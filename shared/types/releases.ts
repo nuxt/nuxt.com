@@ -1,5 +1,3 @@
-import type { MDCRoot } from '@nuxtjs/mdc'
-
 export type Release = {
   url: string
   repo: string
@@ -7,5 +5,5 @@ export type Release = {
   title: string
   date: string
   markdown: string
-  body: MDCRoot
+  body: unknown[]
 }

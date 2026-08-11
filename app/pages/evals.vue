@@ -2,6 +2,8 @@
 import { h, resolveComponent } from 'vue'
 import type { TableColumn, TableRow } from '@nuxt/ui'
 import rawData from '~~/public/agent-results.json'
+import { clientContent } from '~/composables/client-content'
+import { toSitePage } from '~/utils/content'
 
 const UButton = resolveComponent('UButton')
 const UBadge = resolveComponent('UBadge')
@@ -52,7 +54,10 @@ interface ModelRow {
   evals: EvalResultItem[]
 }
 
-const { data: page } = await useAsyncData('evals', () => queryCollection('evals').first())
+const { data: page } = await useAsyncData('evals', async () => {
+  const file = await clientContent.get('/evals')
+  return toSitePage(file)
+})
 if (!page.value) {
   throw createError({ statusCode: 404, statusMessage: 'Page not found', fatal: true })
 }

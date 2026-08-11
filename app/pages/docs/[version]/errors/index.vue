@@ -1,4 +1,8 @@
 <script setup lang="ts">
+import { clientContent } from '~/composables/client-content'
+import { toSitePage } from '~/utils/content'
+import { docsSourcesFromCollection } from '#shared/utils/docs'
+
 definePageMeta({
   validate: route => /^\d\.x$/.test(route.params.version as string),
   heroBackground: 'opacity-30'
@@ -6,12 +10,14 @@ definePageMeta({
 
 const { version } = useDocsVersion()
 
-const { data: errors } = await useAsyncData(`${version.value.collection}-errors`, () =>
-  queryCollection(version.value.collection!)
-    .where('path', 'LIKE', `${version.value.path}/errors/%`)
-    .select('path', 'title', 'description')
-    .all()
-)
+const { data: errors } = await useAsyncData(`${version.value.collection}-errors`, async () => {
+  const sources = [...docsSourcesFromCollection(version.value.collection)]
+  const items = await clientContent.list(sources)
+  return items
+    .filter(i => i.path.startsWith(`${version.value.path}/errors/`))
+    .map(i => toSitePage(i))
+    .filter(Boolean)
+})
 
 if (!errors.value?.length) {
   throw createError({ statusCode: 404, statusMessage: 'Page not found', fatal: true })

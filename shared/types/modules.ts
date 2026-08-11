@@ -1,4 +1,3 @@
-import type { MDCParserResult } from '@nuxtjs/mdc'
 import type NuxtModules from '@nuxt/modules/modules.json'
 
 export type BaseModule = {
@@ -67,6 +66,10 @@ export interface Module extends BaseModule {
   health?: ModuleHealth | null
   contributors?: ModuleContributor[]
   maintainers?: ModuleMaintainer[]
-  readme?: MDCParserResult
+  readme?: {
+    nodes: unknown[]
+    frontmatter: Record<string, any>
+    toc?: { links?: Array<{ id: string, text: string, depth: number, children?: unknown[] }> }
+  }
   generatedAt?: string
 }

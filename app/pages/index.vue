@@ -1,20 +1,28 @@
 <script setup lang="ts">
 import { joinURL } from 'ufo'
 import type { Module } from '#shared/types'
+import { clientContent } from '~/composables/client-content'
+import { toSitePage } from '~/utils/content'
 
 definePageMeta({
   heroBackground: '-z-10'
 })
 
 const [{ data: page }, { data: officialModules }, { data: showcase }, { getFilteredSponsors }] = await Promise.all([
-  useAsyncData('index', () => queryCollection('index').first()),
+  useAsyncData('index', async () => {
+    const file = await clientContent.get('/') || await clientContent.get('/index')
+    return toSitePage(file)
+  }),
   useFetch('/api/v1/modules', {
     key: 'official-modules',
     transform: (res: { modules: Module[], stats: Stats }) => res.modules
       .filter(module => module.type === 'official')
       .sort((a, b) => b.stats.stars - a.stats.stars)
   }),
-  useAsyncData('showcase', () => queryCollection('showcase').first()),
+  useAsyncData('showcase', async () => {
+    const file = await clientContent.get('/showcase')
+    return toSitePage(file)
+  }),
   useSponsors()
 ])
 
@@ -151,7 +159,7 @@ onMounted(() => {
       </template>
 
       <template #description>
-        <LazyMDC :value="page?.hero.description" unwrap="p" cache-key="index-hero-description" hydrate-never />
+        <Markdown :value="page?.hero.description" unwrap="p" />
       </template>
 
       <template #links>
@@ -202,7 +210,7 @@ onMounted(() => {
           }"
         >
           <template #content="{ item, index }">
-            <LazyMDC :value="item.content" :cache-key="`index-hero-tab-${index}`" hydrate-on-idle />
+            <Markdown :value="item.content" />
           </template>
         </UTabs>
       </UPageCard>
@@ -298,10 +306,10 @@ onMounted(() => {
       }"
     >
       <template #title>
-        <LazyMDC :value="page.foundation.title" unwrap="p" cache-key="index-foundation-title" hydrate-never />
+        <Markdown :value="page.foundation.title" unwrap="p" />
       </template>
       <template #description>
-        <LazyMDC :value="page.foundation.description" unwrap="p" cache-key="index-foundation-description" hydrate-never />
+        <Markdown :value="page.foundation.description" unwrap="p" />
       </template>
 
       <div class="grid grid-cols-1 sm:grid-cols-3">
@@ -463,7 +471,7 @@ onMounted(() => {
       }"
     >
       <template #title>
-        <LazyMDC :value="page.modules.title" unwrap="p" cache-key="index-modules-title" hydrate-never />
+        <Markdown :value="page.modules.title" unwrap="p" />
       </template>
       <UCarousel
         v-slot="{ item }"

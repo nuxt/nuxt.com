@@ -1,7 +1,6 @@
 import { Feed } from 'feed'
 import { joinURL } from 'ufo'
 import type { H3Event } from 'h3'
-import { queryCollection } from '@nuxt/content/server'
 
 export default defineEventHandler(async (event: H3Event) => {
   const baseUrl = 'https://nuxt.com'
@@ -20,24 +19,28 @@ export default defineEventHandler(async (event: H3Event) => {
     }
   })
 
-  const articles = await queryCollection(event, 'blog')
-    .order('date', 'DESC')
-    .all()
+  const articles = await content.list(['local'])
 
-  for (const article of articles) {
-    if (article.draft) {
+  const blogPosts = articles
+    .filter(a => a.path.startsWith('/blog/') && a.path !== '/blog')
+    .sort((a, b) => {
+      const dateA = (a.data as { date?: string }).date || ''
+      const dateB = (b.data as { date?: string }).date || ''
+      return dateB.localeCompare(dateA)
+    })
+
+  for (const article of blogPosts) {
+    const data = article.data as { draft?: boolean, title?: string, description?: string, date?: string, image?: string, category?: string }
+    if (data.draft) {
       continue
     }
     feed.addItem({
       link: joinURL(baseUrl, article.path),
-      image: joinURL(baseUrl, article.image),
-      title: article.title,
-      date: new Date(article.date),
-      description: article.description,
-      category: [{
-        name: article.category
-      }]
-      // author: article.authors, INF0: Cannot work without an email field in the author object https://github.com/jpmonette/feed/issues/141
+      image: data.image ? joinURL(baseUrl, data.image) : undefined,
+      title: data.title || '',
+      date: new Date(data.date || ''),
+      description: data.description,
+      category: data.category ? [{ name: data.category }] : undefined
     })
   }
 

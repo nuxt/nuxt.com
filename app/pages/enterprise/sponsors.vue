@@ -1,10 +1,16 @@
 <script setup lang="ts">
+import { clientContent } from '~/composables/client-content'
+import { toSitePage } from '~/utils/content'
+
 definePageMeta({
   heroBackground: 'opacity-80 -z-10'
 })
 
 const [{ data: page }, { sponsors }] = await Promise.all([
-  useAsyncData('sponsors-landing', () => queryCollection('landing').path('/enterprise/sponsors').first()),
+  useAsyncData('sponsors-landing', async () => {
+    const file = await clientContent.get('/enterprise/sponsors')
+    return toSitePage(file)
+  }),
   useSponsors()
 ])
 

@@ -1,4 +1,6 @@
 import type { Sponsor, SponsorType } from '#shared/types'
+import { clientContent } from '~/composables/client-content'
+import { toSitePage } from '~/utils/content'
 
 type SponsorsByTier = Partial<Record<SponsorType, Sponsor[]>>
 
@@ -15,11 +17,14 @@ export const useSponsors = async () => {
         return isEmptySponsorsByTier(data) ? undefined : data
       }
     }),
-    useAsyncData('manual-sponsors', () => queryCollection('manualSponsors').first())
+    useAsyncData('manual-sponsors', async () => {
+      const file = await clientContent.get('/enterprise/manual-sponsors')
+      return toSitePage(file)
+    })
   ])
 
   const sponsors = computed(() => {
-    const manual = manualSponsors.value?.sponsors || []
+    const manual = (manualSponsors.value as any)?.sponsors || []
 
     const result: Record<string, Sponsor[]> = {}
 

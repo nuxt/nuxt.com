@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { navPageFromPath, findTitleTemplate } from '../../app/utils/content'
-import type { ContentNavigationItem } from '@nuxt/content'
+import type { ContentNavigationItem } from '../../shared/types/content'
 
 describe('utils/content', () => {
   describe('navPageFromPath', () => {

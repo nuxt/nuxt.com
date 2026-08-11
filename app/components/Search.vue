@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import type { ContentNavigationItem } from '@nuxt/content'
+import type { ContentNavigationItem } from '~/utils/content'
+import { docsSourcesFromCollection } from '#shared/utils/docs'
 
 defineProps<{
   navigation?: ContentNavigationItem[]
@@ -7,24 +8,33 @@ defineProps<{
 
 const { version } = useDocsVersion()
 
-const collection = computed(() => version.value.collection)
+const status = ref<'idle' | 'pending' | 'success' | 'error'>('idle')
 
-const { status, search, init } = useSearchCollection(collection, {
-  immediate: false,
-  ignoredTags: ['style']
-})
-
-const { searchGroups, searchLinks, searchTerm } = useNavigation()
-const { track } = useAnalytics()
-
-const fuse = {
-  resultLimit: 25,
-  fuseOptions: {
-    useTokenSearch: false
+async function search(query: string) {
+  if (!query?.trim()) return []
+  status.value = 'pending'
+  try {
+    const sources = [...docsSourcesFromCollection(version.value.collection)]
+    const results = await clientContent.search(sources, query, {
+      limit: 25,
+      snippet: { tag: 'mark', around: 30 }
+    })
+    status.value = 'success'
+    return results.map(r => ({
+      id: r.id,
+      title: r.title || r.id,
+      titles: r.titles || [],
+      content: r.snippets?.content || r.content || '',
+      level: r.level
+    }))
+  } catch {
+    status.value = 'error'
+    return []
   }
 }
 
-onNuxtReady(init)
+const { searchGroups, searchLinks, searchTerm } = useNavigation()
+const { track } = useAnalytics()
 
 watchDebounced(searchTerm, (term) => {
   if (term) {
@@ -41,7 +51,12 @@ watchDebounced(searchTerm, (term) => {
     :navigation="navigation"
     :search="search"
     :search-status="status"
-    :fuse="fuse"
+    :fuse="{
+      resultLimit: 25,
+      fuseOptions: {
+        useTokenSearch: false
+      }
+    }"
     :transition="false"
   />
 </template>

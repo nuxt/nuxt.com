@@ -26,7 +26,7 @@ EXAMPLES: "/deploy/vercel", "/deploy/cloudflare", "/deploy/netlify", "/deploy/aw
   cache: '1h',
   async handler({ path, sections }) {
     const event = useEvent()
-    const fullContent = await fetchPageMarkdown(event, 'deploy', path)
+    const fullContent = await fetchPageMarkdown(event, 'local', path)
 
     if (!fullContent) {
       throw createError({ statusCode: 404, message: `Deploy provider not found: ${path}` })

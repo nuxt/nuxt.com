@@ -1,8 +1,8 @@
 <script lang="ts" setup>
-import type { TemplatesCollectionItem } from '@nuxt/content'
+import type { SitePage } from '~/utils/content'
 
 const props = defineProps<{
-  template: TemplatesCollectionItem
+  template: SitePage & { name?: string; slug?: string; badge?: string; demo?: string; repo?: string; purchase?: string; featured?: boolean }
   index: number
 }>()
 

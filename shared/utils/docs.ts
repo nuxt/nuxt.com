@@ -25,3 +25,26 @@ export const SUPPORTED_DOCS_PATH_REGEX = new RegExp(
 // Negative lookahead form so unversioned URLs like `/docs/api.md` still rewrite.
 export const EXCLUDED_DOCS_PATH_LOOKAHEAD
   = `(?!(?:${EXCLUDED_DOC_VERSIONS.map(escape).join('|')})/)`
+
+/**
+ * Docs + examples Comark source names per version collection.
+ * Kept separate (not merge()) so each source keeps its own path prefix.
+ */
+export const docsSourceGroups = {
+  docsv3: ['docsv3', 'examplesv3'],
+  docsv4: ['docsv4', 'examplesv4'],
+  docsv5: ['docsv5', 'examplesv5']
+} as const
+
+export type DocsCollection = keyof typeof docsSourceGroups
+
+/** Flat list of all docs/examples source names. */
+export const docsSources = Object.values(docsSourceGroups).flat()
+
+/** Map a docs version collection name to its Comark sources. */
+export function docsSourcesFromCollection(collection: string | undefined): readonly string[] {
+  if (collection === 'docsv3' || collection === 'docsv4' || collection === 'docsv5') {
+    return docsSourceGroups[collection]
+  }
+  return docsSourceGroups.docsv4
+}

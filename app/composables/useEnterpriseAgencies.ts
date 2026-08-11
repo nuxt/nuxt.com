@@ -1,36 +1,38 @@
 import type { Agency, Filter } from '../types'
 import { slugify, random } from '../utils'
+import { clientContent } from '~/composables/client-content'
+import { toSitePage } from '~/utils/content'
 
 export const useEnterpriseAgencies = () => {
   const route = useRoute()
-  const { data: agencies, execute } = useAsyncData('agencies', () => queryCollection('agencies').all(), {
+  const { data: agencies, execute } = useAsyncData('agencies', async () => {
+    const items = await clientContent.list('local')
+    const agencyItems = items
+      .filter(i => i.path.startsWith('/enterprise/agencies/') && i.path !== '/enterprise/agencies')
+      .map(i => toSitePage(i))
+      .filter(Boolean)
+    return agencyItems.map((agency: any) => ({
+      ...agency,
+      services: (agency.services || []).map((service: string) => ({
+        key: slugify(service),
+        title: service
+      })),
+      regions: (agency.regions || []).map((region: string) => ({
+        key: slugify(region),
+        title: region
+      })),
+      location: agency.location
+        ? {
+            key: slugify(agency.location),
+            title: agency.location
+          }
+        : null
+    })) as Agency[]
+  }, {
     immediate: false,
-    default: () => [],
-    transform: (data) => {
-      if (data && Array.isArray(data)) {
-        return data.map((agency: any) => ({
-          ...agency,
-          services: (agency.services || []).map((service: string) => ({
-            key: slugify(service),
-            title: service
-          })),
-          regions: (agency.regions || []).map((region: string) => ({
-            key: slugify(region),
-            title: region
-          })),
-          location: agency.location
-            ? {
-                key: slugify(agency.location),
-                title: agency.location
-              }
-            : null
-        })) as Agency[]
-      }
-      return []
-    }
+    default: () => []
   })
 
-  // Data fetching
   async function fetchList() {
     if (agencies.value.length) {
       return
@@ -38,8 +40,6 @@ export const useEnterpriseAgencies = () => {
 
     return execute()
   }
-
-  // Computed
 
   const filteredAgencies = computed<Agency[]>(() => {
     return [...agencies.value]

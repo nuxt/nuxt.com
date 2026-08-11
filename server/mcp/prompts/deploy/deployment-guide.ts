@@ -1,5 +1,4 @@
 import { z } from 'zod'
-import { queryCollection } from '@nuxt/content/server'
 
 export default defineMcpPrompt({
   description: 'Get deployment instructions for a specific hosting provider',
@@ -9,23 +8,25 @@ export default defineMcpPrompt({
   async handler({ provider }) {
     const event = useEvent()
 
-    const deployProviders = await queryCollection(event, 'deploy')
-      .select('title', 'path', 'description')
-      .all()
+    const items = await content.list(['local'])
+    const deployProviders = items.filter(item => item.path.startsWith('/deploy/') && item.path !== '/deploy')
 
-    const allProviders = deployProviders?.map(p => ({
-      title: p.title,
-      path: p.path,
-      description: p.description,
-      url: `https://nuxt.com${p.path}`
-    })) || []
+    const allProviders = deployProviders.map((item) => {
+      const data = item.data as Record<string, any>
+      return {
+        title: data.title || '',
+        path: item.path,
+        description: data.description || '',
+        url: `https://nuxt.com${item.path}`
+      }
+    })
 
-    const matchingProvider = deployProviders?.find(p =>
+    const matchingProvider = allProviders.find(p =>
       p.title.toLowerCase().includes(provider.toLowerCase())
     )
 
     const providerContent = matchingProvider
-      ? await fetchPageMarkdown(event, 'deploy', matchingProvider.path)
+      ? await fetchPageMarkdown(event, 'local', matchingProvider.path)
       : null
 
     return {

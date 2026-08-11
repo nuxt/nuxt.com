@@ -159,16 +159,16 @@ function copyRelease(release: Release) {
               class="relative"
               :class="{
                 'h-auto min-h-[200px]': openStates[release.tag],
-                'h-[200px] overflow-y-hidden': !openStates[release.tag] && release.body.children.length > 4
+                'h-[200px] overflow-y-hidden': !openStates[release.tag] && Array.isArray(release.body) && release.body.length > 4
               }"
             >
-              <MDCRenderer
+              <MarkdownDocument
                 v-if="release.body"
-                :body="release.body"
+                :value="{ nodes: release.body, frontmatter: {} }"
                 style="zoom: 0.85"
               />
               <div
-                v-if="!openStates[release.tag] && release.body.children.length > 4"
+                v-if="!openStates[release.tag] && Array.isArray(release.body) && release.body.length > 4"
                 class="h-16 absolute inset-x-0 bottom-0 flex items-end justify-center bg-linear-to-t from-default to-default/50"
               >
                 <UButton

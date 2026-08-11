@@ -1,7 +1,7 @@
 import { existsSync } from 'node:fs'
 import { readdir, readFile } from 'node:fs/promises'
 import { basename, join, relative, resolve } from 'node:path'
-import { parseMdc } from '../../../../helpers/mdc-parser.mjs'
+import { parseMarkdown as parseComark } from '../../../utils/markdown'
 
 interface ExampleSourceTreeItem {
   filename: string
@@ -218,20 +218,21 @@ function createCodeBlock(filename: string, code: string) {
 }
 
 async function parseFile(relativePath: string, code: string) {
-  const parsed = await parseMdc(createCodeBlock(relativePath, code))
+  const parsed = await parseComark(createCodeBlock(relativePath, code))
 
   return {
     filename: basename(relativePath),
     dir: relativePath.replace(basename(relativePath), ''),
     language: getLanguage(relativePath),
-    body: parsed.body
+    body: parsed.nodes
   }
 }
 
 async function getLocalSource(localRoot: string, dirPath: string) {
-  const directory = resolve(localRoot, dirPath)
+  const root = resolve(localRoot)
+  const directory = resolve(root, dirPath)
 
-  if (!directory.startsWith(localRoot) || !existsSync(directory)) {
+  if (!directory.startsWith(root) || !existsSync(directory)) {
     return
   }
 

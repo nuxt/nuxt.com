@@ -1,13 +1,17 @@
 import type { BlogArticle } from '~/types'
+import { clientContent } from '~/composables/client-content'
+import { toSitePage } from '~/utils/content'
 
 export const useBlog = () => {
   const { data: articles, refresh } = useAsyncData<BlogArticle[]>('blog', async () => {
-    return queryCollection('blog')
-      .where('extension', '=', 'md')
-      /* .select('title', 'date', 'image', 'description', 'path', 'authors', 'category') */
-      .order('date', 'DESC')
+    const items = await clientContent.query('local')
+      .where('path', 'LIKE', '/blog/%')
+      .where('meta.extension', '=', '.md')
+      .order('data.date', 'DESC')
       .all()
-      .then(res => res.filter(article => article.path !== '/blog'))
+    return items
+      .map(item => toSitePage(item))
+      .filter((article): article is BlogArticle => !!article && article.path !== '/blog' && !article.draft)
   }, { default: () => [] })
 
   async function fetchList() {
@@ -18,7 +22,6 @@ export const useBlog = () => {
 
   return {
     articles,
-    // featuredArticle,
     fetchList
   }
 }

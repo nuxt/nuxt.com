@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { kebabCase } from 'scule'
+import { clientContent } from '~/composables/client-content'
+import { toSitePage } from '~/utils/content'
 
 definePageMeta({
   heroBackground: 'opacity-30 -z-10'
@@ -7,7 +9,10 @@ definePageMeta({
 
 const route = useRoute()
 
-const { data: agency } = await useAsyncData(kebabCase(route.path), () => queryCollection('agencies').path(route.path).first())
+const { data: agency } = await useAsyncData(kebabCase(route.path), async () => {
+  const file = await clientContent.get(route.path)
+  return toSitePage(file)
+})
 if (!agency.value) {
   throw createError({ statusCode: 404, statusMessage: 'Agency not found', fatal: true })
 }
@@ -98,7 +103,7 @@ defineOgImage('Docs.takumi', {
 
     <UPage :ui="{ right: 'my-8' }">
       <UPageBody>
-        <ContentRenderer v-if="agency && agency.body" :value="agency" />
+        <MarkdownDocument v-if="agency && agency.document" :value="agency.document" />
       </UPageBody>
 
       <template #right>

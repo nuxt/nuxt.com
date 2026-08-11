@@ -1,5 +1,4 @@
 import { createResolver } from 'nuxt/kit'
-import { parseMdc } from './helpers/mdc-parser.mjs'
 
 const { resolve } = createResolver(import.meta.url)
 
@@ -17,9 +16,9 @@ export default defineNuxtConfig({
 
   modules: [
     '@nuxt/ui',
+    '@comark/nuxt',
     // 'nuxt-content-twoslash',
     '@nuxt/test-utils',
-    '@nuxt/content',
     '@nuxt/image',
     '@nuxt/eslint',
     '@nuxt/scripts',
@@ -69,7 +68,7 @@ export default defineNuxtConfig({
     }
   },
   devtools: {
-    enabled: true
+    enabled: false
   },
   app: {
     pageTransition: false,
@@ -85,32 +84,9 @@ export default defineNuxtConfig({
   colorMode: {
     preference: 'dark'
   },
-  content: {
-    // @nuxt/content's nuxthub preset only maps `hub.db` into `content.database` when `hub.db` is a string.
-    // With the object form it falls back to better-sqlite3, whose native addon fails to load on Vercel.
-    // See https://github.com/nuxt/content/issues/3821
-    database: {
-      type: 'libsql',
-      url: 'file:/tmp/sqlite.db'
-    },
-    build: {
-      markdown: {
-        highlight: {
-          theme: {
-            default: 'material-theme-lighter',
-            dark: 'material-theme-palenight'
-          },
-          langs: ['js', 'jsx', 'json', 'ts', 'tsx', 'vue', 'css', 'html', 'bash', 'md', 'mdc', 'yaml', 'sql', 'diff', 'ini']
-        }
-      }
-    }
-  },
-  mdc: {
-    highlight: {
-      noApiRoute: false
-    }
-  },
   ui: {
+    content: true,
+    prose: true,
     theme: {
       colors: ['primary', 'secondary', 'info', 'success', 'warning', 'error', 'important']
     },
@@ -536,39 +512,6 @@ export default defineNuxtConfig({
       include: ['../test/nuxt']
     }
   },
-  hooks: {
-    'content:file:beforeParse': async ({ file }) => {
-      if (file.id.startsWith('docsv5/')) {
-        file.body = file.body.replaceAll(/\(\/docs\/(?!\d\.x)/g, '(/docs/5.x/')
-        // Pages that only exist on main (5.x) but are linked as /docs/4.x/* from
-        // the 5.x docs. Left unrewritten they 404, which fails the prerender now
-        // that the crawler is on. Only paths whose 5.x counterpart exists belong
-        // here — a blanket 4.x→5.x rewrite would break the ~13 links that point
-        // at pages 5.x dropped (guide/concepts/esm, going-further/internals, …).
-        for (const path of [
-          'guide/modules/module-dependencies',
-          'guide/best-practices/accessibility',
-          'guide/concepts/server-components',
-          'guide/recipes/mostly-static-sites'
-        ]) {
-          file.body = file.body.replaceAll(`/docs/4.x/${path}`, `/docs/5.x/${path}`)
-        }
-      }
-      if (file.id.startsWith('docsv4/')) {
-        file.body = file.body.replaceAll(/\(\/docs\/(?!\d\.x)/g, '(/docs/4.x/')
-      }
-    },
-    'content:file:afterParse': async ({ file, content }) => {
-      if (file.id === 'index/index.yml') {
-        // @ts-expect-error -- TODO: fix this
-        for (const tab of content.hero.tabs) {
-          tab.content = await parseMdc(tab.content)
-        }
-        // @ts-expect-error -- TODO: fix this
-        delete content.meta.body
-      }
-    }
-  },
   eslint: {
     config: {
       stylistic: {
@@ -642,32 +585,13 @@ export default defineNuxtConfig({
       title: 'Nuxt Docs',
       description: 'The complete Nuxt documentation and blog posts written in Markdown (MDC syntax).'
     },
+    // Sections are populated at runtime from comark-content in server/plugins/comark-llms.ts
     sections: [
-      {
-        title: 'Nuxt v5 Documentation',
-        contentCollection: 'docsv5',
-        contentFilters: [{ field: 'extension', operator: '=', value: 'md' }]
-      },
-      {
-        title: 'Nuxt v4 Documentation',
-        contentCollection: 'docsv4',
-        contentFilters: [{ field: 'extension', operator: '=', value: 'md' }]
-      },
-      {
-        title: 'Deployment Guides',
-        contentCollection: 'deploy',
-        contentFilters: [{ field: 'extension', operator: '=', value: 'md' }]
-      },
-      {
-        title: 'Nuxt v3 Documentation',
-        contentCollection: 'docsv3',
-        contentFilters: [{ field: 'extension', operator: '=', value: 'md' }]
-      },
-      {
-        title: 'Blog',
-        contentCollection: 'blog',
-        contentFilters: [{ field: 'extension', operator: '=', value: 'md' }]
-      }
+      { title: 'Nuxt v5 Documentation', description: 'Documentation for Nuxt 5.' },
+      { title: 'Nuxt v4 Documentation', description: 'Documentation for Nuxt 4.' },
+      { title: 'Deployment Guides', description: 'Guides for deploying Nuxt applications.' },
+      { title: 'Nuxt v3 Documentation', description: 'Documentation for Nuxt 3.' },
+      { title: 'Blog', description: 'News and updates about Nuxt.' }
     ]
   },
   mcp: {

@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { queryCollection } from '@nuxt/content/server'
+import { docsSourceGroups, docsSourcesFromCollection } from '#shared/utils/docs'
 
 export default defineMcpTool({
   description: `Lists Nuxt documentation pages, optionally filtered by search term.
@@ -22,18 +22,23 @@ TIPS: Always pass a search term to narrow results — avoids dumping the entire 
   ],
   cache: '1h',
   async handler({ version, search }) {
-    const event = useEvent()
+    const sourceGroups = version === 'all'
+      ? [docsSourceGroups.docsv3, docsSourceGroups.docsv4, docsSourceGroups.docsv5]
+      : [docsSourcesFromCollection(version === '3.x' ? 'docsv3' : version === '5.x' ? 'docsv5' : 'docsv4')]
+
     let allDocs: { title: string, path: string, description: string }[] = []
 
-    const collections = version === 'all'
-      ? ['docsv3', 'docsv4', 'docsv5'] as const
-      : [version === '3.x' ? 'docsv3' : version === '5.x' ? 'docsv5' : 'docsv4'] as const
-
-    for (const col of collections) {
-      const docs = await queryCollection(event, col)
-        .select('title', 'path', 'description')
-        .all()
-      if (!docs) {
+    for (const sources of sourceGroups) {
+      const items = await content.list([...sources])
+      const docs = items.map((item) => {
+        const data = item.data as Record<string, any>
+        return {
+          title: data.title || '',
+          path: item.path,
+          description: data.description || ''
+        }
+      })
+      if (!docs.length) {
         if (version === 'all') continue
         throw createError({ statusCode: 404, message: 'Documentation pages collection not found' })
       }

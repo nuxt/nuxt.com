@@ -1,9 +1,15 @@
 <script setup lang="ts">
+import { clientContent } from '~/composables/client-content'
+import { toSitePage } from '~/utils/content'
+
 definePageMeta({
   heroBackground: 'opacity-80 -z-10'
 })
 
-const { data: page } = await useAsyncData('newsletter-landing', () => queryCollection('landing').path('/newsletter').first())
+const { data: page } = await useAsyncData('newsletter-landing', async () => {
+  const file = await clientContent.get('/newsletter')
+  return toSitePage(file)
+})
 if (!page.value) {
   throw createError({ statusCode: 404, statusMessage: 'Page not found', fatal: true })
 }

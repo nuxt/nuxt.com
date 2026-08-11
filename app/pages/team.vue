@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { kebabCase } from 'scule'
+import { clientContent } from '~/composables/client-content'
+import { toSitePage } from '~/utils/content'
 
 const route = useRoute()
 definePageMeta({
@@ -7,7 +9,10 @@ definePageMeta({
 })
 
 const [{ data: page }, { data: teams }] = await Promise.all([
-  useAsyncData(kebabCase(route.path), () => queryCollection('team').first()),
+  useAsyncData(kebabCase(route.path), async () => {
+    const file = await clientContent.get('/team')
+    return toSitePage(file)
+  }),
   useFetch('/api/v1/teams', {
     key: 'teams',
     default: () => ([{ name: 'Core Team', team: [], link: 'https://github.com/orgs/nuxt/teams/core' }, { name: 'Ecosystem Team', team: [], link: 'https://github.com/orgs/nuxt/teams/ecosystem' }]),

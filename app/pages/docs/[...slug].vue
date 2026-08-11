@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import { kebabCase } from 'scule'
 import { joinURL } from 'ufo'
-import type { ContentNavigationItem } from '@nuxt/content'
-import { findPageBreadcrumb } from '@nuxt/content/utils'
 import { mapContentNavigation } from '@nuxt/ui/utils/content'
-import { SUPPORTED_DOCS_PATH_REGEX } from '#shared/utils/docs'
+import type { ContentNavigationItem } from '~/utils/content'
+import { findPageBreadcrumb, itemSurroundings, navPageFromPath, findTitleTemplate, toSitePage } from '~/utils/content'
+import { clientContent } from '~/composables/client-content'
+import { SUPPORTED_DOCS_PATH_REGEX, docsSourcesFromCollection } from '#shared/utils/docs'
 
 definePageMeta({
   heroBackground: 'opacity-30',
@@ -55,17 +56,19 @@ const pageKey = computed(() => kebabCase(path.value))
 const surroundKey = computed(() => `${kebabCase(path.value)}-surround`)
 
 const [{ data: page, status }, { data: surround }] = await Promise.all([
-  useAsyncData(pageKey, () => {
+  useAsyncData(pageKey, async () => {
     const pagePath = path.value
-    const collection = version.value.collection
-    return paintResponse().then(() => queryCollection(collection).path(pagePath).first())
+    await paintResponse()
+    const file = await clientContent.get(pagePath)
+    return toSitePage(file)
   }),
-  useAsyncData(surroundKey, () => {
+  useAsyncData(surroundKey, async () => {
     const pagePath = path.value
-    const collection = version.value.collection
-    return paintResponse().then(() => queryCollectionItemSurroundings(collection, pagePath, {
-      fields: ['description']
-    }))
+    const sources = [...docsSourcesFromCollection(version.value.collection)]
+    await paintResponse()
+    const items = await clientContent.list(sources)
+    const pages = items.map(i => toSitePage(i)).filter(Boolean)
+    return itemSurroundings(pages, pagePath)
   })
 ])
 
@@ -250,7 +253,7 @@ const noRightAside = computed(() => route.path.includes('/examples/'))
         </UPageHeader>
 
         <UPageBody>
-          <ContentRenderer v-if="page.body" :value="page" />
+          <MarkdownDocument v-if="page.document" :value="page.document" />
           <div>
             <Feedback :page="page" />
             <USeparator class="mt-6 mb-10">

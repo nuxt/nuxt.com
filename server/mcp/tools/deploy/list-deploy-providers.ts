@@ -1,5 +1,3 @@
-import { queryCollection } from '@nuxt/content/server'
-
 export default defineMcpTool({
   description: `Lists all deployment providers and hosting platforms for Nuxt applications with their features and capabilities.
 
@@ -18,28 +16,31 @@ OUTPUT: Returns list of providers with titles, descriptions, and paths. Use get_
   },
   cache: '1h',
   async handler() {
-    const event = useEvent()
+    const items = await content.list(['local'])
 
-    const deployProviders = await queryCollection(event, 'deploy')
-      .select('title', 'path', 'description', 'logoSrc', 'logoIcon', 'category', 'nitroPreset', 'website', 'sponsor')
-      .all()
+    const deployProviders = items
+      .filter(item => item.path.startsWith('/deploy/') && item.path !== '/deploy')
+      .map((item) => {
+        const data = item.data as Record<string, any>
+        return {
+          title: data.title,
+          name: data.title,
+          path: item.path,
+          description: data.description,
+          logoSrc: data.logoSrc,
+          logoIcon: data.logoIcon,
+          category: data.category,
+          nitroPreset: data.nitroPreset,
+          website: data.website,
+          sponsor: data.sponsor,
+          url: `https://nuxt.com${item.path}`
+        }
+      })
 
-    if (!deployProviders) {
+    if (!deployProviders.length) {
       throw createError({ statusCode: 404, message: 'Deploy providers collection not found' })
     }
 
-    return deployProviders.map(provider => ({
-      title: provider.title,
-      name: provider.title,
-      path: provider.path,
-      description: provider.description,
-      logoSrc: provider.logoSrc,
-      logoIcon: provider.logoIcon,
-      category: provider.category,
-      nitroPreset: provider.nitroPreset,
-      website: provider.website,
-      sponsor: provider.sponsor,
-      url: `https://nuxt.com${provider.path}`
-    }))
+    return deployProviders
   }
 })

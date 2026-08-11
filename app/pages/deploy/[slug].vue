@@ -1,5 +1,7 @@
 <script lang="ts" setup>
 import { kebabCase } from 'scule'
+import { clientContent } from '~/composables/client-content'
+import { toSitePage, itemSurroundings } from '~/utils/content'
 
 definePageMeta({
   heroBackground: 'opacity-30 -z-10'
@@ -10,11 +12,17 @@ const { fetchList, providers } = useHostingProviders()
 await fetchList()
 
 const [{ data: provider }, { data: surround }] = await Promise.all([
-  useAsyncData(`${kebabCase(route.path)}-provider`, () => queryCollection('deploy').path(route.path).first()),
-  useAsyncData(`${kebabCase(route.path)}-surround`, () => {
-    return queryCollectionItemSurroundings('deploy', route.path, {
-      fields: ['description']
-    })
+  useAsyncData(`${kebabCase(route.path)}-provider`, async () => {
+    const file = await clientContent.get(route.path)
+    return toSitePage(file)
+  }),
+  useAsyncData(`${kebabCase(route.path)}-surround`, async () => {
+    const items = await clientContent.list('local')
+    const pages = items
+      .filter(i => i.path.startsWith('/deploy/') && i.path !== '/deploy')
+      .map(i => toSitePage(i))
+      .filter(Boolean)
+    return itemSurroundings(pages, route.path)
   })
 ])
 
@@ -113,7 +121,7 @@ links.push({
         } : { root: 'lg:grid-cols-12', center: 'lg:col-span-9', right: 'lg:col-span-3' }"
       >
         <UPageBody>
-          <ContentRenderer v-if="provider && provider.body" :value="provider" />
+          <MarkdownDocument v-if="provider && provider.document" :value="provider.document" />
 
           <USeparator v-if="surround?.length" />
 
@@ -121,7 +129,7 @@ links.push({
         </UPageBody>
 
         <template #right>
-          <UContentToc v-if="!isAgentDocked" :links="provider.body.toc?.links || []">
+          <UContentToc v-if="!isAgentDocked" :links="provider.body?.toc?.links || []">
             <template #bottom>
               <div class="hidden lg:block space-y-6">
                 <USeparator v-if="links?.length && provider.body?.toc?.links?.length" type="dashed" />

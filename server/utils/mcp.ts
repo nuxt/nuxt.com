@@ -1,49 +1,57 @@
-import type { H3Event } from 'h3'
-import { stringify } from 'minimark/stringify'
-import type { MinimarkNode } from 'minimark'
-import { queryCollection } from '@nuxt/content/server'
+import { renderMarkdown } from 'comark/render'
+import type { DocsSource } from './content'
 
-type CollectionName = Parameters<typeof queryCollection>[1]
+type SourceName = DocsSource | 'local'
 
 /**
- * Fetches a page from a known content collection and renders it as markdown.
+ * Fetches a page from a known content source and renders it as markdown.
  *
- * Mirrors the output of `/raw/<path>.md` (provided by `@nuxt/content`'s
- * `nuxt-llms` feature) — minimark-stringified body with the title/description
- * prepended and resource links appended — but skips its collection-iteration
- * lookup, which can throw or return 404 for `type: 'page'` collections that
- * aren't keyed by the requested path.
+ * Mirrors the output of `/raw/<path>.md` — rendered markdown body with the
+ * title/description prepended and resource links appended.
  */
 export async function fetchPageMarkdown(
-  event: H3Event,
-  collection: CollectionName,
+  _event: unknown,
+  source: string,
   path: string
 ): Promise<string | null> {
-  const page = await queryCollection(event, collection).path(path).first() as
-    | { title?: string, description?: string, body?: { value?: MinimarkNode[] }, links?: unknown[], meta?: { links?: unknown[] } }
-    | null
+  const file = await content.get(path)
+  if (!file) return null
 
-  if (!page?.body?.value) return null
-
-  const value: MinimarkNode[] = [...page.body.value]
-
-  if ((value[0] as unknown[] | undefined)?.[0] !== 'h1') {
-    if (page.description) value.unshift(['blockquote', {}, page.description])
-    if (page.title) value.unshift(['h1', {}, page.title])
+  // Verify source matches when specified (docs versions)
+  if (source && source !== 'local' && file.meta?.source !== source) {
+    // Try listing and matching by path within the specific source
+    const items = await content.list([source as SourceName])
+    const match = items.find(i => i.path === path)
+    if (!match) return null
+    const fullFile = await content.get(path)
+    if (!fullFile) return null
+    return renderFile(fullFile)
   }
 
-  const links = page.links || page.meta?.links
+  return renderFile(file)
+}
+
+function renderFile(file: { data?: Record<string, any>, nodes?: unknown[], meta?: Record<string, any> }): Promise<string> {
+  const data = (file.data || {}) as Record<string, any>
+  const nodes = [...((file.nodes || []) as unknown[][])]
+
+  if ((nodes[0] as unknown[] | undefined)?.[0] !== 'h1') {
+    if (data.description) nodes.unshift(['blockquote', {}, data.description])
+    if (data.title) nodes.unshift(['h1', {}, data.title])
+  }
+
+  const links = data.links || file.meta?.links
   if (Array.isArray(links) && links.length > 0) {
-    const items: MinimarkNode[] = links
-      .filter((link): link is { label: string, to: string } => Boolean((link as { label?: string }).label && (link as { to?: string }).to))
-      .map(link => ['li', {}, ['a', { href: link.to }, link.label]])
+    const items = links
+      .filter((link: { label?: string, to?: string }) => Boolean(link.label && link.to))
+      .map((link: { label: string, to: string }) => ['li', {}, ['a', { href: link.to }, link.label]])
     if (items.length > 0) {
-      value.push(['hr', {}])
-      value.push(['ul', {}, ...items])
+      nodes.push(['hr', {}])
+      nodes.push(['ul', {}, ...items])
     }
   }
 
-  return stringify({ type: 'minimark', value }, { format: 'markdown/html' })
+  return renderMarkdown({ nodes, frontmatter: data, meta: file.meta } as any)
 }
 
 /**

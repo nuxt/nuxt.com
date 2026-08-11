@@ -1,10 +1,22 @@
 <script lang="ts" setup>
+import { clientContent } from '~/composables/client-content'
+import { toSitePage } from '~/utils/content'
+
 definePageMeta({
   heroBackground: 'opacity-80 -z-10'
 })
 const [{ data: page }, { data: templates }] = await Promise.all([
-  useAsyncData('templates-landing', () => queryCollection('landing').path('/templates').first()),
-  useAsyncData('templates', () => queryCollection('templates').all())
+  useAsyncData('templates-landing', async () => {
+    const file = await clientContent.get('/templates')
+    return toSitePage(file)
+  }),
+  useAsyncData('templates', async () => {
+    const items = await clientContent.list('local')
+    return items
+      .filter(i => i.path.startsWith('/templates/') && i.path !== '/templates')
+      .map(i => toSitePage(i))
+      .filter(Boolean)
+  })
 ])
 
 if (!page.value) {

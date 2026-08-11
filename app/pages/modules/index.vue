@@ -3,6 +3,8 @@ import { motion, AnimatePresence } from 'motion-v'
 import type { DropdownMenuItem } from '@nuxt/ui'
 import type { Module } from '#shared/types'
 import { joinURL } from 'ufo'
+import { clientContent } from '~/composables/client-content'
+import { toSitePage } from '~/utils/content'
 
 definePageMeta({
   heroBackground: 'opacity-50'
@@ -30,7 +32,10 @@ const filteredModulesWithHealth = computed(() =>
 const cacheControl = useResponseHeader('Cache-Control')
 const cdnCacheControl = useResponseHeader('CDN-Cache-Control')
 
-const { data: page } = await useAsyncData('modules-landing', () => queryCollection('landing').path('/modules').first())
+const { data: page } = await useAsyncData('modules-landing', async () => {
+  const file = await clientContent.get('/modules')
+  return toSitePage(file)
+})
 if (!page.value) {
   cacheControl.value = 'no-store, no-cache, must-revalidate'
   cdnCacheControl.value = 'no-store'

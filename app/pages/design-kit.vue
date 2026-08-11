@@ -1,9 +1,15 @@
 <script setup lang="ts">
+import { clientContent } from '~/composables/client-content'
+import { toSitePage } from '~/utils/content'
+
 definePageMeta({
   heroBackground: 'opacity-70 -z-10'
 })
 
-const { data: page } = await useAsyncData('design-kit', () => queryCollection('designKit').first())
+const { data: page } = await useAsyncData('design-kit', async () => {
+  const file = await clientContent.get('/design-kit')
+  return toSitePage(file)
+})
 if (!page.value) {
   throw createError({ statusCode: 404, statusMessage: 'Page not found', fatal: true })
 }
@@ -41,7 +47,7 @@ defineOgImage('Docs.takumi', {
     <UPage>
       <UPageBody>
         <UContainer>
-          <ContentRenderer v-if="page && page.body" :value="page" />
+          <MarkdownDocument v-if="page && page.document" :value="page.document" />
         </UContainer>
       </UPageBody>
     </UPage>

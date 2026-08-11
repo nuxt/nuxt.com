@@ -1,5 +1,11 @@
 <script setup lang="ts">
-const { data: page } = await useAsyncData('blog-landing', () => queryCollection('landing').path('/blog').first())
+import { clientContent } from '~/composables/client-content'
+import { toSitePage } from '~/utils/content'
+
+const { data: page } = await useAsyncData('blog-landing', async () => {
+  const file = await clientContent.get('/blog')
+  return toSitePage(file)
+})
 if (!page.value) {
   throw createError({ statusCode: 404, statusMessage: 'Page not found', fatal: true })
 }

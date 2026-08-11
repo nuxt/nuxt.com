@@ -1,10 +1,16 @@
 <script setup lang="ts">
+import { clientContent } from '~/composables/client-content'
+import { toSitePage } from '~/utils/content'
+
 definePageMeta({
   heroBackground: 'opacity-80 -z-10'
 })
 const { fetchList, filteredJobs } = useEnterpriseJobs()
 
-const { data: page } = await useAsyncData('jobs-landing', () => queryCollection('landing').path('/enterprise/jobs').first())
+const { data: page } = await useAsyncData('jobs-landing', async () => {
+  const file = await clientContent.get('/enterprise/jobs')
+  return toSitePage(file)
+})
 if (!page.value) {
   throw createError({ statusCode: 404, statusMessage: 'Page not found', fatal: true })
 }

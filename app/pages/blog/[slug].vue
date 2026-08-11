@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { kebabCase } from 'scule'
+import { clientContent } from '~/composables/client-content'
+import { toSitePage, itemSurroundings } from '~/utils/content'
 
 definePageMeta({
   heroBackground: 'opacity-30 -z-10'
@@ -11,11 +13,18 @@ const { track } = useAnalytics()
 const { isAgentDocked } = useNuxtAgent()
 
 const [{ data: article }, { data: surround }] = await Promise.all([
-  useAsyncData(kebabCase(route.path), () => queryCollection('blog').path(route.path).first()),
-  useAsyncData(`${kebabCase(route.path)}-surround`, () => {
-    return queryCollectionItemSurroundings('blog', route.path, {
-      fields: ['description']
-    }).order('date', 'DESC')
+  useAsyncData(kebabCase(route.path), async () => {
+    const file = await clientContent.get(route.path)
+    return toSitePage(file)
+  }),
+  useAsyncData(`${kebabCase(route.path)}-surround`, async () => {
+    const items = await clientContent.query('local')
+      .where('path', 'LIKE', '/blog/%')
+      .where('meta.extension', '=', '.md')
+      .order('data.date', 'DESC')
+      .all()
+    const pages = items.map(i => toSitePage(i)).filter(Boolean)
+    return itemSurroundings(pages, route.path)
   })
 ])
 
@@ -133,7 +142,7 @@ const links = [
         } : { root: 'lg:grid-cols-12', center: 'lg:col-span-9', right: 'lg:col-span-3' }"
       >
         <UPageBody>
-          <ContentRenderer v-if="article.body" :value="article" />
+          <MarkdownDocument v-if="article.document" :value="article.document" />
 
           <div class="flex items-center justify-between mt-12 not-prose">
             <ULink to="/blog" class="text-primary">

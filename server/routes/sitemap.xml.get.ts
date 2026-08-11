@@ -1,17 +1,17 @@
 // TODO: Update later
 import { SitemapStream, streamToPromise } from 'sitemap'
-import { queryCollection } from '@nuxt/content/server'
+import { docsSourceGroups } from '#shared/utils/docs'
 
 export default defineEventHandler(async (event) => {
   // TODO: add docsv5 to sitemap when Nuxt 5 is released
-  const [docs, blog] = await Promise.all([
-    queryCollection(event, 'docsv4')
-      .where('path', 'NOT LIKE', '%.navigation')
-      .all(),
-    queryCollection(event, 'blog')
-      .where('draft', '=', 0)
-      .all()
+  const [docsItems, blogItems] = await Promise.all([
+    content.list([...docsSourceGroups.docsv4]),
+    content.list(['local'])
   ])
+
+  const docs = docsItems.filter(d => d.meta.extension === '.md' && !d.path.endsWith('.navigation'))
+  const blog = blogItems
+    .filter(b => b.path.startsWith('/blog/') && b.path !== '/blog' && !(b.data as { draft?: boolean }).draft)
 
   const sitemap = new SitemapStream({
     hostname: getSiteUrl(event)
@@ -24,11 +24,12 @@ export default defineEventHandler(async (event) => {
       lastmod: today
     })
   }
-  for (const doc of blog as Array<{ path: string, date?: string }>) {
+  for (const doc of blog) {
+    const date = (doc.data as { date?: string }).date
     sitemap.write({
       url: doc.path,
       changefreq: 'monthly',
-      lastmod: doc.date || today
+      lastmod: date || today
     })
   }
   sitemap.end()

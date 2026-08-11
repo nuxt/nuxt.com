@@ -1,8 +1,7 @@
-import { parseMarkdown } from '@nuxtjs/mdc/runtime'
-
 import type { H3Event } from 'h3'
 import type { BaseModule, Module, ModuleContributor, ModuleHealth, ModuleStats } from '#shared/types'
 import type { NpmDownloadStats } from '../types/npm'
+import { parseMarkdown } from './markdown'
 
 export function isBot(username: string) {
   return username.includes('[bot]') || username.includes('-bot')
@@ -171,5 +170,10 @@ export async function fetchModuleReadme(_event: H3Event, module: BaseModule) {
     return 'Readme not found'
   }) as string
 
-  return await parseMarkdown(readme)
+  const doc = await parseMarkdown(readme)
+  return {
+    nodes: doc.nodes,
+    frontmatter: doc.frontmatter || {},
+    toc: doc.meta?.toc
+  }
 }

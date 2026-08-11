@@ -1,11 +1,20 @@
 <script setup lang="ts">
+import { clientContent } from '~/composables/client-content'
+import { toSitePage } from '~/utils/content'
+
 definePageMeta({
   heroBackground: 'opacity-80 -z-10'
 })
 
 const [{ data: page }, { data: home }] = await Promise.all([
-  useAsyncData('showcase', () => queryCollection('showcase').first()),
-  useAsyncData('home', () => queryCollection('index').first())
+  useAsyncData('showcase', async () => {
+    const file = await clientContent.get('/showcase')
+    return toSitePage(file)
+  }),
+  useAsyncData('home', async () => {
+    const file = await clientContent.get('/index')
+    return toSitePage(file)
+  })
 ])
 if (!page.value) {
   throw createError({ statusCode: 404, statusMessage: 'Page not found', fatal: true })

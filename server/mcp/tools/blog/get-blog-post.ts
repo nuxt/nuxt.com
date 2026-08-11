@@ -25,7 +25,7 @@ EXAMPLES: "/blog/v4", "/blog/nuxt3", "/blog/nuxt-on-the-edge"`,
   cache: '1h',
   async handler({ path }) {
     const event = useEvent()
-    const fullContent = await fetchPageMarkdown(event, 'blog', path)
+    const fullContent = await fetchPageMarkdown(event, 'local', path)
 
     if (!fullContent) {
       throw createError({ statusCode: 404, message: `Blog post not found: ${path}` })

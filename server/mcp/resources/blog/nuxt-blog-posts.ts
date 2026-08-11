@@ -1,17 +1,13 @@
-import { queryCollection } from '@nuxt/content/server'
-
 export default defineMcpResource({
   uri: 'resource://nuxt-com/blog-posts',
   description: 'Complete list of Nuxt blog posts including releases, tutorials, and announcements',
   cache: '1h',
   async handler(uri: URL) {
-    const event = useEvent()
+    const items = await content.list(['local'])
 
-    const blogPosts = await queryCollection(event, 'blog')
-      .select('title', 'path', 'description', 'date', 'category', 'tags', 'authors', 'image')
-      .all()
+    const blogPosts = items.filter(item => item.path.startsWith('/blog/') && item.path !== '/blog')
 
-    if (!blogPosts) {
+    if (!blogPosts.length) {
       return {
         contents: [{
           uri: uri.href,
@@ -21,17 +17,20 @@ export default defineMcpResource({
       }
     }
 
-    const result = blogPosts.map(post => ({
-      title: post.title,
-      path: post.path,
-      description: post.description,
-      date: post.date,
-      category: post.category,
-      tags: post.tags,
-      authors: post.authors,
-      image: post.image,
-      url: `https://nuxt.com${post.path}`
-    }))
+    const result = blogPosts.map((item) => {
+      const data = item.data as Record<string, any>
+      return {
+        title: data.title,
+        path: item.path,
+        description: data.description,
+        date: data.date,
+        category: data.category,
+        tags: data.tags,
+        authors: data.authors,
+        image: data.image,
+        url: `https://nuxt.com${item.path}`
+      }
+    })
 
     return {
       contents: [{

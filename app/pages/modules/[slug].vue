@@ -218,11 +218,16 @@ if (import.meta.server) {
       } : { root: 'lg:grid-cols-12', center: 'lg:col-span-9', right: 'lg:col-span-3' }"
     >
       <UPageBody>
-        <ContentRenderer v-if="module.readme?.body" :value="module.readme" :components="{ a: ModuleProseA, img: ModuleProseImg, kbd: ModuleProseKbd }" class="first:[&_picture]:block first:[&_picture]:mb-4" />
+        <MarkdownDocument
+          v-if="module.readme?.nodes?.length"
+          :value="{ nodes: module.readme.nodes, frontmatter: module.readme.frontmatter || {} }"
+          :components="{ a: ModuleProseA, img: ModuleProseImg, kbd: ModuleProseKbd }"
+          class="first:[&_picture]:block first:[&_picture]:mb-4"
+        />
       </UPageBody>
 
       <template #right>
-        <UContentToc v-if="!isAgentDocked" :links="module.readme?.toc?.links">
+        <UContentToc v-if="!isAgentDocked && module.readme?.toc?.links" :links="module.readme.toc.links">
           <template #bottom>
             <div class="hidden lg:block space-y-6">
               <UPageLinks title="Links" :links="links" />

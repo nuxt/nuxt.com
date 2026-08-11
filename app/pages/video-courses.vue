@@ -1,10 +1,22 @@
 <script lang="ts" setup>
+import { clientContent } from '~/composables/client-content'
+import { toSitePage } from '~/utils/content'
+
 definePageMeta({
   heroBackground: 'opacity-80 -z-10'
 })
 const [{ data: page }, { data: courses }] = await Promise.all([
-  useAsyncData('video-courses-landing', () => queryCollection('landing').path('/video-courses').first()),
-  useAsyncData('video-courses', () => queryCollection('videoCourses').all())
+  useAsyncData('video-courses-landing', async () => {
+    const file = await clientContent.get('/video-courses')
+    return toSitePage(file)
+  }),
+  useAsyncData('video-courses', async () => {
+    const items = await clientContent.list('local')
+    return items
+      .filter(i => i.path.startsWith('/video-courses/') && i.path !== '/video-courses')
+      .map(i => toSitePage(i))
+      .filter(Boolean)
+  })
 ])
 
 if (!page.value) {

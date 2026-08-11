@@ -1,11 +1,17 @@
 <script setup lang="ts">
+import { clientContent } from '~/composables/client-content'
+import { toSitePage } from '~/utils/content'
+
 definePageMeta({
   heroBackground: 'opacity-30 -z-10'
 })
 
 const { fetchList, providers } = useHostingProviders()
 
-const { data: page } = await useAsyncData('deploy-landing', () => queryCollection('landing').path('/deploy').first())
+const { data: page } = await useAsyncData('deploy-landing', async () => {
+  const file = await clientContent.get('/deploy')
+  return toSitePage(file)
+})
 if (!page.value) {
   throw createError({ statusCode: 404, statusMessage: 'Page not found', fatal: true })
 }

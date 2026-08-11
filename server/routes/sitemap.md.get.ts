@@ -1,4 +1,4 @@
-import { queryCollection } from '@nuxt/content/server'
+import { docsSourceGroups } from '#shared/utils/docs'
 
 const STATIC_LINKS = [
   { title: 'Home', path: '/' },
@@ -20,19 +20,22 @@ export default defineEventHandler(async (event) => {
   const domain = getSiteUrl(event)
   // Mirrors /sitemap.xml: v3 (legacy) and v5 (nightly) are excluded — v5 is
   // also disallowed in /robots.txt until Nuxt 5 ships.
-  const [docsv4, blog, deploy] = await Promise.all([
-    queryCollection(event, 'docsv4')
-      .where('extension', '=', 'md')
-      .select('path', 'title')
-      .all(),
-    queryCollection(event, 'blog')
-      .where('draft', '=', 0)
-      .select('path', 'title', 'date')
-      .all(),
-    queryCollection(event, 'deploy')
-      .select('path', 'title')
-      .all()
+  const [docsv4Items, localItems] = await Promise.all([
+    content.list([...docsSourceGroups.docsv4]),
+    content.list(['local'])
   ])
+
+  const docsv4 = docsv4Items
+    .filter(d => d.meta.extension === '.md')
+    .map(d => ({ path: d.path, title: (d.data as { title?: string }).title || '' }))
+
+  const blog = localItems
+    .filter(b => b.path.startsWith('/blog/') && b.path !== '/blog' && !(b.data as { draft?: boolean }).draft)
+    .map(b => ({ path: b.path, title: (b.data as { title?: string }).title || '', date: (b.data as { date?: string }).date }))
+
+  const deploy = localItems
+    .filter(d => d.path.startsWith('/deploy/') && d.path !== '/deploy')
+    .map(d => ({ path: d.path, title: (d.data as { title?: string }).title || '' }))
 
   const lines: string[] = [
     '# Nuxt Sitemap',
@@ -53,7 +56,7 @@ export default defineEventHandler(async (event) => {
   for (const provider of deploy) lines.push(`- [${provider.title}](${domain}${provider.path}.md)`)
 
   lines.push('', '## Blog', '')
-  for (const post of (blog as Array<{ path: string, title: string, date?: string }>)) {
+  for (const post of blog) {
     const date = post.date ? ` _(${post.date})_` : ''
     lines.push(`- [${post.title}](${domain}${post.path}.md)${date}`)
   }

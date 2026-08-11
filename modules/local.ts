@@ -26,7 +26,12 @@ export default defineNuxtModule<ModuleOptions>({
 
     if (options.uiOnly) {
       consola.info('Enabling UI-only mode for local development')
-      nuxt.options.routeRules['/api/v1/**'] = { proxy: { to: 'https://nuxt.com/api/v1/**' } }
+      // Proxy heavy list endpoints to production (avoids flooding api.npmjs.org
+      // with bulk download stats). Keep `/api/v1/modules/*` local so README
+      // parsing (comark nodes + shiki) can be verified during migration.
+      nuxt.options.routeRules['/api/v1/teams'] = { proxy: { to: 'https://nuxt.com/api/v1/teams' } }
+      nuxt.options.routeRules['/api/v1/teams/**'] = { proxy: { to: 'https://nuxt.com/api/v1/teams/**' } }
+      nuxt.options.routeRules['/api/v1/modules'] = { proxy: { to: 'https://nuxt.com/api/v1/modules' } }
     }
   }
 })
