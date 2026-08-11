@@ -109,7 +109,10 @@ function remoteOrLocalExamples(prefix: string, label: string): Source {
 
   return nested(resilient(github({
     repo: 'nuxt/examples',
-    path: '.docs',
+    // Trailing slash works around comark-content's github() source treating
+    // any last path segment containing a "." (like the hidden `.docs` dir)
+    // as a single file instead of a directory (isFilePath() dot heuristic).
+    path: '.docs/',
     prefix,
     token: githubToken
   }), label), '4.examples')
