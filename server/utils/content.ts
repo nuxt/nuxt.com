@@ -1,5 +1,6 @@
 import { comarkContent } from 'comark-content'
 import fs from 'comark-content/sources/fs'
+import unstorageSource from 'comark-content/sources/unstorage'
 import github from 'comark-content/sources/github'
 import yaml from 'comark-content/plugins/yaml'
 import sqlQuery from 'comark-content/plugins/sql-query'
@@ -99,6 +100,39 @@ function nested(source: Source, dir: string): Source {
   }
 }
 
+/**
+ * Try `primary` first; if it has no keys, use `secondary` instead. Used for
+ * the local source: `fs()` reads `./content` relative to `process.cwd()`,
+ * which is the repo root during `nuxt build`/dev but not necessarily inside
+ * the deployed Vercel function (its bundler traces static imports, not the
+ * raw fs.readdir/readFile calls unstorage's fs driver makes). `secondary` is
+ * only constructed lazily, so it never touches `useStorage()` — only valid
+ * inside Nitro's own auto-imported server build — unless `primary` is empty.
+ */
+function withFallback(primary: Source, getSecondary: () => Source): Source {
+  let active: Source | undefined
+  async function resolveSource(): Promise<Source> {
+    if (!active) {
+      active = (await primary.keys()).length ? primary : getSecondary()
+    }
+    return active
+  }
+  return {
+    prefix: primary.prefix,
+    schema: primary.schema,
+    async keys() {
+      return (await resolveSource()).keys()
+    },
+    async getItem(key: string) {
+      return (await resolveSource()).getItem(key)
+    },
+    async getItemRaw(key: string) {
+      return (await resolveSource()).getItemRaw?.(key)
+    },
+    watch: primary.watch
+  }
+}
+
 function remoteOrLocalExamples(prefix: string, label: string): Source {
   if (process.env.NUXT_EXAMPLES_PATH) {
     return nested(fs('.docs', {
@@ -130,7 +164,9 @@ const database = sqlite({
  */
 export const content = comarkContent({
   sources: {
-    local: fs('./content'),
+    // Falls back to the `content` server asset (bundled by nitro.serverAssets
+    // in nuxt.config) when `fs('./content')` finds nothing — see withFallback.
+    local: withFallback(fs('./content'), () => unstorageSource({ driver: useStorage('assets:content') })),
     docsv3: remoteOrLocalDocs({
       envPath: process.env.NUXT_V3_PATH,
       branch: '3.x',

@@ -468,6 +468,15 @@ export default defineNuxtConfig({
         include: ['../comark-content.d.ts']
       }
     },
+    // Bundles `content/` into the server output so comark-content's local
+    // source can read it at runtime on serverless targets (Vercel traces
+    // imports, not the raw fs.readdir/readFile calls the `fs()` source makes
+    // against a `process.cwd()`-relative path — see server/utils/content.ts).
+    // `dir` must be absolute: nitro resolves a relative one against `server/`,
+    // not the project root, which would silently match zero files.
+    serverAssets: [
+      { baseName: 'content', dir: resolve('./content') }
+    ],
     prerender: {
       // Docs are prerendered by crawling from `/` plus the per-version
       // `getting-started/introduction` seeds in `routeRules` (the version

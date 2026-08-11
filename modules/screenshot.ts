@@ -10,6 +10,14 @@ interface ContentFile {
   meta: { key: string, source: string }
 }
 
+interface ContentUtil {
+  content: {
+    init: () => Promise<void>
+    list: (sources?: string[]) => Promise<ContentFile[]>
+    get: (path: string) => Promise<ContentFile | undefined>
+  }
+}
+
 export default defineNuxtModule((_options, nuxt) => {
   // Screenshots only belong in production builds — never during dev or `nuxt prepare`.
   if (nuxt.options.dev || nuxt.options._prepare) {
@@ -18,7 +26,15 @@ export default defineNuxtModule((_options, nuxt) => {
 
   nuxt.hooks.hook('nitro:init', (nitro) => {
     nitro.hooks.hook('compiled', async () => {
-      const { content } = await import('../server/utils/content')
+      // Import via a non-literal specifier, typed independently of the real
+      // module: this file is loaded outside Nitro's own build (so the
+      // `useStorage()` fallback branch in content.ts's local source is never
+      // reached here — the real `fs()` source always has content to serve
+      // during `nuxt build`), and a static specifier would otherwise pull
+      // content.ts's Nitro-only ambient types into this Nuxt module's
+      // (non-server) TypeScript project.
+      const contentUtilPath = '../server/utils/content'
+      const { content } = await import(contentUtilPath) as ContentUtil
 
       await content.init()
       const items = await content.list(['local'])
