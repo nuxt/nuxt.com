@@ -14,7 +14,7 @@ if (!page.value) {
 
 const stats = useStats()
 const title = page.value.data.head?.title || page.value.data.title
-const description = page.value.data.head?.description || page.value.data.description
+const description = page.value.data.description
 
 useSeoMeta({
   titleTemplate: '%s',
