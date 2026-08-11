@@ -218,13 +218,11 @@ function createCodeBlock(filename: string, code: string) {
 }
 
 async function parseFile(relativePath: string, code: string) {
-  const parsed = await parseComark(createCodeBlock(relativePath, code))
-
   return {
     filename: basename(relativePath),
     dir: relativePath.replace(basename(relativePath), ''),
     language: getLanguage(relativePath),
-    body: parsed.nodes
+    body: await parseComark(createCodeBlock(relativePath, code))
   }
 }
 

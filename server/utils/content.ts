@@ -8,6 +8,7 @@ import sqlite from 'comark-content/database/sqlite-node'
 import toc from 'comark/plugins/toc'
 import shiki from 'comark/plugins/shiki'
 import type { Source } from 'comark-content'
+import type { Node } from 'comark'
 
 /** Prefer the Nuxt-specific token; a generic GITHUB_TOKEN may be invalid for api.github.com. */
 const githubToken = process.env.NUXT_GITHUB_TOKEN || undefined
@@ -77,20 +78,41 @@ function remoteOrLocalDocs(options: {
   }), options.label)
 }
 
+/**
+ * Nest a source's keys under a directory (e.g. `4.examples/`): the numeric
+ * prefix is stripped from URLs by comark's path generation but kept in stems,
+ * which drive navigation ordering — so examples sort as section 4 of the docs.
+ */
+function nested(source: Source, dir: string): Source {
+  const outer = (key: string) => `${dir}/${key}`
+  const inner = (key: string) => key.startsWith(`${dir}/`) ? key.slice(dir.length + 1) : key
+  return {
+    prefix: source.prefix,
+    schema: source.schema,
+    async keys() {
+      const keys = await source.keys()
+      return keys.map(outer)
+    },
+    getItem: key => source.getItem(inner(key)),
+    getItemRaw: key => source.getItemRaw(inner(key)),
+    watch: source.watch
+  }
+}
+
 function remoteOrLocalExamples(prefix: string, label: string): Source {
   if (process.env.NUXT_EXAMPLES_PATH) {
-    return fs('.docs', {
+    return nested(fs('.docs', {
       cwd: process.env.NUXT_EXAMPLES_PATH,
       prefix
-    })
+    }), '4.examples')
   }
 
-  return resilient(github({
+  return nested(resilient(github({
     repo: 'nuxt/examples',
     path: '.docs',
     prefix,
     token: githubToken
-  }), label)
+  }), label), '4.examples')
 }
 
 const database = sqlite({
@@ -112,31 +134,26 @@ export const content = comarkContent({
       prefix: '/docs/3.x',
       label: 'docsv3'
     }),
-    examplesv3: remoteOrLocalExamples('/docs/3.x/4.examples', 'examplesv3'),
+    examplesv3: remoteOrLocalExamples('/docs/3.x', 'examplesv3'),
     docsv4: remoteOrLocalDocs({
       envPath: process.env.NUXT_V4_PATH,
       branch: '4.x',
       prefix: '/docs/4.x',
       label: 'docsv4'
     }),
-    examplesv4: remoteOrLocalExamples('/docs/4.x/4.examples', 'examplesv4'),
+    examplesv4: remoteOrLocalExamples('/docs/4.x', 'examplesv4'),
     docsv5: remoteOrLocalDocs({
       envPath: process.env.NUXT_V5_PATH,
       branch: 'main',
       prefix: '/docs/5.x',
       label: 'docsv5'
     }),
-    examplesv5: remoteOrLocalExamples('/docs/5.x/4.examples', 'examplesv5')
+    examplesv5: remoteOrLocalExamples('/docs/5.x', 'examplesv5')
   },
   markdown: {
     plugins: [
       toc({ depth: 3, searchDepth: 6 }),
-      shiki({
-        themes: {
-          light: 'material-theme-lighter',
-          dark: 'material-theme-palenight'
-        }
-      })
+      shiki()
     ]
   },
   plugins: [
@@ -152,8 +169,13 @@ export const content = comarkContent({
  * navigation builder only reads `data.navigation`, so normalize both shapes.
  */
 function unflattenDottedKeys(data: Record<string, unknown>): Record<string, unknown> {
-  const result: Record<string, unknown> = { ...data }
-  for (const key of Object.keys(data)) {
+  const result: Record<string, unknown> = {}
+  for (const [key, value] of Object.entries(data)) {
+    if (!key.includes('.')) {
+      result[key] = value
+    }
+  }
+  for (const [key, value] of Object.entries(data)) {
     if (!key.includes('.')) continue
     const parts = key.split('.')
     let current: Record<string, unknown> = result
@@ -165,8 +187,7 @@ function unflattenDottedKeys(data: Record<string, unknown>): Record<string, unkn
       }
       current = current[part] as Record<string, unknown>
     }
-    current[parts[parts.length - 1]!] = data[key]
-    delete result[key]
+    current[parts[parts.length - 1]!] = value
   }
   return result
 }
@@ -241,12 +262,7 @@ content.hooks.hook('file:parsed', async (ctx) => {
     const parser = createMarkdownParser({
       plugins: [
         toc({ depth: 3, searchDepth: 6 }),
-        shiki({
-          themes: {
-            light: 'material-theme-lighter',
-            dark: 'material-theme-palenight'
-          }
-        })
+        shiki()
       ]
     })
     const doc = await parser(fullMarkdown)
@@ -288,20 +304,17 @@ content.hooks.hook('file:parsed', (ctx) => {
     return next
   }
 
-  const walk = (nodes: unknown[]): void => {
+  const walk = (nodes: Node[]): void => {
     for (const node of nodes) {
+      // Element/comment nodes are `[tag, attrs, ...children]`; text nodes are plain strings.
       if (!Array.isArray(node) || node.length < 2) continue
       const props = node[1]
-      if (props && typeof props === 'object' && 'href' in props && typeof (props as { href: unknown }).href === 'string') {
-        ;(props as { href: string }).href = rewriteHref((props as { href: string }).href)
+      if (props && typeof props.href === 'string') {
+        props.href = rewriteHref(props.href)
       }
-      for (let i = 2; i < node.length; i++) {
-        const child = node[i]
-        if (Array.isArray(child)) walk([child])
-        else if (Array.isArray((child as unknown[])?.[0])) walk(child as unknown[])
-      }
+      walk(node.slice(2) as Node[])
     }
   }
 
-  walk(file.nodes as unknown[])
+  walk(file.nodes)
 })

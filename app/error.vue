@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { NuxtError } from '#app'
+import type { ContentNavigationItem } from '#shared/types/content'
 
 useSeoMeta({
   title: 'Page not found',
@@ -11,7 +12,7 @@ defineProps<{ error: NuxtError }>()
 const route = useRoute()
 const { version } = useDocsVersion()
 
-const { data: navigation } = await useFetch('/api/navigation.json')
+const { data: navigation } = await useFetch<ContentNavigationItem[]>('/api/navigation.json')
 
 const versionNavigation = computed(() => navigation.value?.filter(item => item.path === version.value.path || item.path === '/blog') ?? [])
 

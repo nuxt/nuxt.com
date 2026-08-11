@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { joinURL } from 'ufo'
+import type { ButtonProps, UserProps } from '@nuxt/ui'
 import type { Module } from '#shared/types'
 import { clientContent } from '~/composables/client-content'
-import { toSitePage } from '~/utils/content'
 
 definePageMeta({
   heroBackground: '-z-10'
@@ -11,7 +11,7 @@ definePageMeta({
 const [{ data: page }, { data: officialModules }, { data: showcase }, { getFilteredSponsors }] = await Promise.all([
   useAsyncData('index', async () => {
     const file = await clientContent.get('/') || await clientContent.get('/index')
-    return toSitePage(file)
+    return file?.data
   }),
   useFetch('/api/v1/modules', {
     key: 'official-modules',
@@ -21,7 +21,7 @@ const [{ data: page }, { data: officialModules }, { data: showcase }, { getFilte
   }),
   useAsyncData('showcase', async () => {
     const file = await clientContent.get('/showcase')
-    return toSitePage(file)
+    return file?.data
   }),
   useSponsors()
 ])
@@ -34,6 +34,13 @@ const officialModulesWithHealth = computed(() =>
 )
 
 const sponsorGroups = getFilteredSponsors(['diamond', 'platinum', 'gold'])
+
+// `sponsors` in the local source is either the landing section (index.yml)
+// or the manual sponsor list (manual-sponsors.yml) — narrow to the section.
+const sponsorsSection = computed(() => {
+  const value = page.value?.sponsors
+  return value && !Array.isArray(value) ? value : undefined
+})
 
 const stats = useStats()
 const { track } = useAnalytics()
@@ -209,7 +216,7 @@ onMounted(() => {
             content: 'lg:h-[450px] bg-default [@media(min-width:2400px)]:border-e [@media(min-width:2400px)]:border-default [@media(min-width:2400px)]:rounded-l-[calc(var(--ui-radius)*1.5)] transition-opacity duration-500 data-[state=inactive]:opacity-0 opacity-100'
           }"
         >
-          <template #content="{ item, index }">
+          <template #content="{ item }">
             <Markdown :value="item.content" />
           </template>
         </UTabs>
@@ -294,7 +301,7 @@ onMounted(() => {
       }"
     >
       <UUser
-        v-bind="page.testimonial.author"
+        v-bind="(page.testimonial.author as UserProps)"
         size="xl"
         class="justify-center"
       />
@@ -423,7 +430,7 @@ onMounted(() => {
               <p class="text-muted text-center">
                 {{ page.stats.community.description }}
               </p>
-              <UButton class="mt-4 w-fit" v-bind="page.stats.cta" />
+              <UButton class="mt-4 w-fit" v-bind="(page.stats.cta as ButtonProps)" />
             </div>
           </UPageCard>
         </div>
@@ -462,7 +469,7 @@ onMounted(() => {
 
     <UPageSection
       :description="page.modules.description"
-      :links="page.modules.links"
+      :links="(page.modules.links as ButtonProps[])"
       :ui="{
         root: 'bg-linear-to-b border-t border-default from-muted dark:from-muted/40 to-default',
         title: 'text-left',
@@ -493,7 +500,7 @@ onMounted(() => {
     <UPageSection
       :title="page.deploy.title"
       :description="page.deploy.description"
-      :links="page.deploy.links"
+      :links="(page.deploy.links as ButtonProps[])"
       orientation="horizontal"
       :ui="{
         root: 'bg-linear-to-b border-t border-default from-muted dark:from-muted/40 to-default'
@@ -512,7 +519,7 @@ onMounted(() => {
     <UPageSection
       :title="page.contributors.title"
       :description="page.contributors.description"
-      :links="page.contributors.links"
+      :links="(page.contributors.links as ButtonProps[])"
       orientation="horizontal"
       reverse
       :ui="{
@@ -585,9 +592,9 @@ onMounted(() => {
     </UPageSection>
 
     <UPageSection
-      :title="page.sponsors.title"
-      :description="page.sponsors.description"
-      :links="page.sponsors.links"
+      :title="sponsorsSection?.title"
+      :description="sponsorsSection?.description"
+      :links="(sponsorsSection?.links as ButtonProps[])"
       class="relative"
       :ui="{
         root: 'bg-linear-to-b border-t border-default from-muted dark:from-muted/40 to-default',

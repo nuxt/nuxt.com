@@ -21,21 +21,23 @@ export default defineEventHandler(async (event) => {
   // Mirrors /sitemap.xml: v3 (legacy) and v5 (nightly) are excluded — v5 is
   // also disallowed in /robots.txt until Nuxt 5 ships.
   const [docsv4Items, localItems] = await Promise.all([
-    content.list([...docsSourceGroups.docsv4]),
+    // Explicit projection: the docsv4 group mixes docs (frontmatter) and examples (no frontmatter) sources.
+    content.list<{ title?: string }>([...docsSourceGroups.docsv4]),
     content.list(['local'])
   ])
 
   const docsv4 = docsv4Items
     .filter(d => d.meta.extension === '.md')
-    .map(d => ({ path: d.path, title: (d.data as { title?: string }).title || '' }))
+    .map(d => ({ path: d.path, title: d.data.title || '' }))
 
   const blog = localItems
+    // `draft` is absent from generated types (no published post carries it)
     .filter(b => b.path.startsWith('/blog/') && b.path !== '/blog' && !(b.data as { draft?: boolean }).draft)
-    .map(b => ({ path: b.path, title: (b.data as { title?: string }).title || '', date: (b.data as { date?: string }).date }))
+    .map(b => ({ path: b.path, title: b.data.title || '', date: b.data.date }))
 
   const deploy = localItems
     .filter(d => d.path.startsWith('/deploy/') && d.path !== '/deploy')
-    .map(d => ({ path: d.path, title: (d.data as { title?: string }).title || '' }))
+    .map(d => ({ path: d.path, title: d.data.title || '' }))
 
   const lines: string[] = [
     '# Nuxt Sitemap',

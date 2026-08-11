@@ -23,15 +23,12 @@ export default defineEventHandler(async (event: H3Event) => {
 
   const blogPosts = articles
     .filter(a => a.path.startsWith('/blog/') && a.path !== '/blog')
-    .sort((a, b) => {
-      const dateA = (a.data as { date?: string }).date || ''
-      const dateB = (b.data as { date?: string }).date || ''
-      return dateB.localeCompare(dateA)
-    })
+    .sort((a, b) => (b.data.date || '').localeCompare(a.data.date || ''))
 
   for (const article of blogPosts) {
-    const data = article.data as { draft?: boolean, title?: string, description?: string, date?: string, image?: string, category?: string }
-    if (data.draft) {
+    const data = article.data
+    // `draft` is absent from generated types (no published post carries it)
+    if ((data as { draft?: boolean }).draft) {
       continue
     }
     feed.addItem({

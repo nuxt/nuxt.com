@@ -29,15 +29,13 @@ TIPS: Always pass a search term to narrow results — avoids dumping the entire 
     let allDocs: { title: string, path: string, description: string }[] = []
 
     for (const sources of sourceGroups) {
-      const items = await content.list([...sources])
-      const docs = items.map((item) => {
-        const data = item.data as Record<string, any>
-        return {
-          title: data.title || '',
-          path: item.path,
-          description: data.description || ''
-        }
-      })
+      // Explicit projection: docs groups mix docs (frontmatter) and examples (no frontmatter) sources.
+      const items = await content.list<{ title?: string, description?: string }>([...sources])
+      const docs = items.map(item => ({
+        title: item.data.title || '',
+        path: item.path,
+        description: item.data.description || ''
+      }))
       if (!docs.length) {
         if (version === 'all') continue
         throw createError({ statusCode: 404, message: 'Documentation pages collection not found' })

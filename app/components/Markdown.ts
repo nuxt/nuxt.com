@@ -7,11 +7,6 @@ import shiki from '@comark/nuxt/plugins/shiki'
 export default defineMarkdownComponent({
   name: 'Markdown',
   plugins: [
-    shiki({
-      themes: {
-        light: 'material-theme-lighter',
-        dark: 'material-theme-palenight'
-      }
-    })
+    shiki()
   ]
 })

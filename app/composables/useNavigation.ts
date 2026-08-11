@@ -250,8 +250,8 @@ const _useNavigation = () => {
 
   const blogItems = computed(() => blogArticles.value.map(article => ({
     id: `blog-${article.path}`,
-    label: article.title,
-    suffix: article.description,
+    label: article.data.title,
+    suffix: article.data.description,
     icon: 'i-lucide-newspaper',
     to: article.path
   })))

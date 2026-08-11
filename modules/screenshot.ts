@@ -26,8 +26,7 @@ export default defineNuxtModule((_options, nuxt) => {
       for (const item of items as ContentFile[]) {
         if (item.path.startsWith('/templates/')) {
           await captureTemplateScreenshot(item)
-        }
-        else if (item.path.startsWith('/video-courses/')) {
+        } else if (item.path.startsWith('/video-courses/')) {
           await captureVideoCourseScreenshot(item)
         }
       }

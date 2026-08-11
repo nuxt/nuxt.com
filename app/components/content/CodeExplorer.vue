@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import CodeIcon from '@nuxt/ui/components/prose/CodeIcon.vue'
+import type { MarkdownDocument } from 'comark'
 
 interface CodeExplorerTreeItem {
   filename: string
@@ -12,10 +13,9 @@ interface CodeExplorerData {
   tree: CodeExplorerTreeItem[]
   files: Record<string, {
     filename: string
-    path: string
     dir: string
     language: string
-    body: unknown[]
+    body: MarkdownDocument
   }>
 }
 
@@ -163,7 +163,7 @@ const docsMapping: Record<string, string> = {
           <UTheme :ui="{ prose: { pre: { root: 'my-0 h-full' } } }">
             <MarkdownDocument
               v-if="selectedFile?.body"
-              :value="{ nodes: selectedFile.body, frontmatter: {} }"
+              :value="selectedFile.body"
               class="h-full"
             />
           </UTheme>

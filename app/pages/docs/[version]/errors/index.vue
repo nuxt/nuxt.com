@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { clientContent } from '~/composables/client-content'
-import { toSitePage } from '~/utils/content'
 import { docsSourcesFromCollection } from '#shared/utils/docs'
 
 definePageMeta({
@@ -12,11 +11,9 @@ const { version } = useDocsVersion()
 
 const { data: errors } = await useAsyncData(`${version.value.collection}-errors`, async () => {
   const sources = [...docsSourcesFromCollection(version.value.collection)]
-  const items = await clientContent.list(sources)
-  return items
-    .filter(i => i.path.startsWith(`${version.value.path}/errors/`))
-    .map(i => toSitePage(i))
-    .filter(Boolean)
+  // Explicit projection: docs groups mix docs (frontmatter) and examples (no frontmatter) sources.
+  const items = await clientContent.list<{ title?: string }>(sources)
+  return items.filter(i => i.path.startsWith(`${version.value.path}/errors/`))
 })
 
 if (!errors.value?.length) {
@@ -76,7 +73,7 @@ if (import.meta.server) {
             <li v-for="error in section.errors" :key="error.path">
               <NuxtLink :to="error.path" class="group flex items-baseline gap-4 py-3">
                 <code class="shrink-0 text-sm font-mono text-primary">{{ code(error.path) }}</code>
-                <span class="text-default group-hover:text-highlighted">{{ error.title }}</span>
+                <span class="text-default group-hover:text-highlighted">{{ error.data.title }}</span>
               </NuxtLink>
             </li>
           </ul>

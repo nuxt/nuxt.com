@@ -1,3 +1,5 @@
+import type { MarkdownDocument } from 'comark'
+import type { Toc } from 'comark/plugins/toc'
 import type NuxtModules from '@nuxt/modules/modules.json'
 
 export type BaseModule = {
@@ -66,10 +68,7 @@ export interface Module extends BaseModule {
   health?: ModuleHealth | null
   contributors?: ModuleContributor[]
   maintainers?: ModuleMaintainer[]
-  readme?: {
-    nodes: unknown[]
-    frontmatter: Record<string, any>
-    toc?: { links?: Array<{ id: string, text: string, depth: number, children?: unknown[] }> }
-  }
+  /** Parsed README, rendered with `<MarkdownDocument :value="module.readme" />`; toc lives in `readme.meta.toc`. */
+  readme?: MarkdownDocument<{ toc?: Toc }>
   generatedAt?: string
 }

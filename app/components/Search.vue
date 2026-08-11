@@ -8,18 +8,18 @@ defineProps<{
 
 const { version } = useDocsVersion()
 
-const status = ref<'idle' | 'pending' | 'success' | 'error'>('idle')
+const status = ref<'idle' | 'loading' | 'ready' | 'error'>('idle')
 
 async function search(query: string) {
   if (!query?.trim()) return []
-  status.value = 'pending'
+  status.value = 'loading'
   try {
     const sources = [...docsSourcesFromCollection(version.value.collection)]
     const results = await clientContent.search(sources, query, {
       limit: 25,
       snippet: { tag: 'mark', around: 30 }
     })
-    status.value = 'success'
+    status.value = 'ready'
     return results.map(r => ({
       id: r.id,
       title: r.title || r.id,

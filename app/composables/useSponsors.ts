@@ -1,6 +1,5 @@
 import type { Sponsor, SponsorType } from '#shared/types'
 import { clientContent } from '~/composables/client-content'
-import { toSitePage } from '~/utils/content'
 
 type SponsorsByTier = Partial<Record<SponsorType, Sponsor[]>>
 
@@ -9,7 +8,7 @@ function isEmptySponsorsByTier(data: SponsorsByTier | null | undefined) {
 }
 
 export const useSponsors = async () => {
-  const [{ data: apiSponsors }, { data: manualSponsors }] = await Promise.all([
+  const [{ data: apiSponsors }, { data: manualSponsorsPage }] = await Promise.all([
     useFetch<SponsorsByTier>('/api/sponsors', {
       key: 'sponsors',
       getCachedData(key, nuxtApp) {
@@ -17,14 +16,14 @@ export const useSponsors = async () => {
         return isEmptySponsorsByTier(data) ? undefined : data
       }
     }),
-    useAsyncData('manual-sponsors', async () => {
-      const file = await clientContent.get('/enterprise/manual-sponsors')
-      return toSitePage(file)
-    })
+    useAsyncData('manual-sponsors', () => clientContent.get('/enterprise/manual-sponsors'))
   ])
 
   const sponsors = computed(() => {
-    const manual = (manualSponsors.value as any)?.sponsors || []
+    // `sponsors` in the local source is either a landing-page section (index.yml)
+    // or the manual sponsor list (manual-sponsors.yml) — narrow to the list.
+    const manualData = manualSponsorsPage.value?.data.sponsors
+    const manual = Array.isArray(manualData) ? manualData : []
 
     const result: Record<string, Sponsor[]> = {}
 

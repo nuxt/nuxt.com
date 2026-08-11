@@ -20,22 +20,19 @@ OUTPUT: Returns list of providers with titles, descriptions, and paths. Use get_
 
     const deployProviders = items
       .filter(item => item.path.startsWith('/deploy/') && item.path !== '/deploy')
-      .map((item) => {
-        const data = item.data as Record<string, any>
-        return {
-          title: data.title,
-          name: data.title,
-          path: item.path,
-          description: data.description,
-          logoSrc: data.logoSrc,
-          logoIcon: data.logoIcon,
-          category: data.category,
-          nitroPreset: data.nitroPreset,
-          website: data.website,
-          sponsor: data.sponsor,
-          url: `https://nuxt.com${item.path}`
-        }
-      })
+      .map(item => ({
+        title: item.data.title,
+        name: item.data.title,
+        path: item.path,
+        description: item.data.description,
+        logoSrc: item.data.logoSrc,
+        logoIcon: item.data.logoIcon,
+        category: item.data.category,
+        nitroPreset: item.data.nitroPreset,
+        website: item.data.website,
+        sponsor: item.data.sponsor,
+        url: `https://nuxt.com${item.path}`
+      }))
 
     if (!deployProviders.length) {
       throw createError({ statusCode: 404, message: 'Deploy providers collection not found' })

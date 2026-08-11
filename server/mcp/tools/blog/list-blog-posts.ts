@@ -1,5 +1,5 @@
 export default defineMcpTool({
-  description: `Lists all Nuxt blog posts with metadata including titles, dates, categories, tags, and descriptions.
+  description: `Lists all Nuxt blog posts with metadata including titles, dates, categories, and descriptions.
 
 WHEN TO USE: Use this tool when you need to DISCOVER or SEARCH for blog posts. Common scenarios:
 - "What are the latest announcements?" - browse recent posts
@@ -20,20 +20,16 @@ OUTPUT: Returns list of posts with title, description, date, path. Use get_blog_
 
     const blogPosts = items
       .filter(item => item.path.startsWith('/blog/') && item.path !== '/blog')
-      .map((item) => {
-        const data = item.data as Record<string, any>
-        return {
-          title: data.title,
-          path: item.path,
-          description: data.description,
-          date: data.date,
-          category: data.category,
-          tags: data.tags,
-          authors: data.authors,
-          image: data.image,
-          url: `https://nuxt.com${item.path}`
-        }
-      })
+      .map(item => ({
+        title: item.data.title,
+        path: item.path,
+        description: item.data.description,
+        date: item.data.date,
+        category: item.data.category,
+        authors: item.data.authors,
+        image: item.data.image,
+        url: `https://nuxt.com${item.path}`
+      }))
 
     if (!blogPosts.length) {
       throw createError({ statusCode: 404, message: 'Blog posts collection not found' })

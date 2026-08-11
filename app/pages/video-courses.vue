@@ -1,21 +1,15 @@
 <script lang="ts" setup>
+import type { ButtonProps } from '@nuxt/ui'
 import { clientContent } from '~/composables/client-content'
-import { toSitePage } from '~/utils/content'
 
 definePageMeta({
   heroBackground: 'opacity-80 -z-10'
 })
 const [{ data: page }, { data: courses }] = await Promise.all([
-  useAsyncData('video-courses-landing', async () => {
-    const file = await clientContent.get('/video-courses')
-    return toSitePage(file)
-  }),
+  useAsyncData('video-courses-landing', () => clientContent.get('/video-courses')),
   useAsyncData('video-courses', async () => {
     const items = await clientContent.list('local')
-    return items
-      .filter(i => i.path.startsWith('/video-courses/') && i.path !== '/video-courses')
-      .map(i => toSitePage(i))
-      .filter(Boolean)
+    return items.filter(i => i.path.startsWith('/video-courses/') && i.path !== '/video-courses')
   })
 ])
 
@@ -23,8 +17,8 @@ if (!page.value) {
   throw createError({ statusCode: 404, statusMessage: 'Page not found', fatal: true })
 }
 
-const title = page.value.head?.title || page.value.title
-const description = page.value.head?.description || page.value.description
+const title = page.value.data.head?.title || page.value.data.title
+const description = page.value.data.head?.description || page.value.data.description
 
 useSeoMeta({
   titleTemplate: '%s',
@@ -44,19 +38,19 @@ defineOgImage('Docs.takumi', {
 <template>
   <UContainer v-if="page">
     <UPageHero
-      :title="page.title"
-      :description="page.description"
-      :links="page.links"
+      :title="page.data.title"
+      :description="page.data.description"
+      :links="(page.data.links as ButtonProps[])"
     />
     <UPage>
       <UPageBody>
         <ul class="divide-y divide-default">
-          <li v-for="(course, index) in courses" :key="course.slug" class="flex items-center py-3 gap-2">
+          <li v-for="(course, index) in courses" :key="course.path" class="flex items-center py-3 gap-2">
             <NuxtImg
-              :src="`/assets/video-courses/${course.slug}.webp`"
-              :alt="course.name"
-              :width="'sponsor' in course && course.sponsor ? 94 : 56"
-              :height="'sponsor' in course && course.sponsor ? 47 : 28"
+              :src="`/assets/video-courses/${course.data.slug}.webp`"
+              :alt="course.data.name"
+              :width="course.data.sponsor ? 94 : 56"
+              :height="course.data.sponsor ? 47 : 28"
               format="webp"
               :modifiers="{ position: 'top' }"
               :loading="index > 3 ? 'lazy' : undefined"
@@ -64,19 +58,19 @@ defineOgImage('Docs.takumi', {
             />
             <h3
               class="font-medium text-highlighted text-nowrap flex-grow lg:flex-grow-0"
-              :class="'sponsor' in course && course.sponsor ? 'text-xl' : 'text-base'"
+              :class="course.data.sponsor ? 'text-xl' : 'text-base'"
             >
-              {{ course.name }}
+              {{ course.data.name }}
             </h3>
             <p
               class="text-muted hidden lg:block flex-grow truncate"
-              :class="'sponsor' in course && course.sponsor ? 'text-base' : 'text-sm'"
+              :class="course.data.sponsor ? 'text-base' : 'text-sm'"
             >
-              {{ course.description }}
+              {{ course.data.description }}
             </p>
             <UBadge
-              v-if="course.badge"
-              :label="course.badge"
+              v-if="course.data.badge"
+              :label="course.data.badge"
               variant="subtle"
               class="rounded-full"
             />
@@ -88,8 +82,8 @@ defineOgImage('Docs.takumi', {
               class="rounded-full"
             />
             <UButton
-              v-if="'sponsor' in course && course.sponsor"
-              :to="course.url"
+              v-if="course.data.sponsor"
+              :to="course.data.url"
               target="_blank"
               trailing-icon="i-lucide-arrow-right"
               size="sm"
@@ -98,7 +92,7 @@ defineOgImage('Docs.takumi', {
             />
             <UButton
               v-else
-              :to="course.url"
+              :to="course.data.url"
               target="_blank"
               trailing-icon="i-lucide-arrow-right"
               variant="link"

@@ -1,5 +1,5 @@
-import { renderMarkdown } from 'comark/render'
 import { withBase } from 'ufo'
+import { renderContentFile } from '../utils/markdown'
 
 /** Map llms section titles → comark-content source names (+ optional path filter). */
 const SECTION_SOURCES: Record<string, { source: string, pathPrefix?: string }> = {
@@ -32,14 +32,11 @@ export default defineNitroPlugin((nitroApp) => {
       if (!docs.length) continue
 
       section.links ||= []
-      section.links.push(...docs.map((doc) => {
-        const data = doc.data as Record<string, any>
-        return {
-          title: data.title || data.seo?.title || '',
-          description: data.description || data.seo?.description || '',
-          href: getDocumentLink(doc.path, options)
-        }
-      }))
+      section.links.push(...docs.map(doc => ({
+        title: doc.data.title || '',
+        description: doc.data.description || '',
+        href: getDocumentLink(doc.path, options)
+      })))
     }
   })
 
@@ -57,15 +54,7 @@ export default defineNitroPlugin((nitroApp) => {
         const file = await content.get(doc.path)
         if (!file) continue
 
-        const data = (file.data || {}) as Record<string, any>
-        const nodes = [...((file.nodes || []) as unknown[])]
-
-        if ((nodes[0] as unknown[] | undefined)?.[0] !== 'h1' && data.title) {
-          nodes.unshift(['h1', {}, data.title])
-        }
-
-        const markdown = await renderMarkdown({ nodes, frontmatter: data, meta: file.meta } as any)
-        contents.push(markdown)
+        contents.push(await renderContentFile(file))
       }
     }
   })

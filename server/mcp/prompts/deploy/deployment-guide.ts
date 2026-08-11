@@ -11,15 +11,12 @@ export default defineMcpPrompt({
     const items = await content.list(['local'])
     const deployProviders = items.filter(item => item.path.startsWith('/deploy/') && item.path !== '/deploy')
 
-    const allProviders = deployProviders.map((item) => {
-      const data = item.data as Record<string, any>
-      return {
-        title: data.title || '',
-        path: item.path,
-        description: data.description || '',
-        url: `https://nuxt.com${item.path}`
-      }
-    })
+    const allProviders = deployProviders.map(item => ({
+      title: item.data.title || '',
+      path: item.path,
+      description: item.data.description || '',
+      url: `https://nuxt.com${item.path}`
+    }))
 
     const matchingProvider = allProviders.find(p =>
       p.title.toLowerCase().includes(provider.toLowerCase())

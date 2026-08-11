@@ -1,41 +1,6 @@
-import type { ContentFile, ContentListFile } from 'comark-content'
-import type { Toc } from 'comark/plugins/toc'
-import type { ContentNavigationItem, SitePage } from '../../shared/types/content'
+import type { ContentNavigationItem } from '../../shared/types/content'
 
-export type { ContentNavigationItem, SitePage }
-
-type ContentLike = ContentFile | ContentListFile
-
-/**
- * Adapt a Comark ContentFile into the flattened page shape site templates expect.
- */
-export function toSitePage<T extends Record<string, any> = Record<string, any>>(
-  file: ContentLike | null | undefined
-): SitePage<T> | null {
-  if (!file) return null
-
-  const data = (file.data || {}) as T
-  const meta = file.meta || {} as ContentFile['meta']
-  const nodes = 'nodes' in file && Array.isArray(file.nodes) ? file.nodes : []
-  const toc = (meta as { toc?: Toc }).toc
-
-  return {
-    ...data,
-    path: file.path,
-    stem: meta.stem || file.path.replace(/^\//, ''),
-    extension: (meta.extension || '.md').replace(/^\./, ''),
-    title: (data as { title?: string }).title,
-    description: (data as { description?: string }).description,
-    seo: (data as { seo?: SitePage['seo'] }).seo,
-    body: toc ? { toc } : undefined,
-    nodes,
-    document: {
-      nodes,
-      frontmatter: data,
-      meta: meta as Record<string, unknown>
-    }
-  }
-}
+export type { ContentNavigationItem, DocsPageData } from '../../shared/types/content'
 
 /**
  * Surroundings (prev/next) for a path within an ordered list of items.
@@ -71,30 +36,29 @@ function cleanV4Path(path: string): string {
   return path.replace(/\/\d\.x(?=\/|$)/, '')
 }
 
-function cleanNavigationPaths(navigation: ContentNavigationItem[], _isV4: boolean): ContentNavigationItem[] {
+function cleanNavigationPaths(navigation: ContentNavigationItem[]): ContentNavigationItem[] {
   return navigation.map(item => ({
     ...item,
-    path: item.path ? cleanV4Path(item.path) : item.path,
-    children: item.children ? cleanNavigationPaths(item.children, _isV4) : undefined
+    path: cleanV4Path(item.path),
+    children: item.children ? cleanNavigationPaths(item.children) : undefined
   }))
 }
 
 export function findTitleTemplate(
-  page: Ref<{ path?: string, titleTemplate?: string } | null | undefined>,
+  page: Ref<{ path: string, data: { titleTemplate?: string } } | null | undefined>,
   navigation: Ref<ContentNavigationItem[]>,
-  versionPath: string
+  _versionPath: string
 ): string {
   if (!page.value?.path) {
     return '%s · Nuxt'
   }
 
-  if (page.value.titleTemplate) {
-    return page.value.titleTemplate
+  if (page.value.data?.titleTemplate) {
+    return page.value.data.titleTemplate
   }
 
-  const isV4 = versionPath === '/docs/4.x'
   const searchPath = cleanV4Path(page.value.path)
-  const cleanNavigation = cleanNavigationPaths(navigation.value, isV4)
+  const cleanNavigation = cleanNavigationPaths(navigation.value)
 
   const parts = searchPath.split('/')
   const items = []
@@ -133,18 +97,4 @@ export function findPageBreadcrumb(
   }
 
   return breadcrumb
-}
-
-/**
- * Map Comark navigation items into the shape Nuxt UI expects (title → label via mapContentNavigation).
- * Attach titleTemplate from nested data when present on the item.
- */
-export function normalizeNavigation(items: ContentNavigationItem[] | null | undefined): ContentNavigationItem[] {
-  if (!items?.length) return []
-  return items.map(item => ({
-    ...item,
-    title: item.title,
-    path: item.path,
-    children: item.children ? normalizeNavigation(item.children) : undefined
-  }))
 }

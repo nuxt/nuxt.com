@@ -1,7 +1,7 @@
-import { renderMarkdown } from 'comark/render'
-import type { DocsSource } from './content'
+import { renderContentFile } from './markdown'
+import type { docsSources } from '#shared/utils/docs'
 
-type SourceName = DocsSource | 'local'
+type SourceName = (typeof docsSources)[number] | 'local'
 
 /**
  * Fetches a page from a known content source and renders it as markdown.
@@ -25,33 +25,10 @@ export async function fetchPageMarkdown(
     if (!match) return null
     const fullFile = await content.get(path)
     if (!fullFile) return null
-    return renderFile(fullFile)
+    return renderContentFile(fullFile)
   }
 
-  return renderFile(file)
-}
-
-function renderFile(file: { data?: Record<string, any>, nodes?: unknown[], meta?: Record<string, any> }): Promise<string> {
-  const data = (file.data || {}) as Record<string, any>
-  const nodes = [...((file.nodes || []) as unknown[][])]
-
-  if ((nodes[0] as unknown[] | undefined)?.[0] !== 'h1') {
-    if (data.description) nodes.unshift(['blockquote', {}, data.description])
-    if (data.title) nodes.unshift(['h1', {}, data.title])
-  }
-
-  const links = data.links || file.meta?.links
-  if (Array.isArray(links) && links.length > 0) {
-    const items = links
-      .filter((link: { label?: string, to?: string }) => Boolean(link.label && link.to))
-      .map((link: { label: string, to: string }) => ['li', {}, ['a', { href: link.to }, link.label]])
-    if (items.length > 0) {
-      nodes.push(['hr', {}])
-      nodes.push(['ul', {}, ...items])
-    }
-  }
-
-  return renderMarkdown({ nodes, frontmatter: data, meta: file.meta } as any)
+  return renderContentFile(file)
 }
 
 /**

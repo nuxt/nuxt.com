@@ -170,10 +170,5 @@ export async function fetchModuleReadme(_event: H3Event, module: BaseModule) {
     return 'Readme not found'
   }) as string
 
-  const doc = await parseMarkdown(readme)
-  return {
-    nodes: doc.nodes,
-    frontmatter: doc.frontmatter || {},
-    toc: doc.meta?.toc
-  }
+  return parseMarkdown(readme)
 }

@@ -1,22 +1,19 @@
 <script setup lang="ts">
+import type { ButtonProps } from '@nuxt/ui'
 import { clientContent } from '~/composables/client-content'
-import { toSitePage } from '~/utils/content'
 
 definePageMeta({
   heroBackground: 'opacity-80 -z-10'
 })
 const { fetchList, filteredJobs } = useEnterpriseJobs()
 
-const { data: page } = await useAsyncData('jobs-landing', async () => {
-  const file = await clientContent.get('/enterprise/jobs')
-  return toSitePage(file)
-})
+const { data: page } = await useAsyncData('jobs-landing', () => clientContent.get('/enterprise/jobs'))
 if (!page.value) {
   throw createError({ statusCode: 404, statusMessage: 'Page not found', fatal: true })
 }
 
-const title = page.value.head?.title || page.value.title
-const description = page.value.head?.description || page.value.description
+const title = page.value.data.head?.title || page.value.data.title
+const description = page.value.data.head?.description || page.value.data.description
 useSeoMeta({
   titleTemplate: '%s',
   title,
@@ -38,9 +35,9 @@ await fetchList()
 <template>
   <UContainer v-if="page">
     <UPageHero
-      :title="page.title"
-      :description="page.description"
-      :links="page.links"
+      :title="page.data.title"
+      :description="page.data.description"
+      :links="(page.data.links as ButtonProps[])"
       :ui="{
         title: 'text-left',
         description: 'text-left',

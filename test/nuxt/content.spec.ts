@@ -73,28 +73,28 @@ describe('utils/content', () => {
 
   describe('findTitleTemplate', () => {
     it('should return default template when page has no path', () => {
-      const page = { value: { path: undefined } } as any
+      const page = { value: { path: undefined, data: {} } } as any
       const navigation = { value: [] } as any
       const result = findTitleTemplate(page, navigation, '/docs/4.x')
       expect(result).toBe('%s · Nuxt')
     })
 
     it('should use page titleTemplate if available', () => {
-      const page = { value: { path: '/test', titleTemplate: '%s | Custom' } } as any
+      const page = { value: { path: '/test', data: { titleTemplate: '%s | Custom' } } } as any
       const navigation = { value: [] } as any
       const result = findTitleTemplate(page, navigation, '/docs/4.x')
       expect(result).toBe('%s | Custom')
     })
 
     it('should return default template when no matching navigation found', () => {
-      const page = { value: { path: '/docs/4.x/guide/introduction' } } as any
+      const page = { value: { path: '/docs/4.x/guide/introduction', data: {} } } as any
       const navigation = { value: [] } as any
       const result = findTitleTemplate(page, navigation, '/docs/4.x')
       expect(result).toBe('%s · Nuxt')
     })
 
     it('should find titleTemplate from parent in navigation tree', () => {
-      const page = { value: { path: '/docs/4.x/getting-started/introduction' } } as any
+      const page = { value: { path: '/docs/4.x/getting-started/introduction', data: {} } } as any
       const navigation = {
         value: [
           {
@@ -121,7 +121,7 @@ describe('utils/content', () => {
     })
 
     it('should handle v4 docs paths with version cleaning', () => {
-      const page = { value: { path: '/docs/4.x/api/composables/use-fetch' } } as any
+      const page = { value: { path: '/docs/4.x/api/composables/use-fetch', data: {} } } as any
       const navigation = {
         value: [
           {

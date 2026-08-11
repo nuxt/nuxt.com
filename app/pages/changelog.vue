@@ -27,7 +27,9 @@ if (import.meta.server) {
   prerenderRoutes(['/raw/changelog.md'])
 }
 
-const { data: releases } = await useFetch('/api/releases')
+// Explicit generic: `Release.body` holds Comark's recursive Node tuples, which
+// blow up useFetch's serialized-type inference (TS2589) if left inferred.
+const { data: releases } = await useFetch<Release[]>('/api/releases')
 const openStates = reactive<Record<string, boolean>>({})
 
 const { modules } = useModules()
@@ -159,16 +161,16 @@ function copyRelease(release: Release) {
               class="relative"
               :class="{
                 'h-auto min-h-[200px]': openStates[release.tag],
-                'h-[200px] overflow-y-hidden': !openStates[release.tag] && Array.isArray(release.body) && release.body.length > 4
+                'h-[200px] overflow-y-hidden': !openStates[release.tag] && release.body.nodes.length > 4
               }"
             >
               <MarkdownDocument
                 v-if="release.body"
-                :value="{ nodes: release.body, frontmatter: {} }"
+                :value="release.body"
                 style="zoom: 0.85"
               />
               <div
-                v-if="!openStates[release.tag] && Array.isArray(release.body) && release.body.length > 4"
+                v-if="!openStates[release.tag] && release.body.nodes.length > 4"
                 class="h-16 absolute inset-x-0 bottom-0 flex items-end justify-center bg-linear-to-t from-default to-default/50"
               >
                 <UButton

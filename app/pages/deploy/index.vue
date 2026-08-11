@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { clientContent } from '~/composables/client-content'
-import { toSitePage } from '~/utils/content'
 
 definePageMeta({
   heroBackground: 'opacity-30 -z-10'
@@ -8,16 +7,13 @@ definePageMeta({
 
 const { fetchList, providers } = useHostingProviders()
 
-const { data: page } = await useAsyncData('deploy-landing', async () => {
-  const file = await clientContent.get('/deploy')
-  return toSitePage(file)
-})
+const { data: page } = await useAsyncData('deploy-landing', () => clientContent.get('/deploy'))
 if (!page.value) {
   throw createError({ statusCode: 404, statusMessage: 'Page not found', fatal: true })
 }
 
-const title = page.value.head?.title || page.value.title
-const description = page.value.head?.description || page.value.description
+const title = page.value.data.head?.title || page.value.data.title
+const description = page.value.data.head?.description || page.value.data.description
 
 useSeoMeta({
   titleTemplate: '%s',
@@ -46,9 +42,9 @@ await fetchList()
             highlight
             orientation="vertical"
             :items="providers.map(provider => ({
-              label: provider.title,
+              label: provider.data.title,
               to: provider.path,
-              badge: provider.sponsor ? 'Sponsor' : undefined
+              badge: provider.data.sponsor ? 'Sponsor' : undefined
             })).sort((a, b) => a.label.localeCompare(b.label))"
           />
         </UPageAside>
@@ -59,8 +55,8 @@ await fetchList()
             v-for="(deployment, index) in providers"
             :key="index"
             :to="deployment.path"
-            :title="deployment.title"
-            :description="deployment.description"
+            :title="deployment.data.title"
+            :description="deployment.data.description"
             variant="subtle"
             class="flex flex-col overflow-hidden"
             :ui="{
@@ -68,21 +64,21 @@ await fetchList()
             }"
           >
             <template #leading>
-              <NuxtImg v-if="deployment.logoSrc" :src="deployment.logoSrc" width="40" height="40" class="w-10 h-10" />
-              <UIcon v-else :name="deployment.logoIcon" class="size-10 text-black dark:text-white" />
+              <NuxtImg v-if="deployment.data.logoSrc" :src="deployment.data.logoSrc" width="40" height="40" class="w-10 h-10" />
+              <UIcon v-else :name="deployment.data.logoIcon" class="size-10 text-black dark:text-white" />
             </template>
             <UBadge
-              v-if="deployment.sponsor"
+              v-if="deployment.data.sponsor"
               class="shine absolute top-4 right-4 sm:top-6 sm:right-6"
               variant="subtle"
               color="important"
               label="Sponsor"
             />
             <template #title>
-              {{ deployment.title }}
+              {{ deployment.data.title }}
             </template>
             <template #description>
-              <span class="line-clamp-2">{{ deployment.description }}</span>
+              <span class="line-clamp-2">{{ deployment.data.description }}</span>
             </template>
           </UPageCard>
         </UPageGrid>

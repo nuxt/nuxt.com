@@ -11,6 +11,7 @@ export default defineEventHandler(async (event) => {
 
   const docs = docsItems.filter(d => d.meta.extension === '.md' && !d.path.endsWith('.navigation'))
   const blog = blogItems
+    // `draft` is absent from generated types (no published post carries it)
     .filter(b => b.path.startsWith('/blog/') && b.path !== '/blog' && !(b.data as { draft?: boolean }).draft)
 
   const sitemap = new SitemapStream({
@@ -25,7 +26,7 @@ export default defineEventHandler(async (event) => {
     })
   }
   for (const doc of blog) {
-    const date = (doc.data as { date?: string }).date
+    const date = doc.data.date
     sitemap.write({
       url: doc.path,
       changefreq: 'monthly',

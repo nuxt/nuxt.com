@@ -1,21 +1,21 @@
 <script lang="ts" setup>
-import type { SitePage } from '~/utils/content'
+import type { ContentListFile, SourceData } from 'comark-content'
 
 const props = defineProps<{
-  template: SitePage & { name?: string; slug?: string; badge?: string; demo?: string; repo?: string; purchase?: string; featured?: boolean }
+  template: ContentListFile<SourceData<'local'>>
   index: number
 }>()
 
 const { track } = useAnalytics()
 
 function trackTemplateAction(action: 'Demo' | 'GitHub' | 'Purchase') {
-  track('Template Action', { template: props.template.name, action })
+  track('Template Action', { template: props.template.data.name, action })
 }
 </script>
 
 <template>
   <UPageCard
-    :description="template.description"
+    :description="template.data.description"
     :ui="{
       container: 'p-0 sm:p-0',
       body: 'p-4 h-[105px]',
@@ -28,9 +28,9 @@ function trackTemplateAction(action: 'Demo' | 'GitHub' | 'Purchase') {
   >
     <template #header>
       <NuxtImg
-        :src="`/assets/templates/${template.slug}.webp`"
+        :src="`/assets/templates/${template.data.slug}.webp`"
         class="object-cover object-top size-full"
-        :alt="template.name"
+        :alt="template.data.name"
         width="640"
         height="360"
         sizes="674px sm:524px lg:426px xl:600px"
@@ -42,20 +42,20 @@ function trackTemplateAction(action: 'Demo' | 'GitHub' | 'Purchase') {
     <template #title>
       <div class="w-full grid grid-cols-[1fr_auto] items-center gap-2">
         <p class="truncate m-0">
-          {{ template.name }}
+          {{ template.data.name }}
         </p>
         <div class="flex shrink-0 gap-1">
           <UBadge
-            v-if="template.badge === 'Premium'"
-            :label="template.badge"
+            v-if="template.data.badge === 'Premium'"
+            :label="template.data.badge"
             color="info"
             variant="subtle"
             size="sm"
             class="rounded-full"
           />
           <UBadge
-            v-else-if="template.badge === 'Freemium'"
-            :label="template.badge"
+            v-else-if="template.data.badge === 'Freemium'"
+            :label="template.data.badge"
             color="success"
             variant="subtle"
             size="sm"
@@ -69,7 +69,7 @@ function trackTemplateAction(action: 'Demo' | 'GitHub' | 'Purchase') {
         <UButton
           label="Demo"
           icon="i-lucide-laptop"
-          :to="template.demo"
+          :to="template.data.demo"
           target="_blank"
           size="sm"
           color="neutral"
@@ -78,10 +78,10 @@ function trackTemplateAction(action: 'Demo' | 'GitHub' | 'Purchase') {
           @click="trackTemplateAction('Demo')"
         />
         <UButton
-          v-if="template.repo"
+          v-if="template.data.repo"
           label="GitHub"
           icon="i-simple-icons-github"
-          :to="`https://github.com/${template.repo}`"
+          :to="`https://github.com/${template.data.repo}`"
           target="_blank"
           size="sm"
           color="neutral"
@@ -90,9 +90,9 @@ function trackTemplateAction(action: 'Demo' | 'GitHub' | 'Purchase') {
           @click="trackTemplateAction('GitHub')"
         />
         <UButton
-          v-else-if="template.purchase"
+          v-else-if="template.data.purchase"
           target="_blank"
-          :to="template.purchase"
+          :to="template.data.purchase"
           color="neutral"
           label="Purchase"
           variant="subtle"

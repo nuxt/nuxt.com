@@ -1,3 +1,5 @@
+import type { MarkdownDocument } from 'comark'
+
 export type Release = {
   url: string
   repo: string
@@ -5,5 +7,6 @@ export type Release = {
   title: string
   date: string
   markdown: string
-  body: unknown[]
+  /** Parsed release notes, rendered with `<MarkdownDocument :value="release.body" />`. */
+  body: MarkdownDocument
 }

@@ -18,22 +18,19 @@ export default defineMcpResource({
       }
     }
 
-    const result = deployProviders.map((item) => {
-      const data = item.data as Record<string, any>
-      return {
-        title: data.title,
-        name: data.title,
-        path: item.path,
-        description: data.description,
-        logoSrc: data.logoSrc,
-        logoIcon: data.logoIcon,
-        category: data.category,
-        nitroPreset: data.nitroPreset,
-        website: data.website,
-        sponsor: data.sponsor,
-        url: `https://nuxt.com${item.path}`
-      }
-    })
+    const result = deployProviders.map(item => ({
+      title: item.data.title,
+      name: item.data.title,
+      path: item.path,
+      description: item.data.description,
+      logoSrc: item.data.logoSrc,
+      logoIcon: item.data.logoIcon,
+      category: item.data.category,
+      nitroPreset: item.data.nitroPreset,
+      website: item.data.website,
+      sponsor: item.data.sponsor,
+      url: `https://nuxt.com${item.path}`
+    }))
 
     return {
       contents: [{

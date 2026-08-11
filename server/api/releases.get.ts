@@ -7,13 +7,14 @@ export default defineCachedEventHandler(async () => {
   const releases: Release[] = await Promise.all(
     rawReleases.slice(0, 20).map(async r => ({
       ...r,
-      body: (await parseMarkdown(r.markdown)).nodes
+      body: await parseMarkdown(r.markdown)
     } satisfies Release))
   )
 
   return releases
 }, {
-  name: 'releases:v2',
+  // v3: `body` is now a full parsed MarkdownDocument (nodes + frontmatter + meta)
+  name: 'releases:v3',
   swr: true,
   maxAge: 60 * 60
 })

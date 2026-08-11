@@ -12,18 +12,16 @@ export default defineMcpPrompt({
       version === '5.x' ? 'docsv5' : version === '3.x' ? 'docsv3' : 'docsv4'
     )]
 
-    const items = await content.list(sources)
+    // Explicit projection: docs groups mix docs (frontmatter) and examples (no frontmatter) sources.
+    const items = await content.list<{ title?: string, description?: string }>(sources)
 
-    const allPages = items.map((item) => {
-      const data = item.data as Record<string, any>
-      return {
-        title: data.title || '',
-        path: item.path,
-        description: data.description || '',
-        version,
-        url: `https://nuxt.com${item.path}`
-      }
-    })
+    const allPages = items.map(item => ({
+      title: item.data.title || '',
+      path: item.path,
+      description: item.data.description || '',
+      version,
+      url: `https://nuxt.com${item.path}`
+    }))
 
     return {
       messages: [

@@ -17,20 +17,16 @@ export default defineMcpResource({
       }
     }
 
-    const result = blogPosts.map((item) => {
-      const data = item.data as Record<string, any>
-      return {
-        title: data.title,
-        path: item.path,
-        description: data.description,
-        date: data.date,
-        category: data.category,
-        tags: data.tags,
-        authors: data.authors,
-        image: data.image,
-        url: `https://nuxt.com${item.path}`
-      }
-    })
+    const result = blogPosts.map(item => ({
+      title: item.data.title,
+      path: item.path,
+      description: item.data.description,
+      date: item.data.date,
+      category: item.data.category,
+      authors: item.data.authors,
+      image: item.data.image,
+      url: `https://nuxt.com${item.path}`
+    }))
 
     return {
       contents: [{

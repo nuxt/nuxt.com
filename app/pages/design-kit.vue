@@ -1,21 +1,18 @@
 <script setup lang="ts">
+import type { ButtonProps } from '@nuxt/ui'
 import { clientContent } from '~/composables/client-content'
-import { toSitePage } from '~/utils/content'
 
 definePageMeta({
   heroBackground: 'opacity-70 -z-10'
 })
 
-const { data: page } = await useAsyncData('design-kit', async () => {
-  const file = await clientContent.get('/design-kit')
-  return toSitePage(file)
-})
+const { data: page } = await useAsyncData('design-kit', () => clientContent.get('/design-kit'))
 if (!page.value) {
   throw createError({ statusCode: 404, statusMessage: 'Page not found', fatal: true })
 }
 
-const title = page.value.head?.title || page.value.title
-const description = page.value.head?.description || page.value.description
+const title = page.value.data.head?.title || page.value.data.title
+const description = page.value.data.head?.description || page.value.data.description
 
 useSeoMeta({
   titleTemplate: '%s',
@@ -34,9 +31,9 @@ defineOgImage('Docs.takumi', {
 <template>
   <UContainer v-if="page">
     <UPageHero
-      :title="page.title"
-      :links="page.links"
-      :description="page.description"
+      :title="page.data.title"
+      :links="(page.data.links as ButtonProps[])"
+      :description="page.data.description"
       :ui="{
         title: 'text-left',
         description: 'text-left',
@@ -47,7 +44,7 @@ defineOgImage('Docs.takumi', {
     <UPage>
       <UPageBody>
         <UContainer>
-          <MarkdownDocument v-if="page && page.document" :value="page.document" />
+          <MarkdownDocument v-if="page.nodes?.length" :value="page" />
         </UContainer>
       </UPageBody>
     </UPage>

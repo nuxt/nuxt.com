@@ -1,14 +1,39 @@
 <script setup lang="ts">
+import type { SourceData } from 'comark-content'
 import { clientContent } from '~/composables/client-content'
-import { toSitePage } from '~/utils/content'
+
+/**
+ * This route is redirected via routeRules and has no backing content file,
+ * so the sections below describe the historical frontmatter shape.
+ */
+interface SupportPageData {
+  title?: string
+  description?: string
+  hero?: { links?: any[] }
+  logos?: Array<{ alt: string, light: string, dark: string, width?: number, height?: number }>
+  service?: { services?: any[], [key: string]: unknown }
+  expertise?: { logos?: Array<{ src: string, color: string, height?: number, width?: number, alt?: string }>, [key: string]: unknown }
+  testimonials?: { items?: any[], [key: string]: unknown }
+  project?: { steps?: Array<{ number: number, title: string, description: string }>, [key: string]: unknown }
+  form?: {
+    title?: string
+    description?: string
+    name: { label: string, placeholder: string }
+    email: { label: string, placeholder: string }
+    company: { label: string, placeholder: string }
+    body: { label: string, placeholder: string }
+    info: string
+    button: any
+  }
+}
 
 definePageMeta({
   heroBackground: 'opacity-100 -z-10'
 })
 
 const { data: page } = await useAsyncData('support', async () => {
-  const file = await clientContent.get('/enterprise/support')
-  return toSitePage(file)
+  const file = await clientContent.get<SourceData<'local'>>('/enterprise/support')
+  return file?.data as unknown as SupportPageData | undefined
 })
 if (!page.value) {
   throw createError({ statusCode: 404, statusMessage: 'Page not found', fatal: true })

@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { kebabCase } from 'scule'
 import { clientContent } from '~/composables/client-content'
-import { toSitePage } from '~/utils/content'
 
 const route = useRoute()
 definePageMeta({
@@ -9,10 +8,7 @@ definePageMeta({
 })
 
 const [{ data: page }, { data: teams }] = await Promise.all([
-  useAsyncData(kebabCase(route.path), async () => {
-    const file = await clientContent.get('/team')
-    return toSitePage(file)
-  }),
+  useAsyncData(kebabCase(route.path), () => clientContent.get('/team')),
   useFetch('/api/v1/teams', {
     key: 'teams',
     default: () => ([{ name: 'Core Team', team: [], link: 'https://github.com/orgs/nuxt/teams/core' }, { name: 'Ecosystem Team', team: [], link: 'https://github.com/orgs/nuxt/teams/ecosystem' }]),
@@ -35,8 +31,8 @@ if (!page.value) {
   throw createError({ statusCode: 404, statusMessage: 'Page not found', fatal: true })
 }
 
-const title = page.value.head?.title || page.value.title
-const description = page.value.head?.description || page.value.description
+const title = page.value.data.head?.title || page.value.data.title
+const description = page.value.data.head?.description || page.value.data.description
 
 useSeoMeta({
   titleTemplate: '%s',
@@ -67,8 +63,8 @@ const icons = {
 <template>
   <UContainer v-if="page">
     <UPageHero
-      :title="page.title"
-      :description="page.description"
+      :title="page.data.title"
+      :description="page.data.description"
     />
 
     <UPage>

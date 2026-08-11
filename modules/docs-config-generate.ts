@@ -38,9 +38,10 @@ function generateMarkdown(schema: Schema, title: string, level: string) {
   }
 
   if (schema.type === 'object') {
-    const keys = Object.keys(schema.properties || {}).sort()
+    const properties = schema.properties || {}
+    const keys = Object.keys(properties).sort()
     for (const key of keys) {
-      const val = schema.properties[key] as Schema
+      const val = properties[key] as Schema
       const propLines = generateMarkdown(val, `\`${key}\``, level + '#')
       if (propLines.length) {
         lines.push('', ...propLines)
@@ -95,11 +96,13 @@ export default async function schemaToMarkdown(): Promise<string | null> {
     const start = Date.now()
     console.log('Generating config docs from schema...')
 
-    const keys = Object.keys(rootSchema.properties).sort()
+    const rootProperties = rootSchema.properties || {}
+    const keys = Object.keys(rootProperties).sort()
     let generatedDocs = ''
 
     for (const key of keys) {
-      const schema = rootSchema.properties[key]
+      const schema = rootProperties[key]
+      if (!schema) continue
       const lines = generateMarkdown(schema, key, '##')
       if (lines.length < 3) continue
       generatedDocs += lines.join('\n') + '\n'

@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import { kebabCase } from 'scule'
+import type { Toc } from 'comark/plugins/toc'
+import type { BlogArticleData } from '~/types'
 import { clientContent } from '~/composables/client-content'
-import { toSitePage, itemSurroundings } from '~/utils/content'
+import { itemSurroundings } from '~/utils/content'
 
 definePageMeta({
   heroBackground: 'opacity-30 -z-10'
@@ -13,18 +15,19 @@ const { track } = useAnalytics()
 const { isAgentDocked } = useNuxtAgent()
 
 const [{ data: article }, { data: surround }] = await Promise.all([
-  useAsyncData(kebabCase(route.path), async () => {
-    const file = await clientContent.get(route.path)
-    return toSitePage(file)
-  }),
+  useAsyncData(kebabCase(route.path), () => clientContent.get<BlogArticleData>(route.path)),
   useAsyncData(`${kebabCase(route.path)}-surround`, async () => {
     const items = await clientContent.query('local')
       .where('path', 'LIKE', '/blog/%')
       .where('meta.extension', '=', '.md')
       .order('data.date', 'DESC')
       .all()
-    const pages = items.map(i => toSitePage(i)).filter(Boolean)
-    return itemSurroundings(pages, route.path)
+    const [prev, next] = itemSurroundings(items, route.path)
+    return [prev, next].map(item => item && {
+      title: item.data.title,
+      description: item.data.description,
+      path: item.path
+    })
   })
 ])
 
@@ -32,8 +35,10 @@ if (!article.value) {
   throw createError({ statusCode: 404, statusMessage: 'Article not found', fatal: true })
 }
 
-const title = article.value.seo?.title || article.value.title
-const description = article.value.seo?.description || article.value.description
+const toc = computed(() => (article.value?.meta as { toc?: Toc } | undefined)?.toc)
+
+const title = article.value.data.seo?.title || article.value.data.title
+const description = article.value.data.seo?.description || article.value.data.description
 
 useSeoMeta({
   titleTemplate: '%s · Nuxt Blog',
@@ -41,11 +46,11 @@ useSeoMeta({
   description,
   ogDescription: description,
   ogTitle: `${title} · Nuxt Blog`,
-  ...(article.value.image ? { ogImage: article.value.image } : {})
+  ...(article.value.data.image ? { ogImage: article.value.data.image } : {})
 })
 useCanonical(`${route.path}.md`)
 
-if (!article.value.image) {
+if (!article.value.data.image) {
   defineOgImage('Docs.takumi', {
     headline: 'Blog',
     title,
@@ -55,14 +60,14 @@ if (!article.value.image) {
 
 function formatSocialIntentQueryText(handle: string | undefined): string {
   const credit = handle ? ` by @${handle}` : ''
-  const body = article.value.title + credit
+  const body = article.value.data.title + credit
   const link = `https://nuxt.com${article.value.path}`
   return encodeURIComponent(`${body}\n\n${link}`)
 }
 
 const authorHandles: { twitter?: string, bluesky?: string } = {
-  twitter: article.value.authors?.[0]?.twitter,
-  bluesky: article.value.authors?.[0]?.bluesky
+  twitter: article.value.data.authors?.[0]?.twitter,
+  bluesky: article.value.data.authors?.[0]?.bluesky
 }
 
 const socialLinks = computed(() =>
@@ -73,25 +78,25 @@ const socialLinks = computed(() =>
           label: 'LinkedIn',
           icon: 'i-simple-icons-linkedin',
           to: `https://www.linkedin.com/sharing/share-offsite/?url=https://nuxt.com${article.value.path}`,
-          onClick: () => track('Blog Share', { platform: 'LinkedIn', article: article.value?.title })
+          onClick: () => track('Blog Share', { platform: 'LinkedIn', article: article.value?.data.title })
         },
         {
           label: 'Bluesky',
           icon: 'i-simple-icons-bluesky',
           to: `https://bsky.app/intent/compose?text=${formatSocialIntentQueryText(authorHandles.bluesky)}`,
-          onClick: () => track('Blog Share', { platform: 'Bluesky', article: article.value?.title })
+          onClick: () => track('Blog Share', { platform: 'Bluesky', article: article.value?.data.title })
         },
         {
           label: 'X',
           icon: 'i-simple-icons-x',
           to: `https://x.com/intent/tweet?text=${formatSocialIntentQueryText(authorHandles.twitter)}`,
-          onClick: () => track('Blog Share', { platform: 'X', article: article.value?.title })
+          onClick: () => track('Blog Share', { platform: 'X', article: article.value?.data.title })
         }
       ]
 )
 
 function copyLink() {
-  track('Blog Link Copied', { article: article.value?.title })
+  track('Blog Link Copied', { article: article.value?.data.title })
   copy(`https://nuxt.com${article.value?.path || '/'}`, { title: 'Link copied to clipboard', icon: 'i-lucide-copy-check' })
 }
 
@@ -99,7 +104,7 @@ const links = [
   {
     icon: 'i-lucide-pen',
     label: 'Edit this article',
-    to: `https://github.com/nuxt/nuxt.com/edit/main/content/${article.value.stem}.md`,
+    to: `https://github.com/nuxt/nuxt.com/edit/main/content/${article.value.meta.stem}.md`,
     target: '_blank'
   }, {
     icon: 'i-lucide-star',
@@ -118,19 +123,19 @@ const links = [
 <template>
   <UContainer>
     <UPage v-if="article">
-      <UPageHeader :title="article.title" :description="article.description" :ui="{ headline: 'flex flex-col gap-y-8 items-start' }">
+      <UPageHeader :title="article.data.title" :description="article.data.description" :ui="{ headline: 'flex flex-col gap-y-8 items-start' }">
         <template #headline>
-          <UBreadcrumb :items="[{ label: 'Blog', icon: 'i-lucide-newspaper', to: '/blog' }, { label: article.title }]" class="max-w-full" />
+          <UBreadcrumb :items="[{ label: 'Blog', icon: 'i-lucide-newspaper', to: '/blog' }, { label: article.data.title }]" class="max-w-full" />
           <div class="flex items-center space-x-2">
             <span>
-              {{ article.category }}
+              {{ article.data.category }}
             </span>
-            <span class="text-muted">&middot;&nbsp;&nbsp;<time>{{ formatDateByLocale('en', article.date) }}</time></span>
+            <span class="text-muted">&middot;&nbsp;&nbsp;<time>{{ formatDateByLocale('en', article.data.date) }}</time></span>
           </div>
         </template>
 
         <div class="mt-4 flex flex-wrap items-center gap-6">
-          <UUser v-for="(author, index) in article.authors" :key="index" v-bind="author" :description="author.to ? `@${author.to.split('/').pop()}` : undefined" />
+          <UUser v-for="(author, index) in article.data.authors" :key="index" v-bind="author" :description="author.to ? `@${author.to.split('/').pop()}` : undefined" />
         </div>
       </UPageHeader>
 
@@ -142,7 +147,7 @@ const links = [
         } : { root: 'lg:grid-cols-12', center: 'lg:col-span-9', right: 'lg:col-span-3' }"
       >
         <UPageBody>
-          <MarkdownDocument v-if="article.document" :value="article.document" />
+          <MarkdownDocument v-if="article.nodes?.length" :value="article" />
 
           <div class="flex items-center justify-between mt-12 not-prose">
             <ULink to="/blog" class="text-primary">
@@ -172,7 +177,7 @@ const links = [
         </UPageBody>
 
         <template #right>
-          <UContentToc v-if="!isAgentDocked && article.body && article.body.toc" :links="article.body.toc.links" title="Table of Contents" highlight highlight-variant="circuit">
+          <UContentToc v-if="!isAgentDocked && toc" :links="toc.links" title="Table of Contents" highlight highlight-variant="circuit">
             <template #bottom>
               <div class="hidden lg:block space-y-6">
                 <UPageLinks title="Links" :links="links" />

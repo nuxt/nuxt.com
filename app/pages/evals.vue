@@ -3,7 +3,6 @@ import { h, resolveComponent } from 'vue'
 import type { TableColumn, TableRow } from '@nuxt/ui'
 import rawData from '~~/public/agent-results.json'
 import { clientContent } from '~/composables/client-content'
-import { toSitePage } from '~/utils/content'
 
 const UButton = resolveComponent('UButton')
 const UBadge = resolveComponent('UBadge')
@@ -54,16 +53,13 @@ interface ModelRow {
   evals: EvalResultItem[]
 }
 
-const { data: page } = await useAsyncData('evals', async () => {
-  const file = await clientContent.get('/evals')
-  return toSitePage(file)
-})
+const { data: page } = await useAsyncData('evals', () => clientContent.get('/evals'))
 if (!page.value) {
   throw createError({ statusCode: 404, statusMessage: 'Page not found', fatal: true })
 }
 
-const title = page.value.head?.title || page.value.title
-const description = page.value.head?.description || page.value.description
+const title = page.value.data.head?.title || page.value.data.title
+const description = page.value.data.head?.description || page.value.data.description
 
 useSeoMeta({
   titleTemplate: '%s',
@@ -367,8 +363,8 @@ const evalColumns: TableColumn<EvalResultItem>[] = [
 <template>
   <div v-if="page && rawData">
     <UPageHero
-      :title="page.title"
-      :description="page.description"
+      :title="page.data.title"
+      :description="page.data.description"
       :ui="{
         title: 'text-4xl sm:text-5xl lg:text-6xl font-bold',
         description: 'max-w-2xl mx-auto text-pretty',
@@ -377,7 +373,7 @@ const evalColumns: TableColumn<EvalResultItem>[] = [
     >
       <template #links>
         <UButton
-          :to="page.githubUrl"
+          :to="page.data.githubUrl"
           icon="i-simple-icons-github"
           label="View on GitHub"
           target="_blank"

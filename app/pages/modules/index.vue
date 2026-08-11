@@ -4,14 +4,15 @@ import type { DropdownMenuItem } from '@nuxt/ui'
 import type { Module } from '#shared/types'
 import { joinURL } from 'ufo'
 import { clientContent } from '~/composables/client-content'
-import { toSitePage } from '~/utils/content'
 
 definePageMeta({
   heroBackground: 'opacity-50'
 })
 
 const input = useTemplateRef('input')
-const modulesToAdd = ref<Module[]>([])
+// Omit `readme`: its recursive Comark Node tuples make Vue's UnwrapRef
+// inference blow up (TS2589), and the modules list never carries a readme.
+const modulesToAdd = ref<Omit<Module, 'readme'>[]>([])
 const el = useTemplateRef<HTMLElement>('el')
 
 const { replaceRoute } = useFilters('modules')
@@ -32,18 +33,17 @@ const filteredModulesWithHealth = computed(() =>
 const cacheControl = useResponseHeader('Cache-Control')
 const cdnCacheControl = useResponseHeader('CDN-Cache-Control')
 
-const { data: page } = await useAsyncData('modules-landing', async () => {
-  const file = await clientContent.get('/modules')
-  return toSitePage(file)
-})
+const { data: page } = await useAsyncData('modules-landing', () => clientContent.get('/modules'))
 if (!page.value) {
   cacheControl.value = 'no-store, no-cache, must-revalidate'
   cdnCacheControl.value = 'no-store'
-  throw createError({ statusCode: 404, statusMessage: 'Page not found', fatal: true })
+  // The content file exists in the repo, so null means the content backend
+  // failed — throw 503 (never cached by ISR, unlike 404) so the error is transient.
+  throw createError({ statusCode: 503, statusMessage: 'Content temporarily unavailable', fatal: true })
 }
 
-const title = page.value.head?.title || page.value.title
-const description = page.value.head?.description || page.value.description
+const title = page.value.data.head?.title || page.value.data.title
+const description = page.value.data.head?.description || page.value.data.description
 
 useSeoMeta({
   titleTemplate: '%s',
@@ -70,7 +70,7 @@ const lastSelectedIndex = ref<number | null>(null)
 
 // O(1) membership lookup so re-rendering the grid on every add/remove doesn't
 // re-scan the whole selection for each card (was `modulesToAdd.some(...)`).
-const addedModuleNames = computed(() => new Set(modulesToAdd.value.map(m => m.name)))
+const addedModuleNames = computed<Set<string>>(() => new Set(modulesToAdd.value.map(m => m.name)))
 
 function toggleModuleSelection(module: Module) {
   const idx = modulesToAdd.value.findIndex(m => m.name === module.name)

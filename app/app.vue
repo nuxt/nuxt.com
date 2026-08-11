@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import type { ContentNavigationItem } from '#shared/types/content'
+
 const colorMode = useColorMode()
 const route = useRoute()
 const { isAgentEnabled } = useNuxtAgent()
@@ -24,7 +26,7 @@ watch(() => colorMode.preference, (newMode, oldMode) => {
   }
 })
 
-const { data: navigation } = await useFetch('/api/navigation.json')
+const { data: navigation } = await useFetch<ContentNavigationItem[]>('/api/navigation.json')
 
 useHead({
   titleTemplate: title => title ? `${title} · Nuxt` : 'Nuxt: The Intuitive Web Framework',

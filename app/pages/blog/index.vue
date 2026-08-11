@@ -1,11 +1,7 @@
 <script setup lang="ts">
 import { clientContent } from '~/composables/client-content'
-import { toSitePage } from '~/utils/content'
 
-const { data: page } = await useAsyncData('blog-landing', async () => {
-  const file = await clientContent.get('/blog')
-  return toSitePage(file)
-})
+const { data: page } = await useAsyncData('blog-landing', () => clientContent.get('/blog'))
 if (!page.value) {
   throw createError({ statusCode: 404, statusMessage: 'Page not found', fatal: true })
 }
@@ -14,8 +10,8 @@ definePageMeta({
 })
 const { fetchList, articles } = useBlog()
 
-const title = page.value.head?.title || page.value.title
-const description = page.value.head?.description || page.value.description
+const title = page.value.data.head?.title || page.value.data.title
+const description = page.value.data.head?.description || page.value.data.description
 
 useHead({
   link: [
@@ -47,8 +43,8 @@ await fetchList()
 <template>
   <UContainer v-if="page">
     <UPageHero
-      :title="page.title"
-      :description="page.description"
+      :title="page.data.title"
+      :description="page.data.description"
       orientation="horizontal"
     >
       <template #links>
@@ -56,7 +52,7 @@ await fetchList()
       </template>
 
       <template #description>
-        {{ page.description }}
+        {{ page.data.description }}
 
         <UButton
           to="/blog/rss.xml"
@@ -79,17 +75,17 @@ await fetchList()
             v-for="(article, index) in articles"
             :key="article.path"
             :to="article.path"
-            :title="article.title"
-            :description="article.description"
+            :title="article.data.title"
+            :description="article.data.description"
             :image="{
-              src: article.image,
+              src: article.data.image,
               width: (index === 0 ? 672 : 437),
               height: (index === 0 ? 378 : 246),
-              alt: `${article.title} image`
+              alt: `${article.data.title} image`
             }"
-            :date="formatDateByLocale('en', article.date)"
-            :authors="article.authors.map(author => ({ ...author, avatar: { ...author.avatar, alt: `${author.name} avatar` } }))"
-            :badge="{ label: article.category, color: 'primary', variant: 'subtle' }"
+            :date="formatDateByLocale('en', article.data.date)"
+            :authors="article.data.authors.map(author => ({ ...author, avatar: { ...author.avatar, alt: `${author.name} avatar` } }))"
+            :badge="{ label: article.data.category, color: 'primary', variant: 'subtle' }"
             :variant="index === 0 ? 'outline' : 'subtle'"
             :orientation="index === 0 ? 'horizontal' : 'vertical'"
             :class="[index === 0 && 'col-span-full']"

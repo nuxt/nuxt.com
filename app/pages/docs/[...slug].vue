@@ -2,8 +2,9 @@
 import { kebabCase } from 'scule'
 import { joinURL } from 'ufo'
 import { mapContentNavigation } from '@nuxt/ui/utils/content'
-import type { ContentNavigationItem } from '~/utils/content'
-import { findPageBreadcrumb, itemSurroundings, navPageFromPath, findTitleTemplate, toSitePage } from '~/utils/content'
+import type { Toc } from 'comark/plugins/toc'
+import type { ContentNavigationItem, DocsPageData } from '~/utils/content'
+import { findPageBreadcrumb, itemSurroundings, navPageFromPath, findTitleTemplate } from '~/utils/content'
 import { clientContent } from '~/composables/client-content'
 import { SUPPORTED_DOCS_PATH_REGEX, docsSourcesFromCollection } from '#shared/utils/docs'
 
@@ -31,7 +32,6 @@ const navClass = (item: ContentNavigationItem) => {
   return ''
 }
 
-// Get the aside navigation
 const asideNavigation = computed(() => {
   const path = [version.value.path, route.params.slug?.[version.value.path.split('/').length - 2]].filter(Boolean).join('/')
 
@@ -59,18 +59,24 @@ const [{ data: page, status }, { data: surround }] = await Promise.all([
   useAsyncData(pageKey, async () => {
     const pagePath = path.value
     await paintResponse()
-    const file = await clientContent.get(pagePath)
-    return toSitePage(file)
+    return clientContent.get<DocsPageData>(pagePath)
   }),
   useAsyncData(surroundKey, async () => {
     const pagePath = path.value
     const sources = [...docsSourcesFromCollection(version.value.collection)]
     await paintResponse()
-    const items = await clientContent.list(sources)
-    const pages = items.map(i => toSitePage(i)).filter(Boolean)
-    return itemSurroundings(pages, pagePath)
+    // Explicit projection: docs groups mix docs (frontmatter) and examples (no frontmatter) sources.
+    const items = await clientContent.list<{ title?: string, description?: string }>(sources)
+    const [prev, next] = itemSurroundings(items, pagePath)
+    return [prev, next].map(item => item && {
+      title: item.data.title,
+      description: item.data.description,
+      path: item.path
+    })
   })
 ])
+
+const toc = computed(() => (page.value?.meta as { toc?: Toc } | undefined)?.toc)
 
 watch(status, (status) => {
   if (status === 'pending') {
@@ -91,7 +97,6 @@ watch(page, (page) => {
   }
 }, { immediate: true })
 
-// Get the -2 item of the breadcrumb
 const currentSectionTitle = computed(() =>
   headerLinks.value[0]?.children?.find(link => path.value.includes(link.to))?.label
   || findPageBreadcrumb(navigation.value, path.value).slice(-1)[0]?.title
@@ -118,7 +123,7 @@ const breadcrumb = computed(() => {
 
   return links
 })
-const editLink = computed(() => `https://github.com/nuxt/nuxt/edit/${version.value.branch}/${page?.value?.stem?.replace(/docs\/\d\.x/, 'docs')}.${page?.value?.extension}`)
+const editLink = computed(() => `https://github.com/nuxt/nuxt/edit/${version.value.branch}/${page.value?.meta.stem?.replace(/docs\/\d\.x/, 'docs')}${page.value?.meta.extension}`)
 
 const communityLinks = [{
   icon: 'i-lucide-heart',
@@ -137,7 +142,7 @@ const communityLinks = [{
   target: '_blank'
 }]
 
-const title = computed(() => page.value?.seo?.title || page.value?.title)
+const title = computed(() => page.value?.data.title)
 const titleTemplate = computed(() => `${findTitleTemplate(page, navigation, version.value.path)} ${version.value.shortTag}`)
 
 useSeoMeta({
@@ -159,8 +164,8 @@ if (import.meta.server) {
   useSchemaOrg([
     defineArticle({
       '@type': 'TechArticle',
-      'headline': page.value?.title,
-      'description': page.value?.seo?.description || page.value?.description
+      'headline': page.value?.data.title,
+      'description': page.value?.data.description
     }),
     defineBreadcrumb({
       itemListElement: breadcrumb.value.map(item => ({
@@ -170,7 +175,7 @@ if (import.meta.server) {
     })
   ])
 
-  const description = page.value?.seo?.description || page.value?.description
+  const description = page.value?.data.description
   useSeoMeta({
     description,
     ogDescription: description,
@@ -215,47 +220,43 @@ const noRightAside = computed(() => route.path.includes('/examples/'))
           :ui="{
             wrapper: 'flex-row items-center flex-wrap justify-between'
           }"
-          v-bind="page"
+          :description="page.data.description"
         >
           <template #headline>
             <UBreadcrumb :items="breadcrumb" />
           </template>
 
           <template #title>
-            {{ page.title }}
+            {{ page.data.title }}
 
             <UBadge
-              v-if="page.minimalVersion?.trim()"
-              :label="`v${page.minimalVersion?.trim()}`"
+              v-if="page.data.minimalVersion?.trim()"
+              :label="`v${page.data.minimalVersion?.trim()}`"
               color="info"
               variant="subtle"
               size="lg"
               class="align-middle"
-              :aria-label="`Minimum Nuxt version: v${page.minimalVersion?.trim()}`"
+              :aria-label="`Minimum Nuxt version: v${page.data.minimalVersion?.trim()}`"
             />
           </template>
 
           <template #links>
             <UButton
-              v-for="link in page.links?.map(link => ({ ...link, size: 'md' }))"
+              v-for="link in page.data.links"
               :key="link.label"
               color="neutral"
               variant="soft"
               :target="link.to.startsWith('http') ? '_blank' : undefined"
               v-bind="{ ...link, size: 'sm' }"
-            >
-              <template v-if="link.avatar" #leading>
-                <UAvatar v-bind="link.avatar" size="2xs" :alt="`${link.label} avatar`" />
-              </template>
-            </UButton>
+            />
             <PageHeaderLinks :key="page.path" />
           </template>
         </UPageHeader>
 
         <UPageBody>
-          <MarkdownDocument v-if="page.document" :value="page.document" />
+          <MarkdownDocument v-if="page.nodes?.length" :value="page" />
           <div>
-            <Feedback :page="page" />
+            <Feedback :page="{ title: page.data.title || '', stem: page.meta.stem }" />
             <USeparator class="mt-6 mb-10">
               <div class="flex items-center gap-2 text-sm text-muted">
                 <UButton
@@ -284,7 +285,7 @@ const noRightAside = computed(() => route.path.includes('/examples/'))
         <template #right>
           <ContentToc
             v-if="!isAgentDocked && !noRightAside"
-            :links="page.body?.toc?.links"
+            :links="toc?.links"
             :community-links="communityLinks"
             highlight
             highlight-variant="circuit"
@@ -352,7 +353,7 @@ const noRightAside = computed(() => route.path.includes('/examples/'))
               />
               <template #body>
                 <ContentToc
-                  :links="page.body?.toc?.links"
+                  :links="toc?.links"
                   :community-links="communityLinks"
                   :open="true"
                   default-open

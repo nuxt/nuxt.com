@@ -1,33 +1,31 @@
 import type { Agency, Filter } from '../types'
 import { slugify, random } from '../utils'
 import { clientContent } from '~/composables/client-content'
-import { toSitePage } from '~/utils/content'
 
 export const useEnterpriseAgencies = () => {
   const route = useRoute()
   const { data: agencies, execute } = useAsyncData('agencies', async () => {
     const items = await clientContent.list('local')
-    const agencyItems = items
+    return items
       .filter(i => i.path.startsWith('/enterprise/agencies/') && i.path !== '/enterprise/agencies')
-      .map(i => toSitePage(i))
-      .filter(Boolean)
-    return agencyItems.map((agency: any) => ({
-      ...agency,
-      services: (agency.services || []).map((service: string) => ({
-        key: slugify(service),
-        title: service
-      })),
-      regions: (agency.regions || []).map((region: string) => ({
-        key: slugify(region),
-        title: region
-      })),
-      location: agency.location
-        ? {
-            key: slugify(agency.location),
-            title: agency.location
-          }
-        : null
-    })) as Agency[]
+      .map((agency): Agency => ({
+        ...agency.data,
+        path: agency.path,
+        services: (agency.data.services || []).map(service => ({
+          key: slugify(service),
+          title: service
+        })),
+        regions: (agency.data.regions || []).map(region => ({
+          key: slugify(region),
+          title: region
+        })),
+        location: agency.data.location
+          ? {
+              key: slugify(agency.data.location),
+              title: agency.data.location
+            }
+          : null
+      }))
   }, {
     immediate: false,
     default: () => []

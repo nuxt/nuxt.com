@@ -1,21 +1,15 @@
 <script lang="ts" setup>
+import type { ButtonProps } from '@nuxt/ui'
 import { clientContent } from '~/composables/client-content'
-import { toSitePage } from '~/utils/content'
 
 definePageMeta({
   heroBackground: 'opacity-80 -z-10'
 })
 const [{ data: page }, { data: templates }] = await Promise.all([
-  useAsyncData('templates-landing', async () => {
-    const file = await clientContent.get('/templates')
-    return toSitePage(file)
-  }),
+  useAsyncData('templates-landing', () => clientContent.get('/templates')),
   useAsyncData('templates', async () => {
     const items = await clientContent.list('local')
-    return items
-      .filter(i => i.path.startsWith('/templates/') && i.path !== '/templates')
-      .map(i => toSitePage(i))
-      .filter(Boolean)
+    return items.filter(i => i.path.startsWith('/templates/') && i.path !== '/templates')
   })
 ])
 
@@ -23,11 +17,11 @@ if (!page.value) {
   throw createError({ statusCode: 404, statusMessage: 'Page not found', fatal: true })
 }
 
-const title = page.value.head?.title || page.value.title
-const description = page.value.head?.description || page.value.description
+const title = page.value.data.head?.title || page.value.data.title
+const description = page.value.data.head?.description || page.value.data.description
 
-const featuredTemplates = computed(() => templates.value?.filter(template => template.featured) || [])
-const baseTemplates = computed(() => templates.value?.filter(template => !template.featured) || [])
+const featuredTemplates = computed(() => templates.value?.filter(template => template.data.featured) || [])
+const baseTemplates = computed(() => templates.value?.filter(template => !template.data.featured) || [])
 
 useSeoMeta({
   titleTemplate: '%s',
@@ -46,9 +40,9 @@ defineOgImage('Docs.takumi', {
 <template>
   <UContainer v-if="page">
     <UPageHero
-      :title="page.title"
-      :description="page.description"
-      :links="page.links"
+      :title="page.data.title"
+      :description="page.data.description"
+      :links="(page.data.links as ButtonProps[])"
     />
     <UPage>
       <UPageBody>
@@ -59,7 +53,7 @@ defineOgImage('Docs.takumi', {
           <UPageGrid class="lg:grid-cols-3 xl:grid-cols-4">
             <TemplateCard
               v-for="(template, index) in featuredTemplates"
-              :key="template.slug"
+              :key="template.path"
               :template="template"
               :index="index"
             />
@@ -73,7 +67,7 @@ defineOgImage('Docs.takumi', {
           <UPageGrid class="lg:grid-cols-3 xl:grid-cols-4">
             <TemplateCard
               v-for="(template, index) in baseTemplates"
-              :key="template.slug"
+              :key="template.path"
               :template="template"
               :index="index + featuredTemplates.length"
             />

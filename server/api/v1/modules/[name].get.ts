@@ -31,7 +31,8 @@ export default defineCachedEventHandler(async (event) => {
     readme
   } satisfies Module
 }, {
-  name: 'modules:v2',
+  // v3: `readme` is now a full parsed MarkdownDocument (toc under meta.toc)
+  name: 'modules:v3',
   getKey: event => event.context.params!.name!,
   swr: true,
   maxAge: 60 * 60 // 1 hour

@@ -1,14 +1,9 @@
 import { docsSourceGroups } from '#shared/utils/docs'
+import type { ContentNavigationItem } from '#shared/types/content'
 
-export default defineEventHandler(async () => {
-  // `?? []` matters: if a source comes back empty (it happens at runtime on
-  // Vercel when content isn't fully available), navigation may be undefined.
-  // Every consumer iterates these items reading `item.path`, so a single null
-  // took down SSR for the whole docs section.
-  //
-  // Prefer the version root (`/docs/4.x`) so `app.vue` can filter with
-  // `item.path === version.path`. When navigation nests under `/docs`, unwrap
-  // one level.
+export default defineEventHandler(async (): Promise<ContentNavigationItem[]> => {
+  // Return [] when a source is empty (e.g. GitHub fetch failed at runtime) and
+  // unwrap the `/docs` level so `app.vue` can filter on the version root path.
   async function versionNav(sources: readonly string[]) {
     const data = await content.navigation([...sources])
     if (!data?.length) return []
