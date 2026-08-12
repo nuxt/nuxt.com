@@ -1,7 +1,8 @@
-navigation.title: Deploy
 title: Deploy a Nuxt App
 description: Discover the different ways to deploy your Nuxt project on different hosting providers.
-navigation.icon: i-lucide-rocket
+navigation:
+  title: Deploy
+  icon: i-lucide-rocket
 links:
   - label: 'Deployment Guide'
     icon: i-lucide-cloud

@@ -7,13 +7,13 @@ definePageMeta({
 
 const { filteredAgencies, fetchList, services, regions } = useEnterpriseAgencies()
 
-const { data: page } = await useAsyncData('agencies-landing', () => queryCollection('landing').path('/enterprise/agencies').first())
+const { data: page } = await useAsyncData('agencies', () => clientContent.get('/agencies'))
 if (!page.value) {
   throw createError({ statusCode: 404, statusMessage: 'Page not found', fatal: true })
 }
+const title = page.value.data.head?.title || page.value.data.title
+const description = page.value.data.head?.description || page.value.data.description
 
-const title = page.value.head?.title || page.value.title
-const description = page.value.head?.description || page.value.description
 useSeoMeta({
   titleTemplate: '%s',
   title,
@@ -42,9 +42,9 @@ await fetchList()
 <template>
   <UContainer v-if="page">
     <UPageHero
-      :title="page.title"
-      :description="page.description"
-      :links="page.links"
+      :title="page.data.title"
+      :description="page.data.description"
+      :links="page.data.links"
     />
 
     <UPage id="smooth" class="pt-20 -mt-20">

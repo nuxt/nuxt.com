@@ -8,8 +8,10 @@ export const content = comarkContent({
   sources: {
     'index': fs('./content/index.yml'),
     'showcase': fs('./content/showcase.yml'),
-    'video-courses-landing': fs('./content/video-courses.yml'),
-    'video-courses': fs('./content/video-courses')
+    'video-courses': fs('./content/video-courses.yml'),
+    'video-courses-list': fs('./content/video-courses'),
+    'agencies': fs('./content/enterprise/agencies.yml'),
+    'agencies-list': fs('./content/enterprise/agencies', { prefix: '/enterprise/agencies' })
   },
   plugins: [
     yaml(),

@@ -3,8 +3,8 @@ definePageMeta({
   heroBackground: 'opacity-80 -z-10'
 })
 const [{ data: page }, { data: courses }] = await Promise.all([
-  useAsyncData('video-courses-landing', () => clientContent.get('/video-courses')),
-  useAsyncData('video-courses', () => clientContent.list('video-courses'))
+  useAsyncData('video-courses', () => clientContent.get('/video-courses')),
+  useAsyncData('video-courses-list', () => clientContent.list('video-courses-list'))
 ])
 
 if (!page.value) {
