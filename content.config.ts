@@ -255,7 +255,6 @@ export default defineContentConfig({
       type: 'page',
       source: [
         { include: 'index.md' },
-        { include: 'blog.yml' },
         { include: 'modules.yml' },
         { include: 'deploy.yml' },
         { include: 'templates.yml' },
