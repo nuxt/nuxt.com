@@ -14,7 +14,9 @@ export const content = comarkContent({
     'agencies': fs('./content/enterprise/agencies.yml'),
     'agencies-list': fs('./content/enterprise/agencies', { prefix: '/enterprise/agencies' }),
     'blog': fs('./content/blog.yml'),
-    'blog-list': fs('./content/blog', { prefix: '/blog' })
+    'blog-list': fs('./content/blog', { prefix: '/blog', exclude: ['.navigation.yml'] }),
+    'templates': fs('./content/templates.yml'),
+    'templates-list': fs('./content/templates')
   },
   plugins: [
     yaml(),

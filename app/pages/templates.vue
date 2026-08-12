@@ -3,19 +3,19 @@ definePageMeta({
   heroBackground: 'opacity-80 -z-10'
 })
 const [{ data: page }, { data: templates }] = await Promise.all([
-  useAsyncData('templates-landing', () => queryCollection('landing').path('/templates').first()),
-  useAsyncData('templates', () => queryCollection('templates').all())
+  useAsyncData('templates', () => clientContent.get('/templates')),
+  useAsyncData('templates-list', () => clientContent.list('templates-list'))
 ])
 
 if (!page.value) {
   throw createError({ statusCode: 404, statusMessage: 'Page not found', fatal: true })
 }
 
-const title = page.value.head?.title || page.value.title
-const description = page.value.head?.description || page.value.description
+const title = page.value.data.head?.title || page.value.data.title
+const description = page.value.data.head?.description || page.value.data.description
 
-const featuredTemplates = computed(() => templates.value?.filter(template => template.featured) || [])
-const baseTemplates = computed(() => templates.value?.filter(template => !template.featured) || [])
+const featuredTemplates = computed(() => templates.value?.filter(template => template.data.featured).map(template => template.data) || [])
+const baseTemplates = computed(() => templates.value?.filter(template => !template.data.featured).map(template => template.data) || [])
 
 useSeoMeta({
   titleTemplate: '%s',
@@ -34,9 +34,9 @@ defineOgImage('Docs.takumi', {
 <template>
   <UContainer v-if="page">
     <UPageHero
-      :title="page.title"
-      :description="page.description"
-      :links="page.links"
+      :title="page.data.title"
+      :description="page.data.description"
+      :links="page.data.links"
     />
     <UPage>
       <UPageBody>

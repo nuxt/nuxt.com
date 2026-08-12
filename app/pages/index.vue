@@ -7,14 +7,14 @@ definePageMeta({
 })
 
 const [{ data: page }, { data: officialModules }, { data: showcase }, { getFilteredSponsors }] = await Promise.all([
-  useAsyncData('index', () => queryCollection('index').first()),
+  useAsyncData('index', () => clientContent.get('/')),
   useFetch('/api/v1/modules', {
     key: 'official-modules',
     transform: (res: { modules: Module[], stats: Stats }) => res.modules
       .filter(module => module.type === 'official')
       .sort((a, b) => b.stats.stars - a.stats.stars)
   }),
-  useAsyncData('showcase', () => queryCollection('showcase').first()),
+  useAsyncData('showcase', () => clientContent.get('/showcase')),
   useSponsors()
 ])
 
@@ -69,7 +69,7 @@ if (import.meta.server) {
   ])
 }
 
-const tabs = computed(() => page.value?.hero.tabs.map(tab => ({
+const tabs = computed(() => page.value?.data.hero.tabs.map(tab => ({
   label: tab.title,
   icon: tab.icon,
   content: tab.content
@@ -91,13 +91,13 @@ const groupedFoundationItems = computed(() => {
     classes: 'rounded-none'
   }
 
-  page.value.foundation.items.forEach((item, index) => {
+  page.value.data.foundation.items.forEach((item, index) => {
     if (item.id === 'bundler') {
       bundlers.items.push(item)
     } else {
       const borderClasses = index === 0
         ? 'max-sm:rounded-t-lg max-sm:rounded-b-none sm:rounded-s-lg sm:rounded-e-none'
-        : index === page.value.foundation.items.length - 1
+        : index === page.value.data.foundation.items.length - 1
           ? 'max-sm:rounded-t-none max-sm:rounded-b-lg sm:rounded-s-none sm:rounded-e-lg'
           : 'rounded-none'
 
@@ -134,12 +134,12 @@ onMounted(() => {
       }"
     >
       <template #headline>
-        <NuxtLink :to="page.hero.cta.to">
+        <NuxtLink :to="page.data.hero.cta.to">
           <UBadge variant="subtle" size="lg" class="px-3 relative rounded-full font-semibold dark:hover:bg-primary-400/15 dark:hover:ring-primary-700">
-            {{ page?.hero.cta.label }}
+            {{ page?.data.hero.cta.label }}
             <UIcon
-              v-if="page?.hero.cta.icon"
-              :name="page?.hero.cta.icon"
+              v-if="page?.data.hero.cta.icon"
+              :name="page?.data.hero.cta.icon"
               class="size-4 pointer-events-none"
             />
           </UBadge>
@@ -151,7 +151,7 @@ onMounted(() => {
       </template>
 
       <template #description>
-        <LazyMDC :value="page?.hero.description" unwrap="p" cache-key="index-hero-description" hydrate-never />
+        <LazyMDC :value="page?.data.hero.description" unwrap="p" cache-key="index-hero-description" hydrate-never />
       </template>
 
       <template #links>
@@ -208,9 +208,9 @@ onMounted(() => {
       </UPageCard>
     </UPageHero>
     <UPageSection :ui="{ container: '!pt-0' }">
-      <UPageLogos :marquee="isMobile" :title="page?.logos.title" :ui="{ title: 'text-left text-muted font-medium text-lg', logos: 'mt-4' }">
+      <UPageLogos :marquee="isMobile" :title="page?.data.logos.title" :ui="{ title: 'text-left text-muted font-medium text-lg', logos: 'mt-4' }">
         <Motion
-          v-for="(company, index) in page?.logos.companies"
+          v-for="(company, index) in page?.data.logos.companies"
           :key="company.alt"
           as-child
           :initial="{ opacity: 0, transform: 'translateY(20px)' }"
@@ -234,8 +234,8 @@ onMounted(() => {
       </UPageLogos>
     </UPageSection>
     <UPageSection
-      :title="page?.features.title"
-      :description="page?.features.description"
+      :title="page?.data.features.title"
+      :description="page?.data.features.description"
       :ui="{
         title: 'text-left',
         description: 'text-left',
@@ -245,7 +245,7 @@ onMounted(() => {
     >
       <template #features>
         <Motion
-          v-for="(feature, index) in page.features.features"
+          v-for="(feature, index) in page.data.features.features"
           :key="feature.title"
           as="li"
           :initial="{ opacity: 0, transform: 'translateY(10px)' }"
@@ -262,22 +262,22 @@ onMounted(() => {
           as="li"
           :initial="{ opacity: 0, transform: 'translateY(10px)' }"
           :while-in-view="{ opacity: 1, transform: 'translateY(0)' }"
-          :transition="{ delay: 0.1 * page.features.features.length }"
+          :transition="{ delay: 0.1 * page.data.features.features.length }"
           :in-view-options="{ once: true }"
           class="flex flex-col justify-center gap-4 p-4 bg-muted/50 h-full"
         >
           <span class="text-lg font-semibold">
-            {{ page.features.cta.title }}
+            {{ page.data.features.cta.title }}
           </span>
           <div>
-            <UButton :to="page.features.cta.to" :label="page.features.cta.label" trailing :icon="page.features.cta.icon" />
+            <UButton :to="page.data.features.cta.to" :label="page.data.features.cta.label" trailing :icon="page.data.features.cta.icon" />
           </div>
         </Motion>
       </template>
     </UPageSection>
 
     <UPageCTA
-      :description="page.testimonial.quote"
+      :description="page.data.testimonial.quote"
       variant="subtle"
       class="rounded-none"
       :ui="{
@@ -286,7 +286,7 @@ onMounted(() => {
       }"
     >
       <UUser
-        v-bind="page.testimonial.author"
+        v-bind="page.data.testimonial.author"
         size="xl"
         class="justify-center"
       />
@@ -298,10 +298,10 @@ onMounted(() => {
       }"
     >
       <template #title>
-        <LazyMDC :value="page.foundation.title" unwrap="p" cache-key="index-foundation-title" hydrate-never />
+        <LazyMDC :value="page.data.foundation.title" unwrap="p" cache-key="index-foundation-title" hydrate-never />
       </template>
       <template #description>
-        <LazyMDC :value="page.foundation.description" unwrap="p" cache-key="index-foundation-description" hydrate-never />
+        <LazyMDC :value="page.data.foundation.description" unwrap="p" cache-key="index-foundation-description" hydrate-never />
       </template>
 
       <div class="grid grid-cols-1 sm:grid-cols-3">
@@ -364,8 +364,8 @@ onMounted(() => {
     </UPageSection>
 
     <UPageSection
-      :title="page.stats.title"
-      :description="page.stats.description"
+      :title="page.data.stats.title"
+      :description="page.data.stats.description"
       class="relative"
       :ui="{
         root: 'bg-linear-to-b border-t border-default from-muted dark:from-muted/40 to-default'
@@ -410,12 +410,12 @@ onMounted(() => {
           <UPageCard class="h-full" variant="subtle" to="https://go.nuxt.com/github">
             <div class="flex flex-col items-center justify-around h-full">
               <span class="text-xl font-semibold">
-                {{ page.stats.community.title }}
+                {{ page.data.stats.community.title }}
               </span>
               <p class="text-muted text-center">
-                {{ page.stats.community.description }}
+                {{ page.data.stats.community.description }}
               </p>
-              <UButton class="mt-4 w-fit" v-bind="page.stats.cta" />
+              <UButton class="mt-4 w-fit" v-bind="page.data.stats.cta" />
             </div>
           </UPageCard>
         </div>
@@ -428,7 +428,7 @@ onMounted(() => {
               </div>
               <div class="flex flex-col">
                 <span class="font-medium">
-                  {{ page.stats.x }}
+                  {{ page.data.stats.x }}
                 </span>
                 <p>Followers</p>
               </div>
@@ -442,7 +442,7 @@ onMounted(() => {
               </div>
               <div class="flex flex-col">
                 <span class="font-medium">
-                  {{ page.stats.discord }}
+                  {{ page.data.stats.discord }}
                 </span>
                 <p>Members</p>
               </div>
@@ -453,8 +453,8 @@ onMounted(() => {
     </UPageSection>
 
     <UPageSection
-      :description="page.modules.description"
-      :links="page.modules.links"
+      :description="page.data.modules.description"
+      :links="page.data.modules.links"
       :ui="{
         root: 'bg-linear-to-b border-t border-default from-muted dark:from-muted/40 to-default',
         title: 'text-left',
@@ -463,7 +463,7 @@ onMounted(() => {
       }"
     >
       <template #title>
-        <LazyMDC :value="page.modules.title" unwrap="p" cache-key="index-modules-title" hydrate-never />
+        <LazyMDC :value="page.data.modules.title" unwrap="p" cache-key="index-modules-title" hydrate-never />
       </template>
       <UCarousel
         v-slot="{ item }"
@@ -483,9 +483,9 @@ onMounted(() => {
     </UPageSection>
 
     <UPageSection
-      :title="page.deploy.title"
-      :description="page.deploy.description"
-      :links="page.deploy.links"
+      :title="page.data.deploy.title"
+      :description="page.data.deploy.description"
+      :links="page.data.deploy.links"
       orientation="horizontal"
       :ui="{
         root: 'bg-linear-to-b border-t border-default from-muted dark:from-muted/40 to-default'
@@ -495,16 +495,16 @@ onMounted(() => {
         src="/assets/landing/deploy.svg"
         width="512"
         height="439"
-        :alt="page.deploy.title"
+        :alt="page.data.deploy.title"
         class="mx-auto max-w-lg sm:w-full w-full"
         loading="lazy"
       />
     </UPageSection>
 
     <UPageSection
-      :title="page.contributors.title"
-      :description="page.contributors.description"
-      :links="page.contributors.links"
+      :title="page.data.contributors.title"
+      :description="page.data.contributors.description"
+      :links="page.data.contributors.links"
       orientation="horizontal"
       reverse
       :ui="{
@@ -538,7 +538,7 @@ onMounted(() => {
         wheel-gestures
         arrows
         :autoplay="{ delay: 3000 }"
-        :items="showcase.websites.slice(0, 10)"
+        :items="showcase.data.websites.slice(0, 10)"
         class="min-w-0"
         :ui="{
           item: 'basis-full sm:basis-1/2',
@@ -577,9 +577,9 @@ onMounted(() => {
     </UPageSection>
 
     <UPageSection
-      :title="page.sponsors.title"
-      :description="page.sponsors.description"
-      :links="page.sponsors.links"
+      :title="page.data.sponsors.title"
+      :description="page.data.sponsors.description"
+      :links="page.data.sponsors.links"
       class="relative"
       :ui="{
         root: 'bg-linear-to-b border-t border-default from-muted dark:from-muted/40 to-default',

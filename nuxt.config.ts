@@ -482,6 +482,11 @@ export default defineNuxtConfig({
   },
   compatibilityDate: '2026-01-14',
   nitro: {
+    typescript: {
+      tsConfig: {
+        include: ['../comark-content.d.ts']
+      }
+    },
     prerender: {
       // Docs are prerendered by crawling from `/` plus the per-version
       // `getting-started/introduction` seeds in `routeRules` (the version
@@ -533,7 +538,7 @@ export default defineNuxtConfig({
   typescript: {
     strict: false,
     tsConfig: {
-      include: ['../test/nuxt']
+      include: ['../test/nuxt', '../comark-content.d.ts']
     }
   },
   hooks: {

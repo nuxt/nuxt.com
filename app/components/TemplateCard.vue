@@ -1,8 +1,8 @@
 <script lang="ts" setup>
-import type { TemplatesCollectionItem } from '@nuxt/content'
+import type { Template } from '~/types'
 
 const props = defineProps<{
-  template: TemplatesCollectionItem
+  template: Template
   index: number
 }>()
 
