@@ -25,10 +25,7 @@ export default defineEventHandler(async (event) => {
       .where('extension', '=', 'md')
       .select('path', 'title')
       .all(),
-    queryCollection(event, 'blog')
-      .where('draft', '=', 0)
-      .select('path', 'title', 'date')
-      .all(),
+    listChildren('/blog'),
     queryCollection(event, 'deploy')
       .select('path', 'title')
       .all()
@@ -53,9 +50,8 @@ export default defineEventHandler(async (event) => {
   for (const provider of deploy) lines.push(`- [${provider.title}](${domain}${provider.path}.md)`)
 
   lines.push('', '## Blog', '')
-  for (const post of (blog as Array<{ path: string, title: string, date?: string }>)) {
-    const date = post.date ? ` _(${post.date})_` : ''
-    lines.push(`- [${post.title}](${domain}${post.path}.md)${date}`)
+  for (const post of blog) {
+    lines.push(`- [${post.data.title}](${domain}${post.path}.md) _(${post.data.date})_`)
   }
 
   setResponseHeader(event, 'Content-Type', 'text/markdown; charset=utf-8')

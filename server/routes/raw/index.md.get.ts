@@ -1,15 +1,14 @@
-import { queryCollection } from '@nuxt/content/server'
 import { CURRENT_DOCS_VERSION } from '#shared/utils/docs'
 
 export default defineCachedEventHandler(async (event) => {
   const domain = getSiteUrl(event)
-  const index = await queryCollection(event, 'index').first()
+  const index = await content.get('/')
 
-  const title = index?.hero?.title?.replace(/\s+/g, ' ').trim() || 'Nuxt'
-  const description = index?.hero?.description?.replace(/\s+/g, ' ').trim()
+  const title = index?.data.hero?.title?.replace(/\s+/g, ' ').trim() || 'Nuxt'
+  const description = index?.data.hero?.description?.replace(/\s+/g, ' ').trim()
     || 'The Intuitive Vue Framework. Build performant and production-grade full-stack web apps and websites with confidence.'
 
-  const featureBullets = (index?.features?.features ?? [])
+  const featureBullets = (index?.data.features?.features ?? [])
     .map(feature => `- **${feature.title}**: ${feature.description}`)
     .join('\n')
 

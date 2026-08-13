@@ -8,9 +8,7 @@ export default defineEventHandler(async (event) => {
     queryCollection(event, 'docsv4')
       .where('path', 'NOT LIKE', '%.navigation')
       .all(),
-    queryCollection(event, 'blog')
-      .where('draft', '=', 0)
-      .all()
+    listChildren('/blog')
   ])
 
   const sitemap = new SitemapStream({
@@ -24,11 +22,11 @@ export default defineEventHandler(async (event) => {
       lastmod: today
     })
   }
-  for (const doc of blog as Array<{ path: string, date?: string }>) {
+  for (const doc of blog) {
     sitemap.write({
       url: doc.path,
       changefreq: 'monthly',
-      lastmod: doc.date || today
+      lastmod: doc.data.date
     })
   }
   sitemap.end()

@@ -4,16 +4,17 @@ definePageMeta({
 })
 
 const [{ data: page }, { data: home }] = await Promise.all([
-  useAsyncData('showcase', () => queryCollection('showcase').first()),
-  useAsyncData('home', () => queryCollection('index').first())
+  useAsyncData('showcase', () => clientContent.get('/showcase')),
+  useAsyncData('home', () => clientContent.get('/'))
 ])
+
 if (!page.value) {
   throw createError({ statusCode: 404, statusMessage: 'Page not found', fatal: true })
 }
 
 const stats = useStats()
-const title = page.value.head?.title || page.value.title
-const description = page.value.head?.description || page.value.description
+const title = page.value.data.head?.title || page.value.data.title
+const description = page.value.data.description
 
 useSeoMeta({
   titleTemplate: '%s',
@@ -36,8 +37,8 @@ onMounted(() => {
 </script>
 
 <template>
-  <div v-if="page">
-    <UPageHero :title="page.title" :description="page.description" :ui="{ container: '!pb-12' }" />
+  <div v-if="page.data">
+    <UPageHero :title="page.data.title" :description="page.data.description" :ui="{ container: '!pb-12' }" />
 
     <UPage id="smooth" class="pt-20 -mt-20">
       <UPageBody>
@@ -79,9 +80,9 @@ onMounted(() => {
         </UPageCTA>
         <UContainer>
           <UPageSection :ui="{ container: '!pt-0' }">
-            <UPageLogos :marquee="isMobile" :title="home?.logos.title" :ui="{ title: 'text-muted font-medium text-lg', logos: 'mt-4' }">
+            <UPageLogos :marquee="isMobile" :title="home.data?.logos.title" :ui="{ title: 'text-muted font-medium text-lg', logos: 'mt-4' }">
               <Motion
-                v-for="(company, index) in home?.logos.companies"
+                v-for="(company, index) in home.data?.logos.companies"
                 :key="company.alt"
                 as-child
                 :initial="{ opacity: 0, transform: 'translateY(20px)' }"
@@ -106,7 +107,7 @@ onMounted(() => {
           </UPageSection>
           <UPageGrid class="bg-elevated/50 p-4 rounded-2xl gap-2">
             <UPageCard
-              v-for="(website, index) in page.websites"
+              v-for="(website, index) in page.data.websites"
               :key="index"
               :to="website.url"
               target="_blank"

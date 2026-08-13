@@ -26,16 +26,14 @@ export default defineEventHandler(async (event) => {
   ]).parse)
 
   if (body.kind === 'blog') {
-    const posts = await queryCollection(event, 'blog')
-      .where('extension', '=', 'md')
-      .order('date', 'DESC')
-      .all()
+    const posts = (await listChildren('/blog'))
+      .sort((a, b) => new Date(b.data.date ?? 0).getTime() - new Date(a.data.date ?? 0).getTime())
 
     const post = posts.find(p =>
       p.path !== '/blog'
       && (
-        p.title?.toLowerCase().includes(body.title.toLowerCase())
-        || p.path?.toLowerCase().includes(body.title.toLowerCase())
+        p.data.title?.toLowerCase().includes(body.title.toLowerCase())
+        || p.path.toLowerCase().includes(body.title.toLowerCase())
       )
     )
 
@@ -44,13 +42,13 @@ export default defineEventHandler(async (event) => {
     }
 
     return {
-      title: post.title,
-      description: post.description,
+      title: post.data.title,
+      description: post.data.description,
       path: post.path,
-      date: post.date,
-      image: post.image,
-      category: post.category,
-      authors: post.authors?.map(a => ({
+      date: post.data.date,
+      image: post.data.image,
+      category: post.data.category,
+      authors: (post.data.authors ?? []).map(a => ({
         name: a.name,
         avatar: a.avatar?.src
       }))
@@ -85,27 +83,27 @@ export default defineEventHandler(async (event) => {
     }
   }
 
-  const allTemplates = await queryCollection(event, 'templates').all()
+  const allTemplates = await listChildren('/templates')
 
   const results = body.names.map((rawName) => {
     const name = rawName.trim().toLowerCase()
     const template = allTemplates.find(t =>
-      t.slug.toLowerCase() === name
-      || t.name.toLowerCase() === name
-      || t.slug.toLowerCase().includes(name)
-      || t.name.toLowerCase().includes(name)
+      t.data.slug?.toLowerCase() === name
+      || t.data.name?.toLowerCase() === name
+      || t.data.slug?.toLowerCase().includes(name)
+      || t.data.name?.toLowerCase().includes(name)
     )
 
     if (!template) return null
 
     return {
-      name: template.name,
-      slug: template.slug,
-      description: template.description,
-      repo: template.repo,
-      demo: template.demo,
-      badge: template.badge,
-      purchase: template.purchase
+      name: template.data.name,
+      slug: template.data.slug,
+      description: template.data.description,
+      repo: template.data.repo,
+      demo: template.data.demo,
+      badge: template.data.badge,
+      purchase: template.data.purchase
     }
   }).filter(Boolean)
 

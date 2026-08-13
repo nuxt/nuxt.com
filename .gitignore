@@ -28,3 +28,4 @@ test-results/
 .env*.local
 .env*
 !.env.example
+comark-content.d.ts

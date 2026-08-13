@@ -1,7 +1,6 @@
 import { Feed } from 'feed'
 import { joinURL } from 'ufo'
 import type { H3Event } from 'h3'
-import { queryCollection } from '@nuxt/content/server'
 
 export default defineEventHandler(async (event: H3Event) => {
   const baseUrl = 'https://nuxt.com'
@@ -20,24 +19,20 @@ export default defineEventHandler(async (event: H3Event) => {
     }
   })
 
-  const articles = await queryCollection(event, 'blog')
-    .order('date', 'DESC')
-    .all()
+  const articles = (await listChildren('/blog'))
+    .sort((a, b) => new Date(b.data.date ?? 0).getTime() - new Date(a.data.date ?? 0).getTime())
 
   for (const article of articles) {
-    if (article.draft) {
-      continue
-    }
     feed.addItem({
       link: joinURL(baseUrl, article.path),
-      image: joinURL(baseUrl, article.image),
-      title: article.title,
-      date: new Date(article.date),
-      description: article.description,
+      image: joinURL(baseUrl, article.data.image ?? ''),
+      title: article.data.title ?? '',
+      date: new Date(article.data.date ?? 0),
+      description: article.data.description,
       category: [{
-        name: article.category
+        name: article.data.category ?? ''
       }]
-      // author: article.authors, INF0: Cannot work without an email field in the author object https://github.com/jpmonette/feed/issues/141
+      // author: article.data.authors, INF0: Cannot work without an email field in the author object https://github.com/jpmonette/feed/issues/141
     })
   }
 

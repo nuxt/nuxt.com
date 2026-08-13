@@ -1,15 +1,17 @@
 <script setup lang="ts">
-const { data: page } = await useAsyncData('blog-landing', () => queryCollection('landing').path('/blog').first())
-if (!page.value) {
-  throw createError({ statusCode: 404, statusMessage: 'Page not found', fatal: true })
-}
 definePageMeta({
   heroBackground: 'opacity-70 -z-10'
 })
+
 const { fetchList, articles } = useBlog()
 
-const title = page.value.head?.title || page.value.title
-const description = page.value.head?.description || page.value.description
+const { data: page } = await useAsyncData('blog-landing', () => clientContent.get('/blog'))
+if (!page.value) {
+  throw createError({ statusCode: 404, statusMessage: 'Page not found', fatal: true })
+}
+
+const title = page.value.data.head?.title || page.value.data.title
+const description = page.value.data.head?.description || page.value.data.description
 
 useHead({
   link: [
@@ -41,8 +43,8 @@ await fetchList()
 <template>
   <UContainer v-if="page">
     <UPageHero
-      :title="page.title"
-      :description="page.description"
+      :title="page.data.title"
+      :description="page.data.description"
       orientation="horizontal"
     >
       <template #links>
@@ -50,7 +52,7 @@ await fetchList()
       </template>
 
       <template #description>
-        {{ page.description }}
+        {{ page.data.description }}
 
         <UButton
           to="/blog/rss.xml"

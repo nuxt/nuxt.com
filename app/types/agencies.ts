@@ -4,7 +4,6 @@ import type { LinkProps } from '@nuxt/ui'
 export interface Agency {
   title: string
   description: string
-  fullDescription: string
   path: string
   link: string
   twitter: string

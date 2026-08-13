@@ -3,25 +3,26 @@ import { slugify, random } from '../utils'
 
 export const useEnterpriseAgencies = () => {
   const route = useRoute()
-  const { data: agencies, execute } = useAsyncData('agencies', () => queryCollection('agencies').all(), {
+  const { data: agencies, execute } = useAsyncData('agencies-list', () => listChildren('/enterprise/agencies'), {
     immediate: false,
     default: () => [],
     transform: (data) => {
       if (data && Array.isArray(data)) {
-        return data.map((agency: any) => ({
-          ...agency,
-          services: (agency.services || []).map((service: string) => ({
+        return data.map(agency => ({
+          ...agency.data,
+          path: agency.path,
+          services: (agency.data.services || []).map((service: string) => ({
             key: slugify(service),
             title: service
           })),
-          regions: (agency.regions || []).map((region: string) => ({
+          regions: (agency.data.regions || []).map((region: string) => ({
             key: slugify(region),
             title: region
           })),
-          location: agency.location
+          location: agency.data.location
             ? {
-                key: slugify(agency.location),
-                title: agency.location
+                key: slugify(agency.data.location),
+                title: agency.data.location
               }
             : null
         })) as Agency[]
