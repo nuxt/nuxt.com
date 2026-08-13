@@ -1,7 +1,6 @@
 import { renderMarkdown } from 'comark/render'
 import type { Node } from 'comark'
 import { z } from 'zod'
-import type { BlogListData } from '../../../../comark-content'
 
 export default defineMcpTool({
   description: `Retrieves the full content of a specific Nuxt blog post.
@@ -27,7 +26,7 @@ EXAMPLES: "/blog/v4", "/blog/nuxt3", "/blog/nuxt-on-the-edge"`,
   ],
   cache: '1h',
   async handler({ path }) {
-    const post = await content.get<BlogListData>(path)
+    const post = await content.get(path)
 
     if (!post?.nodes) {
       throw createError({ statusCode: 404, message: `Blog post not found: ${path}` })
@@ -35,8 +34,8 @@ EXAMPLES: "/blog/v4", "/blog/nuxt3", "/blog/nuxt-on-the-edge"`,
 
     const nodes: Node[] = [...post.nodes]
     if (nodes[0]?.[0] !== 'h1') {
-      nodes.unshift(['blockquote', {}, post.data.description])
-      nodes.unshift(['h1', {}, post.data.title])
+      nodes.unshift(['blockquote', {}, post.data.description ?? ''])
+      nodes.unshift(['h1', {}, post.data.title ?? ''])
     }
 
     return renderMarkdown({ nodes }, { format: 'markdown/html' })

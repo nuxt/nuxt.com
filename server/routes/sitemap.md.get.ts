@@ -25,7 +25,7 @@ export default defineEventHandler(async (event) => {
       .where('extension', '=', 'md')
       .select('path', 'title')
       .all(),
-    content.list('blog-list'),
+    listChildren('/blog'),
     queryCollection(event, 'deploy')
       .select('path', 'title')
       .all()

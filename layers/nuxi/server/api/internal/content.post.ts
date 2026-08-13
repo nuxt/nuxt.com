@@ -26,13 +26,13 @@ export default defineEventHandler(async (event) => {
   ]).parse)
 
   if (body.kind === 'blog') {
-    const posts = (await content.list('blog-list'))
-      .sort((a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime())
+    const posts = (await listChildren('/blog'))
+      .sort((a, b) => new Date(b.data.date ?? 0).getTime() - new Date(a.data.date ?? 0).getTime())
 
     const post = posts.find(p =>
       p.path !== '/blog'
       && (
-        p.data.title.toLowerCase().includes(body.title.toLowerCase())
+        p.data.title?.toLowerCase().includes(body.title.toLowerCase())
         || p.path.toLowerCase().includes(body.title.toLowerCase())
       )
     )
@@ -48,7 +48,7 @@ export default defineEventHandler(async (event) => {
       date: post.data.date,
       image: post.data.image,
       category: post.data.category,
-      authors: post.data.authors.map(a => ({
+      authors: (post.data.authors ?? []).map(a => ({
         name: a.name,
         avatar: a.avatar?.src
       }))
@@ -83,15 +83,15 @@ export default defineEventHandler(async (event) => {
     }
   }
 
-  const allTemplates = await content.list('templates-list')
+  const allTemplates = await listChildren('/templates')
 
   const results = body.names.map((rawName) => {
     const name = rawName.trim().toLowerCase()
     const template = allTemplates.find(t =>
-      t.data.slug.toLowerCase() === name
-      || t.data.name.toLowerCase() === name
-      || t.data.slug.toLowerCase().includes(name)
-      || t.data.name.toLowerCase().includes(name)
+      t.data.slug?.toLowerCase() === name
+      || t.data.name?.toLowerCase() === name
+      || t.data.slug?.toLowerCase().includes(name)
+      || t.data.name?.toLowerCase().includes(name)
     )
 
     if (!template) return null

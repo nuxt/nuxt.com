@@ -8,7 +8,7 @@ export default defineEventHandler(async (event) => {
     queryCollection(event, 'docsv4')
       .where('path', 'NOT LIKE', '%.navigation')
       .all(),
-    content.list('blog-list')
+    listChildren('/blog')
   ])
 
   const sitemap = new SitemapStream({

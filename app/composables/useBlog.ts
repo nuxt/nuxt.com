@@ -2,7 +2,7 @@ import type { BlogArticle } from '~/types'
 
 export const useBlog = () => {
   const { data: articles, refresh } = useAsyncData<BlogArticle[]>('blog', async () => {
-    const list = await clientContent.list('blog-list')
+    const list = await listChildren('/blog')
     return list
       .map(article => ({ ...article.data, path: article.path }) as BlogArticle)
       .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())

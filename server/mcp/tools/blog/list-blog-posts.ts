@@ -16,7 +16,7 @@ OUTPUT: Returns list of posts with title, description, date, path. Use get_blog_
   },
   cache: '1h',
   async handler() {
-    const blogPosts = await content.list('blog-list')
+    const blogPosts = await listChildren('/blog')
 
     return blogPosts.map(post => ({
       title: post.data.title,

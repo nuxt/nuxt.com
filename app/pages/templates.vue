@@ -4,7 +4,7 @@ definePageMeta({
 })
 const [{ data: page }, { data: templates }] = await Promise.all([
   useAsyncData('templates', () => clientContent.get('/templates')),
-  useAsyncData('templates-list', () => clientContent.list('templates-list'))
+  useAsyncData('templates-list', () => listChildren('/templates'))
 ])
 
 if (!page.value) {

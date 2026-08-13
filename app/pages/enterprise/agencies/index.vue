@@ -7,7 +7,7 @@ definePageMeta({
 
 const { filteredAgencies, fetchList, services, regions } = useEnterpriseAgencies()
 
-const { data: page } = await useAsyncData('agencies', () => clientContent.get('/agencies'))
+const { data: page } = await useAsyncData('agencies', () => clientContent.get('/enterprise/agencies'))
 if (!page.value) {
   throw createError({ statusCode: 404, statusMessage: 'Page not found', fatal: true })
 }

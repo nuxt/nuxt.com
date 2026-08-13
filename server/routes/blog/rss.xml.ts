@@ -19,18 +19,18 @@ export default defineEventHandler(async (event: H3Event) => {
     }
   })
 
-  const articles = (await content.list('blog-list'))
-    .sort((a, b) => new Date(b.data.date).getTime() - new Date(a.data.date).getTime())
+  const articles = (await listChildren('/blog'))
+    .sort((a, b) => new Date(b.data.date ?? 0).getTime() - new Date(a.data.date ?? 0).getTime())
 
   for (const article of articles) {
     feed.addItem({
       link: joinURL(baseUrl, article.path),
-      image: joinURL(baseUrl, article.data.image),
-      title: article.data.title,
-      date: new Date(article.data.date),
+      image: joinURL(baseUrl, article.data.image ?? ''),
+      title: article.data.title ?? '',
+      date: new Date(article.data.date ?? 0),
       description: article.data.description,
       category: [{
-        name: article.data.category
+        name: article.data.category ?? ''
       }]
       // author: article.data.authors, INF0: Cannot work without an email field in the author object https://github.com/jpmonette/feed/issues/141
     })

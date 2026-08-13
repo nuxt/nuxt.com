@@ -3,7 +3,7 @@ import { slugify, random } from '../utils'
 
 export const useEnterpriseAgencies = () => {
   const route = useRoute()
-  const { data: agencies, execute } = useAsyncData('agencies-list', () => clientContent.list('agencies-list'), {
+  const { data: agencies, execute } = useAsyncData('agencies-list', () => listChildren('/enterprise/agencies'), {
     immediate: false,
     default: () => [],
     transform: (data) => {

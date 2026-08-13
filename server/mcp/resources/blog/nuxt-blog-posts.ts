@@ -3,7 +3,7 @@ export default defineMcpResource({
   description: 'Complete list of Nuxt blog posts including releases, tutorials, and announcements',
   cache: '1h',
   async handler(uri: URL) {
-    const blogPosts = await content.list('blog-list')
+    const blogPosts = await listChildren('/blog')
 
     const result = blogPosts.map(post => ({
       title: post.data.title,
