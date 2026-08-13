@@ -1,18 +1,37 @@
 <script setup lang="ts">
-import type { ContentNavigationItem } from '@nuxt/content'
+import type { ContentSearchFile } from '@nuxt/ui'
+import { DOCS_COLLECTION_SOURCES } from '#shared/utils/docs'
 
 defineProps<{
-  navigation?: ContentNavigationItem[]
+  navigation?: Array<{ path?: string, title?: string, children?: unknown[] }>
 }>()
 
 const { version } = useDocsVersion()
 
-const collection = computed(() => version.value.collection)
+const files = ref<ContentSearchFile[]>([])
+const searchStatus = ref<'idle' | 'loading' | 'ready'>('idle')
 
-const { status, search, init } = useSearchCollection(collection, {
-  immediate: false,
-  ignoredTags: ['style']
-})
+async function init() {
+  const collection = version.value.collection
+  if (!collection) {
+    files.value = []
+    searchStatus.value = 'ready'
+    return
+  }
+
+  searchStatus.value = 'loading'
+  const items = await clientContent.list([...DOCS_COLLECTION_SOURCES[collection]])
+  files.value = items
+    .filter(item => item.meta.extension === '.md' && !item.meta.stem.split('/').pop()?.startsWith('.'))
+    .map(item => ({
+      id: item.path,
+      title: item.data.title ?? item.path,
+      titles: [],
+      level: 0,
+      content: item.data.description ?? ''
+    }))
+  searchStatus.value = 'ready'
+}
 
 const { searchGroups, searchLinks, searchTerm } = useNavigation()
 const { track } = useAnalytics()
@@ -25,6 +44,11 @@ const fuse = {
 }
 
 onNuxtReady(init)
+
+watch(() => version.value.collection, () => {
+  searchStatus.value = 'idle'
+  init()
+})
 
 watchDebounced(searchTerm, (term) => {
   if (term) {
@@ -39,8 +63,8 @@ watchDebounced(searchTerm, (term) => {
     :links="searchLinks"
     :groups="searchGroups"
     :navigation="navigation"
-    :search="search"
-    :search-status="status"
+    :files="files"
+    :search-status="searchStatus"
     :fuse="fuse"
     :transition="false"
   />

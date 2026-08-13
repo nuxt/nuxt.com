@@ -1,17 +1,15 @@
 <script setup lang="ts">
 import { kebabCase } from 'scule'
 import { joinURL } from 'ufo'
-import type { ContentNavigationItem } from '@nuxt/content'
-import { findPageBreadcrumb } from '@nuxt/content/utils'
-import { mapContentNavigation } from '@nuxt/ui/utils/content'
 import { SUPPORTED_DOCS_PATH_REGEX } from '#shared/utils/docs'
+import type { NavNode } from '~/utils/content'
 
 definePageMeta({
   heroBackground: 'opacity-30',
   key: 'docs'
 })
 
-const navigation = inject<Ref<ContentNavigationItem[]>>('navigation', ref([]))
+const navigation = inject<Ref<NavNode[]>>('navigation', ref([]))
 const menuDrawerOpen = ref(false)
 const onThisPageDrawerOpen = ref(false)
 
@@ -23,24 +21,24 @@ const { isAgentDocked } = useNuxtAgent()
 const path = computed(() => route.path.replace(/\/$/, ''))
 
 const ignoredPaths = ['.nuxt', '.output', '.env', 'node_modules']
-const navClass = (item: ContentNavigationItem) => {
-  if (ignoredPaths.includes(item.title) && !route.path.includes(item.path)) {
+const navClass = (item: NavNode) => {
+  if (ignoredPaths.includes(String(item.title)) && item.path && !route.path.includes(item.path)) {
     return 'opacity-70 hover:opacity-100'
   }
   return ''
 }
 
-// Get the aside navigation
 const asideNavigation = computed(() => {
-  const path = [version.value.path, route.params.slug?.[version.value.path.split('/').length - 2]].filter(Boolean).join('/')
+  const sectionPath = [version.value.path, route.params.slug?.[version.value.path.split('/').length - 2]].filter(Boolean).join('/')
 
-  const nav = navPageFromPath(path, navigation.value)?.children || []
+  const nav = navPageFromPath(sectionPath, navigation.value)?.children || []
 
   return nav.map(item => ({
     ...item,
     class: navClass(item)
   }))
 })
+
 function paintResponse() {
   if (import.meta.server) {
     return Promise.resolve()
@@ -52,22 +50,23 @@ function paintResponse() {
 }
 
 const pageKey = computed(() => kebabCase(path.value))
-const surroundKey = computed(() => `${kebabCase(path.value)}-surround`)
 
-const [{ data: page, status }, { data: surround }] = await Promise.all([
-  useAsyncData(pageKey, () => {
-    const pagePath = path.value
-    const collection = version.value.collection
-    return paintResponse().then(() => queryCollection(collection).path(pagePath).first())
-  }),
-  useAsyncData(surroundKey, () => {
-    const pagePath = path.value
-    const collection = version.value.collection
-    return paintResponse().then(() => queryCollectionItemSurroundings(collection, pagePath, {
-      fields: ['description']
-    }))
-  })
-])
+const { data: page, status } = await useAsyncData(pageKey, () => {
+  const pagePath = path.value
+  return paintResponse().then(() => clientContent.get(pagePath))
+})
+
+const surround = computed(() => {
+  const pages = flattenNavPages(navigation.value)
+  const index = pages.findIndex(item => item.path === path.value)
+  if (index === -1) {
+    return []
+  }
+  return [pages[index - 1], pages[index + 1]].map(item => item
+    ? { title: item.title, path: item.path, description: item.description }
+    : undefined
+  )
+})
 
 watch(status, (status) => {
   if (status === 'pending') {
@@ -88,16 +87,15 @@ watch(page, (page) => {
   }
 }, { immediate: true })
 
-// Get the -2 item of the breadcrumb
 const currentSectionTitle = computed(() =>
   headerLinks.value[0]?.children?.find(link => path.value.includes(link.to))?.label
   || findPageBreadcrumb(navigation.value, path.value).slice(-1)[0]?.title
   || '')
 
 const breadcrumb = computed(() => {
-  const links = mapContentNavigation(findPageBreadcrumb(navigation.value, path.value)).map(link => ({
-    label: link.label,
-    to: link.to
+  const links = findPageBreadcrumb(navigation.value, path.value).map(item => ({
+    label: item.title,
+    to: item.path
   })).slice(1)
 
   if (path.value.startsWith(`${version.value.path}/bridge`) || path.value.startsWith(`${version.value.path}/migration`)) {
@@ -115,7 +113,16 @@ const breadcrumb = computed(() => {
 
   return links
 })
-const editLink = computed(() => `https://github.com/nuxt/nuxt/edit/${version.value.branch}/${page?.value?.stem?.replace(/docs\/\d\.x/, 'docs')}.${page?.value?.extension}`)
+
+const editLink = computed(() => {
+  if (!page.value) return ''
+  const extension = page.value.meta.extension || '.md'
+  const stem = page.value.meta.stem.replace(/^4\.examples\//, '')
+  if (page.value.meta.source.startsWith('examples')) {
+    return `https://github.com/nuxt/examples/edit/main/.docs/${stem}${extension}`
+  }
+  return `https://github.com/nuxt/nuxt/edit/${version.value.branch}/docs/${stem}${extension}`
+})
 
 const communityLinks = [{
   icon: 'i-lucide-heart',
@@ -134,18 +141,13 @@ const communityLinks = [{
   target: '_blank'
 }]
 
-const title = computed(() => page.value?.seo?.title || page.value?.title)
-const titleTemplate = computed(() => `${findTitleTemplate(page, navigation, version.value.path)} ${version.value.shortTag}`)
+const title = computed(() => page.value?.data.head?.title || page.value?.data.title)
+const titleTemplate = computed(() => `${findTitleTemplate(page.value?.path, page.value?.data.titleTemplate, navigation.value, version.value.path)} ${version.value.shortTag}`)
 
 useSeoMeta({
   titleTemplate,
   title
 })
-// Only emit canonical/markdown alternate on versioned paths (e.g.
-// `/docs/4.x/*`). Unversioned `/docs/*` URLs are meta-refresh stubs that
-// the docs-version middleware redirects to the active version, so agents
-// should not treat the stub URL as authoritative. The supported version
-// list lives in `shared/utils/docs.ts` (kept in sync with `md-rewrite.ts`).
 if (SUPPORTED_DOCS_PATH_REGEX.test(path.value)) {
   useCanonical(() => `${path.value}.md`)
 }
@@ -156,8 +158,8 @@ if (import.meta.server) {
   useSchemaOrg([
     defineArticle({
       '@type': 'TechArticle',
-      'headline': page.value?.title,
-      'description': page.value?.seo?.description || page.value?.description
+      'headline': page.value?.data.title,
+      'description': page.value?.data.head?.description || page.value?.data.description
     }),
     defineBreadcrumb({
       itemListElement: breadcrumb.value.map(item => ({
@@ -167,7 +169,7 @@ if (import.meta.server) {
     })
   ])
 
-  const description = page.value?.seo?.description || page.value?.description
+  const description = page.value?.data.head?.description || page.value?.data.description
   useSeoMeta({
     description,
     ogDescription: description,
@@ -187,6 +189,10 @@ function refreshHeading(opened: boolean) {
 }
 
 const noRightAside = computed(() => route.path.includes('/examples/'))
+const feedbackPage = computed(() => ({
+  title: page.value?.data.title ?? '',
+  stem: page.value?.meta.stem ?? ''
+}))
 </script>
 
 <template>
@@ -212,29 +218,30 @@ const noRightAside = computed(() => route.path.includes('/examples/'))
           :ui="{
             wrapper: 'flex-row items-center flex-wrap justify-between'
           }"
-          v-bind="page"
+          :title="page.data.title"
+          :description="page.data.description"
         >
           <template #headline>
             <UBreadcrumb :items="breadcrumb" />
           </template>
 
           <template #title>
-            {{ page.title }}
+            {{ page.data.title }}
 
             <UBadge
-              v-if="page.minimalVersion?.trim()"
-              :label="`v${page.minimalVersion?.trim()}`"
+              v-if="page.data.minimalVersion?.trim()"
+              :label="`v${page.data.minimalVersion?.trim()}`"
               color="info"
               variant="subtle"
               size="lg"
               class="align-middle"
-              :aria-label="`Minimum Nuxt version: v${page.minimalVersion?.trim()}`"
+              :aria-label="`Minimum Nuxt version: v${page.data.minimalVersion?.trim()}`"
             />
           </template>
 
           <template #links>
             <UButton
-              v-for="link in page.links?.map(link => ({ ...link, size: 'md' }))"
+              v-for="link in page.data.links?.map(link => ({ ...link, size: 'md' }))"
               :key="link.label"
               color="neutral"
               variant="soft"
@@ -250,9 +257,9 @@ const noRightAside = computed(() => route.path.includes('/examples/'))
         </UPageHeader>
 
         <UPageBody>
-          <ContentRenderer v-if="page.body" :value="page" />
+          <MarkdownDocument v-if="page.nodes?.length" :value="page" />
           <div>
-            <Feedback :page="page" />
+            <Feedback :page="feedbackPage" />
             <USeparator class="mt-6 mb-10">
               <div class="flex items-center gap-2 text-sm text-muted">
                 <UButton
@@ -281,7 +288,7 @@ const noRightAside = computed(() => route.path.includes('/examples/'))
         <template #right>
           <ContentToc
             v-if="!isAgentDocked && !noRightAside"
-            :links="page.body?.toc?.links"
+            :links="page.meta?.toc?.links"
             :community-links="communityLinks"
             highlight
             highlight-variant="circuit"
@@ -349,7 +356,7 @@ const noRightAside = computed(() => route.path.includes('/examples/'))
               />
               <template #body>
                 <ContentToc
-                  :links="page.body?.toc?.links"
+                  :links="page.meta?.toc?.links"
                   :community-links="communityLinks"
                   :open="true"
                   default-open

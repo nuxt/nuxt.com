@@ -1,11 +1,11 @@
 import { describe, expect, it } from 'vitest'
 import { navPageFromPath, findTitleTemplate } from '../../app/utils/content'
-import type { ContentNavigationItem } from '@nuxt/content'
+import type { NavNode } from '../../app/utils/content'
 
 describe('utils/content', () => {
   describe('navPageFromPath', () => {
     it('should find page at root level', () => {
-      const tree: ContentNavigationItem[] = [
+      const tree: NavNode[] = [
         { title: 'Blog', path: '/blog', stem: 'blog' },
         { title: 'Team', path: '/team', stem: 'team' }
       ]
@@ -14,7 +14,7 @@ describe('utils/content', () => {
     })
 
     it('should find page in nested children', () => {
-      const tree: ContentNavigationItem[] = [
+      const tree: NavNode[] = [
         {
           title: 'Docs',
           path: '/docs/4.x',
@@ -29,7 +29,7 @@ describe('utils/content', () => {
     })
 
     it('should find page in deeply nested structure', () => {
-      const tree: ContentNavigationItem[] = [
+      const tree: NavNode[] = [
         {
           title: 'Docs',
           path: '/docs/4.x',
@@ -58,7 +58,7 @@ describe('utils/content', () => {
     })
 
     it('should return undefined for non-existent path', () => {
-      const tree: ContentNavigationItem[] = [
+      const tree: NavNode[] = [
         { title: 'Blog', path: '/blog', stem: 'blog' }
       ]
       const result = navPageFromPath('/non-existent', tree)
@@ -73,85 +73,73 @@ describe('utils/content', () => {
 
   describe('findTitleTemplate', () => {
     it('should return default template when page has no path', () => {
-      const page = { value: { path: undefined } } as any
-      const navigation = { value: [] } as any
-      const result = findTitleTemplate(page, navigation, '/docs/4.x')
+      const result = findTitleTemplate(undefined, undefined, [], '/docs/4.x')
       expect(result).toBe('%s · Nuxt')
     })
 
     it('should use page titleTemplate if available', () => {
-      const page = { value: { path: '/test', titleTemplate: '%s | Custom' } } as any
-      const navigation = { value: [] } as any
-      const result = findTitleTemplate(page, navigation, '/docs/4.x')
+      const result = findTitleTemplate('/test', '%s | Custom', [], '/docs/4.x')
       expect(result).toBe('%s | Custom')
     })
 
     it('should return default template when no matching navigation found', () => {
-      const page = { value: { path: '/docs/4.x/guide/introduction' } } as any
-      const navigation = { value: [] } as any
-      const result = findTitleTemplate(page, navigation, '/docs/4.x')
+      const result = findTitleTemplate('/docs/4.x/guide/introduction', undefined, [], '/docs/4.x')
       expect(result).toBe('%s · Nuxt')
     })
 
     it('should find titleTemplate from parent in navigation tree', () => {
-      const page = { value: { path: '/docs/4.x/getting-started/introduction' } } as any
-      const navigation = {
-        value: [
-          {
-            title: 'Docs',
-            path: '/docs/4.x',
-            stem: 'docs/4.x',
-            titleTemplate: null,
-            children: [
-              {
-                title: 'Get Started',
-                titleTemplate: '%s · Get Started with Nuxt',
-                path: '/docs/4.x/getting-started',
-                stem: 'docs/4.x/1.getting-started',
-                children: [
-                  { title: 'Introduction', path: '/docs/4.x/getting-started/introduction', stem: 'docs/4.x/1.getting-started/01.introduction', titleTemplate: null }
-                ]
-              }
-            ]
-          }
-        ]
-      } as any
-      const result = findTitleTemplate(page, navigation, '/docs/4.x')
+      const navigation: NavNode[] = [
+        {
+          title: 'Docs',
+          path: '/docs/4.x',
+          stem: 'docs/4.x',
+          titleTemplate: null,
+          children: [
+            {
+              title: 'Get Started',
+              titleTemplate: '%s · Get Started with Nuxt',
+              path: '/docs/4.x/getting-started',
+              stem: 'docs/4.x/1.getting-started',
+              children: [
+                { title: 'Introduction', path: '/docs/4.x/getting-started/introduction', stem: 'docs/4.x/1.getting-started/01.introduction', titleTemplate: null }
+              ]
+            }
+          ]
+        }
+      ]
+      const result = findTitleTemplate('/docs/4.x/getting-started/introduction', undefined, navigation, '/docs/4.x')
       expect(result).toBe('%s · Get Started with Nuxt')
     })
 
     it('should handle v4 docs paths with version cleaning', () => {
-      const page = { value: { path: '/docs/4.x/api/composables/use-fetch' } } as any
-      const navigation = {
-        value: [
-          {
-            title: 'Docs',
-            path: '/docs/4.x',
-            stem: 'docs/4.x',
-            titleTemplate: null,
-            children: [
-              {
-                title: 'API',
-                titleTemplate: '%s · Nuxt API',
-                path: '/docs/4.x/api',
-                stem: 'docs/4.x/4.api',
-                children: [
-                  {
-                    title: 'Composables',
-                    titleTemplate: '%s · Nuxt Composables',
-                    path: '/docs/4.x/api/composables',
-                    stem: 'docs/4.x/4.api/2.composables',
-                    children: [
-                      { title: 'useFetch', path: '/docs/4.x/api/composables/use-fetch', stem: 'docs/4.x/4.api/2.composables/use-fetch', titleTemplate: null }
-                    ]
-                  }
-                ]
-              }
-            ]
-          }
-        ]
-      } as any
-      const result = findTitleTemplate(page, navigation, '/docs/4.x')
+      const navigation: NavNode[] = [
+        {
+          title: 'Docs',
+          path: '/docs/4.x',
+          stem: 'docs/4.x',
+          titleTemplate: null,
+          children: [
+            {
+              title: 'API',
+              titleTemplate: '%s · Nuxt API',
+              path: '/docs/4.x/api',
+              stem: 'docs/4.x/4.api',
+              children: [
+                {
+                  title: 'Composables',
+                  titleTemplate: '%s · Nuxt Composables',
+                  path: '/docs/4.x/api/composables',
+                  stem: 'docs/4.x/4.api/2.composables',
+                  children: [
+                    { title: 'useFetch', path: '/docs/4.x/api/composables/use-fetch', stem: 'docs/4.x/4.api/2.composables/use-fetch', titleTemplate: null }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+      const result = findTitleTemplate('/docs/4.x/api/composables/use-fetch', undefined, navigation, '/docs/4.x')
       expect(result).toBe('%s · Nuxt Composables')
     })
   })

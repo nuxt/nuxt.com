@@ -1,4 +1,5 @@
 import { queryCollection } from '@nuxt/content/server'
+import { DOCS_COLLECTION_SOURCES } from '../../shared/utils/docs'
 
 const STATIC_LINKS = [
   { title: 'Home', path: '/' },
@@ -21,10 +22,7 @@ export default defineEventHandler(async (event) => {
   // Mirrors /sitemap.xml: v3 (legacy) and v5 (nightly) are excluded — v5 is
   // also disallowed in /robots.txt until Nuxt 5 ships.
   const [docsv4, blog, deploy] = await Promise.all([
-    queryCollection(event, 'docsv4')
-      .where('extension', '=', 'md')
-      .select('path', 'title')
-      .all(),
+    content.list([...DOCS_COLLECTION_SOURCES.docsv4]),
     listChildren('/blog'),
     queryCollection(event, 'deploy')
       .select('path', 'title')
@@ -44,7 +42,10 @@ export default defineEventHandler(async (event) => {
   }
 
   lines.push('', '## Documentation', '')
-  for (const doc of docsv4) lines.push(`- [${doc.title}](${domain}${doc.path}.md)`)
+  for (const doc of docsv4) {
+    if (doc.meta.extension !== '.md' || doc.meta.stem.split('/').pop()?.startsWith('.')) continue
+    lines.push(`- [${doc.data.title ?? doc.path}](${domain}${doc.path}.md)`)
+  }
 
   lines.push('', '## Deploy providers', '')
   for (const provider of deploy) lines.push(`- [${provider.title}](${domain}${provider.path}.md)`)

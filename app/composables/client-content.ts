@@ -8,6 +8,6 @@ export const clientContent = createContentClient({
 })
 
 export async function listChildren(prefix: string) {
-  const items = await clientContent.list()
+  const items = await clientContent.list('content')
   return items.filter(item => isChildPath(item.path, item.meta.stem, prefix))
 }

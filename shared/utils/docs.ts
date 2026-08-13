@@ -14,6 +14,20 @@ export const SUPPORTED_DOC_VERSIONS = ['3.x', '4.x'] as const
 export const EXCLUDED_DOC_VERSIONS = ['5.x'] as const
 export const CURRENT_DOCS_VERSION: (typeof SUPPORTED_DOC_VERSIONS)[number] = '4.x'
 
+export const DOCS_COLLECTION_SOURCES = {
+  docsv3: ['docsv3', 'examplesv3'],
+  docsv4: ['docsv4', 'examplesv4'],
+  docsv5: ['docsv5', 'examplesv5']
+} as const
+
+export type DocsCollection = keyof typeof DOCS_COLLECTION_SOURCES
+
+export const ALL_DOCS_SOURCES = [
+  ...DOCS_COLLECTION_SOURCES.docsv3,
+  ...DOCS_COLLECTION_SOURCES.docsv4,
+  ...DOCS_COLLECTION_SOURCES.docsv5
+] as const
+
 const escape = (v: string) => v.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
 
 // `^/docs/(?:3\.x|4\.x)(?:/|$)` — matches versioned doc paths only.

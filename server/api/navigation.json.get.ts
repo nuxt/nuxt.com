@@ -1,16 +1,29 @@
-// This route will be pre-rendered as /api/navigation.json
 import { queryCollectionNavigation } from '@nuxt/content/server'
+import type { NavigationItem } from 'comark-content'
+import { ALL_DOCS_SOURCES } from '../../shared/utils/docs'
+
+const VERSION_PATHS = new Set(['/docs/3.x', '/docs/4.x', '/docs/5.x'])
+
+function versionRoots(tree: NavigationItem[]): NavigationItem[] {
+  const found: NavigationItem[] = []
+  const walk = (items: NavigationItem[]) => {
+    for (const item of items) {
+      if (VERSION_PATHS.has(item.path)) {
+        found.push(item)
+        continue
+      }
+      if (item.children?.length) walk(item.children)
+    }
+  }
+  walk(tree)
+  return found
+}
 
 export default defineEventHandler(async (event) => {
-  // `?? []` matters: if a collection comes back empty (it happens at runtime on
-  // Vercel when the content DB isn't fully available), `data[0]?.children` is
-  // `undefined`, `.flat()` keeps it as an element, and JSON turns it into a
-  // `null` entry. Every consumer iterates these items reading `item.path`, so a
-  // single null took down SSR for the whole docs section.
-  return Promise.all([
-    queryCollectionNavigation(event, 'docsv3', ['titleTemplate']).then(data => data[0]?.children ?? []),
-    queryCollectionNavigation(event, 'docsv4', ['titleTemplate']).then(data => data[0]?.children ?? []),
-    queryCollectionNavigation(event, 'docsv5', ['titleTemplate']).then(data => data[0]?.children ?? []),
+  const [docs, blog] = await Promise.all([
+    content.navigation([...ALL_DOCS_SOURCES]),
     queryCollectionNavigation(event, 'blog')
-  ]).then(data => data.flat().filter(Boolean))
+  ])
+
+  return [...versionRoots(docs), ...(blog ?? [])].filter(Boolean)
 })

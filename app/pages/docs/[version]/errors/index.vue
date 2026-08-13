@@ -1,17 +1,25 @@
 <script setup lang="ts">
+import { DOCS_COLLECTION_SOURCES } from '#shared/utils/docs'
+
 definePageMeta({
   validate: route => /^\d\.x$/.test(route.params.version as string),
   heroBackground: 'opacity-30'
 })
 
 const { version } = useDocsVersion()
+const prefix = `${version.value.path}/errors/`
 
-const { data: errors } = await useAsyncData(`${version.value.collection}-errors`, () =>
-  queryCollection(version.value.collection!)
-    .where('path', 'LIKE', `${version.value.path}/errors/%`)
-    .select('path', 'title', 'description')
-    .all()
-)
+const { data: errors } = await useAsyncData(`${version.value.collection}-errors`, async () => {
+  const collection = version.value.collection
+  if (!collection) return []
+  const items = await clientContent.list([...DOCS_COLLECTION_SOURCES[collection]])
+  return items
+    .filter(item => item.path.startsWith(prefix) && item.meta.extension === '.md')
+    .map(item => ({
+      path: item.path,
+      title: item.data.title ?? item.path
+    }))
+})
 
 if (!errors.value?.length) {
   throw createError({ statusCode: 404, statusMessage: 'Page not found', fatal: true })

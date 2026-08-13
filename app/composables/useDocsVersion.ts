@@ -1,4 +1,5 @@
 import type { BadgeProps } from '@nuxt/ui'
+import type { DocsCollection } from '#shared/utils/docs'
 
 interface Version {
   label: string
@@ -6,7 +7,7 @@ interface Version {
   branch: string
   tagColor: BadgeProps['color']
   path: string
-  collection?: 'docsv3' | 'docsv4' | 'docsv5'
+  collection?: DocsCollection
   /** `unsupported` versions are end of life: no bug fixes, no security patches. */
   status?: 'prerelease' | 'stable' | 'unsupported'
   /** Date the version reached end of life, for `unsupported` versions. */

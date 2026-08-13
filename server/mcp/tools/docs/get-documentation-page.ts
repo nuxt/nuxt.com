@@ -43,9 +43,7 @@ Common Issues:
   ],
   cache: '30m',
   async handler({ path, sections }) {
-    const event = useEvent()
-    const docsVersion = path.includes('/docs/5.x') ? 'docsv5' : path.includes('/docs/3.x') ? 'docsv3' : 'docsv4'
-    const fullContent = await fetchPageMarkdown(event, docsVersion, path)
+    const fullContent = await fetchContentMarkdown(path)
 
     if (!fullContent) {
       throw createError({ statusCode: 404, message: `Documentation page not found: ${path}` })

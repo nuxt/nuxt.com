@@ -1,5 +1,9 @@
 import { z } from 'zod'
-import { queryCollection } from '@nuxt/content/server'
+import { DOCS_COLLECTION_SOURCES, type DocsCollection } from '#shared/utils/docs'
+
+function collectionForVersion(version: '3.x' | '4.x' | '5.x'): DocsCollection {
+  return version === '5.x' ? 'docsv5' : version === '3.x' ? 'docsv3' : 'docsv4'
+}
 
 export default defineMcpPrompt({
   description: 'Find the best Nuxt documentation for a specific topic or feature',
@@ -8,20 +12,17 @@ export default defineMcpPrompt({
     version: z.enum(['3.x', '4.x', '5.x']).optional().describe('Documentation version to search (defaults to 4.x)')
   },
   async handler({ topic, version = '4.x' }) {
-    const event = useEvent()
-    const docsVersion = version === '5.x' ? 'docsv5' : version === '3.x' ? 'docsv3' : 'docsv4'
+    const docs = await content.list([...DOCS_COLLECTION_SOURCES[collectionForVersion(version)]])
 
-    const allDocs = await queryCollection(event, docsVersion)
-      .select('title', 'path', 'description')
-      .all()
-
-    const allPages = allDocs?.map(doc => ({
-      title: doc.title,
-      path: doc.path,
-      description: doc.description,
-      version,
-      url: `https://nuxt.com${doc.path}`
-    })) || []
+    const allPages = docs
+      .filter(item => item.meta.extension === '.md' && !item.meta.stem.split('/').pop()?.startsWith('.'))
+      .map(item => ({
+        title: item.data.title ?? item.path,
+        path: item.path,
+        description: item.data.description,
+        version,
+        url: `https://nuxt.com${item.path}`
+      }))
 
     return {
       messages: [

@@ -1,50 +1,5 @@
 import { defineContentConfig, defineCollection, z } from '@nuxt/content'
 
-const docsV3Source = {
-  cwd: process.env.NUXT_V3_PATH ?? undefined,
-  repository: !process.env.NUXT_V3_PATH ? 'https://github.com/nuxt/nuxt/tree/3.x' : undefined,
-  include: 'docs/**/*',
-  exclude: ['docs/**/*.json'],
-  prefix: '/docs/3.x'
-}
-
-const docsV4Source = {
-  cwd: process.env.NUXT_V4_PATH ?? undefined,
-  repository: !process.env.NUXT_V4_PATH ? 'https://github.com/nuxt/nuxt/tree/4.x' : undefined,
-  include: 'docs/**/*',
-  exclude: ['docs/**/*.json'],
-  prefix: '/docs/4.x'
-}
-
-const docsV5Source = {
-  cwd: process.env.NUXT_V5_PATH ?? undefined,
-  repository: !process.env.NUXT_V5_PATH ? 'https://github.com/nuxt/nuxt/tree/main' : undefined,
-  include: 'docs/**/*',
-  exclude: ['docs/**/*.json'],
-  prefix: '/docs/5.x'
-}
-
-const examplesV3Source = {
-  cwd: process.env.NUXT_EXAMPLES_PATH ?? undefined,
-  repository: !process.env.NUXT_EXAMPLES_PATH ? 'https://github.com/nuxt/examples' : undefined,
-  include: '.docs/**/*',
-  prefix: '/docs/3.x/4.examples'
-}
-
-const examplesV4Source = {
-  cwd: process.env.NUXT_EXAMPLES_PATH ?? undefined,
-  repository: !process.env.NUXT_EXAMPLES_PATH ? 'https://github.com/nuxt/examples' : undefined,
-  include: '.docs/**/*',
-  prefix: '/docs/4.x/4.examples'
-}
-
-const examplesV5Source = {
-  cwd: process.env.NUXT_EXAMPLES_PATH ?? undefined,
-  repository: !process.env.NUXT_EXAMPLES_PATH ? 'https://github.com/nuxt/examples' : undefined,
-  include: '.docs/**/*',
-  prefix: '/docs/5.x/4.examples'
-}
-
 const Image = z.object({
   src: z.string(),
   alt: z.string(),
@@ -111,33 +66,6 @@ const PageHero = BaseSection.extend({
 
 export default defineContentConfig({
   collections: {
-    docsv5: defineCollection({
-      type: 'page',
-      source: [docsV5Source, examplesV5Source],
-      schema: z.object({
-        titleTemplate: z.string().optional(),
-        links: z.array(Button),
-        minimalVersion: z.string().optional()
-      })
-    }),
-    docsv4: defineCollection({
-      type: 'page',
-      source: [docsV4Source, examplesV4Source],
-      schema: z.object({
-        titleTemplate: z.string().optional(),
-        links: z.array(Button),
-        minimalVersion: z.string().optional()
-      })
-    }),
-    docsv3: defineCollection({
-      type: 'page',
-      source: [docsV3Source, examplesV3Source],
-      schema: z.object({
-        titleTemplate: z.string().optional(),
-        links: z.array(Button),
-        minimalVersion: z.string().optional()
-      })
-    }),
     blog: defineCollection({
       type: 'page',
       source: 'blog/*',

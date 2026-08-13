@@ -1,5 +1,9 @@
 import { z } from 'zod'
-import { queryCollection } from '@nuxt/content/server'
+import { ALL_DOCS_SOURCES, DOCS_COLLECTION_SOURCES, type DocsCollection } from '#shared/utils/docs'
+
+function collectionForVersion(version: '3.x' | '4.x' | '5.x'): DocsCollection {
+  return version === '5.x' ? 'docsv5' : version === '3.x' ? 'docsv3' : 'docsv4'
+}
 
 export default defineMcpTool({
   description: `Lists Nuxt documentation pages, optionally filtered by search term.
@@ -22,28 +26,27 @@ TIPS: Always pass a search term to narrow results — avoids dumping the entire 
   ],
   cache: '1h',
   async handler({ version, search }) {
-    const event = useEvent()
-    let allDocs: { title: string, path: string, description: string }[] = []
+    const sources = version === 'all'
+      ? [...ALL_DOCS_SOURCES]
+      : [...DOCS_COLLECTION_SOURCES[collectionForVersion(version)]]
 
-    const collections = version === 'all'
-      ? ['docsv3', 'docsv4', 'docsv5'] as const
-      : [version === '3.x' ? 'docsv3' : version === '5.x' ? 'docsv5' : 'docsv4'] as const
+    const docs = await content.list(sources)
+    let allDocs = docs
+      .filter(item => item.meta.extension === '.md' && !item.meta.stem.split('/').pop()?.startsWith('.'))
+      .map(item => ({
+        title: item.data.title ?? item.path,
+        path: item.path,
+        description: item.data.description ?? ''
+      }))
 
-    for (const col of collections) {
-      const docs = await queryCollection(event, col)
-        .select('title', 'path', 'description')
-        .all()
-      if (!docs) {
-        if (version === 'all') continue
-        throw createError({ statusCode: 404, message: 'Documentation pages collection not found' })
-      }
-      allDocs.push(...docs)
+    if (!allDocs.length) {
+      throw createError({ statusCode: 404, message: 'Documentation pages collection not found' })
     }
 
     if (search) {
       const terms = search.toLowerCase().split(/\s+/)
       allDocs = allDocs.filter((doc) => {
-        const haystack = `${doc.title ?? ''} ${doc.path ?? ''} ${doc.description ?? ''}`.toLowerCase()
+        const haystack = `${doc.title} ${doc.path} ${doc.description}`.toLowerCase()
         return terms.every(t => haystack.includes(t))
       })
     }

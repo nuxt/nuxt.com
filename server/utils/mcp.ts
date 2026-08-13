@@ -1,6 +1,8 @@
 import type { H3Event } from 'h3'
 import { stringify } from 'minimark/stringify'
 import type { MinimarkNode } from 'minimark'
+import type { Node } from 'comark'
+import { renderMarkdown } from 'comark/render'
 import { queryCollection } from '@nuxt/content/server'
 
 type CollectionName = Parameters<typeof queryCollection>[1]
@@ -44,6 +46,30 @@ export async function fetchPageMarkdown(
   }
 
   return stringify({ type: 'minimark', value }, { format: 'markdown/html' })
+}
+
+export async function fetchContentMarkdown(path: string): Promise<string | null> {
+  const page = await content.get(path)
+  if (!page?.nodes) return null
+
+  const nodes: Node[] = [...page.nodes]
+  if (nodes[0]?.[0] !== 'h1') {
+    if (page.data.description) nodes.unshift(['blockquote', {}, page.data.description])
+    if (page.data.title) nodes.unshift(['h1', {}, page.data.title])
+  }
+
+  const links = page.data.links
+  if (Array.isArray(links) && links.length > 0) {
+    const items = links
+      .filter((link): link is { label: string, to: string } => Boolean(link?.label && link?.to))
+      .map(link => ['li', {}, ['a', { href: link.to }, link.label]] as Node)
+    if (items.length > 0) {
+      nodes.push(['hr', {}])
+      nodes.push(['ul', {}, ...items])
+    }
+  }
+
+  return renderMarkdown({ nodes }, { format: 'markdown/html' })
 }
 
 /**
