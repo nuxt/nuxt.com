@@ -147,19 +147,11 @@ export function useEveChat(options: UseEveChatOptions): AgentChatHandle & {
   }
 
   function stop() {
-    const { sessionId } = agent.session.value
-    const wasActive = agent.status.value === 'submitted' || agent.status.value === 'streaming'
+    if (agent.status.value !== 'submitted' && agent.status.value !== 'streaming') return
 
-    agent.stop()
-
-    // `agent.stop()` only aborts the client stream — best-effort cancel the
-    // server-side turn too, or it keeps running to completion.
-    if (wasActive && sessionId) {
-      void $fetch(`/eve/v1/session/${encodeURIComponent(sessionId)}/cancel`, {
-        method: 'POST',
-        headers: options.headers?.()
-      }).catch(() => {})
-    }
+    // `cancel()` durably cancels the server-side turn and keeps the stream
+    // attached until it settles — no separate client abort needed.
+    void agent.cancel().catch(() => {})
   }
 
   function hasAgentMessage(role: UIMessage['role']) {
