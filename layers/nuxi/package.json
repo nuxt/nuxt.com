@@ -8,13 +8,13 @@
     "start": "eve start"
   },
   "dependencies": {
-    "@ai-sdk/gateway": "^4.0.46",
-    "@chat-adapter/discord": "^4.37.0",
-    "@chat-adapter/state-memory": "^4.37.0",
-    "@chat-adapter/state-redis": "^4.37.0",
-    "ai": "^7.0.58",
-    "chat": "^4.37.0",
-    "eve": "^0.31.3",
+    "@ai-sdk/gateway": "^4.0.52",
+    "@chat-adapter/discord": "^4.38.0",
+    "@chat-adapter/state-memory": "^4.38.0",
+    "@chat-adapter/state-redis": "^4.38.0",
+    "ai": "^7.0.66",
+    "chat": "^4.38.0",
+    "eve": "^0.38.3",
     "zod": "^4.4.3"
   }
 }
