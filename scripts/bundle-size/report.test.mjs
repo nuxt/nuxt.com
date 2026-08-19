@@ -57,4 +57,11 @@ test('builds and compares production bundle snapshots', async () => {
   assert.match(report, /Client JavaScript/)
   assert.match(report, /Largest module increases/)
   assert.match(report, /report-only/)
+
+  const reportWithoutRoutes = compareSnapshots(
+    { ...base, routes: {} },
+    { ...head, routes: {} }
+  )
+  assert.doesNotMatch(reportWithoutRoutes, /Initial route/)
+  assert.doesNotMatch(reportWithoutRoutes, /Initial-route values/)
 })

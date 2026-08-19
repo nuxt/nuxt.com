@@ -45,7 +45,13 @@ jobs:
         run: ln -s .bundle-base/.nuxt .nuxt
       - name: Analyze the base bundle
         working-directory: .bundle-base
-        run: pnpm nuxt analyze --extends=../scripts/bundle-size/nuxt-layer --name=base --no-serve --logLevel=info
+        run: >-
+          pnpm --package=@nuxt/cli-nightly@3.38.0-20260726-220626-c3c9e90
+          dlx nuxt analyze
+          --extends=../scripts/bundle-size/nuxt-layer
+          --name=base
+          --no-serve
+          --logLevel=info
         env:
           NODE_OPTIONS: --max-old-space-size=8192
           NUXT_TELEMETRY_DISABLED: 1
@@ -64,7 +70,13 @@ jobs:
       - name: Prepare the PR revision
         run: pnpm nuxt prepare
       - name: Analyze the PR bundle
-        run: pnpm nuxt analyze --extends=./scripts/bundle-size/nuxt-layer --name=pr --no-serve --logLevel=info
+        run: >-
+          pnpm --package=@nuxt/cli-nightly@3.38.0-20260726-220626-c3c9e90
+          dlx nuxt analyze
+          --extends=./scripts/bundle-size/nuxt-layer
+          --name=pr
+          --no-serve
+          --logLevel=info
         env:
           NODE_OPTIONS: --max-old-space-size=8192
           NUXT_TELEMETRY_DISABLED: 1

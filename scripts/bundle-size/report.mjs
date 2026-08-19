@@ -302,10 +302,14 @@ export function compareSnapshots(base, head) {
     )
   }
 
-  lines.push(
-    '',
-    '> Initial-route values include JavaScript and CSS referenced by prerendered HTML. Module values come from Nuxt’s analyzer and are attribution estimates. This workflow is currently report-only.'
-  )
+  const notes = [
+    'Module values come from Nuxt’s analyzer and are attribution estimates.',
+    'This workflow is currently report-only.'
+  ]
+  if (routes.length > 0) {
+    notes.unshift('Initial-route values include JavaScript and CSS referenced by prerendered HTML.')
+  }
+  lines.push('', `> ${notes.join(' ')}`)
 
   return `${lines.join('\n')}\n`
 }
