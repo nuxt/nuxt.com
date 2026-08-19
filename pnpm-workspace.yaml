@@ -20,6 +20,7 @@ allowBuilds:
   puppeteer: false
   unrs-resolver: false
   vue-demi: false
+  zlib-sync: true
 
 minimumReleaseAgeExclude:
   - eve@0.24.3 || 0.27.0

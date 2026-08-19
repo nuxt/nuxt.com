@@ -1,6 +1,6 @@
 import type { ModelMessage } from 'ai'
 import { defineAgent, defineDynamic } from 'eve'
-import type { AdminMcpAuthContext } from './lib/admin-mcp-access.js'
+import type { AuthContext } from './lib/identity/context.js'
 import { nuxiGatewayOptions } from './lib/gateway-attribution.js'
 
 const MODEL = 'anthropic/claude-sonnet-4.6'
@@ -19,7 +19,7 @@ const ANTHROPIC_OPTIONS = {
  * from the first call, `turn.started` refines them once the prompt is in history
  * (that is where a schedule's skill id becomes visible).
  */
-function selectModel(auth: AdminMcpAuthContext | null | undefined, messages: readonly ModelMessage[]) {
+function selectModel(auth: AuthContext | null | undefined, messages: readonly ModelMessage[]) {
   return {
     model: MODEL,
     modelOptions: {
@@ -47,5 +47,16 @@ export default defineAgent({
   // No output cap for the same reason — thinking tokens count towards it.
   limits: {
     maxInputTokensPerSession: 4_000_000
+  },
+  // Keep Discord (and its optional native zlib) out of the Rolldown graph —
+  // discord.js uses direct `eval` and `@discordjs/ws` optionally imports
+  // `zlib-sync`, both of which spam `eve dev` compile diagnostics.
+  build: {
+    externalDependencies: [
+      '@chat-adapter/discord',
+      'discord.js',
+      '@discordjs/ws',
+      'zlib-sync'
+    ]
   }
 })

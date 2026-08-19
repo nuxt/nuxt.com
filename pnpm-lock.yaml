@@ -87,10 +87,13 @@ importers:
         version: 2.0.1(nuxt@4.5.2(63155f8a3eafbf16d6e6f2605838d953))(vue@3.5.41(typescript@6.0.3))
       '@vercel/connect':
         specifier: ^0.8.0
-        version: 0.8.0(@ai-sdk/mcp@2.0.32(zod@4.4.3))(ai@7.0.66(zod@4.4.3))(eve@0.38.3(@libsql/client@0.17.4)(@vercel/functions@3.9.3(ws@8.21.3))(ai@7.0.66(zod@4.4.3))(better-sqlite3@13.0.3)(chokidar@5.0.0)(dotenv@17.4.2)(drizzle-orm@0.45.2(@cloudflare/workers-types@4.20260702.1)(@libsql/client@0.17.4)(better-sqlite3@13.0.3))(giget@3.3.1)(ioredis@5.11.1(supports-color@10.2.2))(jiti@2.7.0)(lru-cache@11.5.2)(rollup@4.62.4)(vite@8.2.1(@types/node@26.2.0)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.50.0)(tsx@4.23.12)(yaml@2.9.0)))
+        version: 0.8.0(@ai-sdk/mcp@2.0.32(zod@4.4.3))(ai@7.0.66(zod@4.4.3))(eve@0.38.3(@libsql/client@0.17.4)(@vercel/functions@3.9.3(ws@8.21.3))(ai@7.0.66(zod@4.4.3))(better-sqlite3@13.0.3)(chokidar@5.0.0)(dotenv@17.4.2)(drizzle-orm@0.45.2(@cloudflare/workers-types@4.20260702.1)(@libsql/client@0.17.4)(better-sqlite3@13.0.3))(giget@3.3.1)(ioredis@5.11.1(supports-color@10.2.2))(jiti@2.7.0)(lru-cache@11.5.2)(microsandbox@0.6.9)(rollup@4.62.4)(vite@8.2.1(@types/node@26.2.0)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.50.0)(tsx@4.23.12)(yaml@2.9.0)))
       '@vercel/functions':
         specifier: ^3.9.3
         version: 3.9.3(ws@8.21.3)
+      '@vercel/global-config':
+        specifier: ^1.5.0
+        version: 1.5.1
       '@vercel/speed-insights':
         specifier: ^2.0.0
         version: 2.0.0(nuxt@4.5.2(63155f8a3eafbf16d6e6f2605838d953))(vue@3.5.41(typescript@6.0.3))
@@ -123,10 +126,10 @@ importers:
         version: 0.45.2(@cloudflare/workers-types@4.20260702.1)(@libsql/client@0.17.4)(better-sqlite3@13.0.3)
       eve:
         specifier: ^0.38.3
-        version: 0.38.3(@libsql/client@0.17.4)(@vercel/functions@3.9.3(ws@8.21.3))(ai@7.0.66(zod@4.4.3))(better-sqlite3@13.0.3)(chokidar@5.0.0)(dotenv@17.4.2)(drizzle-orm@0.45.2(@cloudflare/workers-types@4.20260702.1)(@libsql/client@0.17.4)(better-sqlite3@13.0.3))(giget@3.3.1)(ioredis@5.11.1(supports-color@10.2.2))(jiti@2.7.0)(lru-cache@11.5.2)(rollup@4.62.4)(vite@8.2.1(@types/node@26.2.0)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.50.0)(tsx@4.23.12)(yaml@2.9.0))
+        version: 0.38.3(@libsql/client@0.17.4)(@vercel/functions@3.9.3(ws@8.21.3))(ai@7.0.66(zod@4.4.3))(better-sqlite3@13.0.3)(chokidar@5.0.0)(dotenv@17.4.2)(drizzle-orm@0.45.2(@cloudflare/workers-types@4.20260702.1)(@libsql/client@0.17.4)(better-sqlite3@13.0.3))(giget@3.3.1)(ioredis@5.11.1(supports-color@10.2.2))(jiti@2.7.0)(lru-cache@11.5.2)(microsandbox@0.6.9)(rollup@4.62.4)(vite@8.2.1(@types/node@26.2.0)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.50.0)(tsx@4.23.12)(yaml@2.9.0))
       evlog:
         specifier: ^2.26.0
-        version: 2.26.0(3545f66eabe4c975e27ea83f7c6d06d0)
+        version: 2.26.0(12161be8f9ac74cc033534bbc60ce6dc)
       feed:
         specifier: ^5.2.1
         version: 5.2.1
@@ -230,6 +233,9 @@ importers:
       happy-dom:
         specifier: ^20.11.2
         version: 20.11.2
+      microsandbox:
+        specifier: ^0.6.8
+        version: 0.6.9
       nuxt-content-twoslash:
         specifier: ^0.4.0
         version: 0.4.0(@nuxtjs/mdc@0.23.1(magic-string@1.2.0)(magicast@0.5.4)(oxc-parser@0.143.0)(rolldown@1.2.4)(supports-color@10.2.2)(unplugin@3.3.0(esbuild@0.28.2)(rolldown@1.2.4)(rollup@4.62.4)(vite@8.2.1(@types/node@26.2.0)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.50.0)(tsx@4.23.12)(yaml@2.9.0))))(magic-string@1.2.0)(magicast@0.5.4)(oxc-parser@0.143.0)(rolldown@1.2.4)(supports-color@10.2.2)(unplugin@3.3.0(esbuild@0.28.2)(rolldown@1.2.4)(rollup@4.62.4)(vite@8.2.1(@types/node@26.2.0)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.50.0)(tsx@4.23.12)(yaml@2.9.0)))
@@ -254,6 +260,10 @@ importers:
       vue-tsc:
         specifier: ^3.3.10
         version: 3.3.10(typescript@6.0.3)
+    optionalDependencies:
+      zlib-sync:
+        specifier: ^0.1.10
+        version: 0.1.10
 
 packages:
 
@@ -3228,6 +3238,38 @@ packages:
     peerDependencies:
       eslint: ^9.0.0 || ^10.0.0
 
+  '@superradcompany/microsandbox-darwin-arm64@0.6.9':
+    resolution: {integrity: sha512-0b7XqqmAr+MPpz2kd8Bau5tEDSHjcQFVyZd9T2kPLM+KAFOlRKUVotQuGHMPr4B+X64Q6eRXYsIwBZ4f5g95Cw==}
+    engines: {node: '>= 22'}
+    cpu: [arm64]
+    os: [darwin]
+
+  '@superradcompany/microsandbox-linux-arm64-gnu@0.6.9':
+    resolution: {integrity: sha512-D2xvbNsQG5P9y9JuaJwNfVkjYxOa10uoim8ZNSCkMZbcmzu+OxVqZVGOLyDYcA7CnYepninKqtst8CyXn2CACQ==}
+    engines: {node: '>= 22'}
+    cpu: [arm64]
+    os: [linux]
+    libc: [glibc]
+
+  '@superradcompany/microsandbox-linux-x64-gnu@0.6.9':
+    resolution: {integrity: sha512-nfL/CZbHqKDASH9V4OjevkMvw6PNPz6pFqdzrApzel3xcVCZMpdP34fhxV4hDhdHgghniSW6EQvTl0Zxj+cmzw==}
+    engines: {node: '>= 22'}
+    cpu: [x64]
+    os: [linux]
+    libc: [glibc]
+
+  '@superradcompany/microsandbox-win32-arm64-msvc@0.6.9':
+    resolution: {integrity: sha512-SYsZckrCo27yl+Rkp6H9Fe6AkeMZ0uN/psPfvbyK6PYvOiWInZoxKnllhUvFLi+LgFin/RhPQUBpNTGAuccCmw==}
+    engines: {node: '>= 22'}
+    cpu: [arm64]
+    os: [win32]
+
+  '@superradcompany/microsandbox-win32-x64-msvc@0.6.9':
+    resolution: {integrity: sha512-VnrXTRPDSfAexe40rUyvvSX4zzQ3g9ws3o1bQjX5sjPqffcINve6hMOuTQgxIAzlp+UoIauMFq4cAlWuwxgqFQ==}
+    engines: {node: '>= 22'}
+    cpu: [x64]
+    os: [win32]
+
   '@swc/helpers@0.5.23':
     resolution: {integrity: sha512-5lSsMOTXURePglDfvuAQUqkGek9Hg2kksOYay2m0+XR++b2NWYL/4sWyuvVBIs8oKnJaxkdi9whaL/sqN13afw==}
 
@@ -4229,6 +4271,21 @@ packages:
       '@aws-sdk/credential-provider-web-identity':
         optional: true
       ws:
+        optional: true
+
+  '@vercel/global-config-fs@0.1.0':
+    resolution: {integrity: sha512-xxMUwf96H/qKTA4Az+uh3xlVWkwnN3z400P5gex0uUsU8pe99njopYVyKVoUTfu8gN9xbHqaigWaIBr1+lufMg==}
+
+  '@vercel/global-config@1.5.1':
+    resolution: {integrity: sha512-PUJaoyMGuSLdKnBgYIqeH1i6U3G+5noLvvJLqI8IPP5+P0b2Q5EcBBraFRh6ctNY/yTpb40klyLYyE3X0OPmKQ==}
+    engines: {node: '>=14.6'}
+    peerDependencies:
+      '@opentelemetry/api': ^1.7.0
+      next: '>=1'
+    peerDependenciesMeta:
+      '@opentelemetry/api':
+        optional: true
+      next:
         optional: true
 
   '@vercel/nft@1.10.2':
@@ -7557,6 +7614,11 @@ packages:
     resolution: {integrity: sha512-PXwfBhYu0hBCPw8Dn0E+WDYb7af3dSLVWKi3HGv84IdF4TyFoC0ysxFd0Goxw7nSv4T/PzEJQxsYsEiFCKo2BA==}
     engines: {node: '>=8.6'}
 
+  microsandbox@0.6.9:
+    resolution: {integrity: sha512-la9REVB0OAoSqBkmivTDAtPR/Bje5kxRJZIStK1dhwq84Y6+XOo+tGwQU8U5LgzB+8MMW+55SFLmafFmBws4FA==}
+    engines: {node: '>= 22'}
+    hasBin: true
+
   mime-db@1.54.0:
     resolution: {integrity: sha512-aU5EJuIN2WDemCcAp2vFBfp/m4EAhWJnUNSSw0ixs7/kXbd6Pg64EmwJkNdFhB8aWt1sH2CTXrLxo/iAGV3oPQ==}
     engines: {node: '>= 0.6'}
@@ -7649,6 +7711,9 @@ packages:
 
   murmurhash-js@1.0.0:
     resolution: {integrity: sha512-TvmkNhkv8yct0SVBSy+o8wYzXjE4Zz3PCesbfs8HiCXXdcTuocApFv11UWlNFWKYsP2okqrhb7JNlSm9InBhIw==}
+
+  nan@2.28.0:
+    resolution: {integrity: sha512-fTsDz99OTq2sVePhGdp4qQhggZFtKr64ZNVyVajRKtMOkJxYekplBh577PiJB12v/D3s2E5cGtOI45LWp6rnLQ==}
 
   nanoid@3.3.18:
     resolution: {integrity: sha512-DTg4MJbGMWkfi6VZFdNt2/caMbQy4Ou+Op/hJQvGEWcnVfoA1QA+xzRKAzw9jD6+GVOOeYr/mIcuDSdug6F6+w==}
@@ -10344,6 +10409,9 @@ packages:
   zip-stream@6.0.1:
     resolution: {integrity: sha512-zK7YHHz4ZXpW89AHXUPbQVGKI7uvkd3hzusTdotCg1UxyaVtg0zFJSTfW/Dq5f7OBBVnq6cZIaC8Ti4hb6dtCA==}
     engines: {node: '>= 14'}
+
+  zlib-sync@0.1.10:
+    resolution: {integrity: sha512-t7/pYg5tLBznL1RuhmbAt8rNp5tbhr+TSrJFnMkRtrGIaPJZ6Dc0uR4u3OoQI2d6cGlVI62E3Gy6gwkxyIqr/w==}
 
   zod-to-json-schema@3.25.2:
     resolution: {integrity: sha512-O/PgfnpT1xKSDeQYSCfRI5Gy3hPf91mKVDuYLUHZJMiDFptvP41MSnWofm8dnCm0256ZNfZIM7DSzuSMAFnjHA==}
@@ -13756,6 +13824,21 @@ snapshots:
       estraverse: 5.3.0
       picomatch: 4.0.5
 
+  '@superradcompany/microsandbox-darwin-arm64@0.6.9':
+    optional: true
+
+  '@superradcompany/microsandbox-linux-arm64-gnu@0.6.9':
+    optional: true
+
+  '@superradcompany/microsandbox-linux-x64-gnu@0.6.9':
+    optional: true
+
+  '@superradcompany/microsandbox-win32-arm64-msvc@0.6.9':
+    optional: true
+
+  '@superradcompany/microsandbox-win32-x64-msvc@0.6.9':
+    optional: true
+
   '@swc/helpers@0.5.23':
     dependencies:
       tslib: 2.8.1
@@ -14763,19 +14846,25 @@ snapshots:
     dependencies:
       execa: 5.1.1
 
-  '@vercel/connect@0.8.0(@ai-sdk/mcp@2.0.32(zod@4.4.3))(ai@7.0.66(zod@4.4.3))(eve@0.38.3(@libsql/client@0.17.4)(@vercel/functions@3.9.3(ws@8.21.3))(ai@7.0.66(zod@4.4.3))(better-sqlite3@13.0.3)(chokidar@5.0.0)(dotenv@17.4.2)(drizzle-orm@0.45.2(@cloudflare/workers-types@4.20260702.1)(@libsql/client@0.17.4)(better-sqlite3@13.0.3))(giget@3.3.1)(ioredis@5.11.1(supports-color@10.2.2))(jiti@2.7.0)(lru-cache@11.5.2)(rollup@4.62.4)(vite@8.2.1(@types/node@26.2.0)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.50.0)(tsx@4.23.12)(yaml@2.9.0)))':
+  '@vercel/connect@0.8.0(@ai-sdk/mcp@2.0.32(zod@4.4.3))(ai@7.0.66(zod@4.4.3))(eve@0.38.3(@libsql/client@0.17.4)(@vercel/functions@3.9.3(ws@8.21.3))(ai@7.0.66(zod@4.4.3))(better-sqlite3@13.0.3)(chokidar@5.0.0)(dotenv@17.4.2)(drizzle-orm@0.45.2(@cloudflare/workers-types@4.20260702.1)(@libsql/client@0.17.4)(better-sqlite3@13.0.3))(giget@3.3.1)(ioredis@5.11.1(supports-color@10.2.2))(jiti@2.7.0)(lru-cache@11.5.2)(microsandbox@0.6.9)(rollup@4.62.4)(vite@8.2.1(@types/node@26.2.0)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.50.0)(tsx@4.23.12)(yaml@2.9.0)))':
     dependencies:
       '@vercel/oidc': 3.8.4
     optionalDependencies:
       '@ai-sdk/mcp': 2.0.32(zod@4.4.3)
       ai: 7.0.66(zod@4.4.3)
-      eve: 0.38.3(@libsql/client@0.17.4)(@vercel/functions@3.9.3(ws@8.21.3))(ai@7.0.66(zod@4.4.3))(better-sqlite3@13.0.3)(chokidar@5.0.0)(dotenv@17.4.2)(drizzle-orm@0.45.2(@cloudflare/workers-types@4.20260702.1)(@libsql/client@0.17.4)(better-sqlite3@13.0.3))(giget@3.3.1)(ioredis@5.11.1(supports-color@10.2.2))(jiti@2.7.0)(lru-cache@11.5.2)(rollup@4.62.4)(vite@8.2.1(@types/node@26.2.0)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.50.0)(tsx@4.23.12)(yaml@2.9.0))
+      eve: 0.38.3(@libsql/client@0.17.4)(@vercel/functions@3.9.3(ws@8.21.3))(ai@7.0.66(zod@4.4.3))(better-sqlite3@13.0.3)(chokidar@5.0.0)(dotenv@17.4.2)(drizzle-orm@0.45.2(@cloudflare/workers-types@4.20260702.1)(@libsql/client@0.17.4)(better-sqlite3@13.0.3))(giget@3.3.1)(ioredis@5.11.1(supports-color@10.2.2))(jiti@2.7.0)(lru-cache@11.5.2)(microsandbox@0.6.9)(rollup@4.62.4)(vite@8.2.1(@types/node@26.2.0)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.50.0)(tsx@4.23.12)(yaml@2.9.0))
 
   '@vercel/functions@3.9.3(ws@8.21.3)':
     dependencies:
       '@vercel/oidc': 3.8.4
     optionalDependencies:
       ws: 8.21.3
+
+  '@vercel/global-config-fs@0.1.0': {}
+
+  '@vercel/global-config@1.5.1':
+    dependencies:
+      '@vercel/global-config-fs': 0.1.0
 
   '@vercel/nft@1.10.2(rollup@4.62.4)(supports-color@10.2.2)':
     dependencies:
@@ -16628,11 +16717,13 @@ snapshots:
       - bufferutil
       - utf-8-validate
 
-  eve@0.38.3(@libsql/client@0.17.4)(@vercel/functions@3.9.3(ws@8.21.3))(ai@7.0.66(zod@4.4.3))(better-sqlite3@13.0.3)(chokidar@5.0.0)(dotenv@17.4.2)(drizzle-orm@0.45.2(@cloudflare/workers-types@4.20260702.1)(@libsql/client@0.17.4)(better-sqlite3@13.0.3))(giget@3.3.1)(ioredis@5.11.1(supports-color@10.2.2))(jiti@2.7.0)(lru-cache@11.5.2)(rollup@4.62.4)(vite@8.2.1(@types/node@26.2.0)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.50.0)(tsx@4.23.12)(yaml@2.9.0)):
+  eve@0.38.3(@libsql/client@0.17.4)(@vercel/functions@3.9.3(ws@8.21.3))(ai@7.0.66(zod@4.4.3))(better-sqlite3@13.0.3)(chokidar@5.0.0)(dotenv@17.4.2)(drizzle-orm@0.45.2(@cloudflare/workers-types@4.20260702.1)(@libsql/client@0.17.4)(better-sqlite3@13.0.3))(giget@3.3.1)(ioredis@5.11.1(supports-color@10.2.2))(jiti@2.7.0)(lru-cache@11.5.2)(microsandbox@0.6.9)(rollup@4.62.4)(vite@8.2.1(@types/node@26.2.0)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.50.0)(tsx@4.23.12)(yaml@2.9.0)):
     dependencies:
       ai: 7.0.66(zod@4.4.3)
       nitro: 3.0.260610-beta(@libsql/client@0.17.4)(@vercel/functions@3.9.3(ws@8.21.3))(better-sqlite3@13.0.3)(chokidar@5.0.0)(dotenv@17.4.2)(drizzle-orm@0.45.2(@cloudflare/workers-types@4.20260702.1)(@libsql/client@0.17.4)(better-sqlite3@13.0.3))(giget@3.3.1)(ioredis@5.11.1(supports-color@10.2.2))(jiti@2.7.0)(lru-cache@11.5.2)(rollup@4.62.4)(vite@8.2.1(@types/node@26.2.0)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.50.0)(tsx@4.23.12)(yaml@2.9.0))
       undici: 8.9.0
+    optionalDependencies:
+      microsandbox: 0.6.9
     transitivePeerDependencies:
       - '@azure/app-configuration'
       - '@azure/cosmos'
@@ -16689,11 +16780,11 @@ snapshots:
     dependencies:
       eventsource-parser: 3.1.1
 
-  evlog@2.26.0(3545f66eabe4c975e27ea83f7c6d06d0):
+  evlog@2.26.0(12161be8f9ac74cc033534bbc60ce6dc):
     optionalDependencies:
       '@nuxt/kit': 4.5.2(magic-string@1.2.0)(magicast@0.5.4)(oxc-parser@0.143.0)(rolldown@1.2.4)(unplugin@3.3.0(esbuild@0.28.2)(rolldown@1.2.4)(rollup@4.62.4)(vite@8.2.1(@types/node@26.2.0)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.50.0)(tsx@4.23.12)(yaml@2.9.0)))
       ai: 7.0.66(zod@4.4.3)
-      eve: 0.38.3(@libsql/client@0.17.4)(@vercel/functions@3.9.3(ws@8.21.3))(ai@7.0.66(zod@4.4.3))(better-sqlite3@13.0.3)(chokidar@5.0.0)(dotenv@17.4.2)(drizzle-orm@0.45.2(@cloudflare/workers-types@4.20260702.1)(@libsql/client@0.17.4)(better-sqlite3@13.0.3))(giget@3.3.1)(ioredis@5.11.1(supports-color@10.2.2))(jiti@2.7.0)(lru-cache@11.5.2)(rollup@4.62.4)(vite@8.2.1(@types/node@26.2.0)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.50.0)(tsx@4.23.12)(yaml@2.9.0))
+      eve: 0.38.3(@libsql/client@0.17.4)(@vercel/functions@3.9.3(ws@8.21.3))(ai@7.0.66(zod@4.4.3))(better-sqlite3@13.0.3)(chokidar@5.0.0)(dotenv@17.4.2)(drizzle-orm@0.45.2(@cloudflare/workers-types@4.20260702.1)(@libsql/client@0.17.4)(better-sqlite3@13.0.3))(giget@3.3.1)(ioredis@5.11.1(supports-color@10.2.2))(jiti@2.7.0)(lru-cache@11.5.2)(microsandbox@0.6.9)(rollup@4.62.4)(vite@8.2.1(@types/node@26.2.0)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.50.0)(tsx@4.23.12)(yaml@2.9.0))
       express: 5.2.1(supports-color@10.2.2)
       fastify: 5.12.0
       h3: 1.15.11
@@ -18470,6 +18561,14 @@ snapshots:
       braces: 3.0.3
       picomatch: 2.3.2
 
+  microsandbox@0.6.9:
+    optionalDependencies:
+      '@superradcompany/microsandbox-darwin-arm64': 0.6.9
+      '@superradcompany/microsandbox-linux-arm64-gnu': 0.6.9
+      '@superradcompany/microsandbox-linux-x64-gnu': 0.6.9
+      '@superradcompany/microsandbox-win32-arm64-msvc': 0.6.9
+      '@superradcompany/microsandbox-win32-x64-msvc': 0.6.9
+
   mime-db@1.54.0: {}
 
   mime-types@3.0.2:
@@ -18548,6 +18647,9 @@ snapshots:
   muggle-string@0.4.1: {}
 
   murmurhash-js@1.0.0: {}
+
+  nan@2.28.0:
+    optional: true
 
   nanoid@3.3.18: {}
 
@@ -22030,6 +22132,11 @@ snapshots:
       archiver-utils: 5.0.2
       compress-commons: 6.0.2
       readable-stream: 4.7.0
+
+  zlib-sync@0.1.10:
+    dependencies:
+      nan: 2.28.0
+    optional: true
 
   zod-to-json-schema@3.25.2(zod@3.25.76):
     dependencies:
