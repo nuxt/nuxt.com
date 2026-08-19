@@ -26,8 +26,8 @@ jobs:
             const run = context.payload.workflow_run
             const shaPattern = /^[0-9a-f]{40}$/
 
-            if (run.path !== '.github/workflows/bundle-size.yml') {
-              core.setFailed('The triggering workflow path is invalid.')
+            if (run.name !== 'bundle-size') {
+              core.setFailed('The triggering workflow name is invalid.')
               return
             }
 

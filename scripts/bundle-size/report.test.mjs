@@ -97,3 +97,31 @@ test('validates snapshots and safely renders module identifiers', () => {
     /snapshot SHA does not match/
   )
 })
+
+test('reports PR-only module identifiers inherited by ordinary objects', () => {
+  const emptyTotals = {
+    javascript: { raw: 0, gzip: 0, brotli: 0 },
+    css: { raw: 0, gzip: 0, brotli: 0 },
+    other: { raw: 0, gzip: 0, brotli: 0 },
+    all: { raw: 0, gzip: 0, brotli: 0 }
+  }
+  const base = {
+    schemaVersion: 2,
+    label: 'base',
+    sha: 'a'.repeat(40),
+    totals: emptyTotals,
+    modules: {}
+  }
+  const head = {
+    schemaVersion: 2,
+    label: 'pr',
+    sha: 'b'.repeat(40),
+    totals: emptyTotals,
+    modules: {
+      constructor: { raw: 3, gzip: 2, brotli: 1 }
+    }
+  }
+
+  const report = compareSnapshots(base, head)
+  assert.match(report, /<code>constructor<\/code> \| 0 B \| 1 B \| \+1 B/)
+})

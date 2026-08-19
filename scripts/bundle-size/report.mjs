@@ -275,8 +275,8 @@ function metricRow(label, base, head) {
 function moduleRegressions(base, head) {
   const modules = new Set([...Object.keys(base.modules), ...Object.keys(head.modules)])
   return [...modules].map((id) => {
-    const baseSize = base.modules[id] || EMPTY_SIZE
-    const headSize = head.modules[id] || EMPTY_SIZE
+    const baseSize = Object.hasOwn(base.modules, id) ? base.modules[id] : EMPTY_SIZE
+    const headSize = Object.hasOwn(head.modules, id) ? head.modules[id] : EMPTY_SIZE
     return {
       id,
       base: baseSize,
