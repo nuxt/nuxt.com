@@ -38,6 +38,9 @@ jobs:
       - name: Install base dependencies
         working-directory: .bundle-base
         run: pnpm install --frozen-lockfile
+      - name: Prepare the base revision
+        working-directory: .bundle-base
+        run: pnpm nuxt prepare
       - name: Analyze the base bundle
         working-directory: .bundle-base
         run: pnpm nuxt analyze --extends=../scripts/bundle-size/nuxt-layer --name=base --no-serve --logLevel=info
@@ -54,6 +57,8 @@ jobs:
           --output ${{ runner.temp }}/bundle-size/base.json
       - name: Install PR dependencies
         run: pnpm install --frozen-lockfile
+      - name: Prepare the PR revision
+        run: pnpm nuxt prepare
       - name: Analyze the PR bundle
         run: pnpm nuxt analyze --extends=./scripts/bundle-size/nuxt-layer --name=pr --no-serve --logLevel=info
         env:

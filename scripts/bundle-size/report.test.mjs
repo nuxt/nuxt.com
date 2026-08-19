@@ -1,13 +1,13 @@
 import assert from 'node:assert/strict'
-import { after, test } from 'node:test'
 import { mkdtemp, mkdir, rm, writeFile } from 'node:fs/promises'
 import { join } from 'node:path'
 import { tmpdir } from 'node:os'
+import { afterAll, test } from 'vitest'
 import { buildSnapshot, compareSnapshots } from './report.mjs'
 
 const temporaryDirectories = []
 
-after(async () => {
+afterAll(async () => {
   await Promise.all(temporaryDirectories.map(directory => rm(directory, { force: true, recursive: true })))
 })
 
