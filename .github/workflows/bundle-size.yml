@@ -41,6 +41,8 @@ jobs:
       - name: Prepare the base revision
         working-directory: .bundle-base
         run: pnpm nuxt prepare
+      - name: Link the base Nuxt metadata
+        run: ln -s .bundle-base/.nuxt .nuxt
       - name: Analyze the base bundle
         working-directory: .bundle-base
         run: pnpm nuxt analyze --extends=../scripts/bundle-size/nuxt-layer --name=base --no-serve --logLevel=info
@@ -55,6 +57,8 @@ jobs:
           --label base
           --sha ${{ github.event.pull_request.base.sha }}
           --output ${{ runner.temp }}/bundle-size/base.json
+      - name: Remove the base Nuxt metadata link
+        run: unlink .nuxt
       - name: Install PR dependencies
         run: pnpm install --frozen-lockfile
       - name: Prepare the PR revision
