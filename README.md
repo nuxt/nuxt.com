@@ -108,7 +108,7 @@ NUXT_PUBLIC_SITE_URL=http://localhost:3000
 pnpm dev:nuxi
 ```
 
-Eve TUI only (no Nuxt UI): `pnpm nuxi`. Symlink the root `.env` / `.env.local` into `layers/nuxi` so Eve picks them up. Set `NUXI_CLI_ADMIN=1` for admin tools (ignored when `VERCEL_ENV=production`). Point at a running site with `pnpm nuxi -- http://localhost:3000`.
+Eve TUI only (no Nuxt UI): `pnpm nuxi`. Symlink the root `.env` / `.env.local` into `layers/nuxi` so Eve picks them up. Set `NUXI_CLI_ADMIN=1` for admin tools (ignored when `VERCEL_ENV=production`). For **web chat** admin without being on the Nuxt core team, set `NUXT_ADMIN_GITHUB_LOGINS=your-github-login` and sign in with GitHub (also ignored in production — use Global Config `admin.githubLogins` there). Point at a running site with `pnpm nuxi -- http://localhost:3000`.
 
 On Vercel, configure **both** the `web` and `eve` services (`vercel.json`) with the same `INTERNAL_API_SECRET`, `AI_GATEWAY_API_KEY`, and database env vars.
 

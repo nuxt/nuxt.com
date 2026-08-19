@@ -17,12 +17,22 @@ export async function isCoreTeamMember(login: string): Promise<boolean> {
   return coreMembers.some(member => member.login.toLowerCase() === login)
 }
 
-/** Extra admin logins live in Global Config (`admin.githubLogins`), editable from the Vercel dashboard with no redeploy. */
+function parseGithubLogins(raw: unknown): string[] {
+  const values = Array.isArray(raw)
+    ? raw.map(value => String(value))
+    : typeof raw === 'string'
+      ? raw.split(',')
+      : []
+  return [...new Set(values.map(value => value.trim().toLowerCase()).filter(Boolean))]
+}
+
+/** Extra admin logins: `NUXT_ADMIN_GITHUB_LOGINS` (local/preview) union Global Config `admin.githubLogins`. Env ignored in production. */
 async function getExtraAdminLogins(): Promise<string[]> {
+  const fromEnv = process.env.VERCEL_ENV === 'production'
+    ? []
+    : parseGithubLogins(process.env.NUXT_ADMIN_GITHUB_LOGINS)
   const config = await readGlobalConfig<{ admin?: { githubLogins?: string[] } }>(['admin'])
-  const raw = config.admin?.githubLogins
-  if (!Array.isArray(raw)) return []
-  return raw.map(login => String(login).trim().toLowerCase()).filter(Boolean)
+  return [...new Set([...fromEnv, ...parseGithubLogins(config.admin?.githubLogins)])]
 }
 
 export async function isAuthorizedAdmin(login: string): Promise<boolean> {

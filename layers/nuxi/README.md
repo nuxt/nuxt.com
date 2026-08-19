@@ -204,7 +204,7 @@ One root key per surface — each self-contained, so you never have to jump else
 }
 ```
 
-- `admin.githubLogins` — extra admin GitHub logins on top of the core team (`server/utils/team.ts`, main Nuxt app).
+- `admin.githubLogins` — extra admin GitHub logins on top of the core team (`server/utils/team.ts`, main Nuxt app). Locally (and on preview), `NUXT_ADMIN_GITHUB_LOGINS` is a comma-separated overlay of the same list so you can test web-chat admin without Global Config; ignored when `VERCEL_ENV=production`. Re-sign-in after changing it.
 - `slack` — workspace subdomain + the two known channel refs, consumed by `agent/lib/slack/config.ts` / `slack/api.ts`.
 - `discord` — the live-dispatch allowlist (`channels.admin` / `channels.public` / `channels.autoRespond`) and the optional digest-mirror target (`digestChannel`), consumed by `agent/lib/discord/access.ts`. `admin` grants admin mode; `public` and `autoRespond` stay on the public toolset (`autoRespond` answers without an `@mention`).
 - `workflow` — the only cross-cutting knobs left: digest window and the manual-trigger safety switch, consumed by `agent/lib/workflow/config.ts` / `workflow/shared.ts`.
