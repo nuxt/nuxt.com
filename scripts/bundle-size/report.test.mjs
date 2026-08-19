@@ -80,13 +80,15 @@ test('validates snapshots and safely renders module identifiers', () => {
     sha: 'b'.repeat(40),
     totals,
     modules: {
-      '`</code>|@nuxt<img src=x>`': size
+      '`</code>|@nuxt<img src=x>`': size,
+      '[click me](https://evil.example/)': size
     }
   }
 
   const report = compareSnapshots(base, head, { baseSha: base.sha, headSha: head.sha })
-  assert.doesNotMatch(report, /@nuxt|<img/)
-  assert.match(report, /&lt;\/code&gt;&#124;&#64;nuxt&lt;img src=x&gt;/)
+  assert.doesNotMatch(report, /@nuxt|<img|\[click me\]/)
+  assert.match(report, /&#96;&lt;\/code&gt;&#124;&#64;nuxt&lt;img src=x&gt;&#96;/)
+  assert.match(report, /&#91;click me&#93;\(https:\/\/evil\.example\/\)/)
 
   assert.throws(
     () => validateSnapshot({ ...base, schemaVersion: 1 }, { label: 'base' }),

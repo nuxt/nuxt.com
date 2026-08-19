@@ -263,6 +263,9 @@ function inlineCode(value) {
     .replaceAll('>', '&gt;')
     .replaceAll('@', '&#64;')
     .replaceAll('|', '&#124;')
+    .replaceAll('`', '&#96;')
+    .replaceAll('[', '&#91;')
+    .replaceAll(']', '&#93;')
     .replaceAll('\r', ' ')
     .replaceAll('\n', ' ')
   return `<code>${escaped}</code>`
