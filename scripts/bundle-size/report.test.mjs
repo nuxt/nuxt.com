@@ -23,7 +23,6 @@ test('builds and compares production bundle snapshots', async () => {
   await writeFile(join(assetDir, 'entry.js'), 'console.log("entry")')
   await writeFile(join(assetDir, 'entry.css'), 'body { color: green }')
   await writeFile(join(assetDir, 'entry.js.map'), '{}')
-  await writeFile(join(publicDir, 'index.html'), '<link rel="stylesheet" href="/_nuxt/entry.css"><script src="/_nuxt/entry.js"></script>')
   await writeFile(analyzePath, JSON.stringify({
     nodeParts: {
       part: {
@@ -50,18 +49,10 @@ test('builds and compares production bundle snapshots', async () => {
   head.modules['node_modules/example/index.js'].brotli += 10
 
   assert.equal(base.assets['_nuxt/entry.js.map'], undefined)
-  assert.equal(base.routes['/'].raw, base.totals.javascript.raw + base.totals.css.raw)
   assert.equal(base.modules['node_modules/example/index.js'].brotli, 60)
 
   const report = compareSnapshots(base, head)
   assert.match(report, /Client JavaScript/)
   assert.match(report, /Largest module increases/)
   assert.match(report, /report-only/)
-
-  const reportWithoutRoutes = compareSnapshots(
-    { ...base, routes: {} },
-    { ...head, routes: {} }
-  )
-  assert.doesNotMatch(reportWithoutRoutes, /Initial route/)
-  assert.doesNotMatch(reportWithoutRoutes, /Initial-route values/)
 })

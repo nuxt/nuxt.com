@@ -3,12 +3,6 @@ import { mkdir, readFile, readdir, writeFile } from 'node:fs/promises'
 import { dirname, extname, relative, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
-const REPRESENTATIVE_ROUTES = [
-  '/',
-  '/docs/4.x/getting-started/introduction',
-  '/docs/5.x/getting-started/introduction'
-]
-
 const EMPTY_SIZE = Object.freeze({ raw: 0, gzip: 0, brotli: 0 })
 
 function addSizes(target, sizes) {
@@ -111,58 +105,6 @@ async function readAnalyzerModules(analyzePath, root) {
   return Object.fromEntries([...modules.entries()].sort(([a], [b]) => a.localeCompare(b)))
 }
 
-async function readFirst(paths) {
-  for (const path of paths) {
-    try {
-      return await readFile(path, 'utf8')
-    } catch (error) {
-      if (error.code !== 'ENOENT') {
-        throw error
-      }
-    }
-  }
-}
-
-async function routeSizes(route, publicDir, assets) {
-  const relativeRoute = route.replace(/^\//, '')
-  const html = await readFirst(route === '/'
-    ? [resolve(publicDir, 'index.html')]
-    : [
-        resolve(publicDir, relativeRoute, 'index.html'),
-        resolve(publicDir, `${relativeRoute}.html`)
-      ])
-
-  if (!html) {
-    return
-  }
-
-  const referencedAssets = new Set()
-  const attributePattern = /(?:href|src)=["']([^"']+)["']/g
-  for (const match of html.matchAll(attributePattern)) {
-    let pathname
-    try {
-      pathname = new URL(match[1], 'https://nuxt.com').pathname
-    } catch {
-      continue
-    }
-
-    if (!pathname.startsWith('/_nuxt/')) {
-      continue
-    }
-
-    const file = pathname.slice(1)
-    if (assets[file]?.kind === 'javascript' || assets[file]?.kind === 'css') {
-      referencedAssets.add(file)
-    }
-  }
-
-  const sizes = { ...EMPTY_SIZE }
-  for (const file of referencedAssets) {
-    addSizes(sizes, assets[file].sizes)
-  }
-  return sizes
-}
-
 export async function buildSnapshot({ root, analyzePath, label, sha }) {
   const absoluteRoot = resolve(root)
   const publicDir = resolve(absoluteRoot, '.output/public')
@@ -193,20 +135,11 @@ export async function buildSnapshot({ root, analyzePath, label, sha }) {
     addSizes(totals.all, asset.sizes)
   }
 
-  const routes = {}
-  for (const route of REPRESENTATIVE_ROUTES) {
-    const sizes = await routeSizes(route, publicDir, assets)
-    if (sizes) {
-      routes[route] = sizes
-    }
-  }
-
   return {
     schemaVersion: 1,
     label,
     sha,
     totals,
-    routes,
     assets,
     modules: await readAnalyzerModules(resolve(analyzePath), absoluteRoot)
   }
@@ -278,18 +211,6 @@ export function compareSnapshots(base, head) {
     metricRow('Total client assets', base.totals.all, head.totals.all)
   ]
 
-  const routes = Object.keys(base.routes).filter(route => head.routes[route])
-  if (routes.length > 0) {
-    lines.push(
-      '',
-      '### Initial route assets',
-      '',
-      '| Route | Base (Brotli) | PR (Brotli) | Δ Brotli | Δ gzip |',
-      '| --- | ---: | ---: | ---: | ---: |',
-      ...routes.map(route => metricRow(`\`${escapeMarkdown(route)}\``, base.routes[route], head.routes[route]))
-    )
-  }
-
   const regressions = moduleRegressions(base, head)
   if (regressions.length > 0) {
     lines.push(
@@ -302,14 +223,7 @@ export function compareSnapshots(base, head) {
     )
   }
 
-  const notes = [
-    'Module values come from Nuxt’s analyzer and are attribution estimates.',
-    'This workflow is currently report-only.'
-  ]
-  if (routes.length > 0) {
-    notes.unshift('Initial-route values include JavaScript and CSS referenced by prerendered HTML.')
-  }
-  lines.push('', `> ${notes.join(' ')}`)
+  lines.push('', '> Module values come from Nuxt’s analyzer and are attribution estimates. This workflow is currently report-only.')
 
   return `${lines.join('\n')}\n`
 }
