@@ -121,7 +121,7 @@ links.push({
         </UPageBody>
 
         <template #right>
-          <UContentToc v-if="!isAgentDocked" :links="provider.body.toc?.links || []">
+          <UContentToc :links="provider.body.toc?.links || []">
             <template #bottom>
               <div class="hidden lg:block space-y-6">
                 <USeparator v-if="links?.length && provider.body?.toc?.links?.length" type="dashed" />
