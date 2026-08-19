@@ -49,7 +49,6 @@ jobs:
           pnpm --package=@nuxt/cli-nightly@3.38.0-20260726-220626-c3c9e90
           dlx nuxt analyze
           --extends=../scripts/bundle-size/nuxt-layer
-          --name=base
           --no-serve
           --logLevel=info
         env:
@@ -74,7 +73,6 @@ jobs:
           pnpm --package=@nuxt/cli-nightly@3.38.0-20260726-220626-c3c9e90
           dlx nuxt analyze
           --extends=./scripts/bundle-size/nuxt-layer
-          --name=pr
           --no-serve
           --logLevel=info
         env:
