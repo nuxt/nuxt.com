@@ -130,7 +130,7 @@ function getUserTextParts(message: UIMessage) {
         chevron="leading"
       >
         <AgentComark
-          :markdown="part.text"
+          :value="part.text"
           :streaming="isPartStreaming(part)"
           :caret="isPartStreaming(part) ? streamingCaret : false"
         />
@@ -254,7 +254,7 @@ function getUserTextParts(message: UIMessage) {
 
       <AgentComark
         v-else-if="isTextUIPart(part) && part.text.length > 0"
-        :markdown="part.text"
+        :value="part.text"
         :streaming="isPartStreaming(part)"
         :caret="isPartStreaming(part) ? streamingCaret : false"
       />

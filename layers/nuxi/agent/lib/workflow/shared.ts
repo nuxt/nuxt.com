@@ -59,24 +59,20 @@ export async function resolveSinceDays(
  * no error logged). Awaiting here keeps the mirror inside that same
  * protected async chain instead of relying on a second background task.
  */
-export async function receiveOnSlack({
-  receive,
+export async function sendToSlack({
+  to,
   appAuth,
   message,
   channelRef
 }: {
-  receive: ScheduleHandlerArgs['receive']
+  to: ScheduleHandlerArgs['to']
   appAuth: ScheduleHandlerArgs['appAuth']
   message: string
   channelRef?: string
 }) {
   const resolved = await resolveSlackChannelRef(channelRef ?? await digestSlackChannelRef())
 
-  const session = await receive(slack, {
-    auth: appAuth,
-    target: { channelId: resolved.id },
-    message
-  })
+  const session = await to(slack, { channelId: resolved.id }).send(message, { auth: appAuth })
 
   const discordChannelId = await discordDigestChannelId()
   if (discordChannelId) {
