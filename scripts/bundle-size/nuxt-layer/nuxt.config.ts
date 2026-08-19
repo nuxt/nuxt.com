@@ -1,3 +1,5 @@
+import { resolve } from 'node:path'
+
 export default defineNuxtConfig({
   buildDir: '.nuxt',
   build: {
@@ -9,6 +11,11 @@ export default defineNuxtConfig({
   nitro: {
     prerender: {
       failOnError: false
+    }
+  },
+  vite: {
+    oxc: {
+      tsconfig: resolve('.nuxt/tsconfig.app.json')
     }
   }
 })
