@@ -1,0 +1,84 @@
+name: bundle-size
+
+on:
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+concurrency:
+  group: bundle-size-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  analyze:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - name: Check out the PR merge
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - name: Check out the base revision
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          path: .bundle-base
+          persist-credentials: false
+          ref: ${{ github.event.pull_request.base.sha }}
+      - run: corepack enable
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
+        with:
+          node-version: lts/-1
+          cache: pnpm
+          cache-dependency-path: |
+            pnpm-lock.yaml
+            .bundle-base/pnpm-lock.yaml
+      - name: Install base dependencies
+        working-directory: .bundle-base
+        run: pnpm install --frozen-lockfile
+      - name: Analyze the base bundle
+        working-directory: .bundle-base
+        run: pnpm nuxt analyze --extends=../scripts/bundle-size/nuxt-layer --name=base --no-serve --logLevel=info
+        env:
+          NODE_OPTIONS: --max-old-space-size=8192
+          NUXT_TELEMETRY_DISABLED: 1
+      - name: Snapshot the base bundle
+        run: >-
+          node scripts/bundle-size/report.mjs snapshot
+          --root .bundle-base
+          --analyze .bundle-base/.nuxt/analyze/client.json
+          --label base
+          --sha ${{ github.event.pull_request.base.sha }}
+          --output ${{ runner.temp }}/bundle-size/base.json
+      - name: Install PR dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Analyze the PR bundle
+        run: pnpm nuxt analyze --extends=./scripts/bundle-size/nuxt-layer --name=pr --no-serve --logLevel=info
+        env:
+          NODE_OPTIONS: --max-old-space-size=8192
+          NUXT_TELEMETRY_DISABLED: 1
+      - name: Snapshot the PR bundle
+        run: >-
+          node scripts/bundle-size/report.mjs snapshot
+          --root .
+          --analyze .nuxt/analyze/client.json
+          --label pr
+          --sha ${{ github.event.pull_request.head.sha }}
+          --output ${{ runner.temp }}/bundle-size/pr.json
+      - name: Compare production bundles
+        run: >-
+          node scripts/bundle-size/report.mjs compare
+          --base ${{ runner.temp }}/bundle-size/base.json
+          --head ${{ runner.temp }}/bundle-size/pr.json
+          --output ${{ runner.temp }}/bundle-size/comment.md
+          --metadata ${{ runner.temp }}/bundle-size/metadata.json
+          --pr-number ${{ github.event.pull_request.number }}
+      - name: Upload bundle report
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: bundle-size-report
+          path: ${{ runner.temp }}/bundle-size
+          if-no-files-found: error
+          retention-days: 7
