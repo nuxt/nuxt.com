@@ -1,4 +1,5 @@
 export default defineNuxtConfig({
+  buildDir: '.nuxt',
   build: {
     analyze: {
       filename: '.nuxt/analyze/{name}.json',
