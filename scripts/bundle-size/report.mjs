@@ -1,9 +1,13 @@
 import { constants, brotliCompressSync, gzipSync } from 'node:zlib'
-import { mkdir, readFile, readdir, writeFile } from 'node:fs/promises'
+import { lstat, mkdir, readFile, readdir, writeFile } from 'node:fs/promises'
 import { dirname, extname, relative, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 const EMPTY_SIZE = Object.freeze({ raw: 0, gzip: 0, brotli: 0 })
+const SNAPSHOT_SCHEMA_VERSION = 2
+const MAX_SNAPSHOT_BYTES = 5 * 1024 * 1024
+const MAX_MODULES = 25_000
+const MAX_MODULE_ID_LENGTH = 2_048
 
 function addSizes(target, sizes) {
   target.raw += sizes.raw
@@ -136,13 +140,98 @@ export async function buildSnapshot({ root, analyzePath, label, sha }) {
   }
 
   return {
-    schemaVersion: 1,
+    schemaVersion: SNAPSHOT_SCHEMA_VERSION,
     label,
     sha,
     totals,
-    assets,
     modules: await readAnalyzerModules(resolve(analyzePath), absoluteRoot)
   }
+}
+
+function isRecord(value) {
+  return value !== null && typeof value === 'object' && !Array.isArray(value)
+}
+
+function validateKeys(value, expected, path) {
+  const keys = Object.keys(value).sort()
+  const sortedExpected = [...expected].sort()
+  if (keys.length !== sortedExpected.length || keys.some((key, index) => key !== sortedExpected[index])) {
+    throw new Error(`${path} contains unexpected fields`)
+  }
+}
+
+function validateSize(value, path) {
+  if (!isRecord(value)) {
+    throw new Error(`${path} must be an object`)
+  }
+  validateKeys(value, ['raw', 'gzip', 'brotli'], path)
+  for (const key of ['raw', 'gzip', 'brotli']) {
+    if (!Number.isSafeInteger(value[key]) || value[key] < 0) {
+      throw new Error(`${path}.${key} must be a non-negative safe integer`)
+    }
+  }
+}
+
+export function validateSnapshot(snapshot, { label, sha } = {}) {
+  if (!isRecord(snapshot)) {
+    throw new Error('Snapshot must be an object')
+  }
+  validateKeys(snapshot, ['schemaVersion', 'label', 'sha', 'totals', 'modules'], 'Snapshot')
+
+  if (snapshot.schemaVersion !== SNAPSHOT_SCHEMA_VERSION) {
+    throw new Error(`Unsupported snapshot schema version: ${snapshot.schemaVersion}`)
+  }
+  if (snapshot.label !== label) {
+    throw new Error(`Expected a ${label} snapshot`)
+  }
+  if (!/^[0-9a-f]{40}$/.test(snapshot.sha)) {
+    throw new Error('Snapshot SHA must be a lowercase 40-character hexadecimal string')
+  }
+  if (sha && snapshot.sha !== sha) {
+    throw new Error(`${label} snapshot SHA does not match the triggering workflow`)
+  }
+
+  if (!isRecord(snapshot.totals)) {
+    throw new Error('Snapshot totals must be an object')
+  }
+  validateKeys(snapshot.totals, ['javascript', 'css', 'other', 'all'], 'Snapshot totals')
+  for (const key of ['javascript', 'css', 'other', 'all']) {
+    validateSize(snapshot.totals[key], `Snapshot totals.${key}`)
+  }
+  for (const key of ['raw', 'gzip', 'brotli']) {
+    const sum = snapshot.totals.javascript[key] + snapshot.totals.css[key] + snapshot.totals.other[key]
+    if (snapshot.totals.all[key] !== sum) {
+      throw new Error(`Snapshot totals.all.${key} is inconsistent`)
+    }
+  }
+
+  if (!isRecord(snapshot.modules)) {
+    throw new Error('Snapshot modules must be an object')
+  }
+  const modules = Object.entries(snapshot.modules)
+  if (modules.length > MAX_MODULES) {
+    throw new Error(`Snapshot contains more than ${MAX_MODULES} modules`)
+  }
+  for (const [id, sizes] of modules) {
+    if (id.length === 0 || id.length > MAX_MODULE_ID_LENGTH || /[\p{Cc}\p{Cf}\p{Cs}]/u.test(id)) {
+      throw new Error('Snapshot contains an invalid module identifier')
+    }
+    validateSize(sizes, `Snapshot module ${JSON.stringify(id)}`)
+  }
+
+  return snapshot
+}
+
+async function readSnapshot(path, expected) {
+  const stats = await lstat(path)
+  if (!stats.isFile() || stats.isSymbolicLink()) {
+    throw new Error('Snapshot path must be a regular file')
+  }
+  const contents = await readFile(path)
+  if (contents.byteLength > MAX_SNAPSHOT_BYTES) {
+    throw new Error(`Snapshot exceeds the ${MAX_SNAPSHOT_BYTES}-byte limit`)
+  }
+  return validateSnapshot(JSON.parse(contents.toString('utf8')), expected)
 }
 
 function formatBytes(bytes) {
@@ -167,14 +256,16 @@ function formatDelta(base, head) {
   return `${sign}${formatBytes(delta)}${percentage}`
 }
 
-function escapeMarkdown(value) {
-  return value
+function inlineCode(value) {
+  const escaped = value
     .replaceAll('&', '&amp;')
     .replaceAll('<', '&lt;')
     .replaceAll('>', '&gt;')
     .replaceAll('@', '&#64;')
-    .replaceAll('|', '\\|')
+    .replaceAll('|', '&#124;')
+    .replaceAll('\r', ' ')
     .replaceAll('\n', ' ')
+  return `<code>${escaped}</code>`
 }
 
 function metricRow(label, base, head) {
@@ -197,7 +288,10 @@ function moduleRegressions(base, head) {
     .slice(0, 10)
 }
 
-export function compareSnapshots(base, head) {
+export function compareSnapshots(base, head, expected = {}) {
+  validateSnapshot(base, { label: 'base', sha: expected.baseSha })
+  validateSnapshot(head, { label: 'pr', sha: expected.headSha })
+
   const lines = [
     '## Production bundle',
     '',
@@ -219,7 +313,7 @@ export function compareSnapshots(base, head) {
       '',
       '| Module | Base (Brotli) | PR (Brotli) | Δ Brotli |',
       '| --- | ---: | ---: | ---: |',
-      ...regressions.map(module => `| \`${escapeMarkdown(module.id)}\` | ${formatBytes(module.base.brotli)} | ${formatBytes(module.head.brotli)} | ${formatDelta(module.base.brotli, module.head.brotli)} |`)
+      ...regressions.map(module => `| ${inlineCode(module.id)} | ${formatBytes(module.base.brotli)} | ${formatBytes(module.head.brotli)} | ${formatDelta(module.base.brotli, module.head.brotli)} |`)
     )
   }
 
@@ -276,15 +370,13 @@ async function main() {
   }
 
   if (command === 'compare') {
-    const base = JSON.parse(await readFile(required(options, 'base'), 'utf8'))
-    const head = JSON.parse(await readFile(required(options, 'head'), 'utf8'))
+    const baseSha = required(options, 'base-sha')
+    const headSha = required(options, 'head-sha')
+    const base = await readSnapshot(required(options, 'base'), { label: 'base', sha: baseSha })
+    const head = await readSnapshot(required(options, 'head'), { label: 'pr', sha: headSha })
     const output = required(options, 'output')
     await mkdir(dirname(resolve(output)), { recursive: true })
-    await writeFile(output, compareSnapshots(base, head))
-    await writeJson(required(options, 'metadata'), {
-      prNumber: Number(required(options, 'pr-number')),
-      headSha: head.sha
-    })
+    await writeFile(output, compareSnapshots(base, head, { baseSha, headSha }))
     return
   }
 

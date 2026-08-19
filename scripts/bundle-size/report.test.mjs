@@ -3,7 +3,7 @@ import { mkdtemp, mkdir, rm, writeFile } from 'node:fs/promises'
 import { join } from 'node:path'
 import { tmpdir } from 'node:os'
 import { afterAll, test } from 'vitest'
-import { buildSnapshot, compareSnapshots } from './report.mjs'
+import { buildSnapshot, compareSnapshots, validateSnapshot } from './report.mjs'
 
 const temporaryDirectories = []
 
@@ -41,6 +41,7 @@ test('builds and compares production bundle snapshots', async () => {
 
   const base = await buildSnapshot({ root, analyzePath, label: 'base', sha: 'a'.repeat(40) })
   const head = structuredClone(base)
+  head.label = 'pr'
   head.sha = 'b'.repeat(40)
   head.totals.javascript.brotli += 10
   head.totals.javascript.gzip += 12
@@ -48,11 +49,51 @@ test('builds and compares production bundle snapshots', async () => {
   head.totals.all.gzip += 12
   head.modules['node_modules/example/index.js'].brotli += 10
 
-  assert.equal(base.assets['_nuxt/entry.js.map'], undefined)
+  assert.equal(base.schemaVersion, 2)
+  assert.equal(base.assets, undefined)
   assert.equal(base.modules['node_modules/example/index.js'].brotli, 60)
 
   const report = compareSnapshots(base, head)
   assert.match(report, /Client JavaScript/)
   assert.match(report, /Largest module increases/)
   assert.match(report, /report-only/)
+})
+
+test('validates snapshots and safely renders module identifiers', () => {
+  const size = { raw: 1, gzip: 1, brotli: 1 }
+  const totals = {
+    javascript: { ...size },
+    css: { raw: 0, gzip: 0, brotli: 0 },
+    other: { raw: 0, gzip: 0, brotli: 0 },
+    all: { ...size }
+  }
+  const base = {
+    schemaVersion: 2,
+    label: 'base',
+    sha: 'a'.repeat(40),
+    totals,
+    modules: {}
+  }
+  const head = {
+    schemaVersion: 2,
+    label: 'pr',
+    sha: 'b'.repeat(40),
+    totals,
+    modules: {
+      '`</code>|@nuxt<img src=x>`': size
+    }
+  }
+
+  const report = compareSnapshots(base, head, { baseSha: base.sha, headSha: head.sha })
+  assert.doesNotMatch(report, /@nuxt|<img/)
+  assert.match(report, /&lt;\/code&gt;&#124;&#64;nuxt&lt;img src=x&gt;/)
+
+  assert.throws(
+    () => validateSnapshot({ ...base, schemaVersion: 1 }, { label: 'base' }),
+    /Unsupported snapshot schema version/
+  )
+  assert.throws(
+    () => compareSnapshots(base, head, { baseSha: base.sha, headSha: 'c'.repeat(40) }),
+    /snapshot SHA does not match/
+  )
 })
