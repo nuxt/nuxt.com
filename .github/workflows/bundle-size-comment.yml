@@ -175,11 +175,11 @@ jobs:
       - name: Update PR comment
         if: steps.pull.outputs.should-comment == 'true'
         uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
-        with:
-          github-token: ${{ steps.app-token.outputs.token }}
         env:
           BUNDLE_REPORT_PATH: ${{ runner.temp }}/bundle-size-comment.md
           PR_NUMBER: ${{ steps.pull.outputs.number }}
+        with:
+          github-token: ${{ steps.app-token.outputs.token }}
           script: |
             const fs = require('node:fs')
             const marker = '<!-- nuxt.com-bundle-size-report -->'
