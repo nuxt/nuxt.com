@@ -180,7 +180,6 @@ jobs:
         env:
           BUNDLE_REPORT_PATH: ${{ runner.temp }}/bundle-size-comment.md
           PR_NUMBER: ${{ steps.pull.outputs.number }}
-        with:
           script: |
             const fs = require('node:fs')
             const marker = '<!-- nuxt.com-bundle-size-report -->'
