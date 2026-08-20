@@ -2,10 +2,11 @@ import { defineDynamic, defineInstructions } from 'eve/instructions'
 import { ADMIN_MCP_INSTRUCTIONS } from './connections/admin-mcp.js'
 import { AI_GATEWAY_INSTRUCTIONS } from './tools/ai-gateway.js'
 import { VERCEL_MCP_INSTRUCTIONS } from './connections/vercel-mcp.js'
-import { canAccessAdminMcp } from './lib/admin-mcp-access.js'
+import { isAdminMode } from './lib/identity/admin-mode.js'
 import { buildInstructionsWithDate } from './lib/base-instructions.js'
-import { resolveSurface } from './lib/surface.js'
-import { surfaceInstructions } from './lib/surface-instructions.js'
+import { callerInstructions } from './lib/identity/caller-instructions.js'
+import { resolveContext } from './lib/identity/context.js'
+import { surfaceInstructions } from './lib/identity/surface-instructions.js'
 
 /**
  * Resolved per turn, not per session. A Slack thread opened by a schedule
@@ -24,9 +25,14 @@ export default defineDynamic({
   events: {
     'turn.started': async (_event, ctx) => {
       const auth = ctx.session.auth.current
-      const blocks = [buildInstructionsWithDate(), surfaceInstructions(resolveSurface(auth))]
+      const context = resolveContext(auth)
+      const blocks = [
+        buildInstructionsWithDate(),
+        surfaceInstructions(context.surface),
+        callerInstructions(context.person)
+      ]
 
-      if (canAccessAdminMcp(auth)) {
+      if (await isAdminMode(auth)) {
         blocks.push(ADMIN_MCP_INSTRUCTIONS, VERCEL_MCP_INSTRUCTIONS, AI_GATEWAY_INSTRUCTIONS)
       }
 

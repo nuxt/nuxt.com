@@ -21,7 +21,7 @@ declare module 'chat' {
 /**
  * Slack-first digest/live text → Discord Markdown.
  * Used by live Discord replies and by the scheduled digest mirror
- * (`discord-workflow.ts`) so we don't pay for a second model run.
+ * (`digest-mirror.ts`) so we don't pay for a second model run.
  *
  * `chat`'s emoji map already covers several shortcodes our skills use
  * (`red_circle`, `white_check_mark`, …); this extends the rest + Nuxt customs

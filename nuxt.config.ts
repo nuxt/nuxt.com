@@ -124,7 +124,6 @@ export default defineNuxtConfig({
     },
     contactEmail: '',
     mcpAdminToken: '',
-    adminGithubLogins: '',
     github: {
       token: ''
     },

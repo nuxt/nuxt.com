@@ -5,7 +5,7 @@ import {
   parseSinceHours,
   scheduleAppAuth,
   verifyWorkflowTriggerAuth
-} from '../lib/workflows.js'
+} from '../lib/workflow/shared.js'
 import { runDiscordGateway } from '../schedules/discord-gateway.js'
 import { runFirehoseSummary } from '../schedules/firehose-summary.js'
 import { runWeeklyDigest } from '../schedules/weekly-digest.js'
@@ -13,7 +13,7 @@ import { runWeeklyDigest } from '../schedules/weekly-digest.js'
 export default defineChannel({
   routes: [
     POST('/eve/v1/ops/discord-gateway/trigger', async (req, args) => {
-      if (!isManualWorkflowTriggerAllowed()) {
+      if (!(await isManualWorkflowTriggerAllowed())) {
         return Response.json({ error: 'Manual workflow trigger is disabled' }, { status: 404 })
       }
       if (!verifyWorkflowTriggerAuth(req)) {
@@ -24,7 +24,7 @@ export default defineChannel({
       return Response.json(result, { status: result.started ? 200 : 409 })
     }),
     POST('/eve/v1/ops/weekly-digest/trigger', async (req, args) => {
-      if (!isManualWorkflowTriggerAllowed()) {
+      if (!(await isManualWorkflowTriggerAllowed())) {
         return Response.json({ error: 'Manual workflow trigger is disabled' }, { status: 404 })
       }
       if (!verifyWorkflowTriggerAuth(req)) {
@@ -38,7 +38,7 @@ export default defineChannel({
       }
 
       args.waitUntil(runWeeklyDigest({
-        receive: args.receive,
+        to: args.to,
         appAuth: scheduleAppAuth,
         sinceDays: parsedSinceDays.value
       }))
@@ -46,7 +46,7 @@ export default defineChannel({
       return Response.json({ ok: true, sinceDays: parsedSinceDays.value ?? null })
     }),
     POST('/eve/v1/ops/firehose-summary/trigger', async (req, args) => {
-      if (!isManualWorkflowTriggerAllowed()) {
+      if (!(await isManualWorkflowTriggerAllowed())) {
         return Response.json({ error: 'Manual workflow trigger is disabled' }, { status: 404 })
       }
       if (!verifyWorkflowTriggerAuth(req)) {
@@ -60,7 +60,7 @@ export default defineChannel({
       }
 
       args.waitUntil(runFirehoseSummary({
-        receive: args.receive,
+        to: args.to,
         appAuth: scheduleAppAuth,
         sinceHours: parsedSinceHours.value
       }))

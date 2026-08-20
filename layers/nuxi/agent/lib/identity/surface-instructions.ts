@@ -1,4 +1,4 @@
-import type { Surface } from './surface.js'
+import type { Surface } from './context.js'
 
 /**
  * Per-surface behaviour used to ride along as channel `context`, which eve

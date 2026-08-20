@@ -1,8 +1,7 @@
 import type { GatewayProviderOptions } from '@ai-sdk/gateway'
 import type { ModelMessage } from 'ai'
-import type { AdminMcpAuthContext } from './admin-mcp-access.js'
-import { resolveSurface } from './surface.js'
-import { workflowSkillId } from './workflows.js'
+import { resolveContext, type AuthContext } from './identity/context.js'
+import { workflowSkillId } from './workflow/shared.js'
 import { NUXI_GATEWAY_TAG } from '../../shared/utils/ai-gateway.js'
 
 /**
@@ -35,10 +34,10 @@ function resolveWorkflowSkill(messages: readonly ModelMessage[]): string | undef
 }
 
 export function nuxiGatewayTags(
-  auth: AdminMcpAuthContext | null | undefined,
+  auth: AuthContext | null | undefined,
   messages: readonly ModelMessage[]
 ): string[] {
-  const surface = resolveSurface(auth)
+  const surface = resolveContext(auth).surface
   const tags = [NUXI_GATEWAY_TAG, `surface:${surface}`]
 
   if (surface === 'schedule') {
@@ -55,7 +54,7 @@ export function nuxiGatewayTags(
  * option the static config would have set.
  */
 export function nuxiGatewayOptions(
-  auth: AdminMcpAuthContext | null | undefined,
+  auth: AuthContext | null | undefined,
   messages: readonly ModelMessage[]
 ) {
   // Left unannotated on purpose: `providerOptions` is typed as `JsonObject`,

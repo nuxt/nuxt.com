@@ -1,3 +1,4 @@
+import { readGlobalConfig } from '../../layers/nuxi/agent/lib/global-config'
 import type { GitHubTeamMember } from '../types/github'
 
 const getCoreMembers = cachedFunction((): Promise<GitHubTeamMember[]> => $fetch<GitHubTeamMember[]>('/api/v1/teams/core'), {
@@ -16,18 +17,28 @@ export async function isCoreTeamMember(login: string): Promise<boolean> {
   return coreMembers.some(member => member.login.toLowerCase() === login)
 }
 
-function getExtraAdminLogins(): string[] {
-  const raw = useRuntimeConfig().adminGithubLogins
-  if (!raw) return []
-  return raw
-    .split(',')
-    .map(login => login.trim().toLowerCase())
-    .filter(Boolean)
+function parseGithubLogins(raw: unknown): string[] {
+  const values = Array.isArray(raw)
+    ? raw.map(value => String(value))
+    : typeof raw === 'string'
+      ? raw.split(',')
+      : []
+  return [...new Set(values.map(value => value.trim().toLowerCase()).filter(Boolean))]
+}
+
+/** Extra admin logins: `NUXT_ADMIN_GITHUB_LOGINS` (local/preview) union Global Config `admin.githubLogins`. Env ignored in production. */
+async function getExtraAdminLogins(): Promise<string[]> {
+  const fromEnv = process.env.VERCEL_ENV === 'production'
+    ? []
+    : parseGithubLogins(process.env.NUXT_ADMIN_GITHUB_LOGINS)
+  const config = await readGlobalConfig<{ admin?: { githubLogins?: string[] } }>(['admin'])
+  return [...new Set([...fromEnv, ...parseGithubLogins(config.admin?.githubLogins)])]
 }
 
 export async function isAuthorizedAdmin(login: string): Promise<boolean> {
   const normalized = login.toLowerCase()
-  if (getExtraAdminLogins().includes(normalized)) {
+  const extraLogins = await getExtraAdminLogins()
+  if (extraLogins.includes(normalized)) {
     return true
   }
   return isCoreTeamMember(normalized)
