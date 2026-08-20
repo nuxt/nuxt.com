@@ -280,7 +280,7 @@ const noRightAside = computed(() => route.path.includes('/examples/'))
 
         <template #right>
           <ContentToc
-            v-if="!isAgentDocked && !noRightAside"
+            v-if="!noRightAside"
             :links="page.body?.toc?.links"
             :community-links="communityLinks"
             highlight
