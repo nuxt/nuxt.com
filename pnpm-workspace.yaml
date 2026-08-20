@@ -23,7 +23,7 @@ allowBuilds:
   zlib-sync: true
 
 minimumReleaseAgeExclude:
-  - eve@0.24.3 || 0.27.0
+  - eve@0.24.3 || 0.27.0 || 0.40.0
   - evlog
   - '@nuxt/*'
   - nuxt

@@ -15,7 +15,7 @@
     "@vercel/global-config": "^1.5.0",
     "ai": "^7.0.66",
     "chat": "^4.38.0",
-    "eve": "^0.38.3",
+    "eve": "^0.40.0",
     "zod": "^4.4.3"
   },
   "optionalDependencies": {
