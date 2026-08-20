@@ -1,27 +1,28 @@
 import { defineSchedule } from 'eve/schedules'
 import type { ScheduleHandlerArgs } from 'eve/schedules'
 import {
-  receiveOnSlack,
+  sendToSlack,
   resolveSinceDays,
   skillWorkflowMessage
-} from '../lib/workflows.js'
+} from '../lib/workflow/shared.js'
 
 const SKILL_ID = 'weekly-digest'
-const DEFAULT_WINDOW_DAYS = 7
 
 export async function runWeeklyDigest({
-  receive,
+  to,
   appAuth,
   sinceDays
 }: {
-  receive: ScheduleHandlerArgs['receive']
+  to: ScheduleHandlerArgs['to']
   appAuth: ScheduleHandlerArgs['appAuth']
   sinceDays?: number
 }) {
-  const windowDays = resolveSinceDays(sinceDays, DEFAULT_WINDOW_DAYS)
+  // No local fallback: leaves `workflow.sinceDays` in Global Config as the
+  // effective default (see `resolveSinceDays`) instead of always winning over it.
+  const windowDays = await resolveSinceDays(sinceDays)
 
-  return receiveOnSlack({
-    receive,
+  return sendToSlack({
+    to,
     appAuth,
     message: skillWorkflowMessage(SKILL_ID, windowDays)
   })
@@ -29,7 +30,7 @@ export async function runWeeklyDigest({
 
 export default defineSchedule({
   cron: '0 5 * * 1',
-  async run({ receive, waitUntil, appAuth }) {
-    waitUntil(runWeeklyDigest({ receive, appAuth }))
+  async run({ to, waitUntil, appAuth }) {
+    waitUntil(runWeeklyDigest({ to, appAuth }))
   }
 })

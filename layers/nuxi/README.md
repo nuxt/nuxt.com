@@ -27,7 +27,7 @@ The agent never imports Nuxt server code directly. Shared logic that both sides 
 
 ## Discord channel
 
-`agent/channels/discord.ts` wires Nuxi into Discord through eve's Chat SDK channel (`eve/channels/chat-sdk` + `@chat-adapter/discord`), so it behaves like Slack: **@mention Nuxi** in an allowed channel, it subscribes to the conversation, renames the thread after your message, and answers **in a thread**; follow-up messages in that thread continue the same eve session without re-mentioning.
+`agent/channels/discord.ts` wires Nuxi into Discord through eve's Chat SDK channel (`eve/channels/chat-sdk` + `@chat-adapter/discord`), so it behaves like Slack: **@mention Nuxi** in an allowed channel, it subscribes to the conversation, renames the thread after your message, and answers **in a thread**; follow-up messages in that thread continue the same eve session without re-mentioning. Channels listed under `discord.channels.autoRespond` skip the `@mention` requirement entirely — see [Auto-respond channels](#auto-respond-channels-no-mention) below.
 
 How messages arrive: Discord does not push messages to HTTP webhooks like Slack. `agent/schedules/discord-gateway.ts` restarts a Gateway WebSocket listener every 4 minutes (270s duration, overlapping windows) that forwards events to the channel webhook at `/eve/v1/discord`. Inbound dedupe across overlapping listeners and thread subscriptions rely on the Chat SDK state adapter — **Redis (`REDIS_URL`) is required in production**; local dev falls back to in-memory state.
 
@@ -40,12 +40,24 @@ How messages arrive: Discord does not push messages to HTTP webhooks like Slack.
    - `DISCORD_BOT_TOKEN` — Gateway connection + posting messages
    - `DISCORD_PUBLIC_KEY` — verifies inbound interaction signatures (HITL buttons, PING)
    - `DISCORD_APPLICATION_ID` — interaction responses
-   - `DISCORD_ALLOWED_CHANNELS` — comma-separated Discord channel ids where Nuxi may run. **Unset or empty means deny everywhere.** Mentions elsewhere are silently ignored. (Get an id via right-click on the channel → **Copy Channel ID**, with Developer Mode enabled.)
    - `REDIS_URL` — Chat SDK state adapter (subscriptions, dedupe, locks); memory fallback in dev
    - `DISCORD_GATEWAY_WEBHOOK_URL` — optional override for the Gateway forward target; defaults to `https://$VERCEL_URL/eve/v1/discord` (so previews forward to themselves), falling back to `$VERCEL_PROJECT_PRODUCTION_URL` when `VERCEL_URL` is unset
-3. **Invite the app to the server**: **OAuth2 → URL Generator**, scopes `bot` + `applications.commands`. Bot permissions: **View Channels**, **Send Messages**, **Create Public Threads**, **Send Messages in Threads**, **Manage Threads** (renames threads after the mention text), **Read Message History**, **Add Reactions**.
-4. **Set the Interactions Endpoint URL** (General Information tab) to `https://<eve-service>/eve/v1/discord` — used for HITL button clicks and Discord's verification PING. Deploy the eve service with the env vars set **first**: Discord validates the endpoint when you save.
-5. No slash command to register — the bot is mention-driven.
+3. **Set `discord.channels`** in Global Config (`GLOBAL_CONFIG`, see `.env.example` and `agent/lib/discord/access.ts`) — editable from the Vercel dashboard with no redeploy:
+
+   ```json
+   "discord": {
+     "channels": {
+       "admin": ["1234567890123456"],
+       "public": ["6543210987654321"],
+       "autoRespond": ["1111111111111111"]
+     }
+   }
+   ```
+
+   `admin` channels dispatch with full admin mode (`agent/lib/identity/admin-mode.ts`); `public` and `autoRespond` channels dispatch with the public toolset only. A channel absent from all three is silently ignored. **Unset or empty means deny everywhere.** (Get an id via right-click on the channel → **Copy Channel ID**, with Developer Mode enabled.)
+4. **Invite the app to the server**: **OAuth2 → URL Generator**, scopes `bot` + `applications.commands`. Bot permissions: **View Channels**, **Send Messages**, **Create Public Threads**, **Send Messages in Threads**, **Manage Threads** (renames threads after the mention text), **Read Message History**, **Add Reactions**.
+5. **Set the Interactions Endpoint URL** (General Information tab) to `https://<eve-service>/eve/v1/discord` — used for HITL button clicks and Discord's verification PING. Deploy the eve service with the env vars set **first**: Discord validates the endpoint when you save.
+6. No slash command to register — the bot is mention-driven.
 
 ### Test locally
 
@@ -62,19 +74,27 @@ curl -X POST "https://<preview-url>/eve/v1/ops/discord-gateway/trigger" \
 # -> { "started": true, "webhookUrl": "https://<preview-url>/eve/v1/discord" }
 ```
 
-Each call opens one 270s listener window — re-run it while testing. The preview also needs the `DISCORD_*` env vars (and ideally `REDIS_URL`) available to the preview environment.
+Each call opens one 270s listener window — re-run it while testing. The preview also needs the `DISCORD_*` env vars (and ideally `REDIS_URL`) available to the preview environment. Preview and production share the same `GLOBAL_CONFIG` store, so `discord.channels` applies to both.
 
-Because dispatch is restricted to the `DISCORD_ALLOWED_CHANNELS` allowlist, Discord sessions are **admin-enabled by default** (`canAccessAdminMcp` matches Discord auth, like Slack). Keep the allowlist limited to trusted team channels — widening it to public channels means revisiting the admin gate first (`agent/lib/admin-mcp-access.ts`). The rate-limit hook applies per Discord user id.
+Dispatch is restricted to channels listed under `discord.channels.admin`, `.public`, or `.autoRespond`; only `admin` channels get **admin mode** (`isAdminMode` — see `agent/lib/identity/admin-mode.ts`). Keep `admin` limited to trusted team channels; use `public` for channels where Nuxi should answer without the admin toolset. The rate-limit hook applies per Discord user id.
+
+### Auto-respond channels (no `@mention`)
+
+`discord.channels.autoRespond` answers every message in a channel with no `@mention` needed — e.g. a Discord **Forum channel** used as a support forum (each "New Post" is its own thread, like Kapa in a help forum). Wired via `bot.onNewMessage(/[\s\S]*/, …)` in `agent/channels/discord.ts`, which the Chat SDK routes to only for messages that are not an `@mention` and not already in a subscribed thread — no double dispatch with `onNewMention`. `@chat-adapter/discord` already resolves a Forum post's thread to its parent channel id before Nuxi ever sees it, so listing the Forum channel's own id here covers every post, present and future — no per-post configuration. The bot never renames the thread here (a Forum post already has its own title, unlike the mention flow's ad-hoc thread).
+
+## Caller identity
+
+`agent/lib/identity/context.ts` resolves `Context.person` (id, name, bot flag) for every surface, and `agent/lib/identity/caller-instructions.ts` renders it into the always-on prompt so "who am I?" has an answer. Discord's display name (`global_name`) comes for free from the inbound message payload; the `@`-mention handle (`username`) is still kept on the auth context for future use, it's just not what the model sees. Slack's `app_mention`/`message` events only carry a user id — `channels/slack.ts` resolves the real name via `users.info` (`agent/lib/slack/api.ts`, cached 1h per user), which needs the **`users:read`** bot scope on top of the ones above; without it, Slack callers fall back to their user id.
 
 ## Scheduled Slack workflows
 
-Shared helpers live in `agent/lib/workflows.ts` (`receiveOnSlack`, auth, config). Each workflow keeps its own prompt, cron, and runner in `agent/schedules/<id>.ts`, with the procedure in `agent/skills/<id>/SKILL.md`.
+Shared helpers live in `agent/lib/workflow/shared.ts` (`sendToSlack`, auth, config). Each workflow keeps its own prompt, cron, and runner in `agent/schedules/<id>.ts`, with the procedure in `agent/skills/<id>/SKILL.md`.
 
 ### Adding a workflow
 
 1. **Skill** — `agent/skills/<id>/SKILL.md` with `description` frontmatter and the full procedure (tool calls, output format, Slack delivery rules).
 2. **Schedule** — `agent/schedules/<id>.ts`:
-   - `defineSchedule({ cron, run })` calling `receiveOnSlack` (or export a `run<Id>` helper reused by ops).
+   - `defineSchedule({ cron, run })` calling `sendToSlack` (or export a `run<Id>` helper reused by ops).
    - Workflow-specific constants (`SKILL_ID`, default window, custom message) stay in this file.
 3. **Preview trigger** (optional) — add `POST('/eve/v1/ops/<id>/trigger', …)` in `agent/channels/ops.ts` (full path required for Vercel routing), wired to the schedule's `run<Id>` export.
 4. **Test locally** — Eve dev dispatch (no auth): `POST /eve/v1/dev/schedules/<id>`.
@@ -83,23 +103,24 @@ Example schedule skeleton:
 
 ```ts
 import { defineSchedule } from 'eve/schedules'
-import { receiveOnSlack, resolveSinceDays, skillWorkflowMessage } from '../lib/workflows.js'
+import { sendToSlack, resolveSinceDays, skillWorkflowMessage } from '../lib/workflow/shared.js'
 
 const SKILL_ID = 'my-workflow'
 
-export function runMyWorkflow({ receive, appAuth, sinceDays }) {
-  const days = resolveSinceDays(sinceDays, 7)
-  return receiveOnSlack({
-    receive,
+export async function runMyWorkflow({ to, appAuth, sinceDays }) {
+  // No second argument: falls back to `workflow.sinceDays` in Global Config (then 7)
+  const days = await resolveSinceDays(sinceDays)
+  return sendToSlack({
+    to,
     appAuth,
     message: skillWorkflowMessage(SKILL_ID, days)
-  }) // receiveOnSlack is async — export runMyWorkflow as async when wiring schedules/ops
+  })
 }
 
 export default defineSchedule({
   cron: '0 9 * * 1',
-  async run({ receive, waitUntil, appAuth }) {
-    waitUntil(runMyWorkflow({ receive, appAuth }))
+  async run({ to, waitUntil, appAuth }) {
+    waitUntil(runMyWorkflow({ to, appAuth }))
   }
 })
 ```
@@ -128,7 +149,7 @@ The Nuxi Slack bot must be invited to `#firehose-nuxt`. Required Connect scopes:
 
 ### Discord mirror
 
-Set `DISCORD_WORKFLOW_CHANNEL_ID` (raw Discord channel id, see `.env.example`) to also post the weekly digest and firehose summary to a Discord channel — distinct from `DISCORD_ALLOWED_CHANNELS`, which only gates live @mentions. This reuses the Slack-generated text (no second agent run): `agent/lib/discord-workflow.ts` reads the finished Slack session's final message, `agent/lib/discord-format.ts` converts Slack-only syntax (`<url|label>` links, `:nuxter:`-style emoji, bare `@names`) to Discord Markdown, then posts via the unwrapped Discord adapter (so conversion runs once). Conversion is best-effort — an emoji shortcode outside the known set passes through unchanged. Unset disables the mirror; a mirroring failure is logged and never affects the Slack post. The bot needs **View Channel** + **Send Messages** in the target channel.
+Set `discord.digestChannel` (raw Discord channel id) in Global Config to also post the weekly digest and firehose summary to a Discord channel — distinct from `discord.channels`, which only gates live @mentions. This reuses the Slack-generated text (no second agent run): `agent/lib/discord/digest-mirror.ts` reads the finished Slack session's final message, `agent/lib/discord/format.ts` converts Slack-only syntax (`<url|label>` links, `:nuxter:`-style emoji, bare `@names`) to Discord Markdown, then posts via the unwrapped Discord adapter (so conversion runs once). Conversion is best-effort — an emoji shortcode outside the known set passes through unchanged. Unset disables the mirror; a mirroring failure is logged and never affects the Slack post. The bot needs **View Channel** + **Send Messages** in the target channel.
 
 ### Test locally
 
@@ -150,4 +171,44 @@ curl -X POST "https://<preview-url>/eve/v1/ops/firehose-summary/trigger?sinceHou
   -H "Authorization: Bearer $INTERNAL_API_SECRET"
 ```
 
-Requires on the **eve** runtime: `INTERNAL_API_SECRET`, `NUXT_MCP_ADMIN_TOKEN`, `NUXT_WORKFLOW_SLACK_CHANNEL`, `NUXT_FIREHOSE_SLACK_CHANNEL` (Slack channel names). Optional `NUXT_*_SLACK_CHANNEL_ID` overrides names and skips `users.conversations`. Local dev and Vercel preview use Connect client `slack/nuxi-preview` automatically; prod uses `slack/nuxi` (override with `SLACK_CONNECTOR`). `weekly-digest` additionally needs `NUXI_VERCEL_TEAM_ID`/`NUXI_VERCEL_PROJECT_ID` (see `agent/lib/vercel-connect.ts`) and, for spend/token numbers, `AI_GATEWAY_API_KEY` (optionally `AI_GATEWAY_REPORT_API_KEY_NAME` / `AI_GATEWAY_REPORT_TAGS`) — both connections are admin-gated so only the scheduled/Slack/admin path can reach them.
+Requires on the **eve** runtime: `INTERNAL_API_SECRET`, `NUXT_MCP_ADMIN_TOKEN`. Local dev and Vercel preview use Connect client `slack/nuxi-preview` automatically; prod uses `slack/nuxi` (override with `SLACK_CONNECTOR`). `weekly-digest` additionally needs `NUXI_VERCEL_TEAM_ID`/`NUXI_VERCEL_PROJECT_ID` (see `agent/lib/vercel-connect.ts`) and, for spend/token numbers, `AI_GATEWAY_API_KEY` (optionally `AI_GATEWAY_REPORT_API_KEY_NAME` / `AI_GATEWAY_REPORT_TAGS`) — both connections are admin-gated so only the scheduled/Slack/admin path can reach them.
+
+### Global Config
+
+One root key per surface — each self-contained, so you never have to jump elsewhere to see all of a surface's config:
+
+```json
+{
+  "admin": {
+    "githubLogins": ["some-github-login"]
+  },
+  "slack": {
+    "workspace": "vercel",
+    "channels": {
+      "digest": { "id": "C0123ABC", "name": "project-nuxi" },
+      "firehose": { "id": "C0456DEF", "name": "firehose-nuxt" }
+    }
+  },
+  "discord": {
+    "channels": {
+      "admin": ["1234567890123456"],
+      "public": ["6543210987654321"],
+      "autoRespond": ["1111111111111111"]
+    },
+    "digestChannel": "1234567890123456"
+  },
+  "workflow": {
+    "sinceDays": 7,
+    "manualTrigger": false
+  }
+}
+```
+
+- `admin.githubLogins` — extra admin GitHub logins on top of the core team (`server/utils/team.ts`, main Nuxt app). Locally (and on preview), `NUXT_ADMIN_GITHUB_LOGINS` is a comma-separated overlay of the same list so you can test web-chat admin without Global Config; ignored when `VERCEL_ENV=production`. Re-sign-in after changing it.
+- `slack` — workspace subdomain + the two known channel refs, consumed by `agent/lib/slack/config.ts` / `slack/api.ts`.
+- `discord` — the live-dispatch allowlist (`channels.admin` / `channels.public` / `channels.autoRespond`) and the optional digest-mirror target (`digestChannel`), consumed by `agent/lib/discord/access.ts`. `admin` grants admin mode; `public` and `autoRespond` stay on the public toolset (`autoRespond` answers without an `@mention`).
+- `workflow` — the only cross-cutting knobs left: digest window and the manual-trigger safety switch, consumed by `agent/lib/workflow/config.ts` / `workflow/shared.ts`.
+
+Every field is optional and falls back to a sane default: `sinceDays` → 7, `slack.workspace` → `vercel`, each Slack channel's `id` → `name` → a hardcoded default (`project-nuxi`/`firehose-nuxt`, resolved via `users.conversations` — slower, and needs `channels:read`/`groups:read`), `manualTrigger` → `false` (production `/ops/*/trigger` stays disabled; preview is always allowed), `discord.digestChannel` → mirror disabled, `discord.channels` unset/empty → deny everywhere. Preview and production share the same `GLOBAL_CONFIG` store.
+
+`admin`, `slack`, `discord`, and `workflow` are all read through `agent/lib/global-config.ts` (`readGlobalConfig`), a thin wrapper around `@vercel/global-config` that caches each key set for 30s (a single scheduled run can otherwise trigger several redundant reads of the same key) and turns a Global Config outage into a logged warning + empty result instead of an unhandled throw. Each is parsed with zod, so a malformed dashboard edit falls back to defaults with a clear warning instead of failing silently.

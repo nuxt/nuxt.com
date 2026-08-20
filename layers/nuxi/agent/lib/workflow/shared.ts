@@ -1,8 +1,9 @@
 import { timingSafeEqual } from 'node:crypto'
 import type { ScheduleHandlerArgs } from 'eve/schedules'
-import slack from '../channels/slack.js'
-import { discordWorkflowChannelId } from './discord-access.js'
-import { resolveSlackChannelRef, workflowSlackChannelRef } from './slack-api.js'
+import slack from '../../channels/slack.js'
+import { discordDigestChannelId } from '../discord/access.js'
+import { digestSlackChannelRef, resolveSlackChannelRef } from '../slack/api.js'
+import { loadWorkflowConfig } from './config.js'
 
 const DEFAULT_SINCE_DAYS = 7
 
@@ -13,11 +14,12 @@ export const scheduleAppAuth = {
   principalType: 'runtime'
 } as const satisfies ScheduleHandlerArgs['appAuth']
 
-export function defaultSinceDays(): number {
-  const raw = process.env.NUXT_WORKFLOW_SINCE_DAYS?.trim()
-  const parsed = raw ? Number.parseInt(raw, 10) : DEFAULT_SINCE_DAYS
-  if (!Number.isFinite(parsed) || parsed < 1) return DEFAULT_SINCE_DAYS
-  return Math.min(parsed, 365)
+/** `workflow.sinceDays` in Global Config (see `config.ts`); unset/invalid falls back to a week. */
+export async function defaultSinceDays(): Promise<number> {
+  const config = await loadWorkflowConfig()
+  const raw = config.sinceDays
+  if (typeof raw !== 'number' || !Number.isFinite(raw) || raw < 1) return DEFAULT_SINCE_DAYS
+  return Math.min(raw, 365)
 }
 
 export type ParseWindowResult
@@ -33,17 +35,23 @@ export function parseSinceDays(value: string | null | undefined): ParseWindowRes
   return { ok: true, value: Math.min(parsed, 365) }
 }
 
-export function resolveSinceDays(
+/**
+ * `override` (e.g. a manual `?sinceDays=` trigger) wins, then `fallback` if a
+ * caller passes one, then `workflow.sinceDays` in Global Config. Only pass
+ * `fallback` when a workflow needs a default unrelated to that shared knob —
+ * a hardcoded fallback here always wins over `??` and Global Config is never read.
+ */
+export async function resolveSinceDays(
   override: number | undefined,
-  fallback: number = defaultSinceDays()
-): number {
-  return override ?? fallback
+  fallback?: number
+): Promise<number> {
+  return override ?? fallback ?? await defaultSinceDays()
 }
 
 /**
- * Starts a Slack digest session and, when `DISCORD_WORKFLOW_CHANNEL_ID` is
- * configured, mirrors the same generated text to Discord (see
- * `discord-workflow.ts` — no second agent run). Awaited inline rather than
+ * Starts a Slack digest session and, when `discord.digestChannel` is
+ * configured in Global Config, mirrors the same generated text to Discord
+ * (see `discord/digest-mirror.ts` — no second agent run). Awaited inline rather than
  * fired under a nested `waitUntil`: this whole function already runs inside
  * the caller's top-level `waitUntil(runWeeklyDigest(...))`, and a second,
  * deeply-nested `waitUntil` call turned out not to reliably survive the
@@ -51,38 +59,36 @@ export function resolveSinceDays(
  * no error logged). Awaiting here keeps the mirror inside that same
  * protected async chain instead of relying on a second background task.
  */
-export async function receiveOnSlack({
-  receive,
+export async function sendToSlack({
+  to,
   appAuth,
   message,
   channelRef
 }: {
-  receive: ScheduleHandlerArgs['receive']
+  to: ScheduleHandlerArgs['to']
   appAuth: ScheduleHandlerArgs['appAuth']
   message: string
   channelRef?: string
 }) {
-  const resolved = await resolveSlackChannelRef(channelRef ?? workflowSlackChannelRef())
+  const resolved = await resolveSlackChannelRef(channelRef ?? await digestSlackChannelRef())
 
-  const session = await receive(slack, {
-    auth: appAuth,
-    target: { channelId: resolved.id },
-    message
-  })
+  const session = await to(slack, { channelId: resolved.id }).send(message, { auth: appAuth })
 
-  const discordChannelId = discordWorkflowChannelId()
+  const discordChannelId = await discordDigestChannelId()
   if (discordChannelId) {
     // Dynamic import: keep Slack digest schedules loadable without Discord env.
-    const { mirrorDigestToDiscord } = await import('./discord-workflow.js')
+    const { mirrorDigestToDiscord } = await import('../discord/digest-mirror.js')
     await mirrorDigestToDiscord({ session, channelId: discordChannelId })
   }
 
   return session
 }
 
-export function isManualWorkflowTriggerAllowed(): boolean {
-  if (process.env.NUXT_WORKFLOW_MANUAL_TRIGGER === '1') return true
-  return process.env.VERCEL_ENV === 'preview'
+/** Force-enable manual ops triggers on production via `workflow.manualTrigger` in Global Config; always allowed on preview. */
+export async function isManualWorkflowTriggerAllowed(): Promise<boolean> {
+  if (process.env.VERCEL_ENV === 'preview') return true
+  const config = await loadWorkflowConfig()
+  return config.manualTrigger === true
 }
 
 function safeBearerMatch(provided: string, expected: string): boolean {

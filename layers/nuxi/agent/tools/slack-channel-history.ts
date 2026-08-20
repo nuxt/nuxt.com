@@ -1,16 +1,16 @@
 import { defineDynamic, defineTool } from 'eve/tools'
 import { z } from 'zod'
-import { canAccessAdminMcp } from '../lib/admin-mcp-access.js'
+import { isAdminMode } from '../lib/identity/admin-mode.js'
 import {
   fetchSlackChannelHistory,
   firehoseSlackChannelRef,
   resolveSlackChannelRef
-} from '../lib/slack-api.js'
+} from '../lib/slack/api.js'
 
 export default defineDynamic({
   events: {
     'session.started': async (_event, ctx) => {
-      if (!canAccessAdminMcp(ctx.session.auth.current)) return null
+      if (!(await isAdminMode(ctx.session.auth.current))) return null
 
       return {
         read_slack_channel_history: defineTool({
@@ -21,7 +21,7 @@ export default defineDynamic({
             limit: z.number().int().min(1).max(200).default(200)
           }),
           async execute({ channel, sinceHours, limit }) {
-            const resolved = await resolveSlackChannelRef(channel ?? firehoseSlackChannelRef())
+            const resolved = await resolveSlackChannelRef(channel ?? await firehoseSlackChannelRef())
             const messages = await fetchSlackChannelHistory({
               channelId: resolved.id,
               sinceHours,

@@ -222,7 +222,7 @@ if (import.meta.server) {
       </UPageBody>
 
       <template #right>
-        <UContentToc v-if="!isAgentDocked" :links="module.readme?.toc?.links">
+        <UContentToc :links="module.readme?.toc?.links">
           <template #bottom>
             <div class="hidden lg:block space-y-6">
               <UPageLinks title="Links" :links="links" />
