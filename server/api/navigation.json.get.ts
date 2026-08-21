@@ -8,9 +8,9 @@ export default defineEventHandler(async (event) => {
   // `null` entry. Every consumer iterates these items reading `item.path`, so a
   // single null took down SSR for the whole docs section.
   return Promise.all([
-    queryCollectionNavigation(event, 'docsv3', ['titleTemplate']).then(data => data[0]?.children ?? []),
-    queryCollectionNavigation(event, 'docsv4', ['titleTemplate']).then(data => data[0]?.children ?? []),
-    queryCollectionNavigation(event, 'docsv5', ['titleTemplate']).then(data => data[0]?.children ?? []),
+    queryCollectionNavigation(event, 'docsv3', ['titleTemplate', 'minimalVersion']).then(data => data[0]?.children ?? []),
+    queryCollectionNavigation(event, 'docsv4', ['titleTemplate', 'minimalVersion']).then(data => data[0]?.children ?? []),
+    queryCollectionNavigation(event, 'docsv5', ['titleTemplate', 'minimalVersion']).then(data => data[0]?.children ?? []),
     queryCollectionNavigation(event, 'blog')
   ]).then(data => data.flat().filter(Boolean))
 })
