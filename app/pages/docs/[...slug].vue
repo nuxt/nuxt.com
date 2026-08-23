@@ -4,6 +4,7 @@ import { joinURL } from 'ufo'
 import type { ContentNavigationItem } from '@nuxt/content'
 import { findPageBreadcrumb } from '@nuxt/content/utils'
 import { mapContentNavigation } from '@nuxt/ui/utils/content'
+import { DocsProseImg } from '#components'
 import { SUPPORTED_DOCS_PATH_REGEX } from '#shared/utils/docs'
 
 definePageMeta({
@@ -250,7 +251,7 @@ const noRightAside = computed(() => route.path.includes('/examples/'))
         </UPageHeader>
 
         <UPageBody>
-          <ContentRenderer v-if="page.body" :value="page" />
+          <ContentRenderer v-if="page.body" :value="page" :components="{ img: DocsProseImg }" />
           <div>
             <Feedback :page="page" />
             <USeparator class="mt-6 mb-10">

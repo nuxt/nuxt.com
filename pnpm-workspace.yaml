@@ -31,3 +31,9 @@ minimumReleaseAgeExclude:
   - vue
   - '@vue/*'
   - '@nuxtjs/mdc@0.23.1'
+
+patchedDependencies:
+  # Keys the git checkout directory on the resolved ref, so the `nuxt/cli` sources on
+  # `3.x` and `main` stop overwriting each other's working tree.
+  # https://github.com/nuxt/content/pull/3839
+  '@nuxt/content': patches/@nuxt__content.patch
