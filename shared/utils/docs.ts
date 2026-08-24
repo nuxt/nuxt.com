@@ -14,6 +14,18 @@ export const SUPPORTED_DOC_VERSIONS = ['3.x', '4.x'] as const
 export const EXCLUDED_DOC_VERSIONS = ['5.x'] as const
 export const CURRENT_DOCS_VERSION: (typeof SUPPORTED_DOC_VERSIONS)[number] = '4.x'
 
+/**
+ * Every version that has content behind it
+ */
+
+export const DOC_VERSIONS = [...SUPPORTED_DOC_VERSIONS, ...EXCLUDED_DOC_VERSIONS] as const
+
+export type DocVersion = (typeof DOC_VERSIONS)[number]
+
+export function isDocVersion(value: string): value is DocVersion {
+  return (DOC_VERSIONS as readonly string[]).includes(value)
+}
+
 const escape = (v: string) => v.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
 
 // `^/docs/(?:3\.x|4\.x)(?:/|$)` — matches versioned doc paths only.
