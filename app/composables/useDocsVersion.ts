@@ -1,4 +1,6 @@
 import type { BadgeProps } from '@nuxt/ui'
+import { isDocVersion, CURRENT_DOCS_VERSION } from '#shared/utils/docs'
+import { docsInstanceKey, type ContentInstanceKey } from '#shared/utils/content'
 
 interface Version {
   label: string
@@ -6,6 +8,7 @@ interface Version {
   branch: string
   tagColor: BadgeProps['color']
   path: string
+  /** TODO: remove — only the search palette still uses it (Phase 4). */
   collection?: 'docsv3' | 'docsv4' | 'docsv5'
   /** `unsupported` versions are end of life: no bug fixes, no security patches. */
   status?: 'prerelease' | 'stable' | 'unsupported'
@@ -110,9 +113,16 @@ export const useDocsVersion = () => {
         })
   })))
 
+  /** The content instance key holding the active version's docs, derived from `path`. */
+  const instanceKey = computed<ContentInstanceKey>(() => {
+    const segment = version.value.path.replace('/docs/', '')
+    return docsInstanceKey(isDocVersion(segment) ? segment : CURRENT_DOCS_VERSION)
+  })
+
   return {
     items,
     version,
-    versions
+    versions,
+    instanceKey
   }
 }

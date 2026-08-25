@@ -1,9 +1,7 @@
 <script setup lang="ts">
 import { kebabCase } from 'scule'
 import { joinURL } from 'ufo'
-import type { ContentNavigationItem } from '@nuxt/content'
-import { findPageBreadcrumb } from '@nuxt/content/utils'
-import { mapContentNavigation } from '@nuxt/ui/utils/content'
+import type { NavigationItem } from 'comark-content'
 import { SUPPORTED_DOCS_PATH_REGEX } from '#shared/utils/docs'
 
 definePageMeta({
@@ -11,32 +9,30 @@ definePageMeta({
   key: 'docs'
 })
 
-const navigation = inject<Ref<ContentNavigationItem[]>>('navigation', ref([]))
+const navigation = inject<Ref<NavigationItem[]>>('navigation', ref([]))
 const menuDrawerOpen = ref(false)
 const onThisPageDrawerOpen = ref(false)
 
 const route = useRoute()
 const nuxtApp = useNuxtApp()
-const { version } = useDocsVersion()
+const { version, instanceKey: docsInstanceKey } = useDocsVersion()
 const { headerLinks } = useHeaderLinks()
 const { isAgentDocked } = useNuxtAgent()
 const path = computed(() => route.path.replace(/\/$/, ''))
 
 const ignoredPaths = ['.nuxt', '.output', '.env', 'node_modules']
-const navClass = (item: ContentNavigationItem) => {
+const navClass = (item: NavigationItem) => {
   if (ignoredPaths.includes(item.title) && !route.path.includes(item.path)) {
     return 'opacity-70 hover:opacity-100'
   }
   return ''
 }
 
-// Get the aside navigation
 const asideNavigation = computed(() => {
-  const path = [version.value.path, route.params.slug?.[version.value.path.split('/').length - 2]].filter(Boolean).join('/')
+  const sections = navPageFromPath(version.value.path, navigation.value)?.children ?? []
+  const section = sections.find(item => path.value === item.path || path.value.startsWith(`${item.path}/`))
 
-  const nav = navPageFromPath(path, navigation.value)?.children || []
-
-  return nav.map(item => ({
+  return (section?.children ?? []).map(item => ({
     ...item,
     class: navClass(item)
   }))
@@ -52,22 +48,19 @@ function paintResponse() {
 }
 
 const pageKey = computed(() => kebabCase(path.value))
-const surroundKey = computed(() => `${kebabCase(path.value)}-surround`)
 
-const [{ data: page, status }, { data: surround }] = await Promise.all([
-  useAsyncData(pageKey, () => {
-    const pagePath = path.value
-    const collection = version.value.collection
-    return paintResponse().then(() => queryCollection(collection).path(pagePath).first())
-  }),
-  useAsyncData(surroundKey, () => {
-    const pagePath = path.value
-    const collection = version.value.collection
-    return paintResponse().then(() => queryCollectionItemSurroundings(collection, pagePath, {
-      fields: ['description']
-    }))
-  })
-])
+const instanceKey = computed(() => path.value.startsWith('/docs/examples') ? 'examples' as const : docsInstanceKey.value)
+
+const { data: page, status } = await useAsyncData(pageKey, () => {
+  const pagePath = path.value
+  const client = useContent(instanceKey.value)
+  return paintResponse().then(() => client.get(pagePath))
+})
+
+const surround = computed(() => findSurroundLinks(navigation.value, path.value))
+
+const fm = computed<Record<string, any>>(() => page.value?.data ?? {})
+const tocLinks = computed<any[]>(() => (page.value?.meta as any)?.toc?.links ?? [])
 
 watch(status, (status) => {
   if (status === 'pending') {
@@ -91,13 +84,13 @@ watch(page, (page) => {
 // Get the -2 item of the breadcrumb
 const currentSectionTitle = computed(() =>
   headerLinks.value[0]?.children?.find(link => path.value.includes(link.to))?.label
-  || findPageBreadcrumb(navigation.value, path.value).slice(-1)[0]?.title
+  || findBreadcrumb(navigation.value, path.value).slice(-1)[0]?.title
   || '')
 
 const breadcrumb = computed(() => {
-  const links = mapContentNavigation(findPageBreadcrumb(navigation.value, path.value)).map(link => ({
-    label: link.label,
-    to: link.to
+  const links = findBreadcrumb(navigation.value, path.value).map(item => ({
+    label: item.title,
+    to: item.path
   })).slice(1)
 
   if (path.value.startsWith(`${version.value.path}/bridge`) || path.value.startsWith(`${version.value.path}/migration`)) {
@@ -115,7 +108,13 @@ const breadcrumb = computed(() => {
 
   return links
 })
-const editLink = computed(() => `https://github.com/nuxt/nuxt/edit/${version.value.branch}/${page?.value?.stem?.replace(/docs\/\d\.x/, 'docs')}.${page?.value?.extension}`)
+const editLink = computed(() => {
+  const meta = page.value?.meta
+  if (!meta) return ''
+  return instanceKey.value === 'examples'
+    ? `https://github.com/nuxt/examples/edit/main/.docs/${meta.stem}${meta.extension}`
+    : `https://github.com/nuxt/nuxt/edit/${version.value.branch}/docs/${meta.stem}${meta.extension}`
+})
 
 const communityLinks = [{
   icon: 'i-lucide-heart',
@@ -134,7 +133,7 @@ const communityLinks = [{
   target: '_blank'
 }]
 
-const title = computed(() => page.value?.seo?.title || page.value?.title)
+const title = computed(() => fm.value.seo?.title || fm.value.title)
 const titleTemplate = computed(() => `${findTitleTemplate(page, navigation, version.value.path)} ${version.value.shortTag}`)
 
 useSeoMeta({
@@ -156,8 +155,8 @@ if (import.meta.server) {
   useSchemaOrg([
     defineArticle({
       '@type': 'TechArticle',
-      'headline': page.value?.title,
-      'description': page.value?.seo?.description || page.value?.description
+      'headline': fm.value.title,
+      'description': fm.value.seo?.description || fm.value.description
     }),
     defineBreadcrumb({
       itemListElement: breadcrumb.value.map(item => ({
@@ -167,7 +166,7 @@ if (import.meta.server) {
     })
   ])
 
-  const description = page.value?.seo?.description || page.value?.description
+  const description = fm.value.seo?.description || fm.value.description
   useSeoMeta({
     description,
     ogDescription: description,
@@ -212,29 +211,29 @@ const noRightAside = computed(() => route.path.includes('/examples/'))
           :ui="{
             wrapper: 'flex-row items-center flex-wrap justify-between'
           }"
-          v-bind="page"
+          v-bind="fm"
         >
           <template #headline>
             <UBreadcrumb :items="breadcrumb" />
           </template>
 
           <template #title>
-            {{ page.title }}
+            {{ fm.title }}
 
             <UBadge
-              v-if="page.minimalVersion?.trim()"
-              :label="`v${page.minimalVersion?.trim()}`"
+              v-if="fm.minimalVersion?.trim()"
+              :label="`v${fm.minimalVersion?.trim()}`"
               color="info"
               variant="subtle"
               size="lg"
               class="align-middle"
-              :aria-label="`Minimum Nuxt version: v${page.minimalVersion?.trim()}`"
+              :aria-label="`Minimum Nuxt version: v${fm.minimalVersion?.trim()}`"
             />
           </template>
 
           <template #links>
             <UButton
-              v-for="link in page.links?.map(link => ({ ...link, size: 'md' }))"
+              v-for="link in fm.links?.map((link: any) => ({ ...link, size: 'md' }))"
               :key="link.label"
               color="neutral"
               variant="soft"
@@ -250,9 +249,9 @@ const noRightAside = computed(() => route.path.includes('/examples/'))
         </UPageHeader>
 
         <UPageBody>
-          <ContentRenderer v-if="page.body" :value="page" />
+          <MarkdownDocument v-if="page.nodes?.length" :value="page" />
           <div>
-            <Feedback :page="page" />
+            <Feedback :page="{ title: fm.title, stem: page.meta.stem }" />
             <USeparator class="mt-6 mb-10">
               <div class="flex items-center gap-2 text-sm text-muted">
                 <UButton
@@ -281,7 +280,7 @@ const noRightAside = computed(() => route.path.includes('/examples/'))
         <template #right>
           <ContentToc
             v-if="!noRightAside"
-            :links="page.body?.toc?.links"
+            :links="tocLinks"
             :community-links="communityLinks"
             highlight
             highlight-variant="circuit"
@@ -349,7 +348,7 @@ const noRightAside = computed(() => route.path.includes('/examples/'))
               />
               <template #body>
                 <ContentToc
-                  :links="page.body?.toc?.links"
+                  :links="tocLinks"
                   :community-links="communityLinks"
                   :open="true"
                   default-open

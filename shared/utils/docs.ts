@@ -14,10 +14,7 @@ export const SUPPORTED_DOC_VERSIONS = ['3.x', '4.x'] as const
 export const EXCLUDED_DOC_VERSIONS = ['5.x'] as const
 export const CURRENT_DOCS_VERSION: (typeof SUPPORTED_DOC_VERSIONS)[number] = '4.x'
 
-/**
- * Every version that has content behind it
- */
-
+/** Every version with content behind it, exposed or not. */
 export const DOC_VERSIONS = [...SUPPORTED_DOC_VERSIONS, ...EXCLUDED_DOC_VERSIONS] as const
 
 export type DocVersion = (typeof DOC_VERSIONS)[number]

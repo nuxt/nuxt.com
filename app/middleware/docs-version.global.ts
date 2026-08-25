@@ -5,8 +5,14 @@ import { SUPPORTED_DOC_VERSIONS, EXCLUDED_DOC_VERSIONS, CURRENT_DOCS_VERSION } f
 const KNOWN_DOC_VERSIONS = [...SUPPORTED_DOC_VERSIONS, ...EXCLUDED_DOC_VERSIONS]
 
 export default defineNuxtRouteMiddleware((to) => {
+  // If the path does not start with /docs/, return.
   if (!to.path.startsWith('/docs/')) return
+
+  // If the path starts with a known version, return.
   if (KNOWN_DOC_VERSIONS.some(v => to.path.startsWith(`/docs/${v}`))) return
+
+  // Examples are not versioned.
+  if (to.path.startsWith('/docs/examples')) return
 
   // 302 (not 301): the target version flips when a new stable release
   // ships and we don't want browsers/CDNs caching stale 301s pointing at

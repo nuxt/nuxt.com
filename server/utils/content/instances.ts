@@ -3,10 +3,7 @@ import { isDocVersion, type DocVersion } from '#shared/utils/docs'
 /**
  * Where one instance reads from: a repo directory, mounted under one prefix.
  *
- * nuxt.com runs **one instance per source**, each pinned to a single commit SHA, rather than one
- * instance with many sources behind a combined SHA.
- *
- * A push then invalidates exactly the caches of the instance that changed.
+ * One instance per source, each on a single commit — so a push only invalidates that instance.
  */
 export interface InstanceSource {
   /** Repo the content is read from. */
@@ -19,21 +16,15 @@ export interface InstanceSource {
   contentDir: string
   /** Frontmatter kept in the manifest (everything `list()` and `navigation()` can see) */
   listingFields?: string[]
-  /**
-   * Env var holding the path to a local clone of `repo` (`NUXT_V4_PATH`, `NUXT_EXAMPLES_PATH`, …).
-   * When set, the instance reads that directory instead of GitHub, so a contributor can edit the
-   * Nuxt docs locally and see them live — `fs()` sources are watched in dev, the GitHub source
-   * would keep serving the raw CDN. Documented in `README.md` and `.env.example`.
-   */
+  /** Glob patterns, relative to `contentDir`, never read. */
+  exclude?: string[]
+  /** Env var pointing at a local clone (see `README.md`): reads it instead of GitHub, watched in dev. */
   envOverride?: string
   /** Read from the local `contentDir` in dev (this repo's own content). */
   local?: boolean
 }
 
-/**
- * Where each docs version is read from. Keyed by the version list in `#shared/utils/docs` — the
- * `satisfies` makes adding a version there a type error until it is mapped to a branch here.
- */
+/** `satisfies` makes a new version in `#shared/utils/docs` a type error until it is mapped here. */
 const DOCS_REFS = {
   '3.x': { branch: '3.x', envOverride: 'NUXT_V3_PATH' },
   '4.x': { branch: '4.x', envOverride: 'NUXT_V4_PATH' },
@@ -44,6 +35,9 @@ const DOCS_REFS = {
  * Limited listing fields for docs and examples.
  */
 const DOCS_LISTING_FIELDS = ['title', 'description', 'navigation', 'titleTemplate', 'icon']
+
+/** A contributor readme, not a page. */
+const DOCS_EXCLUDE = ['README.md']
 
 /**
  * Examples are **not** version-scoped.
@@ -60,6 +54,7 @@ export function instanceSource(key: ContentInstanceKey): InstanceSource {
       contentDir: '.docs/',
       prefix: '/docs/examples',
       listingFields: DOCS_LISTING_FIELDS,
+      exclude: DOCS_EXCLUDE,
       envOverride: 'NUXT_EXAMPLES_PATH'
     }
   }
@@ -74,6 +69,7 @@ export function instanceSource(key: ContentInstanceKey): InstanceSource {
     contentDir: 'docs',
     prefix: `/docs/${version}`,
     listingFields: DOCS_LISTING_FIELDS,
+    exclude: DOCS_EXCLUDE,
     envOverride: DOCS_REFS[version].envOverride
   }
 }

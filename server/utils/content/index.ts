@@ -5,24 +5,8 @@ import github from 'comark-content/sources/github'
 import markdown from 'comark-content/plugins/markdown'
 import yaml from 'comark-content/plugins/yaml'
 import json from 'comark-content/plugins/json'
-import security from 'comark/plugins/security'
-import emoji from 'comark/plugins/emoji'
-import toc from 'comark/plugins/toc'
 import type { InstanceSource } from './instances'
 import { instanceBasePath, type ContentInstanceKey } from '#shared/utils/content'
-
-/**
- * The comark markdown-plugin chain.
- */
-const comarkPlugins = [
-  highlightPlugin,
-  toc({ depth: 3 }),
-  emoji(),
-  security({
-    blockedTags: ['script', 'iframe', 'embed', 'form', 'base', 'meta', 'link', 'style'],
-    allowDataImages: false
-  })
-]
 
 /** Read `source` from a local directory in dev, or from the repo at `sha`. */
 function createSource(source: InstanceSource, sha: string) {
@@ -30,16 +14,17 @@ function createSource(source: InstanceSource, sha: string) {
   const prefix = source.prefix === '/' ? undefined : source.prefix
 
   if (source.local && import.meta.dev) {
-    return fs(source.contentDir, { prefix })
+    return fs(source.contentDir, { prefix, exclude: source.exclude })
   }
   if (overridePath) {
-    return fs(join(overridePath, source.contentDir), { prefix })
+    return fs(join(overridePath, source.contentDir), { prefix, exclude: source.exclude })
   }
   return github({
     repo: source.repo,
     branch: sha,
     path: source.contentDir,
     prefix,
+    exclude: source.exclude,
     token: contentGithubToken(),
     // `sha` is an immutable commit outside dev => we can cache hard.
     ttl: 60 * 60 * 24
@@ -47,12 +32,9 @@ function createSource(source: InstanceSource, sha: string) {
 }
 
 /**
- * Create the content instance for `key`, reading at `sha`. Holds no shared state — call sites
- * decide whether/how to memoize (see `getInstance`).
+ * Create the content instance for `key`, reading at `sha`. Holds no shared state.
  *
- * Every instance carries one source named after its corpus (`site`, `docs`, `examples`), so
- * `list()`/`navigation()`/`search()` calls name a corpus, not a version: the version lives in the
- * instance itself, which is what `docs.withRef('3.x')` will express once the library ships it.
+ * Every instance carries one source (`site`, `docs`, `examples`).
  */
 export async function createContentInstance(key: ContentInstanceKey, sha: string): Promise<ComarkContent> {
   const source = instanceSource(key)
@@ -65,7 +47,8 @@ export async function createContentInstance(key: ContentInstanceKey, sha: string
     plugins: [
       markdown({ comark: { plugins: comarkPlugins }, listingFields }),
       yaml({ listingFields }),
-      json({ listingFields })
+      json({ listingFields }),
+      ...instancePlugins(key)
     ],
     cache: { driver: contentCacheDriver(key, sha) }
   })
