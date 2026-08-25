@@ -23,6 +23,13 @@ export function isDocVersion(value: string): value is DocVersion {
   return (DOC_VERSIONS as readonly string[]).includes(value)
 }
 
+/**
+ * Whether a path belongs to a version of the docs.
+ */
+export function isVersionedDocsPath(path: string): boolean {
+  return DOC_VERSIONS.some(version => path === `/docs/${version}` || path.startsWith(`/docs/${version}/`))
+}
+
 const escape = (v: string) => v.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
 
 // `^/docs/(?:3\.x|4\.x)(?:/|$)` — matches versioned doc paths only.

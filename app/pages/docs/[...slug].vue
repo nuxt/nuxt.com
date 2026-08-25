@@ -2,7 +2,7 @@
 import { kebabCase } from 'scule'
 import { joinURL } from 'ufo'
 import type { NavigationItem } from 'comark-content'
-import { SUPPORTED_DOCS_PATH_REGEX } from '#shared/utils/docs'
+import { SUPPORTED_DOCS_PATH_REGEX, isVersionedDocsPath } from '#shared/utils/docs'
 
 definePageMeta({
   heroBackground: 'opacity-30',
@@ -49,7 +49,9 @@ function paintResponse() {
 
 const pageKey = computed(() => kebabCase(path.value))
 
-const instanceKey = computed(() => path.value.startsWith('/docs/examples') ? 'examples' as const : docsInstanceKey.value)
+const versioned = computed(() => isVersionedDocsPath(path.value))
+
+const instanceKey = computed(() => versioned.value ? docsInstanceKey.value : 'examples' as const)
 
 const { data: page, status } = await useAsyncData(pageKey, () => {
   const pagePath = path.value
@@ -134,7 +136,11 @@ const communityLinks = [{
 }]
 
 const title = computed(() => fm.value.seo?.title || fm.value.title)
-const titleTemplate = computed(() => `${findTitleTemplate(page, navigation, version.value.path)} ${version.value.shortTag}`)
+
+const titleTemplate = computed(() => {
+  const template = findTitleTemplate(page, navigation, version.value.path)
+  return versioned.value ? `${template} ${version.value.shortTag}` : template
+})
 
 useSeoMeta({
   titleTemplate,
