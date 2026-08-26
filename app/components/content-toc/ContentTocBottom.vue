@@ -16,13 +16,14 @@ interface Props {
 const props = defineProps<Props>()
 
 const route = useRoute()
-const { open } = useNuxtAgent()
+const { open, isAgentDocked } = useNuxtAgent()
 const { track } = useAnalytics()
 
 // Carbon only renders a single ad per page, so mount it in the toc that is
-// actually visible: the drawer below `lg`, the aside above.
+// actually visible: the drawer below `lg`, the aside above unless the agent
+// panel is docked over it.
 const isLargeScreen = useMediaQuery('(min-width: 1024px)')
-const showAds = computed(() => props.drawer ? !isLargeScreen.value : isLargeScreen.value)
+const showAds = computed(() => props.drawer ? !isLargeScreen.value : isLargeScreen.value && !isAgentDocked.value)
 
 function explainWithAI() {
   track('Nuxi Explain Page', { page: route.path })
