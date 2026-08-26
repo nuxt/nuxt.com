@@ -3,6 +3,7 @@ import { visit } from 'comark/utils'
 import toc from 'comark/plugins/toc'
 import emoji from 'comark/plugins/emoji'
 import security from 'comark/plugins/security'
+import markdownFields from 'comark-content/plugins/markdown-fields'
 import type { ContentPlugin } from 'comark-content'
 import type { DocVersion } from '#shared/utils/docs'
 
@@ -110,7 +111,8 @@ export function configDocs(): ContentPlugin {
 
 /** Per-instance plugins, on top of the shared `markdown()`/`yaml()`/`json()` chain. */
 export function instancePlugins(key: ContentInstanceKey): ContentPlugin[] {
-  if (key === 'site' || key === 'examples') return []
+  if (key === 'site') return [markdownFields()]
+  if (key === 'examples') return []
 
   const version = key.slice('docs:'.length) as DocVersion
 

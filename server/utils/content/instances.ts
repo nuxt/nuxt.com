@@ -1,3 +1,5 @@
+import { markdownField } from 'comark-content/plugins/markdown-fields'
+import type { JsonSchema } from 'comark-content'
 import { isDocVersion, type DocVersion } from '#shared/utils/docs'
 
 /**
@@ -18,7 +20,9 @@ export interface InstanceSource {
   listingFields?: string[]
   /** Glob patterns, relative to `contentDir`, never read. */
   exclude?: string[]
-  /** Env var pointing at a local clone (see `README.md`): reads it instead of GitHub, watched in dev. */
+  /** Partial `data` schema — only the fields needing a declared type or transform. */
+  schema?: JsonSchema
+  /** Env var pointing at a local clone (see `README.md`): reads it instead of GitHub. */
   envOverride?: string
   /** Read from the local `contentDir` in dev (this repo's own content). */
   local?: boolean
@@ -40,12 +44,33 @@ const DOCS_LISTING_FIELDS = ['title', 'description', 'navigation', 'titleTemplat
 const DOCS_EXCLUDE = ['README.md']
 
 /**
+ * Markdown held inside data files, parsed by `markdownFields()` instead of at render time.
+ */
+const SITE_SCHEMA: JsonSchema = {
+  type: 'object',
+  properties: {
+    hero: {
+      type: 'object',
+      properties: {
+        tabs: {
+          type: 'array',
+          items: {
+            type: 'object',
+            properties: { content: markdownField() }
+          }
+        }
+      }
+    }
+  }
+}
+
+/**
  * Examples are **not** version-scoped.
  * They live at one canonical prefix, linked from every version's navigation.
  */
 export function instanceSource(key: ContentInstanceKey): InstanceSource {
   if (key === 'site') {
-    return { repo: 'nuxt/nuxt.com', branch: 'main', contentDir: 'content', prefix: '/', local: true }
+    return { repo: 'nuxt/nuxt.com', branch: 'main', contentDir: 'content', prefix: '/', local: true, schema: SITE_SCHEMA }
   }
   if (key === 'examples') {
     return {

@@ -14,10 +14,10 @@ function createSource(source: InstanceSource, sha: string) {
   const prefix = source.prefix === '/' ? undefined : source.prefix
 
   if (source.local && import.meta.dev) {
-    return fs(source.contentDir, { prefix, exclude: source.exclude })
+    return fs(source.contentDir, { prefix, exclude: source.exclude, schema: source.schema })
   }
   if (overridePath) {
-    return fs(join(overridePath, source.contentDir), { prefix, exclude: source.exclude })
+    return fs(join(overridePath, source.contentDir), { prefix, exclude: source.exclude, schema: source.schema })
   }
   return github({
     repo: source.repo,
@@ -25,6 +25,7 @@ function createSource(source: InstanceSource, sha: string) {
     path: source.contentDir,
     prefix,
     exclude: source.exclude,
+    schema: source.schema,
     token: contentGithubToken(),
     // `sha` is an immutable commit outside dev => we can cache hard.
     ttl: 60 * 60 * 24
@@ -41,7 +42,7 @@ export async function createContentInstance(key: ContentInstanceKey, sha: string
   const { listingFields } = source
   const sourceName = key.startsWith('docs:') ? 'docs' : key
 
-  const instance = comarkContent({
+  return comarkContent({
     basePath: instanceBasePath(key),
     sources: { [sourceName]: createSource(source, sha) },
     plugins: [
@@ -52,12 +53,6 @@ export async function createContentInstance(key: ContentInstanceKey, sha: string
     ],
     cache: { driver: contentCacheDriver(key, sha) }
   })
-
-  if (import.meta.dev) {
-    await instance.watch()
-  }
-
-  return instance
 }
 
 /**

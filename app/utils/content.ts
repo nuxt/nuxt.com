@@ -60,3 +60,39 @@ export function findTitleTemplate(
 
   return items.find(item => typeof item.titleTemplate === 'string')?.titleTemplate as string || '%s · Nuxt'
 }
+
+/**
+ * Every document under the `path` directory (at any depth).
+ */
+export async function listByDir<T extends Record<string, any> = Record<string, any>>(path: string) {
+  const items = await useContent('site').list('site')
+  const prefix = `${path}/`
+
+  return items
+    .filter(item => item.path.startsWith(prefix) && !item.path.split('/').pop()!.startsWith('.'))
+    .sort((a, b) => a.path.localeCompare(b.path))
+    .map(item => ({ ...(item.data as T), path: item.path, stem: item.meta.stem, extension: item.meta.extension }))
+}
+
+export interface ListSurroundLink {
+  title: string
+  description?: string
+  path: string
+  [key: string]: unknown
+}
+
+/**
+ * Previous and next entry around `path` in an already-sorted list
+ */
+export function listSurround(
+  items: Array<Record<string, any>> | undefined | null,
+  path: string
+): Array<ListSurroundLink | null> {
+  const index = (items ?? []).findIndex(item => item.path === path)
+  if (index === -1) return []
+
+  const link = (item?: Record<string, any>): ListSurroundLink | null =>
+    item ? { title: item.title, description: item.description, path: item.path } : null
+
+  return [link(items?.[index - 1]), link(items?.[index + 1])]
+}
