@@ -94,9 +94,13 @@ CMD ["node", ".output/server/index.mjs"]
 Pick a base image that satisfies the `engines.node` range of the Nuxt version you are using. The build output itself is plain JavaScript, so the runtime stage can use Node.js even when you build with another package manager or runtime.
 ::
 
+::note
+The `yarn` example targets Yarn 2 or later; on Yarn Classic use `--frozen-lockfile` instead. The `bun` example expects the text `bun.lock` introduced in Bun 1.2 — copy `bun.lockb` if your project still uses the binary lockfile.
+::
+
 ## Ignore files
 
-Add a `.dockerignore` file next to your `Dockerfile` so local artifacts and secrets never reach the build context. Copying a host `node_modules` into the image is a common source of native-module errors, and a stale `.nuxt` or `.output` can silently override the freshly built one.
+Add a `.dockerignore` file next to your `Dockerfile` so local artifacts stay out of the build context. Copying a host `node_modules` into the image is a common source of native-module errors, and a stale `.nuxt` or `.output` can silently override the freshly built one.
 
 ```bash [.dockerignore]
 .git
@@ -112,6 +116,8 @@ Dockerfile
 .env.*
 *.log
 ```
+
+`COPY . .` sends everything this list does not exclude, so extend it with any other file that carries credentials — an `.npmrc` holding a registry token, for example, unless the build needs it.
 
 ## Build and run
 
@@ -129,7 +135,20 @@ The server reads the following variables at startup:
 - `NITRO_PORT` or `PORT` (defaults to `3000`)
 - `NITRO_HOST` or `HOST` (defaults to `0.0.0.0`)
 
-Values under [`runtimeConfig`](/docs/api/nuxt-config#runtimeconfig) are overridden by matching `NUXT_`-prefixed variables, so a single image can be promoted across environments:
+Values under [`runtimeConfig`](/docs/api/nuxt-config#runtimeconfig) are overridden by matching `NUXT_`-prefixed variables, so a single image can be promoted across environments. Given this configuration:
+
+```ts [nuxt.config.ts]
+export default defineNuxtConfig({
+  runtimeConfig: {
+    apiSecret: '',
+    public: {
+      siteUrl: ''
+    }
+  }
+})
+```
+
+`NUXT_API_SECRET` and `NUXT_PUBLIC_SITE_URL` replace those two keys at startup:
 
 ```bash [Terminal]
 docker run --rm -p 8080:8080 \
@@ -179,7 +198,7 @@ EXPOSE 80
 ```
 
 ::caution
-A static build relies on the `200.html` and `404.html` fallback pages to resolve routes that were not pre-rendered. Configure your web server to serve them, otherwise unmatched URLs return the server's own error page.
+A static build relies on the `200.html` and `404.html` fallback pages to resolve routes that were not pre-rendered. Serve them explicitly — with nginx, `try_files $uri $uri/ /200.html;` hands unmatched routes to the client-side router and `error_page 404 /404.html;` covers the rest — otherwise those URLs return the web server's own error page.
 ::
 
 ::read-more{to="/docs/getting-started/deployment#static-hosting"}
