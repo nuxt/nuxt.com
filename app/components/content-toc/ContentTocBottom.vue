@@ -10,13 +10,19 @@ interface PageLink {
 interface Props {
   hasLinks?: boolean
   communityLinks: PageLink[]
+  drawer?: boolean
 }
 
-defineProps<Props>()
+const props = defineProps<Props>()
 
 const route = useRoute()
 const { open } = useNuxtAgent()
 const { track } = useAnalytics()
+
+// Carbon only renders a single ad per page, so mount it in the toc that is
+// actually visible: the drawer below `lg`, the aside above.
+const isLargeScreen = useMediaQuery('(min-width: 1024px)')
+const showAds = computed(() => props.drawer ? !isLargeScreen.value : isLargeScreen.value)
 
 function explainWithAI() {
   track('Nuxi Explain Page', { page: route.path })
@@ -37,5 +43,5 @@ function explainWithAI() {
   />
   <USeparator type="dashed" />
   <SocialLinks />
-  <Ads />
+  <Ads v-if="showAds" />
 </template>

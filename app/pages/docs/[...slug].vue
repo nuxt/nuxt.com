@@ -253,6 +253,7 @@ const noRightAside = computed(() => route.path.includes('/examples/'))
             :community-links="communityLinks"
             :open="true"
             default-open
+            drawer
             :ui="{
               root: '!mx-0 !px-1 top-0 overflow-visible',
               container: '!pt-0 border-b-0',
