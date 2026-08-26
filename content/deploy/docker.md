@@ -159,7 +159,9 @@ docker run --rm -p 8080:8080 \
 ```
 
 ::important
-Only `runtimeConfig` values can be changed after the image is built. Anything read during the build, such as `import.meta.env` in client code or a `.env` file present in the build context, is baked into the image. Pass those with `--build-arg` and rebuild when they change.
+The server variables above and `runtimeConfig` keys, through their `NUXT_*` equivalents, are read when the container starts, so one image can serve every environment. Values resolved during the build cannot be changed afterwards — `import.meta.env` in client code, for instance. To vary one of those per environment, declare an `ARG` in the build stage, pass it with `--build-arg`, and rebuild the image.
+
+The `.dockerignore` above keeps `.env` files out of the build context, so anything they hold has to be supplied at run time.
 ::
 
 ## Docker Compose
