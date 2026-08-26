@@ -1,5 +1,5 @@
 import type { BadgeProps } from '@nuxt/ui'
-import { isDocVersion, CURRENT_DOCS_VERSION } from '#shared/utils/docs'
+import { isDocVersion, CURRENT_DOCS_VERSION, type DocVersion } from '#shared/utils/docs'
 import { docsInstanceKey, type ContentInstanceKey } from '#shared/utils/content'
 
 interface Version {
@@ -113,16 +113,20 @@ export const useDocsVersion = () => {
         })
   })))
 
-  /** The content instance key holding the active version's docs, derived from `path`. */
-  const instanceKey = computed<ContentInstanceKey>(() => {
+  /** The active docs version, derived from `path`. */
+  const docsVersion = computed<DocVersion>(() => {
     const segment = version.value.path.replace('/docs/', '')
-    return docsInstanceKey(isDocVersion(segment) ? segment : CURRENT_DOCS_VERSION)
+    return isDocVersion(segment) ? segment : CURRENT_DOCS_VERSION
   })
+
+  /** The content instance key holding the active version's docs. */
+  const instanceKey = computed<ContentInstanceKey>(() => docsInstanceKey(docsVersion.value))
 
   return {
     items,
     version,
     versions,
+    docsVersion,
     instanceKey
   }
 }

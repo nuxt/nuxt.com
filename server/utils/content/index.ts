@@ -33,25 +33,27 @@ function createSource(source: InstanceSource, sha: string) {
 }
 
 /**
- * Create the content instance for `key`, reading at `sha`. Holds no shared state.
+ * Create the content instance for `key`, reading each source at its own sha. Holds no shared state.
  *
- * Every instance carries one source (`site`, `docs`, `examples`).
+ * `site` and `examples` carry one source; a docs instance carries two (`docs` + `cli`).
  */
-export async function createContentInstance(key: ContentInstanceKey, sha: string): Promise<ComarkContent> {
-  const source = instanceSource(key)
-  const { listingFields } = source
-  const sourceName = key.startsWith('docs:') ? 'docs' : key
+export async function createContentInstance(key: ContentInstanceKey, shas: Record<string, string>): Promise<ComarkContent> {
+  const sources = instanceSources(key)
+  // Uniform across an instance's sources, so any one of them answers for the instance.
+  const listingFields = Object.values(sources)[0]?.listingFields
 
   return comarkContent({
     basePath: instanceBasePath(key),
-    sources: { [sourceName]: createSource(source, sha) },
+    sources: Object.fromEntries(
+      Object.entries(sources).map(([name, source]) => [name, createSource(source, shas[name]!)])
+    ),
     plugins: [
       markdown({ comark: { plugins: comarkPlugins }, listingFields }),
       yaml({ listingFields }),
       json({ listingFields }),
       ...instancePlugins(key)
     ],
-    cache: { driver: contentCacheDriver(key, sha) }
+    cache: { driver: contentCacheDriver(key, instanceShaKey(shas)) }
   })
 }
 
@@ -66,14 +68,15 @@ const instances = new Map<ContentInstanceKey, { sha: string, instance: Promise<C
  * Each call resolves that instance's latest commit.
  */
 export async function getInstance(key: ContentInstanceKey): Promise<ComarkContent> {
-  const sha = await resolveInstanceSha(key)
+  const shas = await resolveInstanceShas(key)
+  const sha = instanceShaKey(shas)
   const current = instances.get(key)
 
   if (current?.sha === sha) {
     return current.instance
   }
 
-  const instance = createContentInstance(key, sha).catch((error) => {
+  const instance = createContentInstance(key, shas).catch((error) => {
     // Don't memoize a failed build: the next request should retry.
     if (instances.get(key)?.sha === sha) instances.delete(key)
     throw error

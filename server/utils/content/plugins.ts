@@ -5,6 +5,7 @@ import emoji from 'comark/plugins/emoji'
 import security from 'comark/plugins/security'
 import markdownFields from 'comark-content/plugins/markdown-fields'
 import type { ContentPlugin } from 'comark-content'
+import { CLI_DOCS_PREFIX, CLI_DOCS_REFS, CLI_DOCS_REPO } from '#shared/utils/cli-docs'
 import type { DocVersion } from '#shared/utils/docs'
 
 /** Shared by every instance. Bump `CONTENT_PARSER_VERSION` when it changes: cached bodies keep the old output. */
@@ -28,18 +29,17 @@ const V5_ONLY_PAGES = [
 
 const isLink = (node: Node): boolean => Array.isArray(node) && node[0] === 'a'
 
+const isImage = (node: Node): boolean => Array.isArray(node) && node[0] === 'img'
+
 /**
  * Version the unversioned `/docs/*` links the docs are written with.
  *
- * - Rewrites hrefs post-parse: comark has no pre-parse hook, and the tree can't hit code or prose.
- * - 3.x is skipped, as under `@nuxt/content`: its links resolve via the docs-version middleware.
+ * Rewrites hrefs post-parse: comark has no pre-parse hook, and the tree can't hit code or prose.
  */
 export function docsLinks(version: DocVersion): ContentPlugin {
   return {
     name: 'nuxt-docs-links',
     setup(content) {
-      if (version === '3.x') return
-
       const unversioned = /^\/docs\/(?!\d\.x)/
 
       content.hooks.hook('file:parsed', ({ file }) => {
@@ -60,6 +60,47 @@ export function docsLinks(version: DocVersion): ContentPlugin {
           }
 
           if (next !== href) attrs.href = next
+        })
+      })
+    }
+  }
+}
+
+/**
+ * Fold the `nuxt/cli` command reference into the docs tree it is mounted in.
+ *
+ * The pages already resolve to the right paths through the source prefix; this covers what
+ * the prefix cannot:
+ *
+ * - Navigation sorts on `stem`, which is repo-relative and so ranks these pages against the
+ *   wrong siblings. Restating the mount point as a stem prefix puts Commands back inside API.
+ *   The repo-relative original is kept as `repoStem`, which is what still locates the file
+ *   in `nuxt/cli` (the edit link).
+ * - Image sources are repo-relative, and `nuxt/cli` only ships the markdown, not the terminal
+ *   captures committed beside it — so they resolve against the raw CDN at the ref this source
+ *   reads. Hardcoding a ref would serve `main`'s captures on the 3.x tree.
+ */
+export function cliDocs(version: DocVersion): ContentPlugin {
+  return {
+    name: 'nuxt-cli-docs',
+    setup(content) {
+      const rawBase = `https://raw.githubusercontent.com/${CLI_DOCS_REPO}/${CLI_DOCS_REFS[version]}`
+
+      content.hooks.hook('file:parsed', ({ sourceName, file }) => {
+        if (sourceName !== 'cli' || !file) return
+
+        file.meta.repoStem = file.meta.stem
+        file.meta.stem = `${CLI_DOCS_PREFIX}/${file.meta.stem}`
+
+        if (!file.nodes?.length) return
+
+        visit({ nodes: file.nodes, frontmatter: file.data, meta: file.meta }, isImage, (node) => {
+          const attrs = (node as [string, Record<string, unknown>])[1]
+          const src = attrs?.src
+          // Protocol-relative URLs are absolute, not repo-relative.
+          if (typeof src !== 'string' || !src.startsWith('/') || src.startsWith('//')) return
+
+          attrs.src = rawBase + src
         })
       })
     }
@@ -118,6 +159,7 @@ export function instancePlugins(key: ContentInstanceKey): ContentPlugin[] {
 
   return [
     docsLinks(version),
+    cliDocs(version),
     // 3.x is the only version with the marker, and the only one publishing `config.schema.json`.
     ...(version === '3.x' ? [configDocs()] : [])
   ]

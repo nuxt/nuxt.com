@@ -2,6 +2,8 @@
 import { kebabCase } from 'scule'
 import { joinURL } from 'ufo'
 import type { NavigationItem } from 'comark-content'
+import { DocsProseImg } from '#components'
+import { CLI_DOCS_REFS, CLI_DOCS_REPO } from '#shared/utils/cli-docs'
 import { SUPPORTED_DOCS_PATH_REGEX, isVersionedDocsPath } from '#shared/utils/docs'
 
 definePageMeta({
@@ -15,7 +17,7 @@ const onThisPageDrawerOpen = ref(false)
 
 const route = useRoute()
 const nuxtApp = useNuxtApp()
-const { version, instanceKey: docsInstanceKey } = useDocsVersion()
+const { version, docsVersion, instanceKey: docsInstanceKey } = useDocsVersion()
 const { headerLinks } = useHeaderLinks()
 const { isAgentDocked } = useNuxtAgent()
 const path = computed(() => route.path.replace(/\/$/, ''))
@@ -113,9 +115,16 @@ const breadcrumb = computed(() => {
 const editLink = computed(() => {
   const meta = page.value?.meta
   if (!meta) return ''
-  return instanceKey.value === 'examples'
-    ? `https://github.com/nuxt/examples/edit/main/.docs/${meta.stem}${meta.extension}`
-    : `https://github.com/nuxt/nuxt/edit/${version.value.branch}/docs/${meta.stem}${meta.extension}`
+  if (instanceKey.value === 'examples') {
+    return `https://github.com/nuxt/examples/edit/main/.docs/${meta.stem}${meta.extension}`
+  }
+  // The command reference is mounted from `nuxt/cli`, so `stem` is the mount point,
+  // not a path in this repo — `repoStem` is where the file actually lives.
+  if (meta.source === 'cli') {
+    const ref = CLI_DOCS_REFS[docsVersion.value]
+    return `https://github.com/${CLI_DOCS_REPO}/edit/${ref}/docs/${meta.repoStem}${meta.extension}`
+  }
+  return `https://github.com/nuxt/nuxt/edit/${version.value.branch}/docs/${meta.stem}${meta.extension}`
 })
 
 const communityLinks = [{
@@ -255,7 +264,7 @@ const noRightAside = computed(() => route.path.includes('/examples/'))
         </UPageHeader>
 
         <UPageBody>
-          <MarkdownDocument v-if="page.nodes?.length" :value="page" />
+          <MarkdownDocument v-if="page.nodes?.length" :value="page" :components="{ img: DocsProseImg }" />
           <div>
             <Feedback :page="{ title: fm.title, stem: page.meta.stem }" />
             <USeparator class="mt-6 mb-10">
