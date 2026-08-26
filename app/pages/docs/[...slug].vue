@@ -193,6 +193,76 @@ const noRightAside = computed(() => route.path.includes('/examples/'))
 <template>
   <UContainer v-if="page">
     <DocsVersionAlert />
+    <!-- mobile -->
+    <div class="lg:hidden sticky top-(--ui-header-height) z-10 bg-default/75 backdrop-blur -mx-4 sm:-mx-6 p-6 border-b border-dashed border-default flex justify-between">
+      <UDrawer
+        v-model:open="menuDrawerOpen"
+        direction="left"
+        :title="currentSectionTitle"
+        inset
+        :handle="false"
+        side="left"
+        :ui="{
+          content: 'w-full max-w-2/3'
+        }"
+      >
+        <UButton
+          label="Menu"
+          icon="i-lucide-text-align-start"
+          color="neutral"
+          variant="link"
+          size="xs"
+          aria-label="Open navigation"
+          class="-m-4"
+        />
+        <template #body>
+          <UContentNavigation
+            :navigation="asideNavigation"
+            default-open
+            trailing-icon="i-lucide-chevron-right"
+            :ui="{ linkTrailingIcon: 'group-data-[state=open]:rotate-90' }"
+            highlight
+          />
+        </template>
+      </UDrawer>
+      <UDrawer
+        v-if="!noRightAside"
+        v-model:open="onThisPageDrawerOpen"
+        direction="right"
+        :handle="false"
+        side="right"
+        inset
+        no-body-styles
+        :ui="{
+          content: 'w-full max-w-2/3'
+        }"
+        @update:open="refreshHeading"
+      >
+        <UButton
+          label="On this page"
+          trailing-icon="i-lucide-chevron-right"
+          color="neutral"
+          variant="link"
+          size="xs"
+          aria-label="Open on this page"
+          class="-m-4"
+        />
+        <template #body>
+          <ContentToc
+            :links="page.body?.toc?.links"
+            :community-links="communityLinks"
+            :open="true"
+            default-open
+            :ui="{
+              root: '!mx-0 !px-1 top-0 overflow-visible',
+              container: '!pt-0 border-b-0',
+              trailingIcon: 'hidden',
+              bottom: 'flex flex-col'
+            }"
+          />
+        </template>
+      </UDrawer>
+    </div>
     <UPage>
       <template #left>
         <UPageAside>
@@ -204,10 +274,10 @@ const noRightAside = computed(() => route.path.includes('/examples/'))
         </UPageAside>
       </template>
       <UPage
-        :ui="isAgentDocked || noRightAside? {
+        :ui="isAgentDocked || noRightAside ? {
           center: 'lg:col-span-10',
-          right: 'lg:hidden'
-        } : { root: 'lg:grid-cols-12', center: 'lg:col-span-9', right: 'lg:col-span-3' }"
+          right: 'hidden'
+        } : { root: 'lg:grid-cols-12', center: 'lg:col-span-9', right: 'hidden lg:flex lg:col-span-3' }"
       >
         <UPageHeader
           :ui="{
@@ -286,84 +356,12 @@ const noRightAside = computed(() => route.path.includes('/examples/'))
             :community-links="communityLinks"
             highlight
             highlight-variant="circuit"
-            class="hidden lg:flex lg:backdrop-blur-none lg:overflow-y-auto"
+            class="lg:backdrop-blur-none lg:overflow-y-auto"
             :ui="{
               container: 'lg:max-h-[inherit]',
               content: 'lg:min-h-[min(var(--list-height,8rem),8rem)]'
             }"
           />
-          <!-- mobile -->
-          <div class="order-first lg:order-last sticky top-(--ui-header-height) z-10 bg-default/75 lg:bg-[initial] backdrop-blur -mx-4 p-6 border-b border-dashed border-default flex justify-between">
-            <UDrawer
-              v-model:open="menuDrawerOpen"
-              direction="left"
-              :title="currentSectionTitle"
-              inset
-              :handle="false"
-              side="left"
-              class="lg:hidden"
-              :ui="{
-                content: 'w-full max-w-2/3'
-              }"
-            >
-              <UButton
-                label="Menu"
-                icon="i-lucide-text-align-start"
-                color="neutral"
-                variant="link"
-                size="xs"
-                aria-label="Open navigation"
-                class="-m-4"
-              />
-              <template #body>
-                <UContentNavigation
-                  :navigation="asideNavigation"
-                  default-open
-                  trailing-icon="i-lucide-chevron-right"
-                  :ui="{ linkTrailingIcon: 'group-data-[state=open]:rotate-90' }"
-                  highlight
-                />
-              </template>
-            </UDrawer>
-            <UDrawer
-              v-if="!noRightAside"
-              v-model:open="onThisPageDrawerOpen"
-              direction="right"
-              :handle="false"
-              side="right"
-              inset
-              class="lg:hidden"
-              no-body-styles
-              :ui="{
-                content: 'w-full max-w-2/3'
-              }"
-              @update:open="refreshHeading"
-            >
-              <UButton
-                label="On this page"
-                trailing-icon="i-lucide-chevron-right"
-                color="neutral"
-                variant="link"
-                size="xs"
-                aria-label="Open on this page"
-                class="-m-4"
-              />
-              <template #body>
-                <ContentToc
-                  :links="page.body?.toc?.links"
-                  :community-links="communityLinks"
-                  :open="true"
-                  default-open
-                  :ui="{
-                    root: '!mx-0 !px-1 top-0 overflow-visible',
-                    container: '!pt-0 border-b-0',
-                    trailingIcon: 'hidden',
-                    bottom: 'flex flex-col'
-                  }"
-                />
-              </template>
-            </UDrawer>
-          </div>
         </template>
       </UPage>
     </UPage>
