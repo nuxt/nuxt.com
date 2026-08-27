@@ -18,3 +18,21 @@ export function docsInstanceKey(version: DocVersion): ContentInstanceKey {
 export function instanceBasePath(key: ContentInstanceKey): string {
   return `/api/content/${key.replace(':', '/')}`
 }
+
+/**
+ * Same instance, pinned to a commit — `/api/content/blob/<sha>/docs/4.x`.
+ *
+ * Immutable, so the artifacts under it are cached forever (`isr: true`)
+ */
+export function instanceBlobPath(key: ContentInstanceKey, sha: string): string {
+  return `/api/content/blob/${sha}/${key.replace(':', '/')}`
+}
+
+/**
+ * Where an instance reports the base to read it from — `/api/content/head/docs/4.x`.
+ *
+ * Immutable, so the artifacts under it are cached forever (`isr: true`)
+ */
+export function instanceHeadPath(key: ContentInstanceKey): string {
+  return `/api/content/head/${key.replace(':', '/')}`
+}

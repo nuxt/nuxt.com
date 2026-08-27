@@ -6,7 +6,7 @@ import { docsInstanceKey } from '#shared/utils/content'
 /** One doc version's tree, with the shared examples grafted in. */
 async function docTree(version: DocVersion, examples: NavigationItem[]): Promise<NavigationItem[]> {
   const content = await getInstance(docsInstanceKey(version))
-  const nav = await content.navigation(['docs'])
+  const nav = await content.navigation()
 
   // A prefixed source is wrapped in nodes for its prefix, so unwrap to the version root.
   const root = findByPath(nav, `/docs/${version}`)

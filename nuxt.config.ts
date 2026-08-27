@@ -198,6 +198,8 @@ export default defineNuxtConfig({
     '/api/internal/**': { headers: { 'cache-control': 'no-store' } },
     // Main navigation
     '/api/navigation.json': { prerender: true },
+    // Per-commit artifacts hydrating the client-side search database (immutable)
+    '/api/content/blob/**': { isr: true },
     // Redirects
     '/docs': { redirect: '/docs/getting-started/introduction', prerender: false },
     '/docs/3.x': { redirect: '/docs/3.x/getting-started/introduction', prerender: false },
@@ -509,6 +511,8 @@ export default defineNuxtConfig({
     cache: true
   },
   vite: {
+    // The search worker is an ES module (it imports `comark-content`).
+    worker: { format: 'es' },
     optimizeDeps: {
       include: [
         '@comark/vue',
@@ -520,7 +524,8 @@ export default defineNuxtConfig({
         'date-fns',
         'ai'
       ],
-      exclude: ['vue-chrts', 'shaders']
+      // Pre-bundling `@sqlite.org/sqlite-wasm` breaks the wasm asset it resolves against its own module URL.
+      exclude: ['vue-chrts', 'shaders', '@sqlite.org/sqlite-wasm']
     }
   },
   typescript: {

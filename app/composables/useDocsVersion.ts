@@ -8,8 +8,6 @@ interface Version {
   branch: string
   tagColor: BadgeProps['color']
   path: string
-  /** TODO: remove — only the search palette still uses it (Phase 4). */
-  collection?: 'docsv3' | 'docsv4' | 'docsv5'
   /** `unsupported` versions are end of life: no bug fixes, no security patches. */
   status?: 'prerelease' | 'stable' | 'unsupported'
   /** Date the version reached end of life, for `unsupported` versions. */
@@ -25,7 +23,6 @@ const versions: Version[] = [
     branch: 'main',
     tagColor: 'warning',
     path: '/docs/5.x',
-    collection: 'docsv5',
     status: 'prerelease'
   },
   {
@@ -34,7 +31,6 @@ const versions: Version[] = [
     branch: '4.x',
     tagColor: 'primary',
     path: '/docs/4.x',
-    collection: 'docsv4',
     status: 'stable'
   },
   {
@@ -43,7 +39,6 @@ const versions: Version[] = [
     branch: '3.x',
     tagColor: 'neutral',
     path: '/docs/3.x',
-    collection: 'docsv3',
     status: 'unsupported',
     endOfLife: '31 July 2026',
     extendedSupport: 'https://www.herodevs.com/support/nuxt-nes?utm_source=nuxtjs&utm_medium=affiliate&utm_campaign=nuxt3eol&utm_content=link'
