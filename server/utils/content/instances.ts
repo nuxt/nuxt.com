@@ -2,6 +2,7 @@ import { markdownField } from 'comark-content/plugins/markdown-fields'
 import type { JsonSchema } from 'comark-content'
 import { CLI_DOCS_REFS, CLI_DOCS_REPO, CLI_DOCS_PREFIX } from '#shared/utils/cli-docs'
 import { isDocVersion, type DocVersion } from '#shared/utils/docs'
+import { isContentInstanceKey, type ContentInstanceKey } from '#shared/utils/content'
 
 /**
  * Where one source reads from: a repo directory, mounted under one prefix.
@@ -156,4 +157,40 @@ export function instanceShaKey(shas: Record<string, string>): string {
   if (names.length === 1) return shas[names[0]!]!
 
   return names.map(name => `${name}@${shas[name]}`).join('+')
+}
+
+/**
+ * The instance serving a page URL — `/docs/4.x/…`, `/docs/examples/…`, or anything else on the site.
+ *
+ * Unversioned `/docs/*` falls through to `site`, where nothing matches: those URLs pick a version in
+ * the browser, and their raw mirrors have always 404'd, so there is no established target to serve.
+ */
+export function instanceFromPagePath(path: string): ContentInstanceKey {
+  const [first, second] = path.split('/').filter(Boolean)
+  if (first !== 'docs') return 'site'
+  if (second === 'examples') return 'examples'
+
+  const key = `docs:${second}`
+
+  return isContentInstanceKey(key) ? key : 'site'
+}
+
+/**
+ * The instance an `/api/content/…` path targets, from its leading segments — the inverse of
+ * `instanceBasePath()`:
+ * - `site/…` (nuxt.com's own content: blog, deploy, landing pages…)
+ * - `examples/…` (the examples instance, code examples)
+ * - `docs/<version>/…` (one instance per docs version)
+ *
+ * Shared by the live, `head/` and `blob/<sha>/` routes, which must agree on where an instance's
+ * prefix begins — they are the same path with different qualifiers in front. Unlike
+ * `instanceFromPagePath()` there is no fallback: an unknown prefix is a bad URL, not site content.
+ */
+export function instanceFromSegments(segments: string[]): ContentInstanceKey {
+  const [first, second] = segments
+  const key = first === 'docs' ? `docs:${second}` : (first ?? '')
+
+  if (isContentInstanceKey(key)) return key
+
+  throw createError({ statusCode: 404, statusMessage: 'Unknown content instance' })
 }

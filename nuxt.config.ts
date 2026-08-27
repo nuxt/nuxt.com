@@ -535,6 +535,14 @@ export default defineNuxtConfig({
     }
   },
   hooks: {
+    'nitro:config': (nitroConfig) => {
+      // TODO: remove this once `@nuxt/content` is removed.
+      // Drop `@nuxt/content`'s llms plugin: with no `contentCollection` section left for it to
+      // expand, it auto-generates one section per page collection instead
+      // (`prepareContentSections`), duplicating every section `server/plugins/llms.ts` builds from
+      // the comark instances. Goes away with the dependency itself.
+      nitroConfig.plugins = nitroConfig.plugins?.filter(plugin => !plugin.includes('features/llms/runtime/server/content-llms.plugin'))
+    },
     'content:file:beforeParse': async ({ file }) => {
       // Command docs are served from `nuxt/cli`, but Content only ships the markdown,
       // not the terminal captures committed beside it. Root-relative image sources are
@@ -646,33 +654,14 @@ export default defineNuxtConfig({
       title: 'Nuxt Docs',
       description: 'The complete Nuxt documentation and blog posts written in Markdown (MDC syntax).'
     },
-    sections: [
-      {
-        title: 'Nuxt v5 Documentation',
-        contentCollection: 'docsv5',
-        contentFilters: [{ field: 'extension', operator: '=', value: 'md' }]
-      },
-      {
-        title: 'Nuxt v4 Documentation',
-        contentCollection: 'docsv4',
-        contentFilters: [{ field: 'extension', operator: '=', value: 'md' }]
-      },
-      {
-        title: 'Deployment Guides',
-        contentCollection: 'deploy',
-        contentFilters: [{ field: 'extension', operator: '=', value: 'md' }]
-      },
-      {
-        title: 'Nuxt v3 Documentation',
-        contentCollection: 'docsv3',
-        contentFilters: [{ field: 'extension', operator: '=', value: 'md' }]
-      },
-      {
-        title: 'Blog',
-        contentCollection: 'blog',
-        contentFilters: [{ field: 'extension', operator: '=', value: 'md' }]
-      }
-    ]
+    // Sections are pushed by `server/plugins/llms.ts` from the comark instances.
+    //
+    // `@nuxt/content` (Phase 7) contributes this option, and would otherwise register a generic
+    // `/raw/**:slug.md` handler that `server/routes/raw/[...slug].md.get.ts` replaces. Its other
+    // llms surface — expanding `contentCollection` sections — is disabled by dropping its Nitro
+    // plugin, not from here: an empty `sections` array makes it auto-generate one section per
+    // collection instead (see the `nitro:config` hook).
+    contentRawMarkdown: false
   },
   mcp: {
     name: 'Nuxt',

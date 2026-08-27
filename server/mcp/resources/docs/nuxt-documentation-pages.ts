@@ -1,24 +1,15 @@
-import { queryCollection } from '@nuxt/content/server'
-
-const VERSIONED_COLLECTIONS = [
-  { collection: 'docsv3', version: '3.x' },
-  { collection: 'docsv4', version: '4.x' },
-  { collection: 'docsv5', version: '5.x' }
-] as const
+import { docsInstanceKey } from '#shared/utils/content'
+import { DOC_VERSIONS } from '#shared/utils/docs'
 
 export default defineMcpResource({
   uri: 'resource://nuxt-com/documentation-pages',
   description: 'Complete list of available Nuxt documentation pages across v3.x, v4.x, and v5.x',
   cache: '1h',
   async handler(uri: URL) {
-    const event = useEvent()
+    const results = await Promise.all(DOC_VERSIONS.map(async (version) => {
+      const docs = await listInstancePages(docsInstanceKey(version))
 
-    const results = await Promise.all(VERSIONED_COLLECTIONS.map(async ({ collection, version }) => {
-      const docs = await queryCollection(event, collection)
-        .select('title', 'path', 'description')
-        .all()
-
-      return (docs ?? []).map(doc => ({
+      return docs.map(doc => ({
         title: doc.title,
         path: doc.path,
         description: doc.description,

@@ -1,5 +1,6 @@
 import { z } from 'zod'
-import { queryCollection } from '@nuxt/content/server'
+import { docsInstanceKey } from '#shared/utils/content'
+import { DOC_VERSIONS, type DocVersion } from '#shared/utils/docs'
 
 export default defineMcpTool({
   description: `Lists Nuxt documentation pages, optionally filtered by search term.
@@ -22,23 +23,20 @@ TIPS: Always pass a search term to narrow results — avoids dumping the entire 
   ],
   cache: '1h',
   async handler({ version, search }) {
-    const event = useEvent()
     let allDocs: { title: string, path: string, description: string }[] = []
 
-    const collections = version === 'all'
-      ? ['docsv3', 'docsv4', 'docsv5'] as const
-      : [version === '3.x' ? 'docsv3' : version === '5.x' ? 'docsv5' : 'docsv4'] as const
+    const versions: DocVersion[] = version === 'all' ? [...DOC_VERSIONS] : [version as DocVersion]
 
-    for (const col of collections) {
-      const docs = await queryCollection(event, col)
-        .select('title', 'path', 'description')
-        .all()
-      if (!docs) {
+    for (const docsVersion of versions) {
+      const docs = await listInstancePages(docsInstanceKey(docsVersion))
+      if (!docs.length) {
         if (version === 'all') continue
         throw createError({ statusCode: 404, message: 'Documentation pages collection not found' })
       }
       allDocs.push(...docs)
     }
+
+    allDocs.push(...await listInstancePages('examples'))
 
     if (search) {
       const terms = search.toLowerCase().split(/\s+/)

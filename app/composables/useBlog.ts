@@ -1,4 +1,4 @@
-import type { BlogArticle } from '~/types'
+import type { BlogArticle } from '#shared/types'
 
 export const useBlog = () => {
   const { data: articles, refresh } = useAsyncData<BlogArticle[]>('blog', async () => {

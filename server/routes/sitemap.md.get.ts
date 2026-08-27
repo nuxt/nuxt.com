@@ -1,4 +1,5 @@
-import { queryCollection } from '@nuxt/content/server'
+import { CURRENT_DOCS_VERSION } from '#shared/utils/docs'
+import { docsInstanceKey } from '#shared/utils/content'
 
 const STATIC_LINKS = [
   { title: 'Home', path: '/' },
@@ -18,20 +19,12 @@ const STATIC_LINKS = [
 
 export default defineEventHandler(async (event) => {
   const domain = getSiteUrl(event)
-  // Mirrors /sitemap.xml: v3 (legacy) and v5 (nightly) are excluded — v5 is
-  // also disallowed in /robots.txt until Nuxt 5 ships.
-  const [docsv4, blog, deploy] = await Promise.all([
-    queryCollection(event, 'docsv4')
-      .where('extension', '=', 'md')
-      .select('path', 'title')
-      .all(),
-    queryCollection(event, 'blog')
-      .where('draft', '=', 0)
-      .select('path', 'title', 'date')
-      .all(),
-    queryCollection(event, 'deploy')
-      .select('path', 'title')
-      .all()
+  // Mirrors /sitemap.xml: v3 (legacy) and v5 (nightly) are excluded
+  const [docsv4, examples, blog, deploy] = await Promise.all([
+    listInstancePages(docsInstanceKey(CURRENT_DOCS_VERSION)),
+    listInstancePages('examples'),
+    listInstancePages('site', { dir: '/blog' }).then(items => items.filter(item => !item.data.draft)),
+    listInstancePages('site', { dir: '/deploy' })
   ])
 
   const lines: string[] = [
@@ -49,12 +42,15 @@ export default defineEventHandler(async (event) => {
   lines.push('', '## Documentation', '')
   for (const doc of docsv4) lines.push(`- [${doc.title}](${domain}${doc.path}.md)`)
 
+  lines.push('', '## Examples', '')
+  for (const example of examples) lines.push(`- [${example.title}](${domain}${example.path}.md)`)
+
   lines.push('', '## Deploy providers', '')
   for (const provider of deploy) lines.push(`- [${provider.title}](${domain}${provider.path}.md)`)
 
   lines.push('', '## Blog', '')
-  for (const post of (blog as Array<{ path: string, title: string, date?: string }>)) {
-    const date = post.date ? ` _(${post.date})_` : ''
+  for (const post of blog) {
+    const date = post.data.date ? ` _(${post.data.date})_` : ''
     lines.push(`- [${post.title}](${domain}${post.path}.md)${date}`)
   }
 

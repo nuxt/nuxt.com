@@ -1,4 +1,4 @@
-import type { DocVersion } from './docs'
+import { isDocVersion, type DocVersion } from './docs'
 
 /**
  * Identifies one of the content instances nuxt.com reads from.
@@ -12,6 +12,18 @@ export type ContentInstanceKey = 'site' | 'examples' | `docs:${DocVersion}`
 /** The docs instance serving `version`, e.g. `docsInstanceKey('4.x') === 'docs:4.x'`. */
 export function docsInstanceKey(version: DocVersion): ContentInstanceKey {
   return `docs:${version}`
+}
+
+/**
+ * Whether `value` names an instance nuxt.com actually serves.
+ *
+ * The single answer to "is this a real instance", so the resolvers in
+ * `server/utils/content/instances.ts` cannot drift from this type as versions come and go.
+ */
+export function isContentInstanceKey(value: string): value is ContentInstanceKey {
+  if (value === 'site' || value === 'examples') return true
+
+  return value.startsWith('docs:') && isDocVersion(value.slice('docs:'.length))
 }
 
 /** URL segment(s) an instance is served under — `docs:4.x` lives at `/api/content/docs/4.x`. */

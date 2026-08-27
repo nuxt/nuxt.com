@@ -1,9 +1,13 @@
-import { queryCollection } from '@nuxt/content/server'
 import { CURRENT_DOCS_VERSION } from '#shared/utils/docs'
 
 export default defineCachedEventHandler(async (event) => {
   const domain = getSiteUrl(event)
-  const index = await queryCollection(event, 'index').first()
+  const site = await getInstance('site')
+  // The landing page is `content/index.yml`, so its fields live in `data`
+  const index = (await site.get('/'))?.data as {
+    hero?: { title?: string, description?: string }
+    features?: { features?: Array<{ title?: string, description?: string }> }
+  } | undefined
 
   const title = index?.hero?.title?.replace(/\s+/g, ' ').trim() || 'Nuxt'
   const description = index?.hero?.description?.replace(/\s+/g, ' ').trim()

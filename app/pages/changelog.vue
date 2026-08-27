@@ -27,7 +27,7 @@ if (import.meta.server) {
   prerenderRoutes(['/raw/changelog.md'])
 }
 
-const { data: releases } = await useFetch('/api/releases')
+const { data: releases } = await useFetch<Release[]>('/api/releases')
 const openStates = reactive<Record<string, boolean>>({})
 
 const { modules } = useModules()
@@ -159,16 +159,16 @@ function copyRelease(release: Release) {
               class="relative"
               :class="{
                 'h-auto min-h-[200px]': openStates[release.tag],
-                'h-[200px] overflow-y-hidden': !openStates[release.tag] && release.body.children.length > 4
+                'h-[200px] overflow-y-hidden': !openStates[release.tag] && release.nodes.length > 4
               }"
             >
-              <MDCRenderer
-                v-if="release.body"
-                :body="release.body"
+              <MarkdownDocument
+                v-if="release.nodes?.length"
+                :value="{ nodes: release.nodes }"
                 style="zoom: 0.85"
               />
               <div
-                v-if="!openStates[release.tag] && release.body.children.length > 4"
+                v-if="!openStates[release.tag] && release.nodes.length > 4"
                 class="h-16 absolute inset-x-0 bottom-0 flex items-end justify-center bg-linear-to-t from-default to-default/50"
               >
                 <UButton

@@ -1,4 +1,3 @@
-import { queryCollectionNavigation } from '@nuxt/content/server'
 import type { NavigationItem } from 'comark-content'
 import { DOC_VERSIONS, type DocVersion } from '#shared/utils/docs'
 import { docsInstanceKey } from '#shared/utils/content'
@@ -31,7 +30,17 @@ function findByPath(items: NavigationItem[] | undefined, path: string): Navigati
   }
 }
 
-export default defineEventHandler(async (event) => {
+/**
+ * The blog subtree the palette and the docs aside link to.
+ */
+async function blogTree(): Promise<NavigationItem[]> {
+  const site = await getInstance('site')
+  const blog = findByPath(await site.navigation(['site']), '/blog')
+
+  return blog ? [blog] : []
+}
+
+export default defineEventHandler(async () => {
   const examplesContent = await getInstance('examples')
   const examplesNav = await examplesContent.navigation(['examples'])
   // Not version-scoped: one subtree, linked from every version.
@@ -40,8 +49,8 @@ export default defineEventHandler(async (event) => {
 
   const [versions, blog] = await Promise.all([
     Promise.all(DOC_VERSIONS.map(version => docTree(version, examplesChildren).catch(() => []))),
-    queryCollectionNavigation(event, 'blog')
+    blogTree().catch(() => [])
   ])
 
-  return [...versions.flat(), ...(blog ?? [])].filter(Boolean)
+  return [...versions.flat(), ...blog].filter(Boolean)
 })

@@ -19,10 +19,8 @@ WHEN NOT TO USE: For a specific page outside the introduction, prefer get_docume
   ],
   cache: '30m',
   async handler({ version, sections }) {
-    const event = useEvent()
     const path = `/docs/${version}/getting-started/introduction`
-    const docsVersion = version === '5.x' ? 'docsv5' : version === '3.x' ? 'docsv3' : 'docsv4'
-    const fullContent = await fetchPageMarkdown(event, docsVersion, path)
+    const fullContent = await fetchPageMarkdown(docsInstanceKey(version), path)
 
     if (!fullContent) {
       throw createError({ statusCode: 404, message: `Getting started guide not found: ${path}` })
