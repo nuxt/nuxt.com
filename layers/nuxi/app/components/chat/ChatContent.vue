@@ -130,7 +130,7 @@ function getUserTextParts(message: UIMessage) {
         chevron="leading"
       >
         <AgentComark
-          :markdown="part.text"
+          :value="part.text"
           :streaming="isPartStreaming(part)"
           :caret="isPartStreaming(part) ? streamingCaret : false"
         />
@@ -214,7 +214,9 @@ function getUserTextParts(message: UIMessage) {
         <UChatTool v-bind="getRichToolHeader(part as ToolPart, 'show_prompt')" />
         <ToolsPromptCard
           v-if="showPromptCard(part as ToolPart) && getPromptOutput(part.output)"
-          v-bind="getPromptOutput(part.output)!"
+          :description="getPromptOutput(part.output)!.description"
+          :prompt="getPromptOutput(part.output)!.prompt"
+          :icon="getPromptOutput(part.output)!.icon"
         />
       </template>
 
@@ -252,7 +254,7 @@ function getUserTextParts(message: UIMessage) {
 
       <AgentComark
         v-else-if="isTextUIPart(part) && part.text.length > 0"
-        :markdown="part.text"
+        :value="part.text"
         :streaming="isPartStreaming(part)"
         :caret="isPartStreaming(part) ? streamingCaret : false"
       />

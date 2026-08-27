@@ -1,10 +1,11 @@
 import { defineContentConfig, defineCollection, z } from '@nuxt/content'
+import { CLI_DOCS_PREFIX, CLI_DOCS_REFS, CLI_DOCS_REPO } from './shared/utils/cli-docs'
 
 const docsV3Source = {
   cwd: process.env.NUXT_V3_PATH ?? undefined,
   repository: !process.env.NUXT_V3_PATH ? 'https://github.com/nuxt/nuxt/tree/3.x' : undefined,
   include: 'docs/**/*',
-  exclude: ['docs/**/*.json'],
+  exclude: ['docs/**/*.json', 'docs/4.api/4.commands/**'],
   prefix: '/docs/3.x'
 }
 
@@ -12,7 +13,7 @@ const docsV4Source = {
   cwd: process.env.NUXT_V4_PATH ?? undefined,
   repository: !process.env.NUXT_V4_PATH ? 'https://github.com/nuxt/nuxt/tree/4.x' : undefined,
   include: 'docs/**/*',
-  exclude: ['docs/**/*.json'],
+  exclude: ['docs/**/*.json', 'docs/4.api/4.commands/**'],
   prefix: '/docs/4.x'
 }
 
@@ -20,8 +21,29 @@ const docsV5Source = {
   cwd: process.env.NUXT_V5_PATH ?? undefined,
   repository: !process.env.NUXT_V5_PATH ? 'https://github.com/nuxt/nuxt/tree/main' : undefined,
   include: 'docs/**/*',
-  exclude: ['docs/**/*.json'],
+  exclude: ['docs/**/*.json', 'docs/4.api/4.commands/**'],
   prefix: '/docs/5.x'
+}
+
+const cliV3Source = {
+  cwd: process.env.NUXT_CLI_PATH ?? undefined,
+  repository: !process.env.NUXT_CLI_PATH ? `https://github.com/${CLI_DOCS_REPO}/tree/${CLI_DOCS_REFS.docsv3}` : undefined,
+  include: 'docs/**/*',
+  prefix: `/docs/3.x/${CLI_DOCS_PREFIX}`
+}
+
+const cliV4Source = {
+  cwd: process.env.NUXT_CLI_PATH ?? undefined,
+  repository: !process.env.NUXT_CLI_PATH ? `https://github.com/${CLI_DOCS_REPO}/tree/${CLI_DOCS_REFS.docsv4}` : undefined,
+  include: 'docs/**/*',
+  prefix: `/docs/4.x/${CLI_DOCS_PREFIX}`
+}
+
+const cliV5Source = {
+  cwd: process.env.NUXT_CLI_PATH ?? undefined,
+  repository: !process.env.NUXT_CLI_PATH ? `https://github.com/${CLI_DOCS_REPO}/tree/${CLI_DOCS_REFS.docsv5}` : undefined,
+  include: 'docs/**/*',
+  prefix: `/docs/5.x/${CLI_DOCS_PREFIX}`
 }
 
 const examplesV3Source = {
@@ -214,7 +236,7 @@ export default defineContentConfig({
     }),
     docsv5: defineCollection({
       type: 'page',
-      source: [docsV5Source, examplesV5Source],
+      source: [docsV5Source, cliV5Source, examplesV5Source],
       schema: z.object({
         titleTemplate: z.string().optional(),
         links: z.array(Button),
@@ -223,7 +245,7 @@ export default defineContentConfig({
     }),
     docsv4: defineCollection({
       type: 'page',
-      source: [docsV4Source, examplesV4Source],
+      source: [docsV4Source, cliV4Source, examplesV4Source],
       schema: z.object({
         titleTemplate: z.string().optional(),
         links: z.array(Button),
@@ -232,7 +254,7 @@ export default defineContentConfig({
     }),
     docsv3: defineCollection({
       type: 'page',
-      source: [docsV3Source, examplesV3Source],
+      source: [docsV3Source, cliV3Source, examplesV3Source],
       schema: z.object({
         titleTemplate: z.string().optional(),
         links: z.array(Button),

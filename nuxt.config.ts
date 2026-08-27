@@ -1,5 +1,6 @@
 import { createResolver } from 'nuxt/kit'
 import { parseMdc } from './helpers/mdc-parser.mjs'
+import { CLI_DOCS_PREFIX, CLI_DOCS_REFS, CLI_DOCS_REPO } from './shared/utils/cli-docs'
 
 const { resolve } = createResolver(import.meta.url)
 
@@ -86,6 +87,13 @@ export default defineNuxtConfig({
     preference: 'dark'
   },
   content: {
+    // @nuxt/content's nuxthub preset only maps `hub.db` into `content.database` when `hub.db` is a string.
+    // With the object form it falls back to better-sqlite3, whose native addon fails to load on Vercel.
+    // See https://github.com/nuxt/content/issues/3821
+    database: {
+      type: 'libsql',
+      url: 'file:/tmp/sqlite.db'
+    },
     build: {
       markdown: {
         highlight: {
@@ -117,7 +125,6 @@ export default defineNuxtConfig({
     },
     contactEmail: '',
     mcpAdminToken: '',
-    adminGithubLogins: '',
     github: {
       token: ''
     },
@@ -240,10 +247,10 @@ export default defineNuxtConfig({
     '/docs/3.x/api/kit': { redirect: '/docs/3.x/api/kit/modules', prerender: false },
     '/docs/4.x/api/kit': { redirect: '/docs/4.x/api/kit/modules', prerender: false },
     '/docs/5.x/api/kit': { redirect: '/docs/5.x/api/kit/modules', prerender: false },
-    '/docs/api/commands': { redirect: '/docs/api/commands/dev', prerender: false },
-    '/docs/3.x/api/commands': { redirect: '/docs/3.x/api/commands/dev', prerender: false },
-    '/docs/4.x/api/commands': { redirect: '/docs/4.x/api/commands/dev', prerender: false },
-    '/docs/5.x/api/commands': { redirect: '/docs/5.x/api/commands/dev', prerender: false },
+    '/docs/api/commands': { redirect: '/docs/api/commands/overview', prerender: false },
+    '/docs/3.x/api/commands': { redirect: '/docs/3.x/api/commands/overview', prerender: false },
+    '/docs/4.x/api/commands': { redirect: '/docs/4.x/api/commands/overview', prerender: false },
+    '/docs/5.x/api/commands': { redirect: '/docs/5.x/api/commands/overview', prerender: false },
     '/docs/api/advanced': { redirect: '/docs/api/advanced/hooks', prerender: false },
     '/docs/3.x/api/advanced': { redirect: '/docs/3.x/api/advanced/hooks', prerender: false },
     '/docs/4.x/api/advanced': { redirect: '/docs/4.x/api/advanced/hooks', prerender: false },
@@ -531,6 +538,15 @@ export default defineNuxtConfig({
   },
   hooks: {
     'content:file:beforeParse': async ({ file }) => {
+      // Command docs are served from `nuxt/cli`, but Content only ships the markdown,
+      // not the terminal captures committed beside it. Root-relative image sources are
+      // repo-relative, so resolve them against the ref this page was parsed from: a
+      // hardcoded ref would serve `main`'s captures on the 3.x tree.
+      const collection = file.id.split('/')[0] as keyof typeof CLI_DOCS_REFS
+      if (file.id.includes(`/${CLI_DOCS_PREFIX}/`) && CLI_DOCS_REFS[collection]) {
+        const base = `https://raw.githubusercontent.com/${CLI_DOCS_REPO}/${CLI_DOCS_REFS[collection]}`
+        file.body = file.body.replaceAll(/(!\[[^\]]*\]\()\/(?!\/)/g, `$1${base}/`)
+      }
       if (file.id.startsWith('docsv5/')) {
         file.body = file.body.replaceAll(/\(\/docs\/(?!\d\.x)/g, '(/docs/5.x/')
         // Pages that only exist on main (5.x) but are linked as /docs/4.x/* from
@@ -549,6 +565,9 @@ export default defineNuxtConfig({
       }
       if (file.id.startsWith('docsv4/')) {
         file.body = file.body.replaceAll(/\(\/docs\/(?!\d\.x)/g, '(/docs/4.x/')
+      }
+      if (file.id.startsWith('docsv3/')) {
+        file.body = file.body.replaceAll(/\(\/docs\/(?!\d\.x)/g, '(/docs/3.x/')
       }
     },
     'content:file:afterParse': async ({ file, content }) => {
@@ -625,7 +644,11 @@ export default defineNuxtConfig({
   },
   image: {
     format: ['webp', 'jpeg', 'jpg', 'png', 'svg'],
-    provider: 'ipx'
+    provider: 'ipx',
+    // Opt-out escape hatch for images IPX must not touch, used by `DocsProseImg`.
+    providers: {
+      none: { provider: 'none' }
+    }
   },
   llms: {
     domain: 'https://nuxt.com',

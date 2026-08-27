@@ -1,27 +1,9 @@
 import { defineHook } from 'eve/hooks'
 import { appOrigin, chatIdFromContinuationToken, internalHeaders } from '../lib/internal-api.js'
 
-type TurnStartedContext = {
-  session: {
-    auth: {
-      current?: {
-        principalId?: string
-      } | null
-    }
-  }
-  channel: {
-    continuationToken?: string
-  }
-  eve?: {
-    request?: Request
-  }
-}
-
 export default defineHook({
   events: {
     async 'turn.started'(_event, ctx) {
-      const hookCtx = ctx as TurnStartedContext
-
       // This quota exists to throttle anonymous abuse of the public web chat
       // widget (see `ensureRateLimitPrincipalId`: "browser-facing routes
       // only"). Slack/Discord are trusted, allowlisted team channels, and a
@@ -30,15 +12,17 @@ export default defineHook({
       // burns through the daily quota almost instantly for legitimate use.
       // Only meter sessions that map to a real web chat id, same check
       // `chat-title.ts` uses to scope itself to the web chat widget.
-      if (!chatIdFromContinuationToken(hookCtx.channel.continuationToken)) return
+      if (!chatIdFromContinuationToken(ctx.channel.continuationToken)) return
 
-      const principalId = hookCtx.session.auth.current?.principalId
+      const principalId = ctx.session.auth.current?.principalId
       if (!principalId) return
 
-      const cookie = hookCtx.eve?.request?.headers.get('cookie') ?? ''
+      // `HookContext` is session/agent/channel only — there is no inbound
+      // request here, so the browser cookie cannot be forwarded. The consume
+      // route accepts the bearer secret alone for exactly this caller.
       const response = await fetch(`${appOrigin()}/api/internal/agent/rate-limit/consume`, {
         method: 'POST',
-        headers: internalHeaders(cookie ? { cookie } : undefined),
+        headers: internalHeaders(),
         body: JSON.stringify({ userId: principalId })
       })
 

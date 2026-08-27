@@ -1,7 +1,7 @@
 import type { GatewayProviderOptions } from '@ai-sdk/gateway'
 import type { ModelMessage } from 'ai'
-import { isScheduleAppAuth, type AdminMcpAuthContext } from './admin-mcp-access.js'
-import { workflowSkillId } from './workflows.js'
+import { resolveContext, type AuthContext } from './identity/context.js'
+import { workflowSkillId } from './workflow/shared.js'
 import { NUXI_GATEWAY_TAG } from '../../shared/utils/ai-gateway.js'
 
 /**
@@ -19,24 +19,6 @@ import { NUXI_GATEWAY_TAG } from '../../shared/utils/ai-gateway.js'
  */
 const FALLBACK_MODELS = ['anthropic/claude-sonnet-4.5', 'google/gemini-3.6-flash']
 
-type Surface = 'web' | 'slack' | 'discord' | 'schedule' | 'unknown'
-
-/**
- * The Chat SDK bridge reports `chat-sdk` as its channel kind, which does not
- * distinguish adapters, so the surface comes from the authenticated principal
- * instead — the same discriminants `canAccessAdminMcp` relies on.
- */
-export function resolveSurface(auth: AdminMcpAuthContext | null | undefined): Surface {
-  if (!auth) return 'unknown'
-  if (isScheduleAppAuth(auth)) return 'schedule'
-
-  const issuer = auth.issuer ?? ''
-  if (issuer.startsWith('slack')) return 'slack'
-  if (issuer.startsWith('discord')) return 'discord'
-  if (issuer === 'nuxt.com') return 'web'
-  return 'unknown'
-}
-
 /**
  * Schedules dispatch through Slack with an app principal, so the workflow is
  * only identifiable from the prompt — `skillWorkflowMessage` names the skill in
@@ -52,10 +34,10 @@ function resolveWorkflowSkill(messages: readonly ModelMessage[]): string | undef
 }
 
 export function nuxiGatewayTags(
-  auth: AdminMcpAuthContext | null | undefined,
+  auth: AuthContext | null | undefined,
   messages: readonly ModelMessage[]
 ): string[] {
-  const surface = resolveSurface(auth)
+  const surface = resolveContext(auth).surface
   const tags = [NUXI_GATEWAY_TAG, `surface:${surface}`]
 
   if (surface === 'schedule') {
@@ -72,7 +54,7 @@ export function nuxiGatewayTags(
  * option the static config would have set.
  */
 export function nuxiGatewayOptions(
-  auth: AdminMcpAuthContext | null | undefined,
+  auth: AuthContext | null | undefined,
   messages: readonly ModelMessage[]
 ) {
   // Left unannotated on purpose: `providerOptions` is typed as `JsonObject`,

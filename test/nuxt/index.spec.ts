@@ -159,6 +159,11 @@ describe('utils/index', () => {
     it('should use default message for missing link', () => {
       expect(createBreadcrumb()).toBe('Missing link')
     })
+
+    it('should omit docs version folders from titles', () => {
+      expect(createBreadcrumb('/docs/4.x/examples/features/state-management')).toBe('Docs > Examples > Features > State Management')
+      expect(createBreadcrumb('/docs/3.x/getting-started/introduction')).toBe('Docs > Getting Started > Introduction')
+    })
   })
 })
 

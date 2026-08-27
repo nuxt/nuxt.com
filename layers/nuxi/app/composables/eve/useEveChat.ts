@@ -5,11 +5,12 @@ import { eveMessagesToUIMessages } from './adapter'
 import type { AgentChatHandle } from './types'
 
 export interface UseEveChatOptions {
-  chatId: MaybeRefOrGetter<string>
   initialMessages?: MaybeRefOrGetter<UIMessage[] | undefined>
   /** Read once at store creation — must be resolved before calling this composable. */
   sessionCursor?: ChatSessionCursor | null
   headers?: () => Record<string, string>
+  /** Resolved before every turn — ephemeral, never persisted to session history. */
+  clientContext?: () => string | undefined
   onFinish?: (snapshot: UseEveAgentSnapshot<EveMessageData>) => void | Promise<void>
 }
 
@@ -64,34 +65,30 @@ async function sendUserParts(
   const fileParts = parts.filter((part): part is FileUIPart => part.type === 'file')
 
   if (fileParts.length && text) {
-    await agent.send({
-      message: [
-        { type: 'text', text },
-        ...fileParts.map(part => ({
-          type: 'file' as const,
-          data: part.url,
-          mediaType: part.mediaType,
-          filename: part.filename
-        }))
-      ]
-    })
-    return
-  }
-
-  if (fileParts.length) {
-    await agent.send({
-      message: fileParts.map(part => ({
+    await agent.send([
+      { type: 'text', text },
+      ...fileParts.map(part => ({
         type: 'file' as const,
         data: part.url,
         mediaType: part.mediaType,
         filename: part.filename
       }))
-    })
+    ])
+    return
+  }
+
+  if (fileParts.length) {
+    await agent.send(fileParts.map(part => ({
+      type: 'file' as const,
+      data: part.url,
+      mediaType: part.mediaType,
+      filename: part.filename
+    })))
     return
   }
 
   if (text) {
-    await agent.send({ message: text })
+    await agent.send(text)
   }
 }
 
@@ -100,16 +97,21 @@ export function useEveChat(options: UseEveChatOptions): AgentChatHandle & {
   hasAgentMessage: (role: UIMessage['role']) => boolean
 } {
   const agent = useEveAgent({
-    // The chat id doubles as the Eve continuation token. The persisted cursor
-    // makes the first send attach at the stream tail — without it, the client
-    // replays the whole session event log (duplicated turns).
-    initialSession: {
-      continuationToken: toValue(options.chatId),
-      streamIndex: 0,
-      ...options.sessionCursor
-    },
+    // `initialSession` attaches to an existing Eve session, so it is only set
+    // once a cursor has been persisted. The cursor makes the first send attach
+    // at the stream tail — without it, the client replays the whole session
+    // event log (duplicated turns). A fresh chat leaves it undefined so Eve
+    // creates the session and reports its id back through `onFinish`.
+    initialSession: options.sessionCursor ?? undefined,
     reducer: scopedTurnIdReducer(),
     headers: options.headers,
+    // Page context belongs to the turn it was sent with, not to the thread —
+    // `clientContext` reaches the model for that call only and never lands in
+    // durable history, so a stale path can't leak into a later answer.
+    prepareSend: (input) => {
+      const clientContext = options.clientContext?.()
+      return clientContext ? { ...input, clientContext } : input
+    },
     onFinish: (snapshot) => {
       void options.onFinish?.(snapshot)
     }
@@ -145,19 +147,11 @@ export function useEveChat(options: UseEveChatOptions): AgentChatHandle & {
   }
 
   function stop() {
-    const { sessionId } = agent.session.value
-    const wasActive = agent.status.value === 'submitted' || agent.status.value === 'streaming'
+    if (agent.status.value !== 'submitted' && agent.status.value !== 'streaming') return
 
-    agent.stop()
-
-    // `agent.stop()` only aborts the client stream — best-effort cancel the
-    // server-side turn too, or it keeps running to completion.
-    if (wasActive && sessionId) {
-      void $fetch(`/eve/v1/session/${encodeURIComponent(sessionId)}/cancel`, {
-        method: 'POST',
-        headers: options.headers?.()
-      }).catch(() => {})
-    }
+    // `cancel()` durably cancels the server-side turn and keeps the stream
+    // attached until it settles — no separate client abort needed.
+    void agent.cancel().catch(() => {})
   }
 
   function hasAgentMessage(role: UIMessage['role']) {

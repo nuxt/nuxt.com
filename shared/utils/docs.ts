@@ -1,5 +1,7 @@
 // Single source of truth for which Nuxt docs versions are exposed to humans
-// and agents. Bumping this list flips every version-aware surface at once:
+// and agents. "Supported" here means the docs are published and crawlable, not
+// that the release line is maintained: 3.x is end of life but still served.
+// Bumping this list flips every version-aware surface at once:
 //
 //   - app/pages/docs/[...slug].vue        → canonical/markdown alternate emission
 //   - modules/md-rewrite.ts               → Vercel edge rewrites for `.md` and Accept/UA negotiation

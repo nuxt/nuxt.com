@@ -48,5 +48,12 @@ export const createBreadcrumb = (link: string = 'Missing link') => {
   if (link.startsWith('http')) {
     return link
   }
-  return link.split('/').filter(Boolean).map(part => splitByCase(part).map(p => upperFirst(p)).join(' ')).join(' > ').replace('Api', 'API')
+  return link
+    .split('/')
+    .filter(Boolean)
+    // Docs version folders (`4.x`, `3.x`) become "4 X" via splitByCase — skip them.
+    .filter(part => !/^\d+\.x$/i.test(part))
+    .map(part => splitByCase(part).map(p => upperFirst(p)).join(' '))
+    .join(' > ')
+    .replace('Api', 'API')
 }
