@@ -1,7 +1,7 @@
 import type { LLMsSection } from 'nuxt-llms'
 import { joinURL } from 'ufo'
 import { CURRENT_DOCS_VERSION, DOC_VERSIONS, type DocVersion } from '#shared/utils/docs'
-import { docsInstanceKey } from '#shared/utils/content'
+import { cliInstanceKey, docsInstanceKey } from '#shared/utils/content'
 import type { ContentPage } from '../utils/content/pages'
 
 /**
@@ -64,25 +64,25 @@ export default defineNitroPlugin((nitroApp) => {
   })
 
   nitroApp.hooks.hook('llms:generate:full', async (_event, _options, contents) => {
-    // Docs first, every version
-    // Then the site sections
     for (const version of FULL_VERSIONS) {
-      const content = await getInstance(docsInstanceKey(version)).catch(() => null)
-      if (!content) continue
+      for (const key of [docsInstanceKey(version), cliInstanceKey(version)]) {
+        const content = await getInstanceAtHead(key).catch(() => null)
+        if (!content) continue
 
-      const pages = await listInstancePages(docsInstanceKey(version))
-      const rendered = await Promise.all(pages.map(page => renderPageMarkdown(content, page.path)))
-      contents.push(...rendered.filter((page): page is string => Boolean(page)))
+        const pages = await listInstancePages(key)
+        const rendered = await Promise.all(pages.map(page => renderPageMarkdown(content, page.path)))
+        contents.push(...rendered.filter((page): page is string => Boolean(page)))
+      }
     }
 
-    const examplesContent = await getInstance('examples').catch(() => null)
+    const examplesContent = await getInstanceAtHead('examples').catch(() => null)
     if (examplesContent) {
       const pages = await listInstancePages('examples')
       const rendered = await Promise.all(pages.map(page => renderPageMarkdown(examplesContent, page.path)))
       contents.push(...rendered.filter((page): page is string => Boolean(page)))
     }
 
-    const site = await getInstance('site')
+    const site = await getInstanceAtHead('site')
     for (const { dir } of SITE_SECTIONS) {
       const pages = await listInstancePages('site', { dir })
       const rendered = await Promise.all(pages.map(page => renderPageMarkdown(site, page.path)))
@@ -98,9 +98,12 @@ const SITE_SECTIONS = [
 ] as const
 
 async function docsLinks(version: DocVersion, domain: string): Promise<NonNullable<LLMsSection['links']>> {
-  const pages = await listInstancePages(docsInstanceKey(version)).catch(() => [])
+  const [docs, cli] = await Promise.all([
+    listInstancePages(docsInstanceKey(version)).catch(() => []),
+    listInstancePages(cliInstanceKey(version)).catch(() => [])
+  ])
 
-  return pages.map(page => toLink(page, domain))
+  return [...docs, ...cli].map(page => toLink(page, domain))
 }
 
 async function siteLinks(dir: string, domain: string): Promise<NonNullable<LLMsSection['links']>> {

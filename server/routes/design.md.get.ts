@@ -3,7 +3,7 @@ import { renderMarkdown } from 'comark/render'
 export default defineCachedEventHandler(async (event) => {
   const domain = getSiteUrl(event)
 
-  const content = await getInstance('site')
+  const content = await getInstanceAtHead('site')
   const document = await content.get('/design')
   if (!document) {
     throw createError({ statusCode: 404, statusMessage: 'Not found' })

@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import { docsPathPrefix } from '#shared/utils/docs'
 
 export default defineMcpTool({
   description: `Retrieves the official "Getting Started" introduction page for a given Nuxt major version.
@@ -19,7 +20,7 @@ WHEN NOT TO USE: For a specific page outside the introduction, prefer get_docume
   ],
   cache: '30m',
   async handler({ version, sections }) {
-    const path = `/docs/${version}/getting-started/introduction`
+    const path = `${docsPathPrefix(version)}/getting-started/introduction`
     const fullContent = await fetchPageMarkdown(docsInstanceKey(version), path)
 
     if (!fullContent) {

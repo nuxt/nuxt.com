@@ -1,49 +1,50 @@
 import { defineContentConfig, defineCollection, z } from '@nuxt/content'
-import { CLI_DOCS_PREFIX, CLI_DOCS_REFS, CLI_DOCS_REPO } from './shared/utils/cli-docs'
+import { CLI_DOCS_PREFIX, CLI_DOCS_REFS, CLI_DOCS_REPO } from './shared/utils/cli'
+import { DOCS_REFS, DOCS_REPO, docsPathPrefix } from './shared/utils/docs'
 
 const docsV3Source = {
   cwd: process.env.NUXT_V3_PATH ?? undefined,
-  repository: !process.env.NUXT_V3_PATH ? 'https://github.com/nuxt/nuxt/tree/3.x' : undefined,
+  repository: !process.env.NUXT_V3_PATH ? `https://github.com/${DOCS_REPO}/tree/${DOCS_REFS['3.x'].branch}` : undefined,
   include: 'docs/**/*',
   exclude: ['docs/**/*.json', 'docs/4.api/4.commands/**'],
-  prefix: '/docs/3.x'
+  prefix: docsPathPrefix('3.x')
 }
 
 const docsV4Source = {
   cwd: process.env.NUXT_V4_PATH ?? undefined,
-  repository: !process.env.NUXT_V4_PATH ? 'https://github.com/nuxt/nuxt/tree/4.x' : undefined,
+  repository: !process.env.NUXT_V4_PATH ? `https://github.com/${DOCS_REPO}/tree/${DOCS_REFS['4.x'].branch}` : undefined,
   include: 'docs/**/*',
   exclude: ['docs/**/*.json', 'docs/4.api/4.commands/**'],
-  prefix: '/docs/4.x'
+  prefix: docsPathPrefix('4.x')
 }
 
 const docsV5Source = {
   cwd: process.env.NUXT_V5_PATH ?? undefined,
-  repository: !process.env.NUXT_V5_PATH ? 'https://github.com/nuxt/nuxt/tree/main' : undefined,
+  repository: !process.env.NUXT_V5_PATH ? `https://github.com/${DOCS_REPO}/tree/${DOCS_REFS['5.x'].branch}` : undefined,
   include: 'docs/**/*',
   exclude: ['docs/**/*.json', 'docs/4.api/4.commands/**'],
-  prefix: '/docs/5.x'
+  prefix: docsPathPrefix('5.x')
 }
 
 const cliV3Source = {
   cwd: process.env.NUXT_CLI_PATH ?? undefined,
-  repository: !process.env.NUXT_CLI_PATH ? `https://github.com/${CLI_DOCS_REPO}/tree/${CLI_DOCS_REFS['3.x']}` : undefined,
+  repository: !process.env.NUXT_CLI_PATH ? `https://github.com/${CLI_DOCS_REPO}/tree/${CLI_DOCS_REFS['3.x'].branch}` : undefined,
   include: 'docs/**/*',
-  prefix: `/docs/3.x/${CLI_DOCS_PREFIX}`
+  prefix: `${docsPathPrefix('3.x')}/${CLI_DOCS_PREFIX}`
 }
 
 const cliV4Source = {
   cwd: process.env.NUXT_CLI_PATH ?? undefined,
-  repository: !process.env.NUXT_CLI_PATH ? `https://github.com/${CLI_DOCS_REPO}/tree/${CLI_DOCS_REFS['4.x']}` : undefined,
+  repository: !process.env.NUXT_CLI_PATH ? `https://github.com/${CLI_DOCS_REPO}/tree/${CLI_DOCS_REFS['4.x'].branch}` : undefined,
   include: 'docs/**/*',
-  prefix: `/docs/4.x/${CLI_DOCS_PREFIX}`
+  prefix: `${docsPathPrefix('4.x')}/${CLI_DOCS_PREFIX}`
 }
 
 const cliV5Source = {
   cwd: process.env.NUXT_CLI_PATH ?? undefined,
-  repository: !process.env.NUXT_CLI_PATH ? `https://github.com/${CLI_DOCS_REPO}/tree/${CLI_DOCS_REFS['5.x']}` : undefined,
+  repository: !process.env.NUXT_CLI_PATH ? `https://github.com/${CLI_DOCS_REPO}/tree/${CLI_DOCS_REFS['5.x'].branch}` : undefined,
   include: 'docs/**/*',
-  prefix: `/docs/5.x/${CLI_DOCS_PREFIX}`
+  prefix: `${docsPathPrefix('5.x')}/${CLI_DOCS_PREFIX}`
 }
 
 const examplesV3Source = {

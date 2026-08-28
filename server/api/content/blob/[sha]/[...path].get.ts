@@ -11,14 +11,14 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 400, statusMessage: 'Missing sha or path' })
   }
 
-  const key = instanceFromSegments(path.split('/').filter(Boolean))
+  const key = instanceKeyFromSegments(path.split('/').filter(Boolean))
 
-  // Resolving the instance is what advances its SHA, so compare after
-  // Otherwise the first request after a push always 404s
-  const content = await getInstance(key)
-  if (sha !== await getInstanceSha(key)) {
+  // TODO: will be deleted when we'll integrate version history
+  if (sha !== await resolveInstanceSha(key)) {
     throw createError({ statusCode: 404, statusMessage: 'Stale content commit' })
   }
+
+  const content = await getInstanceAtHead(key)
 
   // `handler()` matches on its own `basePath` (`/api/content/<instance>`), so drop the pin.
   const request = toWebRequest(event)

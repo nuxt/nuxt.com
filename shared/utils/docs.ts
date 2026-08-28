@@ -1,15 +1,14 @@
-// Single source of truth for which Nuxt docs versions are exposed to humans
-// and agents. "Supported" here means the docs are published and crawlable, not
-// that the release line is maintained: 3.x is end of life but still served.
-// Bumping this list flips every version-aware surface at once:
-//
-//   - app/pages/docs/[...slug].vue        → canonical/markdown alternate emission
-//   - modules/md-rewrite.ts               → Vercel edge rewrites for `.md` and Accept/UA negotiation
-//   - server/routes/.well-known/**        → API catalog + MCP server card link to versioned docs
-//   - app/middleware/docs-version.global.ts → unversioned `/docs/*` redirect target
-//
-// When Nuxt 5 ships: move `'5.x'` from EXCLUDED_DOC_VERSIONS into
-// SUPPORTED_DOC_VERSIONS and bump CURRENT_DOCS_VERSION.
+// Single source of truth for which Nuxt docs versions are exposed to humans and agents.
+// "Supported" here means the docs are published and crawlable.
+
+export const DOCS_REPO = 'nuxt/nuxt'
+
+export const DOCS_REFS = {
+  '3.x': { branch: '3.x', envOverride: 'NUXT_V3_PATH' },
+  '4.x': { branch: '4.x', envOverride: 'NUXT_V4_PATH' },
+  '5.x': { branch: 'main', envOverride: 'NUXT_V5_PATH' }
+} as const satisfies Record<DocVersion, { branch: string, envOverride: string }>
+
 export const SUPPORTED_DOC_VERSIONS = ['3.x', '4.x'] as const
 export const EXCLUDED_DOC_VERSIONS = ['5.x'] as const
 export const CURRENT_DOCS_VERSION: (typeof SUPPORTED_DOC_VERSIONS)[number] = '4.x'
@@ -24,10 +23,20 @@ export function isDocVersion(value: string): value is DocVersion {
 }
 
 /**
+ * Where a version's docs are mounted.
+ */
+export function docsPathPrefix(version: DocVersion): string {
+  return `/docs/${version}`
+}
+
+/**
  * Whether a path belongs to a version of the docs.
  */
 export function isVersionedDocsPath(path: string): boolean {
-  return DOC_VERSIONS.some(version => path === `/docs/${version}` || path.startsWith(`/docs/${version}/`))
+  return DOC_VERSIONS.some((version) => {
+    const prefix = docsPathPrefix(version)
+    return path === prefix || path.startsWith(`${prefix}/`)
+  })
 }
 
 const escape = (v: string) => v.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')

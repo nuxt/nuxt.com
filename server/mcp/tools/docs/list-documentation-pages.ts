@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { docsInstanceKey } from '#shared/utils/content'
+import { cliInstanceKey, docsInstanceKey } from '#shared/utils/content'
 import { DOC_VERSIONS, type DocVersion } from '#shared/utils/docs'
 
 export default defineMcpTool({
@@ -34,6 +34,7 @@ TIPS: Always pass a search term to narrow results — avoids dumping the entire 
         throw createError({ statusCode: 404, message: 'Documentation pages collection not found' })
       }
       allDocs.push(...docs)
+      allDocs.push(...await listInstancePages(cliInstanceKey(docsVersion)).catch(() => []))
     }
 
     allDocs.push(...await listInstancePages('examples'))

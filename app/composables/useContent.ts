@@ -6,10 +6,11 @@ type ContentClient = ReturnType<typeof createContentClient>
 const clients = new Map<ContentInstanceKey, ContentClient>()
 
 /**
- * Client for one content instance — the app-side mirror of the server's `getInstance()`:
+ * Client for one content instance — the app-side mirror of the server's `getInstanceAtHead()`:
  * - `site` (nuxt.com's own content: blog, deploy, landing pages…)
  * - `examples` (code examples)
- * - `docs:<version>` (one instance per docs version, see `docsInstanceKey()`)
+ * - `docs:<version>` (one instance per docs version)
+ * - `cli:<version>` (one instance per CLI version)
  */
 export function useContent(key: ContentInstanceKey): ContentClient {
   let client = clients.get(key)

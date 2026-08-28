@@ -1,5 +1,5 @@
 import type { BadgeProps } from '@nuxt/ui'
-import { isDocVersion, CURRENT_DOCS_VERSION, type DocVersion } from '#shared/utils/docs'
+import { isDocVersion, CURRENT_DOCS_VERSION, DOCS_REFS, docsPathPrefix, type DocVersion } from '#shared/utils/docs'
 import { docsInstanceKey, type ContentInstanceKey } from '#shared/utils/content'
 
 interface Version {
@@ -20,25 +20,25 @@ const versions: Version[] = [
   {
     label: 'Version 5',
     shortTag: 'v5',
-    branch: 'main',
+    branch: DOCS_REFS['5.x'].branch,
     tagColor: 'warning',
-    path: '/docs/5.x',
+    path: docsPathPrefix('5.x'),
     status: 'prerelease'
   },
   {
     label: 'Version 4',
     shortTag: 'v4',
-    branch: '4.x',
+    branch: DOCS_REFS['4.x'].branch,
     tagColor: 'primary',
-    path: '/docs/4.x',
+    path: docsPathPrefix('4.x'),
     status: 'stable'
   },
   {
     label: 'Version 3',
     shortTag: 'v3',
-    branch: '3.x',
+    branch: DOCS_REFS['3.x'].branch,
     tagColor: 'neutral',
-    path: '/docs/3.x',
+    path: docsPathPrefix('3.x'),
     status: 'unsupported',
     endOfLife: '31 July 2026',
     extendedSupport: 'https://www.herodevs.com/support/nuxt-nes?utm_source=nuxtjs&utm_medium=affiliate&utm_campaign=nuxt3eol&utm_content=link'
@@ -81,16 +81,16 @@ export const useDocsVersion = () => {
   const { track } = useAnalytics()
 
   const version = computed(() => {
-    if (route.path.startsWith('/docs/5.x')) {
-      return versions.find(v => v.path === '/docs/5.x')
+    if (route.path.startsWith(docsPathPrefix('5.x'))) {
+      return versions.find(v => v.path === docsPathPrefix('5.x'))
     }
 
-    if (route.path.startsWith('/docs/3.x')) {
-      return versions.find(v => v.path === '/docs/3.x')
+    if (route.path.startsWith(docsPathPrefix('3.x'))) {
+      return versions.find(v => v.path === docsPathPrefix('3.x'))
     }
 
     // Default to v4 (current stable)
-    return versions.find(v => v.path === '/docs/4.x')
+    return versions.find(v => v.path === docsPathPrefix('4.x'))
   })
 
   const items = computed(() => versions.map(v => ({

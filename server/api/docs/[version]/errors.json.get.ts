@@ -1,4 +1,4 @@
-import { isDocVersion } from '#shared/utils/docs'
+import { docsPathPrefix, isDocVersion } from '#shared/utils/docs'
 import { docsInstanceKey } from '#shared/utils/content'
 
 /**
@@ -10,9 +10,9 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 404, statusMessage: 'Unknown docs version' })
   }
 
-  const content = await getInstance(docsInstanceKey(version))
+  const content = await getInstanceAtHead(docsInstanceKey(version))
   const items = await content.list('docs')
-  const prefix = `/docs/${version}/errors/`
+  const prefix = `${docsPathPrefix(version)}/errors/`
 
   return items
     .filter(item => item.meta.extension === '.md' && item.path.startsWith(prefix))

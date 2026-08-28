@@ -5,7 +5,7 @@
  */
 export default defineEventHandler(async (event) => {
   const segments = (getRouterParam(event, 'path') ?? '').split('/').filter(Boolean)
-  const content = await getInstance(instanceFromSegments(segments))
+  const content = await getInstanceAtHead(instanceKeyFromSegments(segments))
 
   return content.handler(toWebRequest(event))
 })

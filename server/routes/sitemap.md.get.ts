@@ -1,5 +1,5 @@
 import { CURRENT_DOCS_VERSION } from '#shared/utils/docs'
-import { docsInstanceKey } from '#shared/utils/content'
+import { cliInstanceKey, docsInstanceKey } from '#shared/utils/content'
 
 const STATIC_LINKS = [
   { title: 'Home', path: '/' },
@@ -20,8 +20,9 @@ const STATIC_LINKS = [
 export default defineEventHandler(async (event) => {
   const domain = getSiteUrl(event)
   // Mirrors /sitemap.xml: v3 (legacy) and v5 (nightly) are excluded
-  const [docsv4, examples, blog, deploy] = await Promise.all([
+  const [docsv4, cliv4, examples, blog, deploy] = await Promise.all([
     listInstancePages(docsInstanceKey(CURRENT_DOCS_VERSION)),
+    listInstancePages(cliInstanceKey(CURRENT_DOCS_VERSION)),
     listInstancePages('examples'),
     listInstancePages('site', { dir: '/blog' }).then(items => items.filter(item => !item.data.draft)),
     listInstancePages('site', { dir: '/deploy' })
@@ -40,7 +41,7 @@ export default defineEventHandler(async (event) => {
   }
 
   lines.push('', '## Documentation', '')
-  for (const doc of docsv4) lines.push(`- [${doc.title}](${domain}${doc.path}.md)`)
+  for (const doc of [...docsv4, ...cliv4]) lines.push(`- [${doc.title}](${domain}${doc.path}.md)`)
 
   lines.push('', '## Examples', '')
   for (const example of examples) lines.push(`- [${example.title}](${domain}${example.path}.md)`)

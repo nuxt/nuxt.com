@@ -1,3 +1,4 @@
+import { fileURLToPath } from 'node:url'
 import { defineConfig, defaultExclude } from 'vitest/config'
 import { defineVitestProject } from '@nuxt/test-utils/config'
 
@@ -5,6 +6,13 @@ export default defineConfig({
   test: {
     projects: [
       {
+        // Server utils import `#shared/*`, which Nitro aliases at build time. Mapped here so they
+        // can be unit-tested without booting Nuxt.
+        resolve: {
+          alias: {
+            '#shared': fileURLToPath(new URL('./shared', import.meta.url))
+          }
+        },
         test: {
           name: 'unit',
           exclude: [

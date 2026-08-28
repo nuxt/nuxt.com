@@ -3,8 +3,9 @@ import { kebabCase } from 'scule'
 import { joinURL } from 'ufo'
 import type { NavigationItem } from 'comark-content'
 import { DocsProseImg } from '#components'
-import { CLI_DOCS_REFS, CLI_DOCS_REPO } from '#shared/utils/cli-docs'
-import { SUPPORTED_DOCS_PATH_REGEX, isVersionedDocsPath } from '#shared/utils/docs'
+import { CLI_DOCS_REFS, CLI_DOCS_REPO, cliDocsPathPrefix } from '#shared/utils/cli'
+import { cliInstanceKey } from '#shared/utils/content'
+import { DOCS_REFS, DOCS_REPO, SUPPORTED_DOCS_PATH_REGEX, isVersionedDocsPath } from '#shared/utils/docs'
 
 definePageMeta({
   heroBackground: 'opacity-30',
@@ -53,7 +54,15 @@ const pageKey = computed(() => kebabCase(path.value))
 
 const versioned = computed(() => isVersionedDocsPath(path.value))
 
-const instanceKey = computed(() => versioned.value ? docsInstanceKey.value : 'examples' as const)
+const isCliPage = computed(() => {
+  const prefix = cliDocsPathPrefix(docsVersion.value)
+  return path.value === prefix || path.value.startsWith(`${prefix}/`)
+})
+
+const instanceKey = computed(() => {
+  if (!versioned.value) return 'examples' as const
+  return isCliPage.value ? cliInstanceKey(docsVersion.value) : docsInstanceKey.value
+})
 
 const { data: page, status } = await useAsyncData(pageKey, () => {
   const pagePath = path.value
@@ -118,13 +127,14 @@ const editLink = computed(() => {
   if (instanceKey.value === 'examples') {
     return `https://github.com/nuxt/examples/edit/main/.docs/${meta.stem}${meta.extension}`
   }
-  // The command reference is mounted from `nuxt/cli`, so `stem` is the mount point,
-  // not a path in this repo — `repoStem` is where the file actually lives.
-  if (meta.source === 'cli') {
-    const ref = CLI_DOCS_REFS[docsVersion.value]
-    return `https://github.com/${CLI_DOCS_REPO}/edit/${ref}/docs/${meta.repoStem}${meta.extension}`
+
+  if (isCliPage.value) {
+    const ref = CLI_DOCS_REFS[docsVersion.value].branch
+    return `https://github.com/${CLI_DOCS_REPO}/edit/${ref}/docs/${meta.stem}${meta.extension}`
   }
-  return `https://github.com/nuxt/nuxt/edit/${version.value.branch}/docs/${meta.stem}${meta.extension}`
+
+  const ref = DOCS_REFS[docsVersion.value].branch
+  return `https://github.com/${DOCS_REPO}/edit/${ref}/docs/${meta.stem}${meta.extension}`
 })
 
 const communityLinks = [{

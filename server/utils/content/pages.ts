@@ -16,7 +16,7 @@ export async function listInstancePages(
   key: ContentInstanceKey,
   opts: { dir?: string } = {}
 ): Promise<ContentPage[]> {
-  const content = await getInstance(key)
+  const content = await getInstanceAtHead(key)
   const items = await content.list()
   const prefix = opts.dir ? `${opts.dir}/` : undefined
 

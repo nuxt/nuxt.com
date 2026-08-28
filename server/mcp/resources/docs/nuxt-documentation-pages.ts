@@ -1,4 +1,4 @@
-import { docsInstanceKey } from '#shared/utils/content'
+import { cliInstanceKey, docsInstanceKey } from '#shared/utils/content'
 import { DOC_VERSIONS } from '#shared/utils/docs'
 
 export default defineMcpResource({
@@ -7,9 +7,12 @@ export default defineMcpResource({
   cache: '1h',
   async handler(uri: URL) {
     const results = await Promise.all(DOC_VERSIONS.map(async (version) => {
-      const docs = await listInstancePages(docsInstanceKey(version))
+      const [docs, cli] = await Promise.all([
+        listInstancePages(docsInstanceKey(version)),
+        listInstancePages(cliInstanceKey(version)).catch(() => [])
+      ])
 
-      return docs.map(doc => ({
+      return [...docs, ...cli].map(doc => ({
         title: doc.title,
         path: doc.path,
         description: doc.description,

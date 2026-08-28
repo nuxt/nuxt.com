@@ -8,7 +8,7 @@ export default defineEventHandler(async (event) => {
   }
 
   const path = pagePathFromRawSlug(slug)
-  const content = await getInstance(instanceFromPagePath(path))
+  const content = await getInstanceAtHead(instanceFromPagePath(path))
 
   const markdown = await renderPageMarkdown(content, path)
   if (markdown) {

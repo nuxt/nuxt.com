@@ -6,7 +6,7 @@ import type { ContentInstanceKey } from '#shared/utils/content'
  * Mirrors `/raw/<path>.md`, sharing its renderer.
  */
 export async function fetchPageMarkdown(instance: ContentInstanceKey, path: string): Promise<string | null> {
-  const content = await getInstance(instance)
+  const content = await getInstanceAtHead(instance)
 
   return renderPageMarkdown(content, path, { links: true })
 }

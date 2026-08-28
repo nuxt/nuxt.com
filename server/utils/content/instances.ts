@@ -1,41 +1,35 @@
 import { markdownField } from 'comark-content/plugins/markdown-fields'
 import type { JsonSchema } from 'comark-content'
-import { CLI_DOCS_REFS, CLI_DOCS_REPO, CLI_DOCS_PREFIX } from '#shared/utils/cli-docs'
-import { isDocVersion, type DocVersion } from '#shared/utils/docs'
-import { isContentInstanceKey, type ContentInstanceKey } from '#shared/utils/content'
+import type { GithubSource } from 'comark-content/sources/github'
+import type { FSSourceOptions } from 'comark-content/sources/fs'
+import { CLI_DOCS_REFS, CLI_DOCS_REPO, CLI_DOCS_PREFIX, cliDocsPathPrefix } from '#shared/utils/cli'
+import { DOCS_REFS, DOCS_REPO, docsPathPrefix, isDocVersion } from '#shared/utils/docs'
+import { CONTENT_INSTANCE_KEYS, isContentInstanceKey, cliInstanceKey, docsInstanceKey, type ContentInstanceKey } from '#shared/utils/content'
+
+/** What comark-content's sources own; a required `prefix` is what the page resolver depends on. */
+type ComarkSourceOptions = Pick<GithubSource & FSSourceOptions, 'exclude' | 'schema'> & {
+  prefix: string
+}
 
 /**
- * Where one source reads from: a repo directory, mounted under one prefix.
+ * Where an instance reads from: a repo directory, mounted under one prefix.
  *
- * Each source sits on a single commit, so a push only invalidates the instances reading it.
+ * One instance, one repo, one commit — a push only ever invalidates the instance reading it.
  */
-export interface InstanceSource {
+export interface InstanceSource extends ComarkSourceOptions {
   /** Repo the content is read from. */
   repo: string
-  /** Prefix the content is mounted under. */
-  prefix: string
   /** Branch the content is read from. */
   branch: string
   /** Directory within the repo this instance reads. */
   contentDir: string
   /** Frontmatter kept in the manifest (everything `list()` and `navigation()` can see) */
   listingFields?: string[]
-  /** Glob patterns, relative to `contentDir`, never read. */
-  exclude?: string[]
-  /** Partial `data` schema — only the fields needing a declared type or transform. */
-  schema?: JsonSchema
   /** Env var pointing at a local clone (see `README.md`): reads it instead of GitHub. */
   envOverride?: string
   /** Read from the local `contentDir` in dev (this repo's own content). */
   local?: boolean
 }
-
-/** `satisfies` makes a new version in `#shared/utils/docs` a type error until it is mapped here. */
-const DOCS_REFS = {
-  '3.x': { branch: '3.x', envOverride: 'NUXT_V3_PATH' },
-  '4.x': { branch: '4.x', envOverride: 'NUXT_V4_PATH' },
-  '5.x': { branch: 'main', envOverride: 'NUXT_V5_PATH' }
-} as const satisfies Record<DocVersion, { branch: string, envOverride: string }>
 
 /**
  * Limited listing fields for docs and examples.
@@ -67,27 +61,19 @@ const SITE_SCHEMA: JsonSchema = {
 }
 
 /**
- * The command reference lives in `nuxt/cli`, not `nuxt/nuxt`, but reads as part of each
- * version's API section — so every docs instance mounts it as a second source, and
- * excludes the directory from the main source to avoid serving both.
+ * The instance's source.
  */
-const CLI_DOCS_EXCLUDE = [`${CLI_DOCS_PREFIX}/**`]
-
-/**
- * The sources an instance reads, keyed by source name.
- *
- * Examples are **not** version-scoped: they live at one canonical prefix, linked from
- * every version's navigation.
- */
-export function instanceSources(key: ContentInstanceKey): Record<string, InstanceSource> {
+export function instanceSource(key: ContentInstanceKey): { name: string, source: InstanceSource } {
   if (key === 'site') {
     return {
-      site: { repo: 'nuxt/nuxt.com', branch: 'main', contentDir: 'content', prefix: '/', local: true, schema: SITE_SCHEMA }
+      name: 'site',
+      source: { repo: 'nuxt/nuxt.com', branch: 'main', contentDir: 'content', prefix: '/', local: true, schema: SITE_SCHEMA }
     }
   }
   if (key === 'examples') {
     return {
-      examples: {
+      name: 'examples',
+      source: {
         repo: 'nuxt/examples',
         branch: 'main',
         contentDir: '.docs/',
@@ -98,81 +84,79 @@ export function instanceSources(key: ContentInstanceKey): Record<string, Instanc
       }
     }
   }
+  if (key.startsWith('cli:')) {
+    const version = key.slice('cli:'.length)
+    if (!isDocVersion(version)) {
+      throw createError({ statusCode: 404, statusMessage: `Unknown content instance: ${key}` })
+    }
+    return {
+      name: 'cli',
+      source: {
+        repo: CLI_DOCS_REPO,
+        branch: CLI_DOCS_REFS[version].branch,
+        contentDir: 'docs',
+        prefix: cliDocsPathPrefix(version),
+        listingFields: DOCS_LISTING_FIELDS,
+        exclude: DOCS_EXCLUDE,
+        envOverride: CLI_DOCS_REFS[version].envOverride
+      }
+    }
+  }
 
   const version = key.slice('docs:'.length)
   if (!isDocVersion(version)) {
     throw createError({ statusCode: 404, statusMessage: `Unknown content instance: ${key}` })
   }
   return {
-    docs: {
-      repo: 'nuxt/nuxt',
+    name: 'docs',
+    source: {
+      repo: DOCS_REPO,
       branch: DOCS_REFS[version].branch,
       contentDir: 'docs',
-      prefix: `/docs/${version}`,
+      prefix: docsPathPrefix(version),
       listingFields: DOCS_LISTING_FIELDS,
-      exclude: [...DOCS_EXCLUDE, ...CLI_DOCS_EXCLUDE],
+      exclude: [...DOCS_EXCLUDE, `${CLI_DOCS_PREFIX}/**`],
       envOverride: DOCS_REFS[version].envOverride
-    },
-    cli: {
-      repo: CLI_DOCS_REPO,
-      branch: CLI_DOCS_REFS[version],
-      contentDir: 'docs',
-      prefix: `/docs/${version}/api/commands`,
-      listingFields: DOCS_LISTING_FIELDS,
-      exclude: DOCS_EXCLUDE,
-      envOverride: 'NUXT_CLI_PATH'
     }
   }
 }
 
 /**
- * The commit each of the instance's sources reads
+ * The commit `key`'s source reads
  * - in dev the branch name
  * - otherwise the latest commit that touched that source's content directory
  */
-export async function resolveInstanceShas(
+export async function resolveInstanceSha(
   key: ContentInstanceKey,
   opts: { refresh?: boolean } = {}
-): Promise<Record<string, string>> {
-  const sources = instanceSources(key)
+): Promise<string> {
+  const { source } = instanceSource(key)
 
-  const entries = await Promise.all(
-    Object.entries(sources).map(async ([name, source]) => [
-      name,
-      import.meta.dev ? source.branch : await resolveContentSha(source.repo, source.branch, source.contentDir, opts)
-    ] as const)
-  )
-
-  return Object.fromEntries(entries)
+  // `resolveContentSha` itself returns `branch` unresolved in dev.
+  return resolveContentSha(source.repo, source.branch, source.contentDir, opts)
 }
 
 /**
- * One opaque identity for a set of source shas: memoization key and cache namespace.
- *
- * A single-source instance keeps its bare sha, so its namespace is unchanged.
+ * Page-path prefix → instance, longest first: `/docs/4.x/api/commands` must beat `/docs/4.x`.
+ * Derived from each instance's own `prefix`, so mounting and resolution can't disagree.
  */
-export function instanceShaKey(shas: Record<string, string>): string {
-  const names = Object.keys(shas).sort()
+let cachedPagePrefixes: Array<readonly [string, ContentInstanceKey]> | undefined
 
-  if (names.length === 1) return shas[names[0]!]!
-
-  return names.map(name => `${name}@${shas[name]}`).join('+')
+function pagePrefixes(): Array<readonly [string, ContentInstanceKey]> {
+  return cachedPagePrefixes ??= CONTENT_INSTANCE_KEYS
+    .map(key => [instanceSource(key).source.prefix, key] as const)
+    .filter(([prefix]) => prefix !== '/')
+    .sort((a, b) => b[0].length - a[0].length)
 }
 
 /**
- * The instance serving a page URL — `/docs/4.x/…`, `/docs/examples/…`, or anything else on the site.
- *
- * Unversioned `/docs/*` falls through to `site`, where nothing matches: those URLs pick a version in
- * the browser, and their raw mirrors have always 404'd, so there is no established target to serve.
+ * The instance serving a page URL — `/docs/4.x/…`, `/docs/4.x/api/commands/…`,
+ * `/docs/examples/…`, or anything else on the site.
  */
 export function instanceFromPagePath(path: string): ContentInstanceKey {
-  const [first, second] = path.split('/').filter(Boolean)
-  if (first !== 'docs') return 'site'
-  if (second === 'examples') return 'examples'
+  const match = pagePrefixes().find(([prefix]) => path === prefix || path.startsWith(`${prefix}/`))
 
-  const key = `docs:${second}`
-
-  return isContentInstanceKey(key) ? key : 'site'
+  return match?.[1] ?? 'site'
 }
 
 /**
@@ -181,14 +165,20 @@ export function instanceFromPagePath(path: string): ContentInstanceKey {
  * - `site/…` (nuxt.com's own content: blog, deploy, landing pages…)
  * - `examples/…` (the examples instance, code examples)
  * - `docs/<version>/…` (one instance per docs version)
+ * - `cli/<version>/…` (one instance per docs version's command reference)
  *
  * Shared by the live, `head/` and `blob/<sha>/` routes, which must agree on where an instance's
  * prefix begins — they are the same path with different qualifiers in front. Unlike
  * `instanceFromPagePath()` there is no fallback: an unknown prefix is a bad URL, not site content.
  */
-export function instanceFromSegments(segments: string[]): ContentInstanceKey {
+export function instanceKeyFromSegments(segments: string[]): ContentInstanceKey {
   const [first, second] = segments
-  const key = first === 'docs' ? `docs:${second}` : (first ?? '')
+  const version = second as DocVersion
+
+  let key: string
+  if (first === 'docs') key = docsInstanceKey(version)
+  else if (first === 'cli') key = cliInstanceKey(version)
+  else key = first ?? ''
 
   if (isContentInstanceKey(key)) return key
 

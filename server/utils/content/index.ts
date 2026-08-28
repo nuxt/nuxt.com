@@ -33,27 +33,21 @@ function createSource(source: InstanceSource, sha: string) {
 }
 
 /**
- * Create the content instance for `key`, reading each source at its own sha. Holds no shared state.
- *
- * `site` and `examples` carry one source; a docs instance carries two (`docs` + `cli`).
+ * Create the content instance for `key`, reading its source at `sha`. Holds no shared state.
  */
-export async function createContentInstance(key: ContentInstanceKey, shas: Record<string, string>): Promise<ComarkContent> {
-  const sources = instanceSources(key)
-  // Uniform across an instance's sources, so any one of them answers for the instance.
-  const listingFields = Object.values(sources)[0]?.listingFields
+export async function createContentInstance(key: ContentInstanceKey, sha: string): Promise<ComarkContent> {
+  const { name, source } = instanceSource(key)
 
   return comarkContent({
     basePath: instanceBasePath(key),
-    sources: Object.fromEntries(
-      Object.entries(sources).map(([name, source]) => [name, createSource(source, shas[name]!)])
-    ),
+    sources: { [name]: createSource(source, sha) },
     plugins: [
-      markdown({ comark: { plugins: comarkPlugins }, listingFields }),
-      yaml({ listingFields }),
-      json({ listingFields }),
+      markdown({ comark: { plugins: comarkPlugins }, listingFields: source.listingFields }),
+      yaml({ listingFields: source.listingFields }),
+      json({ listingFields: source.listingFields }),
       ...instancePlugins(key)
     ],
-    cache: { driver: contentCacheDriver(key, instanceShaKey(shas)) }
+    cache: { driver: contentCacheDriver(key, sha) }
   })
 }
 
@@ -67,16 +61,15 @@ const instances = new Map<ContentInstanceKey, { sha: string, instance: Promise<C
  * The instance serving `key`, for the lifetime of this server instance.
  * Each call resolves that instance's latest commit.
  */
-export async function getInstance(key: ContentInstanceKey): Promise<ComarkContent> {
-  const shas = await resolveInstanceShas(key)
-  const sha = instanceShaKey(shas)
+export async function getInstanceAtHead(key: ContentInstanceKey): Promise<ComarkContent> {
+  const sha = await resolveInstanceSha(key)
   const current = instances.get(key)
 
   if (current?.sha === sha) {
     return current.instance
   }
 
-  const instance = createContentInstance(key, shas).catch((error) => {
+  const instance = createContentInstance(key, sha).catch((error) => {
     // Don't memoize a failed build: the next request should retry.
     if (instances.get(key)?.sha === sha) instances.delete(key)
     throw error
@@ -87,14 +80,21 @@ export async function getInstance(key: ContentInstanceKey): Promise<ComarkConten
 }
 
 /**
- * The commit the live `key` instance serves.
+ * Fully parse an instance and persist its artifacts, so the next reader pays a cache read.
  *
- * `null` in dev, where content is read from local directories.
+ * Called from the push webhook to persist the instance's artifacts.
  */
-export async function getInstanceSha(key: ContentInstanceKey): Promise<string | null> {
-  if (import.meta.dev) return null
+export async function warmSnapshot(content: ComarkContent): Promise<void> {
+  await content.init({ partial: false })
 
-  await getInstance(key)
+  for (const source of content.manifest.sources) {
+    let artifact = await content.cache.snapshot(source)
+    if (!artifact) {
+      artifact = await content.cache.snapshot(source, { fresh: true })
+    }
 
-  return instances.get(key)?.sha ?? null
+    if (!artifact) {
+      console.warn(`[content] no snapshot artifact produced for source "${source}"`)
+    }
+  }
 }

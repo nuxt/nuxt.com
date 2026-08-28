@@ -1,5 +1,5 @@
 import { createResolver } from 'nuxt/kit'
-import { CLI_DOCS_PREFIX, CLI_DOCS_REFS, CLI_DOCS_REPO } from './shared/utils/cli-docs'
+import { CLI_DOCS_PREFIX, CLI_DOCS_REFS, CLI_DOCS_REPO } from './shared/utils/cli'
 
 const { resolve } = createResolver(import.meta.url)
 
@@ -7,6 +7,13 @@ const { resolve } = createResolver(import.meta.url)
 // Eve agent runtime is never spawned locally. The UI and server routes from
 // `layers/nuxi` are still loaded — only the agent itself is disabled.
 // `--with-nuxi` (`pnpm dev:nuxi`) re-enables the agent while keeping ui-only proxies.
+/**
+ * Revalidation window for content pages and indexes.
+ *
+ * How long a *missed* webhook delivery can serve stale content.
+ */
+const CONTENT_ISR = 300
+
 const uiOnly = process.argv.includes('--ui-only')
 const withNuxi = process.argv.includes('--with-nuxi')
 const nuxiEnabled = !uiOnly || withNuxi
@@ -136,6 +143,7 @@ export default defineNuxtConfig({
     newsletter: {
       secret: ''
     },
+    webhookSecret: '',
     openCollective: {
       apiKey: ''
     },
@@ -145,9 +153,9 @@ export default defineNuxtConfig({
     }
   },
   routeRules: {
-    // Pre-render
+    // Content pages are ISR: rendered on demand, then served from the CDN until the push webhook purges them.
     '/': {
-      prerender: true,
+      isr: CONTENT_ISR,
       headers: {
         // Relative URIs per RFC 8288 — agents resolve them against the request
         // origin, so this works on production, preview deploys, and localhost.
@@ -165,15 +173,13 @@ export default defineNuxtConfig({
         Vary: 'Accept, User-Agent'
       }
     },
-    '/blog/rss.xml': { prerender: true },
-    '/sitemap.xml': { prerender: true },
-    '/sitemap.md': { prerender: true },
-    '/design.md': { prerender: true, headers: { Vary: 'Accept, User-Agent' } },
+    '/llms.txt': { isr: CONTENT_ISR, prerender: false },
+    '/llms-full.txt': { isr: CONTENT_ISR, prerender: false },
+    '/blog/rss.xml': { isr: CONTENT_ISR },
+    '/sitemap.xml': { isr: CONTENT_ISR },
+    '/sitemap.md': { isr: CONTENT_ISR },
+    '/design.md': { isr: CONTENT_ISR, headers: { Vary: 'Accept, User-Agent' } },
     '/404.html': { prerender: true },
-    '/docs/3.x/getting-started/introduction': { prerender: true },
-    '/docs/4.x/getting-started/introduction': { prerender: true },
-    '/docs/5.x/getting-started/introduction': { prerender: true },
-    '/docs/4.x/errors': { prerender: true },
     '/modules': { isr: 60 * 60, prerender: false, headers: { Vary: 'Accept, User-Agent' } },
     '/modules/**': { isr: 60 * 60 },
     '/changelog': { isr: 60 * 60, headers: { Vary: 'Accept, User-Agent' } },
@@ -181,10 +187,17 @@ export default defineNuxtConfig({
     // based on `Accept` and `User-Agent`, so cached responses must vary on both).
     // /raw/** is the rewrite destination — it must carry Vary too so CDNs
     // don't serve cached markdown to a browser that asked for HTML.
-    '/docs/**': { headers: { Vary: 'Accept, User-Agent' } },
-    '/blog/**': { headers: { Vary: 'Accept, User-Agent' } },
-    '/deploy/**': { headers: { Vary: 'Accept, User-Agent' } },
-    '/raw/**': { headers: { Vary: 'Accept, User-Agent' } },
+    '/docs/**': { isr: CONTENT_ISR, headers: { Vary: 'Accept, User-Agent' } },
+    '/blog/**': { isr: CONTENT_ISR, headers: { Vary: 'Accept, User-Agent' } },
+    '/deploy/**': { isr: CONTENT_ISR, headers: { Vary: 'Accept, User-Agent' } },
+    '/raw/**': { isr: CONTENT_ISR, headers: { Vary: 'Accept, User-Agent' } },
+    '/enterprise/**': { isr: CONTENT_ISR },
+    '/templates': { isr: CONTENT_ISR },
+    '/showcase': { isr: CONTENT_ISR },
+    '/team': { isr: CONTENT_ISR },
+    '/design-kit': { isr: CONTENT_ISR },
+    '/video-courses': { isr: CONTENT_ISR },
+    '/newsletter': { isr: CONTENT_ISR },
     // API
     '/api/v1/teams': { isr: 60 * 60 },
     // Admin
@@ -197,8 +210,7 @@ export default defineNuxtConfig({
     '/_eve_internal/**': { headers: { 'cache-control': 'no-store' } },
     '/api/internal/**': { headers: { 'cache-control': 'no-store' } },
     // Main navigation
-    '/api/navigation.json': { prerender: true },
-    // Per-commit artifacts hydrating the client-side search database (immutable)
+    '/api/navigation.json': { isr: CONTENT_ISR },
     '/api/content/blob/**': { isr: true },
     // Redirects
     '/docs': { redirect: '/docs/getting-started/introduction', prerender: false },
@@ -477,29 +489,11 @@ export default defineNuxtConfig({
   },
   compatibilityDate: '2026-01-14',
   nitro: {
-    prerender: {
-      // Docs are prerendered by crawling from `/` plus the per-version
-      // `getting-started/introduction` seeds in `routeRules` (the version
-      // switcher lives in a dropdown, so its links aren't in the SSR'd HTML
-      // and each version tree needs its own entry point).
-      crawlLinks: true,
-      ignore: [
-        route => route === '/modules' || route.startsWith('/modules/'),
-        route => route.startsWith('/raw/'),
-        route => route.startsWith('/admin'),
-        route => route.startsWith('/login'),
-        route => route.startsWith('/dashboard'),
-        '/mcp',
-        route => route.startsWith('/mcp/'),
-        route => route.startsWith('/api/auth/'),
-        route => route.startsWith('/api/chats'),
-        // Crawled from the examples pages, but it fans out to jsDelivr and
-        // raw.githubusercontent for every file of every example — enough
-        // requests during a full crawl to get rate-limited into a 500.
-        // CodeExplorer fetches it client-side at runtime instead.
-        route => route.startsWith('/api/examples/')
-      ],
-      autoSubfolderIndex: false
+    vercel: {
+      config: {
+        // Required for `x-prerender-revalidate` to purge an ISR route.
+        bypassToken: process.env.VERCEL_BYPASS_TOKEN
+      }
     }
   },
   hub: {
@@ -550,7 +544,7 @@ export default defineNuxtConfig({
       // hardcoded ref would serve `main`'s captures on the 3.x tree.
       const version = `${file.id.split('/')[0]?.replace('docsv', '')}.x` as keyof typeof CLI_DOCS_REFS
       if (file.id.includes(`/${CLI_DOCS_PREFIX}/`) && CLI_DOCS_REFS[version]) {
-        const base = `https://raw.githubusercontent.com/${CLI_DOCS_REPO}/${CLI_DOCS_REFS[version]}`
+        const base = `https://raw.githubusercontent.com/${CLI_DOCS_REPO}/${CLI_DOCS_REFS[version].branch}`
         file.body = file.body.replaceAll(/(!\[[^\]]*\]\()\/(?!\/)/g, `$1${base}/`)
       }
       if (file.id.startsWith('docsv5/')) {
