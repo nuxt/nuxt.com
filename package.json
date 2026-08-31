@@ -47,7 +47,7 @@
     "@nuxtjs/html-validator": "^2.1.0",
     "@nuxtjs/mcp-toolkit": "^0.19.0",
     "@nuxtjs/mdc": "^0.23.1",
-    "@takumi-rs/core": "^2.13.2",
+    "@takumi-rs/core": "^2.13.3",
     "@vercel/analytics": "^2.0.1",
     "@vercel/connect": "^2.0.1",
     "@vercel/functions": "^3.9.5",
