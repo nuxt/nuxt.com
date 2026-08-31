@@ -1,5 +1,4 @@
 import { createResolver } from 'nuxt/kit'
-import { CLI_DOCS_PREFIX, CLI_DOCS_REFS, CLI_DOCS_REPO } from './shared/utils/cli'
 
 const { resolve } = createResolver(import.meta.url)
 
@@ -24,9 +23,7 @@ export default defineNuxtConfig({
 
   modules: [
     '@nuxt/ui',
-    // 'nuxt-content-twoslash',
     '@nuxt/test-utils',
-    '@nuxt/content',
     '@comark/nuxt',
     '@nuxt/image',
     '@nuxt/eslint',
@@ -92,31 +89,6 @@ export default defineNuxtConfig({
   },
   colorMode: {
     preference: 'dark'
-  },
-  content: {
-    // @nuxt/content's nuxthub preset only maps `hub.db` into `content.database` when `hub.db` is a string.
-    // With the object form it falls back to better-sqlite3, whose native addon fails to load on Vercel.
-    // See https://github.com/nuxt/content/issues/3821
-    database: {
-      type: 'libsql',
-      url: 'file:/tmp/sqlite.db'
-    },
-    build: {
-      markdown: {
-        highlight: {
-          theme: {
-            default: 'material-theme-lighter',
-            dark: 'material-theme-palenight'
-          },
-          langs: ['js', 'jsx', 'json', 'ts', 'tsx', 'vue', 'css', 'html', 'bash', 'md', 'mdc', 'yaml', 'sql', 'diff', 'ini']
-        }
-      }
-    }
-  },
-  mdc: {
-    highlight: {
-      noApiRoute: false
-    }
   },
   ui: {
     theme: {
@@ -528,49 +500,6 @@ export default defineNuxtConfig({
       include: ['../test/nuxt']
     }
   },
-  hooks: {
-    'nitro:config': (nitroConfig) => {
-      // TODO: remove this once `@nuxt/content` is removed.
-      // Drop `@nuxt/content`'s llms plugin: with no `contentCollection` section left for it to
-      // expand, it auto-generates one section per page collection instead
-      // (`prepareContentSections`), duplicating every section `server/plugins/llms.ts` builds from
-      // the comark instances. Goes away with the dependency itself.
-      nitroConfig.plugins = nitroConfig.plugins?.filter(plugin => !plugin.includes('features/llms/runtime/server/content-llms.plugin'))
-    },
-    'content:file:beforeParse': async ({ file }) => {
-      // Command docs are served from `nuxt/cli`, but Content only ships the markdown,
-      // not the terminal captures committed beside it. Root-relative image sources are
-      // repo-relative, so resolve them against the ref this page was parsed from: a
-      // hardcoded ref would serve `main`'s captures on the 3.x tree.
-      const version = `${file.id.split('/')[0]?.replace('docsv', '')}.x` as keyof typeof CLI_DOCS_REFS
-      if (file.id.includes(`/${CLI_DOCS_PREFIX}/`) && CLI_DOCS_REFS[version]) {
-        const base = `https://raw.githubusercontent.com/${CLI_DOCS_REPO}/${CLI_DOCS_REFS[version].branch}`
-        file.body = file.body.replaceAll(/(!\[[^\]]*\]\()\/(?!\/)/g, `$1${base}/`)
-      }
-      if (file.id.startsWith('docsv5/')) {
-        file.body = file.body.replaceAll(/\(\/docs\/(?!\d\.x)/g, '(/docs/5.x/')
-        // Pages that only exist on main (5.x) but are linked as /docs/4.x/* from
-        // the 5.x docs. Left unrewritten they 404, which fails the prerender now
-        // that the crawler is on. Only paths whose 5.x counterpart exists belong
-        // here — a blanket 4.x→5.x rewrite would break the ~13 links that point
-        // at pages 5.x dropped (guide/concepts/esm, going-further/internals, …).
-        for (const path of [
-          'guide/modules/module-dependencies',
-          'guide/best-practices/accessibility',
-          'guide/concepts/server-components',
-          'guide/recipes/mostly-static-sites'
-        ]) {
-          file.body = file.body.replaceAll(`/docs/4.x/${path}`, `/docs/5.x/${path}`)
-        }
-      }
-      if (file.id.startsWith('docsv4/')) {
-        file.body = file.body.replaceAll(/\(\/docs\/(?!\d\.x)/g, '(/docs/4.x/')
-      }
-      if (file.id.startsWith('docsv3/')) {
-        file.body = file.body.replaceAll(/\(\/docs\/(?!\d\.x)/g, '(/docs/3.x/')
-      }
-    }
-  },
   eslint: {
     config: {
       stylistic: {
@@ -647,15 +576,8 @@ export default defineNuxtConfig({
     full: {
       title: 'Nuxt Docs',
       description: 'The complete Nuxt documentation and blog posts written in Markdown (MDC syntax).'
-    },
+    }
     // Sections are pushed by `server/plugins/llms.ts` from the comark instances.
-    //
-    // `@nuxt/content` (Phase 7) contributes this option, and would otherwise register a generic
-    // `/raw/**:slug.md` handler that `server/routes/raw/[...slug].md.get.ts` replaces. Its other
-    // llms surface — expanding `contentCollection` sections — is disabled by dropping its Nitro
-    // plugin, not from here: an empty `sections` array makes it auto-generate one section per
-    // collection instead (see the `nitro:config` hook).
-    contentRawMarkdown: false
   },
   mcp: {
     name: 'Nuxt',
@@ -689,13 +611,4 @@ export default defineNuxtConfig({
   turnstile: {
     siteKey: '0x4AAAAAAAP2vNBsTBT3ucZi'
   }
-  // twoslash: {
-  //   floatingVueOptions: {
-  //     classMarkdown: 'prose prose-primary dark:prose-invert'
-  //   },
-  //   // Skip Twoslash in dev to improve performance. Turn this on when you want to explicitly test twoslash in dev.
-  //   enableInDev: false,
-  //   // Do not throw when twoslash fails, the typecheck should be down in github.com/nuxt/nuxt's CI
-  //   throws: false
-  // }
 })
