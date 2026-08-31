@@ -89,8 +89,8 @@ importers:
         specifier: ^2.0.1
         version: 2.0.1(nuxt@4.5.2(a8e3c68ca6d2752c8d2a0f3cc48bbbbc))(vue@3.5.41(typescript@6.0.3))
       '@vercel/connect':
-        specifier: ^0.9.0
-        version: 0.9.0(@ai-sdk/mcp@2.0.36(zod@4.4.3))(ai@7.0.77(zod@4.4.3))(eve@0.44.3(@libsql/client@0.17.4)(@vercel/functions@3.9.5(ws@8.21.3))(ai@7.0.77(zod@4.4.3))(better-sqlite3@13.0.3)(chokidar@5.0.0)(dotenv@17.4.2)(drizzle-orm@0.45.2(@cloudflare/workers-types@4.20260702.1)(@libsql/client@0.17.4)(better-sqlite3@13.0.3))(giget@3.3.1)(ioredis@5.11.1(supports-color@10.2.2))(jiti@2.7.0)(lru-cache@11.5.2)(microsandbox@0.6.14)(rollup@4.62.4)(vite@8.2.1(@types/node@26.2.0)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.50.0)(tsx@4.23.12)(yaml@2.9.0)))
+        specifier: ^2.0.1
+        version: 2.0.1(@ai-sdk/mcp@2.0.36(zod@4.4.3))(ai@7.0.77(zod@4.4.3))(eve@0.44.3(@libsql/client@0.17.4)(@vercel/functions@3.9.5(ws@8.21.3))(ai@7.0.77(zod@4.4.3))(better-sqlite3@13.0.3)(chokidar@5.0.0)(dotenv@17.4.2)(drizzle-orm@0.45.2(@cloudflare/workers-types@4.20260702.1)(@libsql/client@0.17.4)(better-sqlite3@13.0.3))(giget@3.3.1)(ioredis@5.11.1(supports-color@10.2.2))(jiti@2.7.0)(lru-cache@11.5.2)(microsandbox@0.6.14)(rollup@4.62.4)(vite@8.2.1(@types/node@26.2.0)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.50.0)(tsx@4.23.12)(yaml@2.9.0)))
       '@vercel/functions':
         specifier: ^3.9.5
         version: 3.9.5(ws@8.21.3)
@@ -4242,8 +4242,8 @@ packages:
     resolution: {integrity: sha512-g9XerViJ/paZujufXYcu5XYI2vU2rtB4sgdpjUHde5RnOkdmpu0ngH46LCFGHoPXO/C+qDPSczIHIRN+8Q2YKQ==}
     engines: {node: '>= 18'}
 
-  '@vercel/connect@0.9.0':
-    resolution: {integrity: sha512-rm+7pcFpKscVcRqbhvH9yV5Ia7hBTePXPMAXn/PZZcfxtrcguJGGi/9/K0lLhsAJTWCTDr0rp0NhGzRuwK6ucw==}
+  '@vercel/connect@2.0.1':
+    resolution: {integrity: sha512-u11CzYvHWGx9c8wJ9nameAlEuoJM8ogmuP/W4Lq/NtBeN+nfX04liKDlerjhyqnBv/h/olOZmfLl/et51TAdqw==}
     peerDependencies:
       '@ai-sdk/mcp': ^1 || ^2
       '@auth/core': '>=0.37.0'
@@ -14814,7 +14814,7 @@ snapshots:
     dependencies:
       execa: 5.1.1
 
-  '@vercel/connect@0.9.0(@ai-sdk/mcp@2.0.36(zod@4.4.3))(ai@7.0.77(zod@4.4.3))(eve@0.44.3(@libsql/client@0.17.4)(@vercel/functions@3.9.5(ws@8.21.3))(ai@7.0.77(zod@4.4.3))(better-sqlite3@13.0.3)(chokidar@5.0.0)(dotenv@17.4.2)(drizzle-orm@0.45.2(@cloudflare/workers-types@4.20260702.1)(@libsql/client@0.17.4)(better-sqlite3@13.0.3))(giget@3.3.1)(ioredis@5.11.1(supports-color@10.2.2))(jiti@2.7.0)(lru-cache@11.5.2)(microsandbox@0.6.14)(rollup@4.62.4)(vite@8.2.1(@types/node@26.2.0)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.50.0)(tsx@4.23.12)(yaml@2.9.0)))':
+  '@vercel/connect@2.0.1(@ai-sdk/mcp@2.0.36(zod@4.4.3))(ai@7.0.77(zod@4.4.3))(eve@0.44.3(@libsql/client@0.17.4)(@vercel/functions@3.9.5(ws@8.21.3))(ai@7.0.77(zod@4.4.3))(better-sqlite3@13.0.3)(chokidar@5.0.0)(dotenv@17.4.2)(drizzle-orm@0.45.2(@cloudflare/workers-types@4.20260702.1)(@libsql/client@0.17.4)(better-sqlite3@13.0.3))(giget@3.3.1)(ioredis@5.11.1(supports-color@10.2.2))(jiti@2.7.0)(lru-cache@11.5.2)(microsandbox@0.6.14)(rollup@4.62.4)(vite@8.2.1(@types/node@26.2.0)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.50.0)(tsx@4.23.12)(yaml@2.9.0)))':
     dependencies:
       '@vercel/oidc': 3.8.5
     optionalDependencies:
