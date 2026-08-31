@@ -8,12 +8,12 @@
     "start": "eve start"
   },
   "dependencies": {
-    "@ai-sdk/gateway": "^4.0.68",
+    "@ai-sdk/gateway": "^4.0.69",
     "@chat-adapter/discord": "^4.39.0",
     "@chat-adapter/state-memory": "^4.39.0",
     "@chat-adapter/state-redis": "^4.39.0",
     "@vercel/global-config": "^1.5.1",
-    "ai": "^7.0.84",
+    "ai": "^7.0.85",
     "chat": "^4.39.0",
     "eve": "^0.47.3",
     "zod": "^4.5.4"

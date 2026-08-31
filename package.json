@@ -25,7 +25,7 @@
     "db:migrate": "nuxt db migrate"
   },
   "dependencies": {
-    "@ai-sdk/mcp": "^2.0.40",
+    "@ai-sdk/mcp": "^2.0.41",
     "@chat-adapter/discord": "^4.39.0",
     "@chat-adapter/state-memory": "^4.39.0",
     "@chat-adapter/state-redis": "^4.39.0",
@@ -57,7 +57,7 @@
     "@vueuse/components": "^14.4.0",
     "@vueuse/core": "^14.4.0",
     "@vueuse/nuxt": "^14.4.0",
-    "ai": "^7.0.84",
+    "ai": "^7.0.85",
     "better-sqlite3": "^13.0.3",
     "chat": "^4.39.0",
     "date-fns": "^4.4.0",

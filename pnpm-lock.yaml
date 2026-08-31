@@ -13,7 +13,7 @@ importers:
   .:
     dependencies:
       '@ai-sdk/mcp':
-        specifier: ^2.0.40
+        specifier: ^2.0.41
         version: 2.0.41(zod@4.5.4)
       '@chat-adapter/discord':
         specifier: ^4.39.0
@@ -109,7 +109,7 @@ importers:
         specifier: ^14.4.0
         version: 14.4.0(magic-string@1.2.3)(magicast@0.5.4)(nuxt@4.5.2(470a0b46be021020e4721cbac7a6e5eb))(oxc-parser@0.143.0)(rolldown@1.2.4)(unplugin@3.3.0(esbuild@0.28.2)(rolldown@1.2.4)(rollup@4.62.4)(vite@8.2.1(@types/node@26.2.0)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.50.0)(tsx@4.23.12)(yaml@2.9.0)))(vue@3.5.42(typescript@6.0.3))
       ai:
-        specifier: ^7.0.84
+        specifier: ^7.0.85
         version: 7.0.85(zod@4.5.4)
       better-sqlite3:
         specifier: ^13.0.3
