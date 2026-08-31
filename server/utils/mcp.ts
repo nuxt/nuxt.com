@@ -5,6 +5,68 @@ import { queryCollection } from '@nuxt/content/server'
 
 type CollectionName = Parameters<typeof queryCollection>[1]
 
+/** App-scoped dirs that live under `directory-structure/app/` in Nuxt 4+ docs. */
+const APP_SCOPED_DIRECTORIES = new Set([
+  'assets',
+  'components',
+  'composables',
+  'layouts',
+  'middleware',
+  'pages',
+  'plugins',
+  'utils',
+  'app',
+  'app-config',
+  'error'
+])
+
+/**
+ * Maps legacy documentation paths to current content paths.
+ *
+ * nuxt.com route rules redirect old URLs in the browser, but MCP resolves
+ * content by path via `queryCollection` and does not follow HTTP redirects.
+ */
+export function resolveDocumentationPath(path: string): string {
+  if (path === '/docs/4.x/guide/going-further/error-handling' || path === '/docs/5.x/guide/going-further/error-handling') {
+    return path.replace('/guide/going-further/error-handling', '/getting-started/error-handling')
+  }
+
+  const resolved = path.replace(
+    /^(\/docs\/(?:3\.x|4\.x|5\.x))\/guide\/directory-structure$/,
+    '$1/directory-structure'
+  )
+
+  const legacyMatch = resolved.match(/^(\/docs\/(3\.x|4\.x|5\.x))\/guide\/directory-structure\/(.+)$/)
+  if (!legacyMatch) {
+    return resolved
+  }
+
+  const prefix = legacyMatch[1]
+  const version = legacyMatch[2]
+  const rest = legacyMatch[3]
+  if (!prefix || !version || !rest) {
+    return resolved
+  }
+
+  if (version === '3.x') {
+    return rest.startsWith('app/')
+      ? `${prefix}/directory-structure/${rest.slice(4)}`
+      : `${prefix}/directory-structure/${rest}`
+  }
+
+  if (rest.startsWith('app/') || rest.startsWith('guide/')) {
+    return `${prefix}/directory-structure/${rest.replace(/^guide\//, '')}`
+  }
+
+  const topLevel = rest.split('/')[0]!
+  if (APP_SCOPED_DIRECTORIES.has(topLevel)) {
+    // `rest === 'app'` → `.../app/app` (canonical content path for app.vue)
+    return `${prefix}/directory-structure/app/${rest}`
+  }
+
+  return `${prefix}/directory-structure/${rest}`
+}
+
 /**
  * Fetches a page from a known content collection and renders it as markdown.
  *
@@ -19,7 +81,8 @@ export async function fetchPageMarkdown(
   collection: CollectionName,
   path: string
 ): Promise<string | null> {
-  const page = await queryCollection(event, collection).path(path).first() as
+  const resolvedPath = resolveDocumentationPath(path)
+  const page = await queryCollection(event, collection).path(resolvedPath).first() as
     | { title?: string, description?: string, body?: { value?: MinimarkNode[] }, links?: unknown[], meta?: { links?: unknown[] } }
     | null
 
