@@ -165,7 +165,10 @@ export function useEveChat(options: UseEveChatOptions): AgentChatHandle & {
       return messages.value
     },
     get status() {
-      return agent.status.value
+      // Eve's `resuming` (checking an attached session for continuation) has no
+      // `AgentChatStatus` equivalent — surface it as busy until the check settles.
+      const status = agent.status.value
+      return status === 'resuming' ? 'submitted' : status
     },
     get error() {
       return agent.error.value
