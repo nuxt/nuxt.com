@@ -7,10 +7,6 @@ settings:
 overrides:
   nostics: ^1.2.0
   '@workflow/serde': 4.1.2
-  '@nuxt/content>@nuxtjs/mdc': ^0.23.1
-
-patchedDependencies:
-  '@nuxt/content': c5b7bb228dea1e45f274e367308107c2f611ad739b4bb5742478643be3a95f9f
 
 importers:
 
@@ -57,7 +53,7 @@ importers:
         version: 2.1.0
       '@nuxt/content':
         specifier: ^3.16.0
-        version: 3.16.0(patch_hash=c5b7bb228dea1e45f274e367308107c2f611ad739b4bb5742478643be3a95f9f)(@libsql/client@0.17.4)(@oxc-project/types@0.144.0)(better-sqlite3@13.0.3)(esbuild@0.28.2)(magic-string@1.2.3)(magicast@0.5.4)(oxc-parser@0.143.0)(rolldown@1.2.4)(rollup@4.62.4)(supports-color@10.2.2)(valibot@1.4.2(typescript@6.0.3))(vite@8.2.1(@types/node@26.2.0)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.50.0)(tsx@4.23.12)(yaml@2.9.0))
+        version: 3.16.0(@libsql/client@0.17.4)(@oxc-project/types@0.144.0)(better-sqlite3@13.0.3)(esbuild@0.28.2)(magic-string@1.2.3)(magicast@0.5.4)(oxc-parser@0.143.0)(rolldown@1.2.4)(rollup@4.62.4)(supports-color@10.2.2)(valibot@1.4.2(typescript@6.0.3))(vite@8.2.1(@types/node@26.2.0)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.50.0)(tsx@4.23.12)(yaml@2.9.0))
       '@nuxt/hints':
         specifier: ^1.1.4
         version: 1.1.4(@libsql/client@0.17.4)(@vercel/functions@3.9.5(ws@8.21.3))(@vitest/expect@4.1.11)(better-sqlite3@13.0.3)(db0@0.3.4(@libsql/client@0.17.4)(better-sqlite3@13.0.3)(drizzle-orm@0.45.2(@cloudflare/workers-types@4.20260702.1)(@libsql/client@0.17.4)(better-sqlite3@13.0.3)))(drizzle-orm@0.45.2(@cloudflare/workers-types@4.20260702.1)(@libsql/client@0.17.4)(better-sqlite3@13.0.3))(esbuild@0.28.2)(ioredis@5.11.1(supports-color@10.2.2))(magicast@0.5.4)(rolldown@1.2.4)(rollup@4.62.4)(srvx@0.11.22)(supports-color@10.2.2)(typescript@6.0.3)(vite@8.2.1(@types/node@26.2.0)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.50.0)(tsx@4.23.12)(yaml@2.9.0))(vitest@4.1.11(@types/node@26.2.0)(happy-dom@20.12.0)(vite@8.2.1(@types/node@26.2.0)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.50.0)(tsx@4.23.12)(yaml@2.9.0)))(vue@3.5.42(typescript@6.0.3))
@@ -69,7 +65,7 @@ importers:
         version: 1.3.8(@oxc-project/types@0.144.0)(@types/youtube@0.3.0)(@unhead/vue@3.3.2(@oxc-project/types@0.144.0)(esbuild@0.28.2)(lightningcss@1.33.0)(oxc-parser@0.143.0)(rolldown@1.2.4)(rollup@4.62.4)(vite@8.2.1(@types/node@26.2.0)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.50.0)(tsx@4.23.12)(yaml@2.9.0))(vue@3.5.42(typescript@6.0.3)))(@vercel/functions@3.9.5(ws@8.21.3))(db0@0.3.4(@libsql/client@0.17.4)(better-sqlite3@13.0.3)(drizzle-orm@0.45.2(@cloudflare/workers-types@4.20260702.1)(@libsql/client@0.17.4)(better-sqlite3@13.0.3)))(esbuild@0.28.2)(ioredis@5.11.1(supports-color@10.2.2))(magicast@0.5.4)(rolldown@1.2.4)(rollup@4.62.4)(typescript@6.0.3)(vite@8.2.1(@types/node@26.2.0)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.50.0)(tsx@4.23.12)(yaml@2.9.0))(vue@3.5.42(typescript@6.0.3))
       '@nuxt/ui':
         specifier: ^4.11.0
-        version: 4.11.0(c5b9035e6469f04677bb68f3a65fb187)
+        version: 4.11.0(292ff97f1d7b1b4ee5bc1034e5059612)
       '@nuxthub/core':
         specifier: ^0.10.8
         version: 0.10.8(@emnapi/core@1.11.2)(@emnapi/runtime@1.11.3)(@vercel/functions@3.9.5(ws@8.21.3))(db0@0.3.4(@libsql/client@0.17.4)(better-sqlite3@13.0.3)(drizzle-orm@0.45.2(@cloudflare/workers-types@4.20260702.1)(@libsql/client@0.17.4)(better-sqlite3@13.0.3)))(ioredis@5.11.1(supports-color@10.2.2))(magic-string@1.2.3)(magicast@0.5.4)(oxc-parser@0.143.0)(rolldown@1.2.4)(typescript@6.0.3)(unplugin@3.3.0(esbuild@0.28.2)(rolldown@1.2.4)(rollup@4.62.4)(vite@8.2.1(@types/node@26.2.0)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.50.0)(tsx@4.23.12)(yaml@2.9.0)))(vue-tsc@3.3.11(typescript@6.0.3))
@@ -244,7 +240,7 @@ importers:
         version: 0.4.0(@nuxtjs/mdc@0.23.1(magic-string@1.2.3)(magicast@0.5.4)(oxc-parser@0.143.0)(rolldown@1.2.4)(supports-color@10.2.2)(unplugin@3.3.0(esbuild@0.28.2)(rolldown@1.2.4)(rollup@4.62.4)(vite@8.2.1(@types/node@26.2.0)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.50.0)(tsx@4.23.12)(yaml@2.9.0))))(magic-string@1.2.3)(magicast@0.5.4)(oxc-parser@0.143.0)(rolldown@1.2.4)(supports-color@10.2.2)(unplugin@3.3.0(esbuild@0.28.2)(rolldown@1.2.4)(rollup@4.62.4)(vite@8.2.1(@types/node@26.2.0)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.50.0)(tsx@4.23.12)(yaml@2.9.0)))
       nuxtseo-layer-devtools:
         specifier: ^5.3.14
-        version: 5.3.14(92336da780d3d57232d8f610e1ee7fe6)
+        version: 5.3.14(3dccc5894608909800db2a6351c8b70b)
       playwright:
         specifier: ^1.62.1
         version: 1.62.1
@@ -11890,7 +11886,7 @@ snapshots:
       - magicast
       - supports-color
 
-  '@nuxt/content@3.16.0(patch_hash=c5b7bb228dea1e45f274e367308107c2f611ad739b4bb5742478643be3a95f9f)(@libsql/client@0.17.4)(@oxc-project/types@0.144.0)(better-sqlite3@13.0.3)(esbuild@0.28.2)(magic-string@1.2.3)(magicast@0.5.4)(oxc-parser@0.143.0)(rolldown@1.2.4)(rollup@4.62.4)(supports-color@10.2.2)(valibot@1.4.2(typescript@6.0.3))(vite@8.2.1(@types/node@26.2.0)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.50.0)(tsx@4.23.12)(yaml@2.9.0))':
+  '@nuxt/content@3.16.0(@libsql/client@0.17.4)(@oxc-project/types@0.144.0)(better-sqlite3@13.0.3)(esbuild@0.28.2)(magic-string@1.2.3)(magicast@0.5.4)(oxc-parser@0.143.0)(rolldown@1.2.4)(rollup@4.62.4)(supports-color@10.2.2)(valibot@1.4.2(typescript@6.0.3))(vite@8.2.1(@types/node@26.2.0)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.50.0)(tsx@4.23.12)(yaml@2.9.0))':
     dependencies:
       '@nuxt/kit': 4.5.2(magic-string@1.2.3)(magicast@0.5.4)(oxc-parser@0.143.0)(rolldown@1.2.4)(unplugin@3.3.0(esbuild@0.28.2)(rolldown@1.2.4)(rollup@4.62.4)(vite@8.2.1(@types/node@26.2.0)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.50.0)(tsx@4.23.12)(yaml@2.9.0)))
       '@nuxtjs/mdc': 0.23.1(magic-string@1.2.3)(magicast@0.5.4)(oxc-parser@0.143.0)(rolldown@1.2.4)(supports-color@10.2.2)(unplugin@3.3.0(esbuild@0.28.2)(rolldown@1.2.4)(rollup@4.62.4)(vite@8.2.1(@types/node@26.2.0)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.50.0)(tsx@4.23.12)(yaml@2.9.0)))
@@ -12709,7 +12705,7 @@ snapshots:
       - vite
       - webpack
 
-  '@nuxt/ui@4.11.0(c5b9035e6469f04677bb68f3a65fb187)':
+  '@nuxt/ui@4.11.0(292ff97f1d7b1b4ee5bc1034e5059612)':
     dependencies:
       '@floating-ui/dom': 1.8.0
       '@iconify/vue': 5.0.1(vue@3.5.42(typescript@6.0.3))
@@ -12778,7 +12774,7 @@ snapshots:
     optionalDependencies:
       '@internationalized/date': 3.12.3
       '@internationalized/number': 3.6.7
-      '@nuxt/content': 3.16.0(patch_hash=c5b7bb228dea1e45f274e367308107c2f611ad739b4bb5742478643be3a95f9f)(@libsql/client@0.17.4)(@oxc-project/types@0.144.0)(better-sqlite3@13.0.3)(esbuild@0.28.2)(magic-string@1.2.3)(magicast@0.5.4)(oxc-parser@0.143.0)(rolldown@1.2.4)(rollup@4.62.4)(supports-color@10.2.2)(valibot@1.4.2(typescript@6.0.3))(vite@8.2.1(@types/node@26.2.0)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.50.0)(tsx@4.23.12)(yaml@2.9.0))
+      '@nuxt/content': 3.16.0(@libsql/client@0.17.4)(@oxc-project/types@0.144.0)(better-sqlite3@13.0.3)(esbuild@0.28.2)(magic-string@1.2.3)(magicast@0.5.4)(oxc-parser@0.143.0)(rolldown@1.2.4)(rollup@4.62.4)(supports-color@10.2.2)(valibot@1.4.2(typescript@6.0.3))(vite@8.2.1(@types/node@26.2.0)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.50.0)(tsx@4.23.12)(yaml@2.9.0))
       ai: 7.0.85(zod@4.5.4)
       valibot: 1.4.2(typescript@6.0.3)
       zod: 4.5.4
@@ -19325,12 +19321,12 @@ snapshots:
       - xml2js
       - yaml
 
-  nuxtseo-layer-devtools@5.3.14(92336da780d3d57232d8f610e1ee7fe6):
+  nuxtseo-layer-devtools@5.3.14(3dccc5894608909800db2a6351c8b70b):
     dependencies:
       '@iconify-json/carbon': 1.2.25
       '@nuxt/devtools-kit': 4.0.0-alpha.7(magic-string@1.2.3)(magicast@0.5.4)(oxc-parser@0.143.0)(rolldown@1.2.4)(unplugin@3.3.0(esbuild@0.28.2)(rolldown@1.2.4)(rollup@4.62.4)(vite@8.2.1(@types/node@26.2.0)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.50.0)(tsx@4.23.12)(yaml@2.9.0)))(vite@8.2.1(@types/node@26.2.0)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.50.0)(tsx@4.23.12)(yaml@2.9.0))
       '@nuxt/kit': 4.5.2(magic-string@1.2.3)(magicast@0.5.4)(oxc-parser@0.143.0)(rolldown@1.2.4)(unplugin@3.3.0(esbuild@0.28.2)(rolldown@1.2.4)(rollup@4.62.4)(vite@8.2.1(@types/node@26.2.0)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.50.0)(tsx@4.23.12)(yaml@2.9.0)))
-      '@nuxt/ui': 4.11.0(c5b9035e6469f04677bb68f3a65fb187)
+      '@nuxt/ui': 4.11.0(292ff97f1d7b1b4ee5bc1034e5059612)
       '@shikijs/langs': 4.4.3
       '@shikijs/themes': 4.4.3
       '@vueuse/core': 14.4.0(vue@3.5.42(typescript@6.0.3))
