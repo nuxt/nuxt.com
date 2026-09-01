@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import { getAgentDocument } from '#agent-discovery'
 
 export default defineMcpTool({
   description: `Retrieves detailed deployment instructions and setup guide for a specific hosting provider.
@@ -25,14 +26,13 @@ EXAMPLES: "/deploy/vercel", "/deploy/cloudflare", "/deploy/netlify", "/deploy/aw
   ],
   cache: '1h',
   async handler({ path, sections }) {
-    const fullContent = await fetchPageMarkdown('site', path)
+    const event = useEvent()
+    const document = await getAgentDocument(event, path, { sections })
 
-    if (!fullContent) {
+    if (!document || 'redirect' in document) {
       throw createError({ statusCode: 404, message: `Deploy provider not found: ${path}` })
     }
 
-    return sections?.length
-      ? extractSections(fullContent, sections)
-      : fullContent
+    return document.markdown
   }
 })

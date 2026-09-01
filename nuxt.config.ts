@@ -1,4 +1,6 @@
 import { createResolver } from 'nuxt/kit'
+import type { LLMsSection } from 'nuxt-llms'
+import { CURRENT_DOCS_VERSION, EXCLUDED_DOC_VERSIONS } from './shared/utils/docs'
 
 const { resolve } = createResolver(import.meta.url)
 
@@ -38,6 +40,9 @@ export default defineNuxtConfig({
     'nuxt-auth-utils',
     'nuxt-schema-org',
     '@nuxtjs/mcp-toolkit',
+    '@nuxtjs/robots',
+    '@nuxtjs/sitemap',
+    'nuxt-agent-discovery',
     '@nuxt/hints',
     '@vercel/analytics',
     '@vercel/speed-insights',
@@ -128,43 +133,23 @@ export default defineNuxtConfig({
   },
   routeRules: {
     // Content pages are ISR: rendered on demand, then served from the CDN until the push webhook purges them.
-    '/': {
-      isr: CONTENT_ISR,
-      headers: {
-        // Relative URIs per RFC 8288 — agents resolve them against the request
-        // origin, so this works on production, preview deploys, and localhost.
-        Link: [
-          '</.well-known/api-catalog>; rel="api-catalog"; type="application/linkset+json"',
-          '</.well-known/mcp/server-card.json>; rel="service-desc"; type="application/json"; title="MCP Server Card"',
-          '</llms.txt>; rel="llms"; type="text/plain"',
-          '</llms-full.txt>; rel="llms-full"; type="text/plain"',
-          '</sitemap.xml>; rel="sitemap"; type="application/xml"',
-          '</sitemap.md>; rel="sitemap"; type="text/markdown"',
-          '</design.md>; rel="design"; type="text/markdown"',
-          '</mcp>; rel="mcp"; type="application/json"',
-          '</docs>; rel="service-doc"; type="text/html"'
-        ].join(', '),
-        Vary: 'Accept, User-Agent'
-      }
-    },
+    // Cached patterns negotiate by redirecting agents to the raw twin (nuxt-agent-discovery).
+    '/': { isr: CONTENT_ISR },
     '/llms.txt': { isr: CONTENT_ISR, prerender: false },
     '/llms-full.txt': { isr: CONTENT_ISR, prerender: false },
     '/blog/rss.xml': { isr: CONTENT_ISR },
     '/sitemap.xml': { isr: CONTENT_ISR },
     '/sitemap.md': { isr: CONTENT_ISR },
-    '/design.md': { isr: CONTENT_ISR, headers: { Vary: 'Accept, User-Agent' } },
+    '/design.md': { isr: CONTENT_ISR },
     '/404.html': { prerender: true },
-    '/modules': { isr: 60 * 60, prerender: false, headers: { Vary: 'Accept, User-Agent' } },
+    '/openapi.json': { prerender: true },
+    '/modules': { isr: 60 * 60, prerender: false },
     '/modules/**': { isr: 60 * 60 },
-    '/changelog': { isr: 60 * 60, headers: { Vary: 'Accept, User-Agent' } },
-    // Markdown content negotiation routes (md-rewrite.ts emits Vercel rewrites
-    // based on `Accept` and `User-Agent`, so cached responses must vary on both).
-    // /raw/** is the rewrite destination — it must carry Vary too so CDNs
-    // don't serve cached markdown to a browser that asked for HTML.
-    '/docs/**': { isr: CONTENT_ISR, headers: { Vary: 'Accept, User-Agent' } },
-    '/blog/**': { isr: CONTENT_ISR, headers: { Vary: 'Accept, User-Agent' } },
-    '/deploy/**': { isr: CONTENT_ISR, headers: { Vary: 'Accept, User-Agent' } },
-    '/raw/**': { isr: CONTENT_ISR, headers: { Vary: 'Accept, User-Agent' } },
+    '/changelog': { isr: 60 * 60 },
+    '/docs/**': { isr: CONTENT_ISR },
+    '/blog/**': { isr: CONTENT_ISR },
+    '/deploy/**': { isr: CONTENT_ISR },
+    '/raw/**': { isr: CONTENT_ISR },
     '/enterprise/**': { isr: CONTENT_ISR },
     '/templates': { isr: CONTENT_ISR },
     '/showcase': { isr: CONTENT_ISR },
@@ -505,6 +490,51 @@ export default defineNuxtConfig({
       include: ['../test/nuxt']
     }
   },
+  agentDiscovery: {
+    // The comark instances, bridged through server/utils/agent-source.ts.
+    source: '~~/server/utils/agent-source',
+    routes: [
+      { path: '/', raw: '/raw/index.md' },
+      '/docs/**',
+      '/blog/**',
+      '/deploy/**',
+      { path: '/modules', raw: '/raw/modules.md' },
+      { path: '/changelog', raw: '/raw/changelog.md' }
+    ],
+    excludePrefixes: {
+      extend: [
+        // Nightly docs don't negotiate and stay out of sitemap.md / llms.txt,
+        // aligned with the robots Disallow below.
+        ...EXCLUDED_DOC_VERSIONS.map(version => `/docs/${version}/`),
+        // Served by its own handler (server/routes/design.md.get.ts).
+        '/design.md'
+      ]
+    },
+    discovery: {
+      mcpServerCard: {
+        endpoint: '/mcp',
+        name: 'Nuxt',
+        title: 'Nuxt MCP Server',
+        description: 'MCP server providing tools, resources and prompts to help AI agents build with Nuxt — search documentation, retrieve guides, fetch module metadata, and discover deployment providers.',
+        documentation: `/docs/${CURRENT_DOCS_VERSION}/guide/ai/mcp`,
+        repository: 'https://github.com/nuxt/nuxt.com',
+        license: 'MIT'
+      },
+      links: [
+        { rel: 'service-desc', href: '/openapi.json', type: 'application/vnd.oai.openapi+json', title: 'OpenAPI specification: machine-readable API surface', anchor: '/' },
+        { rel: 'describedby', href: '/design.md', type: 'text/markdown', title: 'Design system' },
+        { rel: 'service-doc', href: '/docs', type: 'text/html', anchor: '/docs', title: 'Documentation' }
+      ]
+    },
+    sitemap: {
+      markdown: {
+        labels: {
+          docs: 'Documentation',
+          deploy: 'Deploy providers'
+        }
+      }
+    }
+  },
   eslint: {
     config: {
       stylistic: {
@@ -583,8 +613,51 @@ export default defineNuxtConfig({
     full: {
       title: 'Nuxt Docs',
       description: 'The complete Nuxt documentation and blog posts written in Markdown (MDC syntax).'
-    }
-    // Sections are pushed by `server/plugins/llms.ts` from the comark instances.
+    },
+    // `navigation` selectors are resolved by nuxt-agent-discovery's comark
+    // adapter against the merged instance navigation, and every same-origin
+    // page link is rewritten to its raw markdown twin. The versions the index
+    // leaves out reach /llms-full.txt through `server/plugins/llms.ts`.
+    sections: [
+      {
+        title: 'Documentation',
+        description: 'Every page below is also available as raw markdown — append `.md` to any docs URL, or fetch `/raw/<path>.md`.',
+        links: [{
+          title: 'Landing page',
+          description: 'What Nuxt is, and where to start',
+          href: 'https://nuxt.com/'
+        }]
+      },
+      {
+        title: `Nuxt v${CURRENT_DOCS_VERSION.replace('.x', '')} Documentation`,
+        description: 'The current stable release. Other versions live under /docs/<version> and are listed in full in /llms-full.txt.',
+        navigation: `/docs/${CURRENT_DOCS_VERSION}`
+      },
+      {
+        title: 'Examples',
+        description: 'Runnable example projects, with their source',
+        navigation: '/docs/examples'
+      },
+      {
+        title: 'Deployment Guides',
+        description: 'Deploy a Nuxt application to any provider',
+        navigation: '/deploy'
+      },
+      {
+        title: 'Blog',
+        description: 'Release announcements and deep dives',
+        navigation: '/blog'
+      },
+      {
+        title: 'Optional',
+        links: [
+          { title: 'Modules', description: 'Every published Nuxt module, as markdown', href: 'https://nuxt.com/raw/modules.md' },
+          { title: 'Changelog', description: 'Releases of Nuxt and its official modules', href: 'https://nuxt.com/raw/changelog.md' },
+          { title: 'Design system', description: 'Brand and design guidelines', href: 'https://nuxt.com/design.md' },
+          { title: 'MCP server card', description: 'Tools agents can call directly', href: 'https://nuxt.com/.well-known/mcp/server-card.json' }
+        ]
+      }
+    ] as Array<LLMsSection & { navigation?: string }>
   },
   mcp: {
     name: 'Nuxt',
@@ -601,6 +674,12 @@ export default defineNuxtConfig({
       renderTimeout: 60000
     }
   },
+  robots: {
+    // The nightly docs version, carried over from the static public/robots.txt
+    // this replaces. The agent Allow groups and Content-Signal come from
+    // nuxt-agent-discovery through the robots:config hook.
+    disallow: EXCLUDED_DOC_VERSIONS.map(version => `/docs/${version}/`)
+  },
   schemaOrg: {
     identity: {
       type: 'Organization',
@@ -614,6 +693,30 @@ export default defineNuxtConfig({
         'https://m.webtoo.ls/@nuxt'
       ]
     }
+  },
+  sitemap: {
+    // Content pages come from the dynamic source below, resolved at request
+    // time (SWR cached by the module). App sources are off: the nuxt:prerender
+    // source lists every prerendered page, which includes the 3.x/5.x docs and
+    // the unversioned /docs/* meta-refresh stubs. Vue pages without a content
+    // counterpart are listed explicitly.
+    excludeAppSources: true,
+    sources: ['/api/__sitemap__/urls'],
+    urls: ['/', '/showcase', '/changelog', '/evals'],
+    // Belt and braces should an app source come back: keep legacy/nightly docs
+    // versions and auth-only areas out.
+    exclude: [
+      new RegExp(`^/docs/(?!${CURRENT_DOCS_VERSION.replace('.', '\\.')}/|examples/)`),
+      '/admin',
+      '/admin/**',
+      '/dashboard',
+      '/dashboard/**',
+      '/login',
+      '/chat',
+      '/chat/**',
+      '/enterprise',
+      '/enterprise/support'
+    ]
   },
   turnstile: {
     siteKey: '0x4AAAAAAAP2vNBsTBT3ucZi'

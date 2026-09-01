@@ -1,7 +1,8 @@
 import { renderMarkdown } from 'comark/render'
+import { getAgentSiteUrl } from '#agent-discovery'
 
 export default defineCachedEventHandler(async (event) => {
-  const domain = getSiteUrl(event)
+  const domain = getAgentSiteUrl(event)
 
   const content = await getInstanceAtHead('site')
   const document = await content.get('/design')

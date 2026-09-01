@@ -1,26 +1,32 @@
 import { z } from 'zod'
+import { getAgentDocument, getAgentSiteUrl } from '#agent-discovery'
 
 export default defineMcpPrompt({
   description: 'Get deployment instructions for a specific hosting provider',
   inputSchema: {
-    provider: z.string().describe('Hosting provider name (e.g., "Vercel", "Netlify", "AWS", "Cloudflare")')
+    provider: z.string().describe('Hosting provider name (e.g. "Vercel", "Netlify", "AWS", "Cloudflare")')
   },
   async handler({ provider }) {
+    const event = useEvent()
+
     const deployProviders = await listInstancePages('site', { dir: '/deploy' })
 
     const allProviders = deployProviders.map(p => ({
       title: p.title,
       path: p.path,
       description: p.description,
-      url: `https://nuxt.com${p.path}`
+      url: `${getAgentSiteUrl(event)}${p.path}`
     }))
 
     const matchingProvider = deployProviders.find(p =>
       p.title.toLowerCase().includes(provider.toLowerCase())
     )
 
-    const providerContent = matchingProvider
-      ? await fetchPageMarkdown('site', matchingProvider.path)
+    const providerDocument = matchingProvider
+      ? await getAgentDocument(event, matchingProvider.path)
+      : null
+    const providerContent = providerDocument && !('redirect' in providerDocument)
+      ? providerDocument.markdown
       : null
 
     return {

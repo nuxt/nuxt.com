@@ -1,5 +1,7 @@
+import { getAgentSiteUrl } from '#agent-discovery'
+
 export default defineCachedEventHandler(async (event) => {
-  const domain = getSiteUrl(event)
+  const domain = getAgentSiteUrl(event)
   const modules = await fetchModules(event) || []
 
   const lines: string[] = [

@@ -45,8 +45,3 @@ const escape = (v: string) => v.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
 export const SUPPORTED_DOCS_PATH_REGEX = new RegExp(
   `^/docs/(?:${SUPPORTED_DOC_VERSIONS.map(escape).join('|')})(?:/|$)`
 )
-
-// `(?!5\.x/)` — Vercel route fragment used inside `^/docs/(?!5\.x/)(.+)$`.
-// Negative lookahead form so unversioned URLs like `/docs/api.md` still rewrite.
-export const EXCLUDED_DOCS_PATH_LOOKAHEAD
-  = `(?!(?:${EXCLUDED_DOC_VERSIONS.map(escape).join('|')})/)`

@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import { getAgentSiteUrl } from '#agent-discovery'
 import { cliInstanceKey, docsInstanceKey } from '#shared/utils/content'
 import { DOC_VERSIONS, type DocVersion } from '#shared/utils/docs'
 
@@ -23,6 +24,7 @@ TIPS: Always pass a search term to narrow results — avoids dumping the entire 
   ],
   cache: '1h',
   async handler({ version, search }) {
+    const event = useEvent()
     let allDocs: { title: string, path: string, description: string }[] = []
 
     const versions: DocVersion[] = version === 'all' ? [...DOC_VERSIONS] : [version as DocVersion]
@@ -51,7 +53,7 @@ TIPS: Always pass a search term to narrow results — avoids dumping the entire 
       title: doc.title,
       path: doc.path,
       ...(search ? { description: doc.description } : {}),
-      url: `https://nuxt.com${doc.path}`
+      url: `${getAgentSiteUrl(event)}${doc.path}`
     }))
   }
 })

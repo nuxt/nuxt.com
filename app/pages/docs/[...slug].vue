@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { kebabCase } from 'scule'
-import { joinURL } from 'ufo'
 import type { NavigationItem } from 'comark-content'
 import { DocsProseImg } from '#components'
 import { CLI_DOCS_REFS, CLI_DOCS_REPO, cliDocsPathPrefix } from '#shared/utils/cli'
@@ -169,14 +168,12 @@ useSeoMeta({
 // `/docs/4.x/*`). Unversioned `/docs/*` URLs are meta-refresh stubs that
 // the docs-version middleware redirects to the active version, so agents
 // should not treat the stub URL as authoritative. The supported version
-// list lives in `shared/utils/docs.ts` (kept in sync with `md-rewrite.ts`).
+// list lives in `shared/utils/docs.ts`.
 if (SUPPORTED_DOCS_PATH_REGEX.test(path.value)) {
   useCanonical(() => `${path.value}.md`)
 }
 
 if (import.meta.server) {
-  prerenderRoutes([joinURL('/raw', `${path.value}.md`)])
-
   useSchemaOrg([
     defineArticle({
       '@type': 'TechArticle',

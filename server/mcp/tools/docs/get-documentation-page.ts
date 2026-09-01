@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import { getAgentDocument } from '#agent-discovery'
 
 export default defineMcpTool({
   description: `Retrieves the full content and details of a specific Nuxt documentation page.
@@ -43,16 +44,23 @@ Common Issues:
   ],
   cache: '30m',
   async handler({ path, sections }) {
-    const fullContent = await fetchPageMarkdown(instanceFromPagePath(path), path)
+    const event = useEvent()
 
-    if (!fullContent) {
+    // Resolved in-process by the same adapter `/raw/**.md` uses, so the tool
+    // returns the bytes the URL does. A path naming a section resolves to its
+    // first document, which is what following the raw route's redirect does.
+    // `includeExcluded` because this tool deliberately serves the nightly
+    // version that `excludePrefixes` keeps out of the public listings.
+    let document = await getAgentDocument(event, path, { sections, includeExcluded: true })
+    if (document && 'redirect' in document) {
+      document = await getAgentDocument(event, document.redirect, { sections, includeExcluded: true })
+    }
+
+    if (!document || 'redirect' in document) {
       throw createError({ statusCode: 404, message: `Documentation page not found: ${path}` })
     }
 
-    let content = sections?.length
-      ? extractSections(fullContent, sections)
-      : fullContent
-
+    let content = document.markdown
     const MAX_CHARS = 12_000
     if (content.length > MAX_CHARS) {
       content = content.slice(0, MAX_CHARS) + '\n\n[Content truncated. Use the sections parameter to request specific h2 sections.]'
