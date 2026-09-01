@@ -34,6 +34,16 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 401, statusMessage: 'Invalid signature' })
   }
 
+  const requestId = getHeader(event, 'x-vercel-id') ?? getHeader(event, 'x-request-id') ?? 'local'
+  const deliveryId = getHeader(event, 'x-github-delivery')
+  const tag = `[revalidate:${requestId}${deliveryId ? `:${deliveryId}` : ''}]`
+
+  const githubEvent = getHeader(event, 'x-github-event')
+  if (githubEvent !== 'push') {
+    console.log(`${tag} skipped: ${githubEvent ?? 'unknown'} event`)
+    return { ok: true, skipped: 'not-a-push-event', event: githubEvent }
+  }
+
   const payload = JSON.parse(raw) as GitHubPushPayload
   const repo = payload.repository?.full_name
   const branch = payload.ref?.startsWith('refs/heads/') ? payload.ref.slice('refs/heads/'.length) : undefined
@@ -47,9 +57,6 @@ export default defineEventHandler(async (event) => {
   if (!impacted.length) {
     return { ok: true, skipped: 'no-source-reads-this-ref', repo, branch }
   }
-
-  const requestId = getHeader(event, 'x-vercel-id') ?? getHeader(event, 'x-request-id') ?? 'local'
-  const tag = `[revalidate:${requestId}]`
 
   const changesByInstance = new Map<ContentInstanceKey, ContentChanges>()
   for (const key of impacted) {
@@ -66,8 +73,17 @@ export default defineEventHandler(async (event) => {
   }
 
   const pathsToPurge = new Set<string>()
+  // Debug-only breakdown of `pathsToPurge` by the instance (or `'global'`) that added it.
+  const pathsByInstance = new Map<string, Set<string>>()
   const summary: Record<string, { pages: number, navChanged: boolean }> = {}
   const buildId = useRuntimeConfig(event).app.buildId
+
+  const addPath = (scope: string, path: string): void => {
+    pathsToPurge.add(path)
+    const scoped = pathsByInstance.get(scope) ?? new Set<string>()
+    scoped.add(path)
+    pathsByInstance.set(scope, scoped)
+  }
 
   const rebuiltInstances = new Map<ContentInstanceKey, ComarkContent>()
 
@@ -87,30 +103,29 @@ export default defineEventHandler(async (event) => {
 
     const { pagePaths, navChanged } = diffInstance(changes, outdatedItems, newItems)
 
+    // Live `/api/content/<instance>/…` routes have no ISR rule, so there is nothing cached to purge.
     for (const path of pagePaths) {
-      pathsToPurge.add(path)
-      pathsToPurge.add(payloadUrlForPage(path, buildId))
-      pathsToPurge.add(rawUrlForPage(path))
-      pathsToPurge.add(`${instanceBasePath(instanceKey)}/get${path}`)
+      addPath(instanceKey, path)
+      addPath(instanceKey, payloadUrlForPage(path, buildId))
+      addPath(instanceKey, rawUrlForPage(path))
     }
 
     // Navigation renders on every page of the instance, so a change re-renders all of them.
     if (navChanged || changes.navTouched) {
-      pathsToPurge.add(`${instanceBasePath(instanceKey)}/navigation.json`)
-      pathsToPurge.add('/api/navigation.json')
+      addPath(instanceKey, '/api/navigation.json')
       for (const item of Object.values(newItems)) {
         if (item.meta.kind !== 'document') continue
-        pathsToPurge.add(item.path)
-        pathsToPurge.add(payloadUrlForPage(item.path, buildId))
-        pathsToPurge.add(rawUrlForPage(item.path))
+        addPath(instanceKey, item.path)
+        addPath(instanceKey, payloadUrlForPage(item.path, buildId))
+        addPath(instanceKey, rawUrlForPage(item.path))
       }
     }
 
     // `/` and `/showcase` embed each other's content, so either changing purges both.
-    if (instanceKey === 'site' || pagePaths.includes('/showcase')) {
+    if (pagePaths.includes('/') || pagePaths.includes('/showcase')) {
       for (const path of ['/', '/showcase']) {
-        pathsToPurge.add(path)
-        pathsToPurge.add(payloadUrlForPage(path, buildId))
+        addPath(instanceKey, path)
+        addPath(instanceKey, payloadUrlForPage(path, buildId))
       }
     }
 
@@ -119,10 +134,20 @@ export default defineEventHandler(async (event) => {
 
   // Invalidate global indexes: each is rebuilt from every instance, so any change invalidates them.
   for (const path of ['/llms.txt', '/llms-full.txt', '/sitemap.xml', '/sitemap.md', '/blog/rss.xml', '/design.md']) {
-    pathsToPurge.add(path)
+    addPath('global', path)
   }
 
   console.log(`${tag} ${repo}@${branch} → ${JSON.stringify(summary)} | ${pathsToPurge.size} route(s)`)
+
+  // Dev has no ISR cache to purge, and a nav-wide change here is ~1000 local SSR renders against
+  // a dev server, not a purge. Print what would be purged instead of doing it.
+  if (import.meta.dev) {
+    for (const [scope, paths] of pathsByInstance) {
+      console.log(`${tag}   ${scope}:`)
+      for (const path of [...paths].sort()) console.log(`${tag}     ${path}`)
+    }
+    return { ok: true, requestId, repo, branch, instances: summary, routes: pathsToPurge.size, dev: true }
+  }
 
   const baseURL = `${getRequestProtocol(event)}://${getRequestHost(event, { xForwardedHost: true })}`
   const headers: Record<string, string> = {

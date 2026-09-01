@@ -481,6 +481,9 @@ export default defineNuxtConfig({
   vite: {
     // The search worker is an ES module (it imports `comark-content`).
     worker: { format: 'es' },
+    server: {
+      allowedHosts: process.env.NUXT_DEV_ALLOWED_HOSTS?.split(',')
+    },
     optimizeDeps: {
       include: [
         '@comark/vue',

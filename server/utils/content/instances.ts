@@ -40,6 +40,30 @@ const DOCS_LISTING_FIELDS = ['title', 'description', 'navigation', 'titleTemplat
 const DOCS_EXCLUDE = ['README.md']
 
 /**
+ * Per-source branch overrides (testing the push webhook off a non-production branch).
+ */
+const BRANCH_ENV: Record<ContentInstanceKey, string> = {
+  'site': 'NUXT_COM_BRANCH',
+  'examples': 'NUXT_EXAMPLES_BRANCH',
+  'docs:3.x': 'NUXT_V3_BRANCH',
+  'docs:4.x': 'NUXT_V4_BRANCH',
+  'docs:5.x': 'NUXT_V5_BRANCH',
+  'cli:3.x': 'NUXT_CLI_BRANCH',
+  'cli:4.x': 'NUXT_CLI_BRANCH',
+  'cli:5.x': 'NUXT_CLI_BRANCH'
+}
+
+/** Resolve a branch, honouring env var overrides; log a warning if one is active in production. */
+function branchFor(key: ContentInstanceKey, fallback: string): string {
+  const envVar = BRANCH_ENV[key]
+  const override = process.env[envVar]?.trim()
+  if (override && process.env.VERCEL_ENV === 'production') {
+    console.warn(`[content] branch override active in production: ${envVar}=${override} (${key})`)
+  }
+  return override || fallback
+}
+
+/**
  * Markdown held inside data files, parsed by `markdownFields()` instead of at render time.
  */
 const SITE_SCHEMA: JsonSchema = {
@@ -67,7 +91,7 @@ export function instanceSource(key: ContentInstanceKey): { name: string, source:
   if (key === 'site') {
     return {
       name: 'site',
-      source: { repo: 'nuxt/nuxt.com', branch: 'main', contentDir: 'content', prefix: '/', local: true, schema: SITE_SCHEMA }
+      source: { repo: 'nuxt/nuxt.com', branch: branchFor('site', 'main'), contentDir: 'content', prefix: '/', local: true, schema: SITE_SCHEMA }
     }
   }
   if (key === 'examples') {
@@ -75,7 +99,7 @@ export function instanceSource(key: ContentInstanceKey): { name: string, source:
       name: 'examples',
       source: {
         repo: 'nuxt/examples',
-        branch: 'main',
+        branch: branchFor('examples', 'main'),
         contentDir: '.docs/',
         prefix: '/docs/examples',
         listingFields: DOCS_LISTING_FIELDS,
@@ -93,7 +117,7 @@ export function instanceSource(key: ContentInstanceKey): { name: string, source:
       name: 'cli',
       source: {
         repo: CLI_DOCS_REPO,
-        branch: CLI_DOCS_REFS[version].branch,
+        branch: branchFor(key as ContentInstanceKey, CLI_DOCS_REFS[version].branch),
         contentDir: 'docs',
         prefix: cliDocsPathPrefix(version),
         listingFields: DOCS_LISTING_FIELDS,
@@ -111,7 +135,7 @@ export function instanceSource(key: ContentInstanceKey): { name: string, source:
     name: 'docs',
     source: {
       repo: DOCS_REPO,
-      branch: DOCS_REFS[version].branch,
+      branch: branchFor(key as ContentInstanceKey, DOCS_REFS[version].branch),
       contentDir: 'docs',
       prefix: docsPathPrefix(version),
       listingFields: DOCS_LISTING_FIELDS,
