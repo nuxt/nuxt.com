@@ -47,5 +47,4 @@ function explainWithAI() {
   />
   <USeparator type="dashed" />
   <SocialLinks />
-  <Ads v-if="showAds" />
 </template>
