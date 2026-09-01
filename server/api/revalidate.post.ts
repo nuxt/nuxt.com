@@ -46,6 +46,7 @@ export default defineEventHandler(async (event) => {
   const requestId = getHeader(event, 'x-vercel-id') ?? getHeader(event, 'x-request-id') ?? 'local'
   const deliveryId = getHeader(event, 'x-github-delivery')
   const tag = `[revalidate:${requestId}${deliveryId ? `:${deliveryId}` : ''}]`
+  const timings = createTimings()
 
   const githubEvent = getHeader(event, 'x-github-event')
   if (githubEvent !== 'push') {
@@ -100,20 +101,21 @@ export default defineEventHandler(async (event) => {
   const rebuiltInstances = new Map<ContentInstanceKey, ComarkContent>()
 
   for (const [instanceKey, changes] of changesByInstance) {
-    const outdatedInstance = await getInstanceAtHead(instanceKey)
-    await outdatedInstance.init()
+    const { newItems, pagePaths, navChanged } = await timings.time(`rebuild:${instanceKey}`, async () => {
+      const outdatedInstance = await getInstanceAtHead(instanceKey)
+      await outdatedInstance.init()
 
-    const outdatedItems = { ...outdatedInstance.manifest.items }
+      const outdatedItems = { ...outdatedInstance.manifest.items }
 
-    const headSha = await resolveInstanceSha(instanceKey, { refresh: true })
-    const newInstance = await createContentInstance(instanceKey, headSha)
-    await newInstance.init()
+      const headSha = await resolveInstanceSha(instanceKey, { refresh: true })
+      const newInstance = await createContentInstance(instanceKey, headSha)
+      await newInstance.init()
 
-    rebuiltInstances.set(instanceKey, newInstance)
+      rebuiltInstances.set(instanceKey, newInstance)
 
-    const newItems = newInstance.manifest.items
-
-    const { pagePaths, navChanged } = diffInstance(changes, outdatedItems, newItems)
+      const newItems = newInstance.manifest.items
+      return { newItems, ...diffInstance(changes, outdatedItems, newItems) }
+    })
 
     // Live `/api/content/<instance>/…` routes have no ISR rule, so there is nothing cached to purge.
     for (const path of pagePaths) {
@@ -149,7 +151,7 @@ export default defineEventHandler(async (event) => {
     addPath('global', 'global', path)
   }
 
-  console.log(`${tag} ${repo}@${branch} → ${JSON.stringify(summary)} | ${pathsToPurge.size} route(s)`)
+  console.log(`${tag} ${repo}@${branch} → ${JSON.stringify(summary)} | ${pathsToPurge.size} route(s) | ${timings.format()}`)
   logBreakdown(tag, pathsByScope)
 
   // Dev has no ISR cache to purge, and a nav-wide change here is ~1000 local SSR renders against
@@ -170,14 +172,16 @@ export default defineEventHandler(async (event) => {
 
   // Vercel's `waitUntil`, not Nitro's `event.waitUntil`, which can orphan the work here.
   waitUntil((async () => {
-    for (const [instance, content] of rebuiltInstances) {
-      await warmSnapshot(content).catch((error) => {
-        console.error(`${tag} snapshot warm failed for ${instance}`, error?.message ?? error)
-      })
-    }
+    await timings.time('warm', async () => {
+      for (const [instance, content] of rebuiltInstances) {
+        await warmSnapshot(content).catch((error) => {
+          console.error(`${tag} snapshot warm failed for ${instance}`, error?.message ?? error)
+        })
+      }
+    })
 
     let absent = 0
-    const results = await settleInBatches([...pathsToPurge], REVALIDATE_CONCURRENCY, path =>
+    const results = await timings.time('purge', () => settleInBatches([...pathsToPurge], REVALIDATE_CONCURRENCY, path =>
       $fetch(path, { baseURL, method: 'GET', headers }).catch((error) => {
         // Not every content file has an HTML page — `content/design.md` is served only as markdown,
         // at `/design.md`. A 404 means there was nothing cached to purge, which is the goal anyway.
@@ -188,10 +192,10 @@ export default defineEventHandler(async (event) => {
         console.error(`${tag}   ✗ ${path}`, error?.statusCode ?? error?.message ?? error)
         throw error
       })
-    )
+    ))
 
     const failed = results.filter(result => result.status === 'rejected').length
-    console.log(`${tag} complete: ${results.length - failed - absent} purged, ${absent} absent, ${failed} failed`)
+    console.log(`${tag} complete: ${results.length - failed - absent} purged, ${absent} absent, ${failed} failed | ${timings.format()} | total=${timings.since()}ms`)
   })())
 
   return {
