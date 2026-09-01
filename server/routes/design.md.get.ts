@@ -1,8 +1,9 @@
 import { readFile } from 'node:fs/promises'
 import { resolve } from 'node:path'
+import { getAgentSiteUrl } from '#agent-discovery'
 
 export default defineCachedEventHandler(async (event) => {
-  const domain = getSiteUrl(event)
+  const domain = getAgentSiteUrl(event)
   const content = await readFile(resolve(process.cwd(), 'content/design.md'), 'utf8')
 
   setResponseHeader(event, 'Content-Type', 'text/markdown; charset=utf-8')

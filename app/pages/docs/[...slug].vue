@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { kebabCase } from 'scule'
-import { joinURL } from 'ufo'
 import type { ContentNavigationItem } from '@nuxt/content'
 import { findPageBreadcrumb } from '@nuxt/content/utils'
 import { mapContentNavigation } from '@nuxt/ui/utils/content'
@@ -152,8 +151,6 @@ if (SUPPORTED_DOCS_PATH_REGEX.test(path.value)) {
 }
 
 if (import.meta.server) {
-  prerenderRoutes([joinURL('/raw', `${path.value}.md`)])
-
   useSchemaOrg([
     defineArticle({
       '@type': 'TechArticle',
