@@ -8,9 +8,6 @@ overrides:
   nostics: ^1.2.0
   '@workflow/serde': 4.1.2
 
-patchedDependencies:
-  nuxt-agent-discovery@0.1.2: 7649fa37611b6cf344b7fd0d49bfb5f832c5db7c05bc0783244b0d4e3ba5e273
-
 importers:
 
   .:
@@ -242,8 +239,8 @@ importers:
         specifier: ^0.6.16
         version: 0.6.16
       nuxt-agent-discovery:
-        specifier: ^0.1.2
-        version: 0.1.2(patch_hash=7649fa37611b6cf344b7fd0d49bfb5f832c5db7c05bc0783244b0d4e3ba5e273)(93e4c3ad76362aca960ff90534d37c3c)
+        specifier: ^0.2.0
+        version: 0.2.0(93e4c3ad76362aca960ff90534d37c3c)
       nuxt-content-twoslash:
         specifier: ^0.4.0
         version: 0.4.0(@nuxtjs/mdc@0.23.1(magic-string@1.2.3)(magicast@0.5.4)(oxc-parser@0.143.0)(rolldown@1.2.6)(supports-color@10.2.2)(unplugin@3.3.0(esbuild@0.28.2)(rolldown@1.2.6)(rollup@4.63.1)(vite@8.2.2(@types/node@26.4.0)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.13)(yaml@2.9.0))))(magic-string@1.2.3)(magicast@0.5.4)(oxc-parser@0.143.0)(rolldown@1.2.6)(supports-color@10.2.2)(unplugin@3.3.0(esbuild@0.28.2)(rolldown@1.2.6)(rollup@4.63.1)(vite@8.2.2(@types/node@26.4.0)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.13)(yaml@2.9.0)))
@@ -7874,8 +7871,8 @@ packages:
   nth-check@2.1.1:
     resolution: {integrity: sha512-lqjrjmaOoAnWfMmBPL+XNnynZh2+swxiX3WUE0s4yEHI6m+AwrK2UZOimIRl3X/4QctVqS8AiZjFqyOGrMXb/w==}
 
-  nuxt-agent-discovery@0.1.2:
-    resolution: {integrity: sha512-B8aEj/CZ2vYMoETZ2h5t727dUCMAiekSTuyrDJMrJysFHXnYqqGd+ITuG2hsWHhVA3WFR00t2hj6bNouZkJ9Pg==}
+  nuxt-agent-discovery@0.2.0:
+    resolution: {integrity: sha512-thJpURHouJE8ogPitIu/DWestrc+rwBugcLnI+AdkXMPex9QY38XXEWRGhsoeZKzGT8XCq0fJLjOU0DLZb1daQ==}
     peerDependencies:
       '@nuxt/content': ^3.0.0
       '@nuxtjs/mcp-toolkit': '>=0.19.0'
@@ -19059,7 +19056,7 @@ snapshots:
     dependencies:
       boolbase: 1.0.0
 
-  nuxt-agent-discovery@0.1.2(patch_hash=7649fa37611b6cf344b7fd0d49bfb5f832c5db7c05bc0783244b0d4e3ba5e273)(93e4c3ad76362aca960ff90534d37c3c):
+  nuxt-agent-discovery@0.2.0(93e4c3ad76362aca960ff90534d37c3c):
     dependencies:
       '@nuxt/kit': 4.5.2(magic-string@1.2.3)(magicast@0.5.4)(oxc-parser@0.143.0)(rolldown@1.2.6)(unplugin@3.3.0(esbuild@0.28.2)(rolldown@1.2.6)(rollup@4.63.1)(vite@8.2.2(@types/node@26.4.0)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.13)(yaml@2.9.0)))
       defu: 6.1.7

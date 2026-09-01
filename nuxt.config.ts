@@ -37,14 +37,11 @@ export default defineNuxtConfig({
     '@nuxtjs/mcp-toolkit',
     '@nuxtjs/robots',
     '@nuxtjs/sitemap',
+    'nuxt-agent-discovery',
     '@nuxt/hints',
     '@vercel/analytics',
     '@vercel/speed-insights',
     'evlog/nuxt',
-    // After evlog: both prepend a Nitro error handler, and the last one
-    // registered runs first. Agent requests need the markdown error body
-    // before evlog serializes the error as JSON.
-    'nuxt-agent-discovery',
     ...(nuxiEnabled ? ['eve/nuxt'] : [])
   ],
 

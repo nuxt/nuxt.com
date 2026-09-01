@@ -49,9 +49,11 @@ Common Issues:
     // Resolved in-process by the same adapter `/raw/**.md` uses, so the tool
     // returns the bytes the URL does. A path naming a section resolves to its
     // first document, which is what following the raw route's redirect does.
-    let document = await getAgentDocument(event, path, { sections })
+    // `includeExcluded` because this tool deliberately serves the nightly
+    // version that `excludePrefixes` keeps out of the public listings.
+    let document = await getAgentDocument(event, path, { sections, includeExcluded: true })
     if (document && 'redirect' in document) {
-      document = await getAgentDocument(event, document.redirect, { sections })
+      document = await getAgentDocument(event, document.redirect, { sections, includeExcluded: true })
     }
 
     if (!document || 'redirect' in document) {

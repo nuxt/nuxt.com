@@ -27,7 +27,5 @@ minimumReleaseAgeExclude:
   - vue
   - '@vue/*'
   - '@nuxtjs/mdc@0.23.1'
-  - nuxt-agent-discovery@0.1.2
+  - nuxt-agent-discovery@0.2.0
 
-patchedDependencies:
-  nuxt-agent-discovery@0.1.2: patches/nuxt-agent-discovery@0.1.2.patch
