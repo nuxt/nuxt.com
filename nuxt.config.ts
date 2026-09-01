@@ -154,6 +154,7 @@ export default defineNuxtConfig({
   routeRules: {
     // Pre-render
     '/': { prerender: true },
+    '/openapi.json': { prerender: true },
     '/blog/rss.xml': { prerender: true },
     // /sitemap.xml is served at runtime by @nuxtjs/sitemap (SWR cached). Do not
     // prerender it: during prerender the module resolves its own route against
@@ -593,6 +594,7 @@ export default defineNuxtConfig({
         license: 'MIT'
       },
       links: [
+        { rel: 'service-desc', href: '/openapi.json', type: 'application/vnd.oai.openapi+json', title: 'OpenAPI specification: machine-readable API surface', anchor: '/' },
         { rel: 'describedby', href: '/design.md', type: 'text/markdown', title: 'Design system' },
         { rel: 'service-doc', href: '/docs', type: 'text/html', anchor: '/docs', title: 'Documentation' }
       ]
