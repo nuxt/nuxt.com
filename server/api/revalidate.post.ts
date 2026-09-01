@@ -13,6 +13,15 @@ import type { ContentChanges } from '../utils/content/webhook'
 /** Each purge re-enters this deployment, so the ceiling is about not stampeding ourselves. */
 const REVALIDATE_CONCURRENCY = 8
 
+/** Why a route was purged — one value per `addPath` call site below. */
+type PurgeReason = 'page' | 'payload' | 'raw' | 'nav' | 'linked' | 'global'
+
+/** Display/response order. */
+const REASON_ORDER: PurgeReason[] = ['page', 'payload', 'raw', 'nav', 'linked', 'global']
+
+/** `nav` is the only unbounded reason (a whole instance can be thousands of pages) — cap what the log prints. */
+const MAX_LOGGED_PATHS_PER_REASON = 5
+
 export default defineEventHandler(async (event) => {
   const secret = useRuntimeConfig(event).webhookSecret || process.env.WEBHOOK_SECRET
   const bypassToken = process.env.VERCEL_BYPASS_TOKEN
@@ -73,16 +82,19 @@ export default defineEventHandler(async (event) => {
   }
 
   const pathsToPurge = new Set<string>()
-  // Debug-only breakdown of `pathsToPurge` by the instance (or `'global'`) that added it.
-  const pathsByInstance = new Map<string, Set<string>>()
-  const summary: Record<string, { pages: number, navChanged: boolean }> = {}
+  const pathsByScope = new Map<string, Map<PurgeReason, Set<string>>>()
+  const summary: Record<string, { pages: string[], navChanged: boolean }> = {}
   const buildId = useRuntimeConfig(event).app.buildId
 
-  const addPath = (scope: string, path: string): void => {
+  /** Add a path to the purge set, and track it by scope and reason. */
+  const addPath = (scope: string, reason: PurgeReason, path: string): void => {
+    if (pathsToPurge.has(path)) return
     pathsToPurge.add(path)
-    const scoped = pathsByInstance.get(scope) ?? new Set<string>()
-    scoped.add(path)
-    pathsByInstance.set(scope, scoped)
+    const byReason = pathsByScope.get(scope) ?? new Map<PurgeReason, Set<string>>()
+    const paths = byReason.get(reason) ?? new Set<string>()
+    paths.add(path)
+    byReason.set(reason, paths)
+    pathsByScope.set(scope, byReason)
   }
 
   const rebuiltInstances = new Map<ContentInstanceKey, ComarkContent>()
@@ -105,48 +117,45 @@ export default defineEventHandler(async (event) => {
 
     // Live `/api/content/<instance>/…` routes have no ISR rule, so there is nothing cached to purge.
     for (const path of pagePaths) {
-      addPath(instanceKey, path)
-      addPath(instanceKey, payloadUrlForPage(path, buildId))
-      addPath(instanceKey, rawUrlForPage(path))
+      addPath(instanceKey, 'page', path)
+      addPath(instanceKey, 'payload', payloadUrlForPage(path, buildId))
+      addPath(instanceKey, 'raw', rawUrlForPage(path))
     }
 
     // Navigation renders on every page of the instance, so a change re-renders all of them.
     if (navChanged || changes.navTouched) {
-      addPath(instanceKey, '/api/navigation.json')
+      addPath(instanceKey, 'nav', '/api/navigation.json')
       for (const item of Object.values(newItems)) {
         if (item.meta.kind !== 'document') continue
-        addPath(instanceKey, item.path)
-        addPath(instanceKey, payloadUrlForPage(item.path, buildId))
-        addPath(instanceKey, rawUrlForPage(item.path))
+        addPath(instanceKey, 'nav', item.path)
+        addPath(instanceKey, 'nav', payloadUrlForPage(item.path, buildId))
+        addPath(instanceKey, 'nav', rawUrlForPage(item.path))
       }
     }
 
     // `/` and `/showcase` embed each other's content, so either changing purges both.
     if (pagePaths.includes('/') || pagePaths.includes('/showcase')) {
       for (const path of ['/', '/showcase']) {
-        addPath(instanceKey, path)
-        addPath(instanceKey, payloadUrlForPage(path, buildId))
+        addPath(instanceKey, 'linked', path)
+        addPath(instanceKey, 'linked', payloadUrlForPage(path, buildId))
       }
     }
 
-    summary[instanceKey] = { pages: pagePaths.length, navChanged: navChanged || changes.navTouched }
+    summary[instanceKey] = { pages: pagePaths, navChanged: navChanged || changes.navTouched }
   }
 
   // Invalidate global indexes: each is rebuilt from every instance, so any change invalidates them.
   for (const path of ['/llms.txt', '/llms-full.txt', '/sitemap.xml', '/sitemap.md', '/blog/rss.xml', '/design.md']) {
-    addPath('global', path)
+    addPath('global', 'global', path)
   }
 
   console.log(`${tag} ${repo}@${branch} → ${JSON.stringify(summary)} | ${pathsToPurge.size} route(s)`)
+  logBreakdown(tag, pathsByScope)
 
   // Dev has no ISR cache to purge, and a nav-wide change here is ~1000 local SSR renders against
-  // a dev server, not a purge. Print what would be purged instead of doing it.
+  // a dev server, not a purge.
   if (import.meta.dev) {
-    for (const [scope, paths] of pathsByInstance) {
-      console.log(`${tag}   ${scope}:`)
-      for (const path of [...paths].sort()) console.log(`${tag}     ${path}`)
-    }
-    return { ok: true, requestId, repo, branch, instances: summary, routes: pathsToPurge.size, dev: true }
+    return { ok: true, requestId, delivery: deliveryId, repo, branch, instances: summary, routes: routesBreakdown(pathsByScope), dev: true }
   }
 
   const baseURL = `${getRequestProtocol(event)}://${getRequestHost(event, { xForwardedHost: true })}`
@@ -185,8 +194,51 @@ export default defineEventHandler(async (event) => {
     console.log(`${tag} complete: ${results.length - failed - absent} purged, ${absent} absent, ${failed} failed`)
   })())
 
-  return { ok: true, requestId, repo, branch, instances: summary, routes: pathsToPurge.size }
+  return {
+    ok: true,
+    requestId,
+    deliveryId,
+    repo,
+    branch,
+    instances: summary,
+    routes: routesBreakdown(pathsByScope)
+  }
 })
+
+/** One log line per purged path, grouped by scope then reason */
+function logBreakdown(tag: string, pathsByScope: Map<string, Map<PurgeReason, Set<string>>>): void {
+  for (const [scope, byReason] of pathsByScope) {
+    const total = [...byReason.values()].reduce((sum, paths) => sum + paths.size, 0)
+    console.log(`${tag}   ${scope} (${total})`)
+
+    for (const reason of REASON_ORDER) {
+      const paths = byReason.get(reason)
+      if (!paths?.size) continue
+
+      const sorted = [...paths].sort()
+      for (const path of sorted.slice(0, MAX_LOGGED_PATHS_PER_REASON)) {
+        console.log(`${tag}     ${reason}\t${path}`)
+      }
+      if (sorted.length > MAX_LOGGED_PATHS_PER_REASON) {
+        console.log(`${tag}     ${reason}\t...`)
+      }
+    }
+  }
+}
+
+/** Route counts by reason, aggregated across every scope */
+function routesBreakdown(pathsByScope: Map<string, Map<PurgeReason, Set<string>>>): { total: number } & Partial<Record<PurgeReason, number>> {
+  const byReason: Partial<Record<PurgeReason, number>> = {}
+
+  for (const scoped of pathsByScope.values()) {
+    for (const [reason, paths] of scoped) {
+      byReason[reason] = (byReason[reason] ?? 0) + paths.size
+    }
+  }
+
+  const total = Object.values(byReason).reduce((sum, count) => sum + (count ?? 0), 0)
+  return { total, ...byReason }
+}
 
 /**
  * Which pages a push changed, and whether the tree itself moved.
