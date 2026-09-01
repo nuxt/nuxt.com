@@ -8,6 +8,9 @@ overrides:
   nostics: ^1.2.0
   '@workflow/serde': 4.1.2
 
+patchedDependencies:
+  nuxt-agent-discovery@0.1.2: 7649fa37611b6cf344b7fd0d49bfb5f832c5db7c05bc0783244b0d4e3ba5e273
+
 importers:
 
   .:
@@ -235,6 +238,9 @@ importers:
       microsandbox:
         specifier: ^0.6.16
         version: 0.6.16
+      nuxt-agent-discovery:
+        specifier: ^0.1.2
+        version: 0.1.2(patch_hash=7649fa37611b6cf344b7fd0d49bfb5f832c5db7c05bc0783244b0d4e3ba5e273)(a48d56c8af793881affa14df99d72d8b)
       nuxt-content-twoslash:
         specifier: ^0.4.0
         version: 0.4.0(@nuxtjs/mdc@0.23.1(magic-string@1.2.3)(magicast@0.5.4)(oxc-parser@0.143.0)(rolldown@1.2.6)(supports-color@10.2.2)(unplugin@3.3.0(esbuild@0.28.2)(rolldown@1.2.6)(rollup@4.63.1)(vite@8.2.2(@types/node@26.4.0)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.13)(yaml@2.9.0))))(magic-string@1.2.3)(magicast@0.5.4)(oxc-parser@0.143.0)(rolldown@1.2.6)(supports-color@10.2.2)(unplugin@3.3.0(esbuild@0.28.2)(rolldown@1.2.6)(rollup@4.63.1)(vite@8.2.2(@types/node@26.4.0)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.13)(yaml@2.9.0)))
@@ -7837,6 +7843,29 @@ packages:
 
   nth-check@2.1.1:
     resolution: {integrity: sha512-lqjrjmaOoAnWfMmBPL+XNnynZh2+swxiX3WUE0s4yEHI6m+AwrK2UZOimIRl3X/4QctVqS8AiZjFqyOGrMXb/w==}
+
+  nuxt-agent-discovery@0.1.2:
+    resolution: {integrity: sha512-B8aEj/CZ2vYMoETZ2h5t727dUCMAiekSTuyrDJMrJysFHXnYqqGd+ITuG2hsWHhVA3WFR00t2hj6bNouZkJ9Pg==}
+    peerDependencies:
+      '@nuxt/content': ^3.0.0
+      '@nuxtjs/mcp-toolkit': '>=0.19.0'
+      '@nuxtjs/robots': ^6.0.0
+      '@nuxtjs/sitemap': ^8.0.0
+      comark: ^0.6.0
+      nuxt-llms: '>=0.1.0'
+    peerDependenciesMeta:
+      '@nuxt/content':
+        optional: true
+      '@nuxtjs/mcp-toolkit':
+        optional: true
+      '@nuxtjs/robots':
+        optional: true
+      '@nuxtjs/sitemap':
+        optional: true
+      comark:
+        optional: true
+      nuxt-llms:
+        optional: true
 
   nuxt-auth-utils@0.5.30:
     resolution: {integrity: sha512-KtHMHy/OQAy/RYAmORBDvtNRs0BYbeLQOOrMv0FpBpWUYqMBA2lhumqnTACljFHGLGNpMy25Ck7cWVhVUjc6vA==}
@@ -18928,6 +18957,25 @@ snapshots:
   nth-check@2.1.1:
     dependencies:
       boolbase: 1.0.0
+
+  nuxt-agent-discovery@0.1.2(patch_hash=7649fa37611b6cf344b7fd0d49bfb5f832c5db7c05bc0783244b0d4e3ba5e273)(a48d56c8af793881affa14df99d72d8b):
+    dependencies:
+      '@nuxt/kit': 4.5.2(magic-string@1.2.3)(magicast@0.5.4)(oxc-parser@0.143.0)(rolldown@1.2.6)(unplugin@3.3.0(esbuild@0.28.2)(rolldown@1.2.6)(rollup@4.63.1)(vite@8.2.2(@types/node@26.4.0)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.13)(yaml@2.9.0)))
+      defu: 6.1.7
+      pathe: 2.0.3
+      ufo: 1.6.4
+      yaml: 2.9.0
+    optionalDependencies:
+      '@nuxt/content': 3.16.0(@libsql/client@0.17.4)(@oxc-project/types@0.147.0)(better-sqlite3@13.0.3)(esbuild@0.28.2)(magic-string@1.2.3)(magicast@0.5.4)(oxc-parser@0.143.0)(rolldown@1.2.6)(rollup@4.63.1)(supports-color@10.2.2)(valibot@1.4.2(typescript@6.0.3))(vite@8.2.2(@types/node@26.4.0)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.13)(yaml@2.9.0))
+      '@nuxtjs/mcp-toolkit': 0.19.0(@vue/compiler-sfc@3.5.42)(h3@1.15.11)(magic-string@1.2.3)(magicast@0.5.4)(oxc-parser@0.143.0)(rolldown@1.2.6)(rollup@4.63.1)(supports-color@10.2.2)(unplugin@3.3.0(esbuild@0.28.2)(rolldown@1.2.6)(rollup@4.63.1)(vite@8.2.2(@types/node@26.4.0)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.13)(yaml@2.9.0)))(vite@8.2.2(@types/node@26.4.0)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.13)(yaml@2.9.0))(vue@3.5.42(typescript@6.0.3))(zod@4.5.4)
+      comark: 0.6.2(shiki@4.4.3)
+      nuxt-llms: 0.2.0(magic-string@1.2.3)(magicast@0.5.4)(oxc-parser@0.143.0)(rolldown@1.2.6)(unplugin@3.3.0(esbuild@0.28.2)(rolldown@1.2.6)(rollup@4.63.1)(vite@8.2.2(@types/node@26.4.0)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.13)(yaml@2.9.0)))
+    transitivePeerDependencies:
+      - magic-string
+      - magicast
+      - oxc-parser
+      - rolldown
+      - unplugin
 
   nuxt-auth-utils@0.5.30(magic-string@1.2.3)(magicast@0.5.4)(oxc-parser@0.143.0)(rolldown@1.2.6)(unplugin@3.3.0(esbuild@0.28.2)(rolldown@1.2.6)(rollup@4.63.1)(vite@8.2.2(@types/node@26.4.0)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.13)(yaml@2.9.0))):
     dependencies:
