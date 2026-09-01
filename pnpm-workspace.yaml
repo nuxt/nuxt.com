@@ -27,3 +27,5 @@ minimumReleaseAgeExclude:
   - vue
   - '@vue/*'
   - '@nuxtjs/mdc@0.23.1'
+  - nuxt-agent-discovery@0.2.0
+

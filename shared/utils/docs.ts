@@ -4,8 +4,8 @@
 // Bumping this list flips every version-aware surface at once:
 //
 //   - app/pages/docs/[...slug].vue        → canonical/markdown alternate emission
-//   - modules/md-rewrite.ts               → Vercel edge rewrites for `.md` and Accept/UA negotiation
-//   - server/routes/.well-known/**        → API catalog + MCP server card link to versioned docs
+//   - nuxt.config.ts (agentDiscovery)     → excluded versions never negotiate markdown, MCP server card docs link
+//   - server/plugins/agent-discovery.ts   → generated /raw/index.md links to versioned docs
 //   - app/middleware/docs-version.global.ts → unversioned `/docs/*` redirect target
 //
 // When Nuxt 5 ships: move `'5.x'` from EXCLUDED_DOC_VERSIONS into
@@ -20,8 +20,3 @@ const escape = (v: string) => v.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
 export const SUPPORTED_DOCS_PATH_REGEX = new RegExp(
   `^/docs/(?:${SUPPORTED_DOC_VERSIONS.map(escape).join('|')})(?:/|$)`
 )
-
-// `(?!5\.x/)` — Vercel route fragment used inside `^/docs/(?!5\.x/)(.+)$`.
-// Negative lookahead form so unversioned URLs like `/docs/api.md` still rewrite.
-export const EXCLUDED_DOCS_PATH_LOOKAHEAD
-  = `(?!(?:${EXCLUDED_DOC_VERSIONS.map(escape).join('|')})/)`

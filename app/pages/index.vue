@@ -49,8 +49,6 @@ useSeoMeta({
 useCanonical('/raw/index.md')
 
 if (import.meta.server) {
-  prerenderRoutes(['/raw/index.md'])
-
   useSeoMeta({
     ogTitle: title,
     ogDescription: description,

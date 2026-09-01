@@ -1,6 +1,7 @@
 import { createResolver } from 'nuxt/kit'
 import { parseMdc } from './helpers/mdc-parser.mjs'
 import { CLI_DOCS_PREFIX, CLI_DOCS_REFS, CLI_DOCS_REPO } from './shared/utils/cli-docs'
+import { CURRENT_DOCS_VERSION, EXCLUDED_DOC_VERSIONS } from './shared/utils/docs'
 
 const { resolve } = createResolver(import.meta.url)
 
@@ -34,6 +35,9 @@ export default defineNuxtConfig({
     'nuxt-auth-utils',
     'nuxt-schema-org',
     '@nuxtjs/mcp-toolkit',
+    '@nuxtjs/robots',
+    '@nuxtjs/sitemap',
+    'nuxt-agent-discovery',
     '@nuxt/hints',
     '@vercel/analytics',
     '@vercel/speed-insights',
@@ -146,45 +150,22 @@ export default defineNuxtConfig({
   },
   routeRules: {
     // Pre-render
-    '/': {
-      prerender: true,
-      headers: {
-        // Relative URIs per RFC 8288 — agents resolve them against the request
-        // origin, so this works on production, preview deploys, and localhost.
-        Link: [
-          '</.well-known/api-catalog>; rel="api-catalog"; type="application/linkset+json"',
-          '</.well-known/mcp/server-card.json>; rel="service-desc"; type="application/json"; title="MCP Server Card"',
-          '</llms.txt>; rel="llms"; type="text/plain"',
-          '</llms-full.txt>; rel="llms-full"; type="text/plain"',
-          '</sitemap.xml>; rel="sitemap"; type="application/xml"',
-          '</sitemap.md>; rel="sitemap"; type="text/markdown"',
-          '</design.md>; rel="design"; type="text/markdown"',
-          '</mcp>; rel="mcp"; type="application/json"',
-          '</docs>; rel="service-doc"; type="text/html"'
-        ].join(', '),
-        Vary: 'Accept, User-Agent'
-      }
-    },
+    '/': { prerender: true },
+    '/openapi.json': { prerender: true },
     '/blog/rss.xml': { prerender: true },
-    '/sitemap.xml': { prerender: true },
-    '/sitemap.md': { prerender: true },
-    '/design.md': { prerender: true, headers: { Vary: 'Accept, User-Agent' } },
+    // /sitemap.xml is served at runtime by @nuxtjs/sitemap (SWR cached). Do not
+    // prerender it: during prerender the module resolves its own route against
+    // the canonical site URL and ingests the LIVE production sitemap, so every
+    // deploy would ship a copy of the previous one.
+    '/design.md': { prerender: true },
     '/404.html': { prerender: true },
     '/docs/3.x/getting-started/introduction': { prerender: true },
     '/docs/4.x/getting-started/introduction': { prerender: true },
     '/docs/5.x/getting-started/introduction': { prerender: true },
     '/docs/4.x/errors': { prerender: true },
-    '/modules': { isr: 60 * 60, prerender: false, headers: { Vary: 'Accept, User-Agent' } },
+    '/modules': { isr: 60 * 60, prerender: false },
     '/modules/**': { isr: 60 * 60 },
-    '/changelog': { isr: 60 * 60, headers: { Vary: 'Accept, User-Agent' } },
-    // Markdown content negotiation routes (md-rewrite.ts emits Vercel rewrites
-    // based on `Accept` and `User-Agent`, so cached responses must vary on both).
-    // /raw/** is the rewrite destination — it must carry Vary too so CDNs
-    // don't serve cached markdown to a browser that asked for HTML.
-    '/docs/**': { headers: { Vary: 'Accept, User-Agent' } },
-    '/blog/**': { headers: { Vary: 'Accept, User-Agent' } },
-    '/deploy/**': { headers: { Vary: 'Accept, User-Agent' } },
-    '/raw/**': { headers: { Vary: 'Accept, User-Agent' } },
+    '/changelog': { isr: 60 * 60 },
     // API
     '/api/v1/teams': { isr: 60 * 60 },
     // Admin
@@ -581,6 +562,49 @@ export default defineNuxtConfig({
       }
     }
   },
+  agentDiscovery: {
+    routes: [
+      { path: '/', raw: '/raw/index.md' },
+      '/docs/**',
+      '/blog/**',
+      '/deploy/**',
+      { path: '/modules', raw: '/raw/modules.md' },
+      { path: '/changelog', raw: '/raw/changelog.md' }
+    ],
+    excludePrefixes: {
+      extend: [
+        // Nightly docs don't negotiate and stay out of sitemap.md / llms.txt,
+        // aligned with the Disallow in public/robots.txt.
+        ...EXCLUDED_DOC_VERSIONS.map(version => `/docs/${version}/`),
+        // Served by its own handler (server/routes/design.md.get.ts).
+        '/design.md'
+      ]
+    },
+    discovery: {
+      mcpServerCard: {
+        endpoint: '/mcp',
+        name: 'Nuxt',
+        title: 'Nuxt MCP Server',
+        description: 'MCP server providing tools, resources and prompts to help AI agents build with Nuxt — search documentation, retrieve guides, fetch module metadata, and discover deployment providers.',
+        documentation: `/docs/${CURRENT_DOCS_VERSION}/guide/ai/mcp`,
+        repository: 'https://github.com/nuxt/nuxt.com',
+        license: 'MIT'
+      },
+      links: [
+        { rel: 'service-desc', href: '/openapi.json', type: 'application/vnd.oai.openapi+json', title: 'OpenAPI specification: machine-readable API surface', anchor: '/' },
+        { rel: 'describedby', href: '/design.md', type: 'text/markdown', title: 'Design system' },
+        { rel: 'service-doc', href: '/docs', type: 'text/html', anchor: '/docs', title: 'Documentation' }
+      ]
+    },
+    sitemap: {
+      markdown: {
+        labels: {
+          docs: 'Documentation',
+          deploy: 'Deploy providers'
+        }
+      }
+    }
+  },
   eslint: {
     config: {
       stylistic: {
@@ -701,6 +725,12 @@ export default defineNuxtConfig({
       renderTimeout: 60000
     }
   },
+  robots: {
+    // The nightly docs version, carried over from the static public/robots.txt
+    // this replaces. The agent Allow groups and Content-Signal come from
+    // nuxt-agent-discovery through the robots:config hook.
+    disallow: EXCLUDED_DOC_VERSIONS.map(version => `/docs/${version}/`)
+  },
   schemaOrg: {
     identity: {
       type: 'Organization',
@@ -714,6 +744,30 @@ export default defineNuxtConfig({
         'https://m.webtoo.ls/@nuxt'
       ]
     }
+  },
+  sitemap: {
+    // Content pages come from the dynamic source below, resolved at request
+    // time (SWR cached by the module). App sources are off: the nuxt:prerender
+    // source lists every prerendered page, which includes the 3.x/5.x docs and
+    // the unversioned /docs/* meta-refresh stubs. Vue pages without a content
+    // counterpart are listed explicitly.
+    excludeAppSources: true,
+    sources: ['/api/__sitemap__/urls'],
+    urls: ['/', '/showcase', '/changelog', '/evals'],
+    // Belt and braces should an app source come back: keep legacy/nightly docs
+    // versions and auth-only areas out.
+    exclude: [
+      new RegExp(`^/docs/(?!${CURRENT_DOCS_VERSION.replace('.', '\\.')}/)`),
+      '/admin',
+      '/admin/**',
+      '/dashboard',
+      '/dashboard/**',
+      '/login',
+      '/chat',
+      '/chat/**',
+      '/enterprise',
+      '/enterprise/support'
+    ]
   },
   turnstile: {
     siteKey: '0x4AAAAAAAP2vNBsTBT3ucZi'

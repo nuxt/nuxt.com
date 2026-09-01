@@ -4,7 +4,7 @@ import type { H3Event } from 'h3'
 import type { BaseModule, Module, ModuleContributor, ModuleHealth, ModuleStats } from '#shared/types'
 import type { NpmDownloadStats } from '../types/npm'
 
-export function isBot(username: string) {
+export function isBotUsername(username: string) {
   return username.includes('[bot]') || username.includes('-bot')
 }
 
@@ -88,7 +88,7 @@ export async function fetchModuleContributors(_event: H3Event, module: BaseModul
   console.info(`Fetching module ${module.name} contributors ...`)
   try {
     const res = await $fetch<UnghResponse>(`https://ungh.cc/repos/${owner}/${name}/contributors`)
-    const contributors = res.contributors.filter(contributor => !isBot(contributor.username))
+    const contributors = res.contributors.filter(contributor => !isBotUsername(contributor.username))
     await kv.set(key, contributors, { ttl: 60 * 60 * 24 }) // cache for 1 day
     return contributors
   } catch (err) {
