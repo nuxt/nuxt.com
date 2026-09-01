@@ -84,3 +84,11 @@ export function payloadUrlForPage(path: string, buildId: string): string {
 
   return buildId ? `${base}?_b=${buildId}` : base
 }
+
+/**
+ * Page path -> raw markdown URL (`/` -> `/raw/index.md`), for the purge list.
+ * `/raw` is nuxt-agent-discovery's `rawPrefix` (the default, unset in config).
+ */
+export function rawUrlForPage(path: string): string {
+  return path === '/' ? '/raw/index.md' : `/raw/${path.replace(/^\//, '')}.md`
+}
