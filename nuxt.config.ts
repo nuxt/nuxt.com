@@ -35,6 +35,8 @@ export default defineNuxtConfig({
     'nuxt-auth-utils',
     'nuxt-schema-org',
     '@nuxtjs/mcp-toolkit',
+    '@nuxtjs/robots',
+    '@nuxtjs/sitemap',
     '@nuxt/hints',
     '@vercel/analytics',
     '@vercel/speed-insights',
@@ -153,7 +155,10 @@ export default defineNuxtConfig({
     // Pre-render
     '/': { prerender: true },
     '/blog/rss.xml': { prerender: true },
-    '/sitemap.xml': { prerender: true },
+    // /sitemap.xml is served at runtime by @nuxtjs/sitemap (SWR cached). Do not
+    // prerender it: during prerender the module resolves its own route against
+    // the canonical site URL and ingests the LIVE production sitemap, so every
+    // deploy would ship a copy of the previous one.
     '/design.md': { prerender: true },
     '/404.html': { prerender: true },
     '/docs/3.x/getting-started/introduction': { prerender: true },
@@ -588,8 +593,6 @@ export default defineNuxtConfig({
         license: 'MIT'
       },
       links: [
-        // sitemap.xml is served by server/routes/sitemap.xml.get.ts, not @nuxtjs/sitemap.
-        { rel: 'sitemap', href: '/sitemap.xml', type: 'application/xml', title: 'Sitemap (XML)' },
         { rel: 'describedby', href: '/design.md', type: 'text/markdown', title: 'Design system' },
         { rel: 'service-doc', href: '/docs', type: 'text/html', anchor: '/docs', title: 'Documentation' }
       ]
@@ -601,9 +604,7 @@ export default defineNuxtConfig({
           deploy: 'Deploy providers'
         }
       }
-    },
-    // public/robots.txt keeps the `Disallow: /docs/5.x/` line the generated policy has no option for.
-    robots: { aiPolicy: false }
+    }
   },
   eslint: {
     config: {
@@ -725,6 +726,12 @@ export default defineNuxtConfig({
       renderTimeout: 60000
     }
   },
+  robots: {
+    // The nightly docs version, carried over from the static public/robots.txt
+    // this replaces. The agent Allow groups and Content-Signal come from
+    // nuxt-agent-discovery through the robots:config hook.
+    disallow: EXCLUDED_DOC_VERSIONS.map(version => `/docs/${version}/`)
+  },
   schemaOrg: {
     identity: {
       type: 'Organization',
@@ -738,6 +745,30 @@ export default defineNuxtConfig({
         'https://m.webtoo.ls/@nuxt'
       ]
     }
+  },
+  sitemap: {
+    // Content pages come from the dynamic source below, resolved at request
+    // time (SWR cached by the module). App sources are off: the nuxt:prerender
+    // source lists every prerendered page, which includes the 3.x/5.x docs and
+    // the unversioned /docs/* meta-refresh stubs. Vue pages without a content
+    // counterpart are listed explicitly.
+    excludeAppSources: true,
+    sources: ['/api/__sitemap__/urls'],
+    urls: ['/', '/showcase', '/changelog', '/evals'],
+    // Belt and braces should an app source come back: keep legacy/nightly docs
+    // versions and auth-only areas out.
+    exclude: [
+      new RegExp(`^/docs/(?!${CURRENT_DOCS_VERSION.replace('.', '\\.')}/)`),
+      '/admin',
+      '/admin/**',
+      '/dashboard',
+      '/dashboard/**',
+      '/login',
+      '/chat',
+      '/chat/**',
+      '/enterprise',
+      '/enterprise/support'
+    ]
   },
   turnstile: {
     siteKey: '0x4AAAAAAAP2vNBsTBT3ucZi'
