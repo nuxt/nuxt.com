@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import { getAgentDocument } from '#agent-discovery'
 
 export default defineMcpTool({
   description: `Retrieves the official "Getting Started" introduction page for a given Nuxt major version.
@@ -21,15 +22,12 @@ WHEN NOT TO USE: For a specific page outside the introduction, prefer get_docume
   async handler({ version, sections }) {
     const event = useEvent()
     const path = `/docs/${version}/getting-started/introduction`
-    const docsVersion = version === '5.x' ? 'docsv5' : version === '3.x' ? 'docsv3' : 'docsv4'
-    const fullContent = await fetchPageMarkdown(event, docsVersion, path)
+    const document = await getAgentDocument(event, path, { sections })
 
-    if (!fullContent) {
+    if (!document || 'redirect' in document) {
       throw createError({ statusCode: 404, message: `Getting started guide not found: ${path}` })
     }
 
-    return sections?.length
-      ? extractSections(fullContent, sections)
-      : fullContent
+    return document.markdown
   }
 })

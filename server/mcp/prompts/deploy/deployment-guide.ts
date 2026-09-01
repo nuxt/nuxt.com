@@ -1,5 +1,6 @@
 import { z } from 'zod'
 import { queryCollection } from '@nuxt/content/server'
+import { getAgentDocument, getAgentSiteUrl } from '#agent-discovery'
 
 export default defineMcpPrompt({
   description: 'Get deployment instructions for a specific hosting provider',
@@ -17,15 +18,18 @@ export default defineMcpPrompt({
       title: p.title,
       path: p.path,
       description: p.description,
-      url: `https://nuxt.com${p.path}`
+      url: `${getAgentSiteUrl(event)}${p.path}`
     })) || []
 
     const matchingProvider = deployProviders?.find(p =>
       p.title.toLowerCase().includes(provider.toLowerCase())
     )
 
-    const providerContent = matchingProvider
-      ? await fetchPageMarkdown(event, 'deploy', matchingProvider.path)
+    const providerDocument = matchingProvider
+      ? await getAgentDocument(event, matchingProvider.path)
+      : null
+    const providerContent = providerDocument && !('redirect' in providerDocument)
+      ? providerDocument.markdown
       : null
 
     return {

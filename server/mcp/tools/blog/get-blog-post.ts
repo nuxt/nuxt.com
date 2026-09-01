@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import { getAgentDocument } from '#agent-discovery'
 
 export default defineMcpTool({
   description: `Retrieves the full content of a specific Nuxt blog post.
@@ -25,12 +26,12 @@ EXAMPLES: "/blog/v4", "/blog/nuxt3", "/blog/nuxt-on-the-edge"`,
   cache: '1h',
   async handler({ path }) {
     const event = useEvent()
-    const fullContent = await fetchPageMarkdown(event, 'blog', path)
+    const document = await getAgentDocument(event, path)
 
-    if (!fullContent) {
+    if (!document || 'redirect' in document) {
       throw createError({ statusCode: 404, message: `Blog post not found: ${path}` })
     }
 
-    return fullContent
+    return document.markdown
   }
 })

@@ -1,5 +1,6 @@
 import { z } from 'zod'
 import { queryCollection } from '@nuxt/content/server'
+import { getAgentSiteUrl } from '#agent-discovery'
 
 export default defineMcpTool({
   description: `Lists Nuxt documentation pages, optionally filtered by search term.
@@ -52,7 +53,7 @@ TIPS: Always pass a search term to narrow results — avoids dumping the entire 
       title: doc.title,
       path: doc.path,
       ...(search ? { description: doc.description } : {}),
-      url: `https://nuxt.com${doc.path}`
+      url: `${getAgentSiteUrl(event)}${doc.path}`
     }))
   }
 })
