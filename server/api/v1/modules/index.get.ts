@@ -2,14 +2,20 @@ import { z } from 'zod'
 import { CURRENT_NUXT_VERSION, filterModulesByNuxtVersions, MODULE_VERSION_VALUES } from '#shared/utils/modules'
 
 export default defineCachedEventHandler(async (event) => {
-  const { version: versionQuery, category } = await getValidatedQuery(event, z.object({
-    version: z.union([z.string(), z.array(z.string())]).optional(),
-    category: z.string().optional()
-  }).parse)
-  const versions = z.array(z.enum(MODULE_VERSION_VALUES)).min(1).parse(
-    (Array.isArray(versionQuery) ? versionQuery : [versionQuery || CURRENT_NUXT_VERSION])
-      .flatMap(version => version.split(','))
-  )
+  const { versions, category } = await getValidatedQuery(event, (query) => {
+    const { version, category } = z.object({
+      version: z.union([z.string(), z.array(z.string())]).optional(),
+      category: z.string().optional()
+    }).parse(query)
+
+    return {
+      versions: z.array(z.enum(MODULE_VERSION_VALUES)).min(1).parse(
+        (Array.isArray(version) ? version : [version || CURRENT_NUXT_VERSION])
+          .flatMap(value => value.split(','))
+      ),
+      category
+    }
+  })
   console.log(`Fetching v${versions.join(',')} modules...${category ? ` for category: ${category}` : ''}`)
 
   let modules = await fetchModules(event) || []

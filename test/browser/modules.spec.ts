@@ -64,6 +64,9 @@ test.describe('Modules Page', () => {
     expect(catalog.version).toBe('4')
     expect(catalog.modules.some((module: { name: string }) => module.name === 'better-auth')).toBe(true)
 
+    const invalidResponse = await page.request.get('/api/v1/modules?version=invalid')
+    expect(invalidResponse.status()).toBe(400)
+
     await goto('/modules?category=Security&q=better-auth')
 
     const versionFilter = page.getByRole('button', { name: 'Showing Nuxt 4+' })
