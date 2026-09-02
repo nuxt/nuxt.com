@@ -13,10 +13,43 @@ const modulesToAdd = ref<Module[]>([])
 const el = useTemplateRef<HTMLElement>('el')
 
 const { replaceRoute } = useFilters('modules')
-const { fetchList, filteredModules, q, categories, modules, stats, selectedSort, selectedOrder, selectedCategory, sorts } = useModules()
+const { fetchList, filteredModules, q, categories, modules, stats, selectedSort, selectedOrder, selectedCategory, selectedVersions, sorts, versions } = useModules()
 const { health } = useModuleHealth()
 const { track } = useAnalytics()
 const { openInCursor, openInClaudeCode, openInVSCode } = useIdeDeeplink()
+
+type ModuleVersionKey = (typeof versions)[number]['key']
+const optimisticVersionKeys = shallowRef<ModuleVersionKey[] | null>(null)
+
+const selectedVersionKeys = computed<ModuleVersionKey[]>({
+  get: () => optimisticVersionKeys.value ?? selectedVersions.value.map(version => version.key),
+  set: (keys) => {
+    if (!keys.length) return
+
+    const selectedKeys = new Set(keys)
+    const nextVersions = versions.filter(version => selectedKeys.has(version.key)).map(version => version.key)
+    optimisticVersionKeys.value = nextVersions
+    void replaceRoute('version', { key: nextVersions.length === 1 && nextVersions[0] === '4' ? '' : nextVersions.join(',') })
+      .catch(() => {
+        optimisticVersionKeys.value = null
+      })
+  }
+})
+
+watch(selectedVersions, () => {
+  optimisticVersionKeys.value = null
+})
+
+const selectedVersionLabel = computed(() => {
+  const keys = [...selectedVersionKeys.value].sort()
+  if (keys.length === 1) return keys[0] === '4' ? 'Nuxt 4+' : `Nuxt ${keys[0]}`
+  return `Nuxt ${keys.join(', ')}`
+})
+
+const versionOptions = computed(() => versions.map(version => ({
+  ...version,
+  disabled: selectedVersionKeys.value.length === 1 && selectedVersionKeys.value[0] === version.key
+})))
 
 // Merge via computed, not mutation: useFetch `data` is a shallowRef (Nuxt 4
 // default), so writing module.health in place would not trigger a re-render.
@@ -157,6 +190,7 @@ watch(
   () => [
     q.value,
     selectedCategory.value?.key,
+    selectedVersions.value.map(version => version.key).join(','),
     selectedSort.value?.key,
     selectedOrder.value?.key
   ],
@@ -363,15 +397,68 @@ const clearAllModules = () => {
     <UPage id="smooth" class="relative z-20">
       <UPageBody>
         <div class="flex justify-between mb-4 text-muted text-xs">
-          <div class="flex items-center gap-2">
+          <div class="hidden sm:flex items-center gap-2">
             <span class="flex items-center gap-1.5">
               <UKbd value="meta" size="sm" />+click to select · Shift+click for a range · Esc to clear
             </span>
           </div>
-          <ULink to="/docs/guide/modules/getting-started" class="hidden md:flex items-center gap-1">
-            Create your own module
-            <UIcon name="i-lucide-arrow-right" class="size-4" />
-          </ULink>
+
+          <div class="flex items-center gap-5 ml-auto text-sm">
+            <UPopover :content="{ align: 'end' }" :ui="{ content: 'w-72 p-3' }">
+              <template #default="{ open }">
+                <button type="button" class="flex items-center gap-1.5 leading-5 text-muted transition-colors hover:text-highlighted">
+                  Showing {{ selectedVersionLabel }}
+                  <UIcon name="i-lucide-chevron-down" class="size-3.5 transition-transform" :class="open && 'rotate-180'" />
+                </button>
+              </template>
+
+              <template #content>
+                <div class="space-y-1.5 px-1.5">
+                  <p class="text-sm/5 font-medium text-highlighted">
+                    Nuxt compatibility
+                  </p>
+                  <p class="text-sm/5 text-muted">
+                    Show modules that declare support for any selected Nuxt version.
+                  </p>
+                </div>
+
+                <UCheckboxGroup
+                  v-model="selectedVersionKeys"
+                  :items="versionOptions"
+                  value-key="key"
+                  size="md"
+                  aria-label="Nuxt compatibility"
+                  class="mt-3"
+                  :ui="{
+                    fieldset: 'gap-0.5',
+                    item: 'rounded-md px-1.5 py-2 transition-colors hover:bg-elevated',
+                    label: 'font-normal'
+                  }"
+                >
+                  <template #label="{ item }">
+                    <span class="flex w-full items-center">
+                      <span>{{ item.label }}</span>
+                      <span class="ml-auto text-xs text-muted">{{ item.status }}</span>
+                    </span>
+                  </template>
+                </UCheckboxGroup>
+
+                <USeparator class="my-3" />
+
+                <div class="px-1.5 text-sm text-muted">
+                  <ULink to="/docs/4.x/community/roadmap#release-cycle" class="flex items-center gap-1.5 py-1 transition-colors hover:text-highlighted">
+                    Nuxt release lifecycle
+                    <UIcon name="i-lucide-arrow-right" class="size-4" />
+                  </ULink>
+                </div>
+              </template>
+            </UPopover>
+
+            <ULink to="/docs/guide/modules/getting-started" class="hidden md:flex items-center gap-1 leading-5">
+              Create your own module
+              <UIcon name="i-lucide-arrow-right" class="size-4" />
+            </ULink>
+          </div>
         </div>
 
         <UPageGrid v-if="filteredModules?.length" class="lg:grid-cols-2 xl:grid-cols-3">

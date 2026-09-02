@@ -1,28 +1,20 @@
 import { z } from 'zod'
-import { satisfies } from 'semver'
+import { CURRENT_NUXT_VERSION, filterModulesByNuxtVersions, MODULE_VERSION_VALUES } from '#shared/utils/modules'
 
 export default defineCachedEventHandler(async (event) => {
-  const { version, category } = await getValidatedQuery(event, z.object({
-    version: z.enum(['2', '2-bridge', '3', 'all']).default('3'),
+  const { version: versionQuery, category } = await getValidatedQuery(event, z.object({
+    version: z.union([z.string(), z.array(z.string())]).optional(),
     category: z.string().optional()
   }).parse)
-  console.log(`Fetching v${version} modules...${category ? ` for category: ${category}` : ''}`)
+  const versions = z.array(z.enum(MODULE_VERSION_VALUES)).min(1).parse(
+    (Array.isArray(versionQuery) ? versionQuery : [versionQuery || CURRENT_NUXT_VERSION])
+      .flatMap(version => version.split(','))
+  )
+  console.log(`Fetching v${versions.join(',')} modules...${category ? ` for category: ${category}` : ''}`)
 
   let modules = await fetchModules(event) || []
 
-  if (version !== 'all') {
-    const major = (version === '2-bridge' ? '2' : version) satisfies '2' | '3'
-    const testableVersion = `${major}.999.999`
-
-    // Filter out modules by compatibility
-    modules = modules.filter((module) => {
-      // Nuxt 2 + bridge
-      if (version === '2-bridge' && !module.compatibility.requires?.bridge) {
-        return false
-      }
-      return satisfies(testableVersion, module.compatibility.nuxt)
-    })
-  }
+  modules = filterModulesByNuxtVersions(modules, versions)
 
   // Filter by category if provided
   if (category) {
@@ -85,7 +77,8 @@ export default defineCachedEventHandler(async (event) => {
   }
 
   return {
-    version,
+    version: versions.join(','),
+    versions,
     category: category || null,
     generatedAt: new Date().toISOString(),
     stats: {
@@ -104,7 +97,8 @@ export default defineCachedEventHandler(async (event) => {
   swr: true,
   getKey(event) {
     const query = getQuery(event)
-    return `${query?.version || '3'}-${query?.category || 'all'}`
+    const version = Array.isArray(query.version) ? query.version.join(',') : query.version
+    return `${version || CURRENT_NUXT_VERSION}-${query.category || 'all'}`
   },
   maxAge: 60 * 60 // 1 hour
 })

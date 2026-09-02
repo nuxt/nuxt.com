@@ -1,5 +1,6 @@
 type ModuleStatsKeys = 'version' | 'downloads' | 'stars' | 'publishedAt' | 'createdAt'
 import type { Module } from '#shared/types'
+import { nuxtVersions } from './useDocsVersion'
 import type { Filter } from '~/types'
 
 const iconsMap = {
@@ -123,6 +124,20 @@ export const sorts: Filter[] = [
   { key: 'createdAt', label: 'Created' }
 ]
 
+const moduleVersionStatuses = {
+  prerelease: 'Nightly',
+  stable: 'Current',
+  unsupported: 'EOL'
+} as const
+
+export const moduleVersions = nuxtVersions
+  .filter(version => version.shortTag !== 'v2')
+  .map(version => ({
+    key: version.shortTag.slice(1) as '3' | '4' | '5',
+    label: `Nuxt ${version.shortTag.slice(1)}`,
+    status: moduleVersionStatuses[version.status]
+  }))
+
 const orders: Filter[] = [
   { key: 'desc', label: 'Desc', icon: 'i-lucide-arrow-down-wide-narrow' },
   { key: 'asc', label: 'Asc', icon: 'i-lucide-arrow-up-wide-narrow' }
@@ -131,8 +146,23 @@ const orders: Filter[] = [
 export const useModules = () => {
   const route = useRoute()
   const router = useRouter()
+
+  const selectedVersions = computed(() => {
+    const queryValues = (Array.isArray(route.query.version) ? route.query.version : [route.query.version])
+      .filter((value): value is string => typeof value === 'string')
+      .flatMap(value => value.split(','))
+
+    if (queryValues.includes('all')) return [...moduleVersions]
+
+    const selected = moduleVersions.filter(version => queryValues.includes(version.key))
+    return selected.length ? selected : [moduleVersions.find(version => version.key === '4')!]
+  })
+
   const { data, execute } = useFetch('/api/v1/modules', {
     immediate: false,
+    query: {
+      version: computed(() => selectedVersions.value.map(version => version.key).join(','))
+    },
     default: () => ({
       modules: [],
       stats: {
@@ -166,7 +196,14 @@ export const useModules = () => {
           key: category,
           label: category,
           active: route.query.category === category,
-          to: { name: 'modules', query: category === route.query.category ? undefined : { category }, state: { smooth: '#smooth' } },
+          to: {
+            name: 'modules',
+            query: {
+              ...route.query,
+              category: category === route.query.category ? undefined : category
+            },
+            state: { smooth: '#smooth' }
+          },
           icon: iconsMap[category as keyof typeof iconsMap] || undefined,
           click: (e: Event) => {
             if (route.query.category !== category) {
@@ -252,7 +289,7 @@ export const useModules = () => {
     // Data fetching
     fetchList,
     // Data
-    // versions,
+    versions: moduleVersions,
     sorts,
     orders,
     // Computed
@@ -265,8 +302,7 @@ export const useModules = () => {
     // contributors,
     // stats,
     selectedCategory,
-    // selectedType,
-    // selectedVersion,
+    selectedVersions,
     selectedSort,
     selectedOrder,
     q
