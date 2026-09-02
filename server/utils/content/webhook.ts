@@ -1,5 +1,3 @@
-import type { H3Event } from 'h3'
-import { rawUrl, useAgentDiscoveryConfig } from '#agent-discovery'
 import type { GitHubPushCommit } from '../../types/github'
 import { CONTENT_INSTANCE_KEYS } from '#shared/utils/content'
 
@@ -85,14 +83,4 @@ export function payloadUrlForPage(path: string, buildId: string): string {
   const base = path === '/' ? '/_payload.json' : `${path.replace(/\/$/, '')}/_payload.json`
 
   return buildId ? `${base}?_b=${buildId}` : base
-}
-
-/**
- * Page path -> raw markdown URL, or `undefined` when the page has no markdown twin.
- */
-export function rawUrlForPage(event: H3Event, path: string): string | undefined {
-  const resolved = new URL(rawUrl(event, path)).pathname
-  const { rawPrefix } = useAgentDiscoveryConfig(event)
-
-  return resolved === rawPrefix || resolved.startsWith(`${rawPrefix}/`) ? resolved : undefined
 }

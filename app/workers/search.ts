@@ -1,18 +1,15 @@
 /**
- * Search worker: owns the browser-standalone `comark-content` instance (sqlite-wasm FTS5)
- * hydrated from the per-commit snapshot artifacts.
+ * Search worker: owns the browser-standalone `comark-content` instance (sqlite-wasm FTS5) hydrated from the per-commit snapshot artifacts.
  */
 import { comarkContent, readArtifact } from 'comark-content'
 import sqliteWasm from 'comark-content/database/sqlite-wasm'
 import sqliteFullTextSearch from 'comark-content/plugins/sqlite-full-text-search'
 import { ofetch } from 'ofetch'
-import { describeArtifact, indexedRows, isDebug, log, logger, setDebug, since } from './search-logger'
-import type { CacheArtifact, ComarkContent } from 'comark-content'
+import { describeArtifact, indexedRows, isDebug, log, logger, setDebug, since } from './internal/search-logger'
+import type { CacheArtifact, ComarkContent, SearchOptions, SearchResult } from 'comark-content'
 import type { SqliteFullTextSearchMethods } from 'comark-content/plugins/sqlite-full-text-search'
-import type { SearchWorkerRequest, SearchWorkerResponse } from '../types/search-worker'
 
 type SearchInstance = ComarkContent & SqliteFullTextSearchMethods
-type SearchStatus = 'idle' | 'loading' | 'ready' | 'error'
 
 /**
  * The instance currently searchable, and the artifact root it was built from.
@@ -21,34 +18,35 @@ type SearchStatus = 'idle' | 'loading' | 'ready' | 'error'
  * version or a push replaces it.
  */
 let active: { apiBase: string, sources: string[], instance: SearchInstance } | undefined
-let loading: string | undefined
-let status: SearchStatus = 'idle'
-
-function post(message: SearchWorkerResponse): void {
-  self.postMessage(message)
-}
-
-/** Every transition is mirrored to the main thread; the worker owns the hydration lifecycle. */
-function setStatus(value: Exclude<SearchStatus, 'idle'>): void {
-  status = value
-  post({ type: 'status', value })
-}
 
 /**
- * Builds the database for `apiBase`. No-op when it is already loading or loaded.
+ * The in-flight hydration, keyed by the `apiBase` it targets.
  */
-async function loadDatabase(apiBase: string, sources: string[], origin: string): Promise<void> {
+let hydration: { apiBase: string, promise: Promise<void> } | undefined
+
+/**
+ * Loads the database for `apiBase`. No-op once ready for that base; retries after a failure.
+ */
+export function warmupSearch(apiBase: string, sources: string[], origin: string, debug: boolean): Promise<void> {
+  setDebug(debug)
   if (!sources.length) {
-    throw new Error('[search] cannot build a database without sources')
+    return Promise.reject(new Error('[search] cannot build a database without sources'))
   }
-
-  if (loading === apiBase || active?.apiBase === apiBase) {
-    log(`warmup ignored — already ${status} for ${apiBase}`)
-    return
+  if (active?.apiBase === apiBase) {
+    log(`warmup ignored — already ready for ${apiBase}`)
+    return Promise.resolve()
   }
+  if (hydration?.apiBase === apiBase) return hydration.promise
 
-  loading = apiBase
-  setStatus('loading')
+  const promise = loadDatabase(apiBase, sources, origin).catch((error) => {
+    hydration = undefined // clears the guard so the next warmup can retry
+    throw error
+  })
+  hydration = { apiBase, promise }
+  return promise
+}
+
+async function loadDatabase(apiBase: string, sources: string[], origin: string): Promise<void> {
   const started = performance.now()
   try {
     const fetchArtifact = async (path: string): Promise<CacheArtifact> => {
@@ -90,39 +88,25 @@ async function loadDatabase(apiBase: string, sources: string[], origin: string):
     log(`index built in ${since(indexStarted)} — ${await indexedRows(database, sources)} row(s)`)
 
     active = { apiBase, sources, instance: content }
-    setStatus('ready')
     log(`ready in ${since(started)}`)
   } catch (error) {
-    setStatus('error')
     log(`hydration failed after ${since(started)}`, error)
     throw error
-  } finally {
-    loading = undefined
   }
 }
 
-self.onmessage = async (event: MessageEvent<SearchWorkerRequest>) => {
-  const request = event.data
-  try {
-    if (request.type === 'warmup') {
-      setDebug(request.debug === true)
-      await loadDatabase(request.apiBase, request.sources, request.origin)
-      post({ type: 'result', id: request.id, results: [] })
-      return
-    }
-
-    const queryStarted = performance.now()
-    const results = active
-      ? await active.instance.search(active.sources, request.query, {
-          limit: 25,
-          snippet: { columns: ['content'] },
-          ...request.opts
-        })
-      : []
-    if (!active) log(`dropped query "${request.query}" — no instance yet (status ${status})`)
-    else log(`query "${request.query}" -> ${results.length} result(s) in ${since(queryStarted)}`)
-    post({ type: 'result', id: request.id, results })
-  } catch (error) {
-    post({ type: 'error', id: request.id, message: error instanceof Error ? error.message : String(error) })
+/** Empty until hydration lands. */
+export async function searchContent(query: string, opts?: SearchOptions): Promise<SearchResult[]> {
+  if (!active) {
+    log(`dropped query "${query}" — no instance yet`)
+    return []
   }
+  const queryStarted = performance.now()
+  const results = await active.instance.search(active.sources, query, {
+    limit: 25,
+    snippet: { columns: ['content'] },
+    ...opts
+  })
+  log(`query "${query}" -> ${results.length} result(s) in ${since(queryStarted)}`)
+  return results
 }

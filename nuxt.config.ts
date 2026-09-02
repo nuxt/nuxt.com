@@ -47,6 +47,7 @@ export default defineNuxtConfig({
     '@vercel/analytics',
     '@vercel/speed-insights',
     'evlog/nuxt',
+    'nuxt-workers',
     ...(nuxiEnabled ? ['eve/nuxt'] : [])
   ],
 
@@ -444,7 +445,11 @@ export default defineNuxtConfig({
         externalRelAttribute: 'noopener'
       }
     },
-    viteEnvironmentApi: true
+    // Disabled: `nuxt-workers` breaks under the Vite environment API.
+    // Its worker transform lands in every environment's build, not just the client's.
+    // That double-applies it in worker bundles and leaks `self.onmessage` into SSR.
+    // Re-enable once nuxt-workers registers through `vite.worker.plugins`.
+    viteEnvironmentApi: false
   },
   compatibilityDate: '2026-01-14',
   nitro: {

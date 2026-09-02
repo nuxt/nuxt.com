@@ -6,11 +6,11 @@ export default defineConfig({
   test: {
     projects: [
       {
-        // Server utils import `#shared/*`, which Nitro aliases at build time. Mapped here so they
-        // can be unit-tested without booting Nuxt.
+        // Stub server utils imports
         resolve: {
           alias: {
-            '#shared': fileURLToPath(new URL('./shared', import.meta.url))
+            '#shared': fileURLToPath(new URL('./shared', import.meta.url)),
+            '#agent-discovery': fileURLToPath(new URL('./test/stubs/agent-discovery.ts', import.meta.url))
           }
         },
         test: {

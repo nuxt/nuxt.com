@@ -74,6 +74,7 @@
     "nuxt-llms": "^0.2.0",
     "nuxt-og-image": "^6.7.8",
     "nuxt-schema-org": "^6.3.1",
+    "nuxt-workers": "^0.1.0",
     "ofetch": "^1.5.1",
     "rangi": "^2.2.0",
     "resend": "^6.25.0",
