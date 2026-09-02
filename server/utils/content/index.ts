@@ -78,3 +78,24 @@ export async function getInstanceAtHead(key: ContentInstanceKey): Promise<Comark
 
   return instance
 }
+
+/**
+ * Warm up the artifacts.
+ * - manifest artifact
+ * - snapshot artifact (only if `opts.snapshot` is true)
+ */
+export async function warmArtifacts(content: ComarkContent, opts: { snapshot?: boolean } = {}): Promise<void> {
+  await content.init({ partial: false })
+  if (!opts.snapshot) return
+
+  for (const source of content.manifest.sources) {
+    let artifact = await content.cache.snapshot(source)
+    if (!artifact) {
+      artifact = await content.cache.snapshot(source, { fresh: true })
+    }
+
+    if (!artifact) {
+      console.warn(`[content] no snapshot artifact produced for source "${source}"`)
+    }
+  }
+}

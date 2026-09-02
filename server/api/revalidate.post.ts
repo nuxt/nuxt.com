@@ -1,6 +1,6 @@
 import { verify } from '@octokit/webhooks-methods'
 import { waitUntil } from '@vercel/functions'
-import type { ContentListFile } from 'comark-content'
+import type { ComarkContent, ContentListFile } from 'comark-content'
 import { instanceBlobPath } from '#shared/utils/content'
 import type { GitHubPushPayload } from '../types/github'
 import type { ContentChanges } from '../utils/content/webhook'
@@ -22,6 +22,9 @@ const REASON_ORDER: PurgeReason[] = ['page', 'payload', 'raw', 'nav', 'linked', 
 
 /** `nav` is the only unbounded reason (a whole instance can be thousands of pages) — cap what the log prints. */
 const MAX_LOGGED_PATHS_PER_REASON = 5
+
+/** Instances whose sha-pinned artifacts are served (for search indexing) */
+const isInstanceIndexedForSearch = (key: ContentInstanceKey): boolean => key.startsWith('docs:')
 
 export default defineEventHandler(async (event) => {
   const secret = useRuntimeConfig(event).webhookSecret || process.env.WEBHOOK_SECRET
@@ -100,6 +103,7 @@ export default defineEventHandler(async (event) => {
   }
 
   const artifactPaths = new Set<string>()
+  const rebuiltInstances = new Map<ContentInstanceKey, ComarkContent>()
 
   for (const [instanceKey, changes] of changesByInstance) {
     const { headSha, newItems, pagePaths, navChanged } = await timings.time(`rebuild:${instanceKey}`, async () => {
@@ -112,6 +116,8 @@ export default defineEventHandler(async (event) => {
       const newInstance = await createContentInstance(instanceKey, headSha)
       await newInstance.init()
       const newItems = newInstance.manifest.items
+
+      rebuiltInstances.set(instanceKey, newInstance)
 
       return { headSha, newItems, ...diffInstance(changes, outdatedItems, newItems) }
     })
@@ -147,7 +153,7 @@ export default defineEventHandler(async (event) => {
     }
 
     // Purge the artifacts for the docs instance to ensure search is updated
-    if (instanceKey.startsWith('docs:')) {
+    if (isInstanceIndexedForSearch(instanceKey)) {
       const artifactBase = instanceBlobPath(instanceKey, headSha)
       const manifestPath = `${artifactBase}/manifest.json`
       const snapshotPath = `${artifactBase}/snapshot/${instanceSource(instanceKey).name}.json`
@@ -186,6 +192,16 @@ export default defineEventHandler(async (event) => {
   // Vercel's `waitUntil`, not Nitro's `event.waitUntil`, which can orphan the work here.
   waitUntil((async () => {
     const absent: string[] = []
+
+    // Warm up the artifacts for impacted instances
+    // Only the docs instances needs to warm up the snapshot
+    await timings.time('warm', async () => {
+      for (const [instance, content] of rebuiltInstances) {
+        await warmArtifacts(content, { snapshot: isInstanceIndexedForSearch(instance) }).catch((error) => {
+          console.error(`${tag} artifact warm failed for ${instance}`, error?.message ?? error)
+        })
+      }
+    })
 
     // Purge and warm up the artifacts first so the page purges can benefit from it
     const artifactResults = await timings.time('artifact', () => settleInBatches([...artifactPaths], REVALIDATE_CONCURRENCY, (path) => {
