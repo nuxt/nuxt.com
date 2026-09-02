@@ -106,7 +106,7 @@
     "evalite": "1.0.0-beta.16",
     "happy-dom": "^20.12.0",
     "microsandbox": "^0.6.16",
-    "nuxt-agent-discovery": "^0.2.0",
+    "nuxt-agent-discovery": "^0.3.0",
     "nuxtseo-layer-devtools": "^5.3.14",
     "playwright": "^1.62.1",
     "typescript": "^6.0.3",

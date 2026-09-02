@@ -251,8 +251,8 @@ importers:
         specifier: ^0.6.16
         version: 0.6.16
       nuxt-agent-discovery:
-        specifier: ^0.2.0
-        version: 0.2.0(63e9e1514b207b108f914e1865731887)
+        specifier: ^0.3.0
+        version: 0.3.0(63e9e1514b207b108f914e1865731887)
       nuxtseo-layer-devtools:
         specifier: ^5.3.14
         version: 5.3.14(eeca20fc8c0ba2ab1ef5dbd8dabd817a)
@@ -7928,8 +7928,8 @@ packages:
   nth-check@2.1.1:
     resolution: {integrity: sha512-lqjrjmaOoAnWfMmBPL+XNnynZh2+swxiX3WUE0s4yEHI6m+AwrK2UZOimIRl3X/4QctVqS8AiZjFqyOGrMXb/w==}
 
-  nuxt-agent-discovery@0.2.0:
-    resolution: {integrity: sha512-thJpURHouJE8ogPitIu/DWestrc+rwBugcLnI+AdkXMPex9QY38XXEWRGhsoeZKzGT8XCq0fJLjOU0DLZb1daQ==}
+  nuxt-agent-discovery@0.3.0:
+    resolution: {integrity: sha512-H4rRJj7arra4zr0N244WQ7PJPq6rZcuKTadl/rxbASAsNa1bs8CpQne84dWicpe1NAI7jY6JxsgYxM5s5pwP6g==}
     peerDependencies:
       '@nuxt/content': ^3.0.0
       '@nuxtjs/mcp-toolkit': '>=0.19.0'
@@ -19261,7 +19261,7 @@ snapshots:
     dependencies:
       boolbase: 1.0.0
 
-  nuxt-agent-discovery@0.2.0(63e9e1514b207b108f914e1865731887):
+  nuxt-agent-discovery@0.3.0(63e9e1514b207b108f914e1865731887):
     dependencies:
       '@nuxt/kit': 4.5.2(magic-string@1.2.0)(magicast@0.5.4)(oxc-parser@0.143.0)(rolldown@1.2.4)(unplugin@3.3.0(esbuild@0.28.2)(rolldown@1.2.4)(rollup@4.62.4)(vite@8.2.1(@types/node@26.2.0)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.50.0)(tsx@4.23.12)(yaml@2.9.0)))
       defu: 6.1.7
