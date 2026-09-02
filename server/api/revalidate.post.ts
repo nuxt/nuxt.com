@@ -1,6 +1,7 @@
 import { verify } from '@octokit/webhooks-methods'
 import { waitUntil } from '@vercel/functions'
-import type { ComarkContent, ContentListFile } from 'comark-content'
+import type { ContentListFile } from 'comark-content'
+import { instanceBlobPath } from '#shared/utils/content'
 import type { GitHubPushPayload } from '../types/github'
 import type { ContentChanges } from '../utils/content/webhook'
 
@@ -14,10 +15,10 @@ import type { ContentChanges } from '../utils/content/webhook'
 const REVALIDATE_CONCURRENCY = 8
 
 /** Why a route was purged — one value per `addPath` call site below. */
-type PurgeReason = 'page' | 'payload' | 'raw' | 'nav' | 'linked' | 'global'
+type PurgeReason = 'page' | 'payload' | 'raw' | 'nav' | 'linked' | 'artifact' | 'global'
 
 /** Display/response order. */
-const REASON_ORDER: PurgeReason[] = ['page', 'payload', 'raw', 'nav', 'linked', 'global']
+const REASON_ORDER: PurgeReason[] = ['page', 'payload', 'raw', 'nav', 'linked', 'artifact', 'global']
 
 /** `nav` is the only unbounded reason (a whole instance can be thousands of pages) — cap what the log prints. */
 const MAX_LOGGED_PATHS_PER_REASON = 5
@@ -98,10 +99,10 @@ export default defineEventHandler(async (event) => {
     pathsByScope.set(scope, byReason)
   }
 
-  const rebuiltInstances = new Map<ContentInstanceKey, ComarkContent>()
+  const artifactPaths = new Set<string>()
 
   for (const [instanceKey, changes] of changesByInstance) {
-    const { newItems, pagePaths, navChanged } = await timings.time(`rebuild:${instanceKey}`, async () => {
+    const { headSha, newItems, pagePaths, navChanged } = await timings.time(`rebuild:${instanceKey}`, async () => {
       const outdatedInstance = await getInstanceAtHead(instanceKey)
       await outdatedInstance.init()
 
@@ -110,28 +111,30 @@ export default defineEventHandler(async (event) => {
       const headSha = await resolveInstanceSha(instanceKey, { refresh: true })
       const newInstance = await createContentInstance(instanceKey, headSha)
       await newInstance.init()
-
-      rebuiltInstances.set(instanceKey, newInstance)
-
       const newItems = newInstance.manifest.items
-      return { newItems, ...diffInstance(changes, outdatedItems, newItems) }
+
+      return { headSha, newItems, ...diffInstance(changes, outdatedItems, newItems) }
     })
 
-    // Live `/api/content/<instance>/…` routes have no ISR rule, so there is nothing cached to purge.
+    // Only purge the pages that are content routes
+    // Also add their payload and raw URLs equivalent
     for (const path of pagePaths) {
+      if (!isContentRoute(path)) continue
       addPath(instanceKey, 'page', path)
       addPath(instanceKey, 'payload', payloadUrlForPage(path, buildId))
-      addPath(instanceKey, 'raw', rawUrlForPage(path))
+      const rawPath = rawUrlForPage(event, path)
+      if (rawPath) addPath(instanceKey, 'raw', rawPath)
     }
 
     // Navigation renders on every page of the instance, so a change re-renders all of them.
     if (navChanged || changes.navTouched) {
       addPath(instanceKey, 'nav', '/api/navigation.json')
       for (const item of Object.values(newItems)) {
-        if (item.meta.kind !== 'document') continue
+        if (item.meta.kind !== 'document' || !isContentRoute(item.path)) continue
         addPath(instanceKey, 'nav', item.path)
         addPath(instanceKey, 'nav', payloadUrlForPage(item.path, buildId))
-        addPath(instanceKey, 'nav', rawUrlForPage(item.path))
+        const rawPath = rawUrlForPage(event, item.path)
+        if (rawPath) addPath(instanceKey, 'nav', rawPath)
       }
     }
 
@@ -141,6 +144,16 @@ export default defineEventHandler(async (event) => {
         addPath(instanceKey, 'linked', path)
         addPath(instanceKey, 'linked', payloadUrlForPage(path, buildId))
       }
+    }
+
+    // Purge the artifacts for the docs instance to ensure search is updated
+    if (instanceKey.startsWith('docs:')) {
+      const artifactBase = instanceBlobPath(instanceKey, headSha)
+      const manifestPath = `${artifactBase}/manifest.json`
+      const snapshotPath = `${artifactBase}/snapshot/${instanceSource(instanceKey).name}.json`
+      addPath(instanceKey, 'artifact', manifestPath)
+      addPath(instanceKey, 'artifact', snapshotPath)
+      artifactPaths.add(manifestPath).add(snapshotPath)
     }
 
     summary[instanceKey] = { pages: pagePaths, navChanged: navChanged || changes.navTouched }
@@ -172,21 +185,23 @@ export default defineEventHandler(async (event) => {
 
   // Vercel's `waitUntil`, not Nitro's `event.waitUntil`, which can orphan the work here.
   waitUntil((async () => {
-    await timings.time('warm', async () => {
-      for (const [instance, content] of rebuiltInstances) {
-        await warmSnapshot(content).catch((error) => {
-          console.error(`${tag} snapshot warm failed for ${instance}`, error?.message ?? error)
-        })
-      }
-    })
+    const absent: string[] = []
 
-    let absent = 0
-    const results = await timings.time('purge', () => settleInBatches([...pathsToPurge], REVALIDATE_CONCURRENCY, path =>
+    // Purge and warm up the artifacts first so the page purges can benefit from it
+    const artifactResults = await timings.time('artifact', () => settleInBatches([...artifactPaths], REVALIDATE_CONCURRENCY, (path) => {
+      return $fetch(path, { baseURL, method: 'GET', headers }).catch((error) => {
+        console.error(`${tag}   ✗ ${path}`, error?.statusCode ?? error?.message ?? error)
+        throw error
+      })
+    }))
+
+    const pagePaths = [...pathsToPurge].filter(path => !artifactPaths.has(path))
+
+    const pageResults = await timings.time('purge', () => settleInBatches(pagePaths, REVALIDATE_CONCURRENCY, path =>
       $fetch(path, { baseURL, method: 'GET', headers }).catch((error) => {
-        // Not every content file has an HTML page — `content/design.md` is served only as markdown,
-        // at `/design.md`. A 404 means there was nothing cached to purge, which is the goal anyway.
+        // Content with no page of its own are filtered out
         if (error?.statusCode === 404) {
-          absent += 1
+          absent.push(path)
           return
         }
         console.error(`${tag}   ✗ ${path}`, error?.statusCode ?? error?.message ?? error)
@@ -194,8 +209,10 @@ export default defineEventHandler(async (event) => {
       })
     ))
 
+    const results = [...artifactResults, ...pageResults]
     const failed = results.filter(result => result.status === 'rejected').length
-    console.log(`${tag} complete: ${results.length - failed - absent} purged, ${absent} absent, ${failed} failed | ${timings.format()} | total=${timings.since()}ms`)
+    console.log(`${tag} complete: ${results.length - failed - absent.length} purged, ${absent.length} absent, ${failed} failed | ${timings.format()} | total=${timings.since()}ms`)
+    logAbsent(tag, absent)
   })())
 
   return {
@@ -227,6 +244,13 @@ function logBreakdown(tag: string, pathsByScope: Map<string, Map<PurgeReason, Se
         console.log(`${tag}     ${reason}\t...`)
       }
     }
+  }
+}
+
+/** One log line per absent path — expected to be empty */
+function logAbsent(tag: string, absent: string[]): void {
+  for (const path of [...absent].sort()) {
+    console.log(`${tag}   absent\t${path}`)
   }
 }
 

@@ -13,8 +13,8 @@ export default defineEventHandler(async (event) => {
 
   const key = instanceKeyFromSegments(path.split('/').filter(Boolean))
 
-  // TODO: will be deleted when we'll integrate version history
-  if (sha !== await resolveInstanceSha(key)) {
+  // Ensure the sha is the latest
+  if (sha !== await resolveInstanceSha(key) && sha !== await resolveInstanceSha(key, { refresh: true })) {
     throw createError({ statusCode: 404, statusMessage: 'Stale content commit' })
   }
 

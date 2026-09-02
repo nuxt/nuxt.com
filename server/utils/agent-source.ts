@@ -14,21 +14,10 @@ import { DOC_VERSIONS } from '#shared/utils/docs'
  * `agent-discovery:document` hook) stays byte-identical with `/raw/**.md`.
  */
 
-/**
- * Site content that is not a route of its own: data collections backing the
- * templates/video-courses pages, and the design document served at
- * `/design.md` by its own handler. Kept out of every listing an agent reads.
- */
-const NON_PAGE_EXACT = new Set(['/design', '/info', '/enterprise/manual-sponsors', '/enterprise/support'])
-const NON_PAGE_PREFIXES = ['/templates/', '/video-courses/']
-
-export function isAgentListedRoute(path: string): boolean {
-  return !NON_PAGE_EXACT.has(path) && !NON_PAGE_PREFIXES.some(prefix => path.startsWith(prefix))
-}
-
+/** Return only the items with a route of their own (see `isContentRoute`). */
 function prune(items: NavigationItem[]): NavigationItem[] {
   return items
-    .filter(item => !item.path || isAgentListedRoute(item.path))
+    .filter(item => !item.path || isContentRoute(item.path))
     .map(item => (item.children?.length ? { ...item, children: prune(item.children) } : item))
 }
 
@@ -54,6 +43,6 @@ const facade = {
     const content = await getInstanceAtHead(instanceFromPagePath(path))
     return content.get(path)
   }
-} as unknown as ComarkContent
+} as ComarkContent
 
 export default createComarkSource(() => facade)

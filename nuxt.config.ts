@@ -503,8 +503,7 @@ export default defineNuxtConfig({
     ],
     excludePrefixes: {
       extend: [
-        // Nightly docs don't negotiate and stay out of sitemap.md / llms.txt,
-        // aligned with the robots Disallow below.
+        // Nightly docs don't negotiate and stay out of sitemap.md / llms.txt (same as robots Disallow below)
         ...EXCLUDED_DOC_VERSIONS.map(version => `/docs/${version}/`),
         // Served by its own handler (server/routes/design.md.get.ts).
         '/design.md'

@@ -78,23 +78,3 @@ export async function getInstanceAtHead(key: ContentInstanceKey): Promise<Comark
 
   return instance
 }
-
-/**
- * Fully parse an instance and persist its artifacts, so the next reader pays a cache read.
- *
- * Called from the push webhook to persist the instance's artifacts.
- */
-export async function warmSnapshot(content: ComarkContent): Promise<void> {
-  await content.init({ partial: false })
-
-  for (const source of content.manifest.sources) {
-    let artifact = await content.cache.snapshot(source)
-    if (!artifact) {
-      artifact = await content.cache.snapshot(source, { fresh: true })
-    }
-
-    if (!artifact) {
-      console.warn(`[content] no snapshot artifact produced for source "${source}"`)
-    }
-  }
-}
