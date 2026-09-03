@@ -137,16 +137,17 @@ export function configDocs(): ContentPlugin {
 /** Per-instance plugins, on top of the shared `markdown()`/`yaml()`/`json()` chain. */
 export function instancePlugins(key: ContentInstanceKey): ContentPlugin[] {
   if (key === 'site') return [markdownFields()]
-  if (key === 'examples') return []
+  if (key === 'examples') return [dottedFrontmatter()]
   if (key.startsWith('cli:')) {
     const version = key.slice('cli:'.length) as DocVersion
     // Command pages are written with the same unversioned `/docs/*` links as the docs.
-    return [docsLinks(version), cliDocs(version)]
+    return [dottedFrontmatter(), docsLinks(version), cliDocs(version)]
   }
 
   const version = key.slice('docs:'.length) as DocVersion
 
   return [
+    dottedFrontmatter(),
     docsLinks(version),
     // 3.x is the only version with the marker, and the only one publishing `config.schema.json`.
     ...(version === '3.x' ? [configDocs()] : [])

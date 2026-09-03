@@ -18,7 +18,7 @@ function cacheAvailable(): boolean {
 /**
  * Bump when content parser/plugin changes (TODO: automate this)
  */
-export const CONTENT_PARSER_VERSION = 'v2'
+export const CONTENT_PARSER_VERSION = 'v3'
 
 /**
  * Driver backing one instance's manifest, parsed bodies and snapshot artifacts.
