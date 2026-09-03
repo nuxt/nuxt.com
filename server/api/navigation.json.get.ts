@@ -1,16 +1,27 @@
-// This route will be pre-rendered as /api/navigation.json
-import { queryCollectionNavigation } from '@nuxt/content/server'
+import type { NavigationItem } from 'comark-content'
+import { DOC_VERSIONS } from '#shared/utils/docs'
 
-export default defineEventHandler(async (event) => {
-  // `?? []` matters: if a collection comes back empty (it happens at runtime on
-  // Vercel when the content DB isn't fully available), `data[0]?.children` is
-  // `undefined`, `.flat()` keeps it as an element, and JSON turns it into a
-  // `null` entry. Every consumer iterates these items reading `item.path`, so a
-  // single null took down SSR for the whole docs section.
-  return Promise.all([
-    queryCollectionNavigation(event, 'docsv3', ['titleTemplate']).then(data => data[0]?.children ?? []),
-    queryCollectionNavigation(event, 'docsv4', ['titleTemplate']).then(data => data[0]?.children ?? []),
-    queryCollectionNavigation(event, 'docsv5', ['titleTemplate']).then(data => data[0]?.children ?? []),
-    queryCollectionNavigation(event, 'blog')
-  ]).then(data => data.flat().filter(Boolean))
+/**
+ * The blog subtree the palette and the docs aside link to.
+ */
+async function blogTree(): Promise<NavigationItem[]> {
+  const site = await getInstanceAtHead('site')
+  const blog = findByPath(await site.navigation(['site']), '/blog')
+
+  return blog ? [blog] : []
+}
+
+export default defineEventHandler(async () => {
+  const examplesContent = await getInstanceAtHead('examples')
+  const examplesNav = await examplesContent.navigation(['examples'])
+  // Not version-scoped: one subtree, linked from every version.
+  const examples = findByPath(examplesNav, '/docs/examples')
+  const examplesChildren = examples ? [examples] : []
+
+  const [versions, blog] = await Promise.all([
+    Promise.all(DOC_VERSIONS.map(version => docTree(version, examplesChildren).catch(() => []))),
+    blogTree().catch(() => [])
+  ])
+
+  return [...versions.flat(), ...blog].filter(Boolean)
 })

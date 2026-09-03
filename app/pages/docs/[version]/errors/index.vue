@@ -4,14 +4,10 @@ definePageMeta({
   heroBackground: 'opacity-30'
 })
 
+const route = useRoute()
 const { version } = useDocsVersion()
 
-const { data: errors } = await useAsyncData(`${version.value.collection}-errors`, () =>
-  queryCollection(version.value.collection!)
-    .where('path', 'LIKE', `${version.value.path}/errors/%`)
-    .select('path', 'title', 'description')
-    .all()
-)
+const { data: errors } = await useFetch(() => `/api/docs/${route.params.version}/errors.json`)
 
 if (!errors.value?.length) {
   throw createError({ statusCode: 404, statusMessage: 'Page not found', fatal: true })

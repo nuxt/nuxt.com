@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import type { ContentNavigationItem } from '@nuxt/content'
+import type { NavigationItem } from 'comark-content'
 
 const { headerLinks } = useHeaderLinks()
 
-const mobileNavigation = computed<ContentNavigationItem[]>(() => {
+const mobileNavigation = computed<NavigationItem[]>(() => {
   return [
     ...headerLinks.value.map(link => ({
       ...link,
@@ -15,13 +15,13 @@ const mobileNavigation = computed<ContentNavigationItem[]>(() => {
         title: child.label,
         path: child.to
       }))
-    } as ContentNavigationItem)),
+    } as NavigationItem)),
     {
       title: 'Design Kit',
       icon: 'i-lucide-palette',
       path: '/design-kit'
     }
-  ].filter((item): item is ContentNavigationItem => Boolean(item))
+  ].filter((item): item is NavigationItem => Boolean(item))
 })
 </script>
 

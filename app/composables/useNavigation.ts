@@ -48,8 +48,8 @@ function _useHeaderLinks() {
         label: 'Examples',
         description: 'Discover and explore official and community examples.',
         icon: 'i-lucide-app-window-mac',
-        to: `${to}/examples`,
-        active: route.path.startsWith(`${to}/examples`)
+        to: '/docs/examples',
+        active: route.path.startsWith('/docs/examples')
       }, {
         label: 'Community',
         description: 'Find answers and support from the community.',

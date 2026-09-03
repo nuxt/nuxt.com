@@ -1,10 +1,14 @@
-import { readFile } from 'node:fs/promises'
-import { resolve } from 'node:path'
+import { renderMarkdown } from 'comark/render'
 import { getAgentSiteUrl } from '#agent-discovery'
 
 export default defineCachedEventHandler(async (event) => {
   const domain = getAgentSiteUrl(event)
-  const content = await readFile(resolve(process.cwd(), 'content/design.md'), 'utf8')
+
+  const content = await getInstanceAtHead('site')
+  const document = await content.get('/design')
+  if (!document) {
+    throw createError({ statusCode: 404, statusMessage: 'Not found' })
+  }
 
   setResponseHeader(event, 'Content-Type', 'text/markdown; charset=utf-8')
   setResponseHeader(event, 'Link', [
@@ -12,7 +16,7 @@ export default defineCachedEventHandler(async (event) => {
     `<${domain}/design-kit>; rel="alternate"; type="text/html"`
   ].join(', '))
 
-  return content
+  return renderMarkdown(document)
 }, {
   name: 'design-md',
   swr: true,

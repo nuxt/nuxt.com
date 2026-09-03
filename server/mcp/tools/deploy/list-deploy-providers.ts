@@ -1,4 +1,4 @@
-import { queryCollection } from '@nuxt/content/server'
+import type { DeployProvider } from '#shared/types'
 
 export default defineMcpTool({
   description: `Lists all deployment providers and hosting platforms for Nuxt applications with their features and capabilities.
@@ -18,13 +18,9 @@ OUTPUT: Returns list of providers with titles, descriptions, and paths. Use get_
   },
   cache: '1h',
   async handler() {
-    const event = useEvent()
+    const deployProviders = (await listByDir<DeployProvider>('/deploy')).filter(provider => provider.extension === '.md' && provider.path !== '/deploy')
 
-    const deployProviders = await queryCollection(event, 'deploy')
-      .select('title', 'path', 'description', 'logoSrc', 'logoIcon', 'category', 'nitroPreset', 'website', 'sponsor')
-      .all()
-
-    if (!deployProviders) {
+    if (!deployProviders.length) {
       throw createError({ statusCode: 404, message: 'Deploy providers collection not found' })
     }
 

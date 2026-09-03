@@ -1,13 +1,12 @@
-import type { BlogArticle } from '~/types'
+import type { BlogArticle } from '#shared/types'
 
 export const useBlog = () => {
   const { data: articles, refresh } = useAsyncData<BlogArticle[]>('blog', async () => {
-    return queryCollection('blog')
-      .where('extension', '=', 'md')
-      /* .select('title', 'date', 'image', 'description', 'path', 'authors', 'category') */
-      .order('date', 'DESC')
-      .all()
-      .then(res => res.filter(article => article.path !== '/blog'))
+    const items = await listByDir<BlogArticle>('/blog')
+
+    return items
+      .filter(article => article.extension !== '.yml')
+      .sort((a, b) => String(b.date).localeCompare(String(a.date))) as BlogArticle[]
   }, { default: () => [] })
 
   async function fetchList() {

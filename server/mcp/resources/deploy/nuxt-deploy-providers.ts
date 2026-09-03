@@ -1,17 +1,13 @@
-import { queryCollection } from '@nuxt/content/server'
+import type { DeployProvider } from '#shared/types'
 
 export default defineMcpResource({
   uri: 'resource://nuxt-com/deploy-providers',
   description: 'Complete list of deployment providers and hosting platforms for Nuxt applications',
   cache: '1h',
   async handler(uri: URL) {
-    const event = useEvent()
+    const deployProviders = (await listByDir<DeployProvider>('/deploy')).filter(provider => provider.extension === '.md' && provider.path !== '/deploy')
 
-    const deployProviders = await queryCollection(event, 'deploy')
-      .select('title', 'path', 'description', 'logoSrc', 'logoIcon', 'category', 'nitroPreset', 'website', 'sponsor')
-      .all()
-
-    if (!deployProviders) {
+    if (!deployProviders.length) {
       return {
         contents: [{
           uri: uri.href,

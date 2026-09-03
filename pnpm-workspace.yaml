@@ -7,7 +7,6 @@ overrides:
   "@workflow/serde": 4.1.2
 
 allowBuilds:
-  better-sqlite3: false
   esbuild: true
   rolldown: true
   sharp: true
@@ -26,6 +25,4 @@ minimumReleaseAgeExclude:
   - nuxt-nightly
   - vue
   - '@vue/*'
-  - '@nuxtjs/mdc@0.23.1'
-  - nuxt-agent-discovery@0.2.0
-
+  - nuxt-agent-discovery@0.3.0

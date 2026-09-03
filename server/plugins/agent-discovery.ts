@@ -1,4 +1,4 @@
-import { queryCollection } from '@nuxt/content/server'
+import { parseURL } from 'ufo'
 import { rawUrl, getAgentSiteUrl } from '#agent-discovery'
 import { CURRENT_DOCS_VERSION } from '#shared/utils/docs'
 
@@ -8,7 +8,11 @@ export default defineNitroPlugin((nitroApp) => {
   // metadata and body only the site knows.
   nitroApp.hooks.hook('agent-discovery:index', async (event, index) => {
     const domain = getAgentSiteUrl(event)
-    const home = await queryCollection(event, 'index').first()
+    const site = await getInstanceAtHead('site')
+    const home = (await site.get('/'))?.data as {
+      hero?: { title?: string, description?: string }
+      features?: { features?: { title: string, description: string }[] }
+    } | undefined
 
     index.title = home?.hero?.title?.replace(/\s+/g, ' ').trim() || 'Nuxt'
     index.description = home?.hero?.description?.replace(/\s+/g, ' ').trim()
@@ -64,12 +68,19 @@ npm run dev
       sections.set('docs', docs.filter(page => !page.href.includes('/docs/3.x/')))
     }
 
-    sections.set('pages', [
-      { title: 'Home', href: rawUrl(event, '/') },
-      ...sections.get('pages') ?? [],
-      { title: 'Showcase', href: `${domain}/showcase` },
-      { title: 'Changelog', href: rawUrl(event, '/changelog') },
-      { title: 'Design system', href: `${domain}/design.md` }
-    ])
+    // Deduplicated against what the adapter already lists: a yml-backed page
+    // the comark navigation knows about must not appear twice. The homepage
+    // entry comes from `index.yml`, which carries no title of its own.
+    const pages = (sections.get('pages') ?? [])
+      .map(page => (page.title === '/' ? { ...page, title: 'Home' } : page))
+    const listed = new Set(pages.map(page => parseURL(page.href).pathname))
+    const extras = [
+      { title: 'Home', href: rawUrl(event, '/'), path: '/raw/index.md' },
+      { title: 'Showcase', href: `${domain}/showcase`, path: '/showcase' },
+      { title: 'Changelog', href: rawUrl(event, '/changelog'), path: '/raw/changelog.md' },
+      { title: 'Design system', href: `${domain}/design.md`, path: '/design.md' }
+    ].filter(extra => !listed.has(extra.path))
+
+    sections.set('pages', [...extras.map(({ title, href }) => ({ title, href })), ...pages])
   })
 })
