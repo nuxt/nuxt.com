@@ -1,5 +1,7 @@
 import type { Schema } from 'untyped'
+import { createMarkdownParser, parseFrontmatter } from 'comark'
 import { upperFirst } from 'scule'
+import type { ContentPlugin } from 'comark-content'
 
 /** Marker in the 3.x `nuxt.config` reference (`docs/4.api/6.nuxt-config.md`), the only file carrying one. */
 export const CONFIG_DOCS_MARKER = '<!-- GENERATED_CONFIG_DOCS -->'
@@ -84,11 +86,11 @@ function generateMarkdown(schema: Schema, title: string, level: string): string[
 }
 
 // Held for the lambda's lifetime so instance rebuilds don't refetch. Failures are not memoized.
-let configDocs: Promise<string> | undefined
+let cachedMarkdown: Promise<string> | undefined
 
 /** The markdown that replaces the marker, rendered from the published 3.x schema. */
 export function generateConfigDocs(): Promise<string> {
-  configDocs ??= $fetch<Schema>(SCHEMA_URL, { responseType: 'json' })
+  cachedMarkdown ??= $fetch<Schema>(SCHEMA_URL, { responseType: 'json' })
     .then((rootSchema) => {
       const sections: string[] = []
       const properties = rootSchema.properties || {}
@@ -101,9 +103,52 @@ export function generateConfigDocs(): Promise<string> {
       return sections.join('\n')
     })
     .catch((error) => {
-      configDocs = undefined
+      cachedMarkdown = undefined
       throw error
     })
 
-  return configDocs
+  return cachedMarkdown
+}
+
+/**
+ * Inject the rendered schema into the 3.x `nuxt.config` reference.
+ *
+ * - Pre-parse: the generated markdown has to reach the TOC and the highlighter.
+ * - Mirrors the stock `markdown()` parser, which it overrides (last-wins per extension).
+ */
+export function configDocs(): ContentPlugin {
+  return {
+    name: 'nuxt-docs-config-schema',
+    setup(content) {
+      const parse = createMarkdownParser({ tracer: content.perf, plugins: comarkPlugins })
+
+      content.addParser(['.md', '.markdown'], async ({ read, partial }) => {
+        let body = await read()
+        if (!body) return null
+
+        // Frontmatter-only load: the marker lives in the body.
+        if (partial) {
+          return { kind: 'document' as const, data: parseFrontmatter(body).data, partial: true }
+        }
+
+        if (body.includes(CONFIG_DOCS_MARKER)) {
+          try {
+            body = body.replace(CONFIG_DOCS_MARKER, await generateConfigDocs())
+          } catch (error) {
+            // A page missing its section beats a 500 on the whole instance.
+            content.logger.warn('config-docs', 'could not generate the nuxt.config reference:', error)
+          }
+        }
+
+        const parsed = await parse(body)
+        return {
+          kind: 'document' as const,
+          nodes: parsed.nodes,
+          data: parsed.frontmatter,
+          meta: parsed.meta,
+          partial: false
+        }
+      })
+    }
+  }
 }

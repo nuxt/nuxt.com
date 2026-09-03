@@ -1,6 +1,6 @@
 import { generateNavigation } from 'comark-content/utils'
 import { describe, expect, it } from 'vitest'
-import { dottedFrontmatter, hoistNavigationPrefix, unflattenDotted } from '../../server/utils/content/dotted-frontmatter'
+import { dottedFrontmatter, hoistNavigationPrefix, unflattenDotted } from '../../server/utils/content/plugins/dotted-frontmatter'
 
 /** Minimal `ContentFile` for `file:parsed` — only what `dottedFrontmatter()` reads. */
 function file(stem: string, data: Record<string, unknown>, extension = '.md') {
