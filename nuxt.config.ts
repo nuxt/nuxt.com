@@ -1,6 +1,6 @@
 import { createResolver } from 'nuxt/kit'
 import { parseMdc } from './helpers/mdc-parser.mjs'
-import { agentWhenToUse } from './shared/utils/agents'
+import { agentHowToCall, agentWhenToUse } from './shared/utils/agents'
 import { CLI_DOCS_PREFIX, CLI_DOCS_REFS, CLI_DOCS_REPO } from './shared/utils/cli-docs'
 import { CURRENT_DOCS_VERSION, EXCLUDED_DOC_VERSIONS } from './shared/utils/docs'
 
@@ -474,10 +474,15 @@ export default defineNuxtConfig({
       // `getting-started/introduction` seeds in `routeRules` (the version
       // switcher lives in a dropdown, so its links aren't in the SSR'd HTML
       // and each version tree needs its own entry point).
+      //
+      // `/raw/**` is deliberately not ignored: nuxt-agent-discovery hands the
+      // crawler each prerendered page's markdown twin, so an agent reads a
+      // static file off the CDN rather than waiting on a render. The twins the
+      // site backs with live handlers (`/raw/modules.md`, `/raw/changelog.md`)
+      // are skipped by the module itself.
       crawlLinks: true,
       ignore: [
         route => route === '/modules' || route.startsWith('/modules/'),
-        route => route.startsWith('/raw/'),
         route => route.startsWith('/admin'),
         route => route.startsWith('/login'),
         route => route.startsWith('/dashboard'),
@@ -604,9 +609,10 @@ export default defineNuxtConfig({
     },
     llms: {
       // The details section llmstxt.org reserves between the blockquote and the
-      // first `##`: what these docs are the right source for, and how to fetch
-      // them. `/raw/index.md` carries the same paragraphs under a heading.
-      details: agentWhenToUse(SITE_URL)
+      // first `##`. Orientation only: the jobs these docs answer get their own
+      // `## When to use this` section below, where a reader scanning headings
+      // will actually find them.
+      details: agentHowToCall(SITE_URL)
     },
     sitemap: {
       markdown: {
@@ -695,6 +701,13 @@ export default defineNuxtConfig({
       description: 'The complete Nuxt documentation and blog posts written in Markdown (MDC syntax).'
     },
     sections: [
+      {
+        // First, and carrying the landing page link, which is what keeps
+        // nuxt-agent-discovery from prepending an `Overview` section of its own.
+        title: 'When to use this',
+        description: agentWhenToUse().join('\n\n'),
+        links: [{ title: 'Nuxt', href: SITE_URL }]
+      },
       {
         title: 'Nuxt v5 Documentation',
         contentCollection: 'docsv5',
