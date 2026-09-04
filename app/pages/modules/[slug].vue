@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { Module } from '#shared/types'
+import { getModuleCompatibility } from '#shared/utils/modules'
 import { ModuleProseA, ModuleProseKbd, ModuleProseImg } from '#components'
 
 definePageMeta({
@@ -12,6 +13,8 @@ const { data: module } = await useFetch<Module>(`/api/v1/modules/${route.params.
 if (!module.value) {
   throw createError({ statusCode: 404, statusMessage: 'Module not found', fatal: true })
 }
+
+const compatibility = computed(() => getModuleCompatibility(module.value?.compatibility?.nuxt))
 
 // Reassign the ref (not module.value.health = ...): useFetch `data` is a
 // shallowRef, so an in-place nested write would not trigger reactivity.
@@ -105,18 +108,14 @@ if (import.meta.server) {
 
 <template>
   <UContainer v-if="module">
-    <div v-if="!module.compatibility?.nuxt?.includes('^3') && !module.compatibility?.nuxt?.includes('>=3')" class="pt-8">
+    <div v-if="compatibility.status === 'legacy'" class="pt-8">
       <UAlert
         icon="i-lucide-triangle-alert"
+        color="warning"
         variant="subtle"
-        title="This module is not yet compatible with Nuxt 3"
-      >
-        <template #description>
-          Head over to <NuxtLink to="https://v2.nuxt.com" target="_blank" class="underline">
-            v2.nuxt.com
-          </NuxtLink>
-        </template>
-      </UAlert>
+        title="This module does not support Nuxt 4"
+        description="Its declared compatibility only covers older Nuxt releases. Nuxt 3 has reached end of life."
+      />
     </div>
     <UPageHeader
       :description="module.description"
@@ -180,6 +179,15 @@ if (import.meta.server) {
             <UIcon name="i-lucide-tag" class="size-5 shrink-0" />
             <span class="text-sm font-medium">v{{ module.stats.version }}</span>
           </NuxtLink>
+        </UTooltip>
+
+        <span class="hidden lg:block text-muted">&bull;</span>
+
+        <UTooltip :text="`Declared Nuxt compatibility: ${module.compatibility?.nuxt || 'not provided'}`">
+          <span class="flex items-center gap-1.5">
+            <UIcon name="i-lucide-layers-2" class="size-5 shrink-0" />
+            <span class="text-sm font-medium">{{ compatibility.label }}</span>
+          </span>
         </UTooltip>
 
         <template v-if="module.health">

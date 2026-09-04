@@ -1,5 +1,15 @@
 import { z } from 'zod'
-import type { Module, Stats } from '#shared/types'
+import type { Module } from '#shared/types'
+import type { ModuleVersion } from '#shared/utils/modules'
+import { CURRENT_NUXT_VERSION, filterModulesByNuxtVersions, MODULE_VERSION_VALUES } from '#shared/utils/modules'
+
+interface ModuleCatalogStats {
+  downloads: number
+  stars: number
+  maintainers: number
+  contributors: number
+  modules: number
+}
 
 export default defineMcpTool({
   description: `Lists all available Nuxt modules with optional filtering and sorting capabilities.
@@ -11,6 +21,7 @@ WHEN TO USE: Use this tool when you need to DISCOVER or SEARCH for modules. Comm
 - "Find a module for X feature" - general exploration
 
 PARAMETERS:
+- version: Filter by Nuxt version. Defaults to the current Nuxt 4 catalog.
 - search: Filter by name, description, or npm package name
 - category: Filter by exact category name (e.g., "Security", "UI", "Database", "CMS", "SEO") — use search for keyword discovery, not category
 - sort: Order by downloads, stars, publishedAt, or createdAt
@@ -21,6 +32,7 @@ WHEN NOT TO USE: If you already know the exact module slug (e.g., "@nuxt/ui"), u
 
 OUTPUT: Returns list of modules with name, description, category, and either downloads/stars or full stats. Use get_module for complete details including README and compatibility.`,
   inputSchema: {
+    version: z.enum(MODULE_VERSION_VALUES).optional().default(CURRENT_NUXT_VERSION).describe('Nuxt compatibility catalog: 5 (nightly), 4 (current), 3, 2, 2-bridge, or all'),
     search: z.string().optional().describe('Search term to filter modules by name, description, or npm package name'),
     category: z.string().optional().describe('Filter by exact category name (e.g., "Security", "UI", "Database", "CMS", "SEO"). Auth modules use category "Security", not "auth". Prefer search for keyword discovery.'),
     sort: z.enum(['downloads', 'stars', 'publishedAt', 'createdAt']).optional().default('downloads').describe('Sort modules by downloads, stars, published date, or created date'),
@@ -32,20 +44,30 @@ OUTPUT: Returns list of modules with name, description, category, and either dow
     openWorldHint: true
   },
   inputExamples: [
-    { search: 'auth' },
+    { search: 'auth', version: '4' },
     { category: 'ui', sort: 'downloads' },
     { search: 'image', sort: 'stars', order: 'desc' }
   ],
   cache: {
     maxAge: '1h',
-    getKey: (args: { search?: string, category?: string, sort?: string, order?: string, includeStats?: boolean }) =>
-      `search=${args.search ?? ''}|category=${args.category ?? ''}|sort=${args.sort ?? 'downloads'}|order=${args.order ?? 'desc'}|stats=${args.includeStats ?? (args.sort === 'publishedAt' || args.sort === 'createdAt')}`
+    getKey: (args: { version?: ModuleVersion, search?: string, category?: string, sort?: string, order?: string, includeStats?: boolean }) =>
+      `version=${args.version ?? CURRENT_NUXT_VERSION}|search=${args.search ?? ''}|category=${args.category ?? ''}|sort=${args.sort ?? 'downloads'}|order=${args.order ?? 'desc'}|stats=${args.includeStats ?? (args.sort === 'publishedAt' || args.sort === 'createdAt')}`
   },
-  async handler({ search, category, sort = 'downloads', order = 'desc', includeStats }) {
+  async handler({ version = CURRENT_NUXT_VERSION, search, category, sort = 'downloads', order = 'desc', includeStats }) {
     const withStats = includeStats ?? (sort === 'publishedAt' || sort === 'createdAt')
-    const response = await $fetch<{ modules: Module[], stats: Stats }>('https://api.nuxt.com/modules')
+    const response = await $fetch<{ modules: Module[], stats: ModuleCatalogStats }>('https://api.nuxt.com/modules', {
+      query: { version: 'all' }
+    })
 
-    let modules = response.modules || []
+    const catalogModules = filterModulesByNuxtVersions(response.modules || [], [version])
+    const catalogStats: ModuleCatalogStats = {
+      downloads: catalogModules.reduce((total, module) => total + (module.stats?.downloads || 0), 0),
+      stars: catalogModules.reduce((total, module) => total + (module.stats?.stars || 0), 0),
+      maintainers: new Set(catalogModules.flatMap(module => module.maintainers?.map(maintainer => maintainer.github) || [])).size,
+      contributors: new Set(catalogModules.flatMap(module => module.contributors?.map(contributor => contributor.username) || [])).size,
+      modules: catalogModules.length
+    }
+    let modules = catalogModules
 
     if (category) {
       modules = modules.filter(module => module.category === category)
@@ -114,6 +136,7 @@ OUTPUT: Returns list of modules with name, description, category, and either dow
           website: module.website,
           learn_more: module.learn_more,
           category: module.category,
+          compatibility: module.compatibility,
           url: `https://nuxt.com/modules/${module.name}`
         }
 
@@ -127,7 +150,8 @@ OUTPUT: Returns list of modules with name, description, category, and either dow
           stars: module.stats?.stars
         }
       }),
-      stats: response.stats,
+      stats: catalogStats,
+      version,
       total: totalMatches
     }
   }

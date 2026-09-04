@@ -3,7 +3,7 @@ export const useFilters = (entity: string) => {
   const router = useRouter()
 
   const replaceRoute = (name: string, param: string | { key: string | number }) => {
-    router.replace({
+    return router.replace({
       name: entity,
       query: {
         ...route.query,

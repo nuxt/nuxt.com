@@ -1,6 +1,6 @@
 import type { BadgeProps } from '@nuxt/ui'
 
-interface Version {
+export interface NuxtVersion {
   label: string
   shortTag: 'v5' | 'v4' | 'v3' | 'v2'
   branch: string
@@ -8,14 +8,14 @@ interface Version {
   path: string
   collection?: 'docsv3' | 'docsv4' | 'docsv5'
   /** `unsupported` versions are end of life: no bug fixes, no security patches. */
-  status?: 'prerelease' | 'stable' | 'unsupported'
+  status: 'prerelease' | 'stable' | 'unsupported'
   /** Date the version reached end of life, for `unsupported` versions. */
   endOfLife?: string
   /** Third-party extended support offering, for `unsupported` versions. */
   extendedSupport?: string
 }
 
-const versions: Version[] = [
+export const nuxtVersions: NuxtVersion[] = [
   {
     label: 'Version 5',
     shortTag: 'v5',
@@ -56,7 +56,7 @@ const versions: Version[] = [
   }
 ]
 
-const tagMap: Record<Version['shortTag'], string> = {
+const tagMap: Record<NuxtVersion['shortTag'], string> = {
   v5: '5x',
   v4: '4x',
   v3: '3x',
@@ -84,18 +84,18 @@ export const useDocsVersion = () => {
 
   const version = computed(() => {
     if (route.path.startsWith('/docs/5.x')) {
-      return versions.find(v => v.path === '/docs/5.x')
+      return nuxtVersions.find(v => v.path === '/docs/5.x')
     }
 
     if (route.path.startsWith('/docs/3.x')) {
-      return versions.find(v => v.path === '/docs/3.x')
+      return nuxtVersions.find(v => v.path === '/docs/3.x')
     }
 
     // Default to v4 (current stable)
-    return versions.find(v => v.path === '/docs/4.x')
+    return nuxtVersions.find(v => v.path === '/docs/4.x')
   })
 
-  const items = computed(() => versions.map(v => ({
+  const items = computed(() => nuxtVersions.map(v => ({
     ...v,
     label: v.status === 'unsupported' ? `${v.label} (EOL)` : v.label,
     ...(v.branch === version.value.branch
@@ -113,6 +113,6 @@ export const useDocsVersion = () => {
   return {
     items,
     version,
-    versions
+    versions: nuxtVersions
   }
 }
