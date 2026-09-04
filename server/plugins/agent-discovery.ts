@@ -1,5 +1,6 @@
 import { queryCollection } from '@nuxt/content/server'
 import { rawUrl, getAgentSiteUrl } from '#agent-discovery'
+import { agentWhenToUse } from '#shared/utils/agents'
 import { CURRENT_DOCS_VERSION } from '#shared/utils/docs'
 
 export default defineNitroPlugin((nitroApp) => {
@@ -19,6 +20,9 @@ export default defineNitroPlugin((nitroApp) => {
       .join('\n')
 
     index.body.push(
+      `## When to use this
+
+${agentWhenToUse(domain).join('\n\n')}`,
       `## Features
 
 ${featureBullets}`,

@@ -1,9 +1,15 @@
 import { createResolver } from 'nuxt/kit'
 import { parseMdc } from './helpers/mdc-parser.mjs'
+import { agentWhenToUse } from './shared/utils/agents'
 import { CLI_DOCS_PREFIX, CLI_DOCS_REFS, CLI_DOCS_REPO } from './shared/utils/cli-docs'
 import { CURRENT_DOCS_VERSION, EXCLUDED_DOC_VERSIONS } from './shared/utils/docs'
 
 const { resolve } = createResolver(import.meta.url)
+
+// Canonical origin. `llms.txt` is generated against it whatever host serves the
+// request, so the guidance paragraphs it carries have to be built from the same
+// one. The raw index renders them against the live host instead.
+const SITE_URL = 'https://nuxt.com'
 
 // In `--ui-only` mode (default `pnpm dev`), skip the `eve/nuxt` module so the
 // Eve agent runtime is never spawned locally. The UI and server routes from
@@ -83,7 +89,7 @@ export default defineNuxtConfig({
   css: ['~/assets/css/main.css'],
   site: {
     name: 'Nuxt',
-    url: 'https://nuxt.com',
+    url: SITE_URL,
     description: 'Build fast, production-ready web apps with Vue. File-based routing, auto-imports, and server-side rendering — all configured out of the box.',
     defaultLocale: 'en'
   },
@@ -596,6 +602,12 @@ export default defineNuxtConfig({
         { rel: 'service-doc', href: '/docs', type: 'text/html', anchor: '/docs', title: 'Documentation' }
       ]
     },
+    llms: {
+      // The details section llmstxt.org reserves between the blockquote and the
+      // first `##`: what these docs are the right source for, and how to fetch
+      // them. `/raw/index.md` carries the same paragraphs under a heading.
+      details: agentWhenToUse(SITE_URL)
+    },
     sitemap: {
       markdown: {
         labels: {
@@ -675,7 +687,7 @@ export default defineNuxtConfig({
     }
   },
   llms: {
-    domain: 'https://nuxt.com',
+    domain: SITE_URL,
     title: 'Nuxt Docs',
     description: 'Nuxt is an open source framework that makes web development intuitive and powerful. Create performant and production-grade full-stack web apps and websites with confidence.',
     full: {
