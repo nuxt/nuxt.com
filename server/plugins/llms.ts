@@ -8,8 +8,18 @@ const TRIMMED_SECTIONS = new Set([
   'Nuxt v5 Documentation'
 ])
 
+// nuxt-llms prepends a "Documentation Sets" section for the `full` document, so
+// the guidance is pulled back to the front here: what these docs answer is what
+// an agent should read before any link list.
+const GUIDANCE_SECTION = 'When to use this'
+
 export default defineNitroPlugin((nitroApp) => {
   nitroApp.hooks.hook('llms:generate', (_event, options) => {
     options.sections = options.sections.filter((section: { title: string }) => !TRIMMED_SECTIONS.has(section.title))
+
+    const guidance = options.sections.findIndex((section: { title: string }) => section.title === GUIDANCE_SECTION)
+    if (guidance > 0) {
+      options.sections.unshift(...options.sections.splice(guidance, 1))
+    }
   })
 })
