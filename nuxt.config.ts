@@ -609,7 +609,8 @@ export default defineNuxtConfig({
     },
     llms: {
       // The details section llmstxt.org reserves between the blockquote and the
-      // first `##`. Orientation only: the jobs these docs answer get their own
+      // first `##`, carrying how to fetch the docs: markdown negotiation, the
+      // MCP server, the OpenAPI document. The jobs they answer get their own
       // `## When to use this` section below, where a reader scanning headings
       // will actually find them.
       details: agentHowToCall(SITE_URL)
