@@ -554,6 +554,13 @@ export default defineNuxtConfig({
         ]) {
           file.body = file.body.replaceAll(`/docs/4.x/${path}`, `/docs/5.x/${path}`)
         }
+        // The nightly Nitro Kit page currently links to an upstream page that
+        // does not exist. Keep previews deployable while pointing readers to
+        // the closest stable server compatibility documentation.
+        file.body = file.body.replaceAll(
+          '/docs/4.x/guide/modules/server-compatibility',
+          '/docs/4.x/guide/concepts/server-engine'
+        )
       }
       if (file.id.startsWith('docsv4/')) {
         file.body = file.body.replaceAll(/\(\/docs\/(?!\d\.x)/g, '(/docs/4.x/')
