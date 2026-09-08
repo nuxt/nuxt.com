@@ -24,10 +24,35 @@ Traffic (nuxt.com project — always pass `teamId`/`projectId` via `search_verce
 4. Same aggregate with `by=['referrerHostname'], limit=8` + `by=['country'], limit=5` + `by=['deviceType']` → audience snapshot.
 
 Agent-facing usage (Vercel Observability — the only allowed POST is the read-only `POST /v2/observability/query`):
-- For Nuxt and Nuxt UI separately, query `vercel.request.count` with `aggregation='sum'`, the configured project scope, and `filter="request_path eq '/mcp' and environment eq 'production'"` for the current and previous windows.
-- For Nuxt, also query the current window with `filter="endswith(request_path, '.md') and environment eq 'production'"`, then with `filter="contains(http_accept, 'text/markdown') and environment eq 'production'"`.
-- Query Nuxt discovery/intake traffic with `filter="(request_path eq '/llms.txt' or request_path eq '/llms-full.txt' or request_path eq '/sitemap.md' or request_path eq '/openapi.json' or request_path eq '/.well-known/mcp/server-card.json') and environment eq 'production'"`, grouped by `request_path`.
-- Group the current MCP queries by `client_user_agent` with `limit=5` only after obtaining the exact ungrouped totals. These are HTTP requests, not logical tool calls, sessions, or unique agents.
+- Complete every required query below. A per-call batch or concurrency limit is not a total-query limit: continue with another `call_vercel_endpoint` batch until all required results are collected. Never omit a metric because the first batch is full.
+- Required totals:
+  1. Nuxt `/mcp`, current and previous equal-length windows.
+  2. Nuxt UI `/mcp`, current and previous equal-length windows.
+  3. Nuxt explicit Markdown, current window: `endswith(request_path, '.md') and environment eq 'production'`.
+  4. Nuxt negotiated Markdown, current window: `contains(http_accept, 'text/markdown') and environment eq 'production'`.
+  5. Nuxt discovery/intake, current window: `(request_path eq '/llms.txt' or request_path eq '/llms-full.txt' or request_path eq '/sitemap.md' or request_path eq '/openapi.json' or request_path eq '/.well-known/mcp/server-card.json') and environment eq 'production'`.
+- Required detail queries after the totals:
+  - For **each** MCP project, group the current window by `client_user_agent` (limit 25), then by `request_method` + `http_status` (limit 20).
+  - Group Nuxt explicit Markdown by `request_path` (limit 5).
+  - Group Nuxt discovery/intake by `request_path` (limit 5).
+- Use the ungrouped `summary` as the authoritative total. Do not derive a total by adding grouped rows or timeseries buckets.
+- From the returned user-agent rows, show at most five recognized product rows with their exact counts, then at most three generic HTTP-stack rows, then the empty-user-agent row when present. Do not sum version/integration variants in the model. Never attribute a generic or empty user agent to a named agent.
+- Present exact method/status rows under three labels without category totals or equations: successful POST (`200`, `202`), protocol noise (`GET/HEAD 405`), and POST errors (`4xx/5xx`). Mention another row only when materially large or actionable.
+- A response with `truncated: true` or `truncation.omittedArrayItems` means the tool shortened the returned timeseries; it does **not** prove a source-data gap. Never report those omitted rows as missing traffic. Use the ungrouped summary for totals and comparisons.
+- Only label a real data gap when the API explicitly reports one after truncation is ruled out. Avoid causal claims about rises or falls unless a grouped result supports them.
+- These are HTTP requests, not logical tool calls, sessions, or unique agents.
+
+Agent-facing output contract:
+- Start this section directly with `*Nuxt*`; do not announce completed tasks, batches, or collected data.
+- A successful detail query must be rendered, not merely described as “collected”. The section is incomplete if it omits returned client, method/status, Markdown-path, or discovery-path values.
+- Keep exactly two project blocks in this order: `*Nuxt*`, then `*Nuxt UI*`. Never combine their clients, health, totals, or trends.
+- Under `*Nuxt*`, always render five labeled bullets: *MCP*, *Clients*, *HTTP health*, *Markdown*, and *Discovery*.
+- Under `*Nuxt UI*`, always render three labeled bullets: *MCP*, *Clients*, and *HTTP health*.
+- Every bullet must contain values from the corresponding query. Do not emit placeholders such as “report…”, “see Observability”, “not separately queried”, or “included in the batch”.
+- Replace every `<…>` slot in the output template with returned data or an explicit `unavailable — <concrete error>` value.
+- If a required query failed after retrying, keep its bullet and write `unavailable — <concrete error>`. Do not silently omit it.
+- Keep the section to these eight required bullets plus one short caveat. Do not add per-version arithmetic, speculative attribution (including guesses about empty user agents), query-progress narration, or separators between every bullet.
+- Put caveats and interpretation after both complete project blocks.
 
 Docs feedback:
 5. `admin-mcp__feedback-stats` — `topPages=5`
@@ -68,10 +93,19 @@ AI agent:
 • Countries: US, DE, FR — mostly desktop (~80%)
 
 :satellite: **Agent-facing usage**
-• *Nuxt MCP* — 4.2M HTTP requests (-3% WoW); top clients: undici, Claude Code, Codex
-• *Nuxt UI MCP* — 5.4M HTTP requests (+6% WoW); top clients: Go HTTP, OpenCode, Claude Code
-• *Nuxt Markdown* — 38K explicit `.md` requests + 16K `Accept: text/markdown` requests
-• *Discovery* — report index/server-card requests and the leading discovery path
+*Nuxt*
+• *MCP* — `<current>` HTTP requests (`<delta>` vs `<previous>`)
+• *Clients* — named: `<product + count list>` · generic stacks: `<stack + count list>`
+• *HTTP health* — success: POST 200 `<count>`, POST 202 `<count>` · noise: GET 405 `<count>`, HEAD 405 `<count>` · errors: POST 400 `<count>`, other POST 4xx/5xx `<status + count list>`
+• *Markdown* — `<count>` explicit `.md` · `<count>` negotiated `Accept: text/markdown` (may overlap) · top paths: `<path + count list>`
+• *Discovery* — `<total>` · `<path + count list>`
+
+*Nuxt UI*
+• *MCP* — `<current>` HTTP requests (`<delta>` vs `<previous>`)
+• *Clients* — named: `<product + count list>` · generic stacks: `<stack + count list>`
+• *HTTP health* — success: POST 200 `<count>`, POST 202 `<count>` · noise: GET 405 `<count>`, HEAD 405 `<count>` · errors: POST 400 `<count>`, other POST 4xx/5xx `<status + count list>`
+
+• _Counts are HTTP requests, not tool calls, sessions, or unique agents._
 
 :speech_balloon: **Docs feedback**
 • *12 responses* — 83% positive, avg 4.2/5
