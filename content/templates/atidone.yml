@@ -1,0 +1,5 @@
+name: 'Atidone'
+slug: 'atidone'
+description: 'Full-stack app with authentication and SQL database.'
+repo: 'atinux/atidone'
+demo: 'https://todos.nuxt.dev/'

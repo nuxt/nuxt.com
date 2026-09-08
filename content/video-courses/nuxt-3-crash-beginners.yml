@@ -1,0 +1,7 @@
+name: 'Nuxt 3 — Course for Beginners'
+slug: 'nuxt-3-crash-beginners'
+description: 'Learn how to use Nuxt 3 in this full tutorial for beginners.'
+url: 'https://www.youtube.com/watch?v=fTPCKnZZ2dk'
+screenshotOptions:
+  delay: 1
+  removeElements: ['tp-yt-iron-overlay-backdrop', 'tp-yt-paper-dialog']

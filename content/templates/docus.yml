@@ -1,0 +1,6 @@
+name: 'Docus'
+slug: 'docus'
+description: "Write beautiful docs with Markdown and Vue Components."
+repo: 'nuxt-content/docus'
+demo: 'https://docus.dev'
+featured: true

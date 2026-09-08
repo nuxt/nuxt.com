@@ -1,0 +1,320 @@
+import type { CommandPaletteGroup } from '@nuxt/ui'
+import { createSharedComposable } from '@vueuse/core'
+
+function _useHeaderLinks() {
+  const route = useRoute()
+  const { version } = useDocsVersion()
+
+  const headerLinks = computed(() => {
+    const to = version.value.path
+
+    return [{
+      label: 'Docs',
+      icon: 'i-lucide-book-marked',
+      to,
+      search: false,
+      active: route.path.startsWith(to) || route.path.startsWith(`/deploy`),
+      children: [{
+        label: 'Get Started',
+        description: 'Learn how to get started with Nuxt to build your first app.',
+        icon: 'i-lucide-rocket',
+        to: `${to}/getting-started/installation`,
+        active: route.path.startsWith(`${to}/getting-started`)
+      }, {
+        label: 'Structure',
+        description: 'Learn about the directory structure of a Nuxt project.',
+        icon: 'i-lucide-folder-open',
+        to: `${to}/directory-structure`,
+        active: route.path.startsWith(`${to}/directory-structure`)
+      }, {
+        label: 'Guide',
+        description: 'Get the key concepts, directory structure and best practices.',
+        icon: 'i-lucide-book-open',
+        to: `${to}/guide`,
+        active: route.path.startsWith(`${to}/guide`) && !route.path.startsWith(`${to}/guide/directory-structure`)
+      }, {
+        label: 'API',
+        description: 'Explore the Nuxt components, composables, utilities and more.',
+        icon: 'i-lucide-code-xml',
+        to: `${to}/api`,
+        active: route.path.startsWith(`${to}/api`)
+      }, {
+        label: 'Deploy',
+        description: 'Deploy your Nuxt project anywhere.',
+        icon: 'i-lucide-cloud',
+        to: '/deploy',
+        active: route.path.startsWith('/deploy')
+      }, {
+        label: 'Examples',
+        description: 'Discover and explore official and community examples.',
+        icon: 'i-lucide-app-window-mac',
+        to: `${to}/examples`,
+        active: route.path.startsWith(`${to}/examples`)
+      }, {
+        label: 'Community',
+        description: 'Find answers and support from the community.',
+        icon: 'i-lucide-messages-square',
+        to: `${to}/community`,
+        active: route.path.startsWith(`${to}/community`)
+      }]
+    }, {
+      label: 'Modules',
+      icon: 'i-lucide-puzzle',
+      to: '/modules',
+      description: 'Supercharge your Nuxt project with modules.'
+    }, {
+      label: 'Templates',
+      icon: 'i-lucide-app-window',
+      description: 'Start your next project with a Nuxt template.',
+      to: '/templates'
+    }, {
+      label: 'Resources',
+      icon: 'i-lucide-library',
+      to: '/showcase',
+      search: false,
+      active: route.path.startsWith('/video-courses') || route.path.startsWith('/showcase'),
+      children: [{
+        label: 'Showcase',
+        description: 'Discover and explore projects built with Nuxt.',
+        icon: 'i-lucide-presentation',
+        to: '/showcase'
+      }, {
+        label: 'Video Courses',
+        description: 'Learn Nuxt by watching video courses.',
+        icon: 'i-lucide-graduation-cap',
+        to: '/video-courses'
+      }, {
+        label: 'Nuxt Certification',
+        description: 'Obtain your Certification of Competence.',
+        icon: 'i-lucide-medal',
+        to: 'https://certification.nuxt.com',
+        target: '_blank'
+      }]
+    }, {
+      label: 'Enterprise',
+      icon: 'i-lucide-building-2',
+      to: '/enterprise',
+      search: false,
+      children: [{
+        label: 'Agencies',
+        to: '/enterprise/agencies',
+        description: 'Agencies specialized in Nuxt development.',
+        icon: 'i-lucide-handshake'
+      }, {
+        label: 'Sponsors',
+        to: '/enterprise/sponsors',
+        description: 'Help us sustain Nuxt development.',
+        icon: 'i-lucide-hand-heart'
+      }]
+    }, {
+      label: 'Updates',
+      icon: 'i-lucide-newspaper',
+      search: false,
+      to: '/blog',
+      children: [{
+        label: 'Blog',
+        to: '/blog',
+        description: 'News and updates about Nuxt.',
+        icon: 'i-lucide-newspaper'
+      }, {
+        label: 'Changelog',
+        to: '/changelog',
+        description: 'Latest releases from Nuxt and official modules.',
+        icon: 'i-lucide-history'
+      }]
+    }]
+  })
+
+  return { headerLinks }
+}
+
+export const useHeaderLinks = import.meta.client ? createSharedComposable(_useHeaderLinks) : _useHeaderLinks
+
+const footerLinks = [{
+  label: 'Community',
+  children: [{
+    label: 'Nuxters',
+    to: 'https://nuxters.nuxt.com',
+    target: '_blank'
+  }, {
+    label: 'Team',
+    to: '/team'
+  }, {
+    label: 'Design Kit',
+    to: '/design-kit'
+  }]
+}, {
+  label: 'Explore',
+  children: [{
+    label: 'Templates',
+    to: '/templates'
+  }, {
+    label: 'Showcase',
+    to: '/showcase'
+  }, {
+    label: 'AI Evals',
+    to: '/evals'
+  }]
+}, {
+  label: 'Enterprise',
+  children: [{
+    label: 'Agencies',
+    to: '/enterprise/agencies'
+  }, {
+    label: 'Sponsors',
+    to: '/enterprise/sponsors'
+  }]
+}]
+
+export const useFooterLinks = () => ({ footerLinks })
+
+const _useNavigation = () => {
+  const searchTerm = ref<string>('')
+  const { track } = useAnalytics()
+  const { open: openAgent } = useNuxtAgent()
+
+  const { headerLinks } = useHeaderLinks()
+  const { footerLinks } = useFooterLinks()
+  const { modules, fetchList: fetchModules } = useModules()
+  const { providers, fetchList: fetchHosting } = useHostingProviders()
+  const { articles: blogArticles, fetchList: fetchBlog } = useBlog()
+
+  const searchLinks = computed(() => [{
+    label: 'Ask Nuxi',
+    icon: 'i-custom-nuxi',
+    to: 'javascript:void(0);',
+    onSelect: () => {
+      track('Nuxi Opened', { source: 'search-links' })
+      openAgent()
+    }
+  }, ...headerLinks.value.flatMap((link) => {
+    if (link.search === false) {
+      return (link.children || []).map(child => ({
+        ...child,
+        label: `${link.label} > ${child.label}`
+      }))
+    }
+    return [link]
+  }), {
+    label: 'Team',
+    icon: 'i-lucide-users',
+    to: '/team'
+  }, {
+    label: 'Design Kit',
+    icon: 'i-lucide-palette',
+    to: '/design-kit'
+  }, {
+    label: 'AI Evals',
+    icon: 'i-lucide-brain',
+    to: '/evals'
+  }, {
+    label: 'Newsletter',
+    icon: 'i-lucide-mail',
+    to: '/newsletter'
+  }, {
+    label: 'Source Code',
+    icon: 'i-lucide-code',
+    to: 'https://github.com/nuxt/nuxt.com',
+    target: '_blank'
+  }])
+
+  const modulesItems = computed(() => modules.value.map(module => ({
+    id: `module-${module.name}`,
+    label: module.npm,
+    suffix: module.description,
+    downloads: module.stats?.downloads ?? 0,
+    avatar: {
+      src: moduleImage(module.icon),
+      ui: {
+        root: 'rounded-none bg-transparent'
+      }
+    },
+    to: `/modules/${module.name}`
+  })))
+
+  const hostingItems = computed(() => providers.value.map(hosting => ({
+    id: `hosting-${hosting.path}`,
+    label: hosting.title,
+    suffix: hosting.description,
+    icon: hosting.logoIcon,
+    avatar: hosting.logoSrc
+      ? {
+          src: hosting.logoSrc,
+          ui: {
+            root: 'rounded-none bg-transparent'
+          }
+        }
+      : undefined,
+    to: hosting.path
+  })))
+
+  const blogItems = computed(() => blogArticles.value.map(article => ({
+    id: `blog-${article.path}`,
+    label: article.title,
+    suffix: article.description,
+    icon: 'i-lucide-newspaper',
+    to: article.path
+  })))
+
+  const postFilter = (searchTerm: string, items: any[]) => {
+    if (!searchTerm) {
+      return []
+    }
+    return items
+  }
+
+  const searchGroups = computed<CommandPaletteGroup[]>(() => [{
+    id: 'modules-search',
+    label: 'Modules',
+    items: modulesItems.value,
+    postFilter
+  }, {
+    id: 'hosting-search',
+    label: 'Hosting',
+    items: hostingItems.value,
+    postFilter
+  }, {
+    id: 'blog-search',
+    label: 'Blog',
+    items: blogItems.value,
+    postFilter
+  }, {
+    id: 'ask-ai-search',
+    label: 'AI',
+    ignoreFilter: true,
+    postFilter,
+    items: [{
+      label: 'Ask Nuxi',
+      icon: 'i-custom-nuxi',
+      onSelect() {
+        track('Nuxi Opened', { source: 'search-palette', query: searchTerm.value })
+        openAgent(searchTerm.value)
+      }
+    }]
+  }])
+
+  const { open: searchOpen } = useContentSearch()
+  watch(searchOpen, (value) => {
+    if (value) {
+      fetchModules()
+      fetchHosting()
+      fetchBlog()
+    }
+  })
+
+  watchDebounced(searchTerm, (term) => {
+    if (term) {
+      track('Search Performed', { term })
+    }
+  }, { debounce: 500 })
+
+  return {
+    searchTerm,
+    headerLinks,
+    footerLinks,
+    searchLinks,
+    searchGroups
+  }
+}
+
+export const useNavigation = import.meta.client ? createSharedComposable(_useNavigation) : _useNavigation

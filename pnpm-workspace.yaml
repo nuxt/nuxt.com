@@ -1,0 +1,31 @@
+shamefullyHoist: true
+strictPeerDependencies: false
+
+overrides:
+  nostics: ^1.2.0
+  # chat@4.34.0 pins the 4.1.0-beta.2 prerelease, flagged as a downgrade by check-provenance
+  "@workflow/serde": 4.1.2
+
+allowBuilds:
+  better-sqlite3: false
+  esbuild: true
+  rolldown: true
+  sharp: true
+  "@parcel/watcher": false
+  maplibre-gl: false
+  puppeteer: false
+  unrs-resolver: false
+  vue-demi: false
+  zlib-sync: true
+
+minimumReleaseAgeExclude:
+  - eve@0.24.3 || 0.27.0 || 0.40.0
+  - evlog
+  - '@nuxt/*'
+  - nuxt
+  - nuxt-nightly
+  - vue
+  - '@vue/*'
+  - '@nuxtjs/mdc@0.23.1'
+  - nuxt-agent-discovery@0.5.0
+

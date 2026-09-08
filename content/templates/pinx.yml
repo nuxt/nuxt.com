@@ -1,0 +1,6 @@
+name: 'Pinx Admin Template'
+slug: 'pinx'
+description: 'Admin template built with Nuxt, developer friendly and designed with Naive UI and Tailwind CSS.'
+demo: 'https://pinx.vercel.app/'
+purchase: 'https://1.envato.market/pinx'
+badge: 'Premium'

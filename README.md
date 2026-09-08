@@ -1,50 +1,53 @@
-<a href="https://nuxt.com"><img width="1200" alt="Nuxt Website" src="https://github.com/nuxt/nuxt.com/assets/904724/22772d8b-4fff-4cf9-a592-85c5ff5d6d58"></a>
+<a href="https://nuxt.com"><img width="1200" alt="Nuxt Website" src="./public/website.jpg"></a>
+
+[![Install in Cursor](https://nuxt.com/mcp/badge.svg)](https://nuxt.com/mcp/deeplink)
+[![Install in VSCode](https://nuxt.com/mcp/badge.svg?ide=vscode)](https://nuxt.com/mcp/deeplink?ide=vscode)
 
 # nuxt.com
 
 Welcome to the Nuxt website repository available on [nuxt.com](https://nuxt.com).
 
-[![Nuxt UI Pro](https://img.shields.io/badge/Made%20with-Nuxt%20UI%20Pro-00DC82?logo=nuxt.js&labelColor=020420)](https://ui.nuxt.com/pro)
+[![Nuxt UI](https://img.shields.io/badge/Made%20with-Nuxt%20UI-00DC82?logo=nuxt.js&labelColor=020420)](https://ui.nuxt.com)
+[![nuxt.care](https://img.shields.io/badge/Health%20by-nuxt.care-84cc16?labelColor=020420)](https://nuxt.care)
 
-## Setup
+## Quickstart
 
-Make sure to install the dependencies
+No environment variables are required — the site runs out of the box:
 
 ```bash
+corepack enable
 pnpm install
+pnpm dev
 ```
 
-Copy the `.env.example` file to `.env`:
+In this default mode (`--ui-only`):
 
-```bash
-cp .env.example .env
-```
+- The docs are cloned from the public [nuxt/nuxt](https://github.com/nuxt/nuxt) and [nuxt/examples](https://github.com/nuxt/examples) repositories.
+- Ecosystem APIs (`/api/v1/**` — modules, templates, etc.) are proxied to nuxt.com.
+- The Nuxi agent is visible but disabled: the Eve runtime is not spawned, so no AI keys are needed.
 
-Clone/Fork [nuxt/nuxt](https://github.com/nuxt/nuxt) repo where you want (but not in the Nuxt.com project) and inside the `docs/` directory, run:
+## Development modes
 
-```bash
-pwd
-```
+| Command | What it does |
+|---------|--------------|
+| `pnpm dev` | UI-only mode — zero config, no Eve agent, ecosystem APIs proxied to nuxt.com |
+| `pnpm dev:nuxi` | UI-only mode + the Nuxi agent — spawns the Eve runtime (needs `AI_GATEWAY_API_KEY` and `INTERNAL_API_SECRET`) |
+| `pnpm nuxi` | Eve TUI only — `layers/nuxi`'s `dev` script (`eve dev`) |
+| `pnpm dev:full` | Full mode — spawns the Eve agent runtime and fetches the Nuxt ecosystem locally |
 
-If you are on Windows, you can use the following command instead:
+`pnpm dev:full` requires some environment variables (see [`.env.example`](./.env.example), notably `AI_GATEWAY_API_KEY` for the agent). All variables in `.env.example` are optional and grouped by feature — only set what you need.
 
-```bash
-echo %cd%
-```
+### Working on the docs
 
-Copy the output of the command above and paste it in the `NUXT_DOCS_PATH` variable in the `.env` file.
+The docs live in the [nuxt/nuxt](https://github.com/nuxt/nuxt) repository. To edit them locally, clone/fork the repo somewhere outside this project and point the `NUXT_V3_PATH` / `NUXT_V4_PATH` / `NUXT_V5_PATH` variables in your `.env` to your local checkout (use `pwd` — or `echo %cd%` on Windows — inside the clone to get the path). Same goes for `NUXT_EXAMPLES_PATH` with [nuxt/examples](https://github.com/nuxt/examples).
 
-## Development
+### Signing in locally
 
-Start the development server:
-
-```bash
-npm run dev
-```
+Sign-in (dashboard, chat history) needs a GitHub OAuth app: create one at [github.com/settings/applications/new](https://github.com/settings/applications/new) with `http://localhost:3000/api/auth/github` as the callback URL, then set `NUXT_OAUTH_GITHUB_CLIENT_ID` and `NUXT_OAUTH_GITHUB_CLIENT_SECRET` in your `.env`.
 
 ### Add a Nuxt Template
 
-To list a Nuxt template, add it to the list on [./content/4.templates.yml](./content/4.templates.yml).
+To list a Nuxt template, add a file in the [./content/templates](./content/templates) directory.
 
 Make sure to start the development server in order to generate the screenshot for the template and go to http://localhost:3000/templates to see the result.
 
@@ -54,15 +57,60 @@ To regenerate the image, delete the generated one in `public/assets/templates`.
 
 ## Production
 
-In order to build the application for production, you need to have a [Nuxt UI Pro](https://ui.nuxt.com/pro) license and set the `NUXT_UI_PRO_LICENSE` variable in the `.env` file.
-
-Note that this is not required to run in development and contribute to the Nuxt website or documentation.
-
 Build the application for production:
 
 ```bash
-npm run generate
+pnpm generate
 ```
+
+### Running Evals for the MCP Server
+
+To run the evals for the MCP server, follow these steps:
+
+1. **Ensure your development server is running**  
+   Start the local Nuxt development server:
+   ```bash
+   pnpm dev
+   ```
+
+2. **Create an AI Gateway API key**  
+   Go to https://vercel.com/ai-gateway and create an API key.
+   Add the following variable to your `.env` file (replace `sk-...` with your actual key):
+   ```
+   AI_GATEWAY_API_KEY=<you-api-key>
+   ```
+
+3. **Run the evals**  
+   You can execute the evals from the command line:
+   ```bash
+   pnpm eval
+   ```
+
+   Or launch the interactive UI to run them via a web interface:
+   ```bash
+   pnpm eval:ui
+   ```
+
+## Nuxi (Eve agent)
+
+Nuxi lives in [`layers/nuxi/`](./layers/nuxi/) — Eve runtime (`agent/`), UI, and internal APIs in one layer. The agent only runs with `pnpm dev:full` (in the default `pnpm dev` ui-only mode, the Eve runtime is not spawned and the chat UI shows a disabled state). For local development:
+
+```bash
+# Required — Vercel AI Gateway key for the agent model
+AI_GATEWAY_API_KEY=<your-api-key>
+
+# Required — shared secret between the Nuxt app and Eve runtime
+INTERNAL_API_SECRET=$(openssl rand -base64 32)
+
+# Optional — canonical site URL for MCP + internal API callbacks
+NUXT_PUBLIC_SITE_URL=http://localhost:3000
+
+pnpm dev:nuxi
+```
+
+Eve TUI only (no Nuxt UI): `pnpm nuxi`. Symlink the root `.env` / `.env.local` into `layers/nuxi` so Eve picks them up. Set `NUXI_CLI_ADMIN=1` for admin tools (ignored when `VERCEL_ENV=production`). For **web chat** admin without being on the Nuxt core team, set `NUXT_ADMIN_GITHUB_LOGINS=your-github-login` and sign in with GitHub (also ignored in production — use Global Config `admin.githubLogins` there). Point at a running site with `pnpm nuxi -- http://localhost:3000`.
+
+On Vercel, configure **both** the `web` and `eve` services (`vercel.json`) with the same `INTERNAL_API_SECRET`, `AI_GATEWAY_API_KEY`, and database env vars.
 
 ## License
 

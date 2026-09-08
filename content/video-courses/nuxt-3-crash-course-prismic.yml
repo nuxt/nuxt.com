@@ -1,0 +1,7 @@
+name: 'Nuxt 3 — Crash Course'
+slug: 'nuxt-3-crash-course-prismic'
+description: 'Unleash the power of Prismic as a Headless Website Builder alongside Nuxt.'
+url: 'https://www.youtube.com/watch?v=8GmfcbuYOWE'
+screenshotOptions:
+  delay: 1
+  removeElements: ['tp-yt-iron-overlay-backdrop', 'tp-yt-paper-dialog']

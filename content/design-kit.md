@@ -1,17 +1,21 @@
 ---
 title: Design Kit
+head.title: Nuxt Design Kit
 head.description: Get the Nuxt assets such as Logo, Typography and Colors.
 description: Welcome to Nuxt design definition page. Identity was redefined by handpicking conscientiously colors, and shapes in order to express how easy & joyful Nuxt products are.
-navigation.icon: 'i-ph-palette'
+navigation.icon: 'i-lucide-palette'
 links:
   - label: 'Nuxt Brand Kit'
     size: 'lg'
     to: 'https://www.figma.com/community/file/1296154408275753939/nuxt-brand-kit'
-    icon: 'i-simple-icons-figma'
+    icon: 'i-logos-figma'
+    trailingIcon: 'i-lucide-arrow-up-right'
     download: true
-    color: 'white'
+    color: 'neutral'
     target: '_blank'
 ---
+
+For machine-readable design tokens (colors, typography, spacing, components), see [/design.md](/design.md){external}.
 
 ## Logo History
 

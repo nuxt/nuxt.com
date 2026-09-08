@@ -1,0 +1,160 @@
+import { timingSafeEqual } from 'node:crypto'
+import type { ScheduleHandlerArgs } from 'eve/schedules'
+import slack from '../../channels/slack.js'
+import { discordDigestChannelId } from '../discord/access.js'
+import { digestSlackChannelRef, resolveSlackChannelRef } from '../slack/api.js'
+import { loadWorkflowConfig } from './config.js'
+
+const DEFAULT_SINCE_DAYS = 7
+
+/** Eve schedule app principal — same shape as `appAuth` in schedule handlers. */
+export const scheduleAppAuth = {
+  authenticator: 'app',
+  principalId: 'eve:app',
+  principalType: 'runtime'
+} as const satisfies ScheduleHandlerArgs['appAuth']
+
+/** `workflow.sinceDays` in Global Config (see `config.ts`); unset/invalid falls back to a week. */
+export async function defaultSinceDays(): Promise<number> {
+  const config = await loadWorkflowConfig()
+  const raw = config.sinceDays
+  if (typeof raw !== 'number' || !Number.isFinite(raw) || raw < 1) return DEFAULT_SINCE_DAYS
+  return Math.min(raw, 365)
+}
+
+export type ParseWindowResult
+  = | { ok: true, value: number | undefined }
+    | { ok: false, error: string }
+
+export function parseSinceDays(value: string | null | undefined): ParseWindowResult {
+  if (!value?.trim()) return { ok: true, value: undefined }
+  const parsed = Number.parseInt(value, 10)
+  if (!Number.isFinite(parsed) || parsed < 1) {
+    return { ok: false, error: 'sinceDays must be a positive integer' }
+  }
+  return { ok: true, value: Math.min(parsed, 365) }
+}
+
+/**
+ * `override` (e.g. a manual `?sinceDays=` trigger) wins, then `fallback` if a
+ * caller passes one, then `workflow.sinceDays` in Global Config. Only pass
+ * `fallback` when a workflow needs a default unrelated to that shared knob —
+ * a hardcoded fallback here always wins over `??` and Global Config is never read.
+ */
+export async function resolveSinceDays(
+  override: number | undefined,
+  fallback?: number
+): Promise<number> {
+  return override ?? fallback ?? await defaultSinceDays()
+}
+
+/**
+ * Starts a Slack digest session and, when `discord.digestChannel` is
+ * configured in Global Config, mirrors the same generated text to Discord
+ * (see `discord/digest-mirror.ts` — no second agent run). Awaited inline rather than
+ * fired under a nested `waitUntil`: this whole function already runs inside
+ * the caller's top-level `waitUntil(runWeeklyDigest(...))`, and a second,
+ * deeply-nested `waitUntil` call turned out not to reliably survive the
+ * schedule's durable step execution (Discord mirror silently never ran,
+ * no error logged). Awaiting here keeps the mirror inside that same
+ * protected async chain instead of relying on a second background task.
+ */
+export async function sendToSlack({
+  to,
+  appAuth,
+  message,
+  channelRef
+}: {
+  to: ScheduleHandlerArgs['to']
+  appAuth: ScheduleHandlerArgs['appAuth']
+  message: string
+  channelRef?: string
+}) {
+  const resolved = await resolveSlackChannelRef(channelRef ?? await digestSlackChannelRef())
+
+  const session = await to(slack, { channelId: resolved.id }).send(message, { auth: appAuth })
+
+  const discordChannelId = await discordDigestChannelId()
+  if (discordChannelId) {
+    // Dynamic import: keep Slack digest schedules loadable without Discord env.
+    const { mirrorDigestToDiscord } = await import('../discord/digest-mirror.js')
+    await mirrorDigestToDiscord({ session, channelId: discordChannelId })
+  }
+
+  return session
+}
+
+/** Force-enable manual ops triggers on production via `workflow.manualTrigger` in Global Config; always allowed on preview. */
+export async function isManualWorkflowTriggerAllowed(): Promise<boolean> {
+  if (process.env.VERCEL_ENV === 'preview') return true
+  const config = await loadWorkflowConfig()
+  return config.manualTrigger === true
+}
+
+function safeBearerMatch(provided: string, expected: string): boolean {
+  const a = Buffer.from(provided)
+  const b = Buffer.from(expected)
+  if (a.length !== b.length) return false
+  return timingSafeEqual(a, b)
+}
+
+export function verifyWorkflowTriggerAuth(req: Request): boolean {
+  const authorization = req.headers.get('authorization')?.trim()
+  if (!authorization?.toLowerCase().startsWith('bearer ')) return false
+  const token = authorization.slice('Bearer '.length).trim()
+  if (!token) return false
+
+  const internalSecret = process.env.INTERNAL_API_SECRET?.trim()
+  if (internalSecret && safeBearerMatch(token, internalSecret)) return true
+
+  const adminToken = process.env.NUXT_MCP_ADMIN_TOKEN?.trim()
+  if (adminToken && safeBearerMatch(token, adminToken)) return true
+
+  return false
+}
+
+export function parseSinceHours(value: string | null | undefined): ParseWindowResult {
+  if (!value?.trim()) return { ok: true, value: undefined }
+  const parsed = Number.parseInt(value, 10)
+  if (!Number.isFinite(parsed) || parsed < 1) {
+    return { ok: false, error: 'sinceHours must be a positive integer' }
+  }
+  return { ok: true, value: Math.min(parsed, 168) }
+}
+
+const SLACK_WORKFLOW_DELIVERY = `Your text reply is posted verbatim to this Slack channel by Eve — there is no Slack post tool and you do not need one. Output only the formatted summary from the skill. Never say you cannot post, never mention missing tools, never ask anyone to copy-paste, and never add a "Note:" about delivery.`
+
+/** Opening line of every scheduled workflow prompt, and the only trace of which skill ran. */
+function loadSkillDirective(skillId: string): string {
+  return `Load the \`${skillId}\` skill and follow it`
+}
+
+const LOAD_SKILL_RE = /Load the `([a-z0-9-]+)` skill and follow it/
+
+/**
+ * Recovers the skill id from a prompt built above, so `nuxiGatewayTags` can bill
+ * a scheduled run to its workflow. Kept next to the builders on purpose:
+ * rewording one without the other would silently stop tagging spend.
+ */
+export function workflowSkillId(message: string): string | undefined {
+  return LOAD_SKILL_RE.exec(message)?.[1]
+}
+
+/** Prompt prefix shared by scheduled Slack workflows. */
+export function skillWorkflowMessage(skillId: string, sinceDays: number): string {
+  return `${loadSkillDirective(skillId)} for the last ${sinceDays} days.
+
+${SLACK_WORKFLOW_DELIVERY}`
+}
+
+export function skillFirehoseWorkflowMessage(
+  skillId: string,
+  sinceHours: number,
+  firehoseChannelName: string
+): string {
+  return `${loadSkillDirective(skillId)} for the last ${sinceHours} hours.
+
+Use \`read_slack_channel_history\` on channel \`${firehoseChannelName}\` with sinceHours=${sinceHours}.
+
+${SLACK_WORKFLOW_DELIVERY}`
+}

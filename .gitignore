@@ -1,15 +1,19 @@
 node_modules
+.pnpm-store
 *.log
 .nuxt
 nuxt.d.ts
 dist
 .output
 .env
+.env.local
 .DS_STORE
 .history
 .cache
 .data
 .eslintcache
+.eve
+.workflow-data
 
 # Local Netlify folder
 .netlify
@@ -18,3 +22,9 @@ dist
 # Local editor
 *.code-workspace
 .idea/
+
+.wrangler
+test-results/
+.env*.local
+.env*
+!.env.example

@@ -1,0 +1,6 @@
+name: 'Movies'
+slug: 'movies'
+description: 'A TMDB client built with Nuxt and View Transitions.'
+repo: 'nuxt/movies'
+featured: true
+demo: 'https://movies.nuxt.space'
