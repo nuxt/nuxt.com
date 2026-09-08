@@ -3,7 +3,7 @@ import { createMemoryState } from '@chat-adapter/state-memory'
 import { createRedisState } from '@chat-adapter/state-redis'
 import type { UserContent } from 'ai'
 import type { Message, MessageContext, Thread } from 'chat'
-import { defineChannel } from 'eve/channels'
+import { defineChannel, POST } from 'eve/channels'
 import {
   chatSdkChannel,
   isNotImplemented,
@@ -319,7 +319,14 @@ const discordBridge: DiscordBridge | null = isDiscordConfigured()
 
 export const bot = discordBridge?.bot ?? null
 export const send = discordBridge?.send ?? null
-export const channel = discordBridge?.channel ?? defineChannel({ routes: [] })
+export const channel = discordBridge?.channel ?? defineChannel({
+  routes: [
+    POST('/eve/v1/discord', () => Response.json(
+      { error: 'Discord is not configured' },
+      { status: 503 }
+    ))
+  ]
+})
 
 /**
  * Post already-converted Discord markdown to a channel (no thread), skipping
