@@ -135,7 +135,7 @@ Single Monday digest: traffic (trend, top sections, referrers/audience), docs fe
 - Skill: `agent/skills/weekly-digest/SKILL.md`
 - Preview trigger: `POST /eve/v1/ops/weekly-digest/trigger`
 - Browser traffic via `vercel-mcp__search_vercel_endpoints` + `vercel-mcp__call_vercel_endpoint` (`GET /v1/query/web-analytics/visits/count` and `…/aggregate`).
-- MCP and agent-facing traffic via the read-only `POST /v2/observability/query` using `vercel.request.count`: Nuxt/Nuxt UI `/mcp`, explicit `.md` URLs, `Accept: text/markdown`, and discovery endpoints such as `/llms.txt`. The reusable ad-hoc recipe is in `agent/skills/ecosystem-usage/SKILL.md`.
+- MCP and agent-facing traffic via the read-only `POST /v2/observability/query` using `vercel.request.count`: Nuxt and Nuxt UI each report `/mcp`, explicit `.md` URLs, `Accept: text/markdown`, and discovery endpoints such as `/llms.txt`. The reusable ad-hoc recipe is in `agent/skills/ecosystem-usage/SKILL.md`.
 - Spend via `ai_gateway__report` (scoped to `app:nuxi` tags and/or `AI_GATEWAY_REPORT_API_KEY_NAME` — never account-wide); runs via `vercel-mcp__list_agent_runs`.
 
 ### Firehose summary

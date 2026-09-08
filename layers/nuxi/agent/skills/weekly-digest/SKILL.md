@@ -28,15 +28,16 @@ Agent-facing usage (Vercel Observability — the only allowed POST is the read-o
 - Required totals:
   1. Nuxt `/mcp`, current and previous equal-length windows.
   2. Nuxt UI `/mcp`, current and previous equal-length windows.
-  3. Nuxt explicit Markdown, current window: `endswith(request_path, '.md') and environment eq 'production'`.
-  4. Nuxt negotiated Markdown, current window: `contains(http_accept, 'text/markdown') and environment eq 'production'`.
-  5. Nuxt discovery/intake, current window: `(request_path eq '/llms.txt' or request_path eq '/llms-full.txt' or request_path eq '/sitemap.md' or request_path eq '/openapi.json' or request_path eq '/.well-known/mcp/server-card.json') and environment eq 'production'`.
+  3. For **each** project, explicit Markdown in the current window: `endswith(request_path, '.md') and environment eq 'production'`.
+  4. For **each** project, negotiated Markdown in the current window: `contains(http_accept, 'text/markdown') and environment eq 'production'`.
+  5. For **each** project, discovery/intake in the current window: `(request_path eq '/llms.txt' or request_path eq '/llms-full.txt' or request_path eq '/sitemap.md' or request_path eq '/openapi.json' or request_path eq '/.well-known/mcp/server-card.json') and environment eq 'production'`.
 - Required detail queries after the totals:
   - For **each** MCP project, group the current window by `client_user_agent` (limit 25), then by `request_method` + `http_status` (limit 20).
-  - Group Nuxt explicit Markdown by `request_path` (limit 5).
-  - Group Nuxt discovery/intake by `request_path` (limit 5).
+  - For **each** project, group explicit Markdown by `request_path` (limit 5).
+  - For **each** project, group discovery/intake by `request_path` (limit 5).
 - Use the ungrouped `summary` as the authoritative total. Do not derive a total by adding grouped rows or timeseries buckets.
 - From the returned user-agent rows, show at most five recognized product rows with their exact counts, then at most three generic HTTP-stack rows, then the empty-user-agent row when present. Do not sum version/integration variants in the model. Never attribute a generic or empty user agent to a named agent.
+- Treat `claude-code`, `codex-mcp-client`, `Cursor`, `opencode`, and `WorkBuddy` as named product rows. Generic stacks include `undici`, `node`, `Go-http-client`, `python-httpx`, and similar libraries. If the named-product cap is full, omit additional named rows; never move them into the generic list.
 - Present exact method/status rows under three labels without category totals or equations: successful POST (`200`, `202`), protocol noise (`GET/HEAD 405`), and POST errors (`4xx/5xx`). Mention another row only when materially large or actionable.
 - A response with `truncated: true` or `truncation.omittedArrayItems` means the tool shortened the returned timeseries; it does **not** prove a source-data gap. Never report those omitted rows as missing traffic. Use the ungrouped summary for totals and comparisons.
 - Only label a real data gap when the API explicitly reports one after truncation is ruled out. Avoid causal claims about rises or falls unless a grouped result supports them.
@@ -46,13 +47,15 @@ Agent-facing output contract:
 - Start this section directly with `*Nuxt*`; do not announce completed tasks, batches, or collected data.
 - A successful detail query must be rendered, not merely described as “collected”. The section is incomplete if it omits returned client, method/status, Markdown-path, or discovery-path values.
 - Keep exactly two project blocks in this order: `*Nuxt*`, then `*Nuxt UI*`. Never combine their clients, health, totals, or trends.
-- Under `*Nuxt*`, always render five labeled bullets: *MCP*, *Clients*, *HTTP health*, *Markdown*, and *Discovery*.
-- Under `*Nuxt UI*`, always render three labeled bullets: *MCP*, *Clients*, and *HTTP health*.
+- Under both `*Nuxt*` and `*Nuxt UI*`, always render five labeled bullets: *MCP*, *Clients*, *HTTP health*, *Markdown*, and *Discovery*.
 - Every bullet must contain values from the corresponding query. Do not emit placeholders such as “report…”, “see Observability”, “not separately queried”, or “included in the batch”.
 - Replace every `<…>` slot in the output template with returned data or an explicit `unavailable — <concrete error>` value.
 - If a required query failed after retrying, keep its bullet and write `unavailable — <concrete error>`. Do not silently omit it.
-- Keep the section to these eight required bullets plus one short caveat. Do not add per-version arithmetic, speculative attribution (including guesses about empty user agents), query-progress narration, or separators between every bullet.
-- Put caveats and interpretation after both complete project blocks.
+- After both complete project blocks, add `:mag: **What stands out**` with up to three concise observations. Each observation must cite the specific returned value or comparison that supports it. Prefer meaningful cross-project differences, changes, errors, or top returned paths; skip weak observations instead of filling space.
+- Top-N grouped rows are partial. Describe them as “top returned paths/clients”; never claim they represent all or most traffic unless their displayed counts are compared with the authoritative total and actually support that share.
+- HTTP request volume does not establish demand, adoption, unique agents, or intentional workflow behavior. Avoid claims such as “structurally higher”, “confirms agents are…”, “working as designed”, or “growing” unless the queried data directly establishes them across a sufficient period.
+- Keep factual bullets compact. Do not add per-version arithmetic, speculative attribution (including guesses about empty user agents), query-progress narration, or separators between every bullet.
+- Put interpretation and one short caveat after both complete project blocks.
 
 Docs feedback:
 5. `admin-mcp__feedback-stats` — `topPages=5`
@@ -104,6 +107,11 @@ AI agent:
 • *MCP* — `<current>` HTTP requests (`<delta>` vs `<previous>`)
 • *Clients* — named: `<product + count list>` · generic stacks: `<stack + count list>`
 • *HTTP health* — success: POST 200 `<count>`, POST 202 `<count>` · noise: GET 405 `<count>`, HEAD 405 `<count>` · errors: POST 400 `<count>`, other POST 4xx/5xx `<status + count list>`
+• *Markdown* — `<count>` explicit `.md` · `<count>` negotiated `Accept: text/markdown` (may overlap) · top paths: `<path + count list>`
+• *Discovery* — `<total>` · `<path + count list>`
+
+:mag: **What stands out**
+• `<up to three evidence-backed observations; omit this bullet rather than inventing one>`
 
 • _Counts are HTTP requests, not tool calls, sessions, or unique agents._
 
@@ -124,11 +132,13 @@ AI agent:
 3. :large_green_circle: *infra* — confirm WoW traffic dip is seasonal — <https://vercel.com/nuxt-js/nuxt/analytics|analytics>
 
 Rules:
-- If a section has zero data, say so in one bullet with a likely cause — do not skip the section.
+- If a section has zero data, say so in one bullet. Give a cause only when a tool result establishes it; otherwise say no data was returned.
 - **Fix this week** must have exactly 3 items when there is anything to improve; if truly quiet, 1–2 items with ":large_green_circle: *all clear*" is fine.
 - Rank **Fix this week** by traffic × bad feedback (and agent quality issues) — a bad score on a high-traffic page outranks the same score on a rarely-visited one.
 - Never list a page or chat without its `<url|label>` link.
 - Never invent traffic, run, or cost numbers — if a tool call fails or returns nothing attributable, say so instead of guessing.
 - Do not duplicate the same page in both **Docs feedback** and **Fix this week** as a long write-up; feedback states the problem, Fix this week owns the action.
+- For a section-only request, return the rendered section itself. Never replace it with query coverage, compliance notes, completed-task counts, or a description of the data collected.
+- Before sending an Agent-facing usage section, verify that both project headings and all ten required factual bullets are present. If not, rewrite it before responding.
 
 <!-- Format aligned with server/mcp/prompts/admin/weekly-digest.ts for Cursor/IDE admin MCP. -->
