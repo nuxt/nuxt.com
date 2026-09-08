@@ -16,7 +16,7 @@ Use `vercel-mcp__search_vercel_endpoints` to discover `POST /v2/observability/qu
   - `projectIds`: one configured project id, Nuxt or Nuxt UI
 - Always filter to `environment eq 'production'`.
 - Use ISO UTC timestamps for `startTime` and `endTime`.
-- Query the requested window and the immediately preceding equal-length window when a trend or comparison is useful.
+- Because the Results block includes a change, always query the requested window and the immediately preceding equal-length window with the same scope and filter.
 
 ## Query recipes
 
@@ -69,6 +69,7 @@ Every completed response must contain a **Results** block before commentary. A c
 
 - Include the exact requested time window.
 - Include every requested metric and its HTTP request count.
+- Populate each change from the queried preceding equal-length window. If that query was not performed or failed, write `change unavailable — <concrete reason>` instead of calculating or implying a delta.
 - On a follow-up asking for numbers, render the Results block again from the latest successful query instead of relying on an earlier reply.
 - If a required query failed, show that metric as unavailable beside the successful totals and give the concrete error in one line.
 - Put progress, task counts, warnings, interpretation, and recommendations after the Results block.

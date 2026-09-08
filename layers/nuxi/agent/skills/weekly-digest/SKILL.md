@@ -52,8 +52,8 @@ Agent-facing output contract:
 - Replace every `<…>` slot in the output template with returned data or an explicit `unavailable — <concrete error>` value.
 - If a required query failed after retrying, keep its bullet and write `unavailable — <concrete error>`. Do not silently omit it.
 - In *Clients*, show at most three distinct named products using the selected exact rows. Omit additional version variants, generic stacks, and empty-user-agent counts unless one is itself the evidence for a notable observation.
-- In *Content*, show the three totals (explicit Markdown, negotiated Markdown, discovery), plus exactly one leading Markdown path and one leading discovery path when returned. Shorten each displayed path to its meaningful final filename or section; never print a long raw path.
-- In *Health*, show POST 200, POST 400, and GET 405. Add one other status only when it accounts for at least 1% of that project's MCP total.
+- In *Content*, show the three totals (explicit Markdown, negotiated Markdown, discovery), plus exactly one leading Markdown path and one leading discovery path when returned. For each displayed path, take only the final non-empty segment, keep at most 60 characters, replace every character outside `[A-Za-z0-9._-]` with `-`, and wrap the result in backticks. Never insert the raw request path or allow `<`, `>`, `&`, `@`, `|`, backticks, or other Slack mrkdwn control characters into the label.
+- In *Health*, render every returned row in these classes: successful POST (`200`, `202`), protocol noise (`GET/HEAD 405`), and POST errors (`4xx/5xx`). Keep exact rows separate rather than calculating category totals; write `none returned` for an empty class.
 - After both complete project blocks, optionally add `:mag: **What stands out**` with at most one observation of at most 20 words. Cite returned values directly; do not calculate new differences or rates, show equations, recommend actions, or add causal explanations. Omit the heading when nothing is clearly notable.
 - Top-N grouped rows are partial. Describe them as “top returned paths/clients”; never claim they represent all or most traffic unless their displayed counts are compared with the authoritative total and actually support that share.
 - HTTP request volume does not establish demand, adoption, unique agents, or intentional workflow behavior. Avoid claims such as “structurally higher”, “confirms agents are…”, “working as designed”, or “growing” unless the queried data directly establishes them across a sufficient period.
@@ -104,13 +104,13 @@ AI agent:
 • *MCP* — `<current>` HTTP requests (`<delta>` vs `<previous>`)
 • *Clients* — `<up to three named client rows>`
 • *Content* — `.md` `<count>` (top: `<short path + count>`) · negotiated `<count>` · discovery `<count>` (top: `<short path + count>`)
-• *Health* — POST 200 `<count>` · POST 400 `<count>` · GET 405 `<count>` `<optional material status>`
+• *Health* — success: POST 200 `<count>`, 202 `<count>` · noise: GET 405 `<count>`, HEAD 405 `<count>` · errors: `<all POST 4xx/5xx rows, or none returned>`
 
 *Nuxt UI*
 • *MCP* — `<current>` HTTP requests (`<delta>` vs `<previous>`)
 • *Clients* — `<up to three named client rows>`
 • *Content* — `.md` `<count>` (top: `<short path + count>`) · negotiated `<count>` · discovery `<count>` (top: `<short path + count>`)
-• *Health* — POST 200 `<count>` · POST 400 `<count>` · GET 405 `<count>` `<optional material status>`
+• *Health* — success: POST 200 `<count>`, 202 `<count>` · noise: GET 405 `<count>`, HEAD 405 `<count>` · errors: `<all POST 4xx/5xx rows, or none returned>`
 
 :mag: **What stands out**
 • `<one evidence-backed observation of at most 20 words; omit this heading and bullet rather than inventing one>`
