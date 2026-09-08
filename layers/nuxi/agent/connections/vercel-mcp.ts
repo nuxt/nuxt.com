@@ -37,10 +37,10 @@ export const VERCEL_MCP_INSTRUCTIONS = VERCEL_TEAM_ID && VERCEL_PROJECT_ID
   ? `**Vercel MCP connection (\`vercel-mcp__*\`, admin/Slack/schedule only) — read-only, use judiciously:**
 - Discover exact schemas via \`connection_search\`, then call \`vercel-mcp__<tool>\`.
 - Catalog: \`search_vercel_endpoints\` then \`call_vercel_endpoint\` with the returned endpoint id. **GET only** — never buy/deploy/mutate through this connection.
-- Pre-scoped to the \`nuxt-js\` team / \`nuxt\` website project — \`teamId=${VERCEL_TEAM_ID}\`, \`projectId=${VERCEL_PROJECT_ID}\`. Pass both on every call.
+- Pre-scoped to the \`nuxt-js\` team (\`teamId=${VERCEL_TEAM_ID}\`). For website analytics/runtime only, also pass \`projectId=${VERCEL_PROJECT_ID}\` (the \`nuxt\` site).
 - Traffic (production Web Analytics): \`GET /v1/query/web-analytics/visits/count\` for one total (\`visitors\` / \`pageviews\`); \`GET /v1/query/web-analytics/visits/aggregate\` for grouped rows (\`by\` + \`since\` + \`until\` required). Custom events: \`…/events/count\` and \`…/events/aggregate\`. \`filter\` is OData, e.g. \`requestPath eq '/docs'\`.
 - Runtime: \`get_runtime_errors\` first, then \`get_runtime_logs\`.
-- Nuxi's Agent Runs use the same \`teamId\` but a DIFFERENT \`projectId\` — the \`eve\` service, not the website. Call \`list_agent_run_projects\` first, then \`list_agent_runs\` / \`get_agent_run\`. Still NOT tokens/cost — use \`ai_gateway__*\`. Never fetch traces (\`get_agent_run_trace\` is not allowed).
+- Nuxi's Agent Runs use the same \`teamId\` but a DIFFERENT \`projectId\` — the \`eve\` service, not the website. Call \`list_agent_run_projects\` first and use that id on \`list_agent_runs\` / \`get_agent_run\`. Still NOT tokens/cost — use \`ai_gateway__*\`. Never fetch traces (\`get_agent_run_trace\` is not allowed).
 - \`search_vercel_documentation\` needs no ids — general Vercel platform docs search.`
   : ''
 
