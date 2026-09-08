@@ -36,7 +36,7 @@ Agent-facing usage (Vercel Observability — the only allowed POST is the read-o
   - For **each** project, group explicit Markdown by `request_path` (limit 5).
   - For **each** project, group discovery/intake by `request_path` (limit 5).
 - Use the ungrouped `summary` as the authoritative total. Do not derive a total by adding grouped rows or timeseries buckets.
-- From the returned user-agent rows, show at most five recognized product rows with their exact counts, then at most three generic HTTP-stack rows, then the empty-user-agent row when present. Do not sum version/integration variants in the model. Never attribute a generic or empty user agent to a named agent.
+- Keep all returned user-agent rows available for analysis. For digest rendering, choose the highest-volume row for up to three distinct named products and preserve that row's count. Use friendly product labels only (`Claude Code`, `Codex`, `Cursor`, `OpenCode`, `WorkBuddy`); never print user-agent versions or integration suffixes. Do not sum version/integration variants in the model.
 - Treat `claude-code`, `codex-mcp-client`, `Cursor`, `opencode`, and `WorkBuddy` as named product rows. Generic stacks include `undici`, `node`, `Go-http-client`, `python-httpx`, and similar libraries. If the named-product cap is full, omit additional named rows; never move them into the generic list.
 - Present exact method/status rows under three labels without category totals or equations: successful POST (`200`, `202`), protocol noise (`GET/HEAD 405`), and POST errors (`4xx/5xx`). Mention another row only when materially large or actionable.
 - A response with `truncated: true` or `truncation.omittedArrayItems` means the tool shortened the returned timeseries; it does **not** prove a source-data gap. Never report those omitted rows as missing traffic. Use the ungrouped summary for totals and comparisons.
@@ -45,17 +45,21 @@ Agent-facing usage (Vercel Observability — the only allowed POST is the read-o
 
 Agent-facing output contract:
 - Start this section directly with `*Nuxt*`; do not announce completed tasks, batches, or collected data.
-- A successful detail query must be rendered, not merely described as “collected”. The section is incomplete if it omits returned client, method/status, Markdown-path, or discovery-path values.
+- Collect the full detail queries for analysis, but render only the compact summary below. The ad-hoc `ecosystem-usage` skill owns exhaustive breakdowns.
 - Keep exactly two project blocks in this order: `*Nuxt*`, then `*Nuxt UI*`. Never combine their clients, health, totals, or trends.
-- Under both `*Nuxt*` and `*Nuxt UI*`, always render five labeled bullets: *MCP*, *Clients*, *HTTP health*, *Markdown*, and *Discovery*.
+- Under both `*Nuxt*` and `*Nuxt UI*`, render exactly four labeled bullets: *MCP*, *Clients*, *Content*, and *Health*.
 - Every bullet must contain values from the corresponding query. Do not emit placeholders such as “report…”, “see Observability”, “not separately queried”, or “included in the batch”.
 - Replace every `<…>` slot in the output template with returned data or an explicit `unavailable — <concrete error>` value.
 - If a required query failed after retrying, keep its bullet and write `unavailable — <concrete error>`. Do not silently omit it.
-- After both complete project blocks, add `:mag: **What stands out**` with up to three concise observations. Each observation must cite the specific returned value or comparison that supports it. Prefer meaningful cross-project differences, changes, errors, or top returned paths; skip weak observations instead of filling space.
+- In *Clients*, show at most three distinct named products using the selected exact rows. Omit additional version variants, generic stacks, and empty-user-agent counts unless one is itself the evidence for a notable observation.
+- In *Content*, show the three totals (explicit Markdown, negotiated Markdown, discovery), plus exactly one leading Markdown path and one leading discovery path when returned. Shorten each displayed path to its meaningful final filename or section; never print a long raw path.
+- In *Health*, show POST 200, POST 400, and GET 405. Add one other status only when it accounts for at least 1% of that project's MCP total.
+- After both complete project blocks, optionally add `:mag: **What stands out**` with at most one observation of at most 20 words. Cite returned values directly; do not calculate new differences or rates, show equations, recommend actions, or add causal explanations. Omit the heading when nothing is clearly notable.
 - Top-N grouped rows are partial. Describe them as “top returned paths/clients”; never claim they represent all or most traffic unless their displayed counts are compared with the authoritative total and actually support that share.
 - HTTP request volume does not establish demand, adoption, unique agents, or intentional workflow behavior. Avoid claims such as “structurally higher”, “confirms agents are…”, “working as designed”, or “growing” unless the queried data directly establishes them across a sufficient period.
-- Keep factual bullets compact. Do not add per-version arithmetic, speculative attribution (including guesses about empty user agents), query-progress narration, or separators between every bullet.
-- Put interpretation and one short caveat after both complete project blocks.
+- Format counts of 10,000 or more with one-decimal compact notation (`29.7K`, `4.3M`); keep smaller counts exact. Round percentage changes to whole numbers.
+- Keep each factual bullet to one line when Slack wrapping allows it. Do not add parenthetical methodology notes, per-version arithmetic, exhaustive lists, speculative attribution, query-progress narration, or Markdown horizontal rules.
+- End with exactly this caveat and nothing else: `_HTTP requests, not tool calls, sessions, or unique agents._`
 
 Docs feedback:
 5. `admin-mcp__feedback-stats` — `topPages=5`
@@ -98,22 +102,20 @@ AI agent:
 :satellite: **Agent-facing usage**
 *Nuxt*
 • *MCP* — `<current>` HTTP requests (`<delta>` vs `<previous>`)
-• *Clients* — named: `<product + count list>` · generic stacks: `<stack + count list>`
-• *HTTP health* — success: POST 200 `<count>`, POST 202 `<count>` · noise: GET 405 `<count>`, HEAD 405 `<count>` · errors: POST 400 `<count>`, other POST 4xx/5xx `<status + count list>`
-• *Markdown* — `<count>` explicit `.md` · `<count>` negotiated `Accept: text/markdown` (may overlap) · top paths: `<path + count list>`
-• *Discovery* — `<total>` · `<path + count list>`
+• *Clients* — `<up to three named client rows>`
+• *Content* — `.md` `<count>` (top: `<short path + count>`) · negotiated `<count>` · discovery `<count>` (top: `<short path + count>`)
+• *Health* — POST 200 `<count>` · POST 400 `<count>` · GET 405 `<count>` `<optional material status>`
 
 *Nuxt UI*
 • *MCP* — `<current>` HTTP requests (`<delta>` vs `<previous>`)
-• *Clients* — named: `<product + count list>` · generic stacks: `<stack + count list>`
-• *HTTP health* — success: POST 200 `<count>`, POST 202 `<count>` · noise: GET 405 `<count>`, HEAD 405 `<count>` · errors: POST 400 `<count>`, other POST 4xx/5xx `<status + count list>`
-• *Markdown* — `<count>` explicit `.md` · `<count>` negotiated `Accept: text/markdown` (may overlap) · top paths: `<path + count list>`
-• *Discovery* — `<total>` · `<path + count list>`
+• *Clients* — `<up to three named client rows>`
+• *Content* — `.md` `<count>` (top: `<short path + count>`) · negotiated `<count>` · discovery `<count>` (top: `<short path + count>`)
+• *Health* — POST 200 `<count>` · POST 400 `<count>` · GET 405 `<count>` `<optional material status>`
 
 :mag: **What stands out**
-• `<up to three evidence-backed observations; omit this bullet rather than inventing one>`
+• `<one evidence-backed observation of at most 20 words; omit this heading and bullet rather than inventing one>`
 
-• _Counts are HTTP requests, not tool calls, sessions, or unique agents._
+_HTTP requests, not tool calls, sessions, or unique agents._
 
 :speech_balloon: **Docs feedback**
 • *12 responses* — 83% positive, avg 4.2/5
@@ -138,7 +140,8 @@ Rules:
 - Never list a page or chat without its `<url|label>` link.
 - Never invent traffic, run, or cost numbers — if a tool call fails or returns nothing attributable, say so instead of guessing.
 - Do not duplicate the same page in both **Docs feedback** and **Fix this week** as a long write-up; feedback states the problem, Fix this week owns the action.
+- The digest title must be the first visible line. Keep AI Gateway scope/coverage caveats inside the *Spend* bullet; never prepend a note before the title.
 - For a section-only request, return the rendered section itself. Never replace it with query coverage, compliance notes, completed-task counts, or a description of the data collected.
-- Before sending an Agent-facing usage section, verify that both project headings and all ten required factual bullets are present. If not, rewrite it before responding.
+- Before sending an Agent-facing usage section, verify that both project headings and all eight required factual bullets are present. If not, rewrite it before responding.
 
 <!-- Format aligned with server/mcp/prompts/admin/weekly-digest.ts for Cursor/IDE admin MCP. -->
