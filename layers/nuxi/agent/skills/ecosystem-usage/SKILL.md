@@ -55,6 +55,14 @@ Run independent Nuxt and Nuxt UI queries in parallel.
 
 ## Output
 
+Every completed response must contain a **Results** block before commentary. A completion or progress update without that block is not a valid final response.
+
+- Include the exact requested time window.
+- Include every requested metric and its HTTP request count.
+- On a follow-up asking for numbers, render the Results block again from the latest successful query instead of relying on an earlier reply.
+- If a required query failed, show that metric as unavailable beside the successful totals and give the concrete error in one line.
+- Put progress, task counts, warnings, interpretation, and recommendations after the Results block.
+
 Lead with:
 
 - Nuxt MCP HTTP requests and change versus the previous window.
