@@ -134,7 +134,9 @@ Single Monday digest: traffic (trend, top sections, referrers/audience), docs fe
 - Schedule: `agent/schedules/weekly-digest.ts` — Monday 5:00 UTC
 - Skill: `agent/skills/weekly-digest/SKILL.md`
 - Preview trigger: `POST /eve/v1/ops/weekly-digest/trigger`
-- Traffic via `vercel-mcp__search_vercel_endpoints` + `vercel-mcp__call_vercel_endpoint` (`GET /v1/query/web-analytics/visits/count` and `…/aggregate`); spend via `ai_gateway__report` (scoped to `app:nuxi` tags and/or `AI_GATEWAY_REPORT_API_KEY_NAME` — never account-wide); runs via `vercel-mcp__list_agent_runs`.
+- Browser traffic via `vercel-mcp__search_vercel_endpoints` + `vercel-mcp__call_vercel_endpoint` (`GET /v1/query/web-analytics/visits/count` and `…/aggregate`).
+- MCP and agent-facing traffic via the read-only `POST /v2/observability/query` using `vercel.request.count`: Nuxt/Nuxt UI `/mcp`, explicit `.md` URLs, `Accept: text/markdown`, and discovery endpoints such as `/llms.txt`. The reusable ad-hoc recipe is in `agent/skills/ecosystem-usage/SKILL.md`.
+- Spend via `ai_gateway__report` (scoped to `app:nuxi` tags and/or `AI_GATEWAY_REPORT_API_KEY_NAME` — never account-wide); runs via `vercel-mcp__list_agent_runs`.
 
 ### Firehose summary
 
@@ -171,7 +173,7 @@ curl -X POST "https://<preview-url>/eve/v1/ops/firehose-summary/trigger?sinceHou
   -H "Authorization: Bearer $INTERNAL_API_SECRET"
 ```
 
-Requires on the **eve** runtime: `INTERNAL_API_SECRET`, `NUXT_MCP_ADMIN_TOKEN`. Local dev and Vercel preview use Connect client `slack/nuxi-preview` automatically; prod uses `slack/nuxi` (override with `SLACK_CONNECTOR`). `weekly-digest` additionally needs `NUXI_VERCEL_TEAM_ID`/`NUXI_VERCEL_PROJECT_ID` (see `agent/lib/vercel-connect.ts`) and, for spend/token numbers, `AI_GATEWAY_API_KEY` (optionally `AI_GATEWAY_REPORT_API_KEY_NAME` / `AI_GATEWAY_REPORT_TAGS`) — both connections are admin-gated so only the scheduled/Slack/admin path can reach them.
+Requires on the **eve** runtime: `INTERNAL_API_SECRET`, `NUXT_MCP_ADMIN_TOKEN`. Local dev and Vercel preview use Connect client `slack/nuxi-preview` automatically; prod uses `slack/nuxi` (override with `SLACK_CONNECTOR`). `weekly-digest` additionally needs `NUXI_VERCEL_TEAM_ID`, `NUXI_VERCEL_PROJECT_ID` (nuxt.com), and `NUXI_VERCEL_NUXT_UI_PROJECT_ID` (Nuxt UI) plus, for spend/token numbers, `AI_GATEWAY_API_KEY` (optionally `AI_GATEWAY_REPORT_API_KEY_NAME` / `AI_GATEWAY_REPORT_TAGS`) — both connections are admin-gated so only the scheduled/Slack/admin path can reach them.
 
 ### Global Config
 

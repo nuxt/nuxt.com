@@ -23,6 +23,12 @@ Traffic (nuxt.com project — always pass `teamId`/`projectId` via `search_verce
 3. Same aggregate with `by=['route'], limit=10` current + previous window → top sections with per-route deltas.
 4. Same aggregate with `by=['referrerHostname'], limit=8` + `by=['country'], limit=5` + `by=['deviceType']` → audience snapshot.
 
+Agent-facing usage (Vercel Observability — the only allowed POST is the read-only `POST /v2/observability/query`):
+- For Nuxt and Nuxt UI separately, query `vercel.request.count` with `aggregation='sum'`, the configured project scope, and `filter="request_path eq '/mcp' and environment eq 'production'"` for the current and previous windows.
+- For Nuxt, also query the current window with `filter="endswith(request_path, '.md') and environment eq 'production'"`, then with `filter="contains(http_accept, 'text/markdown') and environment eq 'production'"`.
+- Query Nuxt discovery/intake traffic with `filter="(request_path eq '/llms.txt' or request_path eq '/llms-full.txt' or request_path eq '/sitemap.md' or request_path eq '/openapi.json' or request_path eq '/.well-known/mcp/server-card.json') and environment eq 'production'"`, grouped by `request_path`.
+- Group the current MCP queries by `client_user_agent` with `limit=5` only after obtaining the exact ungrouped totals. These are HTTP requests, not logical tool calls, sessions, or unique agents.
+
 Docs feedback:
 5. `admin-mcp__feedback-stats` — `topPages=5`
 6. `admin-mcp__list-feedback` — `ratings=["not-helpful", "confusing"]`, `limit=30`
@@ -60,6 +66,12 @@ AI agent:
 :compass: **Referrers & audience**
 • Top: Direct (55%), <https://google.com|Google> (40%), then GitHub / DuckDuckGo
 • Countries: US, DE, FR — mostly desktop (~80%)
+
+:satellite: **Agent-facing usage**
+• *Nuxt MCP* — 4.2M HTTP requests (-3% WoW); top clients: undici, Claude Code, Codex
+• *Nuxt UI MCP* — 5.4M HTTP requests (+6% WoW); top clients: Go HTTP, OpenCode, Claude Code
+• *Nuxt Markdown* — 38K explicit `.md` requests + 16K `Accept: text/markdown` requests
+• *Discovery* — report index/server-card requests and the leading discovery path
 
 :speech_balloon: **Docs feedback**
 • *12 responses* — 83% positive, avg 4.2/5
