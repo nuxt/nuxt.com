@@ -33,10 +33,8 @@ jobs:
           runtime: node@22
           cache: true
           cache-dependency-path: .bundle-base/pnpm-lock.yaml
-          install: false
-      - name: Install base dependencies
-        working-directory: .bundle-base
-        run: pnpm install --frozen-lockfile
+          working-directory: .bundle-base
+          require-lockfile: true
       - name: Prepare the base revision
         working-directory: .bundle-base
         run: pnpm nuxt prepare
@@ -83,9 +81,7 @@ jobs:
           runtime: node@22
           cache: true
           cache-dependency-path: pnpm-lock.yaml
-          install: false
-      - name: Install PR dependencies
-        run: pnpm install --frozen-lockfile
+          require-lockfile: true
       - name: Prepare the PR revision
         run: pnpm nuxt prepare
       - name: Analyze the PR bundle
