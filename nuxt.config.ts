@@ -2,7 +2,7 @@ import { createResolver } from 'nuxt/kit'
 import { parseMdc } from './helpers/mdc-parser.mjs'
 import { agentHowToCall, agentWhenToUse } from './shared/utils/agents'
 import { CLI_DOCS_PREFIX, CLI_DOCS_REFS, CLI_DOCS_REPO } from './shared/utils/cli-docs'
-import { CURRENT_DOCS_VERSION, EXCLUDED_DOC_VERSIONS } from './shared/utils/docs'
+import { CURRENT_DOCS_VERSION, DOCS_COLLECTION_VERSIONS, EXCLUDED_DOC_VERSIONS, insertDocsVersion } from './shared/utils/docs'
 
 const { resolve } = createResolver(import.meta.url)
 
@@ -538,27 +538,9 @@ export default defineNuxtConfig({
         const base = `https://raw.githubusercontent.com/${CLI_DOCS_REPO}/${CLI_DOCS_REFS[collection]}`
         file.body = file.body.replaceAll(/(!\[[^\]]*\]\()\/(?!\/)/g, `$1${base}/`)
       }
-      if (file.id.startsWith('docsv5/')) {
-        file.body = file.body.replaceAll(/\(\/docs\/(?!\d\.x)/g, '(/docs/5.x/')
-        // Pages that only exist on main (5.x) but are linked as /docs/4.x/* from
-        // the 5.x docs. Left unrewritten they 404, which fails the prerender now
-        // that the crawler is on. Only paths whose 5.x counterpart exists belong
-        // here — a blanket 4.x→5.x rewrite would break the ~13 links that point
-        // at pages 5.x dropped (guide/concepts/esm, going-further/internals, …).
-        for (const path of [
-          'guide/modules/module-dependencies',
-          'guide/best-practices/accessibility',
-          'guide/concepts/server-components',
-          'guide/recipes/mostly-static-sites'
-        ]) {
-          file.body = file.body.replaceAll(`/docs/4.x/${path}`, `/docs/5.x/${path}`)
-        }
-      }
-      if (file.id.startsWith('docsv4/')) {
-        file.body = file.body.replaceAll(/\(\/docs\/(?!\d\.x)/g, '(/docs/4.x/')
-      }
-      if (file.id.startsWith('docsv3/')) {
-        file.body = file.body.replaceAll(/\(\/docs\/(?!\d\.x)/g, '(/docs/3.x/')
+      const docsVersion = DOCS_COLLECTION_VERSIONS[collection]
+      if (docsVersion) {
+        file.body = insertDocsVersion(file.body, docsVersion)
       }
     },
     'content:file:afterParse': async ({ file, content }) => {
