@@ -17,16 +17,16 @@ Always write Slack mrkdwn (`<url|label>`, `:emoji:`). If this run is mirrored to
 
 **Data steps** (parallel where possible; Vercel / AI Gateway tools need admin/Slack/schedule-only access):
 
-Traffic (nuxt.com project — always pass `teamId`/`projectId`):
-1. `vercel-mcp__get_web_analytics` — `mode=count, dataset=visits` for the current window AND the previous window → visitors/pageviews + WoW %.
-2. `mode=aggregate, dataset=visits, by=['day']` current window → daily trend (spot spikes/drops).
-3. `mode=aggregate, dataset=visits, by=['route'], limit=10` current + previous window → top sections with per-route deltas.
-4. `mode=aggregate, dataset=visits, by=['referrerHostname'], limit=8` + `by=['country'], limit=5` + `by=['deviceType']` → audience snapshot.
+Traffic (nuxt.com project — always pass `teamId`/`projectId` via `search_vercel_endpoints` then `call_vercel_endpoint`, GET only):
+1. `GET /v1/query/web-analytics/visits/count` for the current window AND the previous window → visitors/pageviews + WoW %.
+2. `GET /v1/query/web-analytics/visits/aggregate` with `by=['day']` current window → daily trend (spot spikes/drops).
+3. Same aggregate with `by=['route'], limit=10` current + previous window → top sections with per-route deltas.
+4. Same aggregate with `by=['referrerHostname'], limit=8` + `by=['country'], limit=5` + `by=['deviceType']` → audience snapshot.
 
 Docs feedback:
 5. `admin-mcp__feedback-stats` — `topPages=5`
 6. `admin-mcp__list-feedback` — `ratings=["not-helpful", "confusing"]`, `limit=30`
-7. For each worst page from step 5/6: traffic from step 3, or a targeted `mode=count, filter="requestPath eq '<path>'"` if missing from top routes — weigh urgency by real visits.
+7. For each worst page from step 5/6: traffic from step 3, or a targeted `GET /v1/query/web-analytics/visits/count` with `filter="requestPath eq '<path>'"` if missing from top routes — weigh urgency by real visits.
 
 AI agent:
 8. `admin-mcp__agent-usage-stats` — web chat counts and vote quality

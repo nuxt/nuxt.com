@@ -1,8 +1,11 @@
 import { createResolver } from 'nuxt/kit'
 import type { LLMsSection } from 'nuxt-llms'
+import { agentHowToCall, agentWhenToUse } from './shared/utils/agents'
 import { CURRENT_DOCS_VERSION, EXCLUDED_DOC_VERSIONS } from './shared/utils/docs'
 
 const { resolve } = createResolver(import.meta.url)
+
+const SITE_URL = 'https://nuxt.com'
 
 // In `--ui-only` mode (default `pnpm dev`), skip the `eve/nuxt` module so the
 // Eve agent runtime is never spawned locally. The UI and server routes from
@@ -89,7 +92,7 @@ export default defineNuxtConfig({
   css: ['~/assets/css/main.css'],
   site: {
     name: 'Nuxt',
-    url: 'https://nuxt.com',
+    url: SITE_URL,
     description: 'Build fast, production-ready web apps with Vue. File-based routing, auto-imports, and server-side rendering — all configured out of the box.',
     defaultLocale: 'en'
   },
@@ -271,7 +274,15 @@ export default defineNuxtConfig({
     '/docs/4.x/guide/going-further/custom-routing': { redirect: '/docs/4.x/guide/recipes/custom-routing', prerender: false },
     '/docs/5.x/guide/going-further/custom-routing': { redirect: '/docs/5.x/guide/recipes/custom-routing', prerender: false },
     // new directory structure
+    '/docs/3.x/directory-structure/app/assets': { redirect: '/docs/3.x/directory-structure/assets', prerender: false },
+    '/docs/3.x/directory-structure/app/components': { redirect: '/docs/3.x/directory-structure/components', prerender: false },
+    '/docs/3.x/directory-structure/app/composables': { redirect: '/docs/3.x/directory-structure/composables', prerender: false },
+    '/docs/3.x/directory-structure/app/error': { redirect: '/docs/3.x/directory-structure/error', prerender: false },
+    '/docs/3.x/directory-structure/app/layouts': { redirect: '/docs/3.x/directory-structure/layouts', prerender: false },
     '/docs/3.x/directory-structure/app/middleware': { redirect: '/docs/3.x/directory-structure/middleware', prerender: false },
+    '/docs/3.x/directory-structure/app/pages': { redirect: '/docs/3.x/directory-structure/pages', prerender: false },
+    '/docs/3.x/directory-structure/app/plugins': { redirect: '/docs/3.x/directory-structure/plugins', prerender: false },
+    '/docs/3.x/directory-structure/app/utils': { redirect: '/docs/3.x/directory-structure/utils', prerender: false },
     '/docs/4.x/directory-structure/app': { redirect: '/docs/4.x/directory-structure/app/app', prerender: false },
     '/docs/5.x/directory-structure/app': { redirect: '/docs/4.x/directory-structure/app/app', prerender: false },
     '/docs/3.x/guide/directory-structure/**': { redirect: '/docs/3.x/directory-structure', prerender: false },
@@ -419,9 +430,10 @@ export default defineNuxtConfig({
     '/docs/5.x/examples/composables/use-head': { redirect: '/docs/examples/features/meta-tags', prerender: false },
     '/docs/4.x/getting-started/directory-structure': { redirect: '/docs/4.x/directory-structure', prerender: false },
     '/docs/5.x/getting-started/directory-structure': { redirect: '/docs/4.x/directory-structure', prerender: false },
+    '/docs/guide/going-further/modules': { redirect: '/docs/guide/modules', prerender: false },
+    '/docs/3.x/guide/going-further/modules': { redirect: '/docs/3.x/guide/modules', prerender: false },
     '/docs/4.x/guide/going-further/modules': { redirect: '/docs/4.x/guide/modules', prerender: false },
     '/docs/5.x/guide/going-further/modules': { redirect: '/docs/4.x/guide/modules', prerender: false },
-    '/docs/4.x/guide/modules/module-dependencies': { redirect: '/docs/5.x/guide/modules/module-dependencies', prerender: false },
     '/docs/4.x/guide/concepts/rendering-modes': { redirect: '/docs/4.x/guide/concepts/rendering', prerender: false },
     '/docs/5.x/guide/concepts/rendering-modes': { redirect: '/docs/4.x/guide/concepts/rendering', prerender: false },
     '/docs/4.x/guide/directory-structure/nuxt.config': { redirect: '/docs/4.x/directory-structure/nuxt-config', prerender: false },
@@ -530,6 +542,9 @@ export default defineNuxtConfig({
         { rel: 'service-doc', href: '/docs', type: 'text/html', anchor: '/docs', title: 'Documentation' }
       ]
     },
+    llms: {
+      details: agentHowToCall(SITE_URL)
+    },
     sitemap: {
       markdown: {
         labels: {
@@ -611,7 +626,7 @@ export default defineNuxtConfig({
     }
   },
   llms: {
-    domain: 'https://nuxt.com',
+    domain: SITE_URL,
     title: 'Nuxt Docs',
     description: 'Nuxt is an open source framework that makes web development intuitive and powerful. Create performant and production-grade full-stack web apps and websites with confidence.',
     full: {
@@ -624,13 +639,9 @@ export default defineNuxtConfig({
     // leaves out reach /llms-full.txt through `server/plugins/llms.ts`.
     sections: [
       {
-        title: 'Documentation',
-        description: 'Every page below is also available as raw markdown — append `.md` to any docs URL, or fetch `/raw/<path>.md`.',
-        links: [{
-          title: 'Landing page',
-          description: 'What Nuxt is, and where to start',
-          href: 'https://nuxt.com/'
-        }]
+        title: 'When to use this',
+        description: agentWhenToUse().join('\n\n'),
+        links: [{ title: 'Nuxt', href: SITE_URL }]
       },
       {
         title: `Nuxt v${CURRENT_DOCS_VERSION.replace('.x', '')} Documentation`,

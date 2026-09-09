@@ -37,7 +37,7 @@ useSeoMeta({
   ogTitle: `${title} · Nuxt Blog`,
   ...(articleData.value.image ? { ogImage: articleData.value.image } : {})
 })
-useCanonical(`${route.path}.md`)
+useCanonical(`/raw${route.path}.md`)
 
 if (!articleData.value.image) {
   defineOgImage('Docs.takumi', {
@@ -172,7 +172,6 @@ const links = [
                 <UPageLinks title="Links" :links="links" />
                 <USeparator type="dashed" />
                 <SocialLinks />
-                <Ads />
               </div>
             </template>
           </UContentToc>

@@ -12,7 +12,16 @@ import type { ContentPage } from '../utils/content/pages'
  */
 const FULL_ONLY_VERSIONS: DocVersion[] = DOC_VERSIONS.filter(version => version !== CURRENT_DOCS_VERSION)
 
+const GUIDANCE_SECTION = 'When to use this'
+
 export default defineNitroPlugin((nitroApp) => {
+  nitroApp.hooks.hook('llms:generate', (_event, options) => {
+    const guidance = options.sections.findIndex((section: { title: string }) => section.title === GUIDANCE_SECTION)
+    if (guidance > 0) {
+      options.sections.unshift(...options.sections.splice(guidance, 1))
+    }
+  })
+
   nitroApp.hooks.hook('llms:generate:full', async (event, _options, contents) => {
     for (const version of FULL_ONLY_VERSIONS) {
       for (const key of [docsInstanceKey(version), cliInstanceKey(version)]) {

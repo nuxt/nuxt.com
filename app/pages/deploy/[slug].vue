@@ -28,7 +28,7 @@ useSeoMeta({
   ogDescription: description,
   ogTitle: `Deploy Nuxt to ${title}`
 })
-useCanonical(`${route.path}.md`)
+useCanonical(`/raw${route.path}.md`)
 
 defineOgImage('Docs.takumi', {
   headline: 'Deploy To',
@@ -124,7 +124,6 @@ links.push({
                 <UPageLinks title="Links" :links="links" />
                 <USeparator type="dashed" />
                 <SocialLinks />
-                <Ads />
               </div>
             </template>
           </UContentToc>

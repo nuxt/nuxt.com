@@ -170,7 +170,7 @@ useSeoMeta({
 // should not treat the stub URL as authoritative. The supported version
 // list lives in `shared/utils/docs.ts`.
 if (SUPPORTED_DOCS_PATH_REGEX.test(path.value)) {
-  useCanonical(() => `${path.value}.md`)
+  useCanonical(() => `/raw${path.value}.md`)
 }
 
 if (import.meta.server) {

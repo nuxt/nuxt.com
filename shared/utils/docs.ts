@@ -1,5 +1,4 @@
-// Single source of truth for which Nuxt docs versions are exposed to humans and agents.
-// "Supported" here means the docs are published and crawlable.
+// Single source of truth for which Nuxt docs versions are exposed.
 
 export const DOCS_REPO = 'nuxt/nuxt'
 
@@ -9,8 +8,13 @@ export const DOCS_REFS = {
   '5.x': { branch: 'main', envOverride: 'NUXT_V5_PATH' }
 } as const satisfies Record<DocVersion, { branch: string, envOverride: string }>
 
+// Published and crawlable versions.
 export const SUPPORTED_DOC_VERSIONS = ['3.x', '4.x'] as const
+
+// Excluded versions (not yet published).
 export const EXCLUDED_DOC_VERSIONS = ['5.x'] as const
+
+// The current stable version.
 export const CURRENT_DOCS_VERSION: (typeof SUPPORTED_DOC_VERSIONS)[number] = '4.x'
 
 /** Every version with content behind it, exposed or not. */
