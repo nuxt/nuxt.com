@@ -30,7 +30,6 @@ jobs:
           ref: ${{ github.event.pull_request.base.sha }}
       - uses: pnpm/setup@703c52620218391530e48b9e8870d5c0082e1b9b # v2.1.0
         with:
-          runtime: node@22
           cache: true
           cache-dependency-path: .bundle-base/pnpm-lock.yaml
           working-directory: .bundle-base
