@@ -33,7 +33,6 @@ jobs:
           cache: true
           cache-dependency-path: .bundle-base/pnpm-lock.yaml
           working-directory: .bundle-base
-          require-lockfile: true
       - name: Prepare the base revision
         working-directory: .bundle-base
         run: pnpm nuxt prepare
@@ -79,7 +78,6 @@ jobs:
         with:
           cache: true
           cache-dependency-path: pnpm-lock.yaml
-          require-lockfile: true
       - name: Prepare the PR revision
         run: pnpm nuxt prepare
       - name: Analyze the PR bundle
