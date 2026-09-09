@@ -2,6 +2,13 @@
   "name": "nuxt.com",
   "version": "0.3.11",
   "packageManager": "pnpm@12.3.4",
+  "devEngines": {
+    "runtime": {
+      "name": "node",
+      "version": "^22.12.0",
+      "onFail": "warn"
+    }
+  },
   "type": "module",
   "scripts": {
     "dev": "nuxt dev --ui-only",
