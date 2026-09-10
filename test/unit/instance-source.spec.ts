@@ -1,11 +1,6 @@
-import { createError } from 'h3'
-import { describe, expect, it, vi } from 'vitest'
+import { describe, expect, it } from 'vitest'
 import { CONTENT_INSTANCE_KEYS } from '../../shared/utils/content'
-
-/** `instances.ts` throws via `createError`, which Nitro auto-imports from `h3`. */
-vi.stubGlobal('createError', createError)
-
-const { instanceSource } = await import('../../server/utils/content/instances')
+import { instanceSource } from '../../server/utils/content/instances'
 
 /**
  * comark-content validates the instance name it is given positionally, and throws at construction

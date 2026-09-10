@@ -7,9 +7,6 @@ import vercelRuntimeCache from 'unstorage/drivers/vercel-runtime-cache'
  */
 const TTL = 60 * 60 * 24
 
-/** Refs move with their branches, so the pointer cache uses a short TTL. */
-const REF_TTL = 60
-
 /** Whether the Vercel Runtime Cache is available */
 function cacheAvailable(): boolean {
   return !import.meta.dev && Boolean(process.env.VERCEL)
@@ -37,16 +34,17 @@ export function contentCacheDriver(instanceKey: string, sha: string): Driver {
 }
 
 /**
- * Driver backing the ref pointers: `ref -> commit sha`
- * ref: (repo, branch, content dir) triple
- * sha: latest commit touching that dir
+ * Driver backing the ref pointers: `(repo, branch, content dir) -> commit sha`.
+ * The caller supplies the bounded default TTL; individual entries may write a shorter one.
  *
- * Keep in thoughts: Vercel Runtime Cache is **regional**, not global (https://vercel.com/docs/caching/runtime-cache)
+ * TODO: Keep in thoughts: Vercel Runtime Cache is **regional**, not global (https://vercel.com/docs/caching/runtime-cache):
+ * The webhook's forced refresh only reaches its own region, and the others self-heal on TTL.
+ * A globally replicated store (e.g. Edge Config) would remove that bound.
  */
-export function githubRefCacheDriver(): Driver {
+export function githubRefCacheDriver(ttl: number): Driver {
   if (!cacheAvailable()) return memoryDriver()
   return vercelRuntimeCache({
     base: 'github:refs',
-    ttl: REF_TTL
+    ttl
   })
 }

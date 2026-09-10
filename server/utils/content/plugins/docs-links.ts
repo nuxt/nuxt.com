@@ -1,7 +1,7 @@
 import type { Node } from 'comark'
 import { visit } from 'comark/utils'
 import type { ContentPlugin } from 'comark-content'
-import { docsPathPrefix, type DocVersion } from '#shared/utils/docs'
+import { docsPathPrefix, type DocVersion } from '../../../../shared/utils/docs'
 
 /** Pages that only exist on `main` (5.x) but are linked as `/docs/4.x/*` from the 5.x docs. */
 const V5_ONLY_PAGES = [

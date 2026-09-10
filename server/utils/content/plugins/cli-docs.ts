@@ -1,8 +1,8 @@
 import type { Node } from 'comark'
 import { visit } from 'comark/utils'
 import type { ContentPlugin } from 'comark-content'
-import { CLI_DOCS_REFS, CLI_DOCS_REPO } from '#shared/utils/cli'
-import type { DocVersion } from '#shared/utils/docs'
+import { CLI_DOCS_REFS, CLI_DOCS_REPO } from '../../../../shared/utils/cli'
+import type { DocVersion } from '../../../../shared/utils/docs'
 
 const isImage = (node: Node): boolean => Array.isArray(node) && node[0] === 'img'
 

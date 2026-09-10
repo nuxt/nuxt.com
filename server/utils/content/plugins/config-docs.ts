@@ -1,6 +1,8 @@
 import type { Schema } from 'untyped'
+import { $fetch } from 'ofetch'
 import { createMarkdownParser, parseFrontmatter } from 'comark'
 import { upperFirst } from 'scule'
+import type { ParserOptions } from 'comark'
 import type { ContentPlugin } from 'comark-content'
 
 /** Marker in the 3.x `nuxt.config` reference (`docs/4.api/6.nuxt-config.md`), the only file carrying one. */
@@ -116,11 +118,11 @@ export function generateConfigDocs(): Promise<string> {
  * - Pre-parse: the generated markdown has to reach the TOC and the highlighter.
  * - Mirrors the stock `markdown()` parser, which it overrides (last-wins per extension).
  */
-export function configDocs(): ContentPlugin {
+export function configDocs(plugins: ParserOptions['plugins']): ContentPlugin {
   return {
     name: 'nuxt-docs-config-schema',
     setup(content) {
-      const parse = createMarkdownParser({ tracer: content.perf, plugins: comarkPlugins })
+      const parse = createMarkdownParser({ tracer: content.perf, plugins })
 
       content.addParser(['.md', '.markdown'], async ({ read, partial }) => {
         let body = await read()

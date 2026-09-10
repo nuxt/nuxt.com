@@ -1,10 +1,11 @@
+import { createError } from 'h3'
 import { markdownField } from 'comark-content/plugins/markdown-fields'
 import type { JsonSchema } from 'comark-content'
 import type { GithubSource } from 'comark-content/sources/github'
 import type { FSSourceOptions } from 'comark-content/sources/fs'
-import { CLI_DOCS_REFS, CLI_DOCS_REPO, CLI_DOCS_PREFIX, cliDocsPathPrefix } from '#shared/utils/cli'
-import { DOCS_REFS, DOCS_REPO, docsPathPrefix, isDocVersion } from '#shared/utils/docs'
-import { CONTENT_INSTANCE_KEYS, isContentInstanceKey, cliInstanceKey, docsInstanceKey, type ContentInstanceKey } from '#shared/utils/content'
+import { CLI_DOCS_REFS, CLI_DOCS_REPO, CLI_DOCS_PREFIX, cliDocsPathPrefix } from '../../../shared/utils/cli'
+import { DOCS_REFS, DOCS_REPO, docsPathPrefix, isDocVersion, type DocVersion } from '../../../shared/utils/docs'
+import { CONTENT_INSTANCE_KEYS, isContentInstanceKey, cliInstanceKey, docsInstanceKey, type ContentInstanceKey } from '../../../shared/utils/content'
 
 /** What comark-content's sources own; a required `prefix` is what the page resolver depends on. */
 type ComarkSourceOptions = Pick<GithubSource & FSSourceOptions, 'exclude' | 'schema'> & {
@@ -143,21 +144,6 @@ export function instanceSource(key: ContentInstanceKey): { name: string, source:
       envOverride: DOCS_REFS[version].envOverride
     }
   }
-}
-
-/**
- * The commit `key`'s source reads
- * - in dev the branch name
- * - otherwise the latest commit that touched that source's content directory
- */
-export async function resolveInstanceSha(
-  key: ContentInstanceKey,
-  opts: { refresh?: boolean } = {}
-): Promise<string> {
-  const { source } = instanceSource(key)
-
-  // `resolveContentSha` itself returns `branch` unresolved in dev.
-  return resolveContentSha(source.repo, source.branch, source.contentDir, opts)
 }
 
 /**

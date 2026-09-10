@@ -3,10 +3,19 @@ import emoji from 'comark/plugins/emoji'
 import security from 'comark/plugins/security'
 import markdownFields from 'comark-content/plugins/markdown-fields'
 import type { ContentPlugin } from 'comark-content'
-import type { DocVersion } from '#shared/utils/docs'
-import type { ContentInstanceKey } from '#shared/utils/content'
+// Explicit, not auto-imported: `modules/snapshot/` imports this file outside nitro.
+import { highlightPlugin } from './highlight'
+import { dottedFrontmatter } from './dotted-frontmatter'
+import { docsLinks } from './docs-links'
+import { cliDocs } from './cli-docs'
+import { configDocs } from './config-docs'
+import type { DocVersion } from '../../../../shared/utils/docs'
+import type { ContentInstanceKey } from '../../../../shared/utils/content'
 
-/** Shared by every instance. Bump `CONTENT_PARSER_VERSION` when it changes: cached bodies keep the old output. */
+/**
+ * The comark plugin chain every instance parses markdown with.
+ * Bump `CONTENT_PARSER_VERSION` when it changes: cached bodies keep the old output.
+ */
 export const comarkPlugins = [
   highlightPlugin,
   toc({ depth: 3 }),
@@ -33,6 +42,7 @@ export function instancePlugins(key: ContentInstanceKey): ContentPlugin[] {
     dottedFrontmatter(),
     docsLinks(version),
     // 3.x is the only version with the marker, and the only one publishing `config.schema.json`.
-    ...(version === '3.x' ? [configDocs()] : [])
+    // Passed the chain rather than importing it: `configDocs` is imported here, so it cannot import back.
+    ...(version === '3.x' ? [configDocs(comarkPlugins)] : [])
   ]
 }

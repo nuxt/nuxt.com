@@ -1,54 +1,63 @@
-import { join } from 'node:path'
-import { type ComarkContent, comarkContent } from 'comark-content'
-import fs from 'comark-content/sources/fs'
-import github from 'comark-content/sources/github'
-import markdown from 'comark-content/plugins/markdown'
-import yaml from 'comark-content/plugins/yaml'
-import json from 'comark-content/plugins/json'
-import type { InstanceSource } from './instances'
-import { instanceBasePath, type ContentInstanceKey } from '#shared/utils/content'
+import type { ComarkContent, ParsedSource, Source } from 'comark-content'
+import { withSnapshot } from 'comark-content/sources/snapshot'
+import { createInstance, createInstanceSource } from './factory'
+import { hasBuildSnapshot, instanceSnapshotDir, SNAPSHOT_ASSET_BASE } from './snapshot'
+import type { ContentInstanceKey } from '#shared/utils/content'
 
-/** Read `source` from a local directory in dev, or from the repo at `sha`. */
-function createSource(source: InstanceSource, sha: string) {
-  const overridePath = source.envOverride ? process.env[source.envOverride] : undefined
-  const prefix = source.prefix === '/' ? undefined : source.prefix
+const assets = () => useStorage(`assets:${SNAPSHOT_ASSET_BASE}`)
 
-  if (source.local && import.meta.dev) {
-    return fs(source.contentDir, { prefix, exclude: source.exclude, schema: source.schema })
-  }
-  if (overridePath) {
-    return fs(join(overridePath, source.contentDir), { prefix, exclude: source.exclude, schema: source.schema })
-  }
-  return github({
-    repo: source.repo,
-    branch: sha,
-    path: source.contentDir,
-    prefix,
-    exclude: source.exclude,
-    schema: source.schema,
-    token: contentGithubToken(),
-    // `sha` is an immutable commit outside dev => we can cache hard.
-    ttl: 60 * 60 * 24
+/**
+ * Read one artifact `modules/snapshot/` wrote into the function bundle.
+ *
+ * Untyped: unstorage runs every value through `destr`, so this arrives already parsed.
+ * A deployment that shipped no snapshot has no asset, and `null` sends comark to the origin.
+ * A read that *fails* is a bug, but not one worth failing the instance over.
+ */
+async function readArtifact(key: ContentInstanceKey, name: string, file: string): Promise<unknown> {
+  const startedAt = performance.now()
+  const data = await assets().get(`${instanceSnapshotDir(key)}/${name}/${file}`).catch((error) => {
+    console.error(`[content] could not read ${key}'s ${file} — falling back to the content repository`, error)
+    return null
   })
+
+  recordDuration(`content.${file.replace('.json', '')}.read.ms`, startedAt, {
+    instance: key,
+    hit: String(data != null)
+  })
+
+  return data
+}
+
+/**
+ * The source `key` reads at `sha`, wrapped with the build snapshot when this deployment ships one.
+ *
+ * The raw source stays the authority: per-file reads, `refresh()` and `watch()` all go to it.
+ * The snapshot only wins at init, and only for bodies whose source hash still matches.
+ */
+function instanceSourceAt(key: ContentInstanceKey, sha: string): Source | ParsedSource {
+  const { name, source } = instanceSource(key)
+  const raw = createInstanceSource(source, {
+    sha,
+    token: contentGithubToken(),
+    useLocalDir: import.meta.dev
+  })
+
+  // Dev reads the working tree, which `watch()` follows: no snapshot exists, and none would help.
+  if (import.meta.dev || !hasBuildSnapshot(key)) return raw
+
+  // Full snapshot first, then the body-free index that lets a cold start skip downloading bodies.
+  return withSnapshot(
+    raw,
+    () => readArtifact(key, name, 'snapshot.json'),
+    () => readArtifact(key, name, 'manifest.json')
+  )
 }
 
 /**
  * Create the content instance for `key`, reading its source at `sha`. Holds no shared state.
  */
 export async function createContentInstance(key: ContentInstanceKey, sha: string): Promise<ComarkContent> {
-  const { name, source } = instanceSource(key)
-
-  return comarkContent(name, {
-    basePath: instanceBasePath(key),
-    source: createSource(source, sha),
-    plugins: [
-      markdown({ comark: { plugins: comarkPlugins }, listingFields: source.listingFields }),
-      yaml({ listingFields: source.listingFields }),
-      json({ listingFields: source.listingFields }),
-      ...instancePlugins(key)
-    ],
-    cache: { driver: contentCacheDriver(key, sha) }
-  })
+  return createInstance(key, instanceSourceAt(key, sha), { driver: contentCacheDriver(key, sha) })
 }
 
 /**
@@ -92,8 +101,8 @@ export async function getInstanceAtHead(key: ContentInstanceKey): Promise<Comark
 /**
  * Parse every file, so the artifacts fetched next are served from a warm index.
  *
- * Artifact bytes are built behind `handler()`'s `/manifest` and `/snapshot` routes — 0.4 has no
- * public `cache.snapshot()` to force them from here, so the webhook `$fetch`es those URLs instead.
+ * The webhook still `$fetch`es the blob URLs after this.
+ * `content.snapshot()` builds the bytes; only a request through the route fills their ISR entry.
  */
 export async function warmInstance(content: ComarkContent): Promise<void> {
   const startedAt = performance.now()
