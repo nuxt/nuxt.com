@@ -3,16 +3,18 @@ definePageMeta({
   heroBackground: 'opacity-80 -z-10'
 })
 const [{ data: page }, { data: templates }] = await Promise.all([
-  useAsyncData('templates-landing', () => queryCollection('landing').path('/templates').first()),
-  useAsyncData('templates', () => queryCollection('templates').all())
+  useAsyncData('templates-landing', () => useContent('site').get('/templates')),
+  useAsyncData('templates', () => listByDir('/templates'))
 ])
 
 if (!page.value) {
   throw createError({ statusCode: 404, statusMessage: 'Page not found', fatal: true })
 }
 
-const title = page.value.head?.title || page.value.title
-const description = page.value.head?.description || page.value.description
+const pageData = computed(() => page.value!.data)
+
+const title = pageData.value.head?.title || pageData.value.title
+const description = pageData.value.head?.description || pageData.value.description
 
 const featuredTemplates = computed(() => templates.value?.filter(template => template.featured) || [])
 const baseTemplates = computed(() => templates.value?.filter(template => !template.featured) || [])
@@ -32,11 +34,11 @@ defineOgImage('Docs.takumi', {
 </script>
 
 <template>
-  <UContainer v-if="page">
+  <UContainer v-if="pageData">
     <UPageHero
-      :title="page.title"
-      :description="page.description"
-      :links="page.links"
+      :title="pageData.title"
+      :description="pageData.description"
+      :links="pageData.links"
     />
     <UPage>
       <UPageBody>

@@ -3,13 +3,15 @@ definePageMeta({
   heroBackground: 'opacity-100 -z-10'
 })
 
-const { data: page } = await useAsyncData('support', () => queryCollection('support').first())
+const { data: page } = await useAsyncData('support', () => useContent('site').get('/enterprise/support'))
 if (!page.value) {
   throw createError({ statusCode: 404, statusMessage: 'Page not found', fatal: true })
 }
 
-const title = page.value?.title
-const description = page.value?.description
+const pageData = computed(() => page.value!.data)
+
+const title = pageData.value?.title
+const description = pageData.value?.description
 
 useSeoMeta({
   titleTemplate: '%s',
@@ -23,11 +25,11 @@ useCanonical()
 </script>
 
 <template>
-  <UPage v-if="page">
-    <UPageHero :title="page.title" :description="page.description" :links="page.hero.links">
+  <UPage v-if="pageData">
+    <UPageHero :title="pageData.title" :description="pageData.description" :links="pageData.hero.links">
       <UPageLogos marquee>
         <UColorModeImage
-          v-for="company in page.logos"
+          v-for="company in pageData.logos"
           :key="company.alt"
           v-bind="company"
           class="h-10 max-w-[120px] object-contain"
@@ -36,7 +38,7 @@ useCanonical()
     </UPageHero>
 
     <UPageSection
-      v-bind="page.service"
+      v-bind="pageData.service"
       :ui="{
         title: 'text-left',
         description: 'text-left',
@@ -45,23 +47,23 @@ useCanonical()
     >
       <template #links>
         <UPageGrid class="xl:grid-cols-4">
-          <UPageCard v-for="service in page.service.services" :key="service.title" v-bind="service" :ui="{ container: 'card-bg', leadingIcon: 'size-8' }" />
+          <UPageCard v-for="service in pageData.service.services" :key="service.title" v-bind="service" :ui="{ container: 'card-bg', leadingIcon: 'size-8' }" />
         </UPageGrid>
       </template>
     </UPageSection>
 
-    <UPageSection v-bind="page.expertise">
+    <UPageSection v-bind="pageData.expertise">
       <div class="flex justify-center w-full gap-4 sm:gap-x-16 md:gap-x-[92px]">
-        <div v-for="logo in page.expertise.logos" :key="logo.src" class="flex items-center justify-center">
+        <div v-for="logo in pageData.expertise.logos" :key="logo.src" class="flex items-center justify-center">
           <EnterpriseSupportExpertiseCircle :logo="logo" />
         </div>
       </div>
     </UPageSection>
 
-    <UPageSection v-bind="page.testimonials">
+    <UPageSection v-bind="pageData.testimonials">
       <UCarousel
         v-slot="{ item }"
-        :items="page.testimonials.items"
+        :items="(pageData.testimonials.items as any[])"
         dots
         wheel-gestures
         arrows
@@ -77,7 +79,7 @@ useCanonical()
     </UPageSection>
 
     <UPageSection
-      v-bind="page.project"
+      v-bind="pageData.project"
       orientation="horizontal"
       :ui="{
         links: 'mt-8 flex flex-wrap justify-center lg:justify-start gap-x-3 gap-y-1.5',
@@ -101,9 +103,9 @@ useCanonical()
               </svg>
             </div>
             <ul class="flex flex-col text-left gap-y-4 pt-1">
-              <li v-for="step in page.project.steps" :key="step.title" class="flex gap-x-3">
+              <li v-for="step in pageData.project.steps" :key="step.title" class="flex gap-x-3">
                 <div
-                  class="size-8 flex items-center justify-center border-1 border-default rounded-full bg-muted px-3 py-1"
+                  class="size-8 flex items-center justify-center border border-default rounded-full bg-muted px-3 py-1"
                 >
                   {{ step.number }}
                 </div>
@@ -123,12 +125,12 @@ useCanonical()
     </UPageSection>
 
     <UPageSection
-      :title="page.form.title"
-      :description="page.form.description"
+      :title="pageData.form.title"
+      :description="pageData.form.description"
       :ui="{ container: 'gap-y-0 sm:gap-y-0' }"
     >
       <div class="pt-8 w-full flex justify-center">
-        <EnterpriseSupportFormSection :form="page.form" />
+        <EnterpriseSupportFormSection :form="pageData.form" />
       </div>
     </UPageSection>
   </UPage>

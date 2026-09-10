@@ -1,36 +1,12 @@
 <script setup lang="ts">
-import type { ContentNavigationItem } from '@nuxt/content'
+import type { NavigationItem } from 'comark-content'
 
 defineProps<{
-  navigation?: ContentNavigationItem[]
+  navigation?: NavigationItem[]
 }>()
 
-const { version } = useDocsVersion()
-
-const collection = computed(() => version.value.collection)
-
-const { status, search, init } = useSearchCollection(collection, {
-  immediate: false,
-  ignoredTags: ['style']
-})
-
+const { search, status } = useSearch()
 const { searchGroups, searchLinks, searchTerm } = useNavigation()
-const { track } = useAnalytics()
-
-const fuse = {
-  resultLimit: 25,
-  fuseOptions: {
-    useTokenSearch: false
-  }
-}
-
-onNuxtReady(init)
-
-watchDebounced(searchTerm, (term) => {
-  if (term) {
-    track('Search Performed', { term })
-  }
-}, { debounce: 500 })
 </script>
 
 <template>
@@ -41,7 +17,8 @@ watchDebounced(searchTerm, (term) => {
     :navigation="navigation"
     :search="search"
     :search-status="status"
-    :fuse="fuse"
+    :loading="status === 'loading'"
+    :fuse="{ resultLimit: 25 }"
     :transition="false"
   />
 </template>

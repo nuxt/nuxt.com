@@ -4,16 +4,19 @@ definePageMeta({
 })
 
 const [{ data: page }, { data: home }] = await Promise.all([
-  useAsyncData('showcase', () => queryCollection('showcase').first()),
-  useAsyncData('home', () => queryCollection('index').first())
+  useAsyncData('showcase', () => useContent('site').get('/showcase')),
+  useAsyncData('home', () => useContent('site').get('/'))
 ])
 if (!page.value) {
   throw createError({ statusCode: 404, statusMessage: 'Page not found', fatal: true })
 }
 
+const pageData = computed(() => page.value!.data)
+const homeData = computed(() => home.value?.data)
+
 const stats = useStats()
-const title = page.value.head?.title || page.value.title
-const description = page.value.head?.description || page.value.description
+const title = pageData.value.head?.title || pageData.value.title
+const description = pageData.value.head?.description || pageData.value.description
 
 useSeoMeta({
   titleTemplate: '%s',
@@ -36,8 +39,8 @@ onMounted(() => {
 </script>
 
 <template>
-  <div v-if="page">
-    <UPageHero :title="page.title" :description="page.description" :ui="{ container: '!pb-12' }" />
+  <div v-if="pageData">
+    <UPageHero :title="pageData.title" :description="pageData.description" :ui="{ container: '!pb-12' }" />
 
     <UPage id="smooth" class="pt-20 -mt-20">
       <UPageBody>
@@ -79,9 +82,9 @@ onMounted(() => {
         </UPageCTA>
         <UContainer>
           <UPageSection :ui="{ container: '!pt-0' }">
-            <UPageLogos :marquee="isMobile" :title="home?.logos.title" :ui="{ title: 'text-muted font-medium text-lg', logos: 'mt-4' }">
+            <UPageLogos :marquee="isMobile" :title="homeData?.logos.title" :ui="{ title: 'text-muted font-medium text-lg', logos: 'mt-4' }">
               <Motion
-                v-for="(company, index) in home?.logos.companies"
+                v-for="(company, index) in (homeData?.logos.companies as any[])"
                 :key="company.alt"
                 as-child
                 :initial="{ opacity: 0, transform: 'translateY(20px)' }"
@@ -106,7 +109,7 @@ onMounted(() => {
           </UPageSection>
           <UPageGrid class="bg-elevated/50 p-4 rounded-2xl gap-2">
             <UPageCard
-              v-for="(website, index) in page.websites"
+              v-for="(website, index) in pageData.websites"
               :key="index"
               :to="website.url"
               target="_blank"

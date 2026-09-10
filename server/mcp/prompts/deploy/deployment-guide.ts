@@ -1,27 +1,24 @@
 import { z } from 'zod'
-import { queryCollection } from '@nuxt/content/server'
 import { getAgentDocument, getAgentSiteUrl } from '#agent-discovery'
 
 export default defineMcpPrompt({
   description: 'Get deployment instructions for a specific hosting provider',
   inputSchema: {
-    provider: z.string().describe('Hosting provider name (e.g., "Vercel", "Netlify", "AWS", "Cloudflare")')
+    provider: z.string().describe('Hosting provider name (e.g. "Vercel", "Netlify", "AWS", "Cloudflare")')
   },
   async handler({ provider }) {
     const event = useEvent()
 
-    const deployProviders = await queryCollection(event, 'deploy')
-      .select('title', 'path', 'description')
-      .all()
+    const deployProviders = await listInstancePages('site', { dir: '/deploy' })
 
-    const allProviders = deployProviders?.map(p => ({
+    const allProviders = deployProviders.map(p => ({
       title: p.title,
       path: p.path,
       description: p.description,
       url: `${getAgentSiteUrl(event)}${p.path}`
-    })) || []
+    }))
 
-    const matchingProvider = deployProviders?.find(p =>
+    const matchingProvider = deployProviders.find(p =>
       p.title.toLowerCase().includes(provider.toLowerCase())
     )
 

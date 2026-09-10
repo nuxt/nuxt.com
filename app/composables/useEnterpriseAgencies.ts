@@ -3,7 +3,7 @@ import { slugify, random } from '../utils'
 
 export const useEnterpriseAgencies = () => {
   const route = useRoute()
-  const { data: agencies, execute } = useAsyncData('agencies', () => queryCollection('agencies').all(), {
+  const { data: agencies, execute } = useAsyncData('agencies', () => listByDir('/enterprise/agencies'), {
     immediate: false,
     default: () => [],
     transform: (data) => {

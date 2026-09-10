@@ -1,4 +1,4 @@
-import type { MDCRoot } from '@nuxtjs/mdc'
+import type { MarkdownDocument } from 'comark'
 
 export type Release = {
   url: string
@@ -7,5 +7,5 @@ export type Release = {
   title: string
   date: string
   markdown: string
-  body: MDCRoot
+  nodes: MarkdownDocument['nodes']
 }

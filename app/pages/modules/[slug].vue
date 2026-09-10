@@ -218,11 +218,16 @@ if (import.meta.server) {
       } : { root: 'lg:grid-cols-12', center: 'lg:col-span-9', right: 'lg:col-span-3' }"
     >
       <UPageBody>
-        <ContentRenderer v-if="module.readme?.body" :value="module.readme" :components="{ a: ModuleProseA, img: ModuleProseImg, kbd: ModuleProseKbd }" class="first:[&_picture]:block first:[&_picture]:mb-4" />
+        <MarkdownDocument
+          v-if="module.readme?.nodes?.length"
+          :value="module.readme"
+          :components="{ a: ModuleProseA, img: ModuleProseImg, kbd: ModuleProseKbd }"
+          class="first:[&_picture]:block first:[&_picture]:mb-4"
+        />
       </UPageBody>
 
       <template #right>
-        <UContentToc :links="module.readme?.toc?.links">
+        <UContentToc :links="module.readme?.meta?.toc?.links">
           <template #bottom>
             <div class="hidden lg:block space-y-6">
               <UPageLinks title="Links" :links="links" />

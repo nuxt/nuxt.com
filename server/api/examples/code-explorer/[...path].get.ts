@@ -1,7 +1,6 @@
 import { existsSync } from 'node:fs'
 import { readdir, readFile } from 'node:fs/promises'
 import { basename, join, relative, resolve } from 'node:path'
-import { parseMdc } from '../../../../helpers/mdc-parser.mjs'
 
 interface ExampleSourceTreeItem {
   filename: string
@@ -218,13 +217,13 @@ function createCodeBlock(filename: string, code: string) {
 }
 
 async function parseFile(relativePath: string, code: string) {
-  const parsed = await parseMdc(createCodeBlock(relativePath, code))
+  const parsed = await parseStandaloneMarkdown(createCodeBlock(relativePath, code))
 
   return {
     filename: basename(relativePath),
     dir: relativePath.replace(basename(relativePath), ''),
     language: getLanguage(relativePath),
-    body: parsed.body
+    nodes: parsed.nodes
   }
 }
 

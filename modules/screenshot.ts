@@ -1,103 +1,90 @@
-import { defineNuxtModule } from '@nuxt/kit'
 import { existsSync } from 'node:fs'
+import { readFile, readdir } from 'node:fs/promises'
+import { defineNuxtModule } from '@nuxt/kit'
 import { join } from 'pathe'
 import captureWebsite from 'capture-website'
 import { kebabCase } from 'scule'
+import { parseYAML } from 'confbox/yaml'
 
-interface ContentFile {
-  id?: string
+interface ScreenshotOptions {
   slug?: string
-  screenshotUrl?: string
-  demo?: string
+  name?: string
   url?: string
+  demo?: string
+  screenshotUrl?: string
   screenshotOptions?: Record<string, any>
-  websites?: Array<{
-    name: string
-    url: string
-    hostname: string
-    screenshotUrl?: string
-    screenshotOptions?: Record<string, any>
-  }>
 }
 
-export default defineNuxtModule((options, nuxt) => {
-  nuxt.hook('content:file:afterParse', async ({ content: file }: { content: ContentFile }) => {
-    // Handle individual template files
-    if (file.id?.includes('/templates/')) {
-      const template = file
-      const url = template.screenshotUrl || template.demo
-      if (!url) {
-        console.error(`Template ${template.slug} has no "demo" or "screenshotUrl" to take a screenshot from`)
-        return
-      }
-      const filename = join(process.cwd(), 'public/assets/templates', `${template.slug}.webp`)
-      if (existsSync(filename)) {
-        return
-      }
-      console.log(`Generating screenshot for Template ${template.slug} hitting ${url}...`)
-      await captureWebsite.file(url, filename, {
-        ...(template.screenshotOptions || {}),
-        launchOptions: { headless: true },
-        width: 1280,
-        height: 720,
-        type: 'webp'
-      })
-    }
+const CONTENT_DIR = join(process.cwd(), 'content')
 
-    // Handle individual video course files
-    if (file.id?.includes('/video-courses/')) {
-      const course = file
-      const url = course.screenshotUrl || course.url
-      if (!url) {
-        console.error(`Video Course ${course.slug} has no "url" or "screenshotUrl" to take a screenshot from`)
-        return
-      }
-      const filename = join(process.cwd(), 'public/assets/video-courses', `${course.slug}.webp`)
-      if (existsSync(filename)) {
-        return
-      }
-      console.log(`Generating screenshot for Video Course ${course.slug} hitting ${url}...`)
-      await captureWebsite.file(url, filename, {
-        ...(course.screenshotOptions || {}),
-        launchOptions: { headless: true },
-        width: 1280,
-        height: 720,
-        type: 'webp'
-      })
-    }
+/** Every `.yml` directly under `content/<dir>` (`templates/`, `video-courses/`), parsed. */
+async function readYamlDir(dir: string): Promise<ScreenshotOptions[]> {
+  const path = join(CONTENT_DIR, dir)
+  if (!existsSync(path)) return []
 
-    if (file.id?.includes('showcase.yml') && file.websites) {
-      for (const website of file.websites) {
-        const url = website.screenshotUrl || website.url
-        if (!website.name) {
-          throw new Error(`Showcase ${website.hostname} has no "name" to take a screenshot from`)
-          continue
-        }
-        if (!url) {
-          console.error(`Showcase ${website.name} has no "url" or "screenshotUrl" to take a screenshot from`)
-          continue
-        }
-        if (website.screenshotUrl) {
-          continue
-        }
+  const files = (await readdir(path)).filter(file => file.endsWith('.yml'))
 
-        const filename = join(process.cwd(), 'public/assets/websites', `${kebabCase(website.name.replace(/ /g, ''))}.webp`)
-        if (existsSync(filename)) {
-          continue
-        }
+  return Promise.all(files.map(async file => parseYAML<ScreenshotOptions>(await readFile(join(path, file), 'utf8'))))
+}
 
-        console.log(`Generating screenshot for Showcase ${website.name} hitting ${url}...`)
-        await captureWebsite.file(url, filename, {
-          ...(website.screenshotOptions || {}),
-          launchOptions: { headless: true },
-          width: 1280,
-          height: 720,
-          type: 'webp',
-          userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36'
-        }).catch((err) => {
-          console.warn(`Could not generate screenshot for ${url}: ${err.message}`)
-        })
-      }
-    }
+async function capture(url: string, filename: string, label: string, options: Record<string, any> = {}): Promise<void> {
+  if (existsSync(filename)) return
+
+  console.log(`Generating screenshot for ${label} hitting ${url}...`)
+  await captureWebsite.file(url, filename, {
+    ...options,
+    launchOptions: { headless: true },
+    width: 1280,
+    height: 720,
+    type: 'webp'
   })
+}
+
+/**
+ * Screenshots for templates, video courses and showcase sites — build-time only, no runtime
+ * impact. Reads `content/` directly (no content hook to plug into any more): skips anything
+ * whose `.webp` already exists, so this is a no-op for every entry already committed.
+ */
+export default defineNuxtModule(async () => {
+  const templates = await readYamlDir('templates')
+  for (const template of templates) {
+    const url = template.screenshotUrl || template.demo
+    if (!url) {
+      console.error(`Template ${template.slug} has no "demo" or "screenshotUrl" to take a screenshot from`)
+      continue
+    }
+    await capture(url, join(process.cwd(), 'public/assets/templates', `${template.slug}.webp`), `Template ${template.slug}`, template.screenshotOptions)
+  }
+
+  const videoCourses = await readYamlDir('video-courses')
+  for (const course of videoCourses) {
+    const url = course.screenshotUrl || course.url
+    if (!url) {
+      console.error(`Video Course ${course.slug} has no "url" or "screenshotUrl" to take a screenshot from`)
+      continue
+    }
+    await capture(url, join(process.cwd(), 'public/assets/video-courses', `${course.slug}.webp`), `Video Course ${course.slug}`, course.screenshotOptions)
+  }
+
+  const showcasePath = join(CONTENT_DIR, 'showcase.yml')
+  if (existsSync(showcasePath)) {
+    const showcase = parseYAML<{ websites?: ScreenshotOptions[] }>(await readFile(showcasePath, 'utf8'))
+    for (const website of showcase.websites ?? []) {
+      if (!website.name) {
+        console.error('Showcase entry has no "name" to take a screenshot from')
+        continue
+      }
+      // An explicit `screenshotUrl` already points at a hosted image — nothing to capture.
+      if (website.screenshotUrl) continue
+      if (!website.url) {
+        console.error(`Showcase ${website.name} has no "url" or "screenshotUrl" to take a screenshot from`)
+        continue
+      }
+
+      const filename = join(process.cwd(), 'public/assets/websites', `${kebabCase(website.name.replace(/ /g, ''))}.webp`)
+      await capture(website.url, filename, `Showcase ${website.name}`, website.screenshotOptions).catch((err) => {
+        console.warn(`Could not generate screenshot for ${website.url}: ${err.message}`)
+      })
+    }
+  }
 })

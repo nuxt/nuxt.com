@@ -2,6 +2,7 @@
 import { getPaginationRowModel } from '@tanstack/vue-table'
 import type { TableColumn, DropdownMenuItem } from '@nuxt/ui'
 import { h, resolveComponent } from 'vue'
+import { CURRENT_DOCS_VERSION, DOCS_REFS, DOCS_REPO } from '#shared/utils/docs'
 
 const UButton = resolveComponent('UButton')
 const showMcpInstall = ref(false)
@@ -485,7 +486,7 @@ watch(currentPage, () => {
                 size="sm"
                 variant="ghost"
                 color="neutral"
-                :to="`https://github.com/nuxt/nuxt/edit/4.x/${selectedPage.lastFeedback.stem.replace(/docs\/\d\.x/, 'docs')}.md`"
+                :to="`https://github.com/${DOCS_REPO}/edit/${DOCS_REFS[CURRENT_DOCS_VERSION].branch}/${selectedPage.lastFeedback.stem.replace(/docs\/\d\.x/, 'docs')}.md`"
                 target="_blank"
                 icon="i-simple-icons-github"
               />

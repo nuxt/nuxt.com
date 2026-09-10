@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ProseImg } from '#components'
-import { CLI_DOCS_REPO } from '#shared/utils/cli-docs'
+import { CLI_DOCS_REPO } from '#shared/utils/cli'
 
 const props = defineProps({
   src: {

@@ -9,21 +9,17 @@ const { isAgentDocked } = useNuxtAgent()
 const { fetchList, providers } = useHostingProviders()
 await fetchList()
 
-const [{ data: provider }, { data: surround }] = await Promise.all([
-  useAsyncData(`${kebabCase(route.path)}-provider`, () => queryCollection('deploy').path(route.path).first()),
-  useAsyncData(`${kebabCase(route.path)}-surround`, () => {
-    return queryCollectionItemSurroundings('deploy', route.path, {
-      fields: ['description']
-    })
-  })
-])
+const { data: provider } = await useAsyncData(`${kebabCase(route.path)}-provider`, () => useContent('site').get(route.path))
 
 if (!provider.value) {
   throw createError({ statusCode: 404, statusMessage: 'Hosting Platform not found', fatal: true })
 }
 
-const title = provider.value?.title
-const description = provider.value?.description
+const providerData = computed(() => provider.value!.data)
+const surround = computed(() => listSurround(providers.value, route.path))
+
+const title = providerData.value?.title
+const description = providerData.value?.description
 
 useSeoMeta({
   titleTemplate: 'Deploy Nuxt to %s',
@@ -47,19 +43,19 @@ const links = [] as Array<{
   target?: string
 }>
 
-if (provider.value?.website) {
+if (providerData.value?.website) {
   links.push({
     icon: 'i-lucide-globe',
-    label: provider.value?.title,
-    to: provider.value?.website,
+    label: providerData.value?.title,
+    to: providerData.value?.website,
     target: '_blank'
   })
 }
-if (provider.value?.nitroPreset) {
+if (providerData.value?.nitroPreset) {
   links.push({
     icon: 'i-lucide-zap',
     label: 'Nitro Preset',
-    to: `https://nitro.unjs.io/deploy/providers/${provider.value?.nitroPreset}`,
+    to: `https://nitro.unjs.io/deploy/providers/${providerData.value?.nitroPreset}`,
     target: '_blank'
   })
 }
@@ -72,7 +68,7 @@ links.push({
 </script>
 
 <template>
-  <UContainer v-if="provider">
+  <UContainer v-if="providerData">
     <UPage>
       <template #left>
         <UPageAside>
@@ -80,28 +76,28 @@ links.push({
             variant="pill"
             highlight
             orientation="vertical"
-            :items="providers.map(provider => ({
-              label: provider.title,
-              to: provider.path,
-              badge: provider.sponsor ? 'Sponsor' : undefined
+            :items="providers.map(item => ({
+              label: item.title,
+              to: item.path,
+              badge: item.sponsor ? 'Sponsor' : undefined
             })).sort((a, b) => a.label.localeCompare(b.label, 'en'))"
           />
         </UPageAside>
       </template>
       <UPageHeader
-        :description="provider.description"
+        :description="providerData.description"
         :ui="{ headline: 'mb-8' }"
       >
         <template #headline>
-          <UBreadcrumb :items="[{ label: 'Deploy', to: '/deploy' }, { label: provider.title }]" class="max-w-full" />
+          <UBreadcrumb :items="[{ label: 'Deploy', to: '/deploy' }, { label: providerData.title }]" class="max-w-full" />
         </template>
 
         <template #title>
           <div class="flex items-center gap-4">
-            <UIcon v-if="provider.logoIcon" :name="provider.logoIcon" class="w-10" />
-            <NuxtImg v-else :src="provider.logoSrc" width="40" height="40" class="size-10" />
+            <UIcon v-if="providerData.logoIcon" :name="providerData.logoIcon" class="w-10" />
+            <NuxtImg v-else :src="providerData.logoSrc" width="40" height="40" class="size-10" />
 
-            <span>{{ provider.title }}</span>
+            <span>{{ providerData.title }}</span>
           </div>
         </template>
       </UPageHeader>
@@ -113,7 +109,7 @@ links.push({
         } : { root: 'lg:grid-cols-12', center: 'lg:col-span-9', right: 'lg:col-span-3' }"
       >
         <UPageBody>
-          <ContentRenderer v-if="provider && provider.body" :value="provider" />
+          <MarkdownDocument v-if="provider" :value="provider" />
 
           <USeparator v-if="surround?.length" />
 
@@ -121,10 +117,10 @@ links.push({
         </UPageBody>
 
         <template #right>
-          <UContentToc :links="provider.body?.toc?.links || []">
+          <UContentToc :links="providerData.body?.toc?.links || []">
             <template #bottom>
               <div class="hidden lg:block space-y-6">
-                <USeparator v-if="links?.length && provider.body?.toc?.links?.length" type="dashed" />
+                <USeparator v-if="links?.length && providerData.body?.toc?.links?.length" type="dashed" />
                 <UPageLinks title="Links" :links="links" />
                 <USeparator type="dashed" />
                 <SocialLinks />

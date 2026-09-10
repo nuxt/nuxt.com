@@ -1,4 +1,4 @@
-import type { MDCParserResult } from '@nuxtjs/mdc'
+import type { MarkdownDocument } from 'comark'
 import type NuxtModules from '@nuxt/modules/modules.json'
 
 export type BaseModule = {
@@ -67,6 +67,6 @@ export interface Module extends BaseModule {
   health?: ModuleHealth | null
   contributors?: ModuleContributor[]
   maintainers?: ModuleMaintainer[]
-  readme?: MDCParserResult
+  readme?: MarkdownDocument
   generatedAt?: string
 }
