@@ -548,13 +548,6 @@ export default defineNuxtConfig({
         const base = `https://raw.githubusercontent.com/${CLI_DOCS_REPO}/${CLI_DOCS_REFS[collection]}`
         file.body = file.body.replaceAll(/(!\[[^\]]*\]\()\/(?!\/)/g, `$1${base}/`)
       }
-      // The upstream Nitro Kit page currently links to a page that does not
-      // exist. Point it to the closest server compatibility documentation
-      // before adding the collection's version segment.
-      file.body = file.body.replaceAll(
-        '/docs/guide/modules/server-compatibility',
-        '/docs/guide/concepts/server-engine'
-      )
       const docsVersion = DOCS_COLLECTION_VERSIONS[collection]
       if (docsVersion) {
         file.body = insertDocsVersion(file.body, docsVersion)
