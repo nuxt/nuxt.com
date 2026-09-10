@@ -2,7 +2,7 @@ import { createResolver } from 'nuxt/kit'
 import { parseMdc } from './helpers/mdc-parser.mjs'
 import { agentHowToCall, agentWhenToUse } from './shared/utils/agents'
 import { CLI_DOCS_PREFIX, CLI_DOCS_REFS, CLI_DOCS_REPO } from './shared/utils/cli-docs'
-import { CURRENT_DOCS_VERSION, EXCLUDED_DOC_VERSIONS } from './shared/utils/docs'
+import { CURRENT_DOCS_VERSION, DOCS_COLLECTION_VERSIONS, EXCLUDED_DOC_VERSIONS, insertDocsVersion } from './shared/utils/docs'
 
 const { resolve } = createResolver(import.meta.url)
 
@@ -291,7 +291,15 @@ export default defineNuxtConfig({
     '/docs/4.x/guide/going-further/custom-routing': { redirect: '/docs/4.x/guide/recipes/custom-routing', prerender: false },
     '/docs/5.x/guide/going-further/custom-routing': { redirect: '/docs/5.x/guide/recipes/custom-routing', prerender: false },
     // new directory structure
+    '/docs/3.x/directory-structure/app/assets': { redirect: '/docs/3.x/directory-structure/assets', prerender: false },
+    '/docs/3.x/directory-structure/app/components': { redirect: '/docs/3.x/directory-structure/components', prerender: false },
+    '/docs/3.x/directory-structure/app/composables': { redirect: '/docs/3.x/directory-structure/composables', prerender: false },
+    '/docs/3.x/directory-structure/app/error': { redirect: '/docs/3.x/directory-structure/error', prerender: false },
+    '/docs/3.x/directory-structure/app/layouts': { redirect: '/docs/3.x/directory-structure/layouts', prerender: false },
     '/docs/3.x/directory-structure/app/middleware': { redirect: '/docs/3.x/directory-structure/middleware', prerender: false },
+    '/docs/3.x/directory-structure/app/pages': { redirect: '/docs/3.x/directory-structure/pages', prerender: false },
+    '/docs/3.x/directory-structure/app/plugins': { redirect: '/docs/3.x/directory-structure/plugins', prerender: false },
+    '/docs/3.x/directory-structure/app/utils': { redirect: '/docs/3.x/directory-structure/utils', prerender: false },
     '/docs/4.x/directory-structure/app': { redirect: '/docs/4.x/directory-structure/app/app', prerender: false },
     '/docs/5.x/directory-structure/app': { redirect: '/docs/4.x/directory-structure/app/app', prerender: false },
     '/docs/3.x/guide/directory-structure/**': { redirect: '/docs/3.x/directory-structure', prerender: false },
@@ -439,9 +447,10 @@ export default defineNuxtConfig({
     '/docs/5.x/examples/composables/use-head': { redirect: '/docs/4.x/examples/features/meta-tags', prerender: false },
     '/docs/4.x/getting-started/directory-structure': { redirect: '/docs/4.x/directory-structure', prerender: false },
     '/docs/5.x/getting-started/directory-structure': { redirect: '/docs/4.x/directory-structure', prerender: false },
+    '/docs/guide/going-further/modules': { redirect: '/docs/guide/modules', prerender: false },
+    '/docs/3.x/guide/going-further/modules': { redirect: '/docs/3.x/guide/modules', prerender: false },
     '/docs/4.x/guide/going-further/modules': { redirect: '/docs/4.x/guide/modules', prerender: false },
     '/docs/5.x/guide/going-further/modules': { redirect: '/docs/4.x/guide/modules', prerender: false },
-    '/docs/4.x/guide/modules/module-dependencies': { redirect: '/docs/5.x/guide/modules/module-dependencies', prerender: false },
     '/docs/4.x/guide/concepts/rendering-modes': { redirect: '/docs/4.x/guide/concepts/rendering', prerender: false },
     '/docs/5.x/guide/concepts/rendering-modes': { redirect: '/docs/4.x/guide/concepts/rendering', prerender: false },
     '/docs/4.x/guide/directory-structure/nuxt.config': { redirect: '/docs/4.x/directory-structure/nuxt-config', prerender: false },
@@ -539,34 +548,16 @@ export default defineNuxtConfig({
         const base = `https://raw.githubusercontent.com/${CLI_DOCS_REPO}/${CLI_DOCS_REFS[collection]}`
         file.body = file.body.replaceAll(/(!\[[^\]]*\]\()\/(?!\/)/g, `$1${base}/`)
       }
-      if (file.id.startsWith('docsv5/')) {
-        file.body = file.body.replaceAll(/\(\/docs\/(?!\d\.x)/g, '(/docs/5.x/')
-        // Pages that only exist on main (5.x) but are linked as /docs/4.x/* from
-        // the 5.x docs. Left unrewritten they 404, which fails the prerender now
-        // that the crawler is on. Only paths whose 5.x counterpart exists belong
-        // here — a blanket 4.x→5.x rewrite would break the ~13 links that point
-        // at pages 5.x dropped (guide/concepts/esm, going-further/internals, …).
-        for (const path of [
-          'guide/modules/module-dependencies',
-          'guide/best-practices/accessibility',
-          'guide/concepts/server-components',
-          'guide/recipes/mostly-static-sites'
-        ]) {
-          file.body = file.body.replaceAll(`/docs/4.x/${path}`, `/docs/5.x/${path}`)
-        }
-        // The nightly Nitro Kit page currently links to an upstream page that
-        // does not exist. Keep previews deployable while pointing readers to
-        // the closest stable server compatibility documentation.
-        file.body = file.body.replaceAll(
-          '/docs/4.x/guide/modules/server-compatibility',
-          '/docs/4.x/guide/concepts/server-engine'
-        )
-      }
-      if (file.id.startsWith('docsv4/')) {
-        file.body = file.body.replaceAll(/\(\/docs\/(?!\d\.x)/g, '(/docs/4.x/')
-      }
-      if (file.id.startsWith('docsv3/')) {
-        file.body = file.body.replaceAll(/\(\/docs\/(?!\d\.x)/g, '(/docs/3.x/')
+      // The upstream Nitro Kit page currently links to a page that does not
+      // exist. Point it to the closest server compatibility documentation
+      // before adding the collection's version segment.
+      file.body = file.body.replaceAll(
+        '/docs/guide/modules/server-compatibility',
+        '/docs/guide/concepts/server-engine'
+      )
+      const docsVersion = DOCS_COLLECTION_VERSIONS[collection]
+      if (docsVersion) {
+        file.body = insertDocsVersion(file.body, docsVersion)
       }
     },
     'content:file:afterParse': async ({ file, content }) => {
