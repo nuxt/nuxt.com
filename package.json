@@ -59,7 +59,7 @@
     "@vueuse/nuxt": "^14.4.0",
     "ai": "^7.0.93",
     "chat": "^4.40.0",
-    "comark-content": "https://pkg.pr.new/comark-content@e2df8d0",
+    "comark-content": "https://pkg.pr.new/comark-content@14e67ad",
     "date-fns": "^4.4.0",
     "drizzle-orm": "^0.45.2",
     "eve": "^0.52.1",

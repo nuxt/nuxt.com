@@ -1,7 +1,7 @@
 /**
  * Logging for the search worker (based on the `?debug=search` flag).
  */
-import type { ContentFile, Logger, RelationalDatabase } from 'comark-content'
+import type { ContentFile, Logger, RelationalDatabase } from 'comark-content/runtime'
 
 const PREFIX = '[search:worker]'
 
@@ -34,31 +34,37 @@ export const logger: Logger = {
 
 /**
  * What a decoded artifact holds:
- * - a snapshot decodes to the source's items
- * - the manifest to an object keyed by path
+ * - a snapshot decodes to `{ items: ContentFile[] }`
+ * - the manifest to `{ items }` keyed by path, without bodies
+ *
+ * `with nodes` is the number that matters: the FTS plugin only indexes
+ * `kind === 'document' && nodes?.length`, so a bodies-less snapshot builds an empty index — which
+ * is otherwise indistinguishable from a query that matched nothing.
  */
 export function describeArtifact(decoded: unknown): string {
-  if (Array.isArray(decoded)) {
-    const items = decoded as ContentFile[]
-    const documents = items.filter(item => item.meta.kind === 'document')
+  const items = (decoded as { items?: unknown } | null)?.items
+
+  // A snapshot's items are an array of parsed files; a manifest's are a record keyed by path.
+  if (Array.isArray(items)) {
+    const files = items as ContentFile[]
+    const documents = files.filter(item => item.meta?.kind === 'document')
     const withNodes = documents.filter(item => item.nodes?.length)
-    return `${items.length} item(s), ${documents.length} document(s), ${withNodes.length} with nodes`
+
+    return `${files.length} item(s), ${documents.length} document(s), ${withNodes.length} with nodes`
   }
-  const items = (decoded as { items?: Record<string, unknown> } | null)?.items
+
   return `${items ? Object.keys(items).length : 0} manifest item(s)`
 }
 
 /**
  * Rows in the FTS plugin's index
  * Allows to distinguish between "nothing was indexed" and "the query found nothing".
+ *
+ * Reads the plugin's private table, so it is a diagnostic, not something to build on.
  */
-export async function indexedRows(database: RelationalDatabase, sources: string[]): Promise<number | string> {
+export async function indexedRows(database: RelationalDatabase, source: string): Promise<number | string> {
   try {
-    const placeholders = sources.map(() => '?').join(', ')
-    const rows = await database.all<{ n: number }>(
-      `SELECT count(*) as n FROM __fts_search WHERE source IN (${placeholders})`,
-      sources
-    )
+    const rows = await database.all<{ n: number }>('SELECT count(*) as n FROM __fts_search WHERE source = ?', [source])
     return rows?.[0]?.n ?? 'unknown'
   } catch (error) {
     return `unknown (${error instanceof Error ? error.message : String(error)})`

@@ -11,7 +11,7 @@ export default defineEventHandler(async (event) => {
   }
 
   const content = await getInstanceAtHead(docsInstanceKey(version))
-  const items = await content.list('docs')
+  const items = await content.list()
   const prefix = `${docsPathPrefix(version)}/errors/`
 
   return items

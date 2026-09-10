@@ -9,10 +9,10 @@ export default defineEventHandler(async (event) => {
 
   // Dev reads content from local directories, so there is no commit to pin to.
   if (import.meta.dev) {
-    return { base: instanceBasePath(key), sha: null, sources: [name] }
+    return { base: instanceBasePath(key), sha: null, source: name }
   }
 
   const sha = await resolveInstanceSha(key)
 
-  return { base: instanceBlobPath(key, sha), sha, sources: [name] }
+  return { base: instanceBlobPath(key, sha), sha, source: name }
 })

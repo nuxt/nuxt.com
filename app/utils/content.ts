@@ -65,7 +65,7 @@ export function findTitleTemplate(
  * Every document under the `path` directory (at any depth).
  */
 export async function listByDir<T extends Record<string, any> = Record<string, any>>(path: string) {
-  const items = await useContent('site').list('site')
+  const items = await useContent('site').list()
   const prefix = `${path}/`
 
   return items

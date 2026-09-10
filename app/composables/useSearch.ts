@@ -7,7 +7,7 @@ interface ContentHead {
   /** Instance root to read artifacts from: SHA-pinned and immutable, or live in dev. */
   base: string
   sha: string | null
-  sources: string[]
+  source: string
 }
 
 const status = ref<SearchStatus>('idle')
@@ -41,17 +41,17 @@ export function useSearch() {
   // resolves with the fallback *without* ever fetching.
   const { data: head, refresh: refreshHead } = useFetch<ContentHead>(
     () => instanceHeadPath(instanceKey.value),
-    { server: false, default: () => ({ base: '', sha: null, sources: [] }) }
+    { server: false, default: () => ({ base: '', sha: null, source: '' }) }
   )
 
   /**
    * What the worker needs to build a database. The palette renders client-only, so `head` is not in
    * the payload and resolves after mount — hence watching this rather than warming up once.
    */
-  const target = computed(() => ({ base: head.value?.base ?? '', sources: head.value?.sources ?? [] }))
+  const target = computed(() => ({ base: head.value?.base ?? '', source: head.value?.source ?? '' }))
 
   /** Target key for watcher to track changes to the target. */
-  const targetKey = computed(() => `${target.value.base}|${target.value.sources.join(',')}`)
+  const targetKey = computed(() => `${target.value.base}|${target.value.source}`)
 
   /**
    * Load the database ahead of the first keystroke. Safe to call repeatedly: skipped once already
@@ -60,7 +60,7 @@ export function useSearch() {
   async function warmup(): Promise<void> {
     const debug = searchDebug()
     // `head` has not landed yet: the `target` watcher warms up as soon as it does
-    if (!target.value.sources.length) {
+    if (!target.value.source) {
       if (debug) console.info('[search] warmup deferred — waiting for the instance head')
       return
     }
@@ -76,7 +76,7 @@ export function useSearch() {
       }
       if (debug) console.info(`[search] warmup from ${target.value.base} (head ${head.value?.sha ?? 'unpinned'})`)
 
-      await warmupSearch(target.value.base, target.value.sources, location.origin, debug)
+      await warmupSearch(target.value.base, target.value.source, location.origin, debug)
       status.value = 'ready'
     } catch (error) {
       warmedKey = undefined // clears the guard: below retries under a new key, or a later call retries this one

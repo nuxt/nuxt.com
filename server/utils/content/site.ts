@@ -1,7 +1,7 @@
 /** The server-side twin of the app's `listByDir()`. */
 export async function listByDir<T extends Record<string, any> = Record<string, any>>(path: string) {
   const content = await getInstanceAtHead('site')
-  const items = await content.list('site')
+  const items = await content.list()
   const prefix = `${path}/`
 
   return items

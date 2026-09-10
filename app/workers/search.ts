@@ -1,15 +1,33 @@
 /**
  * Search worker: owns the browser-standalone `comark-content` instance (sqlite-wasm FTS5) hydrated from the per-commit snapshot artifacts.
  */
-import { comarkContent, readArtifact } from 'comark-content'
+import { comarkContent, readArtifact } from 'comark-content/runtime'
 import sqliteWasm from 'comark-content/database/sqlite-wasm'
+import snapshot from 'comark-content/sources/snapshot'
 import sqliteFullTextSearch from 'comark-content/plugins/sqlite-full-text-search'
 import { ofetch } from 'ofetch'
 import { describeArtifact, indexedRows, isDebug, log, logger, setDebug, since } from './internal/search-logger'
-import type { CacheArtifact, ComarkContent, SearchOptions, SearchResult } from 'comark-content'
-import type { SqliteFullTextSearchMethods } from 'comark-content/plugins/sqlite-full-text-search'
+import type { CacheArtifact, SearchOptions, SearchResult } from 'comark-content/runtime'
 
-type SearchInstance = ComarkContent & SqliteFullTextSearchMethods
+/**
+ * Creates a search instance.
+ */
+function createSearchInstance(source: string, apiBase: string, fetchArtifact: (path: string) => Promise<CacheArtifact>) {
+  const database = sqliteWasm()
+  return {
+    database,
+    content: comarkContent(source, {
+      source: snapshot(
+        () => fetchArtifact(`${apiBase}/snapshot/${source}.json`),
+        () => fetchArtifact(`${apiBase}/manifest.json`)
+      ),
+      plugins: [sqliteFullTextSearch({ database })],
+      logger
+    })
+  }
+}
+
+type SearchInstance = ReturnType<typeof createSearchInstance>['content']
 
 /**
  * The instance currently searchable, and the artifact root it was built from.
@@ -17,7 +35,7 @@ type SearchInstance = ComarkContent & SqliteFullTextSearchMethods
  * One at a time on purpose: `apiBase` carries both the docs version and its commit, so switching
  * version or a push replaces it.
  */
-let active: { apiBase: string, sources: string[], instance: SearchInstance } | undefined
+let active: { apiBase: string, instance: SearchInstance } | undefined
 
 /**
  * The in-flight hydration, keyed by the `apiBase` it targets.
@@ -27,10 +45,10 @@ let hydration: { apiBase: string, promise: Promise<void> } | undefined
 /**
  * Loads the database for `apiBase`. No-op once ready for that base; retries after a failure.
  */
-export function warmupSearch(apiBase: string, sources: string[], origin: string, debug: boolean): Promise<void> {
+export function warmupSearch(apiBase: string, source: string, origin: string, debug: boolean): Promise<void> {
   setDebug(debug)
-  if (!sources.length) {
-    return Promise.reject(new Error('[search] cannot build a database without sources'))
+  if (!source) {
+    return Promise.reject(new Error('[search] cannot build a database without a source name'))
   }
   if (active?.apiBase === apiBase) {
     log(`warmup ignored — already ready for ${apiBase}`)
@@ -38,7 +56,7 @@ export function warmupSearch(apiBase: string, sources: string[], origin: string,
   }
   if (hydration?.apiBase === apiBase) return hydration.promise
 
-  const promise = loadDatabase(apiBase, sources, origin).catch((error) => {
+  const promise = loadDatabase(apiBase, source, origin).catch((error) => {
     hydration = undefined // clears the guard so the next warmup can retry
     throw error
   })
@@ -46,7 +64,7 @@ export function warmupSearch(apiBase: string, sources: string[], origin: string,
   return promise
 }
 
-async function loadDatabase(apiBase: string, sources: string[], origin: string): Promise<void> {
+async function loadDatabase(apiBase: string, source: string, origin: string): Promise<void> {
   const started = performance.now()
   try {
     const fetchArtifact = async (path: string): Promise<CacheArtifact> => {
@@ -70,24 +88,15 @@ async function loadDatabase(apiBase: string, sources: string[], origin: string):
       }
     }
 
-    // Held rather than inlined into the plugin so the row count below can query the index directly.
-    const database = sqliteWasm()
-    const content = comarkContent({
-      cache: {
-        loadManifest: () => fetchArtifact(`${apiBase}/manifest.json`),
-        loadSnapshot: (source: string) => fetchArtifact(`${apiBase}/snapshot/${source}.json`)
-      },
-      plugins: [sqliteFullTextSearch({ database })],
-      logger
-    }) as SearchInstance
+    const { database, content } = createSearchInstance(source, apiBase, fetchArtifact)
 
     await content.init()
 
     const indexStarted = performance.now()
-    await content.search(sources, '') // pulls the snapshots in and builds the FTS index
-    log(`index built in ${since(indexStarted)} — ${await indexedRows(database, sources)} row(s)`)
+    await content.search('') // pulls the snapshot in and builds the FTS index
+    log(`index built in ${since(indexStarted)} — ${await indexedRows(database, source)} row(s)`)
 
-    active = { apiBase, sources, instance: content }
+    active = { apiBase, instance: content }
     log(`ready in ${since(started)}`)
   } catch (error) {
     log(`hydration failed after ${since(started)}`, error)
@@ -102,7 +111,7 @@ export async function searchContent(query: string, opts?: SearchOptions): Promis
     return []
   }
   const queryStarted = performance.now()
-  const results = await active.instance.search(active.sources, query, {
+  const results = await active.instance.search(query, {
     limit: 25,
     snippet: { columns: ['content'] },
     ...opts

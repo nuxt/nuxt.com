@@ -110,12 +110,12 @@ export default defineEventHandler(async (event) => {
       const outdatedInstance = await getInstanceAtHead(instanceKey)
       await outdatedInstance.init()
 
-      const outdatedItems = { ...outdatedInstance.manifest.items }
+      const outdatedItems = { ...(await outdatedInstance.manifest()).items }
 
       const headSha = await resolveInstanceSha(instanceKey, { refresh: true })
       const newInstance = await createContentInstance(instanceKey, headSha)
       await newInstance.init()
-      const newItems = newInstance.manifest.items
+      const newItems = (await newInstance.manifest()).items
 
       rebuiltInstances.set(instanceKey, newInstance)
 
@@ -193,12 +193,11 @@ export default defineEventHandler(async (event) => {
   waitUntil((async () => {
     const absent: string[] = []
 
-    // Warm up the artifacts for impacted instances
-    // Only the docs instances needs to warm up the snapshot
+    // Parse every impacted instance up front, so the artifact fetches below hit a warm index.
     await timings.time('warm', async () => {
       for (const [instance, content] of rebuiltInstances) {
-        await warmArtifacts(content, { snapshot: isInstanceIndexedForSearch(instance) }).catch((error) => {
-          console.error(`${tag} artifact warm failed for ${instance}`, error?.message ?? error)
+        await warmInstance(content).catch((error) => {
+          console.error(`${tag} instance warm failed for ${instance}`, error?.message ?? error)
         })
       }
     })
@@ -331,7 +330,9 @@ function indexByFileKey(items: Record<string, ContentListFile>): Map<string, str
 }
 
 function sameListing(a: ContentListFile, b: ContentListFile): boolean {
-  return a.path === b.path && JSON.stringify(a.data) === JSON.stringify(b.data)
+  // Key order must not count: a cosmetic frontmatter reorder would otherwise read as a nav change
+  // and purge every page of the instance.
+  return a.path === b.path && hashManifestItem(a) === hashManifestItem(b)
 }
 
 /** `Promise.allSettled` over `items`, at most `size` in flight. */

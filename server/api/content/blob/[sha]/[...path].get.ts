@@ -10,11 +10,16 @@ export default defineEventHandler(async (event) => {
   if (!sha || !path) {
     throw createError({ statusCode: 400, statusMessage: 'Missing sha or path' })
   }
+  // This URL is public and unauthenticated, so reject anything that cannot be a commit
+  if (!/^[0-9a-f]{7,40}$/.test(sha)) {
+    throw createError({ statusCode: 400, statusMessage: 'Malformed content commit' })
+  }
 
   const key = instanceKeyFromSegments(path.split('/').filter(Boolean))
 
-  // Ensure the sha is the latest
-  if (sha !== await resolveInstanceSha(key) && sha !== await resolveInstanceSha(key, { refresh: true })) {
+  // Ensure the sha is the latest.
+  // Deliberately no `{ refresh: true }` retry: that bypasses the ref cache, so any well-formed-but-wrong sha would cost a live GitHub query.
+  if (sha !== await resolveInstanceSha(key)) {
     throw createError({ statusCode: 404, statusMessage: 'Stale content commit' })
   }
 

@@ -38,9 +38,9 @@ function createSource(source: InstanceSource, sha: string) {
 export async function createContentInstance(key: ContentInstanceKey, sha: string): Promise<ComarkContent> {
   const { name, source } = instanceSource(key)
 
-  return comarkContent({
+  return comarkContent(name, {
     basePath: instanceBasePath(key),
-    sources: { [name]: createSource(source, sha) },
+    source: createSource(source, sha),
     plugins: [
       markdown({ comark: { plugins: comarkPlugins }, listingFields: source.listingFields }),
       yaml({ listingFields: source.listingFields }),
@@ -69,33 +69,34 @@ export async function getInstanceAtHead(key: ContentInstanceKey): Promise<Comark
     return current.instance
   }
 
-  const instance = createContentInstance(key, sha).catch((error) => {
+  const instance = createContentInstance(key, sha).then(async (created) => {
+    if (import.meta.dev) {
+      await created.watch()
+      created.hooks.hook('watch:file:update', (_source: string, fileKey: string) => console.log(`[content] ${key} ${fileKey} updated`))
+    }
+
+    return created
+  }).catch((error) => {
     // Don't memoize a failed build: the next request should retry.
     if (instances.get(key)?.sha === sha) instances.delete(key)
     throw error
   })
   instances.set(key, { sha, instance })
 
+  // Release the superseded instance's database and watchers
+  if (current) void current.instance.then(previous => previous.dispose()).catch(() => {})
+
   return instance
 }
 
 /**
- * Warm up the artifacts.
- * - manifest artifact
- * - snapshot artifact (only if `opts.snapshot` is true)
+ * Parse every file, so the artifacts fetched next are served from a warm index.
+ *
+ * Artifact bytes are built behind `handler()`'s `/manifest` and `/snapshot` routes — 0.4 has no
+ * public `cache.snapshot()` to force them from here, so the webhook `$fetch`es those URLs instead.
  */
-export async function warmArtifacts(content: ComarkContent, opts: { snapshot?: boolean } = {}): Promise<void> {
+export async function warmInstance(content: ComarkContent): Promise<void> {
+  const startedAt = performance.now()
   await content.init({ partial: false })
-  if (!opts.snapshot) return
-
-  for (const source of content.manifest.sources) {
-    let artifact = await content.cache.snapshot(source)
-    if (!artifact) {
-      artifact = await content.cache.snapshot(source, { fresh: true })
-    }
-
-    if (!artifact) {
-      console.warn(`[content] no snapshot artifact produced for source "${source}"`)
-    }
-  }
+  recordDuration('content.warm.ms', startedAt, { instance: content.name })
 }

@@ -6,14 +6,14 @@ import { DOC_VERSIONS } from '#shared/utils/docs'
  */
 async function blogTree(): Promise<NavigationItem[]> {
   const site = await getInstanceAtHead('site')
-  const blog = findByPath(await site.navigation(['site']), '/blog')
+  const blog = findByPath(await site.navigation(), '/blog')
 
   return blog ? [blog] : []
 }
 
 export default defineEventHandler(async () => {
   const examplesContent = await getInstanceAtHead('examples')
-  const examplesNav = await examplesContent.navigation(['examples'])
+  const examplesNav = await examplesContent.navigation()
   // Not version-scoped: one subtree, linked from every version.
   const examples = findByPath(examplesNav, '/docs/examples')
   const examplesChildren = examples ? [examples] : []
