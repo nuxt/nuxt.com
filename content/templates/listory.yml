@@ -1,0 +1,6 @@
+name: 'Listory'
+slug: 'listory'
+description: 'A static directory template. Entries are files in the repo — no database, no backend, no third-party requests at runtime.'
+badge: 'Free'
+repo: 'peppe1337/listory'
+demo: 'https://peppe1337.github.io/listory/'
