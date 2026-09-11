@@ -1,0 +1,7 @@
+name: 'Nuxt One'
+slug: 'nuxt-one'
+description: 'The best way to start a full-stack, typesafe Nuxt.js app.'
+repo: 'easy-temps/nuxt-one'
+demo: 'https://www.one.devv.zone/'
+badge: 'Freemium'
+featured: true
