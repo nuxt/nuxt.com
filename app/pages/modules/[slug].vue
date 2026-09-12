@@ -101,15 +101,32 @@ if (import.meta.server) {
     description
   })
 }
+
+const nonLegacyNuxtVersions = [3, 4] as const
+const nonLegacyNuxtVersionsWithPrefixes = nonLegacyNuxtVersions.flatMap(version => [`^${version}`, `>=${version}`])
+
+function isModuleNonLegacyNuxtCompatible(compatibilityNuxtVersion?: string): boolean {
+  if (!compatibilityNuxtVersion) {
+    return false
+  }
+
+  return nonLegacyNuxtVersionsWithPrefixes.some(versionPrefix => compatibilityNuxtVersion.includes(versionPrefix))
+}
+
+const incompatibilityAlertTitle = computed(() => {
+  const nonLegacyVersions = nonLegacyNuxtVersions.map(version => version)
+
+  return `This module is not yet compatible with Nuxt ${nonLegacyVersions.slice(0, -1).join(', ')} or ${nonLegacyVersions.at(-1)}`
+})
 </script>
 
 <template>
   <UContainer v-if="module">
-    <div v-if="!module.compatibility?.nuxt?.includes('^3') && !module.compatibility?.nuxt?.includes('>=3')" class="pt-8">
+    <div v-if="!isModuleNonLegacyNuxtCompatible(module.compatibility?.nuxt)" class="pt-8">
       <UAlert
         icon="i-lucide-triangle-alert"
         variant="subtle"
-        title="This module is not yet compatible with Nuxt 3"
+        :title="incompatibilityAlertTitle"
       >
         <template #description>
           Head over to <NuxtLink to="https://v2.nuxt.com" target="_blank" class="underline">

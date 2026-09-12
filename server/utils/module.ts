@@ -1,5 +1,5 @@
 import { parseMarkdown } from '@nuxtjs/mdc/runtime'
-
+import { satisfies } from 'semver'
 import type { H3Event } from 'h3'
 import type { BaseModule, Module, ModuleContributor, ModuleHealth, ModuleStats } from '#shared/types'
 import type { NpmDownloadStats } from '../types/npm'
@@ -172,4 +172,101 @@ export async function fetchModuleReadme(_event: H3Event, module: BaseModule) {
   }) as string
 
   return await parseMarkdown(readme)
+}
+
+type NuxtCompatibilityVersion = '2' | '2-bridge' | '3' | '4' | 'all'
+
+const nonLegacyNuxtVersions = ['3', '4'] as const
+
+/**
+ * Evaluates whether a module is compatible with a requested Nuxt target version.
+ * If no version is specified, it checks for compatibility with non-legacy Nuxt versions,
+ *
+ * @template TModule The type of module to check compatibility for.
+ * @param targetModule The module metadata containing compatibility constraints.
+ * @param requestedVersion The optional target Nuxt version to test against.
+ * @returns True if the module satisfies the version compatibility requirement, otherwise false.
+ */
+export function isModuleCompatibleWithVersion<TModule extends BaseModule>(targetModule: TModule, requestedVersion?: NuxtCompatibilityVersion): boolean {
+  if (!targetModule.compatibility?.nuxt) {
+    return false
+  }
+
+  if (requestedVersion === 'all') {
+    return true
+  }
+
+  // If a specific Nuxt version was requested, test that version against the module's compatibility range.
+  if (requestedVersion) {
+    let targetVersion: string
+
+    if (requestedVersion === '2-bridge') {
+      // Reject modules that explicitly exclude bridge compatibility.
+      if (!targetModule.compatibility.requires?.bridge) {
+        return false
+      }
+
+      // Assign it highest possible 2.x version.
+      targetVersion = '2.999.999'
+    } else {
+      // Assign it highest possible patch version for the requested major version.
+      targetVersion = `${requestedVersion}.999.999`
+    }
+
+    return satisfies(targetVersion, targetModule.compatibility.nuxt)
+  }
+
+  // When no version is requested, consider all non-legacy Nuxt major versions.
+  return nonLegacyNuxtVersions.some(version => satisfies(`${version}.999.999`, targetModule.compatibility.nuxt))
+}
+
+/**
+ * Filters a collection of modules by their Nuxt version compatibility.
+ *
+ * @template TModule The type of modules in the list.
+ * @param moduleList The array of modules to filter.
+ * @param requestedVersion The optional target Nuxt version.
+ * @returns A new array containing only modules compatible with the specified version.
+ */
+export function filterModulesByCompatibility<TModule extends BaseModule>(moduleList: TModule[], requestedVersion?: NuxtCompatibilityVersion): TModule[] {
+  if (requestedVersion === 'all') {
+    return moduleList
+  }
+
+  return moduleList.filter(module => isModuleCompatibleWithVersion(module, requestedVersion))
+}
+
+/**
+ * Normalizes a category name by converting it to lowercase.
+ * @param category The category name to normalize.
+ * @returns The normalized category name.
+ */
+function normalizeCategory(category: string): string {
+  return category.toLowerCase()
+}
+
+/**
+ * Filters a collection of modules by category name (case-insensitive).
+ *
+ * @param moduleList The array of modules to filter.
+ * @param targetCategory The optional category name to filter by.
+ * @returns A filtered array matching the category, or the original list if no category is provided.
+ * @template TModule The type of modules in the list.
+ */
+export function filterModulesByCategory<TModule extends BaseModule>(moduleList: TModule[], targetCategory?: string): TModule[] {
+  if (!targetCategory) {
+    return moduleList
+  }
+
+  return moduleList.filter((moduleItem) => {
+    if (moduleItem.category && normalizeCategory(moduleItem.category) === normalizeCategory(targetCategory)) {
+      return true
+    }
+
+    if (moduleItem.categories && Array.isArray(moduleItem.categories)) {
+      return moduleItem.categories.some(category => normalizeCategory(category) === normalizeCategory(targetCategory))
+    }
+
+    return false
+  })
 }

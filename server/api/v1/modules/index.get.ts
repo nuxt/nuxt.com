@@ -1,44 +1,23 @@
 import { z } from 'zod'
-import { satisfies } from 'semver'
 
 export default defineCachedEventHandler(async (event) => {
-  const { version, category } = await getValidatedQuery(event, z.object({
-    version: z.enum(['2', '2-bridge', '3', 'all']).default('3'),
-    category: z.string().optional()
-  }).parse)
-  console.log(`Fetching v${version} modules...${category ? ` for category: ${category}` : ''}`)
+  const { version, category } = await getValidatedQuery(
+    event,
+    z.object({
+      version: z.enum(['2', '2-bridge', '3', '4', 'all']).optional(),
+      category: z.string().optional()
+    }).parse
+  )
 
-  let modules = await fetchModules(event) || []
+  console.log(`Fetching ${version ? `v${version}` : 'non-legacy'} modules...${category ? ` for category: ${category}` : ''}`)
 
-  if (version !== 'all') {
-    const major = (version === '2-bridge' ? '2' : version) satisfies '2' | '3'
-    const testableVersion = `${major}.999.999`
+  const fetchedModules = await fetchModules(event) || []
 
-    // Filter out modules by compatibility
-    modules = modules.filter((module) => {
-      // Nuxt 2 + bridge
-      if (version === '2-bridge' && !module.compatibility.requires?.bridge) {
-        return false
-      }
-      return satisfies(testableVersion, module.compatibility.nuxt)
-    })
-  }
+  // Filter modules by version compatibility defaults to non-legacy versions (3 and 4)
+  const compatibilityFilteredModules = filterModulesByCompatibility(fetchedModules, version)
 
-  // Filter by category if provided
-  if (category) {
-    const lowerCaseCategory = category.toLowerCase()
-    modules = modules.filter((module) => {
-      if (module.category && module.category.toLowerCase() === lowerCaseCategory) {
-        return true
-      }
-
-      if (module.categories && Array.isArray(module.categories)) {
-        return module.categories.some(cat => cat.toLowerCase() === lowerCaseCategory)
-      }
-
-      return false
-    })
-  }
+  // Filter modules by category if provided
+  const modules = filterModulesByCategory(compatibilityFilteredModules, category)
 
   interface MaintainerWithModules {
     name: string
@@ -85,7 +64,7 @@ export default defineCachedEventHandler(async (event) => {
   }
 
   return {
-    version,
+    version: version || 'non-legacy',
     category: category || null,
     generatedAt: new Date().toISOString(),
     stats: {
@@ -104,7 +83,7 @@ export default defineCachedEventHandler(async (event) => {
   swr: true,
   getKey(event) {
     const query = getQuery(event)
-    return `${query?.version || '3'}-${query?.category || 'all'}`
+    return `${query?.version || 'non-legacy'}-${query?.category || 'all'}`
   },
   maxAge: 60 * 60 // 1 hour
 })
