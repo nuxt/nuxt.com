@@ -64,7 +64,7 @@ export default defineCachedEventHandler(async (event) => {
   }
 
   return {
-    version: version || 'non-legacy',
+    version: version,
     category: category || null,
     generatedAt: new Date().toISOString(),
     stats: {
@@ -83,7 +83,12 @@ export default defineCachedEventHandler(async (event) => {
   swr: true,
   getKey(event) {
     const query = getQuery(event)
-    return `${query?.version || 'non-legacy'}-${query?.category || 'all'}`
+
+    const versionKey = query?.version
+      ? `version:present:${query.version}`
+      : 'version:absent'
+
+    return `${versionKey}-${query?.category || 'all'}`
   },
   maxAge: 60 * 60 // 1 hour
 })
