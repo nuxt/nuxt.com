@@ -1,17 +1,13 @@
-import { queryCollection } from '@nuxt/content/server'
+import type { BlogArticle } from '#shared/types'
 
 export default defineMcpResource({
   uri: 'resource://nuxt-com/blog-posts',
   description: 'Complete list of Nuxt blog posts including releases, tutorials, and announcements',
   cache: '1h',
   async handler(uri: URL) {
-    const event = useEvent()
+    const blogPosts = (await listByDir<BlogArticle>('/blog')).filter(post => post.extension === '.md' && post.path !== '/blog')
 
-    const blogPosts = await queryCollection(event, 'blog')
-      .select('title', 'path', 'description', 'date', 'category', 'tags', 'authors', 'image')
-      .all()
-
-    if (!blogPosts) {
+    if (!blogPosts.length) {
       return {
         contents: [{
           uri: uri.href,

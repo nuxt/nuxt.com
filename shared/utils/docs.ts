@@ -1,31 +1,46 @@
-// Single source of truth for which Nuxt docs versions are exposed to humans
-// and agents. "Supported" here means the docs are published and crawlable, not
-// that the release line is maintained: 3.x is end of life but still served.
-// Bumping this list flips every version-aware surface at once:
-//
-//   - app/pages/docs/[...slug].vue        → canonical/markdown alternate emission
-//   - nuxt.config.ts (agentDiscovery)     → excluded versions never negotiate markdown, MCP server card docs link
-//   - server/plugins/agent-discovery.ts   → generated /raw/index.md links to versioned docs
-//   - app/middleware/docs-version.global.ts → unversioned `/docs/*` redirect target
-//   - nuxt.config.ts (content:file:beforeParse) → version segment inserted into internal docs links
-//     via DOCS_COLLECTION_VERSIONS, whose keys must match the collection names in content.config.ts
-//
-// When Nuxt 5 ships: move `'5.x'` from EXCLUDED_DOC_VERSIONS into
-// SUPPORTED_DOC_VERSIONS and bump CURRENT_DOCS_VERSION.
+// Single source of truth for which Nuxt docs versions are exposed.
+
+export const DOCS_REPO = 'nuxt/nuxt'
+
+export const DOCS_REFS = {
+  '3.x': { branch: '3.x', envOverride: 'NUXT_V3_PATH' },
+  '4.x': { branch: '4.x', envOverride: 'NUXT_V4_PATH' },
+  '5.x': { branch: 'main', envOverride: 'NUXT_V5_PATH' }
+} as const satisfies Record<DocVersion, { branch: string, envOverride: string }>
+
+// Published and crawlable versions.
 export const SUPPORTED_DOC_VERSIONS = ['3.x', '4.x'] as const
+
+// Excluded versions (not yet published).
 export const EXCLUDED_DOC_VERSIONS = ['5.x'] as const
+
+// The current stable version.
 export const CURRENT_DOCS_VERSION: (typeof SUPPORTED_DOC_VERSIONS)[number] = '4.x'
 
-// Content collection id (the first segment of `file.id`) → docs version.
-export const DOCS_COLLECTION_VERSIONS: Record<string, string | undefined> = Object.fromEntries(
-  [...SUPPORTED_DOC_VERSIONS, ...EXCLUDED_DOC_VERSIONS].map(version => [`docsv${version.split('.')[0]}`, version])
-)
+/** Every version with content behind it, exposed or not. */
+export const DOC_VERSIONS = [...SUPPORTED_DOC_VERSIONS, ...EXCLUDED_DOC_VERSIONS] as const
 
-// Docs sources write internal links unversioned so a docs PR can be
-// cherry-picked between release branches unchanged. The URL-opening delimiter
-// is what keeps `/assets/docs/…` and external `…/docs/…` URLs out of scope.
-export function insertDocsVersion(body: string, version: string) {
-  return body.replaceAll(/(["'(=])\/docs\/(?!\d\.x)/g, `$1/docs/${version}/`)
+export type DocVersion = (typeof DOC_VERSIONS)[number]
+
+export function isDocVersion(value: string): value is DocVersion {
+  return (DOC_VERSIONS as readonly string[]).includes(value)
+}
+
+/**
+ * Where a version's docs are mounted.
+ */
+export function docsPathPrefix(version: DocVersion): string {
+  return `/docs/${version}`
+}
+
+/**
+ * Whether a path belongs to a version of the docs.
+ */
+export function isVersionedDocsPath(path: string): boolean {
+  return DOC_VERSIONS.some((version) => {
+    const prefix = docsPathPrefix(version)
+    return path === prefix || path.startsWith(`${prefix}/`)
+  })
 }
 
 const escape = (v: string) => v.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')

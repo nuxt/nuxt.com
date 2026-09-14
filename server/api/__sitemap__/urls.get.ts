@@ -1,31 +1,33 @@
-import { queryCollection } from '@nuxt/content/server'
+import { cliInstanceKey, docsInstanceKey } from '#shared/utils/content'
+import { CURRENT_DOCS_VERSION } from '#shared/utils/docs'
 
 // Sitemap source for @nuxtjs/sitemap (see `sitemap.sources` in nuxt.config).
-// Content collections are queried at request time: the module's build-time
-// precompute emits unprefixed duplicate paths for the multi-source docs
-// collections, and its app sources list prerendered 3.x/5.x pages and the
-// unversioned /docs/* meta-refresh stubs, so both are bypassed.
-export default defineEventHandler(async (event) => {
-  const [docs, blog, deploy, landing, agencies, designKit, team] = await Promise.all([
-    queryCollection(event, 'docsv4')
-      .where('extension', '=', 'md')
-      .select('path')
-      .all(),
-    queryCollection(event, 'blog')
-      .where('draft', '=', 0)
-      .where('extension', '=', 'md')
-      .select('path', 'date')
-      .all(),
-    queryCollection(event, 'deploy').select('path').all(),
-    queryCollection(event, 'landing').select('path').all(),
-    queryCollection(event, 'agencies').select('path').all(),
-    queryCollection(event, 'designKit').select('path').all(),
-    queryCollection(event, 'team').select('path').all()
+export default defineEventHandler(async () => {
+  const [docs, cli, examples, siteContent] = await Promise.all([
+    listInstancePages(docsInstanceKey(CURRENT_DOCS_VERSION)),
+    listInstancePages(cliInstanceKey(CURRENT_DOCS_VERSION)).catch(() => []),
+    listInstancePages('examples').catch(() => []),
+    getInstanceAtHead('site')
   ])
+
+  // The site instance holds markdown pages and the yml-backed landing pages
+  const site = (await siteContent.list())
+    .filter((item) => {
+      const stem = item.meta.stem.split('/').pop()!
+      return ['.md', '.yml'].includes(item.meta.extension)
+        && !stem.startsWith('.')
+        && isContentRoute(item.path)
+        && !(item.data as { draft?: boolean } | undefined)?.draft
+    })
+    .map((item) => {
+      const date = (item.data as { date?: string } | undefined)?.date
+      return { loc: item.path, ...(date ? { lastmod: date } : {}) }
+    })
 
   return [
     ...docs.map(page => ({ loc: page.path })),
-    ...(blog as Array<{ path: string, date?: string }>).map(post => ({ loc: post.path, ...(post.date ? { lastmod: post.date } : {}) })),
-    ...[...deploy, ...landing, ...agencies, ...designKit, ...team].map(page => ({ loc: page.path }))
+    ...cli.map(page => ({ loc: page.path })),
+    ...examples.map(page => ({ loc: page.path })),
+    ...site
   ]
 })
