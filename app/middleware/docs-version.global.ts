@@ -13,5 +13,9 @@ export default defineNuxtRouteMiddleware((to) => {
   // /docs/4.x/*. Note: prerendered pages can't emit a real HTTP redirect,
   // so the static output falls back to a meta-refresh stub — modern
   // crawlers and clients still follow it.
-  return navigateTo(to.fullPath.replace('/docs', `/docs/${CURRENT_DOCS_VERSION}`), { redirectCode: 302 })
+  return navigateTo({
+    path: to.path.replace('/docs', `/docs/${CURRENT_DOCS_VERSION}`),
+    query: to.query,
+    hash: to.hash
+  }, { redirectCode: 302 })
 })
