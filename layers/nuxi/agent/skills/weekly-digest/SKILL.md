@@ -17,9 +17,10 @@ Always write Slack mrkdwn (`<url|label>`, `:emoji:`). If this run is mirrored to
 
 **Data steps** (parallel where possible; Vercel / AI Gateway tools need admin/Slack/schedule-only access):
 
-Traffic (nuxt.com project — always pass `teamId`/`projectId` via `search_vercel_endpoints` then `call_vercel_endpoint`, GET only):
+Traffic (nuxt.com project — use `search_vercel_endpoints` then `call_vercel_endpoint`, GET only):
+The Vercel MCP URL is already route-bound to the `nuxt` project. Omit `projectId`, `teamId`, and `slug` from every Web Analytics endpoint call; passing them attempts to override the route-bound selector and is rejected.
 1. `GET /v1/query/web-analytics/visits/count` for the current window AND the previous window → visitors/pageviews + WoW %.
-2. `GET /v1/query/web-analytics/visits/aggregate` with `by=['day']` current window → daily trend (spot spikes/drops).
+2. `GET /v1/query/web-analytics/visits/aggregate` with `by=['day']` current window → daily trend (spot spikes/drops). The API may round `until` forward to a day boundary; ignore returned buckets whose timestamp is outside the requested half-open `[start, end)` window.
 3. Same aggregate with `by=['route'], limit=10` current + previous window → top sections with per-route deltas.
 4. Same aggregate with `by=['referrerHostname'], limit=8` + `by=['country'], limit=5` + `by=['deviceType']` → audience snapshot.
 
@@ -53,6 +54,7 @@ Agent-facing output contract:
 - If a required query failed after retrying, keep its bullet and write `unavailable — <concrete error>`. Do not silently omit it.
 - In *Clients*, show at most three distinct named products using the selected exact rows. Omit additional version variants, generic stacks, and empty-user-agent counts unless one is itself the evidence for a notable observation.
 - In *Content*, show the three totals (explicit Markdown, negotiated Markdown, discovery), plus exactly one leading Markdown path and one leading discovery path when returned. For each displayed path, take only the final non-empty segment, keep at most 60 characters, replace every character outside `[A-Za-z0-9._-]` with `-`, and wrap the result in backticks. Never insert the raw request path or allow `<`, `>`, `&`, `@`, `|`, backticks, or other Slack mrkdwn control characters into the label.
+- Never infer a leading path from another project or a prior report. If its grouped query was not completed, render `top path unavailable — <concrete reason>`.
 - In *Health*, render every returned row in these classes: successful POST (`200`, `202`), protocol noise (`GET/HEAD 405`), and POST errors (`4xx/5xx`). Keep exact rows separate rather than calculating category totals; write `none returned` for an empty class.
 - After both complete project blocks, optionally add `:mag: **What stands out**` with at most one observation of at most 20 words. Cite returned values directly; do not calculate new differences or rates, show equations, recommend actions, or add causal explanations. Omit the heading when nothing is clearly notable.
 - Top-N grouped rows are partial. Describe them as “top returned paths/clients”; never claim they represent all or most traffic unless their displayed counts are compared with the authoritative total and actually support that share.
