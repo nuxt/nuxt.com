@@ -1,14 +1,5 @@
 import { z } from 'zod'
-import { satisfies } from 'semver'
-
-const isCompatibleWith = (major: '2' | '3' | '4', range: string) => {
-  if (satisfies(`${major}.999.999`, range)) {
-    return true
-  }
-  // Nuxt 3 is EOL, so a range still capped at `^3.x` is a stale declaration
-  // rather than a real exclusion of Nuxt 4: keep listing those modules under 4.
-  return major === '4' && satisfies('3.999.999', range)
-}
+import { isCompatibleWith, type NuxtMajor } from '#shared/utils/modules'
 
 export default defineCachedEventHandler(async (event) => {
   const { version, category } = await getValidatedQuery(event, z.object({
@@ -20,7 +11,7 @@ export default defineCachedEventHandler(async (event) => {
   let modules = await fetchModules(event) || []
 
   if (version !== 'all') {
-    const major = (version === '2-bridge' ? '2' : version) satisfies '2' | '3' | '4'
+    const major = (version === '2-bridge' ? '2' : version) satisfies NuxtMajor
 
     // Filter out modules by compatibility
     modules = modules.filter((module) => {

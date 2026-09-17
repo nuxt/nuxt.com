@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { Module } from '#shared/types'
 import { ModuleProseA, ModuleProseKbd, ModuleProseImg } from '#components'
+import { isCompatibleWith } from '#shared/utils/modules'
 
 definePageMeta({
   heroBackground: 'opacity-30 -z-10'
@@ -23,8 +24,10 @@ watch(health, (map) => {
   }
 })
 
-// Nuxt 2-only when the range doesn't reach any maintained major (3 or 4).
-const isNuxt2Only = computed(() => !/(?:\^|>=)\s*[34]\b/.test(module.value?.compatibility?.nuxt || ''))
+const isNuxt2Only = computed(() => {
+  const range = module.value?.compatibility?.nuxt || ''
+  return !isCompatibleWith('3', range) && !isCompatibleWith('4', range)
+})
 
 const ownerName = computed(() => {
   const [owner, name] = module.value!.repo.split('#')[0].split('/')
