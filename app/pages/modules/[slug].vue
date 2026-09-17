@@ -23,6 +23,9 @@ watch(health, (map) => {
   }
 })
 
+// Nuxt 2-only when the range doesn't reach any maintained major (3 or 4).
+const isNuxt2Only = computed(() => !/(?:\^|>=)\s*[34]\b/.test(module.value?.compatibility?.nuxt || ''))
+
 const ownerName = computed(() => {
   const [owner, name] = module.value!.repo.split('#')[0].split('/')
   return `${owner}/${name}`
@@ -105,7 +108,7 @@ if (import.meta.server) {
 
 <template>
   <UContainer v-if="module">
-    <div v-if="!module.compatibility?.nuxt?.includes('^3') && !module.compatibility?.nuxt?.includes('>=3')" class="pt-8">
+    <div v-if="isNuxt2Only" class="pt-8">
       <UAlert
         icon="i-lucide-triangle-alert"
         variant="subtle"

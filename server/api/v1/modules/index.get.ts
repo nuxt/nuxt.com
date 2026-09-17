@@ -1,9 +1,18 @@
 import { z } from 'zod'
 import { satisfies } from 'semver'
 
+const isCompatibleWith = (major: '2' | '3' | '4', range: string) => {
+  if (satisfies(`${major}.999.999`, range)) {
+    return true
+  }
+  // Nuxt 3 is EOL, so a range still capped at `^3.x` is a stale declaration
+  // rather than a real exclusion of Nuxt 4: keep listing those modules under 4.
+  return major === '4' && satisfies('3.999.999', range)
+}
+
 export default defineCachedEventHandler(async (event) => {
   const { version, category } = await getValidatedQuery(event, z.object({
-    version: z.enum(['2', '2-bridge', '3', 'all']).default('3'),
+    version: z.enum(['2', '2-bridge', '3', '4', 'all']).default('4'),
     category: z.string().optional()
   }).parse)
   console.log(`Fetching v${version} modules...${category ? ` for category: ${category}` : ''}`)
@@ -11,8 +20,7 @@ export default defineCachedEventHandler(async (event) => {
   let modules = await fetchModules(event) || []
 
   if (version !== 'all') {
-    const major = (version === '2-bridge' ? '2' : version) satisfies '2' | '3'
-    const testableVersion = `${major}.999.999`
+    const major = (version === '2-bridge' ? '2' : version) satisfies '2' | '3' | '4'
 
     // Filter out modules by compatibility
     modules = modules.filter((module) => {
@@ -20,7 +28,7 @@ export default defineCachedEventHandler(async (event) => {
       if (version === '2-bridge' && !module.compatibility.requires?.bridge) {
         return false
       }
-      return satisfies(testableVersion, module.compatibility.nuxt)
+      return isCompatibleWith(major, module.compatibility.nuxt)
     })
   }
 
@@ -104,7 +112,7 @@ export default defineCachedEventHandler(async (event) => {
   swr: true,
   getKey(event) {
     const query = getQuery(event)
-    return `${query?.version || '3'}-${query?.category || 'all'}`
+    return `${query?.version || '4'}-${query?.category || 'all'}`
   },
   maxAge: 60 * 60 // 1 hour
 })

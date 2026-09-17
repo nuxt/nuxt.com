@@ -67,8 +67,8 @@ export const apiPaths: Record<string, unknown> = {
         {
           name: 'version',
           in: 'query',
-          description: 'Nuxt major version the modules must be compatible with.',
-          schema: { type: 'string', enum: ['2', '2-bridge', '3', 'all'], default: '3' }
+          description: 'Nuxt major version the modules must be compatible with. `4` also keeps modules whose declared range is still capped at Nuxt 3.',
+          schema: { type: 'string', enum: ['2', '2-bridge', '3', '4', 'all'], default: '4' }
         },
         {
           name: 'category',
