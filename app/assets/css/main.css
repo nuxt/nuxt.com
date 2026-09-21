@@ -3,7 +3,6 @@
 @import "./twoslash.css";
 
 @source "../../../content/**/*";
-@source "../../../node_modules/.c12";
 
 @theme static {
   --font-sans: 'Public Sans', sans-serif;
