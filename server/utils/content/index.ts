@@ -1,6 +1,6 @@
 import type { ComarkContent, ParsedSource, Source } from 'comark-content'
 import { withSnapshot } from 'comark-content/sources/snapshot'
-import { createInstance, createInstanceSource } from './factory'
+import { createInstanceSource, createRuntimeInstance } from '../../../utils/factory'
 import { hasBuildSnapshot, instanceSnapshotDir, SNAPSHOT_ASSET_BASE } from './snapshot'
 import type { ContentInstanceKey } from '#shared/utils/content'
 
@@ -29,15 +29,15 @@ async function readArtifact(key: ContentInstanceKey, name: string, file: string)
 }
 
 /**
- * The source `key` reads at `sha`, wrapped with the build snapshot when this deployment ships one.
+ * The source `key` reads, wrapped with the build snapshot when this deployment ships one.
+ * Unpinned: `withRef(sha)` on the instance built from it pins the commit.
  *
  * The raw source stays the authority: per-file reads, `refresh()` and `watch()` all go to it.
  * The snapshot only wins at init, and only for bodies whose source hash still matches.
  */
-function instanceSourceAt(key: ContentInstanceKey, sha: string): Source | ParsedSource {
+function instanceSourceFor(key: ContentInstanceKey): Source | ParsedSource {
   const { name, source } = instanceSource(key)
   const raw = createInstanceSource(source, {
-    sha,
     token: contentGithubToken(),
     useLocalDir: import.meta.dev
   })
@@ -54,10 +54,28 @@ function instanceSourceAt(key: ContentInstanceKey, sha: string): Source | Parsed
 }
 
 /**
- * Create the content instance for `key`, reading its source at `sha`. Holds no shared state.
+ * Unpinned base per instance: owns its source, plugin chain and cache driver.
+ * Every commit-pinned instance derives from it with `withRef(sha)`, sharing its driver.
  */
-export async function createContentInstance(key: ContentInstanceKey, sha: string): Promise<ComarkContent> {
-  return createInstance(key, instanceSourceAt(key, sha), { driver: contentCacheDriver(key, sha) }, contentTracer())
+const bases = new Map<ContentInstanceKey, ComarkContent>()
+
+function getBaseInstance(key: ContentInstanceKey): ComarkContent {
+  let base = bases.get(key)
+  if (!base) {
+    base = createRuntimeInstance(key, {
+      source: instanceSourceFor(key),
+      cache: { driver: contentCacheDriver(key) }
+    })
+    bases.set(key, base)
+  }
+  return base
+}
+
+/**
+ * The instance for `key`, pinned to `sha`. Holds no state of its own beyond the base it derives from.
+ */
+export function contentInstanceAt(key: ContentInstanceKey, sha: string): ComarkContent {
+  return getBaseInstance(key).withRef(sha)
 }
 
 /**
@@ -78,14 +96,13 @@ export async function getInstanceAtHead(key: ContentInstanceKey): Promise<Comark
     return current.instance
   }
 
-  const instance = createContentInstance(key, sha).then(async (created) => {
-    if (import.meta.dev) {
-      await created.watch()
-      created.hooks.hook('watch:file:update', (_source: string, fileKey: string) => console.log(`[content] ${key} ${fileKey} updated`))
-    }
-
+  const instance = (async () => {
+    const created = import.meta.dev ? await watchedDevInstance(key) : contentInstanceAt(key, sha)
+    const startedAt = performance.now()
+    await created.init()
+    recordDuration('content.init.ms', startedAt, { instance: key })
     return created
-  }).catch((error) => {
+  })().catch((error) => {
     // Don't memoize a failed build: the next request should retry.
     if (instances.get(key)?.sha === sha) instances.delete(key)
     throw error
@@ -98,11 +115,16 @@ export async function getInstanceAtHead(key: ContentInstanceKey): Promise<Comark
   return instance
 }
 
+/** Dev serves the unpinned base directly: its source is the working tree, which `watch()` follows. */
+async function watchedDevInstance(key: ContentInstanceKey): Promise<ComarkContent> {
+  const base = getBaseInstance(key)
+  await base.watch()
+  base.hooks.hook('watch:file:update', (_source: string, fileKey: string) => console.log(`[content] ${key} ${fileKey} updated`))
+  return base
+}
+
 /**
  * Parse every file, so the artifacts fetched next are served from a warm index.
- *
- * The webhook still `$fetch`es the blob URLs after this.
- * `content.snapshot()` builds the bytes; only a request through the route fills their ISR entry.
  */
 export async function warmInstance(content: ComarkContent): Promise<void> {
   const startedAt = performance.now()

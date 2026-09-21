@@ -15,20 +15,19 @@ function cacheAvailable(): boolean {
 /**
  * Bump when content parser/plugin changes (TODO: automate this)
  */
-export const CONTENT_PARSER_VERSION = 'v4'
+export const CONTENT_PARSER_VERSION = 'v5'
 
 /**
  * Driver backing one instance's manifest, parsed bodies and snapshot artifacts.
  *
- * The namespace is:
- * - Per instance: a push to one repo leaves every other instance's cache untouched.
- * - Per commit: a new commit reads from a new namespace.
- * - Per parser version: `CONTENT_PARSER_VERSION` ensures a parser change rotates namespaces.
+ * Per instance and per parser version.
+ *
+ * (`withRef(sha)` namespaces every key it stores with the ref it pins)
  */
-export function contentCacheDriver(instanceKey: string, sha: string): Driver {
+export function contentCacheDriver(instanceKey: string): Driver {
   if (!cacheAvailable()) return memoryDriver()
   return vercelRuntimeCache({
-    base: `content:${CONTENT_PARSER_VERSION}:${instanceKey}:${sha}`,
+    base: `content:${CONTENT_PARSER_VERSION}:${instanceKey}`,
     ttl: TTL
   })
 }

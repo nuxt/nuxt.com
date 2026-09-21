@@ -7,9 +7,10 @@ import yaml from 'comark-content/plugins/yaml'
 import json from 'comark-content/plugins/json'
 import tracingOtel from 'comark-content/plugins/tracing/otel'
 import type { Tracer } from '@opentelemetry/api'
-import { comarkPlugins, instancePlugins } from './plugins'
-import { instanceSource, type InstanceSource } from './instances'
-import { instanceBasePath, type ContentInstanceKey } from '../../../shared/utils/content'
+import { comarkPlugins, instancePlugins } from '../server/utils/content/plugins'
+import { instanceSource, type InstanceSource } from '../server/utils/content/instances'
+import { instanceBasePath, type ContentInstanceKey } from '../shared/utils/content'
+import { contentTracer } from '../server/utils/tracer'
 
 /**
  * The parser, in one place, for:
@@ -17,12 +18,10 @@ import { instanceBasePath, type ContentInstanceKey } from '../../../shared/utils
  * - The instance serving requests
  *
  * A body parsed with a different chain, prefix or listing fields is one the runtime cannot reuse.
- * Free of nitro auto-imports, and importing `shared/` relatively, so the module can import it.
+ * Free of nitro auto-imports, and importing `shared/`/`server/` relatively, so the module can import it.
  */
 
 export interface SourceContext {
-  /** Commit the source reads. Ignored when reading a local directory. */
-  sha: string
   /** GitHub token, when one is configured. */
   token?: string
   /** Read `local` instances from the checkout's own `contentDir` instead of GitHub. */
@@ -31,7 +30,7 @@ export interface SourceContext {
   rootDir?: string
 }
 
-/** Read `source` from a local directory, or from the repo at `ctx.sha`. */
+/** Read `source` from a local directory, or from its configured branch — `withRef(sha)` pins the commit. */
 export function createInstanceSource(source: InstanceSource, ctx: SourceContext): Source | ParsedSource {
   const overridePath = source.envOverride ? process.env[source.envOverride] : undefined
   const prefix = source.prefix === '/' ? undefined : source.prefix
@@ -46,31 +45,29 @@ export function createInstanceSource(source: InstanceSource, ctx: SourceContext)
 
   return github({
     repo: source.repo,
-    branch: ctx.sha,
+    branch: source.branch,
     path: source.contentDir,
     token: ctx.token,
-    // `sha` is an immutable commit outside dev => we can cache hard.
+    // Reads happen through `withRef(<sha>)`, an immutable commit => cache hard.
     ttl: 60 * 60 * 24,
     ...options
   })
 }
 
+type InstanceOptions = { source: Source | ParsedSource, cache?: CacheOptions }
+
 /**
- * The instance for `key`, reading `source`. Holds no shared state.
+ * The instance for `key`, reading `options.source`. Holds no shared state.
  *
- * `source` is passed in, not derived: the runtime wraps it with `withSnapshot()`, the build does not.
+ * `tracer` is only ever passed by `createRuntimeInstance()` — the build-time instance
+ * (`createBuildInstance()`) is a one-shot parse, not worth tracing.
  */
-export function createInstance(
-  key: ContentInstanceKey,
-  source: Source | ParsedSource,
-  cache?: CacheOptions,
-  tracer?: Tracer
-): ComarkContent {
+function create(key: ContentInstanceKey, options: InstanceOptions, tracer?: Tracer): ComarkContent {
   const { name, source: definition } = instanceSource(key)
 
   return comarkContent(name, {
     basePath: instanceBasePath(key),
-    source,
+    source: options.source,
     plugins: [
       markdown({ comark: { plugins: comarkPlugins }, listingFields: definition.listingFields }),
       yaml({ listingFields: definition.listingFields }),
@@ -78,6 +75,16 @@ export function createInstance(
       ...instancePlugins(key),
       tracer && tracingOtel({ tracer })
     ],
-    cache
+    cache: options.cache
   })
+}
+
+/** An instance serving requests: traced, and cached under its instance driver. */
+export function createRuntimeInstance(key: ContentInstanceKey, options: InstanceOptions): ComarkContent {
+  return create(key, options, contentTracer())
+}
+
+/** The throwaway instance the build-time snapshot is parsed with (`modules/snapshot/`). */
+export function createBuildInstance(key: ContentInstanceKey, options: Pick<InstanceOptions, 'source'>): ComarkContent {
+  return create(key, options)
 }

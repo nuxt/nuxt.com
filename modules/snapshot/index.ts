@@ -2,7 +2,7 @@ import { mkdir, stat } from 'node:fs/promises'
 import { defineNuxtModule, useLogger } from '@nuxt/kit'
 import { writeSnapshots } from 'comark-content/build'
 import { join } from 'pathe'
-import { createInstance, createInstanceSource } from '../../server/utils/content/factory'
+import { createBuildInstance, createInstanceSource } from '../../utils/factory'
 import { instanceSource } from '../../server/utils/content/instances'
 import { instanceSnapshotDir, SNAPSHOT_ASSET_BASE, SNAPSHOT_INSTANCE_KEYS } from '../../server/utils/content/snapshot'
 import type { ContentInstanceKey } from '../../shared/utils/content'
@@ -72,14 +72,15 @@ async function writeInstanceSnapshot(key: ContentInstanceKey, options: WriteOpti
 
   const instanceDir = join(options.dir, instanceSnapshotDir(key))
 
-  // `withRef` stamps the artifact with the commit.
+  // `withRef` pins the source to the commit and stamps the artifact with it.
   // At runtime, even at a different commit, we can reuse unchanged bodies.
-  const content = createInstance(key, createInstanceSource(source, {
-    sha,
-    token: options.token,
-    useLocalDir: source.local,
-    rootDir: options.rootDir
-  })).withRef(sha)
+  const content = createBuildInstance(key, {
+    source: createInstanceSource(source, {
+      token: options.token,
+      useLocalDir: source.local,
+      rootDir: options.rootDir
+    })
+  }).withRef(sha)
 
   try {
     const writeStart = performance.now()

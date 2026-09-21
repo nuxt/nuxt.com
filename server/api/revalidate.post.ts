@@ -113,7 +113,7 @@ export default defineEventHandler(async (event) => {
       const outdatedItems = { ...(await outdatedInstance.manifest()).items }
 
       const headSha = await resolveInstanceSha(instanceKey, { refresh: true })
-      const newInstance = await createContentInstance(instanceKey, headSha)
+      const newInstance = contentInstanceAt(instanceKey, headSha)
       await newInstance.init()
       const newItems = (await newInstance.manifest()).items
 
