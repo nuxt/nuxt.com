@@ -10,8 +10,8 @@ export default defineMcpPrompt({
     return `Produce the Nuxt admin digest for the last ${sinceDays} days.
 
 Steps to follow (run them in parallel where possible):
-1. Traffic via Vercel Web Analytics for nuxt.com: visitors/pageviews + WoW delta, daily trend, top routes with deltas, referrers/geo/device.
-   The Vercel MCP route already scopes Web Analytics to the nuxt project: omit \`projectId\`, \`teamId\`, and \`slug\` from endpoint call arguments. For aggregates, only use buckets inside the requested half-open \`[start, end)\` window; ignore buckets introduced by API boundary rounding.
+1. Traffic via Vercel Web Analytics for nuxt.com: use \`count_pageviews\` and \`aggregate_pageviews\` for visitors/pageviews + WoW delta, daily trend, top routes with deltas, referrers/geo/device.
+   Pass the configured Nuxt \`projectId\` and \`teamId\`; do not pass \`slug\`. For aggregates, only use buckets inside the requested half-open \`[start, end)\` window; ignore buckets introduced by API boundary rounding.
 2. \`feedback-stats\` with \`sinceDays=${sinceDays}\`, \`topPages=5\`.
 3. \`list-feedback\` with \`ratings=["not-helpful", "confusing"]\`, \`sinceDays=${sinceDays}\`, \`limit=30\`.
 4. For worst feedback pages, weigh by real visit counts from step 1.

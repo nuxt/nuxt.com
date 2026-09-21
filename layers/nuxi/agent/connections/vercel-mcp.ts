@@ -25,8 +25,11 @@ function adminOnlyVercelAuth(label: string, connectOptions: EveAuthorizationOpti
 
 const ALLOWED_TOOLS = [
   'search_vercel_documentation',
-  'search_vercel_endpoints',
-  'call_vercel_endpoint',
+  'count_pageviews',
+  'aggregate_pageviews',
+  'count_events',
+  'aggregate_events',
+  'create_observability_query',
   'get_runtime_logs',
   'get_runtime_errors',
   'list_agent_run_projects',
@@ -37,11 +40,10 @@ const ALLOWED_TOOLS = [
 export const VERCEL_MCP_INSTRUCTIONS = VERCEL_TEAM_ID && VERCEL_PROJECT_ID
   ? `**Vercel MCP connection (\`vercel-mcp__*\`, admin/Slack/schedule only) — read-only, use judiciously:**
 - Discover exact schemas via \`connection_search\`, then call \`vercel-mcp__<tool>\`.
-- Catalog: \`search_vercel_endpoints\` then \`call_vercel_endpoint\` with the returned endpoint id. Use GET endpoints plus the read-only \`POST /v2/observability/query\` only — never buy, deploy, or mutate through this connection.
-- Endpoint-call batch/concurrency limits are not a total-query budget. When a report needs more queries than fit in one call, send subsequent read-only batches until every required metric is collected.
-- Pre-scoped to the \`nuxt-js\` team (\`teamId=${VERCEL_TEAM_ID}\`) and route-bound to the \`nuxt\` website project (\`projectId=${VERCEL_PROJECT_ID}\`).
-- Traffic (production Web Analytics): the project selector is supplied by the MCP route. Omit \`projectId\`, \`teamId\`, and \`slug\` from \`call_vercel_endpoint\` arguments; passing any of them attempts an override and is rejected. Use \`GET /v1/query/web-analytics/visits/count\` for one total (\`visitors\` / \`pageviews\`); \`GET /v1/query/web-analytics/visits/aggregate\` for grouped rows (\`by\` + \`since\` + \`until\` required). Custom events: \`…/events/count\` and \`…/events/aggregate\`. \`filter\` is OData, e.g. \`requestPath eq '/docs'\`.
-- Agent-facing HTTP usage (includes CDN/static requests that Web Analytics misses): call \`POST /v2/observability/query\` with \`metric='vercel.request.count'\`, \`aggregation='sum'\`, ISO \`startTime\` / \`endTime\`, and \`scope={ type: 'project', ownerId: '${VERCEL_TEAM_ID}', projectIds: ['<project id>'] }\`. Use Nuxt project \`${VERCEL_PROJECT_ID}\`${VERCEL_NUXT_UI_PROJECT_ID ? ` or Nuxt UI project \`${VERCEL_NUXT_UI_PROJECT_ID}\`` : '; Nuxt UI metrics are unavailable until `NUXI_VERCEL_NUXT_UI_PROJECT_ID` is configured'}.
+- Complete every required query. Tool-call concurrency limits are not a total-query budget; send subsequent read-only calls until every metric is collected.
+- Scoped to the \`nuxt-js\` team (\`teamId=${VERCEL_TEAM_ID}\`). Use the configured Nuxt website project \`projectId=${VERCEL_PROJECT_ID}\`.
+- Traffic (production Web Analytics): call \`count_pageviews\` for totals and \`aggregate_pageviews\` for grouped rows (\`by\` + \`since\` + \`until\` required). Pass \`projectId='${VERCEL_PROJECT_ID}'\` and \`teamId='${VERCEL_TEAM_ID}'\`; do not pass \`slug\`. Custom events use \`count_events\` and \`aggregate_events\`. \`filter\` is OData, e.g. \`requestPath eq '/docs'\`.
+- Agent-facing HTTP usage (includes CDN/static requests that Web Analytics misses): call \`create_observability_query\` with \`requestBody={ metric: 'vercel.request.count', aggregation: 'sum', startTime, endTime, scope: { type: 'project', ownerId: '${VERCEL_TEAM_ID}', projectIds: ['<project id>'] } }\` and \`teamId='${VERCEL_TEAM_ID}'\`. Use Nuxt project \`${VERCEL_PROJECT_ID}\`${VERCEL_NUXT_UI_PROJECT_ID ? ` or Nuxt UI project \`${VERCEL_NUXT_UI_PROJECT_ID}\`` : '; Nuxt UI metrics are unavailable until `NUXI_VERCEL_NUXT_UI_PROJECT_ID` is configured'}.
 - MCP transport: filter \`request_path eq '/mcp' and environment eq 'production'\`. Raw content: \`endswith(request_path, '.md')\`. Negotiated Markdown: \`contains(http_accept, 'text/markdown')\`. Agent discovery/intake paths: \`/llms.txt\`, \`/llms-full.txt\`, \`/sitemap.md\`, \`/openapi.json\`, and \`/.well-known/mcp/server-card.json\`. Useful groupings: \`client_user_agent\`, \`bot_category\`, \`bot_name\`, \`request_path\`, \`request_method\`, \`http_status\`, \`content_type\`.
 - If a response says \`truncated: true\` or reports \`truncation.omittedArrayItems\`, only the returned timeseries was shortened. Do not call that a traffic/data gap; use the ungrouped \`summary\` for the complete total.
 - Be precise: \`vercel.request.count\` counts HTTP requests, not logical MCP tool calls or unique agents. One MCP session performs initialization, discovery, tool calls, retries, and notifications. A \`.md\` path or \`curl/*\` user agent alone does not prove AI usage: humans can use “View as Markdown” / “Copy page”, and scripts use curl. Treat explicit \`Accept: text/markdown\`, known AI bot categories/names, and POST \`/mcp\` as stronger signals. Web Analytics is browser-oriented and must not be used to estimate curl, MCP, or raw Markdown traffic.

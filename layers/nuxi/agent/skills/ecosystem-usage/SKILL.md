@@ -6,7 +6,7 @@ Use this skill when an admin asks about MCP adoption, AI-agent traffic, raw Mark
 
 ## Source of truth
 
-Use `vercel-mcp__search_vercel_endpoints` to discover `POST /v2/observability/query`, then call it through `vercel-mcp__call_vercel_endpoint`.
+Use the read-only `vercel-mcp__create_observability_query` tool directly.
 
 - Metric: `vercel.request.count`
 - Aggregation: `sum`
@@ -21,7 +21,7 @@ Use `vercel-mcp__search_vercel_endpoints` to discover `POST /v2/observability/qu
 ## Query recipes
 
 Run independent Nuxt and Nuxt UI queries in parallel.
-A per-call batch or concurrency limit is not a total-query limit. Continue with additional `call_vercel_endpoint` batches until every requested total and detail query is complete.
+A tool-call concurrency limit is not a total-query limit. Continue with additional calls until every requested total and detail query is complete.
 
 1. MCP request volume:
    - Filter: `request_path eq '/mcp' and environment eq 'production'`
