@@ -161,3 +161,10 @@ websites:
     url: https://www.shainamote.com/
     screenshotOptions:
       hideElements: ['.cookie-policy', '.announcement-bar']
+  - name: Typology
+    url: https://www.typology.com/
+    screenshotOptions:
+      hideElements: ['#CybotCookiebotDialog', '.sticky.bottom-0.z-10.w-full.bg-white']
+      removeElements: ['.relative.z-10.bg-black.text-white']
+      styles: ['.hero { height: 100vh !important; }']
+      delay: 3
