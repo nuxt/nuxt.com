@@ -17,15 +17,15 @@ Always write Slack mrkdwn (`<url|label>`, `:emoji:`). If this run is mirrored to
 
 **Data steps** (parallel where possible; Vercel / AI Gateway tools need admin/Slack/schedule-only access):
 
-Traffic (nuxt.com project — use `search_vercel_endpoints` then `call_vercel_endpoint`, GET only):
-The Vercel MCP URL is already route-bound to the `nuxt` project. Omit `projectId`, `teamId`, and `slug` from every Web Analytics endpoint call; passing them attempts to override the route-bound selector and is rejected.
-1. `GET /v1/query/web-analytics/visits/count` for the current window AND the previous window → visitors/pageviews + WoW %.
-2. `GET /v1/query/web-analytics/visits/aggregate` with `by=['day']` current window → daily trend (spot spikes/drops). The API may round `until` forward to a day boundary; ignore returned buckets whose timestamp is outside the requested half-open `[start, end)` window.
+Traffic (nuxt.com project — use the first-class Vercel Web Analytics tools):
+Pass the configured Nuxt `projectId` and `teamId` to every Web Analytics tool call; do not pass `slug`.
+1. `count_pageviews` for the current window AND the previous window → visitors/pageviews + WoW %.
+2. `aggregate_pageviews` with `by=['day']` current window → daily trend (spot spikes/drops). The API may round `until` forward to a day boundary; ignore returned buckets whose timestamp is outside the requested half-open `[start, end)` window.
 3. Same aggregate with `by=['route'], limit=10` current + previous window → top sections with per-route deltas.
 4. Same aggregate with `by=['referrerHostname'], limit=8` + `by=['country'], limit=5` + `by=['deviceType']` → audience snapshot.
 
-Agent-facing usage (Vercel Observability — the only allowed POST is the read-only `POST /v2/observability/query`):
-- Complete every required query below. A per-call batch or concurrency limit is not a total-query limit: continue with another `call_vercel_endpoint` batch until all required results are collected. Never omit a metric because the first batch is full.
+Agent-facing usage (Vercel Observability — use the read-only `create_observability_query` tool):
+- Complete every required query below. A tool-call concurrency limit is not a total-query limit: continue with additional calls until all required results are collected. Never omit a metric because the first batch is full.
 - Required totals:
   1. Nuxt `/mcp`, current and previous equal-length windows.
   2. Nuxt UI `/mcp`, current and previous equal-length windows.
@@ -66,7 +66,7 @@ Agent-facing output contract:
 Docs feedback:
 5. `admin-mcp__feedback-stats` — `topPages=5`
 6. `admin-mcp__list-feedback` — `ratings=["not-helpful", "confusing"]`, `limit=30`
-7. For each worst page from step 5/6: traffic from step 3, or a targeted `GET /v1/query/web-analytics/visits/count` with `filter="requestPath eq '<path>'"` if missing from top routes — weigh urgency by real visits.
+7. For each worst page from step 5/6: traffic from step 3, or a targeted `count_pageviews` call with `filter="requestPath eq '<path>'"` if missing from top routes — weigh urgency by real visits.
 
 AI agent:
 8. `admin-mcp__agent-usage-stats` — web chat counts and vote quality

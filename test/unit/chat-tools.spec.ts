@@ -45,7 +45,7 @@ describe('normalizeToolName', () => {
   })
 
   it('hyphenates connection tools that use underscores', () => {
-    expect(normalizeToolName('vercel-mcp__call_vercel_endpoint')).toBe('call-vercel-endpoint')
+    expect(normalizeToolName('vercel-mcp__create_observability_query')).toBe('create-observability-query')
   })
 
   it('leaves the discovery tool untouched', () => {
