@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
-import { cliInstanceKey, docsInstanceKey, instanceBasePath, instanceBlobPath, instanceHeadPath, isContentInstanceKey } from '../../shared/utils/content'
+import { CONTENT_INSTANCE_KEYS, cliInstanceKey, docsInstanceKey, instanceBasePath, instanceBlobPath, instanceName, isContentInstanceKey } from '../../shared/utils/content'
+import { instanceSource } from '../../server/utils/content/instances'
 
 describe('content instance paths', () => {
   it('serves each instance under its own prefix', () => {
@@ -10,7 +11,6 @@ describe('content instance paths', () => {
   })
 
   it('puts the qualifier before the instance path', () => {
-    expect(instanceHeadPath(docsInstanceKey('3.x'))).toBe('/api/content/head/docs/3.x')
     expect(instanceBlobPath(docsInstanceKey('3.x'), 'abc123')).toBe('/api/content/blob/abc123/docs/3.x')
   })
 
@@ -21,6 +21,14 @@ describe('content instance paths', () => {
     for (const key of ['site', 'examples', docsInstanceKey('4.x'), docsInstanceKey('5.x'), cliInstanceKey('4.x')] as const) {
       const sha = 'deadbeef'
       expect(instanceBlobPath(key, sha).replace(`/blob/${sha}`, '')).toBe(instanceBasePath(key))
+    }
+  })
+})
+
+describe('instanceName', () => {
+  it('agrees with `instanceSource(key).name` for every instance', () => {
+    for (const key of CONTENT_INSTANCE_KEYS) {
+      expect(instanceName(key), key).toBe(instanceSource(key).name)
     }
   })
 })

@@ -1,21 +1,11 @@
 import type { SearchOptions, SearchResult } from 'comark-content'
-import { instanceHeadPath, docsInstanceKey } from '#shared/utils/content'
+import type { ContentShas } from '#shared/types'
+import { instanceBasePath, instanceBlobPath, instanceName, type ContentInstanceKey } from '#shared/utils/content'
+import type { SearchTarget } from '~/workers/search'
 
 type SearchStatus = 'idle' | 'loading' | 'ready' | 'error'
 
-interface ContentHead {
-  /** Instance root to read artifacts from: SHA-pinned and immutable, or live in dev. */
-  base: string
-  sha: string | null
-  source: string
-}
-
 const status = ref<SearchStatus>('idle')
-
-/**
- * The `targetKey` a hydration is loading or has landed for.
- */
-let warmedKey: string | undefined
 
 /** Hydration logging switch: `?debug=search` */
 function searchDebug(): boolean {
@@ -24,72 +14,53 @@ function searchDebug(): boolean {
 }
 
 /**
- * Client-side full-text search over the active docs version (sqlite-wasm FTS5), hydrated from that
- * instance's per-commit snapshot artifacts.
+ * Client-side full-text search over the active docs version, the CLI corresponding reference and the
+ * examples (sqlite-wasm FTS5), hydrated from each instance's per-commit snapshot artifacts.
  */
 export function useSearch() {
-  const { docsVersion } = useDocsVersion()
-
-  const instanceKey = computed(() => docsInstanceKey(docsVersion.value))
-
-  // `useFetch` rather than `useAsyncData`: the URL is version-dependent, and a getter *key* would be
-  // rewritten into the handler slot by Nuxt's auto-key transform (which prepends a key whenever the
-  // first argument is not a string literal). A getter *URL* is `useFetch`'s documented API, and it
-  // rekeys and refetches on change, which is exactly the version-switch behaviour wanted here.
-  // `server: false` is required, not an optimisation: the palette renders inside `<ClientOnly>`, so
-  // with the default `server: true` Nuxt expects this in the SSR payload, finds nothing, and
-  // resolves with the fallback *without* ever fetching.
-  const { data: head, refresh: refreshHead } = useFetch<ContentHead>(
-    () => instanceHeadPath(instanceKey.value),
-    { server: false, default: () => ({ base: '', sha: null, source: '' }) }
-  )
+  // Fetched once in `app.vue`/`error.vue`
+  const shas = inject<Ref<ContentShas | null | undefined>>('searchShas', ref(undefined))
 
   /**
-   * What the worker needs to build a database. The palette renders client-only, so `head` is not in
-   * the payload and resolves after mount — hence watching this rather than warming up once.
+   * What to hydrate from. The keys `shas` actually carries —
+   * not a re-derivation of the search corpus — so a target set never drifts from what was fetched.
    */
-  const target = computed(() => ({ base: head.value?.base ?? '', source: head.value?.source ?? '' }))
+  const targets = computed<SearchTarget[] | null>(() => {
+    if (!shas.value) return null
+    const entries = Object.entries(shas.value) as Array<[ContentInstanceKey, string | null]>
+    if (!entries.length) return null
 
-  /** Target key for watcher to track changes to the target. */
-  const targetKey = computed(() => `${target.value.base}|${target.value.source}`)
+    return entries.map(([key, sha]) => ({
+      name: instanceName(key),
+      base: sha ? instanceBlobPath(key, sha) : instanceBasePath(key)
+    }))
+  })
+
+  /** Target set key for the watcher to track changes to. */
+  const targetsKey = computed(() => targets.value?.map(target => `${target.name}@${target.base}`).join('|'))
 
   /**
-   * Load the database ahead of the first keystroke. Safe to call repeatedly: skipped once already
-   * loading or loaded for the current `targetKey`.
+   * Load the hub for the current target set.
+   * No-op once loading or ready for it — the worker itself guards that.
    */
   async function warmup(): Promise<void> {
-    const debug = searchDebug()
-    // `head` has not landed yet: the `target` watcher warms up as soon as it does
-    if (!target.value.source) {
-      if (debug) console.info('[search] warmup deferred — waiting for the instance head')
+    // Not resolved yet — the `watch` below re-runs this once `shas` lands.
+    if (shas.value === undefined) return
+
+    const current = targets.value
+    if (!current) {
+      console.error('[search] content shas resolved to nothing — search hidden')
       return
     }
 
-    const key = targetKey.value
-    if (warmedKey === key) return
-    warmedKey = key
     status.value = 'loading'
-
     try {
-      if (!head.value?.sha && !import.meta.dev) {
-        throw new Error(`[search] ${instanceHeadPath(instanceKey.value)} returned no commit pin`)
-      }
-      if (debug) console.info(`[search] warmup from ${target.value.base} (head ${head.value?.sha ?? 'unpinned'})`)
+      const debug = searchDebug()
+      if (debug) console.info(`[search] warmup from ${current.map(target => target.base).join(', ')}`)
 
-      await warmupSearch(target.value.base, target.value.source, location.origin, debug)
+      await warmupSearch(current, location.origin, debug)
       status.value = 'ready'
     } catch (error) {
-      warmedKey = undefined // clears the guard: below retries under a new key, or a later call retries this one
-
-      // A push while the tab was open rotated the SHA, so the pinned artifacts 404. Re-pin and
-      // retry once — any second failure is real.
-      const staleSha = head.value?.sha
-      await refreshHead()
-      if (head.value?.sha && head.value.sha !== staleSha) {
-        if (debug) console.info(`[search] re-pinned ${staleSha} -> ${head.value.sha}, rebuilding`)
-        await warmup()
-        return
-      }
       status.value = 'error'
       console.error('[search] could not load the search database', error)
     }
@@ -97,7 +68,7 @@ export function useSearch() {
 
   if (import.meta.client) {
     onNuxtReady(warmup)
-    watch(targetKey, () => warmup())
+    watch(targetsKey, warmup)
   }
 
   async function search(query: string, opts?: SearchOptions): Promise<SearchResult[]> {

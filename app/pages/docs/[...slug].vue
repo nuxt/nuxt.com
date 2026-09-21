@@ -17,7 +17,7 @@ const onThisPageDrawerOpen = ref(false)
 
 const route = useRoute()
 const nuxtApp = useNuxtApp()
-const { version, docsVersion, instanceKey: docsInstanceKey } = useDocsVersion()
+const { meta: docsMeta, version: docsVersion, instanceKey: docsInstanceKey } = useDocsVersion()
 const { headerLinks } = useHeaderLinks()
 const { isAgentDocked } = useNuxtAgent()
 const path = computed(() => route.path.replace(/\/$/, ''))
@@ -31,7 +31,7 @@ const navClass = (item: NavigationItem) => {
 }
 
 const asideNavigation = computed(() => {
-  const sections = navPageFromPath(version.value.path, navigation.value)?.children ?? []
+  const sections = navPageFromPath(docsMeta.value.path, navigation.value)?.children ?? []
   const section = sections.find(item => path.value === item.path || path.value.startsWith(`${item.path}/`))
 
   return (section?.children ?? []).map(item => ({
@@ -105,10 +105,10 @@ const breadcrumb = computed(() => {
     to: item.path
   })).slice(1)
 
-  if (path.value.startsWith(`${version.value.path}/bridge`) || path.value.startsWith(`${version.value.path}/migration`)) {
+  if (path.value.startsWith(`${docsMeta.value.path}/bridge`) || path.value.startsWith(`${docsMeta.value.path}/migration`)) {
     links.unshift({
       label: 'Upgrade Guide',
-      to: `${version.value.path}/getting-started/upgrade`
+      to: `${docsMeta.value.path}/getting-started/upgrade`
     })
   }
   if (!links.length) {
@@ -156,8 +156,8 @@ const communityLinks = [{
 const title = computed(() => fm.value.seo?.title || fm.value.title)
 
 const titleTemplate = computed(() => {
-  const template = findTitleTemplate(page, navigation, version.value.path)
-  return versioned.value ? `${template} ${version.value.shortTag}` : template
+  const template = findTitleTemplate(page, navigation, docsMeta.value.path)
+  return versioned.value ? `${template} v${docsMeta.value.major}` : template
 })
 
 useSeoMeta({

@@ -1,4 +1,5 @@
 export * from './blog'
+export * from './content'
 export * from './deploy'
 export * from './jobs'
 export * from './modules'

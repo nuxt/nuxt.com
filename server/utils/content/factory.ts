@@ -5,6 +5,8 @@ import github from 'comark-content/sources/github'
 import markdown from 'comark-content/plugins/markdown'
 import yaml from 'comark-content/plugins/yaml'
 import json from 'comark-content/plugins/json'
+import tracingOtel from 'comark-content/plugins/tracing/otel'
+import type { Tracer } from '@opentelemetry/api'
 import { comarkPlugins, instancePlugins } from './plugins'
 import { instanceSource, type InstanceSource } from './instances'
 import { instanceBasePath, type ContentInstanceKey } from '../../../shared/utils/content'
@@ -61,7 +63,8 @@ export function createInstanceSource(source: InstanceSource, ctx: SourceContext)
 export function createInstance(
   key: ContentInstanceKey,
   source: Source | ParsedSource,
-  cache?: CacheOptions
+  cache?: CacheOptions,
+  tracer?: Tracer
 ): ComarkContent {
   const { name, source: definition } = instanceSource(key)
 
@@ -72,7 +75,8 @@ export function createInstance(
       markdown({ comark: { plugins: comarkPlugins }, listingFields: definition.listingFields }),
       yaml({ listingFields: definition.listingFields }),
       json({ listingFields: definition.listingFields }),
-      ...instancePlugins(key)
+      ...instancePlugins(key),
+      tracer && tracingOtel({ tracer })
     ],
     cache
   })

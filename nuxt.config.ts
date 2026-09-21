@@ -452,15 +452,13 @@ export default defineNuxtConfig({
   experimental: {
     viewTransition: true,
     extractAsyncDataHandlers: true,
+    payloadExtraction: 'client',
     defaults: {
       nuxtLink: {
         externalRelAttribute: 'noopener'
       }
     },
-    // Disabled: `nuxt-workers` breaks under the Vite environment API.
-    // Its worker transform lands in every environment's build, not just the client's.
-    // That double-applies it in worker bundles and leaks `self.onmessage` into SSR.
-    // Re-enable once nuxt-workers registers through `vite.worker.plugins`.
+    // `nuxt-workers` breaks under the Vite environment API.
     viteEnvironmentApi: false
   },
   compatibilityDate: '2026-01-14',

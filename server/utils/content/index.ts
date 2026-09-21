@@ -57,7 +57,7 @@ function instanceSourceAt(key: ContentInstanceKey, sha: string): Source | Parsed
  * Create the content instance for `key`, reading its source at `sha`. Holds no shared state.
  */
 export async function createContentInstance(key: ContentInstanceKey, sha: string): Promise<ComarkContent> {
-  return createInstance(key, instanceSourceAt(key, sha), { driver: contentCacheDriver(key, sha) })
+  return createInstance(key, instanceSourceAt(key, sha), { driver: contentCacheDriver(key, sha) }, contentTracer())
 }
 
 /**

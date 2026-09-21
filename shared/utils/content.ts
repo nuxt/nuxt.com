@@ -30,6 +30,16 @@ export const CONTENT_INSTANCE_KEYS: ContentInstanceKey[] = [
 ]
 
 /**
+ * Instances indexed for search.
+ */
+export function searchInstanceKeys(version: DocVersion): ContentInstanceKey[] {
+  return [docsInstanceKey(version), cliInstanceKey(version), 'examples']
+}
+
+/** Every instance whose sha-pinned search artifacts must stay fresh, across every docs version. */
+export const SEARCH_INDEXED_KEYS: Set<ContentInstanceKey> = new Set(DOC_VERSIONS.flatMap(searchInstanceKeys))
+
+/**
  * Whether `value` names an instance nuxt.com actually serves.
  *
  * The single answer to "is this a real instance", so the resolvers in
@@ -57,12 +67,9 @@ export function instanceBlobPath(key: ContentInstanceKey, sha: string): string {
 }
 
 /**
- * Where an instance reports the base to read it from — `/api/content/head/docs/4.x`.
+ * The comark instance name behind `key` — `docs:4.x` → `docs`, `cli:4.x` → `cli`.
  *
- * The mutable pointer, not an artifact: it re-resolves the live commit on every request, so a
- * push is visible here as soon as the ref cache observes it. `instanceBlobPath`, what it points
- * at, is the immutable one.
  */
-export function instanceHeadPath(key: ContentInstanceKey): string {
-  return `/api/content/head/${key.replace(':', '/')}`
+export function instanceName(key: ContentInstanceKey): string {
+  return key.split(':')[0]!
 }

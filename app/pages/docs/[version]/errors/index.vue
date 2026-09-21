@@ -5,7 +5,7 @@ definePageMeta({
 })
 
 const route = useRoute()
-const { version } = useDocsVersion()
+const { meta: docsMeta } = useDocsVersion()
 
 const { data: errors } = await useFetch(() => `/api/docs/${route.params.version}/errors.json`)
 
@@ -33,9 +33,9 @@ const description = 'Reference for Nuxt error codes. Each error and warning incl
 
 useSeoMeta({
   title,
-  titleTemplate: `%s · Nuxt ${version.value.shortTag}`,
+  titleTemplate: `%s · Nuxt v${docsMeta.value.major}`,
   description,
-  ogTitle: `${title} · Nuxt ${version.value.shortTag}`,
+  ogTitle: `${title} · Nuxt v${docsMeta.value.major}`,
   ogDescription: description
 })
 

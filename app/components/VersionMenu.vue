@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { isVersionedDocsPath } from '#shared/utils/docs'
 
-const { version, items } = useDocsVersion()
+const { meta: docsMeta, version: docsVersion, items } = useDocsVersion()
 const { tags } = useDocsTags()
 const route = useRoute()
 
@@ -19,11 +19,11 @@ const switchable = computed(() => isVersionedDocsPath(route.path))
     :disabled="!switchable"
   >
     <UButton
-      :label="`v${tags[version.shortTag]}`"
+      :label="`v${tags[docsVersion]}`"
       variant="subtle"
       :trailing-icon="switchable ? 'i-lucide-chevron-down' : undefined"
       size="xs"
-      :color="version.tagColor"
+      :color="docsMeta.tagColor"
       :disabled="false"
       class="-mb-0.5 font-semibold text-[12px]/3 rounded-sm px-1.5 gap-0.5 truncate"
       :class="[!switchable && 'hover:bg-primary/10 active:bg-primary/10']"

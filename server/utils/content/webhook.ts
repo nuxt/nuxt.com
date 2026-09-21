@@ -1,3 +1,4 @@
+import type { ContentListFile } from 'comark-content'
 import type { GitHubPushCommit } from '../../types/github'
 import { CONTENT_INSTANCE_KEYS } from '#shared/utils/content'
 
@@ -83,4 +84,56 @@ export function payloadUrlForPage(path: string, buildId: string): string {
   const base = path === '/' ? '/_payload.json' : `${path.replace(/\/$/, '')}/_payload.json`
 
   return buildId ? `${base}?_b=${buildId}` : base
+}
+
+/**
+ * Which pages a push changed, and whether the tree itself moved.
+ */
+export function diffInstance(
+  changes: ContentChanges,
+  before: Record<string, ContentListFile> | null,
+  after: Record<string, ContentListFile>
+): { pagePaths: string[], navChanged: boolean } {
+  const pagePaths = new Set<string>()
+
+  // The manifest is keyed by page path; `meta.key` is the `<source>/<stem><ext>` a changed file maps
+  // to. Indexing by it is what lets comark own the file → URL derivation.
+  const afterByKey = indexByFileKey(after)
+  const beforeByKey = before ? indexByFileKey(before) : null
+
+  for (const key of changes.upserted) {
+    const path = afterByKey.get(key)
+    if (path) pagePaths.add(path)
+  }
+  for (const key of changes.removed) {
+    const path = beforeByKey?.get(key)
+    if (path) pagePaths.add(path)
+  }
+
+  // Without a previous manifest, assume the tree moved: purging every page of the instance is
+  // wasteful but correct, and serving a stale navigation is not.
+  if (!before) return { pagePaths: [...pagePaths], navChanged: true }
+
+  const beforeKeys = Object.keys(before)
+  const afterKeys = Object.keys(after)
+  const navChanged = beforeKeys.length !== afterKeys.length
+    || afterKeys.some(key => !before[key])
+    // Listing fields (title, description, icon, `navigation`) are what the tree renders from.
+    || afterKeys.some(key => before[key] && !sameListing(before[key]!, after[key]!))
+
+  return { pagePaths: [...pagePaths], navChanged }
+}
+
+/** `<source>/<stem><ext>` → page path, the reverse of what the path-keyed manifest gives. */
+function indexByFileKey(items: Record<string, ContentListFile>): Map<string, string> {
+  const index = new Map<string, string>()
+  for (const item of Object.values(items)) index.set(item.meta.key, item.path)
+
+  return index
+}
+
+function sameListing(a: ContentListFile, b: ContentListFile): boolean {
+  // Key order must not count: a cosmetic frontmatter reorder would otherwise read as a nav change
+  // and purge every page of the instance.
+  return a.path === b.path && hashManifestItem(a) === hashManifestItem(b)
 }

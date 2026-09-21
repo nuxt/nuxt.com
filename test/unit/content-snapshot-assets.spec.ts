@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
-import { CONTENT_INSTANCE_KEYS, isContentInstanceKey } from '../../shared/utils/content'
+import { CONTENT_INSTANCE_KEYS, isContentInstanceKey, searchInstanceKeys } from '../../shared/utils/content'
+import { CURRENT_DOCS_VERSION } from '../../shared/utils/docs'
 import { hasBuildSnapshot, instanceSnapshotDir, SNAPSHOT_INSTANCE_KEYS } from '../../server/utils/content/snapshot'
 import { instanceSource } from '../../server/utils/content/instances'
 
@@ -43,5 +44,12 @@ describe('SNAPSHOT_INSTANCE_KEYS', () => {
   it('ships the local site instance, whose content the build already holds', () => {
     expect(SNAPSHOT_INSTANCE_KEYS).toContain('site')
     expect(instanceSource('site').source.local).toBe(true)
+  })
+
+  it('ships every instance the current version\'s search palette hydrates from', () => {
+    // The browser worker's first hydration should not have to walk GitHub for any of them.
+    for (const key of searchInstanceKeys(CURRENT_DOCS_VERSION)) {
+      expect(SNAPSHOT_INSTANCE_KEYS, key).toContain(key)
+    }
   })
 })

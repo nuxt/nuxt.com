@@ -3,10 +3,10 @@ import { createSharedComposable } from '@vueuse/core'
 
 function _useHeaderLinks() {
   const route = useRoute()
-  const { version } = useDocsVersion()
+  const { meta: docsMeta } = useDocsVersion()
 
   const headerLinks = computed(() => {
-    const to = version.value.path
+    const to = docsMeta.value.path
 
     return [{
       label: 'Docs',

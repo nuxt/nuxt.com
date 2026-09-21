@@ -1,4 +1,4 @@
-import type { DocVersion } from './docs'
+import type { DocVersion, RepoRefs } from './docs'
 
 // The `nuxt/cli` repo backing the command reference.
 export const CLI_DOCS_REPO = 'nuxt/cli'
@@ -7,7 +7,7 @@ export const CLI_DOCS_REFS = {
   '3.x': { branch: '3.x', envOverride: 'NUXT_CLI_PATH' },
   '4.x': { branch: '3.x', envOverride: 'NUXT_CLI_PATH' },
   '5.x': { branch: 'main', envOverride: 'NUXT_CLI_PATH' }
-} as const satisfies Record<DocVersion, { branch: string, envOverride: string }>
+} as const satisfies Record<DocVersion, RepoRefs>
 
 // Excluded from the docs source; served by the separate `cli:<version>` instance instead.
 export const CLI_DOCS_PREFIX = '4.api/4.commands'

@@ -1,7 +1,7 @@
 import { verify } from '@octokit/webhooks-methods'
 import { waitUntil } from '@vercel/functions'
-import type { ComarkContent, ContentListFile } from 'comark-content'
-import { instanceBlobPath } from '#shared/utils/content'
+import type { ComarkContent } from 'comark-content'
+import { instanceBlobPath, SEARCH_INDEXED_KEYS } from '#shared/utils/content'
 import type { GitHubPushPayload } from '../types/github'
 import type { ContentChanges } from '../utils/content/webhook'
 
@@ -24,7 +24,7 @@ const REASON_ORDER: PurgeReason[] = ['page', 'payload', 'raw', 'nav', 'linked', 
 const MAX_LOGGED_PATHS_PER_REASON = 5
 
 /** Instances whose sha-pinned artifacts are served (for search indexing) */
-const isInstanceIndexedForSearch = (key: ContentInstanceKey): boolean => key.startsWith('docs:')
+const isInstanceIndexedForSearch = (key: ContentInstanceKey): boolean => SEARCH_INDEXED_KEYS.has(key)
 
 export default defineEventHandler(async (event) => {
   const secret = useRuntimeConfig(event).webhookSecret || process.env.WEBHOOK_SECRET
@@ -180,14 +180,14 @@ export default defineEventHandler(async (event) => {
   }
 
   const baseURL = `${getRequestProtocol(event)}://${getRequestHost(event, { xForwardedHost: true })}`
-  const headers: Record<string, string> = {
-    // Purges the ISR entry for the URL being fetched.
-    'x-prerender-revalidate': bypassToken
-  }
+
   // Lets the deployment call itself while Vercel Authentication is on (preview deploys).
-  if (process.env.VERCEL_AUTOMATION_BYPASS_SECRET) {
-    headers['x-vercel-protection-bypass'] = process.env.VERCEL_AUTOMATION_BYPASS_SECRET
-  }
+  const baseHeaders: Record<string, string> = process.env.VERCEL_AUTOMATION_BYPASS_SECRET
+    ? { 'x-vercel-protection-bypass': process.env.VERCEL_AUTOMATION_BYPASS_SECRET }
+    : {}
+
+  // `x-prerender-revalidate` regenerates the ISR entry for the URL being fetched.
+  const purgeHeaders = { ...baseHeaders, 'x-prerender-revalidate': bypassToken }
 
   // Vercel's `waitUntil`, not Nitro's `event.waitUntil`, which can orphan the work here.
   waitUntil((async () => {
@@ -202,9 +202,13 @@ export default defineEventHandler(async (event) => {
       }
     })
 
-    // Purge and warm up the artifacts first so the page purges can benefit from it
+    // Dispose the rebuilt instances
+    await Promise.all([...rebuiltInstances.values()].map(content => content.dispose().catch(() => {})))
+
+    // Warm the artifacts first, so the page purges below can benefit from it.Not a purge: the sha
+    // is brand new, so there's nothing cached to invalidate.
     const artifactResults = await timings.time('artifact', () => settleInBatches([...artifactPaths], REVALIDATE_CONCURRENCY, (path) => {
-      return $fetch(path, { baseURL, method: 'GET', headers }).catch((error) => {
+      return $fetch(path, { baseURL, method: 'GET', headers: baseHeaders }).catch((error) => {
         console.error(`${tag}   ✗ ${path}`, error?.statusCode ?? error?.message ?? error)
         throw error
       })
@@ -213,7 +217,7 @@ export default defineEventHandler(async (event) => {
     const pagePaths = [...pathsToPurge].filter(path => !artifactPaths.has(path))
 
     const pageResults = await timings.time('purge', () => settleInBatches(pagePaths, REVALIDATE_CONCURRENCY, path =>
-      $fetch(path, { baseURL, method: 'GET', headers }).catch((error) => {
+      $fetch(path, { baseURL, method: 'GET', headers: purgeHeaders }).catch((error) => {
         // Content with no page of its own are filtered out
         if (error?.statusCode === 404) {
           absent.push(path)
@@ -224,9 +228,10 @@ export default defineEventHandler(async (event) => {
       })
     ))
 
-    const results = [...artifactResults, ...pageResults]
-    const failed = results.filter(result => result.status === 'rejected').length
-    console.log(`${tag} complete: ${results.length - failed - absent.length} purged, ${absent.length} absent, ${failed} failed | ${timings.format()} | total=${timings.since()}ms`)
+    const warmed = artifactResults.filter(result => result.status === 'fulfilled').length
+    const purged = pageResults.filter(result => result.status === 'fulfilled').length - absent.length
+    const failed = [...artifactResults, ...pageResults].filter(result => result.status === 'rejected').length
+    console.log(`${tag} complete: ${warmed} warmed, ${purged} purged, ${absent.length} absent, ${failed} failed | ${timings.format()} | total=${timings.since()}ms`)
     logAbsent(tag, absent)
   })())
 
@@ -281,58 +286,6 @@ function routesBreakdown(pathsByScope: Map<string, Map<PurgeReason, Set<string>>
 
   const total = Object.values(byReason).reduce((sum, count) => sum + (count ?? 0), 0)
   return { total, ...byReason }
-}
-
-/**
- * Which pages a push changed, and whether the tree itself moved.
- */
-function diffInstance(
-  changes: ContentChanges,
-  before: Record<string, ContentListFile> | null,
-  after: Record<string, ContentListFile>
-): { pagePaths: string[], navChanged: boolean } {
-  const pagePaths = new Set<string>()
-
-  // The manifest is keyed by page path; `meta.key` is the `<source>/<stem><ext>` a changed file maps
-  // to. Indexing by it is what lets comark own the file → URL derivation.
-  const afterByKey = indexByFileKey(after)
-  const beforeByKey = before ? indexByFileKey(before) : null
-
-  for (const key of changes.upserted) {
-    const path = afterByKey.get(key)
-    if (path) pagePaths.add(path)
-  }
-  for (const key of changes.removed) {
-    const path = beforeByKey?.get(key)
-    if (path) pagePaths.add(path)
-  }
-
-  // Without a previous manifest, assume the tree moved: purging every page of the instance is
-  // wasteful but correct, and serving a stale navigation is not.
-  if (!before) return { pagePaths: [...pagePaths], navChanged: true }
-
-  const beforeKeys = Object.keys(before)
-  const afterKeys = Object.keys(after)
-  const navChanged = beforeKeys.length !== afterKeys.length
-    || afterKeys.some(key => !before[key])
-    // Listing fields (title, description, icon, `navigation`) are what the tree renders from.
-    || afterKeys.some(key => before[key] && !sameListing(before[key]!, after[key]!))
-
-  return { pagePaths: [...pagePaths], navChanged }
-}
-
-/** `<source>/<stem><ext>` → page path, the reverse of what the path-keyed manifest gives. */
-function indexByFileKey(items: Record<string, ContentListFile>): Map<string, string> {
-  const index = new Map<string, string>()
-  for (const item of Object.values(items)) index.set(item.meta.key, item.path)
-
-  return index
-}
-
-function sameListing(a: ContentListFile, b: ContentListFile): boolean {
-  // Key order must not count: a cosmetic frontmatter reorder would otherwise read as a nav change
-  // and purge every page of the instance.
-  return a.path === b.path && hashManifestItem(a) === hashManifestItem(b)
 }
 
 /** `Promise.allSettled` over `items`, at most `size` in flight. */

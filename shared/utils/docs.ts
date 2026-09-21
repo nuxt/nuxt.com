@@ -2,11 +2,17 @@
 
 export const DOCS_REPO = 'nuxt/nuxt'
 
+/** Where a version's docs read from: the branch, and an env var that can override it with a local clone. */
+export interface RepoRefs {
+  branch: string
+  envOverride: string
+}
+
 export const DOCS_REFS = {
   '3.x': { branch: '3.x', envOverride: 'NUXT_V3_PATH' },
   '4.x': { branch: '4.x', envOverride: 'NUXT_V4_PATH' },
   '5.x': { branch: 'main', envOverride: 'NUXT_V5_PATH' }
-} as const satisfies Record<DocVersion, { branch: string, envOverride: string }>
+} as const satisfies Record<DocVersion, RepoRefs>
 
 // Published and crawlable versions.
 export const SUPPORTED_DOC_VERSIONS = ['3.x', '4.x'] as const
@@ -22,6 +28,9 @@ export const DOC_VERSIONS = [...SUPPORTED_DOC_VERSIONS, ...EXCLUDED_DOC_VERSIONS
 
 export type DocVersion = (typeof DOC_VERSIONS)[number]
 
+/** The bare major behind a `DocVersion`: `'4.x'` → `'4'`. */
+export type Major = DocVersion extends `${infer M}.x` ? M : never
+
 export function isDocVersion(value: string): value is DocVersion {
   return (DOC_VERSIONS as readonly string[]).includes(value)
 }
@@ -31,6 +40,11 @@ export function isDocVersion(value: string): value is DocVersion {
  */
 export function docsPathPrefix(version: DocVersion): string {
   return `/docs/${version}`
+}
+
+/** The major behind a version: `'4.x'` → `'4'`. Everything display-facing (`v4`, `Version 4`, npm's `4x` tag) derives from this. */
+export function docsMajor(version: DocVersion): Major {
+  return version.slice(0, version.indexOf('.')) as Major
 }
 
 /**

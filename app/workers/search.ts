@@ -1,70 +1,62 @@
 /**
- * Search worker: owns the browser-standalone `comark-content` instance (sqlite-wasm FTS5) hydrated from the per-commit snapshot artifacts.
+ * Search worker: owns the browser-standalone `comark-content` hub (sqlite-wasm FTS5) hydrated from
+ * several instances' per-commit snapshot artifacts (docs, its command reference, and examples).
  */
-import { comarkContent, readArtifact } from 'comark-content/runtime'
+import { comarkContent, contentHub, readArtifact } from 'comark-content/runtime'
 import sqliteWasm from 'comark-content/database/sqlite-wasm'
 import snapshot from 'comark-content/sources/snapshot'
 import sqliteFullTextSearch from 'comark-content/plugins/sqlite-full-text-search'
 import { ofetch } from 'ofetch'
 import { describeArtifact, indexedRows, isDebug, log, logger, setDebug, since } from './internal/search-logger'
-import type { CacheArtifact, SearchOptions, SearchResult } from 'comark-content/runtime'
+import type { AnyComarkContent, CacheArtifact, ContentHub, SearchOptions, SearchResult } from 'comark-content/runtime'
 
-/**
- * Creates a search instance.
- */
-function createSearchInstance(source: string, apiBase: string, fetchArtifact: (path: string) => Promise<CacheArtifact>) {
-  const database = sqliteWasm()
-  return {
-    database,
-    content: comarkContent(source, {
-      source: snapshot(
-        () => fetchArtifact(`${apiBase}/snapshot/${source}.json`),
-        () => fetchArtifact(`${apiBase}/manifest.json`)
-      ),
-      plugins: [sqliteFullTextSearch({ database })],
-      logger
-    })
-  }
+/** One instance the palette searches: an instance name and the base its artifacts are pinned under. */
+export interface SearchTarget {
+  name: string
+  base: string
 }
 
-type SearchInstance = ReturnType<typeof createSearchInstance>['content']
+/** Identifies a set of targets: order and content both matter, a stale sha in one member changes it. */
+const targetsKey = (targets: SearchTarget[]): string => targets.map(target => `${target.name}@${target.base}`).join('|')
 
 /**
- * The instance currently searchable, and the artifact root it was built from.
+ * The hub currently searchable, and the target set it was built from.
  *
- * One at a time on purpose: `apiBase` carries both the docs version and its commit, so switching
- * version or a push replaces it.
+ * One at a time on purpose: a target's `base` carries both the docs version and its commit, so
+ * switching version or a push replaces the whole hub.
  */
-let active: { apiBase: string, instance: SearchInstance } | undefined
+let active: { key: string, hub: ContentHub<AnyComarkContent[]> } | undefined
 
 /**
- * The in-flight hydration, keyed by the `apiBase` it targets.
+ * The in-flight hydration, keyed by the target set it targets.
  */
-let hydration: { apiBase: string, promise: Promise<void> } | undefined
+let hydration: { key: string, promise: Promise<void> } | undefined
 
 /**
- * Loads the database for `apiBase`. No-op once ready for that base; retries after a failure.
+ * Loads the database for `targets`. No-op once ready for that set; retries after a failure.
  */
-export function warmupSearch(apiBase: string, source: string, origin: string, debug: boolean): Promise<void> {
+export function warmupSearch(targets: SearchTarget[], origin: string, debug: boolean): Promise<void> {
   setDebug(debug)
-  if (!source) {
-    return Promise.reject(new Error('[search] cannot build a database without a source name'))
+  if (!targets.length) {
+    return Promise.reject(new Error('[search] cannot build a database without at least one target'))
   }
-  if (active?.apiBase === apiBase) {
-    log(`warmup ignored — already ready for ${apiBase}`)
+
+  const key = targetsKey(targets)
+  if (active?.key === key) {
+    log(`warmup ignored — already ready for ${key}`)
     return Promise.resolve()
   }
-  if (hydration?.apiBase === apiBase) return hydration.promise
+  if (hydration?.key === key) return hydration.promise
 
-  const promise = loadDatabase(apiBase, source, origin).catch((error) => {
+  const promise = loadDatabase(key, targets, origin).catch((error) => {
     hydration = undefined // clears the guard so the next warmup can retry
     throw error
   })
-  hydration = { apiBase, promise }
+  hydration = { key, promise }
   return promise
 }
 
-async function loadDatabase(apiBase: string, source: string, origin: string): Promise<void> {
+async function loadDatabase(key: string, targets: SearchTarget[], origin: string): Promise<void> {
   const started = performance.now()
   try {
     const fetchArtifact = async (path: string): Promise<CacheArtifact> => {
@@ -88,16 +80,48 @@ async function loadDatabase(apiBase: string, source: string, origin: string): Pr
       }
     }
 
-    const { database, content } = createSearchInstance(source, apiBase, fetchArtifact)
+    // One database, shared by every target: the FTS plugin needs it to rank across instances in a
+    // single query — see comark-content's full-text-search plugin, "shared database".
+    const database = sqliteWasm()
 
-    await content.init()
+    // Hydrated independently: one target's stale pin (a push rotated its sha mid-session) must not
+    // sink the others. Only if every target fails does warmup itself fail.
+    const settledContents = await Promise.allSettled(targets.map(async (target) => {
+      const content = comarkContent(target.name, {
+        source: snapshot(
+          () => fetchArtifact(`${target.base}/snapshot/${target.name}.json`),
+          () => fetchArtifact(`${target.base}/manifest.json`)
+        ),
+        plugins: [sqliteFullTextSearch({ database })],
+        logger
+      })
+      await content.init()
+      return content
+    }))
+
+    const hydratedContents: AnyComarkContent[] = []
+    for (const [index, result] of settledContents.entries()) {
+      const target = targets[index]!
+      if (result.status === 'fulfilled') {
+        hydratedContents.push(result.value)
+      } else {
+        log(`hydration failed for "${target.name}" (${target.base})`, result.reason)
+      }
+    }
+
+    if (!hydratedContents.length) {
+      throw new Error(`[search] every target failed to hydrate (${targets.map(target => target.name).join(', ')})`)
+    }
+
+    const hub = contentHub(hydratedContents, { logger })
 
     const indexStarted = performance.now()
-    await content.search('') // pulls the snapshot in and builds the FTS index
-    log(`index built in ${since(indexStarted)} — ${await indexedRows(database, source)} row(s)`)
+    await hub.search('') // pulls every instance in and builds the shared FTS index
+    const rows = await Promise.all(hydratedContents.map(async instance => `${instance.name}=${await indexedRows(database, instance.name)}`))
+    log(`index built in ${since(indexStarted)} — ${rows.join(', ')}`)
 
-    active = { apiBase, instance: content }
-    log(`ready in ${since(started)}`)
+    active = { key, hub }
+    log(`ready in ${since(started)} (${hydratedContents.length}/${targets.length} instance(s))`)
   } catch (error) {
     log(`hydration failed after ${since(started)}`, error)
     throw error
@@ -111,7 +135,7 @@ export async function searchContent(query: string, opts?: SearchOptions): Promis
     return []
   }
   const queryStarted = performance.now()
-  const results = await active.instance.search(query, {
+  const results = await active.hub.search(query, {
     limit: 25,
     snippet: { columns: ['content'] },
     ...opts
