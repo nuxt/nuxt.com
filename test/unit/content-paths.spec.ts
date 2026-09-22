@@ -1,3 +1,6 @@
+import { readdirSync } from 'node:fs'
+import { fileURLToPath } from 'node:url'
+import { createRouter } from 'radix3'
 import { describe, expect, it } from 'vitest'
 import { CONTENT_INSTANCE_KEYS, cliInstanceKey, docsInstanceKey, instanceBasePath, instanceBlobPath, instanceName, isContentInstanceKey, navPathsForInstance, navigationPath } from '../../shared/utils/content'
 import { DOC_VERSIONS } from '../../shared/utils/docs'
@@ -41,6 +44,23 @@ describe('navPathsForInstance', () => {
     const everyVersion = DOC_VERSIONS.map(navigationPath)
     expect(navPathsForInstance('site')).toEqual(everyVersion)
     expect(navPathsForInstance('examples')).toEqual(everyVersion)
+  })
+})
+
+describe('navigation route', () => {
+  it('extracts `version` under the router Nitro actually runs — radix3, not rou3', () => {
+    const dir = fileURLToPath(new URL('../../server/api/navigation', import.meta.url))
+    const files = readdirSync(dir).filter(file => file.endsWith('.get.ts'))
+    expect(files, 'exactly one handler under server/api/navigation/').toHaveLength(1)
+
+    const pattern = `/api/navigation/${files[0]!.replace(/\.get\.ts$/, '').replace(/^\[([^\]]+)\]$/, ':$1')}`
+    const router = createRouter()
+    router.insert(pattern, { handler: true })
+
+    for (const version of DOC_VERSIONS) {
+      const match = router.lookup(navigationPath(version))
+      expect(match?.params, `${pattern} against ${navigationPath(version)}`).toEqual({ version })
+    }
   })
 })
 

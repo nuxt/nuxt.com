@@ -74,9 +74,11 @@ export function instanceName(key: ContentInstanceKey): string {
   return key.split(':')[0]!
 }
 
-/** Where a version's navigation tree is served — `navigationPath('4.x') === '/api/navigation/4.x.json'`. */
+/**
+ * Where a version's navigation tree is served — `navigationPath('4.x') === '/api/navigation/4.x'`.
+ */
 export function navigationPath(version: DocVersion): string {
-  return `/api/navigation/${version}.json`
+  return `/api/navigation/${version}`
 }
 
 /**
