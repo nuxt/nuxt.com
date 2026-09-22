@@ -1,7 +1,7 @@
 import { verify } from '@octokit/webhooks-methods'
 import { waitUntil } from '@vercel/functions'
 import type { ComarkContent } from 'comark-content'
-import { instanceBlobPath, SEARCH_INDEXED_KEYS } from '#shared/utils/content'
+import { instanceBlobPath, navPathsForInstance, SEARCH_INDEXED_KEYS } from '#shared/utils/content'
 import type { GitHubPushPayload } from '../types/github'
 import type { ContentChanges } from '../utils/content/webhook'
 
@@ -134,7 +134,9 @@ export default defineEventHandler(async (event) => {
 
     // Navigation renders on every page of the instance, so a change re-renders all of them.
     if (navChanged || changes.navTouched) {
-      addPath(instanceKey, 'nav', '/api/navigation.json')
+      for (const navPath of navPathsForInstance(instanceKey)) {
+        addPath(instanceKey, 'nav', navPath)
+      }
       for (const item of Object.values(newItems)) {
         if (item.meta.kind !== 'document' || !isContentRoute(item.path)) continue
         addPath(instanceKey, 'nav', item.path)

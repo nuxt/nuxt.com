@@ -73,3 +73,17 @@ export function instanceBlobPath(key: ContentInstanceKey, sha: string): string {
 export function instanceName(key: ContentInstanceKey): string {
   return key.split(':')[0]!
 }
+
+/** Where a version's navigation tree is served — `navigationPath('4.x') === '/api/navigation/4.x.json'`. */
+export function navigationPath(version: DocVersion): string {
+  return `/api/navigation/${version}.json`
+}
+
+/**
+ * Which navigation endpoint(s) a change to `key` affects.
+ */
+export function navPathsForInstance(key: ContentInstanceKey): string[] {
+  if (key === 'site' || key === 'examples') return DOC_VERSIONS.map(navigationPath)
+
+  return [navigationPath(key.split(':')[1] as DocVersion)]
+}

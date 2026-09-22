@@ -1,6 +1,7 @@
 <script setup lang="ts">
+import type { NavigationItem } from 'comark-content'
 import type { ContentShas } from '#shared/types'
-import { searchInstanceKeys } from '#shared/utils/content'
+import { navigationPath, searchInstanceKeys } from '#shared/utils/content'
 
 const colorMode = useColorMode()
 const route = useRoute()
@@ -8,7 +9,7 @@ const { isAgentEnabled } = useNuxtAgent()
 const isChatRoute = computed(() => route.path.startsWith('/dashboard/chat') || route.path.startsWith('/admin/analytics'))
 const showAgent = computed(() => isAgentEnabled.value && !isChatRoute.value)
 
-const { meta: docsMeta, version: docsVersion } = useDocsVersion()
+const { version: docsVersion } = useDocsVersion()
 const { track } = useAnalytics()
 
 const color = computed(() => colorMode.value === 'dark' ? '#020420' : 'white')
@@ -27,7 +28,7 @@ watch(() => colorMode.preference, (newMode, oldMode) => {
   }
 })
 
-const { data: navigation } = await useFetch('/api/navigation.json')
+const { data: navigation } = await useFetch<NavigationItem[]>(computed(() => navigationPath(docsVersion.value)))
 
 const searchKeys = computed(() => searchInstanceKeys(docsVersion.value))
 // Client-only: an SSR value gets baked into the page's ISR entry and would pin search to a stale commit.
@@ -79,7 +80,7 @@ if (import.meta.server) {
   ])
 }
 
-const navigationByVersion = computed(() => navigation.value?.filter(item => item.path === docsMeta.value.path || item.path === '/blog') ?? [])
+const navigationByVersion = computed(() => navigation.value ?? [])
 
 provide('navigation', navigationByVersion)
 provide('searchShas', searchShas)

@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
-import { CONTENT_INSTANCE_KEYS, cliInstanceKey, docsInstanceKey, instanceBasePath, instanceBlobPath, instanceName, isContentInstanceKey } from '../../shared/utils/content'
+import { CONTENT_INSTANCE_KEYS, cliInstanceKey, docsInstanceKey, instanceBasePath, instanceBlobPath, instanceName, isContentInstanceKey, navPathsForInstance, navigationPath } from '../../shared/utils/content'
+import { DOC_VERSIONS } from '../../shared/utils/docs'
 import { instanceSource } from '../../server/utils/content/instances'
 
 describe('content instance paths', () => {
@@ -15,9 +16,6 @@ describe('content instance paths', () => {
   })
 
   it('reduces a pinned path to the live one by dropping the pin', () => {
-    // The contract `server/api/content/blob/[sha]/[...path]` relies on: it strips `/blob/<sha>` and
-    // hands the result to a handler mounted on `instanceBasePath`. If these two ever disagree, the
-    // pinned route 404s on every artifact.
     for (const key of ['site', 'examples', docsInstanceKey('4.x'), docsInstanceKey('5.x'), cliInstanceKey('4.x')] as const) {
       const sha = 'deadbeef'
       expect(instanceBlobPath(key, sha).replace(`/blob/${sha}`, '')).toBe(instanceBasePath(key))
@@ -30,6 +28,19 @@ describe('instanceName', () => {
     for (const key of CONTENT_INSTANCE_KEYS) {
       expect(instanceName(key), key).toBe(instanceSource(key).name)
     }
+  })
+})
+
+describe('navPathsForInstance', () => {
+  it('scopes a docs or cli push to that version alone', () => {
+    expect(navPathsForInstance(docsInstanceKey('4.x'))).toEqual([navigationPath('4.x')])
+    expect(navPathsForInstance(cliInstanceKey('4.x'))).toEqual([navigationPath('4.x')])
+  })
+
+  it('fans `site` and `examples` out to every version — both are grafted onto every tree', () => {
+    const everyVersion = DOC_VERSIONS.map(navigationPath)
+    expect(navPathsForInstance('site')).toEqual(everyVersion)
+    expect(navPathsForInstance('examples')).toEqual(everyVersion)
   })
 })
 

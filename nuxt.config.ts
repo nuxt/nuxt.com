@@ -175,7 +175,7 @@ export default defineNuxtConfig({
     '/_eve_internal/**': { headers: { 'cache-control': 'no-store' } },
     '/api/internal/**': { headers: { 'cache-control': 'no-store' } },
     // Main navigation
-    '/api/navigation.json': { isr: CONTENT_ISR },
+    '/api/navigation/**': { isr: CONTENT_ISR },
     '/api/content/blob/**': { isr: true },
     // Redirects
     '/docs': { redirect: '/docs/getting-started/introduction', prerender: false },
@@ -457,7 +457,8 @@ export default defineNuxtConfig({
     payloadExtraction: 'client',
     defaults: {
       nuxtLink: {
-        externalRelAttribute: 'noopener'
+        externalRelAttribute: 'noopener',
+        prefetchOn: { interaction: true }
       }
     },
     // `nuxt-workers` breaks under the Vite environment API.
