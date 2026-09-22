@@ -7,6 +7,13 @@ overrides:
   "@workflow/serde": 4.1.2
   comark: 0.7.0
 
+# `crossorigin="anonymous"` on the same-origin `_payload.json` preload turns it into a CORS
+# request that never matches the app's later plain fetch, so the payload downloads twice.
+# Drop upstream once https://github.com/nuxt/nuxt fixes it (see comarkdown/comark-docs#52).
+patchedDependencies:
+  nuxt@4.5.2: patches/nuxt@4.5.2.patch
+  "@nuxt/nitro-server@4.5.2": patches/@nuxt__nitro-server@4.5.2.patch
+
 allowBuilds:
   esbuild: true
   rolldown: true
