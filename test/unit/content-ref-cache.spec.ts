@@ -5,16 +5,17 @@ import { fetchLastContentCommit, normalizeContentDir } from '../../server/utils/
 
 const SHA = (char: string) => char.repeat(40)
 
-/** Every write, with the TTL it carried — the thing this cache's behaviour turns on. */
-const writes: { key: string, value: unknown, ttl?: number }[] = []
+/** Every write, with the TTL and tags it carried — the thing this cache's behaviour turns on. */
+const writes: { key: string, value: unknown, ttl?: number, tags?: string[] }[] = []
 const store = new Map<string, unknown>()
 
-/** A memory driver that records the TTL each write asked for. */
+/** A memory driver that records the TTL and tags each write asked for. */
 const recordingDriver = (): Driver => ({
   name: 'recording',
   getItem: key => store.get(key) ?? null,
   setItem: (key, value, opts) => {
-    writes.push({ key, value, ttl: (opts as { ttl?: number } | undefined)?.ttl })
+    const { ttl, tags } = (opts as { ttl?: number, tags?: string[] } | undefined) ?? {}
+    writes.push({ key, value, ttl, tags })
     store.set(key, value)
   },
   removeItem: key => void store.delete(key),
@@ -23,11 +24,15 @@ const recordingDriver = (): Driver => ({
   dispose: () => {}
 })
 
+/** Records every tag `expireGithubRef` was asked to expire — the global side of a refresh. */
+const expiredTags: string[] = []
+
 /** `refs.ts` reaches for these through Nitro's auto-imports. */
 function stubAutoImports() {
   vi.stubGlobal('createError', createError)
   vi.stubGlobal('useRuntimeConfig', () => ({ github: { token: 'tok' } }))
   vi.stubGlobal('githubRefCacheDriver', recordingDriver)
+  vi.stubGlobal('expireGithubRef', vi.fn(async (tag: string) => expiredTags.push(tag)))
   vi.stubGlobal('fetchLastContentCommit', fetchLastContentCommit)
   vi.stubGlobal('normalizeContentDir', normalizeContentDir)
 }
@@ -49,6 +54,7 @@ describe('resolveContentSha', () => {
     // Re-applied every test: `unstubAllGlobals` below clears them.
     stubAutoImports()
     writes.length = 0
+    expiredTags.length = 0
     store.clear()
     delete process.env.VERCEL_ENV
   })
@@ -62,9 +68,11 @@ describe('resolveContentSha', () => {
     expect(await resolveContentSha('nuxt/nuxt', '4.x', 'docs')).toBe(SHA('a'))
     expect(await resolveContentSha('nuxt/nuxt', '4.x', 'docs')).toBe(SHA('a'))
     expect(fetchMock).toHaveBeenCalledOnce()
+    // A plain resolve never touches other regions' copies of this pointer.
+    expect(expiredTags).toHaveLength(0)
   })
 
-  it('re-queries when the webhook forces a refresh', async () => {
+  it('re-queries when the webhook forces a refresh, expiring the pointer in every region', async () => {
     vi.stubGlobal('fetch', stubApi({ sha: SHA('b') }))
     await resolveContentSha('nuxt/nuxt', 'main', 'docs')
 
@@ -73,6 +81,11 @@ describe('resolveContentSha', () => {
 
     expect(await resolveContentSha('nuxt/nuxt', 'main', 'docs', { refresh: true })).toBe(SHA('c'))
     expect(refreshed).toHaveBeenCalledOnce()
+
+    const key = 'repo:nuxt%2Fnuxt:branch:main:path:docs'
+    expect(expiredTags).toEqual([key])
+    // Tagged with its own key, so `expireGithubRef` can target this pointer alone.
+    expect(writes.at(-1)).toMatchObject({ key, tags: [key] })
   })
 
   it('keys pointers per repo, branch and content directory', async () => {

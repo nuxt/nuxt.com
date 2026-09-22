@@ -1,3 +1,4 @@
+import { getCache } from '@vercel/functions'
 import type { Driver } from 'unstorage'
 import memoryDriver from 'unstorage/drivers/memory'
 import vercelRuntimeCache from 'unstorage/drivers/vercel-runtime-cache'
@@ -36,9 +37,9 @@ export function contentCacheDriver(instanceKey: string): Driver {
  * Driver backing the ref pointers: `(repo, branch, content dir) -> commit sha`.
  * The caller supplies the bounded default TTL; individual entries may write a shorter one.
  *
- * TODO: Keep in thoughts: Vercel Runtime Cache is **regional**, not global (https://vercel.com/docs/caching/runtime-cache):
- * The webhook's forced refresh only reaches its own region, and the others self-heal on TTL.
- * A globally replicated store (e.g. Edge Config) would remove that bound.
+ * Vercel Runtime Cache is regional, so a plain write only reaches the region that handled the request.
+ *
+ * Each ref entry is tagged with its own key so a forced refresh can invalidate that pointer everywhere.
  */
 export function githubRefCacheDriver(ttl: number): Driver {
   if (!cacheAvailable()) return memoryDriver()
@@ -46,4 +47,14 @@ export function githubRefCacheDriver(ttl: number): Driver {
     base: 'github:refs',
     ttl
   })
+}
+
+/**
+ * Globally expire a ref pointer tagged with `tag`.
+ *
+ * No-op outside Vercel Runtime Cache (dev, tests): nothing to expire there.
+ */
+export async function expireGithubRef(tag: string): Promise<void> {
+  if (!cacheAvailable()) return
+  await getCache().expireTag(tag)
 }

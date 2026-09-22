@@ -9,7 +9,9 @@ import type { ContentInstanceKey } from '#shared/utils/content'
  * The GitHub query itself is in `commits.ts`, which the build module shares.
  */
 
-/** The webhook refreshes production as a push lands; this bounds recovery when delivery fails. */
+/**
+ * Bounds recovery when webhook delivery fails
+ */
 const PRODUCTION_REF_TTL = 60 * 60
 
 /** No webhook targets a preview deployment, so its pointers recover on TTL alone. */
@@ -54,6 +56,9 @@ export async function resolveContentSha(
   if (!opts.refresh) {
     const cached = await refStorage.getItem<string>(key)
     if (cached) return cached
+  } else {
+    // Expire the sha for this cache key everywhere (multi region invalidation)
+    await expireGithubRef(key)
   }
 
   // Shared with the build-time snapshot, which walks the built commit instead of a branch.
@@ -79,7 +84,8 @@ export async function resolveContentSha(
     throw createError({ statusCode: 404, statusMessage: `Content not found at ${repo}#${branch}:${contentDir}` })
   }
 
-  await refStorage.setItem(key, sha, { ttl: refTtl() })
+  // Tags the cache key for multi region invalidation
+  await refStorage.setItem(key, sha, { ttl: refTtl(), tags: [key] })
   return sha
 }
 
