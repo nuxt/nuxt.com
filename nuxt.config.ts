@@ -457,8 +457,8 @@ export default defineNuxtConfig({
     payloadExtraction: 'client',
     defaults: {
       nuxtLink: {
-        externalRelAttribute: 'noopener',
-        prefetchOn: { interaction: true }
+        externalRelAttribute: 'noopener'
+        // prefetchOn: { interaction: true }
       }
     },
     // `nuxt-workers` breaks under the Vite environment API.
