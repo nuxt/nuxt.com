@@ -1,6 +1,7 @@
 import { createError } from 'h3'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import type { Driver } from 'unstorage'
+import { githubRefTag } from '../../server/utils/content/cache'
 import { fetchLastContentCommit, normalizeContentDir } from '../../server/utils/content/commits'
 
 const SHA = (char: string) => char.repeat(40)
@@ -32,7 +33,8 @@ function stubAutoImports() {
   vi.stubGlobal('createError', createError)
   vi.stubGlobal('useRuntimeConfig', () => ({ github: { token: 'tok' } }))
   vi.stubGlobal('githubRefCacheDriver', recordingDriver)
-  vi.stubGlobal('expireGithubRef', vi.fn(async (tag: string) => expiredTags.push(tag)))
+  vi.stubGlobal('githubRefTag', githubRefTag)
+  vi.stubGlobal('expireGithubRef', vi.fn(async (key: string) => expiredTags.push(key)))
   vi.stubGlobal('fetchLastContentCommit', fetchLastContentCommit)
   vi.stubGlobal('normalizeContentDir', normalizeContentDir)
 }
@@ -84,8 +86,7 @@ describe('resolveContentSha', () => {
 
     const key = 'repo:nuxt%2Fnuxt:branch:main:path:docs'
     expect(expiredTags).toEqual([key])
-    // Tagged with its own key, so `expireGithubRef` can target this pointer alone.
-    expect(writes.at(-1)).toMatchObject({ key, tags: [key] })
+    expect(writes.at(-1)).toMatchObject({ key, tags: [githubRefTag(key)] })
   })
 
   it('keys pointers per repo, branch and content directory', async () => {

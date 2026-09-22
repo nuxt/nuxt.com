@@ -85,7 +85,7 @@ export async function resolveContentSha(
   }
 
   // Tags the cache key for multi region invalidation
-  await refStorage.setItem(key, sha, { ttl: refTtl(), tags: [key] })
+  await refStorage.setItem(key, sha, { ttl: refTtl(), tags: [githubRefTag(key)] })
   return sha
 }
 

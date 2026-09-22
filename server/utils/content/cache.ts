@@ -1,3 +1,4 @@
+import { createHash } from 'node:crypto'
 import { getCache } from '@vercel/functions'
 import type { Driver } from 'unstorage'
 import memoryDriver from 'unstorage/drivers/memory'
@@ -39,7 +40,7 @@ export function contentCacheDriver(instanceKey: string): Driver {
  *
  * Vercel Runtime Cache is regional, so a plain write only reaches the region that handled the request.
  *
- * Each ref entry is tagged with its own key so a forced refresh can invalidate that pointer everywhere.
+ * Each ref entry is tagged with `githubRefTag(key)` so a forced refresh can invalidate that pointer everywhere.
  */
 export function githubRefCacheDriver(ttl: number): Driver {
   if (!cacheAvailable()) return memoryDriver()
@@ -50,11 +51,18 @@ export function githubRefCacheDriver(ttl: number): Driver {
 }
 
 /**
- * Globally expire a ref pointer tagged with `tag`.
+ * The cache tag for a ref key
+ */
+export function githubRefTag(key: string): string {
+  return `ref-${createHash('sha1').update(key).digest('hex')}`
+}
+
+/**
+ * Globally expire the ref pointer keyed by `key`.
  *
  * No-op outside Vercel Runtime Cache (dev, tests): nothing to expire there.
  */
-export async function expireGithubRef(tag: string): Promise<void> {
+export async function expireGithubRef(key: string): Promise<void> {
   if (!cacheAvailable()) return
-  await getCache().expireTag(tag)
+  await getCache().expireTag(githubRefTag(key))
 }
