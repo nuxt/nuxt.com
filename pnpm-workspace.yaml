@@ -6,6 +6,8 @@ overrides:
   # chat@4.34.0 pins the 4.1.0-beta.2 prerelease, flagged as a downgrade by check-provenance
   "@workflow/serde": 4.1.2
   comark: 0.7.0
+  "unhead": 3.4.1
+  "@unhead/vue": 3.4.1
 
 # `crossorigin="anonymous"` on the same-origin `_payload.json` preload turns it into a CORS
 # request that never matches the app's later plain fetch, so the payload downloads twice.
