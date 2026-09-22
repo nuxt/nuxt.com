@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { satisfies } from 'semver'
+import { satisfies } from 'verkit'
 
 export default defineCachedEventHandler(async (event) => {
   const { version, category } = await getValidatedQuery(event, z.object({
