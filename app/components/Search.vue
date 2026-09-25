@@ -7,6 +7,10 @@ defineProps<{
 
 const { search, status } = useSearch()
 const { searchGroups, searchLinks, searchTerm } = useNavigation()
+
+const fuse = {
+  resultLimit: 25
+}
 </script>
 
 <template>
@@ -18,7 +22,7 @@ const { searchGroups, searchLinks, searchTerm } = useNavigation()
     :search="search"
     :search-status="status"
     :loading="status === 'loading'"
-    :fuse="{ resultLimit: 25 }"
+    :fuse="fuse"
     :transition="false"
   />
 </template>
