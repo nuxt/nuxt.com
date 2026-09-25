@@ -16,6 +16,7 @@ if (!provider.value) {
 }
 
 const providerData = computed(() => provider.value!.data)
+const tocLinks = computed<any[]>(() => (provider.value?.meta as Record<string, any>)?.toc?.links ?? [])
 const surround = computed(() => listSurround(providers.value, route.path))
 
 const title = providerData.value?.title
@@ -117,10 +118,10 @@ links.push({
         </UPageBody>
 
         <template #right>
-          <UContentToc :links="providerData.body?.toc?.links || []">
+          <UContentToc :links="tocLinks">
             <template #bottom>
               <div class="hidden lg:block space-y-6">
-                <USeparator v-if="links?.length && providerData.body?.toc?.links?.length" type="dashed" />
+                <USeparator v-if="links?.length && tocLinks.length" type="dashed" />
                 <UPageLinks title="Links" :links="links" />
                 <USeparator type="dashed" />
                 <SocialLinks />
