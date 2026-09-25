@@ -5,9 +5,18 @@ overrides:
   nostics: ^1.2.0
   # chat@4.34.0 pins the 4.1.0-beta.2 prerelease, flagged as a downgrade by check-provenance
   "@workflow/serde": 4.1.2
+  comark: 0.7.0
+  "unhead": 3.4.1
+  "@unhead/vue": 3.4.1
+
+# `crossorigin="anonymous"` on the same-origin `_payload.json` preload turns it into a CORS
+# request that never matches the app's later plain fetch, so the payload downloads twice.
+# Drop upstream once https://github.com/nuxt/nuxt fixes it (see comarkdown/comark-docs#52).
+patchedDependencies:
+  nuxt@4.5.2: patches/nuxt@4.5.2.patch
+  "@nuxt/nitro-server@4.5.2": patches/@nuxt__nitro-server@4.5.2.patch
 
 allowBuilds:
-  better-sqlite3: false
   esbuild: true
   rolldown: true
   sharp: true
@@ -26,6 +35,4 @@ minimumReleaseAgeExclude:
   - nuxt-nightly
   - vue
   - '@vue/*'
-  - '@nuxtjs/mdc@0.23.1'
   - nuxt-agent-discovery@0.5.0
-

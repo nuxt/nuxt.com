@@ -1,4 +1,3 @@
-import { queryCollection } from '@nuxt/content/server'
 import { z } from 'zod'
 
 const blogBodySchema = z.object({
@@ -26,10 +25,9 @@ export default defineEventHandler(async (event) => {
   ]).parse)
 
   if (body.kind === 'blog') {
-    const posts = await queryCollection(event, 'blog')
-      .where('extension', '=', 'md')
-      .order('date', 'DESC')
-      .all()
+    const posts = (await listByDir('/blog'))
+      .filter(p => p.extension === '.md')
+      .sort((a, b) => String(b.date).localeCompare(String(a.date)))
 
     const post = posts.find(p =>
       p.path !== '/blog'
@@ -50,7 +48,7 @@ export default defineEventHandler(async (event) => {
       date: post.date,
       image: post.image,
       category: post.category,
-      authors: post.authors?.map(a => ({
+      authors: (post.authors as Array<{ name: string, avatar?: { src?: string } }>)?.map(a => ({
         name: a.name,
         avatar: a.avatar?.src
       }))
@@ -59,7 +57,7 @@ export default defineEventHandler(async (event) => {
 
   if (body.kind === 'deploy') {
     const needle = body.name.trim().toLowerCase()
-    const providers = await queryCollection(event, 'deploy').all()
+    const providers = await listByDir('/deploy')
     const provider = providers.find(p =>
       p.path !== '/deploy'
       && (
@@ -85,7 +83,7 @@ export default defineEventHandler(async (event) => {
     }
   }
 
-  const allTemplates = await queryCollection(event, 'templates').all()
+  const allTemplates = await listByDir('/templates')
 
   const results = body.names.map((rawName) => {
     const name = rawName.trim().toLowerCase()

@@ -3,10 +3,10 @@ import { createSharedComposable } from '@vueuse/core'
 
 function _useHeaderLinks() {
   const route = useRoute()
-  const { version } = useDocsVersion()
+  const { meta: docsMeta } = useDocsVersion()
 
   const headerLinks = computed(() => {
-    const to = version.value.path
+    const to = docsMeta.value.path
 
     return [{
       label: 'Docs',
@@ -48,8 +48,8 @@ function _useHeaderLinks() {
         label: 'Examples',
         description: 'Discover and explore official and community examples.',
         icon: 'i-lucide-app-window-mac',
-        to: `${to}/examples`,
-        active: route.path.startsWith(`${to}/examples`)
+        to: '/docs/examples',
+        active: route.path.startsWith('/docs/examples')
       }, {
         label: 'Community',
         description: 'Find answers and support from the community.',

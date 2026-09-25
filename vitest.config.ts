@@ -1,3 +1,4 @@
+import { fileURLToPath } from 'node:url'
 import { defineConfig, defaultExclude } from 'vitest/config'
 import { defineVitestProject } from '@nuxt/test-utils/config'
 
@@ -5,6 +6,13 @@ export default defineConfig({
   test: {
     projects: [
       {
+        // Stub server utils imports
+        resolve: {
+          alias: {
+            '#shared': fileURLToPath(new URL('./shared', import.meta.url)),
+            '#agent-discovery': fileURLToPath(new URL('./test/stubs/agent-discovery.ts', import.meta.url))
+          }
+        },
         test: {
           name: 'unit',
           exclude: [

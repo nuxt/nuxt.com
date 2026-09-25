@@ -4,14 +4,10 @@ definePageMeta({
   heroBackground: 'opacity-30'
 })
 
-const { version } = useDocsVersion()
+const route = useRoute()
+const { meta: docsMeta } = useDocsVersion()
 
-const { data: errors } = await useAsyncData(`${version.value.collection}-errors`, () =>
-  queryCollection(version.value.collection!)
-    .where('path', 'LIKE', `${version.value.path}/errors/%`)
-    .select('path', 'title', 'description')
-    .all()
-)
+const { data: errors } = await useFetch(() => `/api/docs/${route.params.version}/errors.json`)
 
 if (!errors.value?.length) {
   throw createError({ statusCode: 404, statusMessage: 'Page not found', fatal: true })
@@ -37,9 +33,9 @@ const description = 'Reference for Nuxt error codes. Each error and warning incl
 
 useSeoMeta({
   title,
-  titleTemplate: `%s · Nuxt ${version.value.shortTag}`,
+  titleTemplate: `%s · Nuxt v${docsMeta.value.major}`,
   description,
-  ogTitle: `${title} · Nuxt ${version.value.shortTag}`,
+  ogTitle: `${title} · Nuxt v${docsMeta.value.major}`,
   ogDescription: description
 })
 

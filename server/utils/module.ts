@@ -1,5 +1,3 @@
-import { parseMarkdown } from '@nuxtjs/mdc/runtime'
-
 import type { H3Event } from 'h3'
 import type { BaseModule, Module, ModuleContributor, ModuleHealth, ModuleStats } from '#shared/types'
 import type { NpmDownloadStats } from '../types/npm'
@@ -171,5 +169,5 @@ export async function fetchModuleReadme(_event: H3Event, module: BaseModule) {
     return 'Readme not found'
   }) as string
 
-  return await parseMarkdown(readme)
+  return await parseStandaloneMarkdown(readme)
 }
