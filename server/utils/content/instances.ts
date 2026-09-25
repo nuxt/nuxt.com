@@ -37,8 +37,10 @@ export interface InstanceSource extends ComarkSourceOptions {
  */
 const DOCS_LISTING_FIELDS = ['title', 'description', 'navigation', 'titleTemplate', 'icon']
 
-/** A contributor readme, not a page. */
-const DOCS_EXCLUDE = ['README.md']
+/**
+ * Not contentpages: a contributor readme, and data files.
+ */
+const DOCS_EXCLUDE = ['README.md', '**/*.json']
 
 /**
  * Per-source branch overrides (testing the push webhook off a non-production branch).
