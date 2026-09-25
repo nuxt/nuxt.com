@@ -109,9 +109,6 @@ export async function getInstanceAtHead(key: ContentInstanceKey): Promise<Comark
   })
   instances.set(key, { sha, instance })
 
-  // Release the superseded instance's database and watchers
-  if (current) void current.instance.then(previous => previous.dispose()).catch(() => {})
-
   return instance
 }
 
