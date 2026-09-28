@@ -1,5 +1,5 @@
 import type { NavigationItem } from 'comark-content'
-import { docsPathPrefix, type DocVersion } from '#shared/utils/docs'
+import { docsPathPrefix, EXAMPLES_PATH_PREFIX, type DocVersion } from '#shared/utils/docs'
 import { cliInstanceKey, docsInstanceKey } from '#shared/utils/content'
 import { cliDocsPathPrefix } from '#shared/utils/cli'
 
@@ -14,6 +14,21 @@ export async function cliTree(version: DocVersion): Promise<NavigationItem[]> {
   const root = findByPath(nav, cliDocsPathPrefix(version))
 
   return root ? [root] : []
+}
+
+/**
+ * The examples subtree. Not version-scoped: one subtree, linked from every version.
+ */
+export async function examplesTree(): Promise<NavigationItem[]> {
+  const nav = await getInstanceAtHead('examples').then(content => content.navigation()).catch((error) => {
+    console.error('[content] could not read the examples navigation — serving the tree without it', error)
+    return null
+  })
+  if (!nav) return []
+
+  const examples = findByPath(nav, EXAMPLES_PATH_PREFIX)
+
+  return examples ? [examples] : []
 }
 
 /** One doc version's tree, with the shared examples and the command reference grafted in. */

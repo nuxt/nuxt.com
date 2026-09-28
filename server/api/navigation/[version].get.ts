@@ -28,15 +28,8 @@ export default defineEventHandler(async (event): Promise<NavigationItem[]> => {
   if (!version || !isDocVersion(version)) {
     throw createError({ statusCode: 404, statusMessage: 'Unknown docs version' })
   }
-
-  const examplesContent = await getInstanceAtHead('examples')
-  const examplesNav = await examplesContent.navigation()
-  // Not version-scoped: one subtree, linked from every version.
-  const examples = findByPath(examplesNav, '/docs/examples')
-  const examplesChildren = examples ? [examples] : []
-
   const [tree, blog] = await Promise.all([
-    docTree(version, examplesChildren).catch(() => []),
+    docTree(version, await examplesTree()),
     blogTree().catch(() => [])
   ])
 
