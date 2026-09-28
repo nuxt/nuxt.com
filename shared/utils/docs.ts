@@ -47,6 +47,9 @@ export function docsMajor(version: DocVersion): Major {
   return version.slice(0, version.indexOf('.')) as Major
 }
 
+/** Where the examples showcase is mounted — under `/docs`, but unversioned. */
+export const EXAMPLES_PATH_PREFIX = '/docs/examples'
+
 /**
  * Whether a path belongs to a version of the docs.
  */
@@ -63,3 +66,12 @@ const escape = (v: string) => v.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
 export const SUPPORTED_DOCS_PATH_REGEX = new RegExp(
   `^/docs/(?:${SUPPORTED_DOC_VERSIONS.map(escape).join('|')})(?:/|$)`
 )
+
+/**
+ * Whether a `/docs/*` URL is the authoritative one, so it can carry `rel="canonical"` and a markdown alternate.
+ */
+export function isCanonicalDocsPath(path: string): boolean {
+  return SUPPORTED_DOCS_PATH_REGEX.test(path)
+    || path === EXAMPLES_PATH_PREFIX
+    || path.startsWith(`${EXAMPLES_PATH_PREFIX}/`)
+}

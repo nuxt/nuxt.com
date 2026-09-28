@@ -4,7 +4,7 @@ import type { NavigationItem } from 'comark-content'
 import { DocsProseImg } from '#components'
 import { CLI_DOCS_REFS, CLI_DOCS_REPO, cliDocsPathPrefix } from '#shared/utils/cli'
 import { cliInstanceKey } from '#shared/utils/content'
-import { DOCS_REFS, DOCS_REPO, SUPPORTED_DOCS_PATH_REGEX, isVersionedDocsPath } from '#shared/utils/docs'
+import { DOCS_REFS, DOCS_REPO, isCanonicalDocsPath, isVersionedDocsPath } from '#shared/utils/docs'
 
 definePageMeta({
   heroBackground: 'opacity-30',
@@ -164,12 +164,8 @@ useSeoMeta({
   titleTemplate,
   title
 })
-// Only emit canonical/markdown alternate on versioned paths (e.g.
-// `/docs/4.x/*`). Unversioned `/docs/*` URLs are meta-refresh stubs that
-// the docs-version middleware redirects to the active version, so agents
-// should not treat the stub URL as authoritative. The supported version
-// list lives in `shared/utils/docs.ts`.
-if (SUPPORTED_DOCS_PATH_REGEX.test(path.value)) {
+// Only emit canonical/markdown alternate where the URL is authoritative.
+if (isCanonicalDocsPath(path.value)) {
   useCanonical(() => `/raw${path.value}.md`)
 }
 

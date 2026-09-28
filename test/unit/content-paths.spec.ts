@@ -3,7 +3,7 @@ import { fileURLToPath } from 'node:url'
 import { createRouter } from 'radix3'
 import { describe, expect, it } from 'vitest'
 import { CONTENT_INSTANCE_KEYS, cliInstanceKey, docsInstanceKey, instanceBasePath, instanceBlobPath, instanceName, isContentInstanceKey, navPathsForInstance, navigationPath } from '../../shared/utils/content'
-import { DOC_VERSIONS } from '../../shared/utils/docs'
+import { DOC_VERSIONS, EXAMPLES_PATH_PREFIX, isCanonicalDocsPath } from '../../shared/utils/docs'
 import { instanceSource } from '../../server/utils/content/instances'
 
 describe('content instance paths', () => {
@@ -60,6 +60,21 @@ describe('navigation route', () => {
     for (const version of DOC_VERSIONS) {
       const match = router.lookup(navigationPath(version))
       expect(match?.params, `${pattern} against ${navigationPath(version)}`).toEqual({ version })
+    }
+  })
+})
+
+describe('isCanonicalDocsPath', () => {
+  it('accepts supported versions and the unversioned examples', () => {
+    expect(isCanonicalDocsPath('/docs/4.x')).toBe(true)
+    expect(isCanonicalDocsPath('/docs/3.x/guide/introduction')).toBe(true)
+    expect(isCanonicalDocsPath(EXAMPLES_PATH_PREFIX)).toBe(true)
+    expect(isCanonicalDocsPath(`${EXAMPLES_PATH_PREFIX}/hello-world`)).toBe(true)
+  })
+
+  it('rejects stubs and unpublished versions, which must not be indexed', () => {
+    for (const path of ['/docs', '/docs/guide/introduction', '/docs/5.x', '/docs/5.x/guide', '/docs/4.xyz', '/blog']) {
+      expect(isCanonicalDocsPath(path), path).toBe(false)
     }
   })
 })
