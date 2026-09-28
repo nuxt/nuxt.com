@@ -49,7 +49,7 @@ export function warmupSearch(targets: SearchTarget[], origin: string, debug: boo
   if (hydration?.key === key) return hydration.promise
 
   const promise = loadDatabase(key, targets, origin).catch((error) => {
-    hydration = undefined // clears the guard so the next warmup can retry
+    if (hydration?.key === key) hydration = undefined // clears the guard so the next warmup can retry
     throw error
   })
   hydration = { key, promise }
@@ -115,10 +115,14 @@ async function loadDatabase(key: string, targets: SearchTarget[], origin: string
 
     const hub = contentHub(hydratedContents, { logger })
 
+    if (hydration?.key !== key) return supersede(hub, key, 'before indexing')
+
     const indexStarted = performance.now()
     await hub.search('') // pulls every instance in and builds the shared FTS index
     const rows = await Promise.all(hydratedContents.map(async instance => `${instance.name}=${await indexedRows(database, instance.name)}`))
     log(`index built in ${since(indexStarted)} — ${rows.join(', ')}`)
+
+    if (hydration?.key !== key) return supersede(hub, key, 'while indexing')
 
     active = { key, hub }
     log(`ready in ${since(started)} (${hydratedContents.length}/${targets.length} instance(s))`)
@@ -126,6 +130,18 @@ async function loadDatabase(key: string, targets: SearchTarget[], origin: string
     log(`hydration failed after ${since(started)}`, error)
     throw error
   }
+}
+
+/**
+ * Drops a hub whose target set is no longer wanted, then resolves with whatever replaced it.
+ */
+async function supersede(hub: ContentHub<AnyComarkContent[]>, key: string, stage: string): Promise<void> {
+  log(`discarded ${key} ${stage} — superseded by ${hydration?.key ?? 'a hydration that then failed'}`)
+
+  await hub.dispose().catch(error => log(`dispose failed for ${key}`, error))
+
+  if (!hydration) throw new Error(`[search] ${key} was superseded and its replacement failed`)
+  return hydration.promise
 }
 
 /** Empty until hydration lands. */
