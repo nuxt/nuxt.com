@@ -41,6 +41,15 @@ describe('docsLinks', () => {
     expect(data).toEqual({ hero: { links: [{ to: '/docs/4.x/getting-started/installation' }] } })
   })
 
+  it('leaves the unversioned examples instance alone', () => {
+    const { nodes } = rewrite('4.x', [
+      ['link-example', { to: '/docs/examples/advanced/teleport' }],
+      ['a', { href: '/docs/examples' }]
+    ])
+    expect(nodes[0]![1]).toEqual({ to: '/docs/examples/advanced/teleport' })
+    expect(nodes[1]![1]).toEqual({ href: '/docs/examples' })
+  })
+
   it('leaves already-versioned links alone', () => {
     const { nodes } = rewrite('5.x', [['a', { href: '/docs/3.x/guide' }], ['read-more', { to: '/docs/4.x/api' }]])
     expect(nodes[0]![1]).toEqual({ href: '/docs/3.x/guide' })

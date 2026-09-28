@@ -24,7 +24,7 @@ const isRewritable = (node: Node): boolean =>
  * Rewrites hrefs and MDC props post-parse.
  */
 export function docsLinks(version: DocVersion): ContentPlugin {
-  const unversioned = /^\/docs\/(?!\d\.x)/
+  const unversioned = /^\/docs\/(?!\d\.x|examples(?:\/|$))/
   const prefix = docsPathPrefix(version)
 
   function versioned(path: string): string {
