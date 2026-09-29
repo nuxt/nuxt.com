@@ -9,7 +9,7 @@ hero:
     - title: Minimal
       icon: i-lucide-leaf
       content: |
-        ::code-tree{defaultValue="app/app.vue" class="lg:rounded-r-none lg:border-r-0 dark:[--ui-border-muted:var(--color-gray-800)] my-0!"}
+        ::code-tree{defaultValue="app/app.vue" class="lg:rounded-r-none lg:border-r-0 dark:[--ui-border-muted:var(--color-neutral-800)] my-0!"}
         ```vue [app/app.vue]
         <script setup lang="ts">
         const version = 4
@@ -47,7 +47,7 @@ hero:
     - title: Routing
       icon: i-lucide-milestone
       content: |
-        ::code-tree{defaultValue="app/pages/index.vue" class="lg:rounded-r-none lg:border-r-0 dark:[--ui-border-muted:var(--color-gray-800)] my-0!"}
+        ::code-tree{defaultValue="app/pages/index.vue" class="lg:rounded-r-none lg:border-r-0 dark:[--ui-border-muted:var(--color-neutral-800)] my-0!"}
         ```vue [app/pages/index.vue]
         <template>
           <h1>Index page</h1>
@@ -86,7 +86,7 @@ hero:
     - title: Data Fetching
       icon: i-lucide-unplug
       content: |
-        ::code-tree{defaultValue="app/pages/index.vue" class="lg:rounded-r-none lg:border-r-0 dark:[--ui-border-muted:var(--color-gray-800)] my-0!"}
+        ::code-tree{defaultValue="app/pages/index.vue" class="lg:rounded-r-none lg:border-r-0 dark:[--ui-border-muted:var(--color-neutral-800)] my-0!"}
         ```vue [app/pages/index.vue]
         <script setup lang="ts">
         const { data: page } = await useFetch('/api/cms/home')
@@ -137,7 +137,7 @@ hero:
     - title: Auto-Imports
       icon: i-lucide-wand-sparkles
       content: |
-        ::code-tree{defaultValue="app/app.vue" class="lg:rounded-r-none lg:border-r-0 dark:[--ui-border-muted:var(--color-gray-800)] my-0!"}
+        ::code-tree{defaultValue="app/app.vue" class="lg:rounded-r-none lg:border-r-0 dark:[--ui-border-muted:var(--color-neutral-800)] my-0!"}
         ```vue [app/app.vue]
         <script setup>
         const message = ref('Nuxt')
@@ -188,7 +188,7 @@ hero:
     - title: API Routes
       icon: i-lucide-pc-case
       content: |
-        ::code-tree{defaultValue="server/api/hello.ts" class="lg:rounded-r-none lg:border-r-0 dark:[--ui-border-muted:var(--color-gray-800)] my-0!"}
+        ::code-tree{defaultValue="server/api/hello.ts" class="lg:rounded-r-none lg:border-r-0 dark:[--ui-border-muted:var(--color-neutral-800)] my-0!"}
         ```vue [app/app.vue]
         <template>
           <NuxtPage />
@@ -233,43 +233,35 @@ hero:
 logos:
   title: Chosen by leading companies worldwide
   companies:
-    - light: /assets/brands/light/louis-vuitton.svg
-      dark: /assets/brands/dark/louis-vuitton.svg
+    - src: /assets/brands/louis-vuitton.svg
       alt: Louis Vuitton
       height: 16
       width: 152
-    - light: /assets/brands/light/dassault-systemes.svg
-      dark: /assets/brands/dark/dassault-systemes.svg
+    - src: /assets/brands/dassault-systemes.svg
       alt: Dassault Systemes
       height: 28
       width: 93
-    - light: /assets/brands/light/backmarket.svg
-      dark: /assets/brands/dark/backmarket.svg
+    - src: /assets/brands/backmarket.svg
       alt: Back Market
       height: 18
       width: 161
-    - light: /assets/brands/light/paul-smith.svg
-      dark: /assets/brands/dark/paul-smith.svg
+    - src: /assets/brands/paul-smith.svg
       alt: Paul Smith
       height: 26
       width: 144
-    - light: /assets/brands/light/caudalie.svg
-      dark: /assets/brands/dark/caudalie.svg
+    - src: /assets/brands/caudalie.svg
       alt: Caudalie
       height: 28
       width: 136
-    - light: /assets/brands/light/blizzard.svg
-      dark: /assets/brands/dark/blizzard.svg
+    - src: /assets/brands/blizzard.svg
       alt: Blizzard
       height: 28
       width: 55
-    - light: /assets/brands/light/vans.svg
-      dark: /assets/brands/dark/vans.svg
+    - src: /assets/brands/vans.svg
       alt: Vans
       height: 23
       width: 67
-    - light: /assets/brands/light/deutsche-bahn.svg
-      dark: /assets/brands/dark/deutsche-bahn.svg
+    - src: /assets/brands/deutsche-bahn.svg
       alt: Deutsche Bahn
       height: 40
       width: 51

@@ -202,7 +202,7 @@ export default defineContentConfig({
         }),
         logos: z.object({
           title: z.string(),
-          companies: z.array(DualModeImage)
+          companies: z.array(Image)
         }),
         features: PageSection,
         foundation: PageSection.extend({
