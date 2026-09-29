@@ -6,6 +6,7 @@
 
 @theme static {
   --font-sans: 'Public Sans', sans-serif;
+  --font-outfit: 'Outfit', serif;
 
   --color-green-50: #EFFDF5;
   --color-green-100: #D9FBE8;
@@ -18,6 +19,14 @@
   --color-green-800: #016538;
   --color-green-900: #0A5331;
   --color-green-950: #052E16;
+}
+
+/* until v5 ships --ui-font-heading */
+@layer base {
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-outfit);
+    font-weight: 500 !important;
+  }
 }
 
 :root {
