@@ -1,0 +1,31 @@
+diff --git a/dist/runtime/handlers/renderer.mjs b/dist/runtime/handlers/renderer.mjs
+index 8e92513..9277140 100644
+--- a/dist/runtime/handlers/renderer.mjs
++++ b/dist/runtime/handlers/renderer.mjs
+@@ -7,7 +7,7 @@ import { APP_ROOT_CLOSE_TAG, APP_ROOT_OPEN_TAG, getRenderer, getServerApp } from
+ import { renderInlineStyles } from "../utils/renderer/inline-styles.mjs";
+ import { renderStreamedIslandTeleports, replaceIslandTeleports } from "../utils/renderer/islands.mjs";
+ import { renderPayloadJsonScript, renderPayloadResponse, renderPayloadScript, splitPayload } from "../utils/renderer/payload.mjs";
+-import { getQuery, joinURL } from "ufo";
++import { getQuery, hasProtocol, joinURL } from "ufo";
+ import { appendResponseHeader, createError, getQuery as getQuery$1, getRequestHeader, getResponseStatus, getResponseStatusText, removeResponseHeader, setResponseHeader, writeEarlyHints } from "h3";
+ import { defineRenderHandler, getRouteRules, useNitroApp } from "nitropack/runtime";
+ import destr from "destr";
+@@ -159,7 +159,7 @@ async function renderRoute(event, ssrError) {
+ 	if (_PAYLOAD_EXTRACTION && !_PAYLOAD_INLINE && !NO_SCRIPTS) ssrContext.head.push({ link: [NUXT_JSON_PAYLOADS ? {
+ 		rel: "preload",
+ 		as: "fetch",
+-		crossorigin: "anonymous",
++		...payloadURL && hasProtocol(payloadURL, { acceptRelative: true }) ? { crossorigin: "anonymous" } : {},
+ 		href: payloadURL
+ 	} : {
+ 		rel: "modulepreload",
+@@ -278,7 +278,7 @@ async function renderStreamedResponse(ctx) {
+ 	if (_PAYLOAD_EXTRACTION && !_PAYLOAD_INLINE && !NO_SCRIPTS) ssrContext.head.push({ link: [NUXT_JSON_PAYLOADS ? {
+ 		rel: "preload",
+ 		as: "fetch",
+-		crossorigin: "anonymous",
++		...payloadURL && hasProtocol(payloadURL, { acceptRelative: true }) ? { crossorigin: "anonymous" } : {},
+ 		href: payloadURL
+ 	} : {
+ 		rel: "modulepreload",

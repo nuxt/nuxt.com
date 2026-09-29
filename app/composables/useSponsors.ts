@@ -15,11 +15,11 @@ export const useSponsors = async () => {
         return isEmptySponsorsByTier(data) ? undefined : data
       }
     }),
-    useAsyncData('manual-sponsors', () => queryCollection('manualSponsors').first())
+    useAsyncData('manual-sponsors', () => useContent('site').get('/enterprise/manual-sponsors'))
   ])
 
   const sponsors = computed(() => {
-    const manual = manualSponsors.value?.sponsors || []
+    const manual = (manualSponsors.value?.data?.sponsors as Sponsor[] | undefined) || []
 
     const result: Record<string, Sponsor[]> = {}
 

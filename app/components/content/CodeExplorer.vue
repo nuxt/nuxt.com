@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { MDCRoot } from '@nuxtjs/mdc'
+import type { MarkdownDocument } from 'comark'
 import CodeIcon from '@nuxt/ui/components/prose/CodeIcon.vue'
 
 interface CodeExplorerTreeItem {
@@ -16,7 +16,7 @@ interface CodeExplorerData {
     path: string
     dir: string
     language: string
-    body: MDCRoot
+    nodes: MarkdownDocument['nodes']
   }>
 }
 
@@ -162,8 +162,8 @@ const docsMapping: Record<string, string> = {
           class="code-explorer-content flex-1 flex-col"
         >
           <UTheme :ui="{ prose: { pre: { root: 'my-0 h-full' } } }">
-            <MDCRenderer
-              :body="selectedFile.body"
+            <MarkdownDocument
+              :value="{ nodes: selectedFile.nodes }"
               class="h-full"
             />
           </UTheme>

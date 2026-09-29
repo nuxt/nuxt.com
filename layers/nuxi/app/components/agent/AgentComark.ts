@@ -1,10 +1,10 @@
-import shiki from '@comark/nuxt/plugins/shiki'
+import rangi from '@comark/nuxt/plugins/rangi'
 import SourceLink from '#layers/nuxi/app/components/tools/SourceLink.vue'
 
 export default defineMarkdownComponent({
   name: 'AgentComark',
   plugins: [
-    shiki()
+    rangi()
   ],
   components: {
     'source-link': SourceLink
