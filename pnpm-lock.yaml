@@ -288,8 +288,8 @@ importers:
         specifier: ^2.29.0
         version: 2.29.0(@nuxt/kit@4.5.2(magic-string@1.4.2)(magicast@0.5.5)(oxc-parser@0.151.0)(rolldown@1.2.11)(unplugin@3.4.0(esbuild@0.28.2)(rolldown@1.2.11)(rollup@4.63.5)(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))))(ai@7.0.118(zod@4.6.5))(eve@0.67.1(ai@7.0.118(zod@4.6.5))(chat@4.41.0(ai@7.0.118(zod@4.6.5))(supports-color@10.2.2)(zod@4.6.5))(microsandbox@0.7.4))(express@5.2.1(supports-color@10.2.2))(fastify@5.12.5)(h3@1.15.11)(hono@4.13.9)(nitropack@2.13.4(@libsql/client@0.18.0)(@vercel/functions@3.9.9(ws@8.22.0))(better-sqlite3@13.0.3)(drizzle-orm@0.45.3(@cloudflare/workers-types@4.20260702.1)(@libsql/client@0.18.0)(better-sqlite3@13.0.3))(oxc-parser@0.151.0)(rolldown@1.2.11)(srvx@0.11.22)(supports-color@10.2.2)(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1)))(ofetch@1.5.1)(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))
       feed:
-        specifier: ^5.2.1
-        version: 5.2.1
+        specifier: ^6.0.0
+        version: 6.0.0
       h3:
         specifier: ^1.15.11
         version: 1.15.11
@@ -6457,8 +6457,8 @@ packages:
       picomatch:
         optional: true
 
-  feed@5.2.1:
-    resolution: {integrity: sha512-jTynzYPWs9ALjro0GW8j7sv9y7cJBeOdD4Y88kVqYy/eyusIX3g+499JiTDIlD9Ge/unebx57T4Uzo6vpYvMtA==}
+  feed@6.0.0:
+    resolution: {integrity: sha512-rvFOF1POce0ijAKy3tZN5T8PuprgIit/VbMyXJWcoYwcMOTSIJ7NqZb8DTLPJr77yiEO27kidm/fw0kcSIV+ww==}
     engines: {node: '>=20', pnpm: '>=10'}
 
   figures@6.1.0:
@@ -17162,7 +17162,7 @@ snapshots:
     optionalDependencies:
       picomatch: 4.0.7
 
-  feed@5.2.1:
+  feed@6.0.0:
     dependencies:
       xml-js: 1.6.11
 
