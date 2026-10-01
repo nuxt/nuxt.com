@@ -14,6 +14,22 @@ const el = useTemplateRef<HTMLElement>('el')
 
 const { replaceRoute } = useFilters('modules')
 const { fetchList, filteredModules, q, categories, modules, stats, selectedSort, selectedOrder, selectedCategory, sorts } = useModules()
+
+const searchInput = ref(q.value ?? '')
+const debouncedSearch = refDebounced(searchInput, 300)
+
+watch(debouncedSearch, (value) => {
+  if ((q.value ?? '') === value) return
+  replaceRoute('q', value)
+})
+
+watch(q, (value) => {
+  const next = value ?? ''
+  if (next !== searchInput.value) {
+    searchInput.value = next
+  }
+})
+
 const { health } = useModuleHealth()
 const { track } = useAnalytics()
 const { openInCursor, openInClaudeCode, openInVSCode } = useIdeDeeplink()
@@ -259,7 +275,7 @@ const clearAllModules = () => {
           <div class="flex flex-col sm:flex-row w-full gap-2 relative">
             <UInput
               ref="input"
-              :model-value="q"
+              v-model="searchInput"
               name="q"
               icon="i-lucide-search"
               placeholder="Search a module..."
@@ -268,16 +284,15 @@ const clearAllModules = () => {
               autofocus
               autocomplete="off"
               variant="subtle"
-              @update:model-value="replaceRoute('q', $event as string)"
             >
               <template #trailing>
                 <UButton
-                  v-if="q"
+                  v-if="searchInput"
                   color="neutral"
                   variant="link"
                   size="lg"
                   icon="i-lucide-x"
-                  @click="replaceRoute('q', '')"
+                  @click="searchInput = ''"
                 />
                 <UKbd v-else value="/" class="hidden sm:flex" />
               </template>
