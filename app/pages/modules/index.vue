@@ -23,6 +23,13 @@ watch(debouncedSearch, (value) => {
   replaceRoute('q', value)
 })
 
+watch(q, (value) => {
+  const next = value ?? ''
+  if (next !== searchInput.value) {
+    searchInput.value = next
+  }
+})
+
 const { health } = useModuleHealth()
 const { track } = useAnalytics()
 const { openInCursor, openInClaudeCode, openInVSCode } = useIdeDeeplink()
