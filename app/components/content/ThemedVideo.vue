@@ -22,11 +22,12 @@ const colorMode = useColorMode()
       :src="colorMode.value === 'dark' ? dark : light"
       :poster="colorMode.value === 'dark' ? darkPoster : lightPoster"
       :style="{ aspectRatio }"
+      class="w-full"
       muted
       playsinline
     />
     <template #fallback>
-      <div :class="$attrs.class" :style="{ aspectRatio }" class="bg-elevated" />
+      <div :class="$attrs.class" :style="[$attrs.style, { aspectRatio }]" class="w-full bg-elevated" />
     </template>
   </ClientOnly>
 </template>
