@@ -222,10 +222,7 @@ if (import.meta.server) {
       </UPageBody>
 
       <template #right>
-        <UContentToc
-          :links="module.readme?.toc?.links"
-          :ui="{ content: 'lg:min-h-[var(--list-height,8rem)]' }"
-        >
+        <UContentToc :links="module.readme?.toc?.links">
           <template #bottom>
             <div class="hidden lg:block space-y-6">
               <UPageLinks title="Links" :links="links" />
