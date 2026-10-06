@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { joinURL } from 'ufo'
 import type { Module } from '#shared/types'
+import { ProseCodeTree, ProsePre } from '#components'
 
 definePageMeta({
   heroBackground: '-z-10'
@@ -152,7 +153,7 @@ onMounted(() => {
       </template>
 
       <template #description>
-        <LazyMarkdown :value="pageData?.hero.description" unwrap="p" hydrate-never />
+        {{ pageData?.hero.description }}
       </template>
 
       <template #links>
@@ -203,7 +204,7 @@ onMounted(() => {
           }"
         >
           <template #content="{ item, index }">
-            <LazyMarkdownDocument :key="index" :value="(item as any).content" hydrate-on-idle />
+            <LazyMarkdownDocument :key="index" :value="(item as any).content" hydrate-on-idle :components="{ ProseCodeTree, ProsePre }" />
           </template>
         </UTabs>
       </UPageCard>

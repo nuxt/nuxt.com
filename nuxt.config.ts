@@ -744,5 +744,14 @@ export default defineNuxtConfig({
   },
   turnstile: {
     siteKey: '0x4AAAAAAAP2vNBsTBT3ucZi'
+  },
+  hooks: {
+    'components:extend': (components) => {
+      for (const component of components) {
+        if (component.global && (component.filePath.includes('@nuxt/ui') || component.filePath.includes('@nuxt+ui'))) {
+          component.global = false
+        }
+      }
+    }
   }
 })
