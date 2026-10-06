@@ -77,7 +77,7 @@
     "h3": "^1.15.11",
     "little-date": "^1.2.1",
     "motion-v": "^2.5.2",
-    "nuxt": "^4.5.2",
+    "nuxt": "^4.6.0",
     "nuxt-auth-utils": "^0.5.30",
     "nuxt-charts": "^2.2.3",
     "nuxt-llms": "https://pkg.pr.new/nuxt-content/nuxt-llms/nuxt-llms@f6a9730",
