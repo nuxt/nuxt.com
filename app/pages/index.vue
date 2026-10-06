@@ -133,10 +133,8 @@ const groupedFoundationItems = computed(() => {
 // Embla writes inline transforms on init, which @nuxt/hints flags as a hydration mismatch.
 const isMounted = useMounted()
 
-const isMobile = ref(false)
-onMounted(() => {
-  isMobile.value = window.innerWidth < 768
-})
+// The eight logos only fit on one row from `lg`; below that they scroll in a marquee.
+const isMobile = useMediaQuery('(max-width: 1023.98px)')
 </script>
 
 <template>
@@ -225,7 +223,7 @@ onMounted(() => {
       </UPageCard>
     </UPageHero>
     <UPageSection :ui="{ container: '!pt-0' }">
-      <UPageLogos :marquee="isMobile" :title="pageData?.logos.title" :ui="{ title: 'text-left text-muted font-medium text-lg', logos: 'mt-4' }">
+      <UPageLogos :marquee="isMobile" :title="pageData?.logos.title" :ui="{ title: 'text-left text-muted font-medium text-lg', logos: isMobile ? 'mt-4' : 'mt-4 justify-between [--gap:--spacing(6)]' }">
         <Motion
           v-for="(company, index) in (pageData?.logos.companies as any[])"
           :key="company.alt"

@@ -247,7 +247,11 @@ const noRightAside = computed(() => route.path.includes('/examples/'))
             :navigation="asideNavigation"
             default-open
             trailing-icon="i-lucide-chevron-right"
-            :ui="{ linkTrailingIcon: 'group-data-[state=open]:rotate-90' }"
+            :ui="{
+              link: 'data-[state=open]:text-muted data-[state=open]:hover:text-highlighted',
+              trigger: 'font-normal',
+              linkTrailingIcon: 'group-data-[state=open]:rotate-90'
+            }"
             highlight
           />
         </template>
@@ -302,6 +306,7 @@ const noRightAside = computed(() => route.path.includes('/examples/'))
           <UContentNavigation
             :navigation="asideNavigation"
             :collapsible="false"
+            :ui="{ link: 'data-[state=open]:text-muted data-[state=open]:hover:text-highlighted', trigger: 'font-normal' }"
             highlight
           />
         </UPageAside>

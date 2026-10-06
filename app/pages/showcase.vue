@@ -32,10 +32,8 @@ defineOgImage('Docs.takumi', {
   description
 })
 
-const isMobile = ref(false)
-onMounted(() => {
-  isMobile.value = window.innerWidth < 768
-})
+// The eight logos only fit on one row from `lg`; below that they scroll in a marquee.
+const isMobile = useMediaQuery('(max-width: 1023.98px)')
 </script>
 
 <template>
@@ -80,7 +78,7 @@ onMounted(() => {
         </template>
       </UPageCTA>
       <UPageSection class="mb-0" :ui="{ container: '!pt-0' }">
-        <UPageLogos :marquee="isMobile" :title="homeData?.logos.title" :ui="{ title: 'text-muted font-medium text-lg', logos: 'mt-4' }">
+        <UPageLogos :marquee="isMobile" :title="homeData?.logos.title" :ui="{ title: 'text-muted font-medium text-lg', logos: isMobile ? 'mt-4' : 'mt-4 [--gap:--spacing(6)]' }">
           <Motion
             v-for="(company, index) in (homeData?.logos.companies as any[])"
             :key="company.alt"
