@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import type { MDCRoot } from '@nuxtjs/mdc'
-import CodeIcon from '@nuxt/ui/components/prose/CodeIcon.vue'
+import type { MarkdownDocument } from 'comark'
+import { ProseCodeIcon, ProsePre } from '#components'
 
 interface CodeExplorerTreeItem {
   filename: string
@@ -16,7 +16,7 @@ interface CodeExplorerData {
     path: string
     dir: string
     language: string
-    body: MDCRoot
+    nodes: MarkdownDocument['nodes']
   }>
 }
 
@@ -128,7 +128,7 @@ const docsMapping: Record<string, string> = {
           @select="onSelect"
         >
           <template #item-leading="{ item, ui }">
-            <CodeIcon
+            <ProseCodeIcon
               v-if="!item.children?.length"
               :filename="item.filename"
               :class="ui.linkLeadingIcon({ class: 'size-4' })"
@@ -143,7 +143,7 @@ const docsMapping: Record<string, string> = {
           class="flex items-center justify-between border-b border-muted bg-muted px-4 py-2 sticky top-0 h-10"
         >
           <div class="inline-flex items-center gap-1.5">
-            <CodeIcon :filename="selected.filename" />
+            <ProseCodeIcon :filename="selected.filename" />
             <span class="font-mono text-xs truncate">{{ selected.filename }}</span>
           </div>
           <UButton
@@ -162,9 +162,10 @@ const docsMapping: Record<string, string> = {
           class="code-explorer-content flex-1 flex-col"
         >
           <UTheme :ui="{ prose: { pre: { root: 'my-0 h-full' } } }">
-            <MDCRenderer
-              :body="selectedFile.body"
+            <MarkdownDocument
+              :value="{ nodes: selectedFile.nodes }"
               class="h-full"
+              :components="{ ProsePre }"
             />
           </UTheme>
         </div>

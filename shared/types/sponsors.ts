@@ -7,3 +7,5 @@ export interface Sponsor {
   monthlyPriceInDollars: number
   tier: SponsorType
 }
+
+export type SponsorsByTier = Partial<Record<SponsorType, Sponsor[]>>
