@@ -7,7 +7,7 @@ definePageMeta({
   heroBackground: '-z-10'
 })
 
-const [{ data: page }, { data: officialModules }, { data: showcase }, { getFilteredSponsors }] = await Promise.all([
+const [{ data: page }, { data: officialModules }, { data: showcase }, { data: sponsorGroups }] = await Promise.all([
   useAsyncData('index', () => useContent('site').get('/')),
   useFetch('/api/v1/modules', {
     key: 'official-modules',
@@ -16,7 +16,21 @@ const [{ data: page }, { data: officialModules }, { data: showcase }, { getFilte
       .sort((a, b) => b.stats.stars - a.stats.stars)
   }),
   useAsyncData('showcase', () => useContent('site').get('/showcase')),
-  useSponsors()
+  useFetch<SponsorsByTier>('/api/sponsors', {
+    key: 'sponsors-home',
+    transform(sponsors) {
+      return Object.entries(sponsors)
+        .filter(([tier, sponsors]) => ['diamond', 'platinum', 'gold'].includes(tier) && sponsors.length > 0)
+        .map(([tier, sponsors]) => ({
+          tier,
+          sponsors: sponsors.map(s => ({
+            sponsorName: s.sponsorName,
+            sponsorLogo: s.sponsorLogo,
+            sponsorUrl: s.sponsorUrl
+          }))
+        }))
+    }
+  })
 ])
 
 const pageData = computed(() => page.value?.data)
@@ -28,8 +42,6 @@ const { health } = useModuleHealth()
 const officialModulesWithHealth = computed(() =>
   (officialModules.value || []).map(m => ({ ...m, health: health.value[m.name] ?? m.health ?? null }))
 )
-
-const sponsorGroups = getFilteredSponsors(['diamond', 'platinum', 'gold'])
 
 const stats = useStats()
 const { track } = useAnalytics()

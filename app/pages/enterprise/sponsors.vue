@@ -3,9 +3,9 @@ definePageMeta({
   heroBackground: 'opacity-80 -z-10'
 })
 
-const [{ data: page }, { sponsors }] = await Promise.all([
-  useAsyncData('sponsors-landing', () => useContent('site').get('/enterprise/sponsors')),
-  useSponsors()
+const [{ data: page }, { data: sponsors }] = await Promise.all([
+  useAsyncData('sponsors-landing', () => useContent('site').get('/enterprise/sponsors.yml')),
+  useFetch<SponsorsByTier>('/api/sponsors', { key: 'sponsors' })
 ])
 
 if (!page.value) {
