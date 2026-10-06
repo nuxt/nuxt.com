@@ -1,4 +1,4 @@
-export type NuxiMood = 'idle' | 'happy' | 'excited' | 'thinking' | 'sleeping' | 'surprised'
+export type NuxiMood = 'idle' | 'happy' | 'excited' | 'thinking' | 'sleeping' | 'surprised' | 'sad' | 'confused'
 
 export interface FaqCategory {
   category: string
