@@ -1,5 +1,7 @@
 title: The Nuxt Blog
-head.title: Nuxt Blog
-navigation.title: Blog
+head:
+  title: Nuxt Blog
+navigation:
+  title: Blog
+  icon: i-lucide-newspaper
 description: 'Read the latest news about all Nuxt solutions, from framework announcements to integration tutorials.'
-navigation.icon: i-lucide-newspaper
