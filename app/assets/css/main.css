@@ -5,7 +5,7 @@
 @source "../../../content/**/*";
 
 @theme static {
-  --font-sans: 'Public Sans', ui-sans-serif, system-ui, sans-serif;
+  --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
   --font-heading: 'Outfit', var(--font-sans);
 
   --color-green-50: #EFFDF5;
