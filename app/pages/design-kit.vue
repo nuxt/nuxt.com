@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { DesignKitColorCard, DesignKitImageCard } from '#components'
+import { DesignKitColorCard, DesignKitFontCard, DesignKitImageCard } from '#components'
 
 definePageMeta({
   heroBackground: 'opacity-70 -z-10'
 })
 
-const markdownComponents = { ...proseComponents, DesignKitColorCard, DesignKitImageCard }
+const markdownComponents = { ...proseComponents, DesignKitColorCard, DesignKitFontCard, DesignKitImageCard }
 
 const { data: page } = await useAsyncData('design-kit', () => useContent('site').get('/design-kit'))
 if (!page.value) {
