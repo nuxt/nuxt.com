@@ -75,7 +75,6 @@ watch(isOpen, (value) => {
         show-faq-empty
         :faq-questions="faqQuestions"
         :get-vote="getVote"
-        class="flex flex-col gap-4"
         @ask-question="askQuestion"
         @vote="vote"
       />
