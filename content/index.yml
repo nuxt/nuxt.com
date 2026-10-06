@@ -223,6 +223,8 @@ hero:
         ```
 
         ```ts [server/api/hello.ts]
+        import { defineEventHandler } from 'nuxt/server'
+
         export default defineEventHandler((event) => {
           return {
             message: 'Hello World'
