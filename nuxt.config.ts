@@ -515,6 +515,15 @@ export default defineNuxtConfig({
       include: ['../test/nuxt']
     }
   },
+  hooks: {
+    'components:extend': (components) => {
+      for (const component of components) {
+        if (component.global && (component.filePath.includes('@nuxt/ui') || component.filePath.includes('@nuxt+ui'))) {
+          component.global = false
+        }
+      }
+    }
+  },
   agentDiscovery: {
     // The comark instances, bridged through server/utils/agent-source.ts.
     source: '~~/server/utils/agent-source',
@@ -586,7 +595,11 @@ export default defineNuxtConfig({
       hydration: true,
       lazyLoad: false,
       webVitals: true,
-      thirdPartyScripts: true,
+      thirdPartyScripts: {
+        options: {
+          ignoredDomains: ['va.vercel-scripts.com']
+        }
+      },
       htmlValidate: true
     }
   },
@@ -744,14 +757,5 @@ export default defineNuxtConfig({
   },
   turnstile: {
     siteKey: '0x4AAAAAAAP2vNBsTBT3ucZi'
-  },
-  hooks: {
-    'components:extend': (components) => {
-      for (const component of components) {
-        if (component.global && (component.filePath.includes('@nuxt/ui') || component.filePath.includes('@nuxt+ui'))) {
-          component.global = false
-        }
-      }
-    }
   }
 })
