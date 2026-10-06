@@ -60,7 +60,14 @@ watch(pendingPrompt, (prompt) => {
   if (prompt) startNewChat()
 })
 
-defineShortcuts({
+const chatRef = useTemplateRef('chatRef')
+const activeElement = useActiveElement()
+const isPromptFocused = computed(() =>
+  activeElement.value?.tagName === 'TEXTAREA' && !!unrefElement(chatRef)?.contains(activeElement.value)
+)
+
+// Matching shortcuts always preventDefault, so `tab` must only be registered while it applies.
+defineShortcuts(computed(() => ({
   meta_i: {
     handler: () => {
       if (!isAgentEnabled.value) return
@@ -75,14 +82,15 @@ defineShortcuts({
     },
     usingInput: true
   },
-  tab: {
-    handler: () => {
-      if (!isOpen.value || !currentPage.value) return
-      pageContextDismissed.value = !pageContextDismissed.value
-    },
-    usingInput: true
-  }
-})
+  tab: isOpen.value && currentPage.value && isPromptFocused.value
+    ? {
+        handler: () => {
+          pageContextDismissed.value = !pageContextDismissed.value
+        },
+        usingInput: true
+      }
+    : undefined
+})))
 </script>
 
 <template>
@@ -121,6 +129,7 @@ defineShortcuts({
     </template>
 
     <AgentPanelChat
+      ref="chatRef"
       :key="chatId"
       :chat-id="chatId"
       :initial-messages="initialMessages"
