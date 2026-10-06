@@ -7,7 +7,7 @@ brand:
   black: "#0A0A0A"
   white: "#FFFFFF"
 theme:
-  font-sans: "'Public Sans', ui-sans-serif, system-ui, sans-serif"
+  font-sans: "'Inter', ui-sans-serif, system-ui, sans-serif"
   font-heading: "'Outfit', var(--font-sans)"
   color-green-50: "#EFFDF5"
   color-green-100: "#D9FBE8"
@@ -92,7 +92,7 @@ When requirements compete, protect them in this order:
 1. Accuracy of the content: code samples, versions, APIs, and claims.
 2. The host stack: Nuxt, Nuxt UI, and Tailwind CSS v4. Use existing components and tokens before writing new ones.
 3. Readability and accessibility: WCAG AA contrast, keyboard access, visible focus.
-4. Nuxt identity: the logo, green as the only accent, Outfit headings, Public Sans body, neutral surfaces.
+4. Nuxt identity: the logo, green as the only accent, Outfit headings, Inter body, neutral surfaces.
 5. Composition that fits the content, rather than a fixed template.
 
 ## Foundation
@@ -104,7 +104,7 @@ The system is Nuxt UI on top of Tailwind CSS v4. Brand tokens are declared once 
 @import "@nuxt/ui";
 
 @theme static {
-  --font-sans: 'Public Sans', ui-sans-serif, system-ui, sans-serif;
+  --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
   --font-heading: 'Outfit', var(--font-sans);
   --color-green-50: #EFFDF5;
   /* … green-100 through green-950 … */
@@ -149,7 +149,7 @@ Name tokens by role, never by value or typeface. Use only the tokens below; do n
 | Token | Utility | Role |
 |-------|---------|------|
 | `--font-heading` | `font-heading` | Headings and titles (Outfit) |
-| `--font-sans` | `font-sans` | Body copy, labels, controls (Public Sans) |
+| `--font-sans` | `font-sans` | Body copy, labels, controls (Inter) |
 | `--font-mono` | `font-mono` | Code, commands, file paths, identifiers |
 
 Set only the identifier in `font-mono`, not the sentence around it.
