@@ -207,7 +207,7 @@ onMounted(() => {
           }"
         >
           <template #content="{ item, index }">
-            <LazyMarkdownDocument :key="index" :value="(item as any).content" hydrate-on-idle :components="{ ProseCodeTree, ProsePre }" />
+            <MarkdownDocument :key="index" :value="(item as any).content" :components="{ ProseCodeTree, ProsePre }" />
           </template>
         </UTabs>
       </UPageCard>
