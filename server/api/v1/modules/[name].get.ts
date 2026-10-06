@@ -31,7 +31,7 @@ export default defineCachedEventHandler(async (event) => {
     readme
   } satisfies Module
 }, {
-  name: 'modules:v1',
+  name: 'modules:v2',
   getKey: event => event.context.params!.name!,
   swr: true,
   maxAge: 60 * 60 // 1 hour

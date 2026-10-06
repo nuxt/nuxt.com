@@ -5,6 +5,14 @@ import { ModuleProseA, ModuleProseKbd, ModuleProseImg } from '#components'
 definePageMeta({
   heroBackground: 'opacity-30 -z-10'
 })
+
+const markdownComponents = {
+  ...proseComponents,
+  ProseA: ModuleProseA,
+  ProseImg: ModuleProseImg,
+  ProseKbd: ModuleProseKbd
+}
+
 const route = useRoute()
 const { isAgentDocked } = useNuxtAgent()
 
@@ -221,7 +229,7 @@ if (import.meta.server) {
         <MarkdownDocument
           v-if="module.readme?.nodes?.length"
           :value="module.readme"
-          :components="{ a: ModuleProseA, img: ModuleProseImg, kbd: ModuleProseKbd }"
+          :components="markdownComponents"
           class="first:[&_picture]:block first:[&_picture]:mb-4"
         />
       </UPageBody>
