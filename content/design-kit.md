@@ -1,9 +1,11 @@
 ---
 title: Design Kit
-head.title: Nuxt Design Kit
-head.description: Get the Nuxt assets such as Logo, Typography and Colors.
+head:
+  title: Nuxt Design Kit
+  description: Get the Nuxt assets such as Logo, Typography and Colors.
 description: Welcome to Nuxt design definition page. Identity was redefined by handpicking conscientiously colors, and shapes in order to express how easy & joyful Nuxt products are.
-navigation.icon: 'i-lucide-palette'
+navigation:
+  icon: 'i-lucide-palette'
 links:
   - label: 'Nuxt Brand Kit'
     size: 'lg'

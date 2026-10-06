@@ -1,7 +1,7 @@
 import { Feed } from 'feed'
 import { joinURL } from 'ufo'
 import type { H3Event } from 'h3'
-import { queryCollection } from '@nuxt/content/server'
+import type { BlogArticle } from '#shared/types'
 
 export default defineEventHandler(async (event: H3Event) => {
   const baseUrl = 'https://nuxt.com'
@@ -20,9 +20,9 @@ export default defineEventHandler(async (event: H3Event) => {
     }
   })
 
-  const articles = await queryCollection(event, 'blog')
-    .order('date', 'DESC')
-    .all()
+  const articles = (await listByDir<BlogArticle>('/blog'))
+    .filter(article => article.extension === '.md' && article.path !== '/blog')
+    .sort((a, b) => String(b.date).localeCompare(String(a.date)))
 
   for (const article of articles) {
     if (article.draft) {
@@ -30,7 +30,7 @@ export default defineEventHandler(async (event: H3Event) => {
     }
     feed.addItem({
       link: joinURL(baseUrl, article.path),
-      image: joinURL(baseUrl, article.image),
+      ...(article.image ? { image: joinURL(baseUrl, article.image) } : {}),
       title: article.title,
       date: new Date(article.date),
       description: article.description,
