@@ -80,7 +80,7 @@
     "nuxt": "^4.5.2",
     "nuxt-auth-utils": "^0.5.30",
     "nuxt-charts": "^2.2.3",
-    "nuxt-llms": "^0.2.0",
+    "nuxt-llms": "https://pkg.pr.new/nuxt-content/nuxt-llms/nuxt-llms@f6a9730",
     "nuxt-og-image": "^6.10.3",
     "nuxt-schema-org": "^6.4.3",
     "nuxt-workers": "^0.1.0",

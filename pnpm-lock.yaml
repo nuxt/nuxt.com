@@ -323,8 +323,8 @@ importers:
         specifier: ^2.2.3
         version: 2.2.3(supports-color@10.2.2)(vue@3.5.43(typescript@6.0.3))
       nuxt-llms:
-        specifier: ^0.2.0
-        version: 0.2.0(magic-string@1.4.2)(magicast@0.5.5)(oxc-parser@0.151.0)(rolldown@1.2.11)(unplugin@3.4.0(esbuild@0.28.2)(rolldown@1.2.11)(rollup@4.63.5)(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1)))
+        specifier: https://pkg.pr.new/nuxt-content/nuxt-llms/nuxt-llms@f6a9730
+        version: https://pkg.pr.new/nuxt-content/nuxt-llms/nuxt-llms@f6a9730(magic-string@1.4.2)(magicast@0.5.5)(oxc-parser@0.151.0)(rolldown@1.2.11)(unplugin@3.4.0(esbuild@0.28.2)(rolldown@1.2.11)(rollup@4.63.5)(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1)))
       nuxt-og-image:
         specifier: ^6.10.3
         version: 6.10.3(d053a4f01bd5917dec8df9bf9b5b2efb)
@@ -424,7 +424,7 @@ importers:
         version: 0.7.6
       nuxt-agent-discovery:
         specifier: ^0.7.0
-        version: 0.7.0(b62eeecfa15942200a3f31a29cb057f1)
+        version: 0.7.0(966235ce9e2797ac5d3bcf30be1e92ce)
       nuxtseo-layer-devtools:
         specifier: ^5.3.16
         version: 5.3.16(fec713da6d27200cb6b07a6051d085a3)
@@ -4973,6 +4973,11 @@ packages:
 
   ajv-formats@3.0.1:
     resolution: {integrity: sha512-8iUql50EUR+uUcdRQ3HDqa6EVyo3docL8g5WJ3FNcWmu62IbkGUue/pEyLBW8VGKKucTPgqeks4fIU1DA4yowQ==}
+    peerDependencies:
+      ajv: ^8.0.0
+    peerDependenciesMeta:
+      ajv:
+        optional: true
 
   ajv@6.15.0:
     resolution: {integrity: sha512-fgFx7Hfoq60ytK2c7DhnF8jIvzYgOMxfugjLOSMHjLIPgenqa7S7oaagATUq99mV6IYvN2tRmC0wnTYX6iPbMw==}
@@ -8243,8 +8248,9 @@ packages:
     resolution: {integrity: sha512-Lo++ctinehNtQvU1SdYdIfYvhUqFtP5nOQsMvbrpFYh53TqwoS97BrS/tjWQe68cfXQaerzhKPFY1Xb1EH4mJg==}
     hasBin: true
 
-  nuxt-llms@0.2.0:
-    resolution: {integrity: sha512-GoEW00x8zaZ1wS0R0aOYptt3b54JEaRwlyVtuAiQoH51BwYdjN5/3+00/+4wi39M5cT4j5XcnGwOxJ7v4WVb9A==}
+  nuxt-llms@https://pkg.pr.new/nuxt-content/nuxt-llms/nuxt-llms@f6a9730:
+    resolution: {integrity: sha512-YME6KBsiyGT5Xy+k9ydQWc2Wx4wqV/Eaal8+CLNaL6wV9LWr1vUrBB3UmA0XNd7SP4BfghN8ew9fEMLMrCKIpg==, tarball: https://pkg.pr.new/nuxt-content/nuxt-llms/nuxt-llms@f6a9730}
+    version: 0.2.0
 
   nuxt-og-image@6.10.3:
     resolution: {integrity: sha512-XirhtvZZNwydtoB6WnOCYiM8T9GsXgBIlKGA0moRbreectJDqHXejjF3nmEwR82uyX/YevFnhRUsryOw1DzOhQ==}
@@ -11642,7 +11648,7 @@ snapshots:
   '@fastify/ajv-compiler@4.0.6':
     dependencies:
       ajv: 8.20.0
-      ajv-formats: 3.0.1
+      ajv-formats: 3.0.1(ajv@8.20.0)
       fast-uri: 4.2.1
 
   '@fastify/error@4.2.0': {}
@@ -12112,7 +12118,7 @@ snapshots:
     dependencies:
       '@hono/node-server': 2.1.1(hono@4.13.9)
       ajv: 8.20.0
-      ajv-formats: 3.0.1
+      ajv-formats: 3.0.1(ajv@8.20.0)
       content-type: 1.0.5
       cors: 2.8.6
       cross-spawn: 7.0.6
@@ -15720,8 +15726,8 @@ snapshots:
       '@ai-sdk/provider-utils': 5.0.53(zod@4.6.5)
       zod: 4.6.5
 
-  ajv-formats@3.0.1:
-    dependencies:
+  ajv-formats@3.0.1(ajv@8.20.0):
+    optionalDependencies:
       ajv: 8.20.0
 
   ajv@6.15.0:
@@ -17441,7 +17447,7 @@ snapshots:
     dependencies:
       '@fastify/merge-json-schemas': 0.2.1
       ajv: 8.20.0
-      ajv-formats: 3.0.1
+      ajv-formats: 3.0.1(ajv@8.20.0)
       fast-uri: 4.2.1
       json-schema-ref-resolver: 3.0.0
       rfdc: 1.4.1
@@ -19527,7 +19533,7 @@ snapshots:
     dependencies:
       boolbase: 1.0.0
 
-  nuxt-agent-discovery@0.7.0(b62eeecfa15942200a3f31a29cb057f1):
+  nuxt-agent-discovery@0.7.0(966235ce9e2797ac5d3bcf30be1e92ce):
     dependencies:
       '@nuxt/kit': 4.5.2(magic-string@1.4.2)(magicast@0.5.5)(oxc-parser@0.151.0)(rolldown@1.2.11)(unplugin@3.4.0(esbuild@0.28.2)(rolldown@1.2.11)(rollup@4.63.5)(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1)))
       defu: 6.1.7
@@ -19540,7 +19546,7 @@ snapshots:
       '@nuxtjs/robots': 6.2.4(@nuxt/schema@4.5.2)(magic-string@1.4.2)(magicast@0.5.5)(nuxt@4.5.2(patch_hash=64b3d0a749dcd1df5777ac96f8eb331db57bf44051211017194b13e3c886f1d1)(fbb00d33e45db0dd8c62399faf8dba58))(oxc-parser@0.151.0)(rolldown@1.2.11)(unplugin@3.4.0(esbuild@0.28.2)(rolldown@1.2.11)(rollup@4.63.5)(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1)))(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))(vue@3.5.43(typescript@6.0.3))(zod@4.6.5)
       '@nuxtjs/sitemap': 8.6.1(@nuxt/schema@4.5.2)(@oxc-project/types@0.151.0)(magic-string@1.4.2)(magicast@0.5.5)(nuxt@4.5.2(patch_hash=64b3d0a749dcd1df5777ac96f8eb331db57bf44051211017194b13e3c886f1d1)(fbb00d33e45db0dd8c62399faf8dba58))(rolldown@1.2.11)(unplugin@3.4.0(esbuild@0.28.2)(rolldown@1.2.11)(rollup@4.63.5)(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1)))(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))(vue@3.5.43(typescript@6.0.3))(zod@4.6.5)
       comark: 0.7.0(rangi@2.2.0)(shiki@4.5.0)
-      nuxt-llms: 0.2.0(magic-string@1.4.2)(magicast@0.5.5)(oxc-parser@0.151.0)(rolldown@1.2.11)(unplugin@3.4.0(esbuild@0.28.2)(rolldown@1.2.11)(rollup@4.63.5)(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1)))
+      nuxt-llms: https://pkg.pr.new/nuxt-content/nuxt-llms/nuxt-llms@f6a9730(magic-string@1.4.2)(magicast@0.5.5)(oxc-parser@0.151.0)(rolldown@1.2.11)(unplugin@3.4.0(esbuild@0.28.2)(rolldown@1.2.11)(rollup@4.63.5)(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1)))
     transitivePeerDependencies:
       - magic-string
       - magicast
@@ -19601,7 +19607,7 @@ snapshots:
       - rolldown
     optional: true
 
-  nuxt-llms@0.2.0(magic-string@1.4.2)(magicast@0.5.5)(oxc-parser@0.151.0)(rolldown@1.2.11)(unplugin@3.4.0(esbuild@0.28.2)(rolldown@1.2.11)(rollup@4.63.5)(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))):
+  nuxt-llms@https://pkg.pr.new/nuxt-content/nuxt-llms/nuxt-llms@f6a9730(magic-string@1.4.2)(magicast@0.5.5)(oxc-parser@0.151.0)(rolldown@1.2.11)(unplugin@3.4.0(esbuild@0.28.2)(rolldown@1.2.11)(rollup@4.63.5)(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))):
     dependencies:
       '@nuxt/kit': 4.5.2(magic-string@1.4.2)(magicast@0.5.5)(oxc-parser@0.151.0)(rolldown@1.2.11)(unplugin@3.4.0(esbuild@0.28.2)(rolldown@1.2.11)(rollup@4.63.5)(vite@8.3.1(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1)))
     transitivePeerDependencies:

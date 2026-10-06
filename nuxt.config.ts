@@ -626,6 +626,7 @@ export default defineNuxtConfig({
     }
   },
   llms: {
+    prerender: false,
     domain: SITE_URL,
     title: 'Nuxt Docs',
     description: 'Nuxt is an open source framework that makes web development intuitive and powerful. Create performant and production-grade full-stack web apps and websites with confidence.',
