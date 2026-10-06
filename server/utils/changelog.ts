@@ -12,12 +12,13 @@ export const CHANGELOG_REPOS = [
   'nuxt/hints'
 ]
 
-export interface UnghRelease {
-  tag: string
-  name: string
+export interface GitHubRelease {
+  tag_name: string
+  name: string | null
   draft: boolean
-  publishedAt: string
-  markdown: string
+  published_at: string | null
+  html_url: string
+  body: string | null
 }
 
 export interface RawRelease {
@@ -32,19 +33,27 @@ export interface RawRelease {
 export const fetchRawReleases = cachedFunction(async (): Promise<RawRelease[]> => {
   const results = await Promise.allSettled(
     CHANGELOG_REPOS.map(async (repo) => {
-      const { releases } = await $fetch<{ releases: UnghRelease[] }>(`https://ungh.cc/repos/${repo}/releases`)
+      const releases = await $fetch<GitHubRelease[]>(`https://api.github.com/repos/${repo}/releases`, {
+        headers: githubHeaders()
+      })
       return releases
-        .filter(r => !r.draft)
+        .filter(r => !r.draft && r.published_at)
         .map(r => ({
           repo,
-          tag: r.tag,
-          title: r.name || r.tag,
-          date: r.publishedAt,
-          url: `https://github.com/${repo}/releases/tag/${r.tag}`,
-          markdown: r.markdown
+          tag: r.tag_name,
+          title: r.name || r.tag_name,
+          date: r.published_at!,
+          url: r.html_url,
+          markdown: r.body || ''
         }))
     })
   )
+
+  results.forEach((r, i) => {
+    if (r.status === 'rejected') {
+      console.error(`Cannot fetch releases for ${CHANGELOG_REPOS[i]}: ${r.reason}`)
+    }
+  })
 
   return results
     .filter((r): r is PromiseFulfilledResult<RawRelease[]> => r.status === 'fulfilled')

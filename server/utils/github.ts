@@ -175,7 +175,7 @@ export const github = {
   }
 }
 
-export function githubHeaders(event: H3Event, headers: Record<string, string> = {}) {
+export function githubHeaders(event?: H3Event, headers: Record<string, string> = {}) {
   const token = useRuntimeConfig(event).github.token
   if (!token) {
     throw createError({
