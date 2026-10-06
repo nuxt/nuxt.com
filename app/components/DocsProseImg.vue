@@ -21,11 +21,11 @@ const props = defineProps({
   }
 })
 
-// The CLI's terminal captures are SVGs carrying both colour schemes via
-// `prefers-color-scheme`, some animated with SMIL, and rasterising them through IPX
+// SVGs such as the CLI's terminal captures can carry both colour schemes via
+// `prefers-color-scheme` and SMIL animation, and rasterising them through IPX
 // drops both. `none` keeps the URL untouched while retaining the default styling and
 // zoom, which a plain `<img>` would lose.
-const provider = computed(() => props.src.startsWith(`https://raw.githubusercontent.com/${CLI_DOCS_REPO}/`) ? 'none' : undefined)
+const provider = computed(() => props.src.startsWith(`https://raw.githubusercontent.com/${CLI_DOCS_REPO}/`) || /\.svg(?:[?#]|$)/i.test(props.src) ? 'none' : undefined)
 </script>
 
 <template>

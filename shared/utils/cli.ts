@@ -5,7 +5,7 @@ export const CLI_DOCS_REPO = 'nuxt/cli'
 
 export const CLI_DOCS_REFS = {
   '3.x': { branch: '3.x', envOverride: 'NUXT_CLI_PATH' },
-  '4.x': { branch: '3.x', envOverride: 'NUXT_CLI_PATH' },
+  '4.x': { branch: 'main', envOverride: 'NUXT_CLI_PATH' },
   '5.x': { branch: 'main', envOverride: 'NUXT_CLI_PATH' }
 } as const satisfies Record<DocVersion, RepoRefs>
 

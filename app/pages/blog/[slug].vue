@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { kebabCase } from 'scule'
+import { DocsProseImg } from '#components'
 
 definePageMeta({
   heroBackground: 'opacity-30 -z-10'
@@ -136,7 +137,7 @@ const links = [
         } : { root: 'lg:grid-cols-12', center: 'lg:col-span-9', right: 'lg:col-span-3' }"
       >
         <UPageBody>
-          <MarkdownDocument v-if="article" :value="article" />
+          <MarkdownDocument v-if="article" :value="article" :components="{ img: DocsProseImg }" />
 
           <div class="flex items-center justify-between mt-12 not-prose">
             <ULink to="/blog" class="text-primary">

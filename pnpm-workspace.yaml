@@ -15,6 +15,7 @@ overrides:
 patchedDependencies:
   nuxt@4.5.2: patches/nuxt@4.5.2.patch
   "@nuxt/nitro-server@4.5.2": patches/@nuxt__nitro-server@4.5.2.patch
+  "@chat-adapter/discord@4.41.1": patches/@chat-adapter__discord@4.41.1.patch
 
 allowBuilds:
   esbuild: true
