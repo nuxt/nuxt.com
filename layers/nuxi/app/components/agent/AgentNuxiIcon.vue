@@ -158,7 +158,7 @@ const isConfused = computed(() => effectiveMood.value === 'confused')
 }
 .nuxi-body--surprised { animation: nuxi-surprised 0.6s cubic-bezier(0.25, 1, 0.5, 1) forwards; }
 .nuxi-body--sad {
-  animation: nuxi-sad 3.6s ease-in-out infinite;
+  animation: nuxi-sad 4s ease-in-out infinite;
   transform-origin: center 100%;
 }
 .nuxi-body--confused { animation: nuxi-confused 2.4s ease-in-out infinite; }
@@ -221,8 +221,8 @@ const isConfused = computed(() => effectiveMood.value === 'confused')
 }
 
 @keyframes nuxi-sad {
-  0%, 100% { transform: translateY(1px) scale(1.02, 0.97); }
-  50% { transform: translateY(4px) scale(1.04, 0.94) rotate(-1.5deg); }
+  0%, 100% { transform: translateY(0) scale(1, 1); }
+  45%, 60% { transform: translateY(3px) scale(1.03, 0.95); }
 }
 
 @keyframes nuxi-confused {

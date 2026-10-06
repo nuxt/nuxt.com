@@ -53,8 +53,9 @@ const success = computed(() => ({
       class="flex items-center gap-3"
       role="status"
     >
-      <motion.div v-bind="success.nuxi" class="shrink-0" aria-hidden="true">
-        <AgentNuxiIcon mood="happy" :interactive="false" class="w-12 h-auto text-primary" />
+      <motion.div v-bind="success.nuxi" class="relative shrink-0 text-primary" aria-hidden="true">
+        <AgentNuxiIcon mood="happy" :interactive="false" class="w-12 h-auto" />
+        <FeedbackSparkles :show="formState.rating === 'very-helpful'" />
       </motion.div>
       <div>
         <motion.p v-bind="success.text(0.08)" class="text-sm font-medium text-highlighted">
@@ -73,13 +74,18 @@ const success = computed(() => ({
       :transition="{ duration: 0.15, ease: EASE_OUT }"
     >
       <div class="flex items-center gap-3">
-        <AgentNuxiIcon
-          :mood="reactiveRating ? FEEDBACK_MOODS[reactiveRating].mood : 'idle'"
-          :interactive="false"
-          class="w-12 h-auto shrink-0 transition-colors duration-200 ease-out"
+        <span
+          class="relative shrink-0 transition-colors duration-200 ease-out"
           :class="reactiveRating ? FEEDBACK_MOODS[reactiveRating].text : 'text-muted'"
           aria-hidden="true"
-        />
+        >
+          <AgentNuxiIcon
+            :mood="reactiveRating ? FEEDBACK_MOODS[reactiveRating].mood : 'idle'"
+            :interactive="false"
+            class="w-12 h-auto"
+          />
+          <FeedbackSparkles :show="reactiveRating === 'very-helpful'" />
+        </span>
 
         <div class="space-y-1.5 min-w-0">
           <p id="feedback-label" class="text-sm font-medium text-highlighted">
