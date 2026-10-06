@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { AnimatePresence, MotionConfig, motion } from 'motion-v'
+import { AnimatePresence, motion, useReducedMotion } from 'motion-v'
 
 const props = defineProps<{
   page: {
@@ -16,185 +16,152 @@ const {
   handleRatingSelect,
   submitFeedback
 } = useFeedbackForm(props)
+
+const FEEDBACK_MOODS: Record<FeedbackRating, { mood: NuxiMood, text: string, hover: string, active: string }> = {
+  'very-helpful': { mood: 'happy', text: 'text-primary', hover: 'hover:text-primary hover:border-primary/50', active: 'text-primary border-primary bg-primary/15' },
+  'helpful': { mood: 'idle', text: 'text-primary', hover: 'hover:text-primary hover:border-primary/50', active: 'text-primary border-primary bg-primary/15' },
+  'not-helpful': { mood: 'sad', text: 'text-info', hover: 'hover:text-info hover:border-info/50', active: 'text-info border-info bg-info/15' },
+  'confusing': { mood: 'confused', text: 'text-warning', hover: 'hover:text-warning hover:border-warning/50', active: 'text-warning border-warning bg-warning/15' }
+}
+
+const previewRating = ref<FeedbackRating | null>(null)
+const reactiveRating = computed(() => previewRating.value ?? formState.rating)
+
+const reduceMotion = useReducedMotion()
+const EASE_OUT = [0.23, 1, 0.32, 1] as const
+const EASE_OUT_BACK = [0.34, 1.56, 0.64, 1] as const
+
+const success = computed(() => ({
+  nuxi: {
+    initial: { opacity: 0, transform: reduceMotion.value ? 'scale(1)' : 'scale(0.8)' },
+    animate: { opacity: 1, transform: 'scale(1)' },
+    transition: { duration: 0.35, ease: EASE_OUT_BACK }
+  },
+  text: (delay: number) => ({
+    initial: { opacity: 0, filter: 'blur(2px)', transform: reduceMotion.value ? 'none' : 'translateY(4px)' },
+    animate: { opacity: 1, filter: 'blur(0px)', transform: 'none' },
+    transition: { duration: 0.3, ease: EASE_OUT, delay }
+  })
+}))
 </script>
 
 <template>
-  <MotionConfig
-    :transition="{ type: 'spring', visualDuration: 0.25, bounce: 0 }"
-  >
+  <AnimatePresence mode="wait" :initial="false">
     <motion.div
-      layout
-      class="rounded-lg max-w-md"
+      v-if="isSubmitted"
+      key="success"
+      class="flex items-center gap-3"
+      role="status"
     >
-      <AnimatePresence mode="wait">
-        <!-- Success State -->
-        <motion.div
-          v-if="isSubmitted"
-          key="success"
-          :initial="{ opacity: 0, scale: 0.95 }"
-          :animate="{ opacity: 1, scale: 1 }"
-          :transition="{ duration: 0.3 }"
-          class="flex items-center gap-3 py-2"
-          role="status"
-          aria-live="polite"
-          aria-label="Feedback submitted successfully"
-        >
-          <motion.div
-            :initial="{ scale: 0 }"
-            :animate="{ scale: 1 }"
-            :transition="{ delay: 0.1, type: 'spring', visualDuration: 0.4 }"
-            class="text-xl"
-            aria-hidden="true"
-          >
-            ✨
-          </motion.div>
-          <motion.div
-            :initial="{ opacity: 0, x: 10 }"
-            :animate="{ opacity: 1, x: 0 }"
-            :transition="{ delay: 0.2, duration: 0.3 }"
-          >
-            <div class="text-sm font-medium text-highlighted">
-              Thank you for your feedback!
-            </div>
-            <div class="text-xs text-muted mt-1">
-              Your input helps us improve the documentation.
-            </div>
-          </motion.div>
-        </motion.div>
-
-        <motion.div
-          v-else
-          key="feedback"
-        >
-          <fieldset>
-            <motion.div layout class="flex items-center gap-3">
-              <motion.legend id="feedback-legend" layout class="text-sm font-medium text-highlighted whitespace-nowrap">
-                Was this helpful?
-              </motion.legend>
-
-              <motion.div
-                layout
-                class="flex gap-2"
-                role="radiogroup"
-                aria-labelledby="feedback-legend"
-              >
-                <UButton
-                  v-for="option in FEEDBACK_OPTIONS"
-                  :key="option.value"
-                  class="flex items-center grayscale-80 hover:grayscale-0 justify-center size-8 rounded-lg border transition-all duration-150 focus:outline-2 focus:outline-primary focus:outline-offset-2"
-                  :class="[
-                    formState.rating === option.value
-                      ? 'border-primary bg-primary/20 hover:bg-primary/30 grayscale-0'
-                      : 'border-default bg-accented/20 hover:border-accented/70 hover:bg-accented/80'
-                  ]"
-                  :aria-label="`Rate as ${option.label}`"
-                  role="radio"
-                  :aria-checked="formState.rating === option.value"
-                  @click="handleRatingSelect(option.value)"
-                >
-                  <span class="text-lg">{{ option.emoji }}</span>
-                </UButton>
-              </motion.div>
-            </motion.div>
-          </fieldset>
-
-          <AnimatePresence>
-            <motion.div
-              v-if="isExpanded"
-              key="expanded-form"
-              :initial="{ opacity: 0, height: 0, marginTop: 0 }"
-              :animate="{ opacity: 1, height: 'auto', marginTop: 8 }"
-              :exit="{ opacity: 0, height: 0, marginTop: 0 }"
-              :transition="{ duration: 0.3, ease: 'easeInOut' }"
-              class="overflow-hidden"
-              role="region"
-              aria-label="Additional feedback form"
-            >
-              <motion.div
-                :initial="{ opacity: 0 }"
-                :animate="{ opacity: 1 }"
-                :transition="{ delay: 0.15, duration: 0.2 }"
-                class="space-y-1"
-              >
-                <UForm :state="formState" :schema="feedbackFormSchema" @submit="submitFeedback">
-                  <UFormField name="feedback">
-                    <label for="feedback-textarea" class="sr-only">
-                      Additional feedback (optional)
-                    </label>
-                    <UTextarea
-                      id="feedback-textarea"
-                      ref="textareaRef"
-                      v-model="formState.feedback"
-                      class="w-full rounded-xl text-sm leading-relaxed resize-vertical"
-                      placeholder="Share your thoughts... (optional)"
-                      :rows="4"
-                      autoresize
-                      aria-describedby="feedback-help"
-                    />
-                    <div id="feedback-help" class="sr-only">
-                      Provide additional details about your experience with this page
-                    </div>
-                  </UFormField>
-                  <div class="flex items-center mt-2">
-                    <div class="flex gap-2">
-                      <UButton
-                        size="sm"
-                        :disabled="isSubmitting"
-                        type="submit"
-                        class="focus:outline-0"
-                        :aria-label="isSubmitting ? 'Sending feedback...' : 'Send feedback'"
-                      >
-                        <motion.span
-                          class="flex items-center"
-                          :transition="{ duration: 0.2, ease: 'easeInOut' }"
-                        >
-                          <motion.div
-                            :animate="{
-                              width: isSubmitting ? '14px' : '0px',
-                              marginRight: isSubmitting ? '6px' : '0px',
-                              opacity: isSubmitting ? 1 : 0,
-                              scale: isSubmitting ? 1 : 0,
-                              rotate: isSubmitting ? 360 : 0
-                            }"
-                            :transition="{
-                              width: { duration: 0.2, ease: 'easeInOut' },
-                              marginRight: { duration: 0.2, ease: 'easeInOut' },
-                              opacity: { duration: 0.2 },
-                              scale: { duration: 0.2, type: 'spring', bounce: 0.3 },
-                              rotate: { duration: 1, ease: 'linear', repeat: Infinity }
-                            }"
-                            class="flex items-center justify-center overflow-hidden"
-                          >
-                            <Icon name="mdi:loading" class="size-3.5 shrink-0" />
-                          </motion.div>
-                          <motion.span
-                            :animate="{
-                              opacity: 1
-                            }"
-                            :transition="{ duration: 0.2, ease: 'easeInOut' }"
-                          >
-                            {{ isSubmitting ? 'Sending...' : 'Send' }}
-                          </motion.span>
-                        </motion.span>
-                      </UButton>
-                    </div>
-                  </div>
-                </UForm>
-              </motion.div>
-            </motion.div>
-          </AnimatePresence>
-        </motion.div>
-      </AnimatePresence>
-
-      <div
-        aria-live="polite"
-        class="sr-only"
-      >
-        <span v-if="isSubmitting">Sending your feedback...</span>
-        <span v-else-if="isExpanded && formState.rating">
-          Feedback form expanded. You can now add additional comments.
-        </span>
+      <motion.div v-bind="success.nuxi" class="shrink-0" aria-hidden="true">
+        <AgentNuxiIcon mood="happy" :interactive="false" class="w-12 h-auto text-primary" />
+      </motion.div>
+      <div>
+        <motion.p v-bind="success.text(0.08)" class="text-sm font-medium text-highlighted">
+          Thank you for your feedback!
+        </motion.p>
+        <motion.p v-bind="success.text(0.14)" class="text-xs text-muted mt-1">
+          Your input helps us improve the documentation.
+        </motion.p>
       </div>
     </motion.div>
-  </MotionConfig>
+
+    <motion.div
+      v-else
+      key="feedback"
+      :exit="{ opacity: 0, filter: 'blur(2px)' }"
+      :transition="{ duration: 0.15, ease: EASE_OUT }"
+    >
+      <div class="flex items-center gap-3">
+        <AgentNuxiIcon
+          :mood="reactiveRating ? FEEDBACK_MOODS[reactiveRating].mood : 'idle'"
+          :interactive="false"
+          class="w-12 h-auto shrink-0 transition-colors duration-200 ease-out"
+          :class="reactiveRating ? FEEDBACK_MOODS[reactiveRating].text : 'text-muted'"
+          aria-hidden="true"
+        />
+
+        <div class="space-y-1.5 min-w-0">
+          <p id="feedback-label" class="text-sm font-medium text-highlighted">
+            Was this helpful?
+          </p>
+
+          <div
+            role="group"
+            aria-labelledby="feedback-label"
+            class="flex flex-wrap gap-1"
+            @mouseleave="previewRating = null"
+          >
+            <UButton
+              v-for="option in FEEDBACK_OPTIONS"
+              :key="option.value"
+              size="xs"
+              color="neutral"
+              variant="ghost"
+              :label="option.label"
+              :aria-pressed="formState.rating === option.value"
+              class="rounded-full border px-2.5 transition-[color,background-color,border-color,scale] duration-150 ease-out active:scale-[0.97] focus-visible:outline-1 focus-visible:outline-offset-1 focus-visible:outline-primary"
+              :class="formState.rating === option.value
+                ? FEEDBACK_MOODS[option.value].active
+                : ['border-default bg-accented/20 text-muted hover:bg-accented/60', FEEDBACK_MOODS[option.value].hover]"
+              @mouseenter="previewRating = option.value"
+              @focus="previewRating = option.value"
+              @blur="previewRating = null"
+              @click="handleRatingSelect(option.value)"
+            />
+          </div>
+        </div>
+      </div>
+
+      <!-- Open: rows grow, then content fades in top to bottom. Close: content fades out, then rows collapse. -->
+      <div
+        class="grid transition-[grid-template-rows] motion-reduce:transition-none"
+        :class="isExpanded
+          ? 'grid-rows-[1fr] duration-300 ease-[cubic-bezier(0.23,1,0.32,1)]'
+          : 'grid-rows-[0fr] duration-250 delay-100 ease-[cubic-bezier(0.77,0,0.175,1)]'"
+        :inert="!isExpanded"
+      >
+        <!-- Padding keeps the textarea focus ring inside the clipped area. -->
+        <div class="min-h-0 overflow-hidden -mx-1 px-1">
+          <UForm
+            :state="formState"
+            :schema="feedbackFormSchema"
+            class="max-w-md pt-3 pb-1 space-y-2"
+            @submit="submitFeedback"
+          >
+            <div
+              class="transition-[opacity,transform,filter]"
+              :class="isExpanded
+                ? 'opacity-100 translate-y-0 blur-[0px] duration-300 delay-75 ease-[cubic-bezier(0.23,1,0.32,1)]'
+                : 'opacity-0 motion-safe:-translate-y-1 blur-[2px] duration-150 ease-out'"
+            >
+              <UFormField name="feedback" label="Additional feedback (optional)" :ui="{ label: 'sr-only' }">
+                <UTextarea
+                  v-model="formState.feedback"
+                  class="w-full"
+                  placeholder="Share your thoughts... (optional)"
+                  :rows="3"
+                  autoresize
+                />
+              </UFormField>
+            </div>
+
+            <div
+              class="transition-[opacity,transform,filter]"
+              :class="isExpanded
+                ? 'opacity-100 translate-y-0 blur-[0px] duration-300 delay-[130ms] ease-[cubic-bezier(0.23,1,0.32,1)]'
+                : 'opacity-0 motion-safe:-translate-y-1 blur-[2px] duration-150 ease-out'"
+            >
+              <UButton
+                type="submit"
+                size="sm"
+                :loading="isSubmitting"
+                :label="isSubmitting ? 'Sending…' : 'Send'"
+              />
+            </div>
+          </UForm>
+        </div>
+      </div>
+    </motion.div>
+  </AnimatePresence>
 </template>

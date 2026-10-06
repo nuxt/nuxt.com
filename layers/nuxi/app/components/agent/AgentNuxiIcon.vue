@@ -21,6 +21,7 @@ const {
   smileRightPath,
   smileOpacity,
   mouthD,
+  mouthStroked,
   mouthOpacity,
   eyeLeftTransform,
   eyeRightTransform,
@@ -34,6 +35,7 @@ const {
 } = useNuxiIcon(props, emit)
 
 const isSleeping = computed(() => effectiveMood.value === 'sleeping')
+const isConfused = computed(() => effectiveMood.value === 'confused')
 </script>
 
 <template>
@@ -86,7 +88,10 @@ const isSleeping = computed(() => effectiveMood.value === 'sleeping')
             class="nuxi-mouth"
             :style="{ transform: mouthTransform, opacity: mouthOpacity, transition: 'transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), d 0.3s ease, opacity 0.3s ease' }"
             :d="mouthD"
-            fill="black"
+            :fill="mouthStroked ? 'none' : 'black'"
+            :stroke="mouthStroked ? 'black' : 'none'"
+            stroke-width="11"
+            stroke-linecap="round"
           />
         </g>
       </mask>
@@ -112,6 +117,17 @@ const isSleeping = computed(() => effectiveMood.value === 'sleeping')
       <text class="nuxi-z nuxi-z-2" x="202" y="125" font-size="54">z</text>
       <text class="nuxi-z nuxi-z-3" x="228" y="82" font-size="70">z</text>
     </g>
+
+    <text
+      v-if="isConfused"
+      class="nuxi-question"
+      x="226"
+      y="56"
+      font-size="88"
+      font-family="sans-serif"
+      font-weight="800"
+      fill="currentColor"
+    >?</text>
 
   </svg>
 </template>
@@ -141,6 +157,17 @@ const isSleeping = computed(() => effectiveMood.value === 'sleeping')
   transform-origin: center 92%;
 }
 .nuxi-body--surprised { animation: nuxi-surprised 0.6s cubic-bezier(0.25, 1, 0.5, 1) forwards; }
+.nuxi-body--sad {
+  animation: nuxi-sad 3.6s ease-in-out infinite;
+  transform-origin: center 100%;
+}
+.nuxi-body--confused { animation: nuxi-confused 2.4s ease-in-out infinite; }
+
+.nuxi-question {
+  transform-box: fill-box;
+  transform-origin: center bottom;
+  animation: nuxi-question-bob 2.4s ease-in-out infinite;
+}
 
 .nuxi-z {
   animation: nuxi-z-float 3.2s ease-in-out infinite;
@@ -191,6 +218,30 @@ const isSleeping = computed(() => effectiveMood.value === 'sleeping')
   65%  { transform: scale(1.05, 0.96) translateY(-5px); }
   85%  { transform: scale(0.97, 1.02) translateY(-8px); }
   100% { transform: scale(1, 1) translateY(0); }
+}
+
+@keyframes nuxi-sad {
+  0%, 100% { transform: translateY(1px) scale(1.02, 0.97); }
+  50% { transform: translateY(4px) scale(1.04, 0.94) rotate(-1.5deg); }
+}
+
+@keyframes nuxi-confused {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(-7deg) translateY(-2px); }
+  60% { transform: rotate(5deg) translateY(-1px); }
+}
+
+@keyframes nuxi-question-bob {
+  0%, 100% { transform: translateY(0) rotate(8deg); opacity: 1; }
+  50% { transform: translateY(-8px) rotate(-6deg); opacity: 0.8; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nuxi-body,
+  .nuxi-z,
+  .nuxi-question {
+    animation: none !important;
+  }
 }
 
 @keyframes nuxi-z-float {

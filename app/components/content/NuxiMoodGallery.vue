@@ -5,7 +5,9 @@ const moods: { mood: NuxiMood, label: string }[] = [
   { mood: 'excited', label: 'excited' },
   { mood: 'thinking', label: 'thinking' },
   { mood: 'surprised', label: 'surprised' },
-  { mood: 'sleeping', label: 'sleeping' }
+  { mood: 'sleeping', label: 'sleeping' },
+  { mood: 'sad', label: 'sad' },
+  { mood: 'confused', label: 'confused' }
 ]
 </script>
 
@@ -29,7 +31,7 @@ const moods: { mood: NuxiMood, label: string }[] = [
 
 @media (min-width: 640px) {
   .nuxi-mood-gallery {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: 0.75rem;
   }
 }
