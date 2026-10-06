@@ -76,7 +76,7 @@ onMounted(() => {
           </div>
         </template>
       </UPageCTA>
-      <UPageSection :ui="{ container: '!pt-0' }">
+      <UPageSection class="mb-0" :ui="{ container: '!pt-0' }">
         <UPageLogos :marquee="isMobile" :title="home?.logos.title" :ui="{ title: 'text-muted font-medium text-lg', logos: 'mt-4' }">
           <Motion
             v-for="(company, index) in home?.logos.companies"
