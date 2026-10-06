@@ -30,3 +30,4 @@ minimumReleaseAgeExclude:
   - '@vue/*'
   - nuxt-agent-discovery@0.5.0
   - cssnano-utils@8.2.0
+  - "@nuxtjs/mcp-toolkit@0.24.1"
