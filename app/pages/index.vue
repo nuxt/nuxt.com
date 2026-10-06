@@ -16,9 +16,9 @@ const [{ data: page }, { data: officialModules }, { data: showcase }, { data: sp
       .sort((a, b) => b.stats.stars - a.stats.stars)
   }),
   useAsyncData('showcase', () => useContent('site').get('/showcase')),
-  useFetch<SponsorsByTier>('/api/sponsors', {
+  useFetch('/api/sponsors', {
     key: 'sponsors-home',
-    transform(sponsors) {
+    transform(sponsors: SponsorsByTier) {
       return Object.entries(sponsors)
         .filter(([tier, sponsors]) => ['diamond', 'platinum', 'gold'].includes(tier) && sponsors.length > 0)
         .map(([tier, sponsors]) => ({
