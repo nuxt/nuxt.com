@@ -118,6 +118,9 @@ const groupedFoundationItems = computed(() => {
   return result
 })
 
+// Embla writes inline transforms on init, which @nuxt/hints flags as a hydration mismatch.
+const isMounted = useMounted()
+
 const isMobile = ref(false)
 onMounted(() => {
   isMobile.value = window.innerWidth < 768
@@ -470,6 +473,7 @@ onMounted(() => {
         wheel-gestures
         arrows
         :items="officialModulesWithHealth"
+        :active="isMounted"
         class="min-w-0"
         :ui="{
           container: 'ms-0 items-stretch',
@@ -538,6 +542,7 @@ onMounted(() => {
         arrows
         :autoplay="{ delay: 3000 }"
         :items="(showcaseData.websites as any[]).slice(0, 10)"
+        :active="isMounted"
         class="min-w-0"
         :ui="{
           item: 'basis-full sm:basis-1/2',
