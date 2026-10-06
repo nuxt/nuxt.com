@@ -82,6 +82,14 @@ export default defineNuxtConfig({
       }
     }
   },
+  components: [
+    // Keeps `@nuxt/content` names (`ReadMore`, not `ContentReadMore`).
+    // Pages pass them to `MarkdownDocument` through `components`.
+    { path: '~/components/content', pathPrefix: false },
+    // Nuxt's defaults, which an explicit list replaces.
+    { path: '~/components/global', global: true },
+    '~/components'
+  ],
   devtools: {
     enabled: true
   },

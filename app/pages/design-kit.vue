@@ -1,7 +1,11 @@
 <script setup lang="ts">
+import { DesignKitColorCard, DesignKitImageCard } from '#components'
+
 definePageMeta({
   heroBackground: 'opacity-70 -z-10'
 })
+
+const markdownComponents = { ...proseComponents, DesignKitColorCard, DesignKitImageCard }
 
 const { data: page } = await useAsyncData('design-kit', () => useContent('site').get('/design-kit'))
 if (!page.value) {
@@ -43,7 +47,7 @@ defineOgImage('Docs.takumi', {
     <UPage>
       <UPageBody>
         <UContainer>
-          <MarkdownDocument v-if="page" :value="page" />
+          <MarkdownDocument v-if="page" :value="page" :components="markdownComponents" />
         </UContainer>
       </UPageBody>
     </UPage>

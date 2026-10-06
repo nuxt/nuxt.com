@@ -1,9 +1,12 @@
 <script lang="ts" setup>
 import { kebabCase } from 'scule'
+import { Important, ReadMore } from '#components'
 
 definePageMeta({
   heroBackground: 'opacity-30 -z-10'
 })
+
+const markdownComponents = { ...proseComponents, Important, ReadMore }
 const route = useRoute()
 const { isAgentDocked } = useNuxtAgent()
 const { fetchList, providers } = useHostingProviders()
@@ -110,7 +113,7 @@ links.push({
         } : { root: 'lg:grid-cols-12', center: 'lg:col-span-9', right: 'lg:col-span-3' }"
       >
         <UPageBody>
-          <MarkdownDocument v-if="provider" :value="provider" />
+          <MarkdownDocument v-if="provider" :value="provider" :components="markdownComponents" />
 
           <USeparator v-if="surround?.length" />
 

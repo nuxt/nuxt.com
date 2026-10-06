@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { kebabCase } from 'scule'
 import type { NavigationItem } from 'comark-content'
-import { DocsProseImg } from '#components'
+import { DocsProseImg, Browser, CodeExplorer, Important, LinkExample, ReadMore, VideoAccordion } from '#components'
 import { CLI_DOCS_REFS, CLI_DOCS_REPO, cliDocsPathPrefix } from '#shared/utils/cli'
 import { cliInstanceKey } from '#shared/utils/content'
 import { DOCS_REFS, DOCS_REPO, isCanonicalDocsPath, isVersionedDocsPath } from '#shared/utils/docs'
@@ -10,6 +10,17 @@ definePageMeta({
   heroBackground: 'opacity-30',
   key: 'docs'
 })
+
+const markdownComponents = {
+  ...proseComponents,
+  ProseImg: DocsProseImg,
+  Browser,
+  CodeExplorer,
+  Important,
+  LinkExample,
+  ReadMore,
+  VideoAccordion
+}
 
 const navigation = inject<Ref<NavigationItem[]>>('navigation', ref([]))
 const menuDrawerOpen = ref(false)
@@ -338,7 +349,7 @@ const noRightAside = computed(() => route.path.includes('/examples/'))
         </UPageHeader>
 
         <UPageBody>
-          <MarkdownDocument v-if="page.nodes?.length" :value="page" :components="{ img: DocsProseImg }" />
+          <MarkdownDocument v-if="page.nodes?.length" :value="page" :components="markdownComponents" />
           <div>
             <Feedback :page="{ title: fm.title, stem: page.meta.stem }" />
             <USeparator class="mt-6 mb-10">

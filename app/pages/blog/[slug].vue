@@ -1,10 +1,39 @@
 <script setup lang="ts">
 import { kebabCase } from 'scule'
-import { DocsProseImg } from '#components'
+import {
+  DocsProseImg,
+  AgentNuxiIcon,
+  ArticleVideo,
+  Carousel,
+  Important,
+  IndexExample,
+  NuxiMoodGallery,
+  ReadMore,
+  ThemedVideo,
+  TryNuxi,
+  VideoAccordion,
+  YoutubeDemo
+} from '#components'
 
 definePageMeta({
   heroBackground: 'opacity-30 -z-10'
 })
+
+const markdownComponents = {
+  ...proseComponents,
+  ProseImg: DocsProseImg,
+  AgentNuxiIcon,
+  ArticleVideo,
+  Carousel,
+  Important,
+  IndexExample,
+  NuxiMoodGallery,
+  ReadMore,
+  ThemedVideo,
+  TryNuxi,
+  VideoAccordion,
+  YoutubeDemo
+}
 
 const route = useRoute()
 const { copy } = useClipboard()
@@ -137,7 +166,7 @@ const links = [
         } : { root: 'lg:grid-cols-12', center: 'lg:col-span-9', right: 'lg:col-span-3' }"
       >
         <UPageBody>
-          <MarkdownDocument v-if="article" :value="article" :components="{ img: DocsProseImg }" />
+          <MarkdownDocument v-if="article" :value="article" :components="markdownComponents" />
 
           <div class="flex items-center justify-between mt-12 not-prose">
             <ULink to="/blog" class="text-primary">
