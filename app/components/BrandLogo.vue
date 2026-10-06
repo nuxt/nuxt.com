@@ -7,11 +7,11 @@ const props = defineProps<{
 }>()
 
 const style = computed(() => ({
-  aspectRatio: props.width && props.height ? `${props.width} / ${props.height}` : undefined,
-  mask: `url(${props.src}) center / contain no-repeat`
+  'aspectRatio': props.width && props.height ? `${props.width} / ${props.height}` : undefined,
+  '--logo-src': `url(${props.src})`
 }))
 </script>
 
 <template>
-  <span role="img" :aria-label="alt" class="block bg-current" :style="style" />
+  <span role="img" :aria-label="alt" class="block bg-current [mask:var(--logo-src)_center/contain_no-repeat]" :style="style" />
 </template>

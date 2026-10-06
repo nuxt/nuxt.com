@@ -47,7 +47,7 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
 </script>
 
 <template>
-  <UForm :schema="schema" :state="state" @submit="onSubmit">
+  <UForm :schema="schema" :state="state" class="block" @submit="onSubmit">
     <UFormField name="email" :label="label" size="lg" :description="description" :ui="{ label: 'font-semibold', container: 'mt-3' }">
       <UInput
         v-model="state.email"
