@@ -30,14 +30,14 @@ defineOgImage('Docs.takumi', {
 </script>
 
 <template>
-  <UContainer v-if="page">
+  <UPage v-if="page">
     <UPageHero
       :title="page.title"
       :description="page.description"
       :links="page.links"
     />
-    <UPage>
-      <UPageBody>
+    <UPageBody>
+      <UContainer>
         <ul class="divide-y divide-default">
           <li v-for="(course, index) in courses" :key="course.slug" class="flex items-center py-3 gap-2">
             <NuxtImg
@@ -96,7 +96,7 @@ defineOgImage('Docs.takumi', {
             />
           </li>
         </ul>
-      </UPageBody>
-    </UPage>
-  </UContainer>
+      </UContainer>
+    </UPageBody>
+  </UPage>
 </template>

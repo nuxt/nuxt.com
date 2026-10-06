@@ -25,7 +25,7 @@ defineOgImage('Docs.takumi', {
 </script>
 
 <template>
-  <UContainer v-if="page">
+  <UPage v-if="page">
     <UPageHero
       :title="page.title"
       :description="page.description"
@@ -35,10 +35,10 @@ defineOgImage('Docs.takumi', {
       </template>
     </UPageHero>
 
-    <UPage>
-      <UPageBody>
+    <UPageBody>
+      <UContainer>
         <UPageCTA v-bind="page.cta" />
-      </UPageBody>
-    </UPage>
-  </UContainer>
+      </UContainer>
+    </UPageBody>
+  </UPage>
 </template>

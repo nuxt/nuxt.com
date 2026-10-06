@@ -211,6 +211,45 @@ All headings render in Outfit at medium weight. Body copy is regular weight; emp
 
 ## Layout
 
+### Page shells
+
+Every page uses one of three Nuxt UI shells. `UPageHero` and `UPageSection` render their own container, so never wrap them in a `UContainer`; everything else sits in exactly one `UContainer`, which keeps page content aligned with the header. `UPageCTA` is a card: place it inside a `UContainer` or `UPageSection`, or use `class="rounded-none"` for a deliberate full-bleed band.
+
+**Hero and content** (listings, design kit, team):
+
+```vue
+<UPage>
+  <UPageHero title="…" description="…" />
+  <UPageBody>
+    <UContainer>
+      <!-- content -->
+    </UContainer>
+  </UPageBody>
+</UPage>
+```
+
+**Sections** (landing pages): `UPageHero` followed by `UPageSection` blocks, with no wrapper container.
+
+**Content with sidebars** (docs, articles, module and provider pages):
+
+```vue
+<UContainer>
+  <UPage>
+    <template #left>
+      <UPageAside />
+    </template>
+    <UPageHeader title="…" />
+    <UPageBody>
+      <!-- content -->
+    </UPageBody>
+  </UPage>
+</UContainer>
+```
+
+A hero page that also needs a sidebar places the sidebar shell after the hero: `UPage` > `UPageHero` + `UContainer` > `UPage` with `#left`.
+
+### Spacing and grid
+
 - **Container:** `UContainer`, max width `--ui-container: 90rem`.
 - **Spacing:** Tailwind's 4px scale. `gap-2` inside a group, `gap-4` between related items, `py-10 sm:py-20` for sections, `py-24 sm:py-32 lg:py-40` for heroes.
 - **Breakpoints:** Tailwind defaults (`sm` 640px, `md` 768px, `lg` 1024px, `xl` 1280px, `2xl` 1536px).
@@ -264,6 +303,7 @@ Default to stillness. Animate only to explain a state change or confirm an actio
 - Tiny muted body text used to make content fit.
 - State communicated by color alone.
 - Re-implemented Nuxt UI components.
+- A `UPageHero` or `UPageSection` inside a `UContainer`, or one `UContainer` inside another.
 - The wordmark without the mountain, or a recolored, stretched, or redrawn logo.
 
 ## Review before shipping

@@ -26,7 +26,7 @@ defineOgImage('Docs.takumi', {
 </script>
 
 <template>
-  <UContainer v-if="page">
+  <UPage v-if="page">
     <UPageHero
       :title="page.title"
       :links="page.links"
@@ -38,12 +38,10 @@ defineOgImage('Docs.takumi', {
       }"
     />
 
-    <UPage>
-      <UPageBody>
-        <UContainer>
-          <ContentRenderer v-if="page && page.body" :value="page" />
-        </UContainer>
-      </UPageBody>
-    </UPage>
-  </UContainer>
+    <UPageBody>
+      <UContainer>
+        <ContentRenderer v-if="page && page.body" :value="page" />
+      </UContainer>
+    </UPageBody>
+  </UPage>
 </template>
