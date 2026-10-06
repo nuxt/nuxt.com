@@ -4,10 +4,11 @@ name: Nuxt
 description: Nuxt design system, powered by Nuxt UI and Tailwind CSS v4. Dark mode is the default theme.
 brand:
   green: "#00DC82"
-  navy: "#020420"
+  black: "#0A0A0A"
   white: "#FFFFFF"
 theme:
   font-sans: "'Public Sans', sans-serif"
+  font-outfit: "'Outfit', serif"
   color-green-50: "#EFFDF5"
   color-green-100: "#D9FBE8"
   color-green-200: "#B3F5D1"
@@ -21,7 +22,7 @@ theme:
   color-green-950: "#052E16"
 semantic-colors:
   primary: green
-  neutral: slate
+  neutral: neutral
   important: violet
   secondary: blue
   success: green
@@ -71,7 +72,7 @@ components:
 
 ## Overview
 
-Nuxt is the design language for Nuxt products and communications. The aesthetic is developer-focused and confident: deep navy surfaces, Nuxt green as the single accent, and generous whitespace. Prioritize readability, accessibility, and clarity over decoration. Use color to signal state or hierarchy, not to fill space.
+Nuxt is the design language for Nuxt products and communications. The aesthetic is developer-focused and confident: true neutral surfaces, Nuxt green as the single accent, and generous whitespace. Prioritize readability, accessibility, and clarity over decoration. Use color to signal state or hierarchy, not to fill space.
 
 The system is powered by [Nuxt UI](https://ui.nuxt.com) and **Tailwind CSS v4**, with **CSS variables** as design tokens. Colors are semantic (`primary`, `neutral`, `error`…) rather than hardcoded hex values in components. Dark mode is the default theme.
 
@@ -87,6 +88,7 @@ Theme tokens are defined with the `@theme` directive:
 
 @theme static {
   --font-sans: 'Public Sans', sans-serif;
+  --font-outfit: 'Outfit', serif;
   --color-green-50: #EFFDF5;
   /* … green-100 through green-950 … */
   --color-green-400: #00DC82;
@@ -113,7 +115,7 @@ These are the Nuxt marketing colors, distinct from Nuxt UI semantic tokens:
 | Name | Hex | Usage |
 |------|-----|-------|
 | Green | `#00DC82` | Logo, brand accent. Maps to `green-400` in `@theme`. |
-| Navy | `#020420` | Dark backgrounds, OG images, `theme-color` meta. |
+| Black | `#0A0A0A` | Dark backgrounds. Maps to `neutral-950`. |
 | White | `#FFFFFF` | Text on dark surfaces, light logo variants. |
 
 The full green scale (`green-50`–`green-950`) is defined in `@theme static` and powers the `primary` semantic color.
@@ -125,7 +127,7 @@ Nuxt UI maps semantic aliases to Tailwind color scales via runtime config:
 | Semantic | Maps to | Usage |
 |----------|---------|-------|
 | `primary` | `green` | CTAs, links, active nav, brand elements |
-| `neutral` | `slate` | Text, borders, backgrounds, disabled states |
+| `neutral` | `neutral` | Text, borders, backgrounds, disabled states |
 | `important` | `violet` | Highlighted badges and emphasis |
 | `secondary` | `blue` (default) | Secondary actions |
 | `success` | `green` (default) | Success states |
@@ -172,7 +174,7 @@ Nuxt UI exposes semantic utility classes backed by `--ui-*` CSS variables. See t
 | `bg-accented` | Hover states, active panels |
 | `bg-inverted` | Inverted surface |
 
-The dark theme overrides `--ui-bg` to `neutral-950` (deeper than the Nuxt UI default `neutral-900`) for a navy-adjacent feel.
+The dark theme overrides `--ui-bg` to `neutral-950` (deeper than the Nuxt UI default `neutral-900`).
 
 ### Border hierarchy
 
@@ -187,7 +189,10 @@ Cards and modules typically use `border border-default` on `bg-elevated` or `bg-
 
 ## Typography
 
-**Font:** Public Sans (`--font-sans`), loaded via `@nuxt/fonts`.
+**Fonts:** loaded via `@nuxt/fonts`.
+
+- **Outfit** (`--font-outfit`) for headings (`h1`–`h6`), medium weight (500).
+- **Public Sans** (`--font-sans`) for body copy and interface text.
 
 Nuxt UI does not ship a fixed type scale like a dedicated design system. Use Tailwind utilities:
 
@@ -200,7 +205,7 @@ Nuxt UI does not ship a fixed type scale like a dedicated design system. Use Tai
 | UI labels | `text-sm`, `text-xs` |
 | Code | `font-mono`, Shiki-highlighted blocks |
 
-Prefer semantic text classes (`text-highlighted`, `text-muted`) over raw slate colors.
+Prefer semantic text classes (`text-highlighted`, `text-muted`) over raw neutral colors.
 
 ## Layout
 

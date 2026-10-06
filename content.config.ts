@@ -98,7 +98,9 @@ const Button = z.object({
   size: z.enum(['xs', 'sm', 'md', 'lg', 'xl']).optional(),
   variant: z.enum(['solid', 'outline', 'subtle', 'soft', 'ghost', 'link']).optional(),
   id: z.string().optional(),
-  target: z.enum(['_blank', '_self']).optional()
+  target: z.enum(['_blank', '_self']).optional(),
+  download: z.union([z.boolean(), z.string()]).optional(),
+  external: z.boolean().optional()
 })
 
 const BaseSection = z.object({

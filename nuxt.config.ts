@@ -164,6 +164,7 @@ export default defineNuxtConfig({
     // the canonical site URL and ingests the LIVE production sitemap, so every
     // deploy would ship a copy of the previous one.
     '/design.md': { prerender: true },
+    '/nuxt-brand-assets.zip': { prerender: true },
     '/404.html': { prerender: true },
     '/docs/3.x/getting-started/introduction': { prerender: true },
     '/docs/4.x/getting-started/introduction': { prerender: true },

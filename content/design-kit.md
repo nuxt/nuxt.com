@@ -5,13 +5,19 @@ head.description: Get the Nuxt assets such as Logo, Typography and Colors.
 description: Welcome to Nuxt design definition page. Identity was redefined by handpicking conscientiously colors, and shapes in order to express how easy & joyful Nuxt products are.
 navigation.icon: 'i-lucide-palette'
 links:
+  - label: 'Download Brand Assets'
+    size: 'lg'
+    to: '/nuxt-brand-assets.zip'
+    icon: 'i-lucide-download'
+    download: 'nuxt-brand-assets.zip'
+    external: true
   - label: 'Nuxt Brand Kit'
     size: 'lg'
     to: 'https://www.figma.com/community/file/1296154408275753939/nuxt-brand-kit'
     icon: 'i-logos-figma'
     trailingIcon: 'i-lucide-arrow-up-right'
-    download: true
     color: 'neutral'
+    variant: 'subtle'
     target: '_blank'
 ---
 
@@ -40,24 +46,33 @@ The logo is made from two elements: the triangular mountains and the wordmark. I
 ::u-page-grid
   :design-kit-image-card{path="icon-green" name="Green"}
   :design-kit-image-card{path="icon-black" name="Black" background="bg-white"}
-  :design-kit-image-card{path="icon-white" name="White" background="bg-gray-950"}
+  :design-kit-image-card{path="icon-white" name="White" background="bg-neutral-950"}
 ::
 
 ### Logo
 
 ::u-page-grid
-  :design-kit-image-card{path="logo-green-white" name="Green & white" background="bg-gray-950" full}
+  :design-kit-image-card{path="logo-green-white" name="Green & white" background="bg-neutral-950" full}
   :design-kit-image-card{path="logo-black" name="Black" background="bg-white" full}
-  :design-kit-image-card{path="logo-white" name="White" background="bg-gray-950" full}
+  :design-kit-image-card{path="logo-white" name="White" background="bg-neutral-950" full}
   :design-kit-image-card{path="logo-green-black" name="Green & black" background="bg-white" full}
 ::
 
 ## Color Palette
 
-Our color palette is based on our iconic Nuxt green and colours have been carefully considered to work in harmony and consistency across various media. When creating Nuxt communications, use the colour values shown to make sure your designs stay on-brand.
+Our color palette is based on our iconic Nuxt green, paired with true neutrals so the green carries every accent. When creating Nuxt communications, use the colour values shown to make sure your designs stay on-brand.
 
 ::u-page-grid
   :design-kit-color-card{background="#00DC82" name="Green"}
   :design-kit-color-card{background="#FFFFFF" name="White"}
-  :design-kit-color-card{background="#020420" name="Gray"}
+  :design-kit-color-card{background="#0A0A0A" name="Black"}
+::
+
+## Typography
+
+Headings are set in Outfit, a geometric sans-serif whose rounded shapes echo the Nuxt mountains. Body copy and interface text use Public Sans for long-form readability.
+
+::u-page-grid
+  :design-kit-font-card{name="Outfit" usage="Headings and titles, medium weight" font="font-outfit" to="https://fonts.google.com/specimen/Outfit"}
+  :design-kit-font-card{name="Public Sans" usage="Body copy and interface text" font="font-sans" to="https://fonts.google.com/specimen/Public+Sans"}
 ::

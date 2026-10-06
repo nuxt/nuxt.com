@@ -7,7 +7,7 @@ import { DocsProseImg } from '#components'
 import { SUPPORTED_DOCS_PATH_REGEX } from '#shared/utils/docs'
 
 definePageMeta({
-  heroBackground: 'opacity-30',
+  heroBackground: false,
   key: 'docs'
 })
 
