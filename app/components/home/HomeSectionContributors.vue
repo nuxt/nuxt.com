@@ -74,7 +74,6 @@ async function nextContributors() {
       <Transition
         name="avatar"
         mode="out-in"
-        appear
       >
         <a
           v-if="username"
