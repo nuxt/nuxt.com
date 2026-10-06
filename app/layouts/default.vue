@@ -39,6 +39,7 @@ onMounted(() => {
 
     <UMain class="relative">
       <HeroBackground
+        v-if="route.meta?.heroBackground !== false"
         class="absolute w-full -top-px transition-all text-primary shrink-0 -z-10"
         :class="[
           isLoading ? 'animate-pulse' : (appear ? heroBackgroundClass : 'opacity-0'),

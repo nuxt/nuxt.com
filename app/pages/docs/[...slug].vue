@@ -7,7 +7,7 @@ import { cliInstanceKey } from '#shared/utils/content'
 import { DOCS_REFS, DOCS_REPO, isCanonicalDocsPath, isVersionedDocsPath } from '#shared/utils/docs'
 
 definePageMeta({
-  heroBackground: 'opacity-30',
+  heroBackground: false,
   key: 'docs'
 })
 

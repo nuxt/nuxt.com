@@ -154,6 +154,7 @@ export default defineNuxtConfig({
     '/sitemap.md': { isr: CONTENT_ISR },
     '/design.md': { isr: CONTENT_ISR, robots: 'noindex' },
     '/openapi.json': { isr: CONTENT_ISR },
+    '/nuxt-brand-assets.zip': { prerender: true },
     '/modules': { isr: 60 * 60, prerender: false },
     '/modules/**': { isr: 60 * 60 },
     '/changelog': { isr: 60 * 60 },

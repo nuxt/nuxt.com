@@ -1,7 +1,7 @@
 <script setup lang="ts">
 definePageMeta({
   validate: route => /^\d\.x$/.test(route.params.version as string),
-  heroBackground: 'opacity-30'
+  heroBackground: false
 })
 
 const route = useRoute()

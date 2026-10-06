@@ -4,10 +4,11 @@ name: Nuxt
 description: Nuxt design system, powered by Nuxt UI and Tailwind CSS v4. Dark mode is the default theme.
 brand:
   green: "#00DC82"
-  navy: "#020420"
+  black: "#0A0A0A"
   white: "#FFFFFF"
 theme:
-  font-sans: "'Public Sans', sans-serif"
+  font-sans: "'Inter', ui-sans-serif, system-ui, sans-serif"
+  font-heading: "'Outfit', var(--font-sans)"
   color-green-50: "#EFFDF5"
   color-green-100: "#D9FBE8"
   color-green-200: "#B3F5D1"
@@ -21,7 +22,7 @@ theme:
   color-green-950: "#052E16"
 semantic-colors:
   primary: green
-  neutral: slate
+  neutral: neutral
   important: violet
   secondary: blue
   success: green
@@ -69,31 +70,52 @@ components:
 
 # Nuxt
 
-## Overview
+Use this file to design or build an official Nuxt surface: nuxt.com, framework and module documentation, templates, and other Nuxt-authored sites built with [Nuxt UI](https://ui.nuxt.com). The tokens in the front matter are the machine-readable source; this body explains how to apply them.
 
-Nuxt is the design language for Nuxt products and communications. The aesthetic is developer-focused and confident: deep navy surfaces, Nuxt green as the single accent, and generous whitespace. Prioritize readability, accessibility, and clarity over decoration. Use color to signal state or hierarchy, not to fill space.
+The aesthetic is developer-focused, calm, and confident: true neutral surfaces, Nuxt green as the single accent, and generous whitespace. Build trust through clarity and accurate technical content, never through decoration. Dark mode is the default theme.
 
-The system is powered by [Nuxt UI](https://ui.nuxt.com) and **Tailwind CSS v4**, with **CSS variables** as design tokens. Colors are semantic (`primary`, `neutral`, `error`…) rather than hardcoded hex values in components. Dark mode is the default theme.
+## Download logos
 
-Logo assets and downloadable brand files live at [/design-kit](/design-kit).
+Official Nuxt logo, with transparent backgrounds:
 
-## Tailwind CSS
+- For dark backgrounds: [Green & white SVG](https://nuxt.com/assets/design-kit/logo-green-white.svg) · [PNG](https://nuxt.com/assets/design-kit/logo-green-white.png)
+- For light backgrounds: [Green & black SVG](https://nuxt.com/assets/design-kit/logo-green-black.svg) · [PNG](https://nuxt.com/assets/design-kit/logo-green-black.png)
+- Icon only: [Green SVG](https://nuxt.com/assets/design-kit/icon-green.svg) · [PNG](https://nuxt.com/assets/design-kit/icon-green.png)
+- Everything, including monochrome variants: [nuxt-brand-assets.zip](https://nuxt.com/nuxt-brand-assets.zip)
 
-Theme tokens are defined with the `@theme` directive:
+Prefer SVG for websites. Never use the wordmark without the mountain symbol, and never recolor, stretch, or redraw the logo. See [/design-kit](https://nuxt.com/design-kit) for every variant and the [Figma brand kit](https://www.figma.com/community/file/1296154408275753939/nuxt-brand-kit) for source files.
+
+## Priority order
+
+When requirements compete, protect them in this order:
+
+1. Accuracy of the content: code samples, versions, APIs, and claims.
+2. The host stack: Nuxt, Nuxt UI, and Tailwind CSS v4. Use existing components and tokens before writing new ones.
+3. Readability and accessibility: WCAG AA contrast, keyboard access, visible focus.
+4. Nuxt identity: the logo, green as the only accent, Outfit headings, Inter body, neutral surfaces.
+5. Composition that fits the content, rather than a fixed template.
+
+## Foundation
+
+The system is Nuxt UI on top of Tailwind CSS v4. Brand tokens are declared once with `@theme`; everything else comes from Nuxt UI's semantic tokens:
 
 ```css
 @import "tailwindcss";
 @import "@nuxt/ui";
 
 @theme static {
-  --font-sans: 'Public Sans', sans-serif;
+  --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+  --font-heading: 'Outfit', var(--font-sans);
   --color-green-50: #EFFDF5;
   /* … green-100 through green-950 … */
   --color-green-400: #00DC82;
 }
 
-:root {
-  --ui-container: 90rem;
+@layer base {
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-heading);
+    font-weight: var(--font-weight-medium) !important;
+  }
 }
 
 .dark {
@@ -104,176 +126,158 @@ Theme tokens are defined with the `@theme` directive:
 }
 ```
 
-See the [Nuxt UI design system docs](https://ui.nuxt.com/docs/getting-started/theme/design-system) for full `@theme` customization options.
-
-## Brand colors
-
-These are the Nuxt marketing colors, distinct from Nuxt UI semantic tokens:
-
-| Name | Hex | Usage |
-|------|-----|-------|
-| Green | `#00DC82` | Logo, brand accent. Maps to `green-400` in `@theme`. |
-| Navy | `#020420` | Dark backgrounds, OG images, `theme-color` meta. |
-| White | `#FFFFFF` | Text on dark surfaces, light logo variants. |
-
-The full green scale (`green-50`–`green-950`) is defined in `@theme static` and powers the `primary` semantic color.
-
-## Semantic colors
-
-Nuxt UI maps semantic aliases to Tailwind color scales via runtime config:
-
-| Semantic | Maps to | Usage |
-|----------|---------|-------|
-| `primary` | `green` | CTAs, links, active nav, brand elements |
-| `neutral` | `slate` | Text, borders, backgrounds, disabled states |
-| `important` | `violet` | Highlighted badges and emphasis |
-| `secondary` | `blue` (default) | Secondary actions |
-| `success` | `green` (default) | Success states |
-| `info` | `blue` (default) | Info alerts, tooltips |
-| `warning` | `yellow` (default) | Warnings, pending states |
-| `error` | `red` (default) | Errors, destructive actions |
-
-Use the `color` prop on Nuxt UI components:
-
-```vue
-<UButton color="primary">Get Started</UButton>
-<UButton color="neutral" variant="subtle">Learn More</UButton>
-<UButton color="error">Delete</UButton>
+```ts [app.config.ts]
+export default defineAppConfig({
+  ui: {
+    colors: {
+      primary: 'green',
+      neutral: 'neutral',
+      important: 'violet'
+    }
+  }
+})
 ```
 
-Registered theme colors: `primary`, `secondary`, `info`, `success`, `warning`, `error`, `important`.
+The heading rule lives in a base layer until Nuxt UI ships a heading font token (`--ui-font-heading`). Its `!important` overrides the bold weights Nuxt UI hardcodes on titles, so weight utilities have no effect on headings.
 
-## CSS variables
+## Public tokens
 
-Nuxt UI exposes semantic utility classes backed by `--ui-*` CSS variables. See the [CSS variables docs](https://ui.nuxt.com/docs/getting-started/theme/css-variables).
+Name tokens by role, never by value or typeface. Use only the tokens below; do not invent, alias, or redeclare them in page code. Extend the system by adding a role to `@theme` or `app.config.ts`, not by hardcoding values.
 
-### Color utilities
+### Fonts
 
-`text-primary`, `bg-success`, `border-error`, etc. — each resolves to a shade of the mapped color scale. Light mode uses `-500` shades; dark mode uses `-400`.
+| Token | Utility | Role |
+|-------|---------|------|
+| `--font-heading` | `font-heading` | Headings and titles (Outfit) |
+| `--font-sans` | `font-sans` | Body copy, labels, controls (Inter) |
+| `--font-mono` | `font-mono` | Code, commands, file paths, identifiers |
 
-### Text hierarchy
+Set only the identifier in `font-mono`, not the sentence around it.
 
-| Class | Role |
-|-------|------|
-| `text-dimmed` | Disabled, placeholder |
-| `text-muted` | Secondary text, captions |
-| `text-toned` | Tertiary text |
-| `text-default` | Body text |
-| `text-highlighted` | Headings, emphasis |
-| `text-inverted` | Text on inverted backgrounds |
+### Colors
 
-### Background hierarchy
+| Semantic | Maps to | Use |
+|----------|---------|-----|
+| `primary` | `green` | The main action on a view, links, active navigation |
+| `neutral` | `neutral` | Text, borders, surfaces, disabled states |
+| `important` | `violet` | Rare emphasis badges |
+| `secondary` | `blue` | Secondary actions |
+| `success` | `green` | Success states |
+| `info` | `blue` | Informational alerts |
+| `warning` | `yellow` | Warnings, pending states |
+| `error` | `red` | Errors, destructive actions |
 
-| Class | Role |
-|-------|------|
-| `bg-default` | Page surface |
-| `bg-muted` | Subtle fill, grouped content |
-| `bg-elevated` | Cards, popovers |
-| `bg-accented` | Hover states, active panels |
-| `bg-inverted` | Inverted surface |
+Use the `color` prop on Nuxt UI components (`<UButton color="neutral" variant="subtle">`) and semantic utilities in markup. Light mode resolves to `-500` shades, dark mode to `-400`.
 
-The dark theme overrides `--ui-bg` to `neutral-950` (deeper than the Nuxt UI default `neutral-900`) for a navy-adjacent feel.
+### Text, surfaces, and borders
 
-### Border hierarchy
+| Text | Role | Surface | Role | Border | Role |
+|------|------|---------|------|--------|------|
+| `text-highlighted` | Headings, emphasis | `bg-default` | Page canvas | `border-default` | Standard |
+| `text-default` | Body | `bg-muted` | Subtle grouping | `border-muted` | Dividers |
+| `text-toned` | Tertiary | `bg-elevated` | Cards, popovers | `border-accented` | Emphasis |
+| `text-muted` | Secondary, captions | `bg-accented` | Hover, active | `border-inverted` | On inverted |
+| `text-dimmed` | Disabled, placeholder | `bg-inverted` | Inverted | | |
 
-| Class | Role |
-|-------|------|
-| `border-default` | Standard borders |
-| `border-muted` | Subtle dividers |
-| `border-accented` | Emphasized borders |
-| `border-inverted` | Borders on inverted surfaces |
+The dark canvas is `neutral-950` (`#0A0A0A`), deeper than the Nuxt UI default.
 
-Cards and modules typically use `border border-default` on `bg-elevated` or `bg-muted`.
+### Brand colors
 
-## Typography
+For logos, social images, and print. Do not use them as raw values in UI code.
 
-**Font:** Public Sans (`--font-sans`), loaded via `@nuxt/fonts`.
+| Name | Hex | Use |
+|------|-----|-----|
+| Green | `#00DC82` | Logo, brand accent. Maps to `green-400`. |
+| Black | `#0A0A0A` | Dark backgrounds. Maps to `neutral-950`. |
+| White | `#FFFFFF` | Text and logos on dark backgrounds. |
 
-Nuxt UI does not ship a fixed type scale like a dedicated design system. Use Tailwind utilities:
+## Typography roles
 
-| Context | Typical classes |
-|---------|----------------|
-| Page hero | `text-5xl sm:text-7xl font-semibold` |
-| Section hero | `sm:text-5xl font-semibold` |
-| Section headings | `text-2xl`–`text-4xl font-semibold` |
-| Body / prose | `prose prose-primary dark:prose-invert` |
-| UI labels | `text-sm`, `text-xs` |
-| Code | `font-mono`, Shiki-highlighted blocks |
+Pick a role, not a size. Equivalent peers always share a role; never resize one item because its text is longer.
 
-Prefer semantic text classes (`text-highlighted`, `text-muted`) over raw slate colors.
+| Role | Use | Implementation |
+|------|-----|----------------|
+| Display | The single page-defining statement on a marketing page | `UPageHero` title |
+| Section | A major turn on a marketing page | `UPageSection` title (`text-3xl sm:text-4xl lg:text-5xl`) |
+| Page title | Documentation and content pages | `UPageHeader` title (`text-3xl sm:text-4xl`) |
+| Heading | Nested structure in content | Prose `h2` / `h3` / `h4` (`text-2xl` / `text-xl` / `text-lg`) |
+| Card title | Titles inside peer cards | `UPageCard` title (`text-base`) |
+| Lede | One short orientation passage under a title | Hero or section description (`text-lg sm:text-xl text-muted`) |
+| Body | Reading text | Prose paragraph (`text-base leading-7`) |
+| Label | Compact names, controls, navigation | `text-sm` |
+| Caption | Subordinate context for evidence | `text-sm text-muted` or `text-xs text-muted` |
+
+All headings render in Outfit at medium weight. Body copy is regular weight; emphasis is scarce. Keep prose near 65 characters per line, and rewrite rather than shrink text to make it fit.
 
 ## Layout
 
-### Container
+- **Container:** `UContainer`, max width `--ui-container: 90rem`.
+- **Spacing:** Tailwind's 4px scale. `gap-2` inside a group, `gap-4` between related items, `py-10 sm:py-20` for sections, `py-24 sm:py-32 lg:py-40` for heroes.
+- **Breakpoints:** Tailwind defaults (`sm` 640px, `md` 768px, `lg` 1024px, `xl` 1280px, `2xl` 1536px).
+- **Radius:** every `rounded-*` utility derives from `--ui-radius`. Controls and cards use `rounded-md` or `rounded-lg`; reserve `rounded-2xl` for large panels.
 
-`--ui-container: 90rem` — used by `UContainer`.
-
-### Header
-
-`--ui-header-height: 112px` on large screens for docs and marketing layouts.
-
-### Spacing
-
-Tailwind's default 4px-based spacing scale. Common rhythm:
-
-- `gap-2` / `p-2` (8px) — inside a group
-- `gap-4` / `p-4` (16px) — between related items
-- `py-10 sm:py-20` — section padding
-- `py-24 sm:py-32 lg:py-40` — hero sections
-
-### Breakpoints
-
-Tailwind defaults: `sm` 640px, `md` 768px, `lg` 1024px, `xl` 1280px, `2xl` 1536px.
-
-## Radius
-
-Nuxt UI derives all `rounded-*` utilities from a single `--ui-radius` base (default `0.25rem`). Available: `rounded-xs`, `rounded-sm`, `rounded-md`, `rounded-lg`, `rounded-xl`, `rounded-2xl`, `rounded-3xl`.
-
-Cards and controls typically use `rounded-lg` or `rounded-md`. Hero panels may use `rounded-2xl`.
+Give every gap one owner: the parent's `gap` sets spacing, children do not add competing margins.
 
 ## Components
 
-Use Nuxt UI primitives — do not rebuild what already exists:
+Use Nuxt UI primitives. Do not rebuild what exists:
 
-| Pattern | Component | Example |
-|---------|-----------|---------|
-| Primary action | `UButton` | `<UButton color="primary">Deploy</UButton>` |
-| Secondary action | `UButton` | `<UButton color="neutral" variant="subtle">Cancel</UButton>` |
-| Tertiary / link | `UButton` | `<UButton variant="ghost">Docs</UButton>` |
-| Destructive | `UButton` | `<UButton color="error">Delete</UButton>` |
-| Form input | `UInput` | `<UInput placeholder="Search modules" />` |
-| Page layout | `UPage`, `UPageHero`, `UPageBody` | Marketing and docs pages |
-| Content | `ContentRenderer` + prose | Markdown/MDC content |
-| Navigation | `UHeader`, `UNavigationMenu` | App header |
+| Pattern | Component |
+|---------|-----------|
+| Primary action | `<UButton color="primary">` |
+| Secondary action | `<UButton color="neutral" variant="subtle">` |
+| Tertiary or inline action | `<UButton variant="ghost">` or `variant="link"` |
+| Destructive action | `<UButton color="error">` |
+| Form input | `UInput`, `UFormField` |
+| Page structure | `UPage`, `UPageHero`, `UPageSection`, `UPageHeader`, `UPageBody` |
+| Content | `ContentRenderer` with prose components |
+| Navigation | `UHeader`, `UNavigationMenu`, `UContentNavigation` |
+| Menus | `UDropdownMenu`, `UContextMenu` |
 
-Focus rings are handled by Nuxt UI (`outline-primary/25` on `:focus-visible`). Do not remove outlines without a visible replacement.
+Icons use Lucide (`i-lucide-*`) for interface actions and Simple Icons (`i-simple-icons-*`) for third-party brands. Use an icon only when it makes an action faster to recognize.
 
-## Motion
+## Effects and motion
 
-Use motion sparingly. Honor `prefers-reduced-motion`. Nuxt UI components include sensible default transitions for modals, popovers, and menus.
+Surfaces are flat. Earn a border or a card only when it communicates grouping, selection, or interaction that spacing cannot express.
 
-## Voice & Content
+The green hero glow (`HeroBackground`, enabled per page with the `heroBackground` page meta) is reserved for marketing page heroes. Documentation and product interfaces use no glows, gradients, or blurs.
+
+Default to stillness. Animate only to explain a state change or confirm an action, keep Nuxt UI's built-in transitions, and honor `prefers-reduced-motion`.
+
+## Voice and content
 
 - Title Case for labels, buttons, titles, and tabs; sentence case for body and helper text.
-- Name actions with a verb and a noun (`Deploy Project`, `Install Module`).
+- Name actions with a verb and a noun: `Deploy Project`, `Install Module`.
 - Write errors as what happened plus what to do next.
-- Toasts name the specific thing that changed — no trailing period, no "successfully".
+- Toasts name the specific thing that changed, with no trailing period and no "successfully".
 - Empty states point to the first action.
-- In-progress states use present participle + ellipsis: `Deploying…`.
+- In-progress states use a present participle and an ellipsis: `Deploying…`.
 
-## Do's and Don'ts
+## Reject these
 
-- Use semantic color props (`color="primary"`) and utility classes (`text-muted`, `bg-elevated`) — not raw hex in components.
-- Use the green `primary` color for the main call to action on a view.
-- Rank text with `text-highlighted` > `text-default` > `text-muted` > `text-dimmed`.
-- Hold WCAG AA contrast (4.5:1 for body text).
-- Don't signal state with color alone; pair with an icon or label.
-- Don't hardcode `#00DC82` in UI code — use `text-primary` or `color="primary"`.
-- Don't use the wordmark without the mountain symbol — see [/design-kit](/design-kit).
+- Raw hex values or palette classes (`text-gray-500`) in components instead of semantic tokens.
+- New tokens named after a value or typeface, such as `--font-outfit` or `--color-dark-navy`.
+- Arbitrary font sizes, or weight utilities on headings.
+- Glows, gradients, gradient text, or blurs outside marketing heroes.
+- Cards nested inside cards, or borders used to repair weak hierarchy.
+- Icons in colored tiles, decorative icons, or mixed icon sets.
+- Tiny muted body text used to make content fit.
+- State communicated by color alone.
+- Re-implemented Nuxt UI components.
+- The wordmark without the mountain, or a recolored, stretched, or redrawn logo.
+
+## Review before shipping
+
+1. **Identity:** Is it unmistakably Nuxt at a glance: logo, green accent, Outfit headings?
+2. **Hierarchy:** Is there one dominant element per view, and does every element use a typography role?
+3. **Tokens:** Are all colors, fonts, and radii semantic tokens, with no raw values?
+4. **Restraint:** Can any border, card, icon, color, or effect be removed without losing meaning? If yes, remove it.
+5. **Themes:** Do dark and light modes keep the same hierarchy and contrast?
+6. **Access:** Is everything usable by keyboard, with visible focus, labels, and text alternatives?
+7. **Reflow:** Does the layout recompose on narrow screens without overflow?
 
 ## Resources
 
-- Brand assets (logos, icons): [/design-kit](/design-kit)
-- Figma brand kit: [Nuxt Brand Kit](https://www.figma.com/community/file/1296154408275753939/nuxt-brand-kit)
+- Brand assets: [/design-kit](https://nuxt.com/design-kit) and the [Figma brand kit](https://www.figma.com/community/file/1296154408275753939/nuxt-brand-kit)
 - Nuxt UI design system: [ui.nuxt.com/docs/getting-started/theme/design-system](https://ui.nuxt.com/docs/getting-started/theme/design-system)
 - Nuxt UI CSS variables: [ui.nuxt.com/docs/getting-started/theme/css-variables](https://ui.nuxt.com/docs/getting-started/theme/css-variables)

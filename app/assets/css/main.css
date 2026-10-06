@@ -4,7 +4,8 @@
 @source "../../../content/**/*";
 
 @theme static {
-  --font-sans: 'Public Sans', sans-serif;
+  --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+  --font-heading: 'Outfit', var(--font-sans);
 
   --color-green-50: #EFFDF5;
   --color-green-100: #D9FBE8;
@@ -17,6 +18,14 @@
   --color-green-800: #016538;
   --color-green-900: #0A5331;
   --color-green-950: #052E16;
+}
+
+/* until Nuxt UI v5 ships --ui-font-heading; !important beats the bold weights hardcoded in Nuxt UI titles */
+@layer base {
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-heading);
+    font-weight: var(--font-weight-medium) !important;
+  }
 }
 
 :root {
