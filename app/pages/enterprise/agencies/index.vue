@@ -42,64 +42,66 @@ await fetchList()
 </script>
 
 <template>
-  <UContainer v-if="pageData">
+  <UPage v-if="pageData">
     <UPageHero
       :title="pageData.title"
       :description="pageData.description"
       :links="pageData.links"
     />
 
-    <UPage id="smooth" class="pt-20 -mt-20">
-      <template #left>
-        <UPageAside>
-          <UContentNavigation highlight :navigation="navigation" :collapsible="false" />
-        </UPageAside>
-      </template>
+    <UContainer>
+      <UPage>
+        <template #left>
+          <UPageAside>
+            <UContentNavigation highlight :navigation="navigation" :collapsible="false" />
+          </UPageAside>
+        </template>
 
-      <UPageBody>
-        <UPageGrid v-if="filteredAgencies?.length" class="lg:grid-cols-2">
-          <UPageCard
-            v-for="(agency, index) in filteredAgencies"
-            :key="index"
-            variant="subtle"
-            :to="agency.path"
-            :title="agency.title"
-            :description="agency.description"
-          >
-            <template #leading>
-              <UColorModeAvatar
-                :light="agency.logo.light"
-                :dark="agency.logo.dark"
-                :alt="agency.location.title"
-                size="lg"
-                class="rounded-none bg-transparent"
-              />
-            </template>
+        <UPageBody>
+          <UPageGrid v-if="filteredAgencies?.length" class="lg:grid-cols-2">
+            <UPageCard
+              v-for="(agency, index) in filteredAgencies"
+              :key="index"
+              variant="subtle"
+              :to="agency.path"
+              :title="agency.title"
+              :description="agency.description"
+            >
+              <template #leading>
+                <UColorModeAvatar
+                  :light="agency.logo.light"
+                  :dark="agency.logo.dark"
+                  :alt="agency.location.title"
+                  size="lg"
+                  class="rounded-none bg-transparent"
+                />
+              </template>
 
-            <template #footer>
-              <UBadge :label="agency.location.title" color="neutral" variant="subtle" />
-            </template>
-          </UPageCard>
-        </UPageGrid>
+              <template #footer>
+                <UBadge :label="agency.location.title" color="neutral" variant="subtle" />
+              </template>
+            </UPageCard>
+          </UPageGrid>
 
-        <EmptyCard v-else label="No agency matches your criteria for now.">
-          <UButton
-            label="Clear filters"
-            color="neutral"
-            variant="subtle"
-            trailing-icon="i-lucide-circle-x"
-            size="md"
-            @click="$router.replace({ query: {} })"
-          />
-          <UButton
-            to="https://opencollective.com/nuxtjs/contribute/agency-partner-93555"
-            target="_blank"
-            color="neutral"
-            size="md"
-            label="Become a partner"
-          />
-        </EmptyCard>
-      </UPageBody>
-    </UPage>
-  </UContainer>
+          <EmptyCard v-else label="No agency matches your criteria for now.">
+            <UButton
+              label="Clear filters"
+              color="neutral"
+              variant="subtle"
+              trailing-icon="i-lucide-circle-x"
+              size="md"
+              @click="$router.replace({ query: {} })"
+            />
+            <UButton
+              to="https://opencollective.com/nuxtjs/contribute/agency-partner-93555"
+              target="_blank"
+              color="neutral"
+              size="md"
+              label="Become a partner"
+            />
+          </EmptyCard>
+        </UPageBody>
+      </UPage>
+    </UContainer>
+  </UPage>
 </template>

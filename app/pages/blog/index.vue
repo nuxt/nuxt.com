@@ -41,7 +41,7 @@ await fetchList()
 </script>
 
 <template>
-  <UContainer v-if="pageData">
+  <UPage v-if="pageData">
     <UPageHero
       :title="pageData.title"
       :description="pageData.description"
@@ -93,5 +93,5 @@ await fetchList()
         </UBlogPosts>
       </UContainer>
     </UPageBody>
-  </UContainer>
+  </UPage>
 </template>

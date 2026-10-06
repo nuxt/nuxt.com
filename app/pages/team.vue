@@ -62,14 +62,14 @@ const icons = {
 </script>
 
 <template>
-  <UContainer v-if="pageData">
+  <UPage v-if="pageData">
     <UPageHero
       :title="pageData.title"
       :description="pageData.description"
     />
 
-    <UPage>
-      <UPageBody class="mt-0">
+    <UPageBody class="mt-0">
+      <UContainer>
         <template v-for="(team, index) of teams" :key="index">
           <h2 class="font-bold text-2xl mb-4 flex gap-2 items-center justify-between" :class="{ 'mt-12 md:mt-24': !!index }">
             <span>{{ team.name }}</span>
@@ -137,7 +137,7 @@ const icons = {
             </UPageCard>
           </UPageGrid>
         </template>
-      </UPageBody>
-    </UPage>
-  </UContainer>
+      </UContainer>
+    </UPageBody>
+  </UPage>
 </template>

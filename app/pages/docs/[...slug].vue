@@ -247,7 +247,11 @@ const noRightAside = computed(() => route.path.includes('/examples/'))
             :navigation="asideNavigation"
             default-open
             trailing-icon="i-lucide-chevron-right"
-            :ui="{ linkTrailingIcon: 'group-data-[state=open]:rotate-90' }"
+            :ui="{
+              link: 'data-[state=open]:text-muted data-[state=open]:hover:text-highlighted',
+              trigger: 'font-normal',
+              linkTrailingIcon: 'group-data-[state=open]:rotate-90'
+            }"
             highlight
           />
         </template>
@@ -291,107 +295,106 @@ const noRightAside = computed(() => route.path.includes('/examples/'))
         </template>
       </UDrawer>
     </div>
-    <UPage>
+    <UPage
+      :ui="isAgentDocked || noRightAside ? {
+        center: 'lg:col-span-8',
+        right: 'hidden'
+      } : { right: 'hidden lg:flex' }"
+    >
       <template #left>
         <UPageAside>
           <UContentNavigation
             :navigation="asideNavigation"
             :collapsible="false"
+            :ui="{ link: 'data-[state=open]:text-muted data-[state=open]:hover:text-highlighted', trigger: 'font-normal' }"
             highlight
           />
         </UPageAside>
       </template>
-      <UPage
-        :ui="isAgentDocked || noRightAside ? {
-          center: 'lg:col-span-10',
-          right: 'hidden'
-        } : { root: 'lg:grid-cols-12', center: 'lg:col-span-9', right: 'hidden lg:flex lg:col-span-3' }"
+      <UPageHeader
+        :ui="{
+          wrapper: 'flex-row items-center flex-wrap justify-between'
+        }"
+        v-bind="fm"
       >
-        <UPageHeader
-          :ui="{
-            wrapper: 'flex-row items-center flex-wrap justify-between'
-          }"
-          v-bind="fm"
-        >
-          <template #headline>
-            <UBreadcrumb :items="breadcrumb" />
-          </template>
+        <template #headline>
+          <UBreadcrumb :items="breadcrumb" />
+        </template>
 
-          <template #title>
-            {{ fm.title }}
+        <template #title>
+          {{ fm.title }}
 
-            <UBadge
-              v-if="fm.minimalVersion?.trim()"
-              :label="`v${fm.minimalVersion?.trim()}`"
-              color="info"
-              variant="subtle"
-              size="lg"
-              class="align-middle"
-              :aria-label="`Minimum Nuxt version: v${fm.minimalVersion?.trim()}`"
-            />
-          </template>
-
-          <template #links>
-            <UButton
-              v-for="link in fm.links?.map((link: any) => ({ ...link, size: 'md' }))"
-              :key="link.label"
-              color="neutral"
-              variant="soft"
-              :target="link.to.startsWith('http') ? '_blank' : undefined"
-              v-bind="{ ...link, size: 'sm' }"
-            >
-              <template v-if="link.avatar" #leading>
-                <UAvatar v-bind="link.avatar" size="2xs" :alt="`${link.label} avatar`" />
-              </template>
-            </UButton>
-            <PageHeaderLinks :key="page.path" />
-          </template>
-        </UPageHeader>
-
-        <UPageBody>
-          <MarkdownDocument v-if="page.nodes?.length" :value="page" :components="markdownComponents" />
-          <div>
-            <Feedback :page="{ title: fm.title, stem: page.meta.stem }" />
-            <USeparator class="mt-6 mb-10">
-              <div class="flex items-center gap-2 text-sm text-muted">
-                <UButton
-                  size="sm"
-                  variant="link"
-                  color="neutral"
-                  to="https://github.com/nuxt/nuxt/issues/new/choose"
-                  target="_blank"
-                  label="Report an issue"
-                />
-                or
-                <UButton
-                  size="sm"
-                  variant="link"
-                  color="neutral"
-                  :to="editLink"
-                  target="_blank"
-                  label="Edit this page on GitHub"
-                />
-              </div>
-            </USeparator>
-            <UContentSurround :surround="surround" />
-          </div>
-        </UPageBody>
-
-        <template #right>
-          <ContentToc
-            v-if="!noRightAside"
-            :links="tocLinks"
-            :community-links="communityLinks"
-            highlight
-            highlight-variant="circuit"
-            class="lg:backdrop-blur-none lg:overflow-y-auto"
-            :ui="{
-              container: 'lg:max-h-[inherit]',
-              content: 'lg:min-h-[min(var(--list-height,8rem),16rem)]'
-            }"
+          <UBadge
+            v-if="fm.minimalVersion?.trim()"
+            :label="`v${fm.minimalVersion?.trim()}`"
+            color="info"
+            variant="subtle"
+            size="lg"
+            class="align-middle"
+            :aria-label="`Minimum Nuxt version: v${fm.minimalVersion?.trim()}`"
           />
         </template>
-      </UPage>
+
+        <template #links>
+          <UButton
+            v-for="link in fm.links?.map((link: any) => ({ ...link, size: 'md' }))"
+            :key="link.label"
+            color="neutral"
+            variant="soft"
+            :target="link.to.startsWith('http') ? '_blank' : undefined"
+            v-bind="{ ...link, size: 'sm' }"
+          >
+            <template v-if="link.avatar" #leading>
+              <UAvatar v-bind="link.avatar" size="2xs" :alt="`${link.label} avatar`" />
+            </template>
+          </UButton>
+          <PageHeaderLinks :key="page.path" />
+        </template>
+      </UPageHeader>
+
+      <UPageBody>
+        <MarkdownDocument v-if="page.nodes?.length" :value="page" :components="markdownComponents" />
+        <div>
+          <Feedback :page="{ title: fm.title, stem: page.meta.stem }" />
+          <USeparator class="mt-6 mb-10">
+            <div class="flex items-center gap-2 text-sm text-muted">
+              <UButton
+                size="sm"
+                variant="link"
+                color="neutral"
+                to="https://github.com/nuxt/nuxt/issues/new/choose"
+                target="_blank"
+                label="Report an issue"
+              />
+              or
+              <UButton
+                size="sm"
+                variant="link"
+                color="neutral"
+                :to="editLink"
+                target="_blank"
+                label="Edit this page on GitHub"
+              />
+            </div>
+          </USeparator>
+          <UContentSurround :surround="surround" />
+        </div>
+      </UPageBody>
+
+      <template #right>
+        <ContentToc
+          v-if="!noRightAside"
+          :links="tocLinks"
+          :community-links="communityLinks"
+          highlight
+          highlight-variant="circuit"
+          class="lg:backdrop-blur-none lg:overflow-y-auto"
+          :ui="{
+            container: 'lg:max-h-[inherit]',
+            content: 'lg:min-h-[min(var(--list-height,8rem),16rem)]'
+          }"
+        />
+      </template>
     </UPage>
   </UContainer>
 </template>

@@ -365,7 +365,7 @@ const evalColumns: TableColumn<EvalResultItem>[] = [
 </script>
 
 <template>
-  <div v-if="pageData && rawData">
+  <UPage v-if="pageData && rawData">
     <UPageHero
       :title="pageData.title"
       :description="pageData.description"
@@ -468,5 +468,5 @@ const evalColumns: TableColumn<EvalResultItem>[] = [
         </div>
       </UContainer>
     </UPageBody>
-  </div>
+  </UPage>
 </template>

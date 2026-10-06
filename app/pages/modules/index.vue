@@ -236,7 +236,7 @@ const clearAllModules = () => {
 </script>
 
 <template>
-  <UContainer ref="el">
+  <div ref="el">
     <ClientOnly>
       <LazyModulesMarquee :modules="modules" />
     </ClientOnly>
@@ -362,157 +362,159 @@ const clearAllModules = () => {
       </template>
     </UPageHero>
 
-    <UPage id="smooth" class="relative z-20">
-      <UPageBody>
-        <div class="flex justify-between mb-4 text-muted text-xs">
-          <div class="flex items-center gap-2">
-            <span class="flex items-center gap-1.5">
-              <UKbd value="meta" size="sm" />+click to select · Shift+click for a range · Esc to clear
-            </span>
+    <UContainer>
+      <UPage id="smooth" class="relative z-20">
+        <UPageBody>
+          <div class="flex justify-between mb-4 text-muted text-xs">
+            <div class="flex items-center gap-2">
+              <span class="flex items-center gap-1.5">
+                <UKbd value="meta" size="sm" />+click to select · Shift+click for a range · Esc to clear
+              </span>
+            </div>
+            <ULink to="/docs/guide/modules/getting-started" class="hidden md:flex items-center gap-1">
+              Create your own module
+              <UIcon name="i-lucide-arrow-right" class="size-4" />
+            </ULink>
           </div>
-          <ULink to="/docs/guide/modules/getting-started" class="hidden md:flex items-center gap-1">
-            Create your own module
-            <UIcon name="i-lucide-arrow-right" class="size-4" />
-          </ULink>
-        </div>
 
-        <UPageGrid v-if="filteredModules?.length" class="lg:grid-cols-2 xl:grid-cols-3">
-          <ModuleItem
-            v-for="module in displayedModules"
-            :key="module.name"
-            :module="module"
-            :is-added="addedModuleNames.has(module.name)"
-            :sort-key="String(selectedSort.key)"
-            selectable
-            @add="modulesToAdd.push(module)"
-            @remove="modulesToAdd = modulesToAdd.filter(m => m.name !== module.name)"
-            @select="handleModuleSelect"
-          />
+          <UPageGrid v-if="filteredModules?.length" class="lg:grid-cols-2 xl:grid-cols-3">
+            <ModuleItem
+              v-for="module in displayedModules"
+              :key="module.name"
+              :module="module"
+              :is-added="addedModuleNames.has(module.name)"
+              :sort-key="String(selectedSort.key)"
+              selectable
+              @add="modulesToAdd.push(module)"
+              @remove="modulesToAdd = modulesToAdd.filter(m => m.name !== module.name)"
+              @select="handleModuleSelect"
+            />
 
-          <template v-if="isLoading">
-            <div v-for="n in ITEMS_PER_PAGE" :key="n" class="flex flex-col gap-4 p-4 rounded-lg border border-default">
-              <div class="flex items-center gap-3">
-                <USkeleton class="h-8 w-8 rounded" />
+            <template v-if="isLoading">
+              <div v-for="n in ITEMS_PER_PAGE" :key="n" class="flex flex-col gap-4 p-4 rounded-lg border border-default">
+                <div class="flex items-center gap-3">
+                  <USkeleton class="h-8 w-8 rounded" />
+                </div>
+                <USkeleton class="h-4 w-3/4" />
+                <USkeleton class="h-4 w-full" />
+                <div class="flex gap-2">
+                  <USkeleton class="h-6 w-16" />
+                  <USkeleton class="h-6 w-16" />
+                </div>
               </div>
-              <USkeleton class="h-4 w-3/4" />
-              <USkeleton class="h-4 w-full" />
-              <div class="flex gap-2">
-                <USkeleton class="h-6 w-16" />
-                <USkeleton class="h-6 w-16" />
-              </div>
-            </div>
-          </template>
-        </UPageGrid>
+            </template>
+          </UPageGrid>
 
-        <EmptyCard v-else :label="`There is no module found for ${q} yet. Become the first one to create it!`">
-          <UButton
-            label="Contribute on GitHub"
-            color="neutral"
-            to="https://github.com/nuxt/modules"
-            target="_blank"
-            size="md"
-            @click="$router.replace({ query: {} })"
-          />
-          <UButton to="/docs/guide/going-further/modules" color="neutral" size="md" label="How to create a module?" />
-        </EmptyCard>
-      </UPageBody>
+          <EmptyCard v-else :label="`There is no module found for ${q} yet. Become the first one to create it!`">
+            <UButton
+              label="Contribute on GitHub"
+              color="neutral"
+              to="https://github.com/nuxt/modules"
+              target="_blank"
+              size="md"
+              @click="$router.replace({ query: {} })"
+            />
+            <UButton to="/docs/guide/going-further/modules" color="neutral" size="md" label="How to create a module?" />
+          </EmptyCard>
+        </UPageBody>
 
-      <AnimatePresence>
-        <motion.div
-          v-if="modulesToAdd.length"
-          key="toolbar"
-          class="fixed z-50 bottom-0 left-0 right-0"
-          :initial="{ y: 100, opacity: 0 }"
-          :animate="{ y: 0, opacity: 1 }"
-          :exit="{ y: 100, opacity: 0 }"
-          :transition="{ type: 'spring', stiffness: 400, damping: 30 }"
-        >
-          <div class="flex flex-col items-center mb-6">
-            <div class="relative flex mb-0.5 p-1 rounded-full border border-default bg-default/90 backdrop-blur-lg">
-              <UAvatarGroup size="3xs" :max="6">
-                <TransitionGroup name="avatar-pop">
-                  <UTooltip
-                    v-for="m in modulesToAdd"
-                    :key="m.name"
-                    :text="m.npm"
-                    :content="{
-                      side: 'top'
-                    }"
-                  >
-                    <UAvatar
-                      :src="moduleImage(m.icon)"
-                      :icon="moduleIcon(m.category)"
-                      :alt="m.name"
-                      :ui="{ root: 'size-3.5 text-[6px]' }"
-                      class="rounded-full bg-default ring-1 ring-default"
-                    />
-                  </UTooltip>
-                </TransitionGroup>
-              </UAvatarGroup>
-            </div>
-
-            <div class="relative z-10 bg-default/80 backdrop-blur-lg rounded-full p-1 border border-default dark:shadow-[0_25px_50px_-12px_rgba(0,0,0,0.9)] shadow-[0_25px_50px_-12px_rgba(0,0,0,0.25)] flex items-center gap-4">
-              <motion.div class="flex items-center gap-1">
-                <UTooltip text="Copy install command">
-                  <Motion :press="{ scale: 0.99 }">
-                    <UButton
-                      color="primary"
-                      variant="soft"
-                      size="lg"
-                      icon="i-lucide-download"
-                      class="font-medium rounded-full"
-                      @click="copyAllInstallCommands"
+        <AnimatePresence>
+          <motion.div
+            v-if="modulesToAdd.length"
+            key="toolbar"
+            class="fixed z-50 bottom-0 left-0 right-0"
+            :initial="{ y: 100, opacity: 0 }"
+            :animate="{ y: 0, opacity: 1 }"
+            :exit="{ y: 100, opacity: 0 }"
+            :transition="{ type: 'spring', stiffness: 400, damping: 30 }"
+          >
+            <div class="flex flex-col items-center mb-6">
+              <div class="relative flex mb-0.5 p-1 rounded-full border border-default bg-default/90 backdrop-blur-lg">
+                <UAvatarGroup size="3xs" :max="6">
+                  <TransitionGroup name="avatar-pop">
+                    <UTooltip
+                      v-for="m in modulesToAdd"
+                      :key="m.name"
+                      :text="m.npm"
+                      :content="{
+                        side: 'top'
+                      }"
                     >
-                      Install {{ modulesToAdd.length }} module{{ modulesToAdd.length > 1 ? 's' : '' }}
-                    </UButton>
-                  </Motion>
-                </UTooltip>
-
-                <Motion :press="{ scale: 0.99 }">
-                  <UFieldGroup>
-                    <UTooltip text="Copy agent prompt to install & configure">
-                      <UButton
-                        color="neutral"
-                        variant="soft"
-                        size="lg"
-                        icon="i-custom-ai"
-                        class="rounded-s-full"
-                        @click="copyAgentPrompt"
+                      <UAvatar
+                        :src="moduleImage(m.icon)"
+                        :icon="moduleIcon(m.category)"
+                        :alt="m.name"
+                        :ui="{ root: 'size-3.5 text-[6px]' }"
+                        class="rounded-full bg-default ring-1 ring-default"
                       />
                     </UTooltip>
+                  </TransitionGroup>
+                </UAvatarGroup>
+              </div>
 
-                    <UDropdownMenu :items="agentPromptItems" :content="{ align: 'end' }">
+              <div class="relative z-10 bg-default/80 backdrop-blur-lg rounded-full p-1 border border-default dark:shadow-[0_25px_50px_-12px_rgba(0,0,0,0.9)] shadow-[0_25px_50px_-12px_rgba(0,0,0,0.25)] flex items-center gap-4">
+                <motion.div class="flex items-center gap-1">
+                  <UTooltip text="Copy install command">
+                    <Motion :press="{ scale: 0.99 }">
+                      <UButton
+                        color="primary"
+                        variant="soft"
+                        size="lg"
+                        icon="i-lucide-download"
+                        class="font-medium rounded-full"
+                        @click="copyAllInstallCommands"
+                      >
+                        Install {{ modulesToAdd.length }} module{{ modulesToAdd.length > 1 ? 's' : '' }}
+                      </UButton>
+                    </Motion>
+                  </UTooltip>
+
+                  <Motion :press="{ scale: 0.99 }">
+                    <UFieldGroup>
+                      <UTooltip text="Copy agent prompt to install & configure">
+                        <UButton
+                          color="neutral"
+                          variant="soft"
+                          size="lg"
+                          icon="i-custom-ai"
+                          class="rounded-s-full"
+                          @click="copyAgentPrompt"
+                        />
+                      </UTooltip>
+
+                      <UDropdownMenu :items="agentPromptItems" :content="{ align: 'end' }">
+                        <UButton
+                          color="neutral"
+                          variant="soft"
+                          size="lg"
+                          icon="i-lucide-chevron-down"
+                          class="rounded-e-full"
+                          aria-label="More agent prompt options"
+                        />
+                      </UDropdownMenu>
+                    </UFieldGroup>
+                  </Motion>
+
+                  <UTooltip text="Clear selection">
+                    <Motion :press="{ scale: 0.99 }">
                       <UButton
                         color="neutral"
                         variant="soft"
                         size="lg"
-                        icon="i-lucide-chevron-down"
-                        class="rounded-e-full"
-                        aria-label="More agent prompt options"
+                        icon="i-lucide-x"
+                        class="rounded-full"
+                        @click="clearAllModules"
                       />
-                    </UDropdownMenu>
-                  </UFieldGroup>
-                </Motion>
-
-                <UTooltip text="Clear selection">
-                  <Motion :press="{ scale: 0.99 }">
-                    <UButton
-                      color="neutral"
-                      variant="soft"
-                      size="lg"
-                      icon="i-lucide-x"
-                      class="rounded-full"
-                      @click="clearAllModules"
-                    />
-                  </Motion>
-                </UTooltip>
-              </motion.div>
+                    </Motion>
+                  </UTooltip>
+                </motion.div>
+              </div>
             </div>
-          </div>
-        </motion.div>
-      </AnimatePresence>
-    </UPage>
-  </UContainer>
+          </motion.div>
+        </AnimatePresence>
+      </UPage>
+    </UContainer>
+  </div>
 </template>
 
 <style scoped>

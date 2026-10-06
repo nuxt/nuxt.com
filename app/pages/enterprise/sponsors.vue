@@ -33,15 +33,15 @@ defineOgImage('Docs.takumi', {
 </script>
 
 <template>
-  <UContainer v-if="pageData">
+  <UPage v-if="pageData">
     <UPageHero
       :title="pageData.title"
       :description="pageData.description"
       :links="pageData.links"
     />
 
-    <UPage>
-      <UPageBody class="relative divide-y divide-default">
+    <UPageBody class="relative">
+      <UContainer class="divide-y divide-default">
         <div v-for="([key, value]) of Object.entries(sponsors)" :key="key" class="relative grid lg:grid-cols-5 gap-8 py-24">
           <div class="lg:self-start flex lg:flex-col items-center lg:items-start justify-between lg:sticky lg:top-0 lg:pt-24 lg:-mt-24">
             <h2 class="capitalize font-bold text-2xl text-highlighted">
@@ -103,7 +103,7 @@ defineOgImage('Docs.takumi', {
             </div>
           </div>
         </div>
-      </UPageBody>
-    </UPage>
-  </UContainer>
+      </UContainer>
+    </UPageBody>
+  </UPage>
 </template>

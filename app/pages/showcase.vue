@@ -32,107 +32,103 @@ defineOgImage('Docs.takumi', {
   description
 })
 
-const isMobile = ref(false)
-onMounted(() => {
-  isMobile.value = window.innerWidth < 768
-})
+// The eight logos only fit on one row from `lg`; below that they scroll in a marquee.
+const isMobile = useMediaQuery('(max-width: 1023.98px)')
 </script>
 
 <template>
-  <div v-if="pageData">
+  <UPage v-if="pageData">
     <UPageHero :title="pageData.title" :description="pageData.description" :ui="{ container: '!pb-12' }" />
 
-    <UPage id="smooth" class="pt-20 -mt-20">
-      <UPageBody>
-        <UPageCTA
-          variant="subtle"
-          class="rounded-none"
-          :ui="{
-            container: 'sm:py-12 lg:py-12 sm:gap-8'
-          }"
-        >
-          <template #description>
-            <div class="flex flex-col md:flex-row justify-center items-center gap-8 md:gap-16">
-              <div class="flex flex-col items-center">
-                <h3 class="text-4xl font-bold text-primary">
-                  #1
-                </h3>
-                <p class="text-sm text-muted">
-                  Vue Framework
-                </p>
-              </div>
-              <div class="flex flex-col items-center">
-                <h3 class="text-4xl font-bold">
-                  {{ formatNumber(stats.stars) }}
-                </h3>
-                <p class="text-sm text-muted">
-                  GitHub Stars
-                </p>
-              </div>
-              <div class="flex flex-col items-center">
-                <h3 class="text-4xl font-bold">
-                  {{ formatNumber(stats.monthlyDownloads) }}
-                </h3>
-                <p class="text-sm text-muted">
-                  Monthly Downloads
-                </p>
-              </div>
-            </div>
-          </template>
-        </UPageCTA>
-        <UContainer>
-          <UPageSection :ui="{ container: '!pt-0' }">
-            <UPageLogos :marquee="isMobile" :title="homeData?.logos.title" :ui="{ title: 'text-muted font-medium text-lg', logos: 'mt-4' }">
-              <Motion
-                v-for="(company, index) in (homeData?.logos.companies as any[])"
-                :key="company.alt"
-                as-child
-                :initial="{ opacity: 0, transform: 'translateY(20px)' }"
-                :while-in-view="{ opacity: 1, transform: 'translateY(0)' }"
-                :transition="{ delay: 0.4 + 0.2 * index }"
-                :in-view-options="{ once: true }"
-              >
-                <div class="opacity-0">
-                  <BrandLogo
-                    :src="company.src"
-                    :alt="`${company.alt} logo`"
-                    :height="company.height"
-                    :width="company.width"
-                    class="h-6 shrink-0 max-w-[140px] text-muted"
-                  />
-                </div>
-              </Motion>
-            </UPageLogos>
-          </UPageSection>
-          <UPageGrid class="bg-elevated/50 p-4 rounded-2xl gap-2">
-            <UPageCard
-              v-for="(website, index) in pageData.websites"
-              :key="index"
-              :to="website.url"
-              target="_blank"
-              variant="naked"
-              class="overflow-hidden group rounded-lg"
-            >
-              <NuxtImg
-                :src="getWebsiteScreenShotUrl(website)"
-                :alt="website.name"
-                :loading="index === 0 ? 'eager' : 'lazy'"
-                class="object-cover object-top size-full opacity-100 group-hover:opacity-50 transition-opacity duration-300"
-                width="576"
-                height="324"
-                sizes="575px sm:468px lg:443px"
-                format="webp"
-              />
-
-              <p class="hidden absolute text-nowrap top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 group-hover:flex bg-inverted text-inverted px-2.5 py-1 rounded-full text-sm font-medium font-mono items-center gap-1 shadow">
-                {{ website.name }}
-
-                <UIcon name="i-lucide-arrow-up-right" class="size-4" />
+    <UPageBody>
+      <UPageCTA
+        variant="subtle"
+        class="rounded-none"
+        :ui="{
+          container: 'sm:py-12 lg:py-12 sm:gap-8'
+        }"
+      >
+        <template #description>
+          <div class="flex flex-col md:flex-row justify-center items-center gap-8 md:gap-16">
+            <div class="flex flex-col items-center">
+              <h3 class="text-4xl font-bold text-primary">
+                #1
+              </h3>
+              <p class="text-sm text-muted">
+                Vue Framework
               </p>
-            </UPageCard>
-          </UPageGrid>
-        </UContainer>
-      </UPageBody>
-    </UPage>
-  </div>
+            </div>
+            <div class="flex flex-col items-center">
+              <h3 class="text-4xl font-bold">
+                {{ formatNumber(stats.stars) }}
+              </h3>
+              <p class="text-sm text-muted">
+                GitHub Stars
+              </p>
+            </div>
+            <div class="flex flex-col items-center">
+              <h3 class="text-4xl font-bold">
+                {{ formatNumber(stats.monthlyDownloads) }}
+              </h3>
+              <p class="text-sm text-muted">
+                Monthly Downloads
+              </p>
+            </div>
+          </div>
+        </template>
+      </UPageCTA>
+      <UPageSection class="mb-0" :ui="{ container: '!pt-0' }">
+        <UPageLogos :marquee="isMobile" :title="homeData?.logos.title" :ui="{ title: 'text-muted font-medium text-lg', logos: isMobile ? 'mt-4' : 'mt-4 [--gap:--spacing(6)]' }">
+          <Motion
+            v-for="(company, index) in (homeData?.logos.companies as any[])"
+            :key="company.alt"
+            as-child
+            :initial="{ opacity: 0, transform: 'translateY(20px)' }"
+            :while-in-view="{ opacity: 1, transform: 'translateY(0)' }"
+            :transition="{ delay: 0.4 + 0.2 * index }"
+            :in-view-options="{ once: true }"
+          >
+            <div class="opacity-0">
+              <BrandLogo
+                :src="company.src"
+                :alt="`${company.alt} logo`"
+                :height="company.height"
+                :width="company.width"
+                class="h-6 shrink-0 max-w-[140px] text-muted"
+              />
+            </div>
+          </Motion>
+        </UPageLogos>
+      </UPageSection>
+      <UContainer>
+        <UPageGrid class="bg-elevated/50 p-4 rounded-2xl gap-2">
+          <UPageCard
+            v-for="(website, index) in pageData.websites"
+            :key="index"
+            :to="website.url"
+            target="_blank"
+            variant="naked"
+            class="overflow-hidden group rounded-lg"
+          >
+            <NuxtImg
+              :src="getWebsiteScreenShotUrl(website)"
+              :alt="website.name"
+              :loading="index === 0 ? 'eager' : 'lazy'"
+              class="object-cover object-top size-full opacity-100 group-hover:opacity-50 transition-opacity duration-300"
+              width="576"
+              height="324"
+              sizes="575px sm:468px lg:443px"
+              format="webp"
+            />
+
+            <p class="hidden absolute text-nowrap top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 group-hover:flex bg-inverted text-inverted px-2.5 py-1 rounded-full text-sm font-medium font-mono items-center gap-1 shadow">
+              {{ website.name }}
+
+              <UIcon name="i-lucide-arrow-up-right" class="size-4" />
+            </p>
+          </UPageCard>
+        </UPageGrid>
+      </UContainer>
+    </UPageBody>
+  </UPage>
 </template>

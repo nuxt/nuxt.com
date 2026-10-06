@@ -34,14 +34,14 @@ defineOgImage('Docs.takumi', {
 </script>
 
 <template>
-  <UContainer v-if="pageData">
+  <UPage v-if="pageData">
     <UPageHero
       :title="pageData.title"
       :description="pageData.description"
       :links="pageData.links"
     />
-    <UPage>
-      <UPageBody>
+    <UPageBody>
+      <UContainer>
         <div v-if="featuredTemplates.length" class="mb-24">
           <h2 class="text-2xl font-semibold mb-4 text-highlighted">
             Featured
@@ -69,7 +69,7 @@ defineOgImage('Docs.takumi', {
             />
           </UPageGrid>
         </div>
-      </UPageBody>
-    </UPage>
-  </UContainer>
+      </UContainer>
+    </UPageBody>
+  </UPage>
 </template>

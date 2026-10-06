@@ -32,7 +32,7 @@ await fetchList()
 </script>
 
 <template>
-  <UContainer v-if="pageData">
+  <UPage v-if="pageData">
     <UPageHero
       :title="pageData.title"
       :description="pageData.description"
@@ -44,9 +44,9 @@ await fetchList()
       }"
     />
 
-    <UPage id="smooth" class="pt-20 -mt-20">
-      <UPageBody>
-        <UContainer class="space-y-8">
+    <UPageBody>
+      <UContainer>
+        <div class="space-y-8">
           <UPageCard
             v-for="(job, index) in filteredJobs"
             :key="index"
@@ -71,8 +71,8 @@ await fetchList()
               </div>
             </template>
           </UPageCard>
-        </UContainer>
-      </UPageBody>
-    </UPage>
-  </UContainer>
+        </div>
+      </UContainer>
+    </UPageBody>
+  </UPage>
 </template>
