@@ -166,6 +166,9 @@ overrides:
   nostics: ^1.3.0
   '@workflow/serde': 4.1.2
 
+patchedDependencies:
+  '@chat-adapter/discord@4.41.1': 27146e744fc7428b588010223288cf2f69620c6aeb9d22e0e9fcd655f7bd66e0
+
 importers:
 
   .:
@@ -175,7 +178,7 @@ importers:
         version: 2.0.66(zod@4.6.5)
       '@chat-adapter/discord':
         specifier: ^4.41.1
-        version: 4.41.1(ai@7.0.127(zod@4.6.5))(supports-color@10.2.2)(zod@4.6.5)
+        version: 4.41.1(patch_hash=27146e744fc7428b588010223288cf2f69620c6aeb9d22e0e9fcd655f7bd66e0)(ai@7.0.127(zod@4.6.5))(supports-color@10.2.2)(zod@4.6.5)
       '@chat-adapter/state-memory':
         specifier: ^4.41.1
         version: 4.41.1(ai@7.0.127(zod@4.6.5))(supports-color@10.2.2)(zod@4.6.5)
@@ -10951,7 +10954,7 @@ snapshots:
     dependencies:
       fontkitten: 1.0.3
 
-  '@chat-adapter/discord@4.41.1(ai@7.0.127(zod@4.6.5))(supports-color@10.2.2)(zod@4.6.5)':
+  '@chat-adapter/discord@4.41.1(patch_hash=27146e744fc7428b588010223288cf2f69620c6aeb9d22e0e9fcd655f7bd66e0)(ai@7.0.127(zod@4.6.5))(supports-color@10.2.2)(zod@4.6.5)':
     dependencies:
       '@chat-adapter/shared': 4.41.1(ai@7.0.127(zod@4.6.5))(supports-color@10.2.2)(zod@4.6.5)
       chat: 4.41.1(ai@7.0.127(zod@4.6.5))(supports-color@10.2.2)(zod@4.6.5)

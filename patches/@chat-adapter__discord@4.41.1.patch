@@ -1,0 +1,20 @@
+diff --git a/dist/index.js b/dist/index.js
+--- a/dist/index.js
++++ b/dist/index.js
+@@ -2494,9 +2494,14 @@
+         this.logger.info("Discord Gateway forwarding event", {
+           type: packet.t
+         });
++        // Snapshot before yielding. https://github.com/vercel/chat/pull/923
++        // discord.js emits `raw` and handles the packet in the same turn, so
++        // once this handler yields it patches this object in place
++        // (`Message.js` / `MessageMentions.js` assign `member.user`).
++        const wire = { ...packet, d: structuredClone(packet.d) };
+         await this.enqueueOrderedForward(
+-          getPacketChannelId(packet),
+-          () => this.forwardRawGatewayPacket(client, webhookUrl, packet)
++          getPacketChannelId(wire),
++          () => this.forwardRawGatewayPacket(client, webhookUrl, wire)
+         );
+       });
+     } else {
