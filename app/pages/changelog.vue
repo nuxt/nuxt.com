@@ -162,6 +162,7 @@ function copyRelease(release: Release) {
                 v-if="release.nodes?.length"
                 :value="{ nodes: release.nodes }"
                 style="zoom: 0.85"
+                :components="proseComponents"
               />
               <div
                 v-if="!openStates[release.tag] && release.nodes.length > 4"
