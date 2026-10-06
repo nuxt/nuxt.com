@@ -163,6 +163,7 @@ function copyRelease(release: Release) {
                 :value="{ nodes: release.nodes }"
                 style="zoom: 0.85"
                 :components="proseComponents"
+                class="mt-8"
               />
               <div
                 v-if="!openStates[release.tag] && release.nodes.length > 4"
