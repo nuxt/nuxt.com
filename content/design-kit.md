@@ -73,6 +73,6 @@ Our color palette is based on our iconic Nuxt green, paired with true neutrals s
 Headings are set in Outfit, a geometric sans-serif whose rounded shapes echo the Nuxt mountains. Body copy and interface text use Public Sans for long-form readability.
 
 ::u-page-grid
-  :design-kit-font-card{name="Outfit" usage="Headings and titles, medium weight" font="font-outfit" to="https://fonts.google.com/specimen/Outfit"}
+  :design-kit-font-card{name="Outfit" usage="Headings and titles, medium weight" font="font-heading" to="https://fonts.google.com/specimen/Outfit"}
   :design-kit-font-card{name="Public Sans" usage="Body copy and interface text" font="font-sans" to="https://fonts.google.com/specimen/Public+Sans"}
 ::
