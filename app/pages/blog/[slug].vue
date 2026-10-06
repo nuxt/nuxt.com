@@ -108,73 +108,71 @@ const links = [
 </script>
 
 <template>
-  <UContainer>
-    <UPage v-if="article">
-      <UPageHeader :title="article.title" :description="article.description" :ui="{ headline: 'flex flex-col gap-y-8 items-start' }">
-        <template #headline>
-          <UBreadcrumb :items="[{ label: 'Blog', icon: 'i-lucide-newspaper', to: '/blog' }, { label: article.title }]" class="max-w-full" />
-          <div class="flex items-center space-x-2">
-            <span>
-              {{ article.category }}
-            </span>
-            <span class="text-muted">&middot;&nbsp;&nbsp;<time>{{ formatDateByLocale('en', article.date) }}</time></span>
-          </div>
-        </template>
-
-        <div class="mt-4 flex flex-wrap items-center gap-6">
-          <UUser v-for="(author, index) in article.authors" :key="index" v-bind="author" :description="author.to ? `@${author.to.split('/').pop()}` : undefined" />
+  <UContainer v-if="article">
+    <UPageHeader :title="article.title" :description="article.description" :ui="{ headline: 'flex flex-col gap-y-8 items-start' }">
+      <template #headline>
+        <UBreadcrumb :items="[{ label: 'Blog', icon: 'i-lucide-newspaper', to: '/blog' }, { label: article.title }]" class="max-w-full" />
+        <div class="flex items-center space-x-2">
+          <span>
+            {{ article.category }}
+          </span>
+          <span class="text-muted">&middot;&nbsp;&nbsp;<time>{{ formatDateByLocale('en', article.date) }}</time></span>
         </div>
-      </UPageHeader>
+      </template>
 
-      <UPage
-        class="lg:gap-24"
-        :ui="isAgentDocked ? {
-          center: 'lg:col-span-10',
-          right: 'lg:hidden'
-        } : { root: 'lg:grid-cols-12', center: 'lg:col-span-9', right: 'lg:col-span-3' }"
-      >
-        <UPageBody>
-          <ContentRenderer v-if="article.body" :value="article" :components="{ img: DocsProseImg }" />
+      <div class="mt-4 flex flex-wrap items-center gap-6">
+        <UUser v-for="(author, index) in article.authors" :key="index" v-bind="author" :description="author.to ? `@${author.to.split('/').pop()}` : undefined" />
+      </div>
+    </UPageHeader>
 
-          <div class="flex items-center justify-between mt-12 not-prose">
-            <ULink to="/blog" class="text-primary">
-              ← Back to blog
-            </ULink>
-            <div class="flex justify-end items-center gap-1.5">
-              <UButton icon="i-lucide-link" variant="ghost" color="neutral" @click="copyLink">
-                <span class="sr-only">Copy URL</span>
-                Copy URL
-              </UButton>
-              <UButton
-                v-for="(link, index) in socialLinks"
-                :key="index"
-                v-bind="link"
-                variant="ghost"
-                color="neutral"
-                target="_blank"
-              >
-                <span class="sr-only">Nuxt on {{ link.label }}</span>
-              </UButton>
-            </div>
+    <UPage
+      class="lg:gap-24"
+      :ui="isAgentDocked ? {
+        center: 'lg:col-span-10',
+        right: 'lg:hidden'
+      } : { root: 'lg:grid-cols-12', center: 'lg:col-span-9', right: 'lg:col-span-3' }"
+    >
+      <UPageBody>
+        <ContentRenderer v-if="article.body" :value="article" :components="{ img: DocsProseImg }" />
+
+        <div class="flex items-center justify-between mt-12 not-prose">
+          <ULink to="/blog" class="text-primary">
+            ← Back to blog
+          </ULink>
+          <div class="flex justify-end items-center gap-1.5">
+            <UButton icon="i-lucide-link" variant="ghost" color="neutral" @click="copyLink">
+              <span class="sr-only">Copy URL</span>
+              Copy URL
+            </UButton>
+            <UButton
+              v-for="(link, index) in socialLinks"
+              :key="index"
+              v-bind="link"
+              variant="ghost"
+              color="neutral"
+              target="_blank"
+            >
+              <span class="sr-only">Nuxt on {{ link.label }}</span>
+            </UButton>
           </div>
+        </div>
 
-          <USeparator v-if="surround?.length" />
+        <USeparator v-if="surround?.length" />
 
-          <UContentSurround :surround="surround" />
-        </UPageBody>
+        <UContentSurround :surround="surround" />
+      </UPageBody>
 
-        <template #right>
-          <UContentToc v-if="article.body && article.body.toc" :links="article.body.toc.links" title="Table of Contents" highlight highlight-variant="circuit">
-            <template #bottom>
-              <div class="hidden lg:block space-y-6">
-                <UPageLinks title="Links" :links="links" />
-                <USeparator type="dashed" />
-                <SocialLinks />
-              </div>
-            </template>
-          </UContentToc>
-        </template>
-      </UPage>
+      <template #right>
+        <UContentToc v-if="article.body && article.body.toc" :links="article.body.toc.links" title="Table of Contents" highlight highlight-variant="circuit">
+          <template #bottom>
+            <div class="hidden lg:block space-y-6">
+              <UPageLinks title="Links" :links="links" />
+              <USeparator type="dashed" />
+              <SocialLinks />
+            </div>
+          </template>
+        </UContentToc>
+      </template>
     </UPage>
   </UContainer>
 </template>

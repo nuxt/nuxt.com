@@ -230,23 +230,23 @@ Every page uses one of three Nuxt UI shells. `UPageHero` and `UPageSection` rend
 
 **Sections** (landing pages): `UPageHero` followed by `UPageSection` blocks, with no wrapper container.
 
-**Content with sidebars** (docs, articles, module and provider pages):
+**Content with columns** (docs, articles, module and agency pages): one `UPage` adds the columns with its `#left` and `#right` slots. Articles and detail pages keep their header full width above the columns:
 
 ```vue
 <UContainer>
+  <UPageHeader title="…" />
   <UPage>
-    <template #left>
-      <UPageAside />
-    </template>
-    <UPageHeader title="…" />
     <UPageBody>
       <!-- content -->
     </UPageBody>
+    <template #right>
+      <UContentToc />
+    </template>
   </UPage>
 </UContainer>
 ```
 
-A hero page that also needs a sidebar places the sidebar shell after the hero: `UPage` > `UPageHero` + `UContainer` > `UPage` with `#left`.
+Docs put the header inside the `UPage`, so the navigation runs alongside it. Use a second `UPage` only when content must sit above one column but beside another: deploy pages keep their navigation on the left and their header above the table of contents. A hero page that needs a sidebar places it after the hero: `UPage` > `UPageHero` + `UContainer` > `UPage` with `#left`.
 
 ### Spacing and grid
 
