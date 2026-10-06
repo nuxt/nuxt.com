@@ -20,6 +20,9 @@ const {
   smileLeftPath,
   smileRightPath,
   smileOpacity,
+  squintLeftPath,
+  squintRightPath,
+  squintOpacity,
   mouthD,
   mouthStroked,
   mouthOpacity,
@@ -85,6 +88,18 @@ const isConfused = computed(() => effectiveMood.value === 'confused')
             stroke-linecap="round"
           />
           <path
+            v-for="path in [squintLeftPath, squintRightPath]"
+            :key="path"
+            class="nuxi-eye"
+            :style="{ opacity: squintOpacity, transition: 'opacity 0.3s ease' }"
+            :d="path"
+            fill="none"
+            stroke="black"
+            stroke-width="13"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+          <path
             class="nuxi-mouth"
             :style="{ transform: mouthTransform, opacity: mouthOpacity, transition: 'transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), d 0.3s ease, opacity 0.3s ease' }"
             :d="mouthD"
@@ -92,6 +107,7 @@ const isConfused = computed(() => effectiveMood.value === 'confused')
             :stroke="mouthStroked ? 'black' : 'none'"
             stroke-width="11"
             stroke-linecap="round"
+            stroke-linejoin="round"
           />
         </g>
       </mask>
@@ -221,8 +237,10 @@ const isConfused = computed(() => effectiveMood.value === 'confused')
 }
 
 @keyframes nuxi-sad {
-  0%, 100% { transform: translateY(0) scale(1, 1); }
-  45%, 60% { transform: translateY(3px) scale(1.03, 0.95); }
+  0%, 55%, 100% { transform: translateY(0) scale(1, 1); }
+  65% { transform: translateY(3px) scale(1.05, 0.92); }
+  75% { transform: translateY(1px) scale(0.98, 1.03); }
+  85% { transform: translateY(2px) scale(1.02, 0.96); }
 }
 
 @keyframes nuxi-confused {
