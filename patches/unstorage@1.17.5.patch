@@ -1,0 +1,40 @@
+diff --git a/drivers/vercel-runtime-cache.cjs b/drivers/vercel-runtime-cache.cjs
+index 6eefe07a8dea7d577047dbc9a34f720313648216..7993fb5e4a5d076b89fc9a5f4ffd0c81f93b37e7 100644
+--- a/drivers/vercel-runtime-cache.cjs
++++ b/drivers/vercel-runtime-cache.cjs
+@@ -9,13 +9,8 @@ const DRIVER_NAME = "vercel-runtime-cache";
+ module.exports = (0, _utils.defineDriver)(opts => {
+   const base = (0, _utils.normalizeKey)(opts?.base);
+   const r = (...keys) => (0, _utils.joinKeys)(base, ...keys);
+-  let _cache;
+-  const getClient = () => {
+-    if (!_cache) {
+-      _cache = getCache();
+-    }
+-    return _cache;
+-  };
++  // Resolved per call: a request's cache client stops working when its JWT expires (vercel/vercel#13454).
++  const getClient = () => getCache();
+   return {
+     name: DRIVER_NAME,
+     getInstance: getClient,
+diff --git a/drivers/vercel-runtime-cache.mjs b/drivers/vercel-runtime-cache.mjs
+index bbdfb12061eeb08c93dc992d0c53064ec0795238..d52f2538629cd4b005d6a59fdccc1f09e97c5040 100644
+--- a/drivers/vercel-runtime-cache.mjs
++++ b/drivers/vercel-runtime-cache.mjs
+@@ -3,13 +3,8 @@ const DRIVER_NAME = "vercel-runtime-cache";
+ export default defineDriver((opts) => {
+   const base = normalizeKey(opts?.base);
+   const r = (...keys) => joinKeys(base, ...keys);
+-  let _cache;
+-  const getClient = () => {
+-    if (!_cache) {
+-      _cache = getCache();
+-    }
+-    return _cache;
+-  };
++  // Resolved per call: a request's cache client stops working when its JWT expires (vercel/vercel#13454).
++  const getClient = () => getCache();
+   return {
+     name: DRIVER_NAME,
+     getInstance: getClient,
