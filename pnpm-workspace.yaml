@@ -8,6 +8,7 @@ overrides:
 
 patchedDependencies:
   "@chat-adapter/discord@4.41.1": patches/@chat-adapter__discord@4.41.1.patch
+  unstorage@1.17.5: patches/unstorage@1.17.5.patch
 
 allowBuilds:
   esbuild: true
