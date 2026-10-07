@@ -34,12 +34,14 @@ async function readArtifact(key: ContentInstanceKey, name: string, file: string)
  *
  * The raw source stays the authority: per-file reads, `refresh()` and `watch()` all go to it.
  * The snapshot only wins at init, and only for bodies whose source hash still matches.
+ *
+ * `remote` always reads GitHub, skipping the local checkout and clone overrides a commit can't pin.
  */
-function instanceSourceFor(key: ContentInstanceKey): Source | ParsedSource {
+function instanceSourceFor(key: ContentInstanceKey, { remote = false } = {}): Source | ParsedSource {
   const { name, source } = instanceSource(key)
-  const raw = createInstanceSource(source, {
+  const raw = createInstanceSource(remote ? { ...source, envOverride: undefined } : source, {
     token: contentGithubToken(),
-    useLocalDir: import.meta.dev
+    useLocalDir: import.meta.dev && !remote
   })
 
   // Dev reads the working tree, which `watch()` follows: no snapshot exists, and none would help.
@@ -53,20 +55,27 @@ function instanceSourceFor(key: ContentInstanceKey): Source | ParsedSource {
   )
 }
 
+/** Picks the instance serving `key`: the live head, or a pull request preview's commit. */
+export type InstanceResolver = (key: ContentInstanceKey) => Promise<ComarkContent>
+
 /**
  * Unpinned base per instance: owns its source, plugin chain and cache driver.
  * Every commit-pinned instance derives from it with `withRef(sha)`, sharing its driver.
  */
 const bases = new Map<ContentInstanceKey, ComarkContent>()
 
-function getBaseInstance(key: ContentInstanceKey): ComarkContent {
-  let base = bases.get(key)
+/** Same, reading GitHub only: the bases pull request previews pin. */
+const pullBases = new Map<ContentInstanceKey, ComarkContent>()
+
+function getBaseInstance(key: ContentInstanceKey, { remote = false } = {}): ComarkContent {
+  const registry = remote ? pullBases : bases
+  let base = registry.get(key)
   if (!base) {
     base = createRuntimeInstance(key, {
-      source: instanceSourceFor(key),
+      source: instanceSourceFor(key, { remote }),
       cache: { driver: contentCacheDriver(key) }
     })
-    bases.set(key, base)
+    registry.set(key, base)
   }
   return base
 }
@@ -108,6 +117,45 @@ export async function getInstanceAtHead(key: ContentInstanceKey): Promise<Comark
     throw error
   })
   instances.set(key, { sha, instance })
+
+  return instance
+}
+
+/** Most pull request previews kept warm per server instance, least recently used evicted first. */
+const MAX_PULL_INSTANCES = 8
+
+/** Keyed by `key@sha`, holding the promise for the same reason as `instances`. */
+const pullInstances = new Map<string, Promise<ComarkContent>>()
+
+/**
+ * The instance for `key` at a pull request's head commit, read from GitHub even in dev.
+ * Evicted instances are dropped, not disposed: a request may still be reading one.
+ */
+export function getInstanceAtPull(key: ContentInstanceKey, sha: string): Promise<ComarkContent> {
+  const id = `${key}@${sha}`
+  const existing = pullInstances.get(id)
+  if (existing) {
+    pullInstances.delete(id)
+    pullInstances.set(id, existing)
+    return existing
+  }
+
+  const instance: Promise<ComarkContent> = (async () => {
+    const created = getBaseInstance(key, { remote: true }).withRef(sha)
+    const startedAt = performance.now()
+    await created.init()
+    recordDuration('content.pull.init.ms', startedAt, { instance: key })
+    return created
+  })().catch((error) => {
+    if (pullInstances.get(id) === instance) pullInstances.delete(id)
+    throw error
+  })
+  pullInstances.set(id, instance)
+
+  for (const oldest of pullInstances.keys()) {
+    if (pullInstances.size <= MAX_PULL_INSTANCES) break
+    pullInstances.delete(oldest)
+  }
 
   return instance
 }

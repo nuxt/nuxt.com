@@ -2,7 +2,7 @@
 import type { NuxtError } from '#app'
 import type { NavigationItem } from 'comark-content'
 import type { ContentShas } from '#shared/types'
-import { navigationPath, searchInstanceKeys } from '#shared/utils/content'
+import { navigationPath, pullNavigationPath, searchInstanceKeys } from '#shared/utils/content'
 
 useSeoMeta({
   title: 'Page not found',
@@ -14,7 +14,10 @@ defineProps<{ error: NuxtError }>()
 const route = useRoute()
 const { version: docsVersion } = useDocsVersion()
 
-const { data: navigation } = await useFetch<NavigationItem[]>(computed(() => navigationPath(docsVersion.value)))
+const pull = usePullPreview()
+
+const { data: navigation } = await useFetch<NavigationItem[]>(computed(() =>
+  pull.value ? pullNavigationPath(docsVersion.value, pull.value) : navigationPath(docsVersion.value)))
 
 const searchKeys = computed(() => searchInstanceKeys(docsVersion.value))
 // Client-only: an SSR value gets baked into the page's ISR entry and would pin search to a stale commit.

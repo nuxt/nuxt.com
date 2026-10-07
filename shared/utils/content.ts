@@ -1,4 +1,5 @@
 import { DOC_VERSIONS, isDocVersion, type DocVersion } from './docs'
+import { pullBasePath, type PullRepo, type PullTarget } from './pull'
 
 /**
  * Identifies one of the content instances nuxt.com reads from.
@@ -66,6 +67,22 @@ export function instanceBlobPath(key: ContentInstanceKey, sha: string): string {
   return `/api/content/blob/${sha}/${key.replace(':', '/')}`
 }
 
+/** Same instance, as a pull request previews it: `/api/content/pull/nuxt/33012/docs/5.x`. */
+export function instancePullPath(key: ContentInstanceKey, pull: PullTarget): string {
+  return `/api/content${pullBasePath(pull)}/${key.replace(':', '/')}`
+}
+
+/**
+ * The `nuxt` org repo `key` reads from, as `/pull/:repo` names it.
+ * Pinned to `instanceSource(key).source.repo` by `test/unit/pull-paths.spec.ts`.
+ */
+export function instanceRepo(key: ContentInstanceKey): PullRepo {
+  if (key === 'site') return 'nuxt.com'
+  if (key === 'examples') return 'examples'
+
+  return key.startsWith('cli:') ? 'cli' : 'nuxt'
+}
+
 /**
  * The comark instance name behind `key` — `docs:4.x` → `docs`, `cli:4.x` → `cli`.
  *
@@ -79,6 +96,11 @@ export function instanceName(key: ContentInstanceKey): string {
  */
 export function navigationPath(version: DocVersion): string {
   return `/api/navigation/${version}`
+}
+
+/** Same tree, as a pull request previews it — `/api/navigation/pull/nuxt/33012/5.x`. */
+export function pullNavigationPath(version: DocVersion, pull: PullTarget): string {
+  return `/api/navigation${pullBasePath(pull)}/${version}`
 }
 
 /**

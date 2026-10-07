@@ -1,5 +1,5 @@
 import { createContentClient, type ContentFetch } from 'comark-content/client'
-import { instanceBasePath, type ContentInstanceKey } from '#shared/utils/content'
+import { instanceBasePath, instancePullPath, instanceRepo, type ContentInstanceKey } from '#shared/utils/content'
 
 type ContentClient = ReturnType<typeof createContentClient>
 
@@ -15,6 +15,11 @@ const contentFetch: ContentFetch = <T>(url: string, options?: Record<string, any
  * - `cli:<version>` (one instance per CLI version)
  */
 export function useContent(key: ContentInstanceKey): ContentClient {
+  const pull = usePullPreview().value
+  if (pull && instanceRepo(key) === pull.repo) {
+    return createContentClient({ basePath: instancePullPath(key, pull), fetch: contentFetch })
+  }
+
   let client = clients.get(key)
   if (!client) {
     client = createContentClient({ basePath: instanceBasePath(key), fetch: contentFetch })

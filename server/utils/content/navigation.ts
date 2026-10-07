@@ -2,12 +2,13 @@ import type { NavigationItem } from 'comark-content'
 import { docsPathPrefix, EXAMPLES_PATH_PREFIX, type DocVersion } from '#shared/utils/docs'
 import { cliInstanceKey, docsInstanceKey } from '#shared/utils/content'
 import { cliDocsPathPrefix } from '#shared/utils/cli'
+import type { InstanceResolver } from './index'
 
 /**
  * The command reference subtree for `version`.
  */
-export async function cliTree(version: DocVersion): Promise<NavigationItem[]> {
-  const content = await getInstanceAtHead(cliInstanceKey(version)).catch(() => null)
+export async function cliTree(version: DocVersion, resolve: InstanceResolver = getInstanceAtHead): Promise<NavigationItem[]> {
+  const content = await resolve(cliInstanceKey(version)).catch(() => null)
   if (!content) return []
 
   const nav = await content.navigation()
@@ -19,8 +20,8 @@ export async function cliTree(version: DocVersion): Promise<NavigationItem[]> {
 /**
  * The examples subtree. Not version-scoped: one subtree, linked from every version.
  */
-export async function examplesTree(): Promise<NavigationItem[]> {
-  const nav = await getInstanceAtHead('examples').then(content => content.navigation()).catch((error) => {
+export async function examplesTree(resolve: InstanceResolver = getInstanceAtHead): Promise<NavigationItem[]> {
+  const nav = await resolve('examples').then(content => content.navigation()).catch((error) => {
     console.error('[content] could not read the examples navigation — serving the tree without it', error)
     return null
   })
@@ -32,10 +33,10 @@ export async function examplesTree(): Promise<NavigationItem[]> {
 }
 
 /** One doc version's tree, with the shared examples and the command reference grafted in. */
-export async function docTree(version: DocVersion, examples: NavigationItem[]): Promise<NavigationItem[]> {
+export async function docTree(version: DocVersion, examples: NavigationItem[], resolve: InstanceResolver = getInstanceAtHead): Promise<NavigationItem[]> {
   const [content, commands] = await Promise.all([
-    getInstanceAtHead(docsInstanceKey(version)),
-    cliTree(version)
+    resolve(docsInstanceKey(version)),
+    cliTree(version, resolve)
   ])
   const nav = await content.navigation()
 
@@ -63,6 +64,37 @@ export async function docTree(version: DocVersion, examples: NavigationItem[]): 
     ...(root ?? { title: 'Docs', path: docsPathPrefix(version) }),
     children
   }]
+}
+
+/**
+ * The blog subtree the palette and the docs aside link to — grafted onto every version.
+ */
+async function blogTree(resolve: InstanceResolver): Promise<NavigationItem[]> {
+  const site = await resolve('site')
+  const blog = findByPath(await site.navigation(), '/blog')
+
+  return blog ? [blog] : []
+}
+
+/** Drop fields the client never reads off a nav item — `stem` is only ever read from page frontmatter. */
+function withoutStem(items: NavigationItem[]): NavigationItem[] {
+  return items.map(({ stem: _stem, children, ...item }) => ({
+    ...item,
+    ...(children ? { children: withoutStem(children) } : {})
+  }))
+}
+
+/**
+ * One docs version's navigation tree, plus blog — scoped here so the other versions never leave the server.
+ * `resolve` picks each instance's commit: the live heads, or a pull request preview's.
+ */
+export async function versionNavigation(version: DocVersion, resolve: InstanceResolver = getInstanceAtHead): Promise<NavigationItem[]> {
+  const [tree, blog] = await Promise.all([
+    docTree(version, await examplesTree(resolve), resolve),
+    blogTree(resolve).catch(() => [])
+  ])
+
+  return withoutStem([...tree, ...blog])
 }
 
 export function findByPath(items: NavigationItem[] | undefined, path: string): NavigationItem | undefined {
