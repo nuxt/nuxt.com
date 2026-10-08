@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import type { NavigationItem } from 'comark-content'
 import type { ContentShas } from '#shared/types'
-import { navigationPath, pullNavigationPath, searchInstanceKeys } from '#shared/utils/content'
+import { navigationPath, searchInstanceKeys } from '#shared/utils/content'
+import { pullNavigationPath } from '#shared/utils/pull'
 
 const colorMode = useColorMode()
 const route = useRoute()

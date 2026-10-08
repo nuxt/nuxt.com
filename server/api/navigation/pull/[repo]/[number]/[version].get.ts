@@ -11,5 +11,5 @@ export default defineEventHandler(async (event): Promise<NavigationItem[]> => {
     throw createError({ status: 404, statusText: 'Unknown docs version' })
   }
 
-  return versionNavigation(version, pullResolver(await resolvePullPreview(target)))
+  return pullNavigation(version, await resolvePullPreview(target))
 })

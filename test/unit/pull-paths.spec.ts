@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
-import { CONTENT_INSTANCE_KEYS, instanceBasePath, instancePullPath, instanceRepo, navigationPath, pullNavigationPath } from '../../shared/utils/content'
+import { CONTENT_INSTANCE_KEYS, instanceBasePath, navigationPath } from '../../shared/utils/content'
 import { instanceSource } from '../../server/utils/content/instances'
-import { parsePullPath, parsePullTarget, pullApiPath, pullBasePath, pullRepoName } from '../../shared/utils/pull'
+import { instancePullPath, instanceRepo, parsePullPath, parsePullTarget, pullApiPath, pullBasePath, pullNavigationPath, pullRepoName } from '../../shared/utils/pull'
 
 const PULL = { repo: 'nuxt', number: 33012 } as const
 

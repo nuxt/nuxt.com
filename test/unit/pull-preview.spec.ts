@@ -1,7 +1,10 @@
 import { createError } from 'h3'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import memoryDriver from 'unstorage/drivers/memory'
+import type { NavigationItem } from 'comark-content'
 import { instanceSource } from '../../server/utils/content/instances'
+import { findByPath } from '../../server/utils/content/navigation'
+import type { ContentInstanceKey } from '../../shared/utils/content'
 
 const SHA = 'a'.repeat(40)
 
@@ -15,10 +18,23 @@ vi.stubGlobal('contentGithubToken', () => 'tok')
 vi.stubGlobal('instanceSource', instanceSource)
 vi.stubGlobal('$fetch', vi.fn(async (url: string) => github(url)))
 
+/** What the PR's pinned instance answers, and production's navigation per instance. */
 const pageStat = vi.fn()
-vi.stubGlobal('getInstanceAtPull', vi.fn(async () => ({ stat: pageStat })))
+const pullNav = vi.fn<() => NavigationItem[]>(() => [])
+const headNavs = new Map<ContentInstanceKey, NavigationItem[]>()
 
-const { pullInstanceKeys, pullPages, resolvePullPreview } = await import('../../server/utils/content/pull')
+vi.mock('../../utils/factory', () => ({
+  createRuntimeInstance: () => ({
+    withRef: () => ({ init: async () => {}, stat: pageStat, navigation: async () => pullNav() })
+  })
+}))
+vi.stubGlobal('instanceSourceFor', () => ({}))
+vi.stubGlobal('contentCacheDriver', () => undefined)
+vi.stubGlobal('recordDuration', () => 0)
+vi.stubGlobal('getInstanceAtHead', async (key: ContentInstanceKey) => ({ navigation: async () => headNavs.get(key) ?? [] }))
+vi.stubGlobal('findByPath', findByPath)
+
+const { pullInstanceKeys, pullNavigation, pullPages, resolvePullPreview } = await import('../../server/utils/content/pull')
 
 let number = 0
 /** A fresh PR number per test: the preview cache is module state. */
@@ -45,6 +61,8 @@ const httpError = (status: number) => Object.assign(new Error(`HTTP ${status}`),
 beforeEach(() => {
   github.mockReset()
   pageStat.mockReset()
+  pullNav.mockReset().mockReturnValue([])
+  headNavs.clear()
 })
 
 describe('pullInstanceKeys', () => {
@@ -118,5 +136,42 @@ describe('pullPages', () => {
     })
 
     expect(pages).toEqual([{ title: 'Installation', path: '/docs/5.x/getting-started/installation' }])
+  })
+})
+
+describe('pullNavigation', () => {
+  const nav = (path: string, children?: NavigationItem[]) => ({ title: path, path, ...(children ? { children } : {}) }) as NavigationItem
+
+  it('reads the PR\'s instances and grafts the others like production', async () => {
+    pullNav.mockReturnValue([nav('/docs/4.x', [
+      nav('/docs/4.x/getting-started'),
+      nav('/docs/4.x/api', [nav('/docs/4.x/api/utils'), nav('/docs/4.x/api/kit')]),
+      nav('/docs/4.x/new-section')
+    ])])
+    headNavs.set('cli:4.x', [nav('/docs/4.x/api/commands')])
+    headNavs.set('examples', [nav('/docs/examples')])
+    headNavs.set('site', [nav('/blog')])
+
+    const tree = await pullNavigation('4.x', {
+      target: { repo: 'nuxt', number: 1 },
+      title: '',
+      url: '',
+      sha: SHA,
+      keys: ['docs:4.x'],
+      files: []
+    })
+
+    expect(tree.map(item => item.path)).toEqual(['/docs/4.x', '/blog'])
+    expect(tree[0]!.children!.map(item => item.path)).toEqual([
+      '/docs/4.x/getting-started',
+      '/docs/4.x/api',
+      '/docs/examples',
+      '/docs/4.x/new-section'
+    ])
+    expect(tree[0]!.children![1]!.children!.map(item => item.path)).toEqual([
+      '/docs/4.x/api/utils',
+      '/docs/4.x/api/commands',
+      '/docs/4.x/api/kit'
+    ])
   })
 })

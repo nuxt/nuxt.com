@@ -1,5 +1,6 @@
 import { createContentClient, type ContentFetch } from 'comark-content/client'
-import { instanceBasePath, instancePullPath, instanceRepo, type ContentInstanceKey } from '#shared/utils/content'
+import { instanceBasePath, type ContentInstanceKey } from '#shared/utils/content'
+import { instancePullPath, instanceRepo } from '#shared/utils/pull'
 
 type ContentClient = ReturnType<typeof createContentClient>
 

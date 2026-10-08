@@ -1,3 +1,6 @@
+import type { ContentInstanceKey } from './content'
+import type { DocVersion } from './docs'
+
 /**
  * Pull request previews: `/pull/:repo/:number` mirrors `github.com/nuxt/:repo/pull/:number`.
  *
@@ -41,6 +44,27 @@ export function pullBasePath(target: PullTarget): string {
 /** The preview's metadata endpoint: title, link and changed pages. */
 export function pullApiPath(target: PullTarget): string {
   return `/api${pullBasePath(target)}`
+}
+
+/** An instance's live endpoint, as a pull request previews it: `/api/content/pull/nuxt/33012/docs/5.x`. */
+export function instancePullPath(key: ContentInstanceKey, pull: PullTarget): string {
+  return `/api/content${pullBasePath(pull)}/${key.replace(':', '/')}`
+}
+
+/** A version's navigation tree, as a pull request previews it: `/api/navigation/pull/nuxt/33012/5.x`. */
+export function pullNavigationPath(version: DocVersion, pull: PullTarget): string {
+  return `/api/navigation${pullBasePath(pull)}/${version}`
+}
+
+/**
+ * The `nuxt` org repo `key` reads from, as `/pull/:repo` names it.
+ * Pinned to `instanceSource(key).source.repo` by `test/unit/pull-paths.spec.ts`.
+ */
+export function instanceRepo(key: ContentInstanceKey): PullRepo {
+  if (key === 'site') return 'nuxt.com'
+  if (key === 'examples') return 'examples'
+
+  return key.startsWith('cli:') ? 'cli' : 'nuxt'
 }
 
 const PULL_PATH_RE = /^\/pull\/([^/?#]+)\/([^/?#]+)/

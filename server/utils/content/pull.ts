@@ -1,10 +1,12 @@
 import { createStorage } from 'unstorage'
 import type { H3Event } from 'h3'
-import type { NavigationItem } from 'comark-content'
+import type { ComarkContent, NavigationItem } from 'comark-content'
 import type { PullPreviewSummary } from '#shared/types'
-import { CONTENT_INSTANCE_KEYS, type ContentInstanceKey } from '#shared/utils/content'
+import { cliDocsPathPrefix } from '#shared/utils/cli'
+import { CONTENT_INSTANCE_KEYS, cliInstanceKey, docsInstanceKey, type ContentInstanceKey } from '#shared/utils/content'
+import { docsPathPrefix, EXAMPLES_PATH_PREFIX, type DocVersion } from '#shared/utils/docs'
 import { parsePullTarget, pullRepoName, type PullTarget } from '#shared/utils/pull'
-import type { InstanceResolver } from './index'
+import { createRuntimeInstance } from '../../../utils/factory'
 
 /**
  * `/pull/:repo/:number` previews: which commit and instances a pull request maps to, and who may preview it.
@@ -118,9 +120,63 @@ export async function resolvePullPreview(target: PullTarget): Promise<PullPrevie
   return preview
 }
 
-/** The PR's head commit for the instances it targets, the live heads for the rest. */
-export function pullResolver(preview: PullPreview): InstanceResolver {
-  return key => preview.keys.includes(key) ? getInstanceAtPull(key, preview.sha) : getInstanceAtHead(key)
+/** Unpinned bases previews pin, reading GitHub only: a PR never renders the local checkout. */
+const pullBases = new Map<ContentInstanceKey, ComarkContent>()
+
+function getPullBaseInstance(key: ContentInstanceKey): ComarkContent {
+  let base = pullBases.get(key)
+  if (!base) {
+    base = createRuntimeInstance(key, {
+      source: instanceSourceFor(key, { remote: true }),
+      cache: { driver: contentCacheDriver(key) }
+    })
+    pullBases.set(key, base)
+  }
+  return base
+}
+
+/** Most pull request previews kept warm per server instance, least recently used evicted first. */
+const MAX_PULL_INSTANCES = 8
+
+/** Keyed by `key@sha`, holding the promise so concurrent requests share one init. */
+const pullInstances = new Map<string, Promise<ComarkContent>>()
+
+/**
+ * The instance for `key` at a pull request's head commit.
+ * Evicted instances are dropped, not disposed: a request may still be reading one.
+ */
+export function getInstanceAtPull(key: ContentInstanceKey, sha: string): Promise<ComarkContent> {
+  const id = `${key}@${sha}`
+  const existing = pullInstances.get(id)
+  if (existing) {
+    pullInstances.delete(id)
+    pullInstances.set(id, existing)
+    return existing
+  }
+
+  const instance: Promise<ComarkContent> = (async () => {
+    const created = getPullBaseInstance(key).withRef(sha)
+    const startedAt = performance.now()
+    await created.init()
+    recordDuration('content.pull.init.ms', startedAt, { instance: key })
+    return created
+  })().catch((error) => {
+    if (pullInstances.get(id) === instance) pullInstances.delete(id)
+    throw error
+  })
+  pullInstances.set(id, instance)
+
+  for (const oldest of pullInstances.keys()) {
+    if (pullInstances.size <= MAX_PULL_INSTANCES) break
+    pullInstances.delete(oldest)
+  }
+
+  return instance
+}
+
+/** The instance serving `key` in this preview: the PR's head commit if it targets `key`, production otherwise. */
+export function getInstanceForPull(preview: PullPreview, key: ContentInstanceKey): Promise<ComarkContent> {
+  return preview.keys.includes(key) ? getInstanceAtPull(key, preview.sha) : getInstanceAtHead(key)
 }
 
 /** The `:repo` and `:number` route params, validated. */
@@ -166,4 +222,38 @@ export async function pullLandingPath(preview: PullPreview): Promise<string> {
   const content = await getInstanceAtPull(key, preview.sha)
 
   return firstPagePath(findByPath(await content.navigation(), prefix)?.children) ?? prefix
+}
+
+/** `items` with `nodes` inserted after the item at `path`, or at the end. */
+function insertAfter(items: NavigationItem[], path: string, nodes: NavigationItem[]): NavigationItem[] {
+  const at = (items.findIndex(item => item.path === path) + 1) || items.length
+
+  return [...items.slice(0, at), ...nodes, ...items.slice(at)]
+}
+
+/**
+ * `/api/navigation/:version`'s tree, read through the preview's instances.
+ * Mirrors production's `docTree()` grafts, so `navigation.ts` stays preview-free.
+ */
+export async function pullNavigation(version: DocVersion, preview: PullPreview): Promise<NavigationItem[]> {
+  const subtree = async (key: ContentInstanceKey, path: string): Promise<NavigationItem[]> => {
+    const item = findByPath(await (await getInstanceForPull(preview, key)).navigation(), path)
+    return item ? [item] : []
+  }
+
+  const prefix = docsPathPrefix(version)
+  const [[docs], commands, examples, blog] = await Promise.all([
+    subtree(docsInstanceKey(version), prefix),
+    // Optional grafts, as in production: losing one keeps the rest of the tree.
+    subtree(cliInstanceKey(version), cliDocsPathPrefix(version)).catch(() => []),
+    subtree('examples', EXAMPLES_PATH_PREFIX).catch(() => []),
+    subtree('site', '/blog').catch(() => [])
+  ])
+
+  // Examples after the API section, commands after its utils.
+  const children = insertAfter(docs?.children ?? [], `${prefix}/api`, examples).map(item => item.path === `${prefix}/api`
+    ? { ...item, children: insertAfter(item.children ?? [], `${prefix}/api/utils`, commands) }
+    : item)
+
+  return [{ ...(docs ?? { title: 'Docs', path: prefix }), children }, ...blog]
 }

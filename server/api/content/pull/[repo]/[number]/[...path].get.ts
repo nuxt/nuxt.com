@@ -10,9 +10,8 @@ export default defineEventHandler(async (event) => {
   const key = instanceKeyFromSegments(segments)
 
   const preview = await resolvePullPreview(target)
-  const content = await pullResolver(preview)(key)
+  const content = await getInstanceForPull(preview, key)
 
-  // `handler()` matches on its own `basePath` (`/api/content/<instance>`), so drop the PR.
   const request = toWebRequest(event)
   const url = new URL(request.url)
   url.pathname = url.pathname.replace(pullBasePath(target), '')
