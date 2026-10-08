@@ -49,7 +49,6 @@ jobs:
           --no-serve
           --logLevel=info
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NODE_OPTIONS: --max-old-space-size=8192
           NUXT_TELEMETRY_DISABLED: 1
       - name: Snapshot the base bundle
@@ -91,7 +90,6 @@ jobs:
           --no-serve
           --logLevel=info
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NODE_OPTIONS: --max-old-space-size=8192
           NUXT_TELEMETRY_DISABLED: 1
       - name: Snapshot the PR bundle
