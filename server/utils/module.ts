@@ -164,14 +164,10 @@ export async function fetchBulkModuleHealth(_event: H3Event, modules: BaseModule
 
 export async function fetchModuleReadme(_event: H3Event, module: BaseModule) {
   console.info(`Fetching module ${module.name} readme ...`)
-  let readme = await $fetch(`https://unpkg.com/${module.npm}/README.md`).catch(() => {
+  const readme = await $fetch(`https://unpkg.com/${module.npm}/README.md`).catch(() => {
     console.warn(`Could not fetch ${module.npm}/README.md`)
     return 'Readme not found'
   }) as string
-
-  // Relative `<img src>` / `<source srcset>` in raw HTML would resolve against nuxt.com
-  const base = `https://raw.githubusercontent.com/${module.repo.split('#')[0]}/HEAD/`
-  readme = readme.replace(/(src|srcset)="(?![a-z]+:|\/|#)(?:\.\/)?/g, `$1="${base}`)
 
   return await parseStandaloneMarkdown(readme)
 }
