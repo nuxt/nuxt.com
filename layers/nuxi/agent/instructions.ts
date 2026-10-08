@@ -1,6 +1,7 @@
 import { defineDynamic, defineInstructions } from 'eve/instructions'
 import { ADMIN_MCP_INSTRUCTIONS } from './connections/admin-mcp.js'
 import { AI_GATEWAY_INSTRUCTIONS } from './tools/ai-gateway.js'
+import { ARTIFACTS_MCP_INSTRUCTIONS } from './connections/artifacts-mcp.js'
 import { VERCEL_MCP_INSTRUCTIONS } from './connections/vercel-mcp.js'
 import { isAdminMode } from './lib/identity/admin-mode.js'
 import { buildInstructionsWithDate } from './lib/base-instructions.js'
@@ -33,7 +34,7 @@ export default defineDynamic({
       ]
 
       if (await isAdminMode(auth)) {
-        blocks.push(ADMIN_MCP_INSTRUCTIONS, VERCEL_MCP_INSTRUCTIONS, AI_GATEWAY_INSTRUCTIONS)
+        blocks.push(ADMIN_MCP_INSTRUCTIONS, VERCEL_MCP_INSTRUCTIONS, AI_GATEWAY_INSTRUCTIONS, ARTIFACTS_MCP_INSTRUCTIONS)
       }
 
       return defineInstructions({ markdown: blocks.filter(Boolean).join('\n\n') })
