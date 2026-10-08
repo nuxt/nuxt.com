@@ -2,7 +2,8 @@ import { getAgentSiteUrl } from '#agent-discovery'
 
 export default defineCachedEventHandler(async (event) => {
   const domain = getAgentSiteUrl(event)
-  const modules = await fetchModules(event) || []
+  const { modules } = await event.$fetch('/api/v1/modules')
+  modules.sort((a, b) => (b.stats?.downloads || 0) - (a.stats?.downloads || 0))
 
   const lines: string[] = [
     '# Nuxt Modules',
@@ -11,14 +12,14 @@ export default defineCachedEventHandler(async (event) => {
     ''
   ]
 
-  const categories = new Map<string, typeof modules>()
+  const sections = new Map<string, typeof modules>([['Official', []]])
   for (const mod of modules) {
-    const cat = mod.category || 'Uncategorized'
-    if (!categories.has(cat)) categories.set(cat, [])
-    categories.get(cat)!.push(mod)
+    const section = mod.type === 'official' ? 'Official' : mod.category || 'Uncategorized'
+    if (!sections.has(section)) sections.set(section, [])
+    sections.get(section)!.push(mod)
   }
 
-  for (const [category, mods] of categories) {
+  for (const [category, mods] of sections) {
     lines.push(`## ${category}`, '')
     for (const mod of mods) {
       const links = [

@@ -250,7 +250,6 @@ Docs put the header inside the `UPage`, so the navigation runs alongside it. Use
 
 ### Spacing and grid
 
-- **Container:** `UContainer`, max width `--ui-container: 90rem`.
 - **Spacing:** Tailwind's 4px scale. `gap-2` inside a group, `gap-4` between related items, `py-10 sm:py-20` for sections, `py-24 sm:py-32 lg:py-40` for heroes.
 - **Breakpoints:** Tailwind defaults (`sm` 640px, `md` 768px, `lg` 1024px, `xl` 1280px, `2xl` 1536px).
 - **Radius:** every `rounded-*` utility derives from `--ui-radius`. Controls and cards use `rounded-md` or `rounded-lg`; reserve `rounded-2xl` for large panels.
