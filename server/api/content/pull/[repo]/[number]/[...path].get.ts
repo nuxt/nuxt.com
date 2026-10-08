@@ -1,7 +1,7 @@
 import { pullBasePath } from '#shared/utils/pull'
 
 /**
- * The live endpoint, as a pull request previews it: the instances the PR targets are pinned to its head commit.
+ * The live endpoint, as a pull request previews it: the instance the PR replaces is pinned to its head commit.
  * Follows new pushes within the PR lookup's TTL, so no ISR rule.
  */
 export default defineEventHandler(async (event) => {

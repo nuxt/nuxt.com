@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
-import { CONTENT_INSTANCE_KEYS, instanceBasePath, navigationPath } from '../../shared/utils/content'
+import { CONTENT_INSTANCE_KEYS, instanceBasePath, instanceBlobPath, navigationPath } from '../../shared/utils/content'
 import { instanceSource } from '../../server/utils/content/instances'
-import { instancePullPath, instanceRepo, parsePullPath, parsePullTarget, pullApiPath, pullBasePath, pullNavigationPath, pullRepoName } from '../../shared/utils/pull'
+import { instancePullBlobPath, instancePullPath, instanceRepo, parsePullPath, parsePullTarget, pullApiPath, pullBasePath, pullHeadPath, pullNavigationPath, pullRepoName } from '../../shared/utils/pull'
 
 const PULL = { repo: 'nuxt', number: 33012 } as const
 
@@ -52,12 +52,14 @@ describe('pull paths', () => {
     expect(pullBasePath(PULL)).toBe('/pull/nuxt/33012')
     expect(pullApiPath(PULL)).toBe('/api/pull/nuxt/33012')
     expect(pullNavigationPath('5.x', PULL)).toBe('/api/navigation/pull/nuxt/33012/5.x')
+    expect(pullHeadPath(PULL)).toBe('/api/content/pull/nuxt/33012/head')
   })
 
   it('reduces a preview content path to the live one by dropping the prefix', () => {
     expect(instancePullPath('docs:5.x', PULL)).toBe('/api/content/pull/nuxt/33012/docs/5.x')
     expect(instancePullPath('docs:5.x', PULL).replace(pullBasePath(PULL), '')).toBe(instanceBasePath('docs:5.x'))
     expect(pullNavigationPath('5.x', PULL).replace(pullBasePath(PULL), '')).toBe(navigationPath('5.x'))
+    expect(instancePullBlobPath('docs:5.x', PULL, 'abc123').replace(pullBasePath(PULL), '')).toBe(instanceBlobPath('docs:5.x', 'abc123'))
   })
 })
 

@@ -31,8 +31,8 @@ export interface PullPreview {
   url: string
   /** The PR's head commit. */
   sha: string
-  /** The instances reading the PR's base branch, current docs version first. */
-  keys: ContentInstanceKey[]
+  /** The instance the PR replaces, read at `sha`. */
+  instanceKey: ContentInstanceKey
   /** Repo paths the PR adds or modifies. */
   files: string[]
 }
@@ -53,9 +53,12 @@ function githubHeaders(): Record<string, string> {
   }
 }
 
-/** `repo`'s instances reading `branch`: `nuxt/cli`'s `main` backs both `cli:4.x` and `cli:5.x`. */
-export function pullInstanceKeys(repo: string, branch: string): ContentInstanceKey[] {
-  return CONTENT_INSTANCE_KEYS.filter((key) => {
+/**
+ * The instance reading `repo`'s `branch`.
+ * When several versions read it, the oldest wins: `nuxt/cli` `main` backs 4.x (current) and 5.x.
+ */
+export function pullInstanceKey(repo: string, branch: string): ContentInstanceKey | undefined {
+  return CONTENT_INSTANCE_KEYS.find((key) => {
     const { source } = instanceSource(key)
     return source.repo === repo && source.branch === branch
   })
@@ -97,8 +100,8 @@ export async function resolvePullPreview(target: PullTarget): Promise<PullPrevie
   if (!pull) return deny()
 
   // A PR against a branch no instance reads (a feature branch, an old major) has nothing to preview.
-  const keys = pullInstanceKeys(repo, pull.base.ref)
-  if (!keys.length || !allowsPreview(pull, repo)) return deny()
+  const instanceKey = pullInstanceKey(repo, pull.base.ref)
+  if (!instanceKey || !allowsPreview(pull, repo)) return deny()
 
   const files = await $fetch<Array<{ filename: string, status: string }>>(`${api}/files`, {
     headers: githubHeaders(),
@@ -112,7 +115,7 @@ export async function resolvePullPreview(target: PullTarget): Promise<PullPrevie
     title: pull.title,
     url: pull.html_url,
     sha: pull.head.sha,
-    keys,
+    instanceKey,
     files: files.filter(file => file.status !== 'removed').map(file => file.filename)
   }
   await pullStorage.setItem(key, preview, { ttl: PULL_TTL })
@@ -174,9 +177,9 @@ export function getInstanceAtPull(key: ContentInstanceKey, sha: string): Promise
   return instance
 }
 
-/** The instance serving `key` in this preview: the PR's head commit if it targets `key`, production otherwise. */
+/** The instance serving `key` in this preview: the PR's head commit if it replaces `key`, production otherwise. */
 export function getInstanceForPull(preview: PullPreview, key: ContentInstanceKey): Promise<ComarkContent> {
-  return preview.keys.includes(key) ? getInstanceAtPull(key, preview.sha) : getInstanceAtHead(key)
+  return key === preview.instanceKey ? getInstanceAtPull(key, preview.sha) : getInstanceAtHead(key)
 }
 
 /** The `:repo` and `:number` route params, validated. */
@@ -189,9 +192,9 @@ export function pullTargetFromEvent(event: H3Event): PullTarget {
   return target
 }
 
-/** The pages the PR adds or changes, read off its first instance: the others read the same files. */
+/** The pages the PR adds or changes. */
 export async function pullPages(preview: PullPreview): Promise<PullPreviewSummary['pages']> {
-  const key = preview.keys[0]!
+  const key = preview.instanceKey
   const content = await getInstanceAtPull(key, preview.sha)
   const dir = `${instanceSource(key).source.contentDir.replace(/\/+$/, '')}/`
 
@@ -215,7 +218,7 @@ export async function pullLandingPath(preview: PullPreview): Promise<string> {
   const [page] = await pullPages(preview)
   if (page) return page.path
 
-  const key = preview.keys[0]!
+  const key = preview.instanceKey
   const { prefix } = instanceSource(key).source
   if (prefix === '/') return prefix
 

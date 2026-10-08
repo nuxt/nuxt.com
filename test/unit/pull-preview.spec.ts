@@ -34,7 +34,7 @@ vi.stubGlobal('recordDuration', () => 0)
 vi.stubGlobal('getInstanceAtHead', async (key: ContentInstanceKey) => ({ navigation: async () => headNavs.get(key) ?? [] }))
 vi.stubGlobal('findByPath', findByPath)
 
-const { pullInstanceKeys, pullNavigation, pullPages, resolvePullPreview } = await import('../../server/utils/content/pull')
+const { pullInstanceKey, pullNavigation, pullPages, resolvePullPreview } = await import('../../server/utils/content/pull')
 
 let number = 0
 /** A fresh PR number per test: the preview cache is module state. */
@@ -65,13 +65,16 @@ beforeEach(() => {
   headNavs.clear()
 })
 
-describe('pullInstanceKeys', () => {
-  it('maps a base branch to the instances reading it', () => {
-    expect(pullInstanceKeys('nuxt/nuxt', 'main')).toEqual(['docs:5.x'])
-    expect(pullInstanceKeys('nuxt/nuxt', '4.x')).toEqual(['docs:4.x'])
-    expect(pullInstanceKeys('nuxt/cli', 'main')).toEqual(['cli:4.x', 'cli:5.x'])
-    expect(pullInstanceKeys('nuxt/nuxt.com', 'main')).toEqual(['site'])
-    expect(pullInstanceKeys('nuxt/nuxt', 'feat/x')).toEqual([])
+describe('pullInstanceKey', () => {
+  it('maps a base branch to the instance reading it', () => {
+    expect(pullInstanceKey('nuxt/nuxt', 'main')).toBe('docs:5.x')
+    expect(pullInstanceKey('nuxt/nuxt', '4.x')).toBe('docs:4.x')
+    expect(pullInstanceKey('nuxt/nuxt.com', 'main')).toBe('site')
+    expect(pullInstanceKey('nuxt/nuxt', 'feat/x')).toBeUndefined()
+  })
+
+  it('picks the current version when several read the branch', () => {
+    expect(pullInstanceKey('nuxt/cli', 'main')).toBe('cli:4.x')
   })
 })
 
@@ -84,7 +87,7 @@ describe('resolvePullPreview', () => {
 
     const preview = await resolvePullPreview(nextTarget())
 
-    expect(preview).toMatchObject({ sha: SHA, keys: ['docs:5.x'], files: ['docs/1.getting-started/2.installation.md'] })
+    expect(preview).toMatchObject({ sha: SHA, instanceKey: 'docs:5.x', files: ['docs/1.getting-started/2.installation.md'] })
   })
 
   it('requires the preview label on a fork PR', async () => {
@@ -121,7 +124,7 @@ describe('resolvePullPreview', () => {
 })
 
 describe('pullPages', () => {
-  it('maps changed files to the pages of the first instance', async () => {
+  it('maps changed files to the pages of the instance it replaces', async () => {
     pageStat.mockImplementation((key: string) => key === '1.getting-started/2.installation.md'
       ? { path: '/docs/5.x/getting-started/installation', data: { title: 'Installation' } }
       : undefined)
@@ -131,7 +134,7 @@ describe('pullPages', () => {
       title: '',
       url: '',
       sha: SHA,
-      keys: ['docs:5.x'],
+      instanceKey: 'docs:5.x',
       files: ['docs/1.getting-started/2.installation.md', 'docs/README.md', 'packages/nuxt/src/index.ts']
     })
 
@@ -157,7 +160,7 @@ describe('pullNavigation', () => {
       title: '',
       url: '',
       sha: SHA,
-      keys: ['docs:4.x'],
+      instanceKey: 'docs:4.x',
       files: []
     })
 

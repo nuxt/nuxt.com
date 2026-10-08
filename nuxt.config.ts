@@ -185,6 +185,7 @@ export default defineNuxtConfig({
     // Main navigation
     '/api/navigation/**': { isr: CONTENT_ISR },
     '/api/content/blob/**': { isr: true },
+    '/api/content/pull/*/*/blob/**': { isr: true },
     '/pull/**': { isr: CONTENT_ISR, robots: 'noindex, nofollow' },
     // Redirects
     '/docs': { redirect: '/docs/getting-started/introduction', prerender: false },

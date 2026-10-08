@@ -4,7 +4,7 @@ import type { DocVersion } from './docs'
 /**
  * Pull request previews: `/pull/:repo/:number` mirrors `github.com/nuxt/:repo/pull/:number`.
  *
- * The whole site is mounted under that prefix, with the instances the PR targets pinned to its head commit.
+ * The whole site is mounted under that prefix, with the instance the PR replaces pinned to its head commit.
  */
 
 /** Repos in the `nuxt` org a content instance reads from; the PR's base branch picks which instances. */
@@ -49,6 +49,19 @@ export function pullApiPath(target: PullTarget): string {
 /** An instance's live endpoint, as a pull request previews it: `/api/content/pull/nuxt/33012/docs/5.x`. */
 export function instancePullPath(key: ContentInstanceKey, pull: PullTarget): string {
   return `/api/content${pullBasePath(pull)}/${key.replace(':', '/')}`
+}
+
+/** The instance a preview replaces and its commit: `/api/content/pull/nuxt/33012/head`. */
+export function pullHeadPath(pull: PullTarget): string {
+  return `/api/content${pullBasePath(pull)}/head`
+}
+
+/**
+ * An instance's search artifacts, pinned to the commit the preview reads it at.
+ * `/api/content/pull/nuxt/33012/blob/<sha>/docs/5.x` — immutable, so cached forever (`isr: true`).
+ */
+export function instancePullBlobPath(key: ContentInstanceKey, pull: PullTarget, sha: string): string {
+  return `/api/content${pullBasePath(pull)}/blob/${sha}/${key.replace(':', '/')}`
 }
 
 /** A version's navigation tree, as a pull request previews it: `/api/navigation/pull/nuxt/33012/5.x`. */
