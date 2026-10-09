@@ -25,38 +25,57 @@ const pageItems = computed<DropdownMenuItem[]>(() => (preview.value?.pages ?? []
   <UBanner
     v-if="preview"
     icon="i-lucide-git-pull-request"
-    color="warning"
-    :title="`Previewing ${preview.repo}#${preview.number}: ${preview.title}`"
+    :ui="{
+      root: 'bg-primary/10 border-b border-primary/25',
+      icon: 'size-4 text-primary',
+      title: 'flex items-center gap-2 min-w-0 text-default font-normal',
+      actions: 'gap-1 ms-2'
+    }"
   >
+    <template #title>
+      <span class="font-semibold text-highlighted shrink-0 hidden sm:inline">Preview</span>
+      <UBadge :label="`${preview.repo}#${preview.number}`" color="primary" variant="subtle" size="sm" class="shrink-0" />
+      <span class="truncate text-muted hidden sm:inline">{{ preview.title }}</span>
+    </template>
+
     <template #actions>
       <UDropdownMenu v-if="pageItems.length" :items="pageItems" :content="{ align: 'end' }">
         <UButton
-          :label="`${pageItems.length} changed ${pageItems.length === 1 ? 'page' : 'pages'}`"
+          icon="i-lucide-file-diff"
+          trailing-icon="i-lucide-chevron-down"
           color="neutral"
           variant="outline"
           size="xs"
-          trailing-icon="i-lucide-chevron-down"
-        />
+          :aria-label="`${pageItems.length} changed ${pageItems.length === 1 ? 'page' : 'pages'}`"
+        >
+          <span class="hidden sm:inline">{{ pageItems.length }} changed {{ pageItems.length === 1 ? 'page' : 'pages' }}</span>
+        </UButton>
       </UDropdownMenu>
-      <UButton
-        label="View on GitHub"
-        :to="preview.url"
-        target="_blank"
-        color="neutral"
-        variant="outline"
-        size="xs"
-        trailing-icon="i-lucide-arrow-up-right"
-      />
+
+      <UTooltip text="View on GitHub">
+        <UButton
+          :to="preview.url"
+          target="_blank"
+          icon="i-simple-icons-github"
+          color="neutral"
+          variant="ghost"
+          size="xs"
+          aria-label="View on GitHub"
+        />
+      </UTooltip>
+
       <!-- `external` skips the router, whose base would keep the link in the preview. -->
-      <UButton
-        label="Exit preview"
-        :to="route.fullPath"
-        external
-        color="neutral"
-        variant="outline"
-        size="xs"
-        trailing-icon="i-lucide-x"
-      />
+      <UTooltip text="Exit preview">
+        <UButton
+          :to="route.fullPath"
+          external
+          icon="i-lucide-x"
+          color="neutral"
+          variant="ghost"
+          size="xs"
+          aria-label="Exit preview"
+        />
+      </UTooltip>
     </template>
   </UBanner>
 </template>
