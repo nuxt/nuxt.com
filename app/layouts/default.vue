@@ -36,7 +36,7 @@ onMounted(() => {
       ]"
     /> -->
 
-    <PullPreviewBanner v-if="pull" :pull="pull" />
+    <LazyPullPreviewBanner v-if="pull" :pull="pull" />
 
     <Header />
 

@@ -3,6 +3,7 @@ import { parsePullPath } from '#shared/utils/pull'
 /**
  * Render a `/pull/:repo/:number/<path>` request as `<path>`, so pages, middleware and `route.path` stay unaware.
  * `router.options.ts` puts the prefix back on every link, and the client router hydrates from `payload.path`.
+ * Only content pages get here: `server/middleware/pull-preview.ts` redirects the rest to production.
  */
 export default defineNuxtPlugin({
   name: 'pull-preview',

@@ -95,3 +95,35 @@ export function parsePullPath(url: string): { target: PullTarget, path: string }
 
   return { target, path: rest.startsWith('/') ? rest : `/${rest}` }
 }
+
+/**
+ * Pages that render content, the only ones a preview mirrors: an exact path, or a prefix with `/**`.
+ * Pinned to the pages calling `useContent()` by `test/unit/pull-paths.spec.ts`.
+ */
+export const PULL_CONTENT_PAGES = [
+  '/',
+  '/blog/**',
+  '/deploy/**',
+  '/design-kit',
+  '/docs/**',
+  '/enterprise/agencies/**',
+  '/enterprise/jobs',
+  '/enterprise/sponsors',
+  '/enterprise/support',
+  '/evals',
+  '/modules',
+  '/newsletter',
+  '/showcase',
+  '/team',
+  '/templates',
+  '/video-courses'
+]
+
+/** Whether a preview mirrors `path` (query and trailing slash ignored), instead of sending it to production. */
+export function isPullContentPage(path: string): boolean {
+  const pathname = path.replace(/[?#].*$/, '').replace(/\/+$/, '') || '/'
+
+  return PULL_CONTENT_PAGES.some(page => page.endsWith('/**')
+    ? pathname === page.slice(0, -3) || pathname.startsWith(page.slice(0, -2))
+    : pathname === page)
+}

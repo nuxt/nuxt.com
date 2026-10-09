@@ -43,7 +43,7 @@ The docs live in the [nuxt/nuxt](https://github.com/nuxt/nuxt) repository. To ed
 
 ### Previewing a pull request
 
-`/pull/:repo/:number` mirrors `github.com/nuxt/:repo/pull/:number`: it renders the whole site with that pull request's content, and lands on the first page it changes. `:repo` is `nuxt`, `cli`, `examples` or `nuxt.com`, and the pull request's base branch picks which content it replaces (`nuxt/nuxt`'s `main` is the 5.x docs). Pull requests from forks need the `preview:enabled` label.
+`/pull/:repo/:number` mirrors `github.com/nuxt/:repo/pull/:number`: it renders the site's content pages with that pull request's content (any other page redirects to production), and lands on the first page it changes. `:repo` is `nuxt`, `cli`, `examples` or `nuxt.com`, and the pull request's base branch picks which content it replaces (`nuxt/nuxt`'s `main` is the 5.x docs). Pull requests from forks need the `preview:enabled` label.
 
 ### Signing in locally
 
