@@ -128,9 +128,12 @@ const orders: Filter[] = [
   { key: 'asc', label: 'Asc', icon: 'i-lucide-arrow-up-wide-narrow' }
 ]
 
+function queryValue(value: unknown) {
+  return typeof value === 'string' ? value : ''
+}
+
 export const useModules = () => {
   const route = useRoute()
-  const router = useRouter()
   const { data, execute } = useFetch('/api/v1/modules', {
     immediate: false,
     default: () => ({
@@ -157,44 +160,77 @@ export const useModules = () => {
     return execute()
   }
 
+  // Input → refs → filteredModules. URL is only a mirror (replaceState), not part of the filter path.
+  const q = ref(queryValue(route.query.q))
+  const category = ref(queryValue(route.query.category))
+  const sortBy = ref(queryValue(route.query.sortBy))
+  const orderBy = ref(queryValue(route.query.orderBy))
+
+  function reflectFiltersInUrl() {
+    if (!import.meta.client) return
+
+    const params = new URLSearchParams()
+    if (q.value) params.set('q', q.value)
+    if (category.value) params.set('category', category.value)
+    if (sortBy.value) params.set('sortBy', sortBy.value)
+    if (orderBy.value) params.set('orderBy', orderBy.value)
+
+    const search = params.toString()
+    const next = `${window.location.pathname}${search ? `?${search}` : ''}${window.location.hash}`
+    const current = `${window.location.pathname}${window.location.search}${window.location.hash}`
+    if (next === current) return
+
+    window.history.replaceState(window.history.state, '', next)
+  }
+
+  watch([q, category, sortBy, orderBy], reflectFiltersInUrl)
+
+  watch(
+    () => [route.query.q, route.query.category, route.query.sortBy, route.query.orderBy] as const,
+    ([nextQ, nextCategory, nextSort, nextOrder]) => {
+      const search = queryValue(nextQ)
+      if (q.value !== search) q.value = search
+
+      const nextCategoryValue = queryValue(nextCategory)
+      if (category.value !== nextCategoryValue) category.value = nextCategoryValue
+
+      const nextSortValue = queryValue(nextSort)
+      if (sortBy.value !== nextSortValue) sortBy.value = nextSortValue
+
+      const nextOrderValue = queryValue(nextOrder)
+      if (orderBy.value !== nextOrderValue) orderBy.value = nextOrderValue
+    }
+  )
+
   // Data
 
   const categories = computed<Filter[]>(() => {
     return Object.keys(iconsMap)
-      .map((category) => {
+      .map((name) => {
         return {
-          key: category,
-          label: category,
-          active: route.query.category === category,
-          to: { name: 'modules', query: category === route.query.category ? undefined : { category }, state: { smooth: '#smooth' } },
-          icon: iconsMap[category as keyof typeof iconsMap] || undefined,
+          key: name,
+          label: name,
+          active: category.value === name,
+          to: { name: 'modules', query: name === category.value ? undefined : { category: name }, state: { smooth: '#smooth' } },
+          icon: iconsMap[name as keyof typeof iconsMap] || undefined,
           click: (e: Event) => {
-            if (route.query.category !== category) {
-              return
-            }
-
             e.preventDefault()
-
-            router.replace({ query: { ...route.query, category: undefined } })
+            category.value = category.value === name ? '' : name
           }
         }
       })
   })
 
   const selectedCategory = computed(() => {
-    return categories.value.find(category => category.label === route.query.category)
+    return categories.value.find(item => item.key === category.value)
   })
 
   const selectedSort = computed(() => {
-    return sorts.find(sort => sort.key === route.query.sortBy) || sorts[0]
+    return sorts.find(sort => sort.key === sortBy.value) || sorts[0]
   })
 
   const selectedOrder = computed(() => {
-    return orders.find(order => order.key === route.query.orderBy) || orders[0]
-  })
-
-  const q = computed<string>(() => {
-    return route.query.q as string
+    return orders.find(order => order.key === orderBy.value) || orders[0]
   })
 
   const isSponsorOrOfficial = (a: Module, b: Module) => {
@@ -242,7 +278,7 @@ export const useModules = () => {
     }
 
     // sponsored & official modules in first place if no sort or order by
-    if (!route.query.sortBy && !route.query.orderBy) {
+    if (!sortBy.value && !orderBy.value) {
       return filteredModules.sort(isSponsorOrOfficial)
     }
     return filteredModules
@@ -269,6 +305,9 @@ export const useModules = () => {
     // selectedVersion,
     selectedSort,
     selectedOrder,
-    q
+    q,
+    category,
+    sortBy,
+    orderBy
   }
 }

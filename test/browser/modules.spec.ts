@@ -19,19 +19,14 @@ test.describe('Modules Page', () => {
     await expect(searchInput).toBeVisible()
     await expect(searchInput).toBeEditable()
 
-    // type a nonexistent module name to test filtering
+    // Filtering is client-side from the in-memory list.
     await searchInput.fill('nonexistent-module-xyz')
-    await page.waitForLoadState('networkidle')
 
-    // Verify that no module links are visible after filtering
     const moduleLinks = page.locator('a[href^="/modules/"]')
-    expect(await moduleLinks.count()).toBe(0)
+    await expect(moduleLinks).toHaveCount(0)
 
-    // Clear the search input
     await searchInput.fill('')
-
-    // Verify that module links are visible again
-    expect(await moduleLinks.count()).toBeGreaterThanOrEqual(0)
+    await expect.poll(async () => moduleLinks.count()).toBeGreaterThan(0)
   })
 
   test('has category filters', async ({ page, goto }) => {
