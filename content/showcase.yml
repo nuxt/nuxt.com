@@ -170,3 +170,5 @@ websites:
       removeElements: ['.relative.z-10.bg-black.text-white']
       styles: ['.hero { height: 100vh !important; }']
       delay: 3
+  - name: Red Hat Documentation
+    url: https://docs.redhat.com/
