@@ -109,19 +109,9 @@ function _useHeaderLinks() {
     }, {
       label: 'Updates',
       icon: 'i-lucide-newspaper',
-      search: false,
-      to: '/blog',
-      children: [{
-        label: 'Blog',
-        to: '/blog',
-        description: 'News and updates about Nuxt.',
-        icon: 'i-lucide-newspaper'
-      }, {
-        label: 'Changelog',
-        to: '/changelog',
-        description: 'Latest releases from Nuxt and official modules.',
-        icon: 'i-lucide-history'
-      }]
+      to: '/updates',
+      description: 'Releases and blog posts from the Nuxt team.',
+      active: route.path.startsWith('/updates') || route.path.startsWith('/blog') || route.path.startsWith('/changelog')
     }]
   })
 
@@ -196,6 +186,10 @@ const _useNavigation = () => {
     }
     return [link]
   }), {
+    label: 'Changelog',
+    icon: 'i-lucide-history',
+    to: '/changelog'
+  }, {
     label: 'Team',
     icon: 'i-lucide-users',
     to: '/team'
