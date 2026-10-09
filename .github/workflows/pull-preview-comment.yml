@@ -29,9 +29,8 @@ jobs:
             // `/pull/:repo/:number` mirrors `github.com/nuxt/:repo/pull/:number`.
             const previewUrl = `${SITE_URL}/pull/${repo}/${pr.number}`
 
-            // nuxt.com previews same-repo PRs, and fork PRs only with the label.
-            const internal = pr.head.repo?.full_name === `${owner}/${repo}`
-            const enabled = internal || pr.labels.some(label => label.name === PREVIEW_LABEL)
+            // nuxt.com only previews PRs a maintainer labelled, same-repo ones included.
+            const enabled = pr.labels.some(label => label.name === PREVIEW_LABEL)
 
             const body = [
               marker,
@@ -40,12 +39,10 @@ jobs:
               ...(enabled
                 ? [
                     `📚 [Preview the changes on nuxt.com](${previewUrl}) (follows new pushes within 10 minutes)`,
-                    ...(internal ? [] : ['', `Enabled by the \`${PREVIEW_LABEL}\` label — remove it to disable the preview.`])
+                    '',
+                    `Enabled by the \`${PREVIEW_LABEL}\` label — remove it to disable the preview.`
                   ]
-                : [
-                    'Previews are disabled for pull requests from forks.',
-                    `A maintainer can add the \`${PREVIEW_LABEL}\` label to enable them.`
-                  ])
+                : [`A maintainer can add the \`${PREVIEW_LABEL}\` label to preview this pull request on nuxt.com.`])
             ].join('\n')
 
             const comments = await github.paginate(github.rest.issues.listComments, {

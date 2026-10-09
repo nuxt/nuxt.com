@@ -5,23 +5,26 @@ import type { PullPreviewSummary } from '#shared/types'
 import { cliDocsPathPrefix } from '#shared/utils/cli'
 import { CONTENT_INSTANCE_KEYS, cliInstanceKey, docsInstanceKey, type ContentInstanceKey } from '#shared/utils/content'
 import { docsPathPrefix, EXAMPLES_PATH_PREFIX, type DocVersion } from '#shared/utils/docs'
-import { parsePullTarget, pullRepoName, type PullTarget } from '#shared/utils/pull'
+import { isPullContentPage, parsePullTarget, pullRepoName, type PullTarget } from '#shared/utils/pull'
 import { createRuntimeInstance } from '../../../utils/factory'
 
-/**
- * `/pull/:repo/:number` previews: which commit and instances a pull request maps to, and who may preview it.
- *
- * Public and unauthenticated, so every lookup is cached, misses included.
- */
-
-/** Label a maintainer adds to a fork PR to make it previewable. */
+/** Label a maintainer adds to a PR to make it previewable. */
 export const PULL_PREVIEW_LABEL = 'preview:enabled'
 
 /** A preview follows new pushes, and a removed label revokes it, within this bound. */
 const PULL_TTL = 600
 
-/** Sentinel for "no preview for this PR", so unknown numbers don't each cost a GitHub call. */
-const UNRESOLVED = '\0unresolved'
+/** A PR labelled or opened since the list was fetched refreshes it, at most this often. */
+const PULL_REFRESH_COOLDOWN = 60
+
+/** Open PRs listed per repo, 100 per page: older ones past that aren't previewable. */
+const MAX_PULL_PAGES = 5
+
+/** A PR's files only change with its head commit. */
+const PULL_FILES_TTL = 60 * 60 * 24
+
+/** GitHub lists at most 3000 files per PR, 100 per page. */
+const MAX_FILE_PAGES = 30
 
 const pullStorage = createStorage({ driver: githubRefCacheDriver(PULL_TTL) })
 
@@ -33,14 +36,38 @@ export interface PullPreview {
   sha: string
   /** The instance the PR replaces, read at `sha`. */
   instanceKey: ContentInstanceKey
-  /** Repo paths the PR adds or modifies. */
-  files: string[]
+  /** Files the PR adds, modifies or removes. */
+  files: PullFile[]
+}
+
+/** A file a PR changes. */
+export interface PullFile {
+  path: string
+  /** Deleted by the PR: only production still has it. */
+  removed: boolean
+}
+
+/** What the cached list keeps of a previewable PR. */
+interface PreviewablePull {
+  title: string
+  url: string
+  sha: string
+  /** The instance the PR replaces. */
+  instanceKey: ContentInstanceKey
+}
+
+interface PreviewablePulls {
+  fetchedAt: number
+  /** Every open PR number, previewable or not. */
+  open: number[]
+  pulls: Record<number, PreviewablePull>
 }
 
 interface GitHubPull {
+  number: number
   title: string
   html_url: string
-  head: { sha: string, repo: { full_name: string } | null }
+  head: { sha: string }
   base: { ref: string }
   labels: Array<{ name: string }>
 }
@@ -64,63 +91,116 @@ export function pullInstanceKey(repo: string, branch: string): ContentInstanceKe
   })
 }
 
-/**
- * Same-repo PRs come from people who can push to the repo anyway.
- * Fork PRs need a maintainer's label, or any fork's markdown would render on nuxt.com.
- */
-function allowsPreview(pull: GitHubPull, repo: string): boolean {
-  if (pull.head.repo?.full_name === repo) return true
-  return pull.labels.some(label => label.name === PULL_PREVIEW_LABEL)
+/** Lists every open PR, but keeps only the ones nuxt.com may preview. */
+async function fetchPreviewablePulls(repo: string): Promise<PreviewablePulls> {
+  const pulls: Record<number, PreviewablePull> = {}
+  const open: number[] = []
+
+  for (let page = 1; page <= MAX_PULL_PAGES; page++) {
+    const batch = await $fetch<GitHubPull[]>(`https://api.github.com/repos/${repo}/pulls`, {
+      headers: githubHeaders(),
+      query: { state: 'open', per_page: 100, page }
+    }).catch((error) => {
+      throw createError({ status: 502, statusText: 'Could not reach GitHub', cause: error })
+    })
+
+    for (const pull of batch) {
+      open.push(pull.number)
+
+      const instanceKey = pullInstanceKey(repo, pull.base.ref)
+      // Same-repo PRs need the label too: rendering a PR on nuxt.com is a maintainer's call.
+      const isPreviewEnabled = pull.labels.some(label => label.name === PULL_PREVIEW_LABEL)
+      if (!instanceKey || !isPreviewEnabled) continue
+
+      pulls[pull.number] = { title: pull.title, url: pull.html_url, sha: pull.head.sha, instanceKey }
+    }
+    if (batch.length < 100) break
+  }
+
+  return { fetchedAt: Date.now(), open, pulls }
 }
 
-/** The PR behind `target`, or a 404 when it doesn't exist, targets no instance or isn't allowed. */
-export async function resolvePullPreview(target: PullTarget): Promise<PullPreview> {
-  const repo = pullRepoName(target.repo)
-  const key = `pull:${repo}:${target.number}`
-  const notFound = () => createError({ status: 404, statusText: `No preview available for ${repo}#${target.number}` })
+/** List fetches in flight, so a burst of requests shares one. */
+const pullListFetches = new Map<string, Promise<PreviewablePulls>>()
 
-  const cached = await pullStorage.getItem<PullPreview | typeof UNRESOLVED>(key)
-  if (cached === UNRESOLVED) throw notFound()
+/**
+ * Return PR `number` if nuxt.com may preview it:
+ * - The PR is open
+ * - The PR is against a branch nuxt.com reads
+ * - The PR has the `preview:enabled` label
+ */
+async function getPreviewablePull(repo: string, number: number): Promise<PreviewablePull | undefined> {
+  const key = `pull-list:${repo}`
+  const cached = await pullStorage.getItem<PreviewablePulls>(key)
+  if (cached) {
+    const age = Date.now() - cached.fetchedAt
+    // An open PR the list can't preview may have been labelled since, a number above them all opened since.
+    const mayHaveChanged = !(number in cached.pulls) && (cached.open.includes(number) || number > Math.max(0, ...cached.open))
+    if (age < PULL_TTL * 1000 && (!mayHaveChanged || age < PULL_REFRESH_COOLDOWN * 1000)) return cached.pulls[number]
+  }
+
+  let fetching = pullListFetches.get(repo)
+  if (!fetching) {
+    fetching = fetchPreviewablePulls(repo)
+      .then(async (list) => {
+        await pullStorage.setItem(key, list, { ttl: PULL_TTL })
+        return list
+      })
+      .finally(() => pullListFetches.delete(repo))
+    pullListFetches.set(repo, fetching)
+  }
+
+  return (await fetching).pulls[number]
+}
+
+/** Files the PR adds, modifies or removes at its head commit. */
+async function getPullFiles(repo: string, number: number, pull: PreviewablePull): Promise<PullFile[]> {
+  const key = `pull-changes:${repo}:${number}:${pull.instanceKey}:${pull.sha}`
+  const cached = await pullStorage.getItem<PullFile[]>(key)
   if (cached) return cached
 
-  const deny = async (): Promise<never> => {
-    await pullStorage.setItem(key, UNRESOLVED, { ttl: PULL_TTL })
-    throw notFound()
+  const files: PullFile[] = []
+  for (let page = 1; page <= MAX_FILE_PAGES; page++) {
+    const batch = await $fetch<Array<{ filename: string, status: string }>>(`https://api.github.com/repos/${repo}/pulls/${number}/files`, {
+      headers: githubHeaders(),
+      query: { per_page: 100, page }
+    }).catch((error) => {
+      throw createError({ status: 502, statusText: 'Could not reach GitHub', cause: error })
+    })
+
+    files.push(...batch.map(file => ({ path: file.filename, removed: file.status === 'removed' })))
+    if (batch.length < 100) break
   }
+  await pullStorage.setItem(key, files, { ttl: PULL_FILES_TTL })
 
-  // Not cached, so the next request retries; GitHub's message would leak this server's IP on a rate limit.
-  const unavailable = (cause: unknown) => createError({ status: 502, statusText: 'Could not reach GitHub', cause })
+  return files
+}
 
-  const api = `https://api.github.com/repos/${repo}/pulls/${target.number}`
-  const pull = await $fetch<GitHubPull>(api, { headers: githubHeaders() }).catch((error) => {
-    // Only a definitive 404 is cacheable.
-    if ((error as { status?: number }).status === 404) return null
-    throw unavailable(error)
-  })
-  if (!pull) return deny()
+/** Where `key`'s content lives in its repo, with a trailing slash: `docs/`. */
+function instanceContentDir(key: ContentInstanceKey): string {
+  return `${instanceSource(key).source.contentDir.replace(/\/+$/, '')}/`
+}
 
-  // A PR against a branch no instance reads (a feature branch, an old major) has nothing to preview.
-  const instanceKey = pullInstanceKey(repo, pull.base.ref)
-  if (!instanceKey || !allowsPreview(pull, repo)) return deny()
+/** The PR behind `target`, or a 404 when it isn't open, changes no content, or nuxt.com may not preview it. */
+export async function resolvePullPreview(target: PullTarget): Promise<PullPreview> {
+  const repo = pullRepoName(target.repo)
+  const notFound = () => createError({ status: 404, statusText: `No preview available for ${repo}#${target.number}` })
 
-  const files = await $fetch<Array<{ filename: string, status: string }>>(`${api}/files`, {
-    headers: githubHeaders(),
-    query: { per_page: 100 }
-  }).catch((error) => {
-    throw unavailable(error)
-  })
+  const pull = await getPreviewablePull(repo, target.number)
+  if (!pull) throw notFound()
 
-  const preview: PullPreview = {
+  const files = await getPullFiles(repo, target.number, pull)
+  const dir = instanceContentDir(pull.instanceKey)
+  if (!files.some(file => file.path.startsWith(dir))) throw notFound()
+
+  return {
     target,
     title: pull.title,
-    url: pull.html_url,
-    sha: pull.head.sha,
-    instanceKey,
-    files: files.filter(file => file.status !== 'removed').map(file => file.filename)
+    url: pull.url,
+    sha: pull.sha,
+    instanceKey: pull.instanceKey,
+    files
   }
-  await pullStorage.setItem(key, preview, { ttl: PULL_TTL })
-
-  return preview
 }
 
 /** Unpinned bases previews pin, reading GitHub only: a PR never renders the local checkout. */
@@ -192,17 +272,36 @@ export function pullTargetFromEvent(event: H3Event): PullTarget {
   return target
 }
 
-/** The pages the PR adds or changes. */
+/**
+ * The previewed page an entry appears on: its own path, or, for an entry without a route (a template card), the page listing it.
+ * `undefined` for an entry no page shows (`/design`).
+ */
+function previewedPage(path: string): string | undefined {
+  for (let page = path; page !== '/'; page = page.slice(0, page.lastIndexOf('/')) || '/') {
+    if (isPullContentPage(page)) return page
+  }
+
+  return path === '/' ? path : undefined
+}
+
+/** The pages the PR adds, changes or removes; a removed page is read from production, the PR's commit no longer has it. */
 export async function pullPages(preview: PullPreview): Promise<PullPreviewSummary['pages']> {
-  const key = preview.instanceKey
-  const content = await getInstanceAtPull(key, preview.sha)
-  const dir = `${instanceSource(key).source.contentDir.replace(/\/+$/, '')}/`
+  const dir = instanceContentDir(preview.instanceKey)
+  const files = preview.files.filter(file => file.path.startsWith(dir))
+  const [content, production] = await Promise.all([
+    getInstanceAtPull(preview.instanceKey, preview.sha),
+    files.some(file => file.removed) ? getInstanceAtHead(preview.instanceKey) : undefined
+  ])
 
-  return preview.files.flatMap((file) => {
-    const entry = file.startsWith(dir) ? content.stat(file.slice(dir.length)) : undefined
-    if (!entry) return []
+  return files.flatMap((file) => {
+    const entry = (file.removed ? production : content)?.stat(file.path.slice(dir.length))
+    if (!entry?.path) return []
 
-    return [{ title: String(entry.data?.title || entry.path), path: entry.path }]
+    // A data entry links to the listing showing it
+    const page = previewedPage(entry.path)
+    if (!page) return []
+
+    return [{ title: String(entry.data?.title || entry.path), path: page, removed: file.removed }]
   })
 }
 
@@ -213,9 +312,9 @@ function firstPagePath(items: NavigationItem[] | undefined): string | undefined 
   return first.children?.length ? firstPagePath(first.children) : first.path
 }
 
-/** Where `/pull/:repo/:number` lands: the first changed page, else the first page the PR's instance serves. */
+/** Where `/pull/:repo/:number` lands: the first changed page it still has, else the first page the PR's instance serves. */
 export async function pullLandingPath(preview: PullPreview): Promise<string> {
-  const [page] = await pullPages(preview)
+  const page = (await pullPages(preview)).find(page => !page.removed)
   if (page) return page.path
 
   const key = preview.instanceKey

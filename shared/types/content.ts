@@ -22,6 +22,6 @@ export interface PullPreviewSummary {
   url: string
   /** The head commit the instance the PR replaces is pinned to. */
   sha: string
-  /** Pages the PR adds or changes, in GitHub's file order. */
-  pages: Array<{ title: string, path: string }>
+  /** Pages the PR adds, changes or removes, in GitHub's file order. */
+  pages: Array<{ title: string, path: string, removed: boolean }>
 }
