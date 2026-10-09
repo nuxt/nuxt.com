@@ -185,6 +185,8 @@ export default defineNuxtConfig({
     // Main navigation
     '/api/navigation/**': { isr: CONTENT_ISR },
     '/api/content/blob/**': { isr: true },
+    '/api/content/pull/*/*/blob/**': { isr: true },
+    '/pull/**': { isr: CONTENT_ISR, robots: 'noindex, nofollow' },
     // Redirects
     '/docs': { redirect: '/docs/getting-started/introduction', prerender: false },
     '/docs/3.x': { redirect: '/docs/3.x/getting-started/introduction', prerender: false },
@@ -716,7 +718,7 @@ export default defineNuxtConfig({
     // The nightly docs version, carried over from the static public/robots.txt
     // this replaces. The agent Allow groups and Content-Signal come from
     // nuxt-agent-discovery through the robots:config hook.
-    disallow: EXCLUDED_DOC_VERSIONS.map(version => `/docs/${version}/`)
+    disallow: [...EXCLUDED_DOC_VERSIONS.map(version => `/docs/${version}/`), '/pull/']
   },
   schemaOrg: {
     identity: {
@@ -753,7 +755,8 @@ export default defineNuxtConfig({
       '/chat',
       '/chat/**',
       '/enterprise',
-      '/enterprise/support'
+      '/enterprise/support',
+      '/pull/**'
     ]
   },
   turnstile: {

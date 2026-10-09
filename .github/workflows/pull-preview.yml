@@ -1,0 +1,27 @@
+name: pull-preview
+
+on:
+  # zizmor: ignore[dangerous-triggers] - DO NOT add actions/checkout: the called workflow only reads PR metadata
+  pull_request_target:
+    branches:
+      - main
+    paths:
+      - 'content/**'
+    types:
+      - opened
+      - reopened
+      - synchronize
+      - labeled
+      - unlabeled
+
+permissions: {}
+
+concurrency:
+  group: pull-preview-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  comment:
+    permissions:
+      pull-requests: write
+    uses: ./.github/workflows/pull-preview-comment.yml

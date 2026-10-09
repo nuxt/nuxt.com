@@ -1,0 +1,60 @@
+name: pull-preview-comment
+
+# Reusable: the repos nuxt.com reads content from call it on their pull requests (nuxt.com: `pull-preview.yml`).
+# DO NOT add actions/checkout: callers run it on `pull_request_target`.
+on:
+  workflow_call:
+
+permissions: {}
+
+jobs:
+  comment:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      pull-requests: write
+    steps:
+      - name: Create or update the preview comment
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
+        env:
+          SITE_URL: https://nuxt.com
+          PREVIEW_LABEL: preview:enabled
+        with:
+          script: |
+            const marker = '<!-- nuxt-com-preview -->'
+            const { SITE_URL, PREVIEW_LABEL } = process.env
+            const { owner, repo } = context.repo
+            const pr = context.payload.pull_request
+
+            // `/pull/:repo/:number` mirrors `github.com/nuxt/:repo/pull/:number`.
+            const previewUrl = `${SITE_URL}/pull/${repo}/${pr.number}`
+
+            // nuxt.com only previews PRs a maintainer labelled, same-repo ones included.
+            const enabled = pr.labels.some(label => label.name === PREVIEW_LABEL)
+
+            const body = [
+              marker,
+              '## nuxt.com preview',
+              '',
+              ...(enabled
+                ? [
+                    `📚 [Preview the changes on nuxt.com](${previewUrl}) (follows new pushes within 10 minutes)`,
+                    '',
+                    `Enabled by the \`${PREVIEW_LABEL}\` label — remove it to disable the preview.`
+                  ]
+                : [`A maintainer can add the \`${PREVIEW_LABEL}\` label to preview this pull request on nuxt.com.`])
+            ].join('\n')
+
+            const comments = await github.paginate(github.rest.issues.listComments, {
+              owner,
+              repo,
+              issue_number: pr.number,
+              per_page: 100
+            })
+            const existing = comments.find(comment => comment.user?.type === 'Bot' && comment.body?.includes(marker))
+
+            if (existing) {
+              await github.rest.issues.updateComment({ owner, repo, comment_id: existing.id, body })
+            } else {
+              await github.rest.issues.createComment({ owner, repo, issue_number: pr.number, body })
+            }

@@ -34,12 +34,14 @@ async function readArtifact(key: ContentInstanceKey, name: string, file: string)
  *
  * The raw source stays the authority: per-file reads, `refresh()` and `watch()` all go to it.
  * The snapshot only wins at init, and only for bodies whose source hash still matches.
+ *
+ * `remote` always reads GitHub, skipping the local checkout and clone overrides a commit can't pin.
  */
-function instanceSourceFor(key: ContentInstanceKey): Source | ParsedSource {
+export function instanceSourceFor(key: ContentInstanceKey, { remote = false } = {}): Source | ParsedSource {
   const { name, source } = instanceSource(key)
-  const raw = createInstanceSource(source, {
+  const raw = createInstanceSource(remote ? { ...source, envOverride: undefined } : source, {
     token: contentGithubToken(),
-    useLocalDir: import.meta.dev
+    useLocalDir: import.meta.dev && !remote
   })
 
   // Dev reads the working tree, which `watch()` follows: no snapshot exists, and none would help.

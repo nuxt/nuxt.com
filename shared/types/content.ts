@@ -6,3 +6,22 @@ import type { ContentInstanceKey } from '../utils/content'
  * `null` in dev, where content is read live and there is no commit to pin to.
  */
 export type ContentShas = Partial<Record<ContentInstanceKey, string | null>>
+
+/** The instance a pull request preview replaces, at the PR's head commit (`GET /api/content/pull/:repo/:number/head`). */
+export interface PullHead {
+  instanceKey: ContentInstanceKey
+  sha: string
+}
+
+/** A pull request preview, as its banner shows it (`GET /api/pull/:repo/:number`). */
+export interface PullPreviewSummary {
+  /** `nuxt/nuxt` */
+  repo: string
+  number: number
+  title: string
+  url: string
+  /** The head commit the instance the PR replaces is pinned to. */
+  sha: string
+  /** Pages the PR adds, changes or removes, in GitHub's file order. */
+  pages: Array<{ title: string, path: string, removed: boolean }>
+}

@@ -1,6 +1,7 @@
 import type { SearchOptions, SearchResult } from 'comark-content'
-import type { ContentShas } from '#shared/types'
+import type { ContentShas, PullHead } from '#shared/types'
 import { instanceBasePath, instanceBlobPath, instanceName, type ContentInstanceKey } from '#shared/utils/content'
+import { instancePullBlobPath, pullHeadPath, type PullTarget } from '#shared/utils/pull'
 import type { SearchTarget } from '~/workers/search'
 
 type SearchStatus = 'idle' | 'loading' | 'ready' | 'error'
@@ -13,6 +14,14 @@ function searchDebug(): boolean {
   return new URLSearchParams(location.search).get('debug') === 'search'
 }
 
+/** The instance `pull` replaces and its commit sha */
+function usePullHead(pull: PullTarget) {
+  return useAsyncData('pull-head', () => $fetch<PullHead>(pullHeadPath(pull)).catch((error) => {
+    console.error('[search] could not resolve the pull request head — searching production', error)
+    return null
+  }), { server: false }).data
+}
+
 /**
  * Client-side full-text search over the active docs version, the CLI corresponding reference and the
  * examples (sqlite-wasm FTS5), hydrated from each instance's per-commit snapshot artifacts.
@@ -20,6 +29,18 @@ function searchDebug(): boolean {
 export function useSearch() {
   // Fetched once in `app.vue`/`error.vue`
   const shas = inject<Ref<ContentShas | null | undefined>>('searchShas', ref(undefined))
+  const pull = usePullPreview()
+
+  const pullHead: Ref<PullHead | null> = pull.value ? usePullHead(pull.value) : ref(null)
+
+  /** Where `key`'s artifacts are pinned. */
+  function artifactsBase(key: ContentInstanceKey, sha: string | null): string {
+    if (pull.value && pullHead.value?.instanceKey === key) {
+      return instancePullBlobPath(key, pull.value, pullHead.value.sha)
+    }
+
+    return sha ? instanceBlobPath(key, sha) : instanceBasePath(key)
+  }
 
   /**
    * What to hydrate from. The keys `shas` actually carries —
@@ -32,7 +53,7 @@ export function useSearch() {
 
     return entries.map(([key, sha]) => ({
       name: instanceName(key),
-      base: sha ? instanceBlobPath(key, sha) : instanceBasePath(key)
+      base: artifactsBase(key, sha)
     }))
   })
 
@@ -45,7 +66,7 @@ export function useSearch() {
    */
   async function warmup(): Promise<void> {
     // Not resolved yet — the `watch` below re-runs this once `shas` lands.
-    if (shas.value === undefined) return
+    if (shas.value === undefined || pullHead.value === undefined) return
 
     const current = targets.value
     if (!current) {
@@ -68,7 +89,7 @@ export function useSearch() {
 
   if (import.meta.client) {
     onNuxtReady(warmup)
-    watch(targetsKey, warmup)
+    watch([targetsKey, pullHead], warmup)
   }
 
   async function search(query: string, opts?: SearchOptions): Promise<SearchResult[]> {
