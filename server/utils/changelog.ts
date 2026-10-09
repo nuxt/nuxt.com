@@ -1,16 +1,19 @@
-export const CHANGELOG_REPOS = [
-  'nuxt/nuxt',
-  'nuxt/image',
-  'nuxt/fonts',
-  'nuxt/ui',
-  'nuxt/content',
-  'nuxt/devtools',
-  'nuxt/test-utils',
-  'nuxt/scripts',
-  'nuxt/eslint',
-  'nuxt/icon',
-  'nuxt/hints'
-]
+/** Repositories whose releases make up the changelog, with the product name blog posts use. */
+export const CHANGELOG_PRODUCTS: Record<string, string> = {
+  'nuxt/nuxt': 'Nuxt',
+  'nuxt/image': 'Nuxt Image',
+  'nuxt/fonts': 'Nuxt Fonts',
+  'nuxt/ui': 'Nuxt UI',
+  'nuxt/content': 'Nuxt Content',
+  'nuxt/devtools': 'Nuxt DevTools',
+  'nuxt/test-utils': 'Nuxt Test Utils',
+  'nuxt/scripts': 'Nuxt Scripts',
+  'nuxt/eslint': 'Nuxt ESLint',
+  'nuxt/icon': 'Nuxt Icon',
+  'nuxt/hints': 'Nuxt Hints'
+}
+
+export const CHANGELOG_REPOS = Object.keys(CHANGELOG_PRODUCTS)
 
 export interface GitHubRelease {
   tag_name: string

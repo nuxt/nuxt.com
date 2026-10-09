@@ -13,18 +13,23 @@ test.describe('Homepage', () => {
 
 test.describe('Content Pages', () => {
   test('key pages load successfully', async ({ page, goto }) => {
-    const pages = ['/templates', '/blog', '/showcase', '/team']
+    const pages = ['/templates', '/updates', '/showcase', '/team']
 
     for (const path of pages) {
       await goto(path)
-      await expect(page).toHaveTitle(/Nuxt|Template|Blog|Showcase|Team/i)
+      await expect(page).toHaveTitle(/Nuxt|Template|Updates|Showcase|Team/i)
       await expect(page.getByRole('heading', { level: 1 }).first()).toBeVisible()
     }
   })
 
+  test('the blog index redirects to updates', async ({ page, goto }) => {
+    await goto('/blog')
+    await expect(page).toHaveURL(/\/updates$/)
+  })
+
   // TODO: https://github.com/nuxt/ui/issues/5635
   test.skip('blog posts are navigable', async ({ page, goto }) => {
-    await goto('/blog')
+    await goto('/updates')
 
     const firstBlogLink = page.locator('a[href^="/blog/"]:not([href="/blog"]):not([href="/blog/"]):not([href*="rss"])').first()
     await firstBlogLink.click()

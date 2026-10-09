@@ -230,7 +230,11 @@ Every page uses one of three Nuxt UI shells. `UPageHero` and `UPageSection` rend
 
 **Sections** (landing pages): `UPageHero` followed by `UPageSection` blocks, with no wrapper container.
 
-**Content with columns** (docs, articles, module and agency pages): one `UPage` adds the columns with its `#left` and `#right` slots. Articles and detail pages keep their header full width above the columns:
+**Feed** (updates): a compact `UPageHeader` and a `UPageBody` in one `UContainer`, with no hero, so the newest entries sit high on the page.
+
+**Blog posts**: one reading column (`max-w-3xl`) centered in the `UContainer`, with the header inside it: category, date and reading time, then the title, the description as a lede, and the authors beside the page actions. From `xl`, the column takes the middle track of a three-track grid whose right track holds the sticky `BlogToc`; below that, the table of contents is a menu among the header actions.
+
+**Content with columns** (docs, module and agency pages): one `UPage` adds the columns with its `#left` and `#right` slots. Detail pages keep their header full width above the columns:
 
 ```vue
 <UContainer>

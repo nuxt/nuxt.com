@@ -4,7 +4,7 @@ export const ROUTES = Object.freeze([
   '/docs/4.x/getting-started/introduction',
   '/modules',
   '/modules/ui',
-  '/blog',
+  '/updates',
   '/blog/v4-6',
   '/templates',
   '/enterprise'

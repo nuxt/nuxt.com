@@ -19,6 +19,11 @@ export const formatDateByLocale = (locale: string, d: string | number | Date) =>
   })
 }
 
+// In UTC, so the server and the browser render the same day
+export const formatShortDate = (date: string | number | Date) => {
+  return new Date(date).toLocaleDateString('en', { dateStyle: 'medium', timeZone: 'UTC' })
+}
+
 export const toRelativeDate = (date: string | number | Date) => {
   const diff = Math.floor((new Date().getTime() - new Date(date).getTime()) / 1000)
   if (diff < 60) {

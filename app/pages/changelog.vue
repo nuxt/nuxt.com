@@ -81,9 +81,9 @@ function copyRelease(release: Release) {
             color="neutral"
           />
           <UButton
-            to="/blog"
+            to="/updates"
             icon="i-lucide-newspaper"
-            label="Blog"
+            label="Updates"
             variant="ghost"
             color="neutral"
           />
