@@ -13,10 +13,10 @@ if (error.value) {
   throw createError({ status: 404, statusText: error.value.statusText || 'Preview not found', fatal: true })
 }
 
-const pageItems = computed<DropdownMenuItem[]>(() => (preview.value?.pages ?? []).map(page => ({
-  label: page.title,
-  to: page.path
-})))
+// A removed page has nothing to open in the preview.
+const pageItems = computed<DropdownMenuItem[]>(() => (preview.value?.pages ?? []).map(page => page.removed
+  ? { label: page.title, disabled: true, ui: { itemLabel: 'line-through' } }
+  : { label: page.title, to: page.path }))
 
 const pagesLabel = computed(() => `${pageItems.value.length} ${pageItems.value.length === 1 ? 'page' : 'pages'} updated`)
 </script>
@@ -27,47 +27,44 @@ const pagesLabel = computed(() => `${pageItems.value.length} ${pageItems.value.l
       <div class="flex items-center gap-2 min-w-0 text-sm">
         <UIcon name="i-lucide-git-pull-request" class="size-4 shrink-0 text-primary" />
         <span class="font-semibold text-highlighted shrink-0 hidden sm:inline">Preview</span>
-        <UBadge :label="`${preview.repo}#${preview.number}`" color="primary" variant="subtle" size="sm" class="shrink-0" />
-      </div>
 
-      <div class="flex items-center gap-1 shrink-0">
-        <UDropdownMenu v-if="pageItems.length" :items="pageItems" size="xs" :content="{ align: 'end' }">
+        <UButton
+          :to="preview.url"
+          target="_blank"
+          :label="`${preview.repo}#${preview.number}`"
+          icon="i-simple-icons-github"
+          color="neutral"
+          variant="outline"
+          size="xs"
+          class="min-w-0"
+        />
+
+        <UDropdownMenu v-if="pageItems.length" :items="pageItems" size="xs" :content="{ align: 'start' }">
           <UButton
             icon="i-lucide-file-diff"
             trailing-icon="i-lucide-chevron-down"
             color="neutral"
             variant="outline"
             size="xs"
+            class="shrink-0"
             :aria-label="pagesLabel"
           >
             <span class="hidden sm:inline">{{ pagesLabel }}</span>
           </UButton>
         </UDropdownMenu>
-
-        <UTooltip text="View on GitHub">
-          <UButton
-            :to="preview.url"
-            target="_blank"
-            icon="i-simple-icons-github"
-            color="neutral"
-            variant="ghost"
-            size="xs"
-            aria-label="View on GitHub"
-          />
-        </UTooltip>
-
-        <UTooltip text="Exit preview">
-          <UButton
-            :to="route.fullPath"
-            external
-            icon="i-lucide-x"
-            color="neutral"
-            variant="ghost"
-            size="xs"
-            aria-label="Exit preview"
-          />
-        </UTooltip>
       </div>
+
+      <UTooltip text="Exit preview">
+        <UButton
+          :to="route.fullPath"
+          external
+          icon="i-lucide-x"
+          color="neutral"
+          variant="ghost"
+          size="xs"
+          aria-label="Exit preview"
+        />
+      </UTooltip>
     </UContainer>
   </div>
 </template>
