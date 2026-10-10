@@ -72,7 +72,7 @@ function _useHeaderLinks() {
       icon: 'i-lucide-library',
       to: '/showcase',
       search: false,
-      active: route.path.startsWith('/video-courses') || route.path.startsWith('/showcase'),
+      active: route.path.startsWith('/video-courses') || route.path.startsWith('/showcase') || route.path.startsWith('/nuxters'),
       children: [{
         label: 'Showcase',
         description: 'Discover and explore projects built with Nuxt.',
@@ -83,6 +83,11 @@ function _useHeaderLinks() {
         description: 'Learn Nuxt by watching video courses.',
         icon: 'i-lucide-graduation-cap',
         to: '/video-courses'
+      }, {
+        label: 'Nuxters',
+        description: 'Discover your contributions and share your Nuxter profile.',
+        icon: 'i-lucide-award',
+        to: '/nuxters'
       }, {
         label: 'Nuxt Certification',
         description: 'Obtain your Certification of Competence.',
@@ -134,8 +139,7 @@ const footerLinks = [{
   label: 'Community',
   children: [{
     label: 'Nuxters',
-    to: 'https://nuxters.nuxt.com',
-    target: '_blank'
+    to: '/nuxters'
   }, {
     label: 'Team',
     to: '/team'

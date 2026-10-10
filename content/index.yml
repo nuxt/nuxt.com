@@ -407,8 +407,7 @@ contributors:
   description: 'Hundreds of contributors making Nuxt better every day. Join us.'
   links:
     - label: Nuxters
-      to: https://nuxters.nuxt.com
-      target: _blank
+      to: /nuxters
       icon: i-simple-icons-nuxtdotjs
       color: neutral
       title: See your own profile on Nuxters
