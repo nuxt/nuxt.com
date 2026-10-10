@@ -3,7 +3,7 @@ import { readdir, readFile } from 'node:fs/promises'
 import { join } from 'node:path'
 import type { H3Event } from 'h3'
 import type { BatchItem } from 'drizzle-orm/batch'
-import { and, asc, count, eq, inArray, sum } from 'drizzle-orm'
+import { and, asc, count, eq, inArray, sql, sum } from 'drizzle-orm'
 import type { NuxterBadges, NuxterProfile, NuxtersPage, NuxtersPeriod, NuxterSummary } from '#shared/types'
 import {
   NUXTERS_MIN_ROWS,
@@ -29,17 +29,10 @@ function toProfile(rows: NuxterDbRow[]): NuxterProfile | null {
   const byPeriod = new Map(rows.map(row => [row.period, row]))
   return {
     ...rowToNuxter(allTime),
+    // Full stats per period (14 rows at most): the profile switches period without a request.
     periods: sortNuxtersPeriods(rows.map(row => row.period).filter(period => period !== 'all')).map((period) => {
-      const row = byPeriod.get(period)!
-      return {
-        period,
-        rank: row.rank,
-        score: row.score,
-        mergedPullRequests: row.prAll,
-        issues: row.issues,
-        comments: row.comments,
-        reactions: row.reactions
-      }
+      const { githubId: _id, username: _username, firstContributionAt: _first, ...stats } = rowToNuxter(byPeriod.get(period)!)
+      return { period, ...stats }
     })
   }
 }
@@ -99,6 +92,25 @@ export const nuxters = {
       items: items satisfies NuxterSummary[],
       syncedAt: syncs.find(sync => sync.period === period)?.syncedAt.toISOString() ?? null
     }
+  },
+
+  /**
+   * Usernames containing `query` in a period: names starting with it first, then by rank.
+   * About 27k rows at most per period, so a scan is fast enough and needs no extra index.
+   */
+  async search({ query, period = 'all', limit = 8 }: { query: string, period?: NuxtersPeriod, limit?: number }): Promise<NuxterSummary[]> {
+    const term = query.trim().toLowerCase()
+    if (!term) return []
+    const position = sql`instr(${schema.nuxters.usernameLower}, ${term})`
+    return db.select({
+      githubId: schema.nuxters.githubId,
+      username: schema.nuxters.username,
+      rank: schema.nuxters.rank,
+      score: schema.nuxters.score
+    }).from(schema.nuxters)
+      .where(and(eq(schema.nuxters.period, period), sql`${position} > 0`))
+      .orderBy(sql`case when ${position} = 1 then 0 else 1 end`, asc(schema.nuxters.rank))
+      .limit(limit)
   },
 
   /** All-time scores by lowercased username, for the team pages. */

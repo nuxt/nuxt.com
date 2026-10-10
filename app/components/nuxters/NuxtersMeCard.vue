@@ -57,11 +57,12 @@ onMounted(() => {
       <p class="text-lg font-medium text-highlighted">
         Discover your contributions
       </p>
-      <p class="text-muted max-w-sm">
+      <p class="text-muted max-w-sm -mt-2">
         Sign in with GitHub to see your score, share your Nuxter profile and unlock your badges.
       </p>
       <UButton
         label="Sign in with GitHub"
+        color="neutral"
         icon="i-simple-icons-github"
         to="/api/auth/github?redirect=/nuxters"
         external

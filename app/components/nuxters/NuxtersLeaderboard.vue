@@ -12,6 +12,9 @@ const loading = ref(false)
 const items = computed(() => [...props.initial.items, ...more.value])
 const total = computed(() => props.initial.total)
 
+// The profile opens on the same period (all time is its default).
+const profileQuery = computed(() => props.initial.period === 'all' ? {} : { period: props.initial.period })
+
 // Another period: start again from its first page.
 watch(() => props.initial, () => {
   more.value = []
@@ -33,7 +36,7 @@ async function showMore() {
     <ul class="grid grid-cols-5 sm:grid-cols-8 md:grid-cols-10 gap-3 sm:gap-4">
       <li v-for="nuxter in items" :key="nuxter.githubId" class="relative">
         <UTooltip :text="nuxter.username">
-          <NuxtLink :to="`/nuxters/${nuxter.username}`" class="block aspect-square rounded-lg overflow-hidden bg-muted ring ring-default hover:ring-primary transition">
+          <NuxtLink :to="{ path: `/nuxters/${nuxter.username}`, query: profileQuery }" class="block aspect-square rounded-lg overflow-hidden bg-muted ring ring-default hover:ring-primary transition">
             <NuxtImg
               :src="`/gh_avatar/${nuxter.username}`"
               provider="ipx"
