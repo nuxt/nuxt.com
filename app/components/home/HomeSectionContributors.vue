@@ -23,7 +23,7 @@ function onIntersectionObserver([{ isIntersecting }]) {
 // Fetch on client-side
 onMounted(async () => {
   if (contributors.value.length) return
-  _contributors = await $fetch('/api/contributors').then(data => data.slice(0, total * 10).map(c => c.username))
+  _contributors = await $fetch('/api/nuxters', { query: { limit: total * 10 } }).then(data => data.items.map(c => c.username))
   await loadImages(_contributors.slice(0, total))
   if (!contributors.value.length && intersecting.value) {
     contributors.value = _contributors
@@ -75,11 +75,10 @@ async function nextContributors() {
         name="avatar"
         mode="out-in"
       >
-        <a
+        <NuxtLink
           v-if="username"
           :key="username"
-          :href="`https://nuxters.nuxt.com/${username}`"
-          target="_blank"
+          :to="`/nuxters/${username}`"
           class="absolute inset-0 flex transition-all"
           :style="{
             'transition-delay': `${(index % 8 + Math.floor(index / 8)) * 20}ms`
@@ -99,7 +98,7 @@ async function nextContributors() {
               class="rounded-xl w-full h-full transition lg:hover:scale-125 bg-muted"
             />
           </UTooltip>
-        </a>
+        </NuxtLink>
       </Transition>
     </div>
   </div>

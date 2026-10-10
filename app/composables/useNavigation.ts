@@ -1,4 +1,5 @@
 import type { CommandPaletteGroup } from '@nuxt/ui'
+import type { NuxterSummary } from '#shared/types'
 import { createSharedComposable } from '@vueuse/core'
 
 function _useHeaderLinks() {
@@ -68,11 +69,17 @@ function _useHeaderLinks() {
       description: 'Start your next project with a Nuxt template.',
       to: '/templates'
     }, {
+      label: 'Nuxters',
+      icon: 'i-lucide-award',
+      description: 'Discover the contributors of the Nuxt ecosystem and share your Nuxter profile.',
+      to: '/nuxters',
+      active: route.path.startsWith('/nuxters')
+    }, {
       label: 'Resources',
       icon: 'i-lucide-library',
       to: '/showcase',
       search: false,
-      active: route.path.startsWith('/video-courses') || route.path.startsWith('/showcase'),
+      active: ['/showcase', '/video-courses', '/enterprise'].some(path => route.path.startsWith(path)),
       children: [{
         label: 'Showcase',
         description: 'Discover and explore projects built with Nuxt.',
@@ -84,27 +91,21 @@ function _useHeaderLinks() {
         icon: 'i-lucide-graduation-cap',
         to: '/video-courses'
       }, {
+        label: 'Agencies',
+        description: 'Agencies specialized in Nuxt development.',
+        icon: 'i-lucide-handshake',
+        to: '/enterprise/agencies'
+      }, {
+        label: 'Sponsors',
+        description: 'Help us sustain Nuxt development.',
+        icon: 'i-lucide-hand-heart',
+        to: '/enterprise/sponsors'
+      }, {
         label: 'Nuxt Certification',
         description: 'Obtain your Certification of Competence.',
         icon: 'i-lucide-medal',
         to: 'https://certification.nuxt.com',
         target: '_blank'
-      }]
-    }, {
-      label: 'Enterprise',
-      icon: 'i-lucide-building-2',
-      to: '/enterprise',
-      search: false,
-      children: [{
-        label: 'Agencies',
-        to: '/enterprise/agencies',
-        description: 'Agencies specialized in Nuxt development.',
-        icon: 'i-lucide-handshake'
-      }, {
-        label: 'Sponsors',
-        to: '/enterprise/sponsors',
-        description: 'Help us sustain Nuxt development.',
-        icon: 'i-lucide-hand-heart'
       }]
     }, {
       label: 'Updates',
@@ -134,8 +135,7 @@ const footerLinks = [{
   label: 'Community',
   children: [{
     label: 'Nuxters',
-    to: 'https://nuxters.nuxt.com',
-    target: '_blank'
+    to: '/nuxters'
   }, {
     label: 'Team',
     to: '/team'
@@ -256,6 +256,36 @@ const _useNavigation = () => {
     to: article.path
   })))
 
+  // Nuxters: 27k usernames, so the server searches them (lazy, one request per pause in typing).
+  const nuxterResults = ref<NuxterSummary[]>([])
+  let nuxtersRequest = 0
+  watchDebounced(searchTerm, async (term) => {
+    const query = term.trim()
+    const current = ++nuxtersRequest
+    if (query.length < 2) {
+      nuxterResults.value = []
+      return
+    }
+    const items = await $fetch<NuxterSummary[]>('/api/search/nuxters', { query: { q: query, limit: 5 } }).catch(() => [])
+    // A slower, older request must not replace newer results.
+    if (current === nuxtersRequest) nuxterResults.value = items
+  }, { debounce: 200 })
+
+  const { format } = new Intl.NumberFormat('en-US')
+  const nuxterItems = computed(() => nuxterResults.value.map(nuxter => ({
+    id: `nuxter-${nuxter.githubId}`,
+    label: nuxter.username,
+    suffix: `Nuxter #${format(nuxter.rank)} · ${format(nuxter.score)} pts`,
+    // UAvatar renders with <NuxtImg> (IPX): pass the source path, not an IPX URL.
+    avatar: {
+      src: `/gh_avatar/${nuxter.username}`,
+      alt: nuxter.username,
+      densities: 'x1 x2',
+      ui: { root: 'rounded-md' }
+    },
+    to: `/nuxters/${nuxter.username}`
+  })))
+
   const postFilter = (searchTerm: string, items: any[]) => {
     if (!searchTerm) {
       return []
@@ -277,6 +307,13 @@ const _useNavigation = () => {
     id: 'blog-search',
     label: 'Blog',
     items: blogItems.value,
+    postFilter
+  }, {
+    id: 'nuxters-search',
+    label: 'Nuxters',
+    items: nuxterItems.value,
+    // Already filtered and ranked by the server
+    ignoreFilter: true,
     postFilter
   }, {
     id: 'ask-ai-search',

@@ -28,12 +28,12 @@ watch(() => colorMode.preference, (newMode, oldMode) => {
   }
 })
 
-const { data: navigation } = await useFetch<NavigationItem[]>(computed(() => navigationPath(docsVersion.value)))
+const { data: navigation } = await useFetch<NavigationItem[]>(() => navigationPath(docsVersion.value), { key: 'navigation' })
 
 const searchKeys = computed(() => searchInstanceKeys(docsVersion.value))
 // Client-only: an SSR value gets baked into the page's ISR entry and would pin search to a stale commit.
 const { data: searchShas } = useAsyncData(
-  computed(() => `content-heads:${searchKeys.value.join(',')}`),
+  () => `content-heads:${searchKeys.value.join(',')}`,
   () => $fetch<ContentShas>('/api/content/heads', {
     query: { keys: searchKeys.value.join(',') }
   }).catch((error) => {

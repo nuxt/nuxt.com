@@ -51,6 +51,7 @@ export default defineNuxtConfig({
     '@vercel/speed-insights',
     'evlog/nuxt',
     'nuxt-workers',
+    'workflow/nuxt',
     ...(nuxiEnabled ? ['eve/nuxt'] : [])
   ],
 
@@ -141,6 +142,20 @@ export default defineNuxtConfig({
     resend: {
       apiKey: '',
       audienceId: ''
+    },
+    // Discord role unlock on /nuxters. Off unless the guild, bot token and
+    // `NUXT_OAUTH_DISCORD_CLIENT_ID`/`_SECRET` are all set.
+    nuxters: {
+      discord: {
+        guildId: '',
+        botToken: '',
+        roles: {
+          nuxter: '',
+          moduleAuthor: '',
+          // One key per hackathon id in `NUXTERS_HACKATHONS`
+          nuxtathon1: ''
+        }
+      }
     }
   },
   routeRules: {
@@ -171,6 +186,11 @@ export default defineNuxtConfig({
     '/design-kit': { isr: CONTENT_ISR },
     '/video-courses': { isr: CONTENT_ISR },
     '/newsletter': { isr: CONTENT_ISR },
+    // Stats change once a day (nuxt/nuxters CI); the import purges /nuxters itself.
+    // One cache entry per `?period=` (and only that query: no entry per utm_* link).
+    '/nuxters': { isr: { expiration: 60 * 60, allowQuery: ['period'], passQuery: true } },
+    // Profiles too: `?period=` selects the stats on screen.
+    '/nuxters/**': { isr: { expiration: 60 * 60, allowQuery: ['period'], passQuery: true } },
     // API
     '/api/v1/teams': { isr: 60 * 60 },
     // Admin
@@ -474,6 +494,15 @@ export default defineNuxtConfig({
   },
   compatibilityDate: '2026-01-14',
   nitro: {
+    experimental: {
+      // `pnpm nuxters:sync` (server/tasks/nuxters/sync.ts)
+      tasks: true
+    },
+    // Only scan this directory for `'use workflow'` files.
+    // @ts-expect-error `@workflow/nitro` does not augment Nuxt's Nitro config type
+    workflow: {
+      dirs: ['server/workflows']
+    },
     vercel: {
       config: {
         // Required for `x-prerender-revalidate` to purge an ISR route.
@@ -740,7 +769,8 @@ export default defineNuxtConfig({
     // counterpart are listed explicitly.
     excludeAppSources: true,
     sources: ['/api/__sitemap__/urls'],
-    urls: ['/', '/showcase', '/changelog', '/evals'],
+    // Nuxter profiles stay out: 26k near-identical stat pages would only dilute the docs.
+    urls: ['/', '/showcase', '/changelog', '/evals', '/nuxters'],
     // Belt and braces should an app source come back: keep legacy/nightly docs
     // versions and auth-only areas out.
     exclude: [
