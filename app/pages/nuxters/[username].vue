@@ -61,50 +61,61 @@ defineOgImage('Nuxter.takumi', { username }, {
 
 <template>
   <UPage v-if="nuxter">
-    <UPageHero :ui="{ container: 'py-16 sm:py-20 lg:py-24' }">
-      <template #top>
-        <UContainer class="pt-8">
-          <UButton
-            to="/nuxters"
-            label="All Nuxters"
-            icon="i-lucide-arrow-left"
-            color="neutral"
-            variant="link"
-            class="px-0"
-          />
-        </UContainer>
-      </template>
+    <UContainer class="pt-8">
+      <UButton
+        to="/nuxters"
+        label="All Nuxters"
+        icon="i-lucide-arrow-left"
+        color="neutral"
+        variant="link"
+        class="px-0"
+      />
+    </UContainer>
 
-      <template #title>
-        <div class="flex flex-col items-center gap-6">
+    <!-- Profile on the left, stats on the right; stacked below lg -->
+    <UContainer class="py-12 lg:py-20">
+      <div class="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+        <div class="flex flex-col items-center text-center lg:items-start lg:text-left gap-6">
           <NuxtImg
             :src="`/gh_avatar/${nuxter.username}`"
             provider="ipx"
             densities="x1 x2"
-            width="128"
-            height="128"
+            width="112"
+            height="112"
             format="auto"
             :alt="nuxter.username"
-            class="size-32 rounded-full ring-4 ring-default bg-muted"
+            class="size-28 rounded-full ring-4 ring-default bg-muted"
           />
-          <span>{{ nuxter.username }}</span>
-        </div>
-      </template>
 
-      <template #description>
-        <div class="flex flex-col items-center gap-4">
-          <div class="flex items-center justify-center gap-3 text-lg">
-            <span class="tabular-nums">Nuxter #{{ format(nuxter.rank) }}</span>
-            <span class="text-dimmed">·</span>
-            <span class="flex items-center gap-1">
-              <span class="font-semibold text-highlighted tabular-nums">{{ format(nuxter.score) }}</span> pts
-              <NuxtersScoreBreakdown :nuxter="nuxter" />
-            </span>
+          <div class="flex flex-col gap-2">
+            <h1 class="text-4xl sm:text-5xl font-bold text-highlighted">
+              {{ nuxter.username }}
+            </h1>
+            <ULink
+              :to="`https://github.com/${nuxter.username}`"
+              target="_blank"
+              class="inline-flex items-center justify-center lg:justify-start gap-1.5 text-muted"
+            >
+              <UIcon name="i-simple-icons-github" class="size-4" />
+              github.com/{{ nuxter.username }}
+            </ULink>
           </div>
-          <p v-if="since" class="text-muted">
-            Contributing since {{ since }}
-          </p>
-          <div v-if="recent.length" class="flex flex-wrap justify-center gap-2">
+
+          <div class="flex flex-col items-center lg:items-start gap-3">
+            <div class="flex items-center gap-3 text-lg">
+              <span class="tabular-nums">Nuxter #{{ format(nuxter.rank) }}</span>
+              <span class="text-dimmed">·</span>
+              <span class="flex items-center gap-1">
+                <span class="font-semibold text-highlighted tabular-nums">{{ format(nuxter.score) }}</span> pts
+                <NuxtersScoreBreakdown :nuxter="nuxter" />
+              </span>
+            </div>
+            <p v-if="since" class="text-muted">
+              Contributing since {{ since }}
+            </p>
+          </div>
+
+          <div v-if="recent.length || hackathons.length" class="flex flex-wrap justify-center lg:justify-start gap-2">
             <UBadge
               v-for="row in recent"
               :key="row.period"
@@ -113,52 +124,36 @@ defineOgImage('Nuxter.takumi', { username }, {
               variant="outline"
               size="lg"
             />
-          </div>
-          <div v-if="hackathons.length" class="flex flex-wrap justify-center gap-2">
             <UBadge
               v-for="hackathon in hackathons"
               :key="hackathon.id"
               :label="hackathon.name"
               icon="i-lucide-trophy"
               variant="subtle"
+              size="lg"
             />
           </div>
-        </div>
-      </template>
 
-      <template #links>
-        <div class="flex flex-wrap justify-center gap-2">
-          <UButton
-            :to="`https://github.com/${nuxter.username}`"
-            target="_blank"
-            label="GitHub"
-            icon="i-simple-icons-github"
-            color="neutral"
-            variant="outline"
-          />
           <NuxtersShare :username="nuxter.username" />
         </div>
-      </template>
-    </UPageHero>
+
+        <ul class="grid grid-cols-2 gap-4" aria-label="All-time contributions">
+          <li v-for="stat in stats" :key="stat.label">
+            <UPageCard :icon="stat.icon" variant="subtle" class="h-full">
+              <div class="flex flex-col gap-1">
+                <span class="text-3xl sm:text-4xl font-semibold text-highlighted tabular-nums">{{ format(stat.value) }}</span>
+                <span class="text-default">{{ stat.label }}</span>
+                <span class="text-sm text-muted">{{ stat.detail }}</span>
+              </div>
+            </UPageCard>
+          </li>
+        </ul>
+      </div>
+    </UContainer>
 
     <UPageBody class="mt-0">
       <UContainer>
-        <UPageGrid class="lg:grid-cols-4">
-          <UPageCard
-            v-for="stat in stats"
-            :key="stat.label"
-            :icon="stat.icon"
-            variant="subtle"
-          >
-            <div class="flex flex-col gap-1">
-              <span class="text-4xl font-semibold text-highlighted tabular-nums">{{ format(stat.value) }}</span>
-              <span class="text-default">{{ stat.label }}</span>
-              <span class="text-sm text-muted">{{ stat.detail }}</span>
-            </div>
-          </UPageCard>
-        </UPageGrid>
-
-        <div v-if="yearly.length" class="mt-12">
+        <div v-if="yearly.length">
           <h2 class="text-2xl font-bold text-highlighted mb-1">
             Year by year
           </h2>

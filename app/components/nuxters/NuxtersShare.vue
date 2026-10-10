@@ -12,7 +12,7 @@ const markdown = computed(() => `[![${props.username}'s Nuxter profile](${cardUr
 </script>
 
 <template>
-  <div class="flex flex-wrap items-center gap-2">
+  <div class="flex flex-wrap items-center justify-center lg:justify-start gap-2">
     <UButton
       label="Copy profile link"
       icon="i-lucide-link"
@@ -26,7 +26,7 @@ const markdown = computed(() => `[![${props.username}'s Nuxter profile](${cardUr
       description="Paste this Markdown in your GitHub profile README. The card updates every day."
       :ui="{ content: 'sm:max-w-2xl' }"
     >
-      <UButton label="Add to GitHub README" icon="i-simple-icons-github" color="neutral" variant="outline" />
+      <UButton label="Add to README" icon="i-lucide-id-card" color="neutral" variant="outline" />
 
       <template #body>
         <div class="flex flex-col gap-4">
