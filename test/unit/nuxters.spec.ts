@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest'
 import {
   canUnlockNuxterRole,
   isNuxtersPeriod,
+  nuxterForPeriod,
   nuxterHackathons,
   nuxterScoreBreakdown,
   nuxtersPeriodFile,
@@ -247,5 +248,28 @@ describe('nuxterHackathons', () => {
     expect(nuxterHackathons(28706372).map(hackathon => hackathon.id)).toEqual(['nuxtathon1'])
     expect(nuxterHackathons('1')).toEqual([])
     expect(nuxterHackathons(undefined)).toEqual([])
+  })
+})
+
+describe('nuxterForPeriod', () => {
+  const allTime = rowToNuxter(parseNuxtersFile([record()])[0]!)
+  const { githubId: _id, username: _username, firstContributionAt: _first, ...stats } = rowToNuxter(parseNuxtersFile([record({ score: 12, issues: 1 })])[0]!)
+  const profile = { ...allTime, periods: [{ period: '2024', ...stats }] }
+
+  it('returns the all-time stats for all', () => {
+    expect(nuxterForPeriod(profile, 'all')).toBe(profile)
+  })
+
+  it('returns the period stats with the profile identity', () => {
+    expect(nuxterForPeriod(profile, '2024')).toEqual({
+      ...stats,
+      githubId: allTime.githubId,
+      username: allTime.username,
+      firstContributionAt: allTime.firstContributionAt
+    })
+  })
+
+  it('returns null for a period without contributions', () => {
+    expect(nuxterForPeriod(profile, '30d')).toBeNull()
   })
 })

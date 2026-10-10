@@ -1,4 +1,4 @@
-import type { Nuxter, NuxterMergedPullRequests, NuxtersHackathon, NuxtersPeriod } from '../types/nuxters'
+import type { Nuxter, NuxterMergedPullRequests, NuxterProfile, NuxtersHackathon, NuxtersPeriod } from '../types/nuxters'
 
 /**
  * Where the contributor stats come from: committed nightly by the nuxt/nuxters CI,
@@ -61,6 +61,15 @@ export function sortNuxtersPeriods(periods: NuxtersPeriod[]): NuxtersPeriod[] {
     return ROLLING_PERIODS.length + 1 + (9999 - Number(period))
   }
   return [...new Set(periods)].sort((a, b) => order(a) - order(b))
+}
+
+/** A profile's stats over `period` (all time for `all`), or `null` when the user did not contribute in it. */
+export function nuxterForPeriod(profile: NuxterProfile, period: NuxtersPeriod): Nuxter | null {
+  if (period === 'all') return profile
+  const stats = profile.periods.find(row => row.period === period)
+  if (!stats) return null
+  const { period: _period, ...rest } = stats
+  return { githubId: profile.githubId, username: profile.username, firstContributionAt: profile.firstContributionAt, ...rest }
 }
 
 /** Pinned to a commit: the branch URL is CDN-cached for 5 minutes and can serve the previous file. */

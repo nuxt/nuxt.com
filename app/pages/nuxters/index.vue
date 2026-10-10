@@ -37,7 +37,7 @@ const ways = [{
   title: 'Write a helpful comment',
   description: 'Answer a question or review a PR: a comment with 3+ reactions counts.',
   icon: 'i-lucide-message-circle-heart',
-  to: 'https://github.com/nuxt/nuxt/discussions',
+  to: 'https://github.com/nuxt/nuxt/issues',
   target: '_blank'
 }]
 
@@ -159,9 +159,11 @@ const periodPhrase = (value: NuxtersPeriod) => {
             :color="years.includes(period) ? 'primary' : 'neutral'"
             :highlight="years.includes(period)"
             class="w-36"
+            :ui="{ base: 'text-sm/5' }"
             aria-label="Leaderboard by year"
             @update:model-value="selectYear"
           />
+          <NuxtersSearch :period="period" />
         </div>
 
         <ul v-if="breakdown.length" class="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 mb-10 text-muted" aria-label="Contributions in this period">

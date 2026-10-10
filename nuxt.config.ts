@@ -189,7 +189,8 @@ export default defineNuxtConfig({
     // Stats change once a day (nuxt/nuxters CI); the import purges /nuxters itself.
     // One cache entry per `?period=` (and only that query: no entry per utm_* link).
     '/nuxters': { isr: { expiration: 60 * 60, allowQuery: ['period'], passQuery: true } },
-    '/nuxters/**': { isr: 60 * 60 },
+    // Profiles too: `?period=` selects the stats on screen.
+    '/nuxters/**': { isr: { expiration: 60 * 60, allowQuery: ['period'], passQuery: true } },
     // API
     '/api/v1/teams': { isr: 60 * 60 },
     // Admin

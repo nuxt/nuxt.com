@@ -34,15 +34,9 @@ export interface Nuxter {
   core: NuxterCoreContributions
 }
 
-/** A period line of a profile: "Last 30 days: #12 · 340 pts". */
-export interface NuxterPeriodStats {
+/** A contributor's full stats over one period of their profile. */
+export interface NuxterPeriodStats extends Omit<Nuxter, 'githubId' | 'username' | 'firstContributionAt'> {
   period: NuxtersPeriod
-  rank: number
-  score: number
-  mergedPullRequests: number
-  issues: number
-  comments: number
-  reactions: number
 }
 
 /** /nuxters/[username]: all-time stats, plus every period the user contributed in. */

@@ -12,7 +12,7 @@ const markdown = computed(() => `[![${props.username}'s Nuxter profile](${cardUr
 </script>
 
 <template>
-  <div class="flex flex-wrap items-center justify-center lg:justify-start gap-2">
+  <div class="flex flex-wrap items-center gap-2">
     <UButton
       label="Copy profile link"
       icon="i-lucide-link"
