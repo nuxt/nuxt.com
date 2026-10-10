@@ -3,7 +3,7 @@ import type { NuxterProfile } from '#shared/types'
 import { nuxterHackathons, nuxtersPeriodLabel } from '#shared/utils/nuxters'
 
 definePageMeta({
-  heroBackground: 'opacity-70 -z-10'
+  heroBackground: 'opacity-30 -z-10'
 })
 
 const route = useRoute()
@@ -36,11 +36,12 @@ const best = computed(() => yearly.value.reduce<typeof yearly.value[number] | un
 
 const stats = computed(() => {
   const n = nuxter.value!
+  // Same colors as the README card (OgImage/Nuxter.takumi.vue). Darker text in light mode, for contrast.
   return [
-    { label: n.mergedPullRequests.all === 1 ? 'Merged PR' : 'Merged PRs', value: n.mergedPullRequests.all, icon: 'i-lucide-git-merge', detail: `${format(n.mergedPullRequests.feat)} feat · ${format(n.mergedPullRequests.fix)} fix · ${format(n.mergedPullRequests.docs)} docs · ${format(n.mergedPullRequests.chore)} chore` },
-    { label: n.issues === 1 ? 'Issue' : 'Issues', value: n.issues, icon: 'i-lucide-circle-dot', detail: `${format(n.helpfulIssues)} helpful` },
-    { label: n.comments === 1 ? 'Comment' : 'Comments', value: n.comments, icon: 'i-lucide-message-circle', detail: `${format(n.helpfulComments)} helpful` },
-    { label: n.reactions === 1 ? 'Reaction' : 'Reactions', value: n.reactions, icon: 'i-lucide-smile-plus', detail: 'received' }
+    { label: n.mergedPullRequests.all === 1 ? 'Merged PR' : 'Merged PRs', value: n.mergedPullRequests.all, icon: 'i-lucide-git-merge', detail: `${format(n.mergedPullRequests.feat)} feat · ${format(n.mergedPullRequests.fix)} fix · ${format(n.mergedPullRequests.docs)} docs · ${format(n.mergedPullRequests.chore)} chore`, ring: 'ring-primary', text: 'text-primary' },
+    { label: n.issues === 1 ? 'Issue' : 'Issues', value: n.issues, icon: 'i-lucide-circle-dot', detail: `${format(n.helpfulIssues)} helpful`, ring: 'ring-sky-400', text: 'text-sky-600 dark:text-sky-400' },
+    { label: n.comments === 1 ? 'Comment' : 'Comments', value: n.comments, icon: 'i-lucide-message-circle', detail: `${format(n.helpfulComments)} helpful`, ring: 'ring-violet-400', text: 'text-violet-600 dark:text-violet-400' },
+    { label: n.reactions === 1 ? 'Reaction' : 'Reactions', value: n.reactions, icon: 'i-lucide-smile-plus', detail: 'received', ring: 'ring-yellow-400', text: 'text-amber-600 dark:text-yellow-400' }
   ]
 })
 
@@ -139,10 +140,15 @@ defineOgImage('Nuxter.takumi', { username }, {
 
         <ul class="grid grid-cols-2 gap-4" aria-label="All-time contributions">
           <li v-for="stat in stats" :key="stat.label">
-            <UPageCard :icon="stat.icon" variant="subtle" class="h-full">
+            <UPageCard
+              :icon="stat.icon"
+              variant="subtle"
+              :class="['h-full', stat.ring]"
+              :ui="{ leadingIcon: stat.text }"
+            >
               <div class="flex flex-col gap-1">
                 <span class="text-3xl sm:text-4xl font-semibold text-highlighted tabular-nums">{{ format(stat.value) }}</span>
-                <span class="text-default">{{ stat.label }}</span>
+                <span :class="stat.text">{{ stat.label }}</span>
                 <span class="text-sm text-muted">{{ stat.detail }}</span>
               </div>
             </UPageCard>
