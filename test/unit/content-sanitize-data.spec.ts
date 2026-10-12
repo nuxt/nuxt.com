@@ -18,17 +18,29 @@ describe('stripUnsafeData', () => {
     expect(strip({
       title: 'Page',
       innerHTML: '<b>x</b>',
-      links: [{ label: 'Docs', TextContent: 'x' }],
+      links: [{ label: 'Docs', TextContent: 'x', labelHtml: '<b>x</b>' }],
       hero: { card: { outerHTML: '<b>x</b>', srcdoc: '<b>x</b>' } }
     })).toEqual({
       data: { title: 'Page', links: [{ label: 'Docs' }], hero: { card: {} } },
-      removed: ['innerHTML', 'links.0.TextContent', 'hero.card.outerHTML', 'hero.card.srcdoc']
+      removed: ['innerHTML', 'links.0.TextContent', 'links.0.labelHtml', 'hero.card.outerHTML', 'hero.card.srcdoc']
     })
   })
 
   it('drops event handler keys, lowercase or not', () => {
     expect(strip({ onclick: 'x()', onMouseOver: 'x()', links: [{ label: 'Docs', onfocus: 'x()' }] }))
       .toEqual({ data: { links: [{ label: 'Docs' }] }, removed: ['onclick', 'onMouseOver', 'links.0.onfocus'] })
+  })
+
+  it('sees through Vue\'s `.prop` and `^attr` key prefixes', () => {
+    expect(strip({
+      '^onclick': 'x()',
+      '^title': 'Page',
+      'links': [{ 'label': 'Docs', '.innerHTML': '<b>x</b>', '^href': 'javascript:void(0)', '.^srcdoc': '<b>x</b>' }],
+      'hero': { '^as': 'script' }
+    })).toEqual({
+      data: { '^title': 'Page', 'links': [{ label: 'Docs' }], 'hero': {} },
+      removed: ['^onclick', 'links.0..innerHTML', 'links.0.^href', 'links.0..^srcdoc', 'hero.^as']
+    })
   })
 
   it('drops script URLs in link and resource keys, however they are spelled', () => {
@@ -59,10 +71,24 @@ describe('stripUnsafeData', () => {
     expect(strip({ links: structuredClone(links) })).toEqual({ data: { links }, removed: [] })
   })
 
-  it('only checks URLs under URL keys', () => {
-    const data = { title: 'JavaScript: the good parts', description: 'javascript:void(0) is a no-op' }
+  it('drops script URLs under any key, since pages bind them as links', () => {
+    expect(strip({ courses: [{ title: 'Course', url: 'javascript:void(0)' }], agency: { link: 'vbscript:x', website: 'https://nuxt.com' } }))
+      .toEqual({
+        data: { courses: [{ title: 'Course' }], agency: { website: 'https://nuxt.com' } },
+        removed: ['courses.0.url', 'agency.link']
+      })
+  })
 
-    expect(strip(structuredClone(data))).toEqual({ data, removed: [] })
+  it('keeps prose, unless it opens with a script scheme', () => {
+    expect(strip({ title: 'JavaScript: the good parts', description: 'Use javascript:void(0) sparingly', note: 'Note: none' }))
+      .toEqual({ data: { description: 'Use javascript:void(0) sparingly', note: 'Note: none' }, removed: ['title'] })
+  })
+
+  it('closes the hole a dropped array item leaves', () => {
+    const { data, removed } = strip({ links: ['/docs', 'javascript:void(0)', '/blog'] })
+
+    expect(data.links).toEqual(['/docs', '/blog'])
+    expect(removed).toEqual(['links.1'])
   })
 
   it('drops an `as` naming a blocked tag, keeping any other', () => {

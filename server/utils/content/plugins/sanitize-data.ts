@@ -6,11 +6,8 @@ import type { ContentPlugin } from 'comark-content'
  * Mirrors `comark/dist/internal/props-validation.js`
  */
 
-/** Keys that write markup or redirect a form whatever their value: comark's list, plus `outerHTML` and `innerText`. */
-const UNSAFE_KEYS = new Set(['innerhtml', 'outerhtml', 'innertext', 'textcontent', 'dangerouslysetinnerhtml', 'srcdoc', 'formaction'])
-
-/** Keys a URL is bound through. */
-const URL_KEYS = new Set(['to', 'href', 'src', 'action', 'xlinkhref'])
+/** Keys that write text or a document, or redirect a form, whatever their value: comark's list, plus `innerText`. */
+const UNSAFE_KEYS = new Set(['innertext', 'textcontent', 'srcdoc', 'formaction'])
 
 /** comark's protocol floor. */
 const UNSAFE_URL_PREFIXES = ['javascript:', 'vbscript:', 'data:text/html', 'data:text/javascript', 'data:text/vbscript', 'data:text/css', 'data:text/plain', 'data:text/xml']
@@ -19,7 +16,8 @@ const UNSAFE_URL_PREFIXES = ['javascript:', 'vbscript:', 'data:text/html', 'data
 const UNSAFE_TAGS = ['object']
 
 function isUnsafeUrl(value: string): boolean {
-  // Vue binds values verbatim, so no entity decoding; `new URL()` drops the tabs and spaces browsers ignore.
+  if (!value.includes(':')) return false
+
   try {
     const href = new URL(value).href.toLowerCase()
     return UNSAFE_URL_PREFIXES.some(prefix => href.startsWith(prefix))
@@ -30,10 +28,11 @@ function isUnsafeUrl(value: string): boolean {
 }
 
 function isUnsafeEntry(key: string, value: unknown, blockedTags: Set<string>): boolean {
-  const name = key.toLowerCase().replace(/:/g, '')
-  if (name.startsWith('on') || UNSAFE_KEYS.has(name)) return true
+  // Vue binds a leading `.` as a DOM prop and `^` as an attribute: `^onclick` is `onclick`.
+  const name = key.toLowerCase().replace(/^[.^]+/, '').replace(/:/g, '')
+  if (name.startsWith('on') || name.endsWith('html') || UNSAFE_KEYS.has(name)) return true
   if (typeof value !== 'string') return false
-  if (URL_KEYS.has(name)) return isUnsafeUrl(value)
+  if (isUnsafeUrl(value)) return true
 
   // `as` picks the element a component renders.
   return name === 'as' && blockedTags.has(value.toLowerCase())
@@ -53,14 +52,21 @@ export function stripUnsafeData(data: unknown, blockedTags: string[]): string[] 
     if (value === null || typeof value !== 'object' || seen.has(value)) return
     seen.add(value)
 
+    let deleted = false
     for (const [key, child] of Object.entries(value)) {
       const at = path ? `${path}.${key}` : key
       if (isUnsafeEntry(key, child, blocked)) {
         Reflect.deleteProperty(value, key)
         removed.push(at)
+        deleted = true
       } else {
         walk(child, at)
       }
+    }
+
+    // A deleted item leaves a hole, which serialises as `null` and breaks `v-for` templates.
+    if (deleted && Array.isArray(value)) {
+      value.splice(0, value.length, ...value.filter(() => true))
     }
   }
   walk(data, '')
