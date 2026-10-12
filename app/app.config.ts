@@ -40,6 +40,15 @@ export default defineAppConfig({
       }
     },
     prose: {
+      h2: {
+        defaultVariants: { anchor: true }
+      },
+      h3: {
+        defaultVariants: { anchor: true }
+      },
+      h4: {
+        defaultVariants: { anchor: true }
+      },
       img: {
         slots: {
           base: 'w-full'
