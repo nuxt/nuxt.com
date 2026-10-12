@@ -12,6 +12,8 @@ import { configDocs } from './config-docs'
 import type { DocVersion } from '../../../../shared/utils/docs'
 import type { ContentInstanceKey } from '../../../../shared/utils/content'
 
+export const BLOCKED_TAGS = ['script', 'iframe', 'embed', 'form', 'base', 'meta', 'link', 'style']
+
 /**
  * The comark plugin chain every instance parses markdown with.
  * Bump `CONTENT_PARSER_VERSION` when it changes: cached bodies keep the old output.
@@ -21,7 +23,7 @@ export const comarkPlugins = [
   toc({ depth: 3 }),
   emoji(),
   security({
-    blockedTags: ['script', 'iframe', 'embed', 'form', 'base', 'meta', 'link', 'style'],
+    blockedTags: BLOCKED_TAGS,
     allowDataImages: false
   })
 ]
