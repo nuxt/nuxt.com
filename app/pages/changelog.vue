@@ -40,14 +40,6 @@ const repoLinks = computed(() => {
   return links
 })
 
-function formatDate(date: string) {
-  return new Date(date).toLocaleDateString('en', {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric'
-  })
-}
-
 function copyRelease(release: Release) {
   const md = `# ${release.title}\n\n${release.markdown}`
   copy(md, {
@@ -114,7 +106,7 @@ function copyRelease(release: Release) {
           :to="release.url"
           target="_blank"
           :title="release.title"
-          :date="formatDate(release.date)"
+          :date="formatShortDate(release.date)"
           :ui="{
             root: 'flex items-start',
             container: 'max-w-xl 2xl:mx-12 w-full relative',

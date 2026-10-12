@@ -46,7 +46,7 @@ defineShortcuts({
   '/': () => searchInput.value?.inputRef?.focus()
 })
 
-const { posts, timeline, matches, searchable, searching, loadSearchIndex, ready } = useUpdates(query)
+const { posts, timeline, ready } = useUpdates()
 await ready
 
 const tabs: TabsItem[] = [
@@ -62,13 +62,14 @@ const feeds: DropdownMenuItem[] = [
 const selectedCategory = computed(() => BLOG_CATEGORIES.find(item => item.slug === category.value)?.value)
 const inCategory = (post: BlogPost) => !selectedCategory.value || post.category === selectedCategory.value
 
-const articles = computed(() => posts.value.filter(inCategory))
-const resultArticles = computed(() => matches.value.articles.filter(({ post }) => inCategory(post)))
-const resultReleases = computed(() => !selectedCategory.value || selectedCategory.value === 'Release' ? matches.value.releases : [])
+const articles = computed(() => {
+  const regexp = searchTextRegExp(query.value)
+  return posts.value.filter(post => inCategory(post) && (regexp.test(post.title) || regexp.test(post.description)))
+})
 
 const PAGE_SIZE = 12
 const limit = ref(PAGE_SIZE)
-watch(category, () => {
+watch([category, query], () => {
   limit.value = PAGE_SIZE
 })
 </script>
@@ -107,15 +108,15 @@ watch(category, () => {
             }"
           >
             <template #list-trailing>
-              <div class="ms-auto hidden items-center gap-1 pb-1.5 sm:flex" @pointerenter="loadSearchIndex" @focusin="loadSearchIndex">
+              <div class="ms-auto hidden items-center gap-1 pb-1.5 sm:flex">
                 <UInput
                   ref="searchInput"
                   v-model="search"
                   icon="i-lucide-search"
-                  placeholder="Search articles and releases…"
+                  placeholder="Search articles…"
                   size="sm"
                   class="w-72"
-                  aria-label="Search articles and releases"
+                  aria-label="Search articles"
                 >
                   <template #trailing>
                     <UButton
@@ -141,41 +142,36 @@ watch(category, () => {
           <UInput
             v-model="search"
             icon="i-lucide-search"
-            placeholder="Search articles and releases…"
+            placeholder="Search articles…"
             class="sm:hidden"
-            aria-label="Search articles and releases"
-            @focusin="loadSearchIndex"
+            aria-label="Search articles"
           />
         </div>
 
-        <UpdatesSearchResults
-          v-if="searchable"
-          :query="query"
-          :articles="resultArticles"
-          :releases="resultReleases"
-          :searching="searching"
-          @clear="search = ''"
+        <UBlogPosts v-if="articles.length" class="gap-y-12 lg:gap-y-14">
+          <BlogPostCard
+            v-for="(post, index) in articles.slice(0, limit)"
+            :key="post.path"
+            :post="post"
+            :eager="index < 3"
+          />
+        </UBlogPosts>
+
+        <UEmpty
+          v-else-if="query"
+          icon="i-lucide-search-x"
+          :title="`No article matches “${query}”`"
+          :actions="[{ label: 'Clear Search', color: 'neutral', variant: 'subtle', onClick: () => { search = '' } }]"
         />
 
-        <template v-else>
-          <UBlogPosts class="gap-y-12 lg:gap-y-14">
-            <BlogPostCard
-              v-for="(post, index) in articles.slice(0, limit)"
-              :key="post.path"
-              :post="post"
-              :eager="index < 3"
-            />
-          </UBlogPosts>
-
-          <UButton
-            v-if="articles.length > limit"
-            label="Show More"
-            color="neutral"
-            variant="subtle"
-            class="self-center"
-            @click="limit += PAGE_SIZE"
-          />
-        </template>
+        <UButton
+          v-if="articles.length > limit"
+          label="Show More"
+          color="neutral"
+          variant="subtle"
+          class="self-center"
+          @click="limit += PAGE_SIZE"
+        />
       </section>
     </UPageBody>
   </UContainer>

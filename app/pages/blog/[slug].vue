@@ -18,7 +18,6 @@ import {
   VideoAccordion,
   YoutubeDemo
 } from '#components'
-import { plainHeading } from '#shared/utils/heading'
 import { readingMinutes } from '#shared/utils/reading-time'
 
 definePageMeta({
@@ -41,18 +40,16 @@ const markdownComponents = {
   YoutubeDemo
 }
 
-const NUXT_3_BETA_DATE = new Date('2021-10-11')
-
 const route = useRoute()
 const { copy } = useClipboard()
 const { track } = useAnalytics()
-const { open: openAgent, isAgentDocked } = useNuxtAgent()
+const { isAgentDocked } = useNuxtAgent()
 
-const { posts, ready } = useBlogPosts()
+const { articles, fetchList } = useBlog()
 
 const [{ data: article }] = await Promise.all([
   useAsyncData(kebabCase(route.path), () => useContent('site').get(route.path)),
-  ready
+  fetchList()
 ])
 
 if (!article.value) {
@@ -62,17 +59,9 @@ if (!article.value) {
 const articleData = computed(() => article.value!.data as BlogArticle)
 const category = computed(() => BLOG_CATEGORIES.find(item => item.value === articleData.value.category) ?? BLOG_CATEGORIES[0]!)
 const readingTime = computed(() => readingMinutes(article.value?.nodes as Node[] | undefined))
-const coversNuxt2 = computed(() => new Date(articleData.value.date) < NUXT_3_BETA_DATE)
 
 const tocLinks = computed(() => (article.value?.meta as { toc?: { links: TocLink[] } })?.toc?.links ?? [])
-const surround = computed(() => listSurround(posts.value.filter(item => item.category === 'Release'), route.path))
-const related = computed(() => {
-  const others = posts.value.filter(item => item.path !== route.path && item.category !== 'Release')
-  return [
-    ...others.filter(item => item.category === category.value.value),
-    ...others.filter(item => item.category !== category.value.value)
-  ].slice(0, 3)
-})
+const surround = computed(() => listSurround(articles.value.filter(item => item.category === 'Release'), route.path))
 
 const title = articleData.value.seo?.title || articleData.value.title
 const description = articleData.value.seo?.description || articleData.value.description
@@ -97,10 +86,6 @@ if (!articleData.value.image) {
 
 const articleBody = useTemplateRef<HTMLElement>('articleBody')
 const showToc = computed(() => !isAgentDocked.value && tocLinks.value.length > 1)
-const contents = computed(() => tocLinks.value.flatMap((link): DropdownMenuItem[] => [
-  { label: plainHeading(link.text), to: `#${link.id}` },
-  ...(link.children ?? []).map(child => ({ label: plainHeading(child.text), to: `#${child.id}`, class: 'ps-6' }))
-]))
 
 function authorSeparator(index: number) {
   const remaining = (articleData.value.authors?.length ?? 0) - index - 1
@@ -155,10 +140,6 @@ const socialLinks = computed<DropdownMenuItem[]>(() =>
 function copyLink() {
   track('Blog Link Copied', { article: articleData.value?.title })
   copy(`https://nuxt.com${route.path}`, { title: 'Link copied to clipboard', icon: 'i-lucide-copy-check' })
-}
-
-function askNuxi() {
-  openAgent(`Summarize the key takeaways of the Nuxt blog post "${articleData.value.title}" (https://nuxt.com${route.path}) and show how I can apply them in my app.`)
 }
 </script>
 
@@ -224,58 +205,28 @@ function askNuxi() {
                 :ui="{ leadingIcon: 'size-3.5' }"
               />
             </UDropdownMenu>
-            <UDropdownMenu
-              v-if="contents.length"
-              :items="contents"
-              :content="{ align: 'end' }"
-              :ui="{ content: 'max-h-96 w-72 overflow-y-auto' }"
-            >
-              <UButton
-                icon="i-lucide-list"
-                color="neutral"
-                variant="soft"
-                size="sm"
-                aria-label="Contents"
-                :class="showToc && 'xl:hidden'"
-                :ui="{ leadingIcon: 'size-3.5' }"
-              />
-            </UDropdownMenu>
           </div>
         </div>
       </header>
 
       <aside v-if="showToc" class="hidden xl:col-start-3 xl:row-start-2 xl:block">
-        <BlogToc
+        <UContentToc
           :links="tocLinks"
-          :reading-time="readingTime"
-          :target="articleBody"
-          class="sticky top-[calc(var(--ui-header-height)+2rem)]"
-        />
+          title="On This Page"
+          highlight
+          highlight-variant="circuit"
+          class="lg:backdrop-blur-none"
+        >
+          <template #bottom>
+            <BlogReadingProgress :reading-time="readingTime" :target="articleBody" />
+          </template>
+        </UContentToc>
       </aside>
 
       <div ref="articleBody" class="min-w-0 xl:col-start-2 xl:row-start-2">
-        <UAlert
-          v-if="coversNuxt2"
-          icon="i-lucide-history"
-          color="warning"
-          variant="subtle"
-          title="This article covers Nuxt 2"
-          description="Nuxt 2 reached end of life on June 30, 2024, and some of the APIs below no longer exist in Nuxt 4."
-          :actions="[
-            { label: 'Upgrade Guide', to: '/docs/getting-started/upgrade', color: 'warning', variant: 'solid', size: 'xs' },
-            { label: 'Nuxt 4 Docs', to: '/docs', color: 'warning', variant: 'outline', size: 'xs' }
-          ]"
-          class="mb-8"
-        />
-
         <MarkdownDocument :value="article!" :components="markdownComponents" />
 
-        <div class="mt-16 flex flex-wrap items-center gap-x-6 gap-y-2 border-t border-default pt-6">
-          <UButton label="Ask Nuxi About This Post" color="neutral" variant="link" class="px-0" @click="askNuxi">
-            <template #leading>
-              <AgentNuxiIcon class="size-4 text-primary" :interactive="false" />
-            </template>
-          </UButton>
+        <div class="mt-16 border-t border-default pt-6">
           <UButton
             label="Edit This Post"
             icon="i-lucide-pen"
@@ -298,28 +249,6 @@ function askNuxi() {
         Release History
       </h2>
       <UContentSurround :surround="surround" />
-    </section>
-
-    <section
-      v-else-if="related.length"
-      aria-labelledby="related-heading"
-      class="flex flex-col gap-8 border-t border-default pt-12 pb-24"
-    >
-      <div class="flex items-center justify-between gap-4">
-        <h2 id="related-heading" class="text-2xl text-highlighted">
-          More from {{ category.label }}
-        </h2>
-        <UButton
-          :to="`/updates?category=${category.slug}`"
-          label="View All"
-          trailing-icon="i-lucide-arrow-right"
-          color="neutral"
-          variant="link"
-        />
-      </div>
-      <UBlogPosts>
-        <BlogPostCard v-for="item in related" :key="item.path" :post="item" />
-      </UBlogPosts>
     </section>
   </UContainer>
 </template>
