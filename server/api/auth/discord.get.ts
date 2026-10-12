@@ -11,11 +11,19 @@ const oauthHandler = defineOAuthDiscordEventHandler({
 
     const nuxter = await nuxters.getByGithubId(user.providerId)
     const badges = await nuxters.badges(event, user, nuxter)
-    const roles = await nuxtersDiscord.grant(event, {
-      discordId: discordUser.id,
-      accessToken: tokens.access_token,
-      badges
-    })
+    // `onError` only covers the OAuth exchange: a Discord API error here (missing Manage Roles
+    // permission, unknown role id) needs its own redirect.
+    let roles: string[]
+    try {
+      roles = await nuxtersDiscord.grant(event, {
+        discordId: discordUser.id,
+        accessToken: tokens.access_token,
+        badges
+      })
+    } catch (error) {
+      console.error('Discord role grant failed:', error)
+      return sendRedirect(event, '/nuxters?discord=error')
+    }
 
     const row = await db.query.users.findFirst({ where: () => eq(schema.users.id, user.id) })
     await db.update(schema.users).set({

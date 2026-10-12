@@ -11,6 +11,7 @@ export default defineEventHandler(async (event) => {
 
   const result = await syncNuxters({ sha, force })
   const summary = result.imported.map(file => `${file.period}=${file.count}`).join(' ') || 'nothing'
-  console.log(`[nuxters] sync ${result.commitSha}: imported ${summary}, ${result.unchanged} unchanged`)
+  const removed = result.removed.length ? `, removed ${result.removed.join(' ')}` : ''
+  console.log(`[nuxters] sync ${result.commitSha}: imported ${summary}${removed}, ${result.unchanged} unchanged`)
   return result
 })

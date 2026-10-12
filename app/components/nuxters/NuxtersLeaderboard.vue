@@ -21,10 +21,12 @@ watch(() => props.initial, () => {
 })
 
 async function showMore() {
+  // The period can change while the page loads: its items must not join the new list.
+  const initial = props.initial
   loading.value = true
   try {
-    const page = await $fetch<NuxtersPage>('/api/nuxters', { query: { period: props.initial.period, offset: items.value.length, limit: PAGE_SIZE } })
-    more.value.push(...page.items)
+    const page = await $fetch<NuxtersPage>('/api/nuxters', { query: { period: initial.period, offset: items.value.length, limit: PAGE_SIZE } })
+    if (initial === props.initial) more.value.push(...page.items)
   } finally {
     loading.value = false
   }

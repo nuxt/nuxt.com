@@ -14,7 +14,7 @@ export async function syncNuxtersWorkflow(input: { baseURL: string, sha: string 
 
   const result = await importNuxters(input.baseURL, input.sha)
   if (result.status === 'imported') {
-    await purgeNuxtersPages(input.baseURL, result.imported.map(file => file.period))
+    await purgeNuxtersPages(input.baseURL, [...result.imported.map(file => file.period), ...result.removed])
   }
   return result
 }
@@ -26,6 +26,7 @@ async function importNuxters(baseURL: string, sha: string) {
     status: 'imported' | 'skipped'
     commitSha: string
     imported: Array<{ period: string, count: number }>
+    removed: string[]
     unchanged: number
   }>(baseURL, '/api/internal/nuxters/sync', { sha })
 }

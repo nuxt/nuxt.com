@@ -162,6 +162,8 @@ export interface NuxtersSyncResult {
   status: 'imported' | 'skipped'
   commitSha: string
   imported: Array<{ period: NuxtersPeriod, count: number }>
+  /** Periods whose file is no longer in the source: their rows are deleted. */
+  removed: NuxtersPeriod[]
   unchanged: number
 }
 
@@ -220,10 +222,20 @@ export async function syncNuxters(options: { sha?: string, force?: boolean, dir?
     imported.push({ period: file.period, count: rows.length })
   }
 
+  // The source is the reference: a period whose file is gone must leave the leaderboard too.
+  const removed = [...last.keys()].filter(period => !source.files.some(file => file.period === period))
+  if (removed.length) {
+    await db.batch([
+      db.delete(schema.nuxters).where(inArray(schema.nuxters.period, removed)),
+      db.delete(schema.nuxtersSyncs).where(inArray(schema.nuxtersSyncs.period, removed))
+    ])
+  }
+
   return {
-    status: imported.length ? 'imported' : 'skipped',
+    status: imported.length || removed.length ? 'imported' : 'skipped',
     commitSha: source.commitSha,
     imported,
+    removed,
     unchanged: source.files.length - imported.length
   }
 }

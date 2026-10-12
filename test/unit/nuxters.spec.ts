@@ -132,7 +132,8 @@ describe('nuxtersPushSha', () => {
     expect(nuxtersPushSha(push())).toEqual({ sha: SHA })
     expect(nuxtersPushSha(push({ commits: [{ modified: ['public/contributors-30d.json'] }] }))).toEqual({ sha: SHA })
     // The first file of a new year is added, not modified
-    expect(nuxtersPushSha(push({ commits: [{ added: ['public/contributors-2027.json'] }] }))).toEqual({ sha: SHA })
+    const year = new Date().getUTCFullYear()
+    expect(nuxtersPushSha(push({ commits: [{ added: [`public/contributors-${year}.json`] }] }))).toEqual({ sha: SHA })
   })
 
   it('ignores pushes that do not change the data', () => {
@@ -163,6 +164,14 @@ describe('periods', () => {
     for (const period of ['', '7d', '2015', '20255', 'ALL', 2025, undefined]) {
       expect(isNuxtersPeriod(period)).toBe(false)
     }
+  })
+
+  it('accepts years up to the current one only', () => {
+    // Bounds the `?period=` cache entries (ISR `allowQuery`)
+    const year = new Date().getUTCFullYear()
+    expect(isNuxtersPeriod(String(year))).toBe(true)
+    expect(isNuxtersPeriod(String(year + 1))).toBe(false)
+    expect(isNuxtersPeriod('9999')).toBe(false)
   })
 
   it('maps file names to periods and back', () => {

@@ -25,7 +25,8 @@ watchDebounced([searchTerm, () => props.period], async ([term]) => {
   }
   loading.value = true
   try {
-    const items = await $fetch<NuxterSummary[]>('/api/search/nuxters', { query: { q: query, period: props.period } })
+    // On an error, show no results rather than stale ones.
+    const items = await $fetch<NuxterSummary[]>('/api/search/nuxters', { query: { q: query, period: props.period } }).catch(() => [])
     // A slower, older request must not replace newer results.
     if (current === request) results.value = items
   } finally {

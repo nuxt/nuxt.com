@@ -29,8 +29,12 @@ export const NUXTERS_MIN_ROWS = 1000
 const PERIOD_RE = /^(?:all|30d|12m|\d{4})$/
 const FILE_RE = /^contributors(?:-(30d|12m|\d{4}))?\.json$/
 
+/** `all`, `30d`, `12m`, or a year from 2016 to the current one: 14 values at most in 2026. */
 export function isNuxtersPeriod(value: unknown): value is NuxtersPeriod {
-  return typeof value === 'string' && PERIOD_RE.test(value) && (!/^\d{4}$/.test(value) || Number(value) >= NUXTERS_FIRST_YEAR)
+  if (typeof value !== 'string' || !PERIOD_RE.test(value)) return false
+  if (!/^\d{4}$/.test(value)) return true
+  const year = Number(value)
+  return year >= NUXTERS_FIRST_YEAR && year <= new Date().getUTCFullYear()
 }
 
 /** `contributors-30d.json` → `30d`, `contributors.json` → `all`, anything else → `null`. */
