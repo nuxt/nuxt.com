@@ -37,7 +37,9 @@ const { data: navigation } = await useFetch<NavigationItem[]>(() =>
 const searchKeys = computed(() => searchInstanceKeys(docsVersion.value))
 // Client-only: an SSR value gets baked into the page's ISR entry and would pin search to a stale commit.
 const { data: searchShas } = useAsyncData(
-  () => `content-heads:${searchKeys.value.join(',')}`,
+  // A `computed()` key, not a getter: `experimental.extractAsyncDataHandlers` takes the first arrow
+  // function as the handler, so a getter key is extracted instead (NUXT_E3008 in production).
+  computed(() => `content-heads:${searchKeys.value.join(',')}`),
   () => $fetch<ContentShas>('/api/content/heads', {
     query: { keys: searchKeys.value.join(',') }
   }).catch((error) => {

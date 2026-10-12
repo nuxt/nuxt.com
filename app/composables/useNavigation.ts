@@ -64,10 +64,10 @@ function _useHeaderLinks() {
       to: '/modules',
       description: 'Supercharge your Nuxt project with modules.'
     }, {
-      label: 'Templates',
-      icon: 'i-lucide-app-window',
-      description: 'Start your next project with a Nuxt template.',
-      to: '/templates'
+      label: 'Showcase',
+      icon: 'i-lucide-presentation',
+      description: 'Discover and explore projects built with Nuxt.',
+      to: '/showcase'
     }, {
       label: 'Nuxters',
       icon: 'i-lucide-award',
@@ -77,14 +77,14 @@ function _useHeaderLinks() {
     }, {
       label: 'Resources',
       icon: 'i-lucide-library',
-      to: '/showcase',
+      to: '/templates',
       search: false,
-      active: ['/showcase', '/video-courses', '/enterprise'].some(path => route.path.startsWith(path)),
+      active: ['/templates', '/video-courses', '/enterprise'].some(path => route.path.startsWith(path)),
       children: [{
-        label: 'Showcase',
-        description: 'Discover and explore projects built with Nuxt.',
-        icon: 'i-lucide-presentation',
-        to: '/showcase'
+        label: 'Templates',
+        description: 'Start your next project with a Nuxt template.',
+        icon: 'i-lucide-app-window',
+        to: '/templates'
       }, {
         label: 'Video Courses',
         description: 'Learn Nuxt by watching video courses.',
