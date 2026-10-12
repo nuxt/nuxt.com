@@ -57,6 +57,8 @@ export const useDocsTags = () => {
     return Object.fromEntries(DOC_VERSIONS.map((v) => {
       // TODO: remove nightly fallback when Nuxt 5 is released
       if (v === '5.x') return [v, distTags['5x'] ?? '5 (nightly)']
+      // npm's `Nx` tags only track non-latest majors, so the current version reads `latest`
+      if (v === CURRENT_DOCS_VERSION) return [v, distTags.latest]
       return [v, distTags[`${docsMajor(v)}x`] ?? distTags.latest]
     })) as Tags
   }, { default: () => ({}) as Tags })
