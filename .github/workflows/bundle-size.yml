@@ -47,6 +47,7 @@ jobs:
           dlx nuxt analyze
           --extends=../scripts/bundle-size/nuxt-layer
           --no-serve
+          --prerender
           --logLevel=info
         env:
           NODE_OPTIONS: --max-old-space-size=8192
@@ -88,6 +89,7 @@ jobs:
           dlx nuxt analyze
           --extends=./scripts/bundle-size/nuxt-layer
           --no-serve
+          --prerender
           --logLevel=info
         env:
           NODE_OPTIONS: --max-old-space-size=8192
