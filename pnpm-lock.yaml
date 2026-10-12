@@ -388,9 +388,6 @@ importers:
       '@nuxtjs/sitemap':
         specifier: ^8.6.1
         version: 8.6.1(@nuxt/schema@4.6.1)(@oxc-project/types@0.151.0)(confbox@0.2.4)(dotenv@17.4.2)(giget@3.3.1)(jiti@2.7.0)(magic-string@1.4.3)(mlly@1.8.2)(nuxt@4.6.1(3438fe5d2e81a71cd7513db026499c67))(rolldown@1.2.11)(unplugin@3.4.0(esbuild@0.28.2)(rolldown@1.2.11)(rollup@4.63.5)(vite@8.3.2(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1)))(vite@8.3.2(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))(vue@3.5.43(typescript@6.0.3))(zod@4.6.5)
-      '@nuxtjs/turnstile':
-        specifier: ^1.1.3
-        version: 1.1.3(@nuxt/scripts@1.3.12(@nuxt/schema@4.6.1)(@oxc-project/types@0.151.0)(@types/youtube@0.3.0)(@unhead/vue@3.4.2(@oxc-project/types@0.151.0)(esbuild@0.28.2)(lightningcss@1.33.0)(oxc-parser@0.151.0)(rolldown@1.2.11)(rollup@4.63.5)(vite@8.3.2(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))(vue@3.5.43(typescript@6.0.3)))(@vercel/functions@3.9.11(ws@8.22.0))(confbox@0.2.4)(db0@0.3.4(@libsql/client@0.18.0)(drizzle-orm@0.45.3(@cloudflare/workers-types@4.20260702.1)(@libsql/client@0.18.0)(@opentelemetry/api@1.9.1)))(dotenv@17.4.2)(esbuild@0.28.2)(giget@3.3.1)(ioredis@5.11.1(supports-color@10.2.2))(jiti@2.7.0)(mlly@1.8.2)(rolldown@1.2.11)(rollup@4.63.5)(typescript@6.0.3)(vite@8.3.2(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))(vue@3.5.43(typescript@6.0.3)))(magicast@0.5.5)
       '@playwright/test':
         specifier: ^1.63.0
         version: 1.63.0
@@ -2392,11 +2389,6 @@ packages:
       zod:
         optional: true
 
-  '@nuxtjs/turnstile@1.1.3':
-    resolution: {integrity: sha512-NKiRHvdCuuWz85VHWzhofPXxHFq6y2eOHXQPsrRJhLnEZ/YBvGt6beOxI0M50rHKMEmdYjM/30QomyzNLIBz4w==}
-    peerDependencies:
-      '@nuxt/scripts': ^0.11.0 || ^0.12.0 || ^0.13.0 || ^1.0.0
-
   '@octokit/webhooks-methods@6.0.0':
     resolution: {integrity: sha512-MFlzzoDJVw/GcbfzVC1RLR36QqkTLUf79vLVO3D+xn7r0QgxnFoLZgtrzxiQErAjFUOdH6fas2KeQJ1yr/qaXQ==}
     engines: {node: '>= 20'}
@@ -4169,9 +4161,6 @@ packages:
 
   '@types/chai@5.2.3':
     resolution: {integrity: sha512-Mw558oeA9fFbv65/y4mHtXDs9bPnFMZAL/jxdPFUpOHHIXX91mcgEHbS5Lahr+pwZFR8A7GQleRWeI6cGFC2UA==}
-
-  '@types/cloudflare-turnstile@0.2.2':
-    resolution: {integrity: sha512-3Yf7b1Glci+V2bFWwWBbZkRgTuegp7RDgNTOG4U0UNPB9RV4AWvwqg2/qqLff8G+SwKFNXoXvTkqaRBZrAFdKA==}
 
   '@types/d3-array@3.2.2':
     resolution: {integrity: sha512-hOLWVbm7uRza0BYXpIIW5pxfrKe0W+D5lrFiAEYR+pb6w3N2SwSMaJbXdUfSEv+dT4MfHBLtn5js0LAWaO6otw==}
@@ -13810,16 +13799,6 @@ snapshots:
       - vite
       - vue
 
-  '@nuxtjs/turnstile@1.1.3(@nuxt/scripts@1.3.12(@nuxt/schema@4.6.1)(@oxc-project/types@0.151.0)(@types/youtube@0.3.0)(@unhead/vue@3.4.2(@oxc-project/types@0.151.0)(esbuild@0.28.2)(lightningcss@1.33.0)(oxc-parser@0.151.0)(rolldown@1.2.11)(rollup@4.63.5)(vite@8.3.2(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))(vue@3.5.43(typescript@6.0.3)))(@vercel/functions@3.9.11(ws@8.22.0))(confbox@0.2.4)(db0@0.3.4(@libsql/client@0.18.0)(drizzle-orm@0.45.3(@cloudflare/workers-types@4.20260702.1)(@libsql/client@0.18.0)(@opentelemetry/api@1.9.1)))(dotenv@17.4.2)(esbuild@0.28.2)(giget@3.3.1)(ioredis@5.11.1(supports-color@10.2.2))(jiti@2.7.0)(mlly@1.8.2)(rolldown@1.2.11)(rollup@4.63.5)(typescript@6.0.3)(vite@8.3.2(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))(vue@3.5.43(typescript@6.0.3)))(magicast@0.5.5)':
-    dependencies:
-      '@nuxt/kit': 3.21.11(magicast@0.5.5)
-      '@nuxt/scripts': 1.3.12(@nuxt/schema@4.6.1)(@oxc-project/types@0.151.0)(@types/youtube@0.3.0)(@unhead/vue@3.4.2(@oxc-project/types@0.151.0)(esbuild@0.28.2)(lightningcss@1.33.0)(oxc-parser@0.151.0)(rolldown@1.2.11)(rollup@4.63.5)(vite@8.3.2(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))(vue@3.5.43(typescript@6.0.3)))(@vercel/functions@3.9.11(ws@8.22.0))(confbox@0.2.4)(db0@0.3.4(@libsql/client@0.18.0)(drizzle-orm@0.45.3(@cloudflare/workers-types@4.20260702.1)(@libsql/client@0.18.0)(@opentelemetry/api@1.9.1)))(dotenv@17.4.2)(esbuild@0.28.2)(giget@3.3.1)(ioredis@5.11.1(supports-color@10.2.2))(jiti@2.7.0)(mlly@1.8.2)(rolldown@1.2.11)(rollup@4.63.5)(typescript@6.0.3)(vite@8.3.2(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))(vue@3.5.43(typescript@6.0.3))
-      '@types/cloudflare-turnstile': 0.2.2
-      defu: 6.1.7
-      pathe: 2.0.3
-    transitivePeerDependencies:
-      - magicast
-
   '@octokit/webhooks-methods@6.0.0': {}
 
   '@one-ini/wasm@0.2.1': {}
@@ -15075,8 +15054,6 @@ snapshots:
     dependencies:
       '@types/deep-eql': 4.0.2
       assertion-error: 2.0.1
-
-  '@types/cloudflare-turnstile@0.2.2': {}
 
   '@types/d3-array@3.2.2': {}
 

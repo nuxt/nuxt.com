@@ -433,37 +433,6 @@ contributors:
       variant: ghost
       size: lg
       title: Nuxt on Bluesky
-support:
-  title: Nuxt Enterprise Support
-  description: |
-    To ensure your Nuxt projects reach their full potential, our Nuxt Experts team, featuring :icon{name=i-custom-vue .align-middle} Vue, :icon{name=i-custom-nuxt .align-middle} Nuxt and :icon{name=i-custom-vite .align-middle} Vite, core contributors — offers a complete suite of services.
-  features:
-    - title: Performance optimization
-      description: Boost Nuxt performance and reliability with our expert optimizations.
-      icon: i-lucide-rocket
-    - title: Migration to Nuxt
-      description: Ensure successful, painless migrations from start to deployment.
-      icon: i-lucide-circle-arrow-up
-    - title: Nuxt Workshop
-      description: Develop expert teams through training and support.
-      icon: i-lucide-school
-  companies:
-    - src: /assets/enterprise/support/malt.svg
-      alt: Malt
-    - src: /assets/enterprise/support/zadig-and-voltaire.svg
-      alt: Zadig & Voltaire
-    - src: /assets/enterprise/support/adyen.svg
-      alt: Adyen
-    - src: /assets/enterprise/support/world-wide-technology.svg
-      alt: World Wide Technology
-    - src: /assets/enterprise/support/cora.svg
-      alt: Cora
-  links:
-    - label: Talk to a Nuxt Expert
-      to: /enterprise/support
-      icon: i-lucide-arrow-right
-      color: neutral
-      trailing: true
 sponsors:
   title: Sponsors
   description: Nuxt is and will always remain free and open source under the MIT License, thanks to our contributors and sponsors.
