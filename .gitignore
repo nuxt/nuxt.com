@@ -28,3 +28,6 @@ test-results/
 .env*.local
 .env*
 !.env.example
+
+# Amp orb portal manifests
+.amp/portals/*

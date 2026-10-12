@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+# Prepares an Amp orb for nuxt.com. Runs on fresh and stale snapshots; must stay idempotent.
+set -euo pipefail
+
+cd "$(dirname "${BASH_SOURCE[0]}")/.."
+
+step() {
+  local label="$1"
+  shift
+  echo "==> ${label}"
+  local start=$SECONDS
+  "$@"
+  echo "<== ${label} ($((SECONDS - start))s)"
+}
+
+# The orb base image ships Node and pnpm; package.json pins pnpm via `packageManager`
+# and requires Node ^24 || ^26 via `devEngines`.
+echo "node $(node --version), pnpm $(pnpm --version)"
+
+# CI=true keeps pnpm non-interactive (e.g. when it needs to purge a restored node_modules).
+# The `postinstall` script runs `nuxt prepare`; it is skipped when dependencies are already up to date.
+step "pnpm install" env CI=true pnpm install --frozen-lockfile
+
+# Chromium for `pnpm test:browser` (Playwright). No-op when the matching build is already cached.
+step "playwright install chromium" pnpm exec playwright install chromium
