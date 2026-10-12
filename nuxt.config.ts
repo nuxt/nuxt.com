@@ -49,6 +49,7 @@ export default defineNuxtConfig({
     '@nuxt/hints',
     '@vercel/analytics',
     '@vercel/speed-insights',
+    'botid/nuxt',
     'evlog/nuxt',
     'nuxt-workers',
     ...(nuxiEnabled ? ['eve/nuxt'] : [])

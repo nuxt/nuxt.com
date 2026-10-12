@@ -67,6 +67,7 @@
     "@vueuse/core": "^14.4.0",
     "@vueuse/nuxt": "^14.4.0",
     "ai": "^7.0.127",
+    "botid": "^1.5.11",
     "chat": "^4.41.1",
     "comark-content": "^0.4.1",
     "date-fns": "^4.4.0",
