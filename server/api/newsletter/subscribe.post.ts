@@ -4,7 +4,7 @@ import { withQuery, withTrailingSlash } from 'ufo'
 import { checkBotId } from 'botid/server'
 
 export default eventHandler(async (event) => {
-  const verification = await checkBotId({ advancedOptions: { headers: event.node.req.headers } })
+  const verification = await checkBotId()
   if (verification.isBot) {
     throw createError({ statusCode: 403, statusMessage: 'Forbidden' })
   }

@@ -24,9 +24,7 @@ function nuxtSessionAuth(): AuthFn<Request> {
     try {
       // Only POSTs carry the BotID challenge header; stream reconnects are GETs.
       if (request.method === 'POST') {
-        const verification = await checkBotId({
-          advancedOptions: { headers: Object.fromEntries(request.headers) }
-        })
+        const verification = await checkBotId()
         if (verification.isBot) return null
       }
 

@@ -29,7 +29,7 @@ async function getFingerprint(event: H3Event): Promise<string> {
 }
 
 export default defineEventHandler(async (event: H3Event) => {
-  const verification = await checkBotId({ advancedOptions: { headers: event.node.req.headers } })
+  const verification = await checkBotId()
   if (verification.isBot) {
     throw createError({ statusCode: 403, statusMessage: 'Forbidden' })
   }
