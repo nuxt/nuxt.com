@@ -127,40 +127,43 @@ onMounted(update)
       </div>
     </div>
 
-    <div class="flex items-center justify-between gap-3 border-t border-default pt-3 text-sm text-muted">
-      <span class="flex items-center gap-2">
-        <svg viewBox="0 0 16 16" aria-hidden="true" class="size-4 -rotate-90">
-          <circle
-            cx="8"
-            cy="8"
-            r="6.5"
-            fill="none"
-            stroke-width="2"
-            class="stroke-(--ui-border-accented)"
-          />
-          <circle
-            cx="8"
-            cy="8"
-            r="6.5"
-            fill="none"
-            stroke-width="2"
-            stroke-linecap="round"
-            pathLength="100"
-            stroke-dasharray="100"
-            :stroke-dashoffset="100 - progress * 100"
-            class="stroke-primary"
-          />
-        </svg>
-        <span class="tabular-nums">{{ minutesLeft ? `${minutesLeft} min left` : 'Finished' }}</span>
-      </span>
+    <div class="flex flex-col border-t border-default pt-2">
       <UButton
-        icon="i-lucide-arrow-up"
         color="neutral"
         variant="ghost"
-        size="xs"
-        aria-label="Back to Top"
+        trailing-icon="i-lucide-arrow-up"
+        class="-mx-2.5 gap-2 text-muted"
         @click="backToTop"
-      />
+      >
+        <template #leading>
+          <svg viewBox="0 0 16 16" aria-hidden="true" class="size-4 shrink-0 -rotate-90">
+            <circle
+              cx="8"
+              cy="8"
+              r="6.5"
+              fill="none"
+              stroke-width="2"
+              class="stroke-(--ui-border-accented)"
+            />
+            <circle
+              cx="8"
+              cy="8"
+              r="6.5"
+              fill="none"
+              stroke-width="2"
+              stroke-linecap="round"
+              pathLength="100"
+              stroke-dasharray="100"
+              :stroke-dashoffset="100 - progress * 100"
+              class="stroke-primary"
+            />
+          </svg>
+        </template>
+
+        <span class="flex-1 text-start tabular-nums">
+          {{ minutesLeft ? `${minutesLeft} min left` : 'Finished' }}<span class="sr-only">, back to top</span>
+        </span>
+      </UButton>
     </div>
   </nav>
 </template>
