@@ -79,10 +79,21 @@ watch([category, query], () => {
     <UPageHeader
       :title="title"
       :description="description"
-      :ui="{ root: 'border-none pt-12 pb-10 sm:pt-16', wrapper: 'flex-row items-center justify-between', description: 'max-w-xl' }"
+      :ui="{
+        root: 'border-none pt-12 pb-10 sm:pt-16',
+        container: 'sm:grid sm:grid-cols-[minmax(0,1fr)_auto] sm:gap-x-8',
+        wrapper: 'sm:contents',
+        links: 'sm:col-start-2 sm:row-span-2 sm:row-start-1 sm:self-end',
+        description: 'max-w-xl'
+      }"
     >
       <template #links>
-        <UButton to="/newsletter" label="Subscribe" icon="i-lucide-mail" color="neutral" variant="subtle" />
+        <div class="flex w-full flex-col gap-1.5 sm:w-72 sm:items-end">
+          <p class="text-xs text-muted">
+            Never miss a release. We'll keep you posted.
+          </p>
+          <NewsletterForm label="" description="" size="sm" class="w-full" />
+        </div>
       </template>
     </UPageHeader>
 
