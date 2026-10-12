@@ -65,6 +65,16 @@ export async function docTree(version: DocVersion, examples: NavigationItem[]): 
   }]
 }
 
+/**
+ * The blog subtree the palette and the docs aside link to — grafted onto every version.
+ */
+export async function blogTree(): Promise<NavigationItem[]> {
+  const site = await getInstanceAtHead('site')
+  const blog = findByPath(await site.navigation(), '/blog')
+
+  return blog ? [blog] : []
+}
+
 export function findByPath(items: NavigationItem[] | undefined, path: string): NavigationItem | undefined {
   for (const item of items ?? []) {
     if (item.path === path) return item

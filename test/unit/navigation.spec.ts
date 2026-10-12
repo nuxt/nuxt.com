@@ -21,11 +21,12 @@ vi.stubGlobal('getInstanceAtHead', async (key: ContentInstanceKey) => {
 })
 
 const navigationUtils = await import('../../server/utils/content/navigation')
-const { cliTree, docTree, examplesTree, findByPath } = navigationUtils
+const { blogTree, cliTree, docTree, examplesTree, findByPath } = navigationUtils
 
 vi.stubGlobal('docTree', docTree)
 vi.stubGlobal('examplesTree', examplesTree)
 vi.stubGlobal('findByPath', findByPath)
+vi.stubGlobal('blogTree', blogTree)
 vi.stubGlobal('defineEventHandler', <T>(handler: T) => handler)
 vi.stubGlobal('getRouterParam', (event: Record<string, string>, name: string) => event[name])
 vi.stubGlobal('createError', (input: { statusCode: number, statusMessage: string }) =>

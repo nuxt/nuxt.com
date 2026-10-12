@@ -2,6 +2,7 @@
 import type { NavigationItem } from 'comark-content'
 import type { ContentShas } from '#shared/types'
 import { navigationPath, searchInstanceKeys } from '#shared/utils/content'
+import { pullNavigationPath } from '#shared/utils/pull'
 
 const colorMode = useColorMode()
 const route = useRoute()
@@ -28,7 +29,10 @@ watch(() => colorMode.preference, (newMode, oldMode) => {
   }
 })
 
-const { data: navigation } = await useFetch<NavigationItem[]>(computed(() => navigationPath(docsVersion.value)))
+const pull = usePullPreview()
+
+const { data: navigation } = await useFetch<NavigationItem[]>(computed(() =>
+  pull.value ? pullNavigationPath(docsVersion.value, pull.value) : navigationPath(docsVersion.value)))
 
 const searchKeys = computed(() => searchInstanceKeys(docsVersion.value))
 // Client-only: an SSR value gets baked into the page's ISR entry and would pin search to a stale commit.
