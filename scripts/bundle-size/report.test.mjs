@@ -134,7 +134,7 @@ test('validates snapshots and safely renders module identifiers', () => {
   assert.match(report, /\| <code>\/blog<\/code> \| n\/a \| 1 B \| n\/a \| n\/a \| n\/a \|/)
   assert.match(report, /\| <code>\/updates<\/code> \| n\/a \| 1 B \| n\/a \| n\/a \| n\/a \|/)
 
-  for (const route of ['/<img src=x>', '/a|b', '/[x](y)', 'blog', `/${'a'.repeat(256)}`]) {
+  for (const route of ['/<img src=x>', '/a|b', '/[x](y)', 'blog', `/${'a'.repeat(256)}`, '/updates\n', '/updates\r\n', '/updates\u2028']) {
     assert.throws(
       () => validateSnapshot({ ...head, routes: { [route]: head.routes['/blog'] } }, { label: 'pr' }),
       /invalid route/
