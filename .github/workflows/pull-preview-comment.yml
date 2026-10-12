@@ -29,21 +29,24 @@ jobs:
             // `/pull/:repo/:number` mirrors `github.com/nuxt/:repo/pull/:number`.
             const previewUrl = `${SITE_URL}/pull/${repo}/${pr.number}`
 
-            // nuxt.com only previews PRs a maintainer labelled, same-repo ones included.
+            // nuxt.com only previews open PRs a maintainer labelled, same-repo ones included.
+            const closed = pr.state !== 'open'
             const enabled = pr.labels.some(label => label.name === PREVIEW_LABEL)
 
-            const body = [
-              marker,
-              '## nuxt.com preview',
-              '',
-              ...(enabled
-                ? [
-                    `📚 [Preview the changes on nuxt.com](${previewUrl}) (follows new pushes within 10 minutes)`,
-                    '',
-                    `Enabled by the \`${PREVIEW_LABEL}\` label — remove it to disable the preview.`
-                  ]
-                : [`A maintainer can add the \`${PREVIEW_LABEL}\` label to preview this pull request on nuxt.com.`])
-            ].join('\n')
+            let message
+            if (closed) {
+              message = ['This pull request is closed: its preview is no longer available.']
+            } else if (enabled) {
+              message = [
+                `📚 [Preview the changes on nuxt.com](${previewUrl}) (follows new pushes within 10 minutes)`,
+                '',
+                `Enabled by the \`${PREVIEW_LABEL}\` label — remove it to disable the preview.`
+              ]
+            } else {
+              message = [`A maintainer can add the \`${PREVIEW_LABEL}\` label to preview this pull request on nuxt.com.`]
+            }
+
+            const body = [marker, '## nuxt.com preview', '', ...message].join('\n')
 
             const comments = await github.paginate(github.rest.issues.listComments, {
               owner,
@@ -55,6 +58,7 @@ jobs:
 
             if (existing) {
               await github.rest.issues.updateComment({ owner, repo, comment_id: existing.id, body })
-            } else {
+            } else if (!closed) {
+              // A PR closed before this workflow ever ran on it gets no comment.
               await github.rest.issues.createComment({ owner, repo, issue_number: pr.number, body })
             }
