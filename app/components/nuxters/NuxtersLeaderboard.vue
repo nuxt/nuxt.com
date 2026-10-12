@@ -7,6 +7,9 @@ const props = defineProps<{
 
 const PAGE_SIZE = 100
 
+const { format } = new Intl.NumberFormat('en-US')
+const points = (score: number) => `${format(score)} ${score === 1 ? 'pt' : 'pts'}`
+
 const more = ref<NuxterSummary[]>([])
 const loading = ref(false)
 const items = computed(() => [...props.initial.items, ...more.value])
@@ -37,8 +40,12 @@ async function showMore() {
   <div>
     <ul class="grid grid-cols-5 sm:grid-cols-8 md:grid-cols-10 gap-3 sm:gap-4">
       <li v-for="nuxter in items" :key="nuxter.githubId" class="relative">
-        <UTooltip :text="nuxter.username">
-          <NuxtLink :to="{ path: `/nuxters/${nuxter.username}`, query: profileQuery }" class="block aspect-square rounded-lg overflow-hidden bg-muted ring ring-default hover:ring-primary transition">
+        <UTooltip :text="`${nuxter.username} · ${points(nuxter.score)}`">
+          <NuxtLink
+            :to="{ path: `/nuxters/${nuxter.username}`, query: profileQuery }"
+            :aria-label="`${nuxter.username}, #${format(nuxter.rank)}, ${points(nuxter.score)}`"
+            class="block aspect-square rounded-lg overflow-hidden bg-muted ring ring-default hover:ring-primary transition"
+          >
             <NuxtImg
               :src="`/gh_avatar/${nuxter.username}`"
               provider="ipx"

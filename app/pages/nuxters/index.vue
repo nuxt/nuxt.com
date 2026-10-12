@@ -1,26 +1,12 @@
 <script setup lang="ts">
-import type { NuxtersPage, NuxtersPeriod } from '#shared/types'
-import { NUXTERS_DEFAULT_PERIOD, isNuxtersPeriod, nuxtersPeriodLabel } from '#shared/utils/nuxters'
+import type { NuxtersPage } from '#shared/types'
+import { NUXTERS_DEFAULT_PERIOD, isNuxtersPeriod, nuxtersPeriodLabel, nuxtersPeriodPhrase } from '#shared/utils/nuxters'
 
 definePageMeta({
   heroBackground: 'opacity-70 -z-10'
 })
 
-const title = 'Nuxters'
 const description = 'Every contribution to the Nuxt ecosystem counts. Discover yours, share your Nuxter profile and unlock your badges on the Nuxt Discord server.'
-
-useSeoMeta({
-  title,
-  description,
-  ogTitle: 'Are you a Nuxter?',
-  ogDescription: description
-})
-useCanonical()
-defineOgImage('Docs.takumi', {
-  headline: 'Community',
-  title: 'Are you a Nuxter?',
-  description
-})
 
 const ways = [{
   title: 'Merge a pull request',
@@ -82,6 +68,33 @@ const summary = computed(() => {
   // nuxt/framework and nuxt/docs are archived former homes of nuxt/nuxt: the score modal lists them.
   return `${people} made ${made} ${periodPhrase(period.value)}. Ranked by score, where nuxt/nuxt counts double. Updated every day.`
 })
+// A shared `?period=` link shows that leaderboard: title, description, `og:url` and card.
+// The canonical URL has no `?period=`, and `/nuxters` alone keeps the generic texts.
+const site = useSiteConfig()
+const sharedPeriod = computed(() => requestedPeriod.value && leaderboard.value?.total ? period.value : undefined)
+const seo = computed(() => {
+  if (!sharedPeriod.value) {
+    return { title: 'Nuxters', ogTitle: 'Are you a Nuxter?', description }
+  }
+  const title = `Top Nuxters ${nuxtersPeriodPhrase(sharedPeriod.value)}`
+  const page = leaderboard.value!
+  const text = `${format(page.total)} contributors made ${format(page.totals.contributions)} contributions to the Nuxt ecosystem ${nuxtersPeriodPhrase(sharedPeriod.value)}. Discover the Nuxters and their profiles.`
+  return { title, ogTitle: title, description: text }
+})
+useSeoMeta({
+  title: () => seo.value.title,
+  description: () => seo.value.description,
+  ogTitle: () => seo.value.ogTitle,
+  ogDescription: () => seo.value.description,
+  ogUrl: () => `${site.url}/nuxters${sharedPeriod.value ? `?period=${sharedPeriod.value}` : ''}`
+})
+useCanonical()
+defineOgImage('Docs.takumi', {
+  headline: () => sharedPeriod.value ? 'Nuxters' : 'Community',
+  title: () => seo.value.ogTitle,
+  description: () => seo.value.description
+})
+
 const breakdown = computed(() => {
   const totals = leaderboard.value?.totals
   if (!totals?.contributions) return []
@@ -92,12 +105,7 @@ const breakdown = computed(() => {
   ]
 })
 
-const periodPhrase = (value: NuxtersPeriod) => {
-  if (value === '30d') return 'in the last 30 days'
-  if (value === '12m') return 'in the last 12 months'
-  if (value === 'all') return 'of all time'
-  return `in ${value}`
-}
+const periodPhrase = nuxtersPeriodPhrase
 </script>
 
 <template>

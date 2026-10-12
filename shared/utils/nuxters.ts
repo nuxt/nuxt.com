@@ -56,6 +56,14 @@ export function nuxtersPeriodLabel(period: NuxtersPeriod): string {
   return period
 }
 
+/** The period in a sentence: "in the last 30 days", "of all time", "in 2024". */
+export function nuxtersPeriodPhrase(period: NuxtersPeriod): string {
+  if (period === '30d') return 'in the last 30 days'
+  if (period === '12m') return 'in the last 12 months'
+  if (period === 'all') return 'of all time'
+  return `in ${period}`
+}
+
 /** Rolling windows, all time, then years from the newest. */
 export function sortNuxtersPeriods(periods: NuxtersPeriod[]): NuxtersPeriod[] {
   const order = (period: NuxtersPeriod) => {

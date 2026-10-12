@@ -1,14 +1,21 @@
 <script setup lang="ts">
+import type { NuxtersPeriod } from '#shared/types'
+import { nuxtersPeriodPhrase } from '#shared/utils/nuxters'
+
 const props = defineProps<{
   username: string
+  /** The link and the card share the period on screen (all time by default). */
+  period?: NuxtersPeriod
 }>()
 
 const site = useSiteConfig()
 const { copy } = useClipboard()
 
-const profileUrl = computed(() => `${site.url}/nuxters/${props.username}`)
-const cardUrl = computed(() => `${profileUrl.value}/card.png`)
-const markdown = computed(() => `[![${props.username}'s Nuxter profile](${cardUrl.value})](${profileUrl.value})`)
+const query = computed(() => !props.period || props.period === 'all' ? '' : `?period=${props.period}`)
+const profileUrl = computed(() => `${site.url}/nuxters/${props.username}${query.value}`)
+const cardUrl = computed(() => `${site.url}/nuxters/${props.username}/card.png${query.value}`)
+const alt = computed(() => `${props.username}'s Nuxter profile${query.value ? ` ${nuxtersPeriodPhrase(props.period!)}` : ''}`)
+const markdown = computed(() => `[![${alt.value}](${cardUrl.value})](${profileUrl.value})`)
 </script>
 
 <template>

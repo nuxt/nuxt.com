@@ -1,3 +1,5 @@
+import { isNuxtersPeriod } from '#shared/utils/nuxters'
+
 const META_TAG_RE = /<meta\b[^>]*>/gi
 
 /**
@@ -10,7 +12,11 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 400, statusMessage: 'Invalid GitHub username' })
   }
 
-  const html = await $fetch<string>(`/nuxters/${username}`, {
+  // `?period=2024`: the card of that period (the profile falls back to all time without data).
+  const period = getQuery(event).period
+  const query = typeof period === 'string' && isNuxtersPeriod(period) ? `?period=${period}` : ''
+
+  const html = await $fetch<string>(`/nuxters/${username}${query}`, {
     headers: { accept: 'text/html' },
     responseType: 'text'
   }).catch((error) => {

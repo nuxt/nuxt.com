@@ -8,6 +8,7 @@ import {
   nuxtersPeriodFile,
   nuxtersPeriodFromFile,
   nuxtersPeriodLabel,
+  nuxtersPeriodPhrase,
   nuxtersPushSha,
   nuxtersSourceUrl,
   sortNuxtersPeriods,
@@ -188,6 +189,10 @@ describe('periods', () => {
 
   it('orders rolling windows, all time, then years from the newest', () => {
     expect(sortNuxtersPeriods(['2017', 'all', '2025', '12m', '30d', '2020', '12m'])).toEqual(['30d', '12m', 'all', '2025', '2020', '2017'])
+  })
+
+  it('puts each period in a sentence', () => {
+    expect(['30d', '12m', 'all', '2024'].map(nuxtersPeriodPhrase)).toEqual(['in the last 30 days', 'in the last 12 months', 'of all time', 'in 2024'])
   })
 
   it('labels each period', () => {

@@ -1,26 +1,39 @@
 <script lang="ts" setup>
 import type { NuxterProfile } from '#shared/types'
+import { isNuxtersPeriod, nuxterForPeriod, nuxtersPeriodPhrase } from '#shared/utils/nuxters'
 
-// Only the username is in the image URL: the stats are read at render time,
+// Only the username and the period are in the image URL: the stats are read at render time,
 // so a README card stays the same URL and shows fresh numbers.
 const props = defineProps<{
   username: string
+  /** `all` (default), `30d`, `12m` or a year: the stats of a shared `?period=` link. */
+  period?: string
 }>()
 
-const nuxter = await $fetch<NuxterProfile>(`/api/nuxters/${props.username}`)
-const since = nuxter.firstContributionAt ? new Date(nuxter.firstContributionAt).getUTCFullYear() : null
+const profile = await $fetch<NuxterProfile>(`/api/nuxters/${props.username}`)
+// Not named `period`: a local variable with a prop's name hides the prop from nuxt-og-image,
+// which then drops it from the image URL (it only keeps the declared props).
+// The image URL decodes `period_2024` as the number 2024: compare it as a string.
+const raw = props.period == null ? undefined : String(props.period)
+const requested = isNuxtersPeriod(raw) ? raw : 'all'
+// A period without contributions shows all time, like the profile page.
+const nuxter = nuxterForPeriod(profile, requested) ?? profile
+const shown = nuxter === profile ? 'all' : requested
+const since = profile.firstContributionAt ? new Date(profile.firstContributionAt).getUTCFullYear() : null
 
 const { format } = new Intl.NumberFormat('en-US')
+
+const label = (value: number, one: string, many: string) => value === 1 ? one : many
 
 // Two explicit rows: takumi does not wrap flex items.
 const rows = [
   [
-    { label: 'Merged PRs', value: nuxter.mergedPullRequests.all, color: '#00DC82' },
-    { label: 'Issues', value: nuxter.issues, color: '#38BDF8' }
+    { label: label(nuxter.mergedPullRequests.all, 'Merged PR', 'Merged PRs'), value: nuxter.mergedPullRequests.all, color: '#00DC82' },
+    { label: label(nuxter.issues, 'Issue', 'Issues'), value: nuxter.issues, color: '#38BDF8' }
   ],
   [
-    { label: 'Comments', value: nuxter.comments, color: '#A78BFA' },
-    { label: 'Reactions', value: nuxter.reactions, color: '#FACC15' }
+    { label: label(nuxter.comments, 'Comment', 'Comments'), value: nuxter.comments, color: '#A78BFA' },
+    { label: label(nuxter.reactions, 'Reaction', 'Reactions'), value: nuxter.reactions, color: '#FACC15' }
   ]
 ]
 </script>
@@ -40,10 +53,10 @@ const rows = [
           {{ nuxter.username }}
         </p>
         <p class="text-3xl text-neutral-400 mt-4">
-          Nuxter #{{ format(nuxter.rank) }}
+          {{ shown === 'all' ? `Nuxter #${format(nuxter.rank)}` : `#${format(nuxter.rank)} ${nuxtersPeriodPhrase(shown)}` }}
         </p>
         <p class="text-4xl font-semibold text-green-400 mt-4">
-          {{ format(nuxter.score) }} pts
+          {{ format(nuxter.score) }} {{ nuxter.score === 1 ? 'pt' : 'pts' }}
         </p>
         <p v-if="since" class="text-2xl text-neutral-500 mt-3">
           Nuxter since {{ since }}

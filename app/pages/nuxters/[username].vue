@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { Nuxter, NuxterPeriodStats, NuxterProfile, NuxtersPeriod } from '#shared/types'
-import { isNuxtersPeriod, nuxterForPeriod, nuxterHackathons, nuxtersPeriodLabel } from '#shared/utils/nuxters'
+import { isNuxtersPeriod, nuxterForPeriod, nuxterHackathons, nuxtersPeriodLabel, nuxtersPeriodPhrase } from '#shared/utils/nuxters'
 
 definePageMeta({
   heroBackground: 'opacity-30 -z-10'
@@ -55,12 +55,7 @@ function selectYear(value: string | number | undefined) {
   router.replace({ query: periodQuery(String(value)) })
 }
 
-const periodPhrase = (value: NuxtersPeriod) => {
-  if (value === '30d') return 'in the last 30 days'
-  if (value === '12m') return 'in the last 12 months'
-  if (value === 'all') return 'of all time'
-  return `in ${value}`
-}
+const periodPhrase = nuxtersPeriodPhrase
 
 const yearly = computed(() => (nuxter.value?.periods ?? []).filter(row => /^\d{4}$/.test(row.period)))
 // Best rank; on a tie (#1 several years), the year with the most points.
@@ -97,17 +92,32 @@ const stats = computed(() => {
   }))
 })
 
-// Meta stays on all-time stats: the canonical URL has no `?period=`.
-const title = `${username} is a Nuxter`
-const description = `Discover ${username}'s contributions to the Nuxt ecosystem: #${format(nuxter.value.rank)} with ${format(nuxter.value.score)} points.`
+// Shared links show the period on screen: title, description, `og:url` and card.
+// The canonical URL has no `?period=`, so search engines see one page per profile.
+const site = useSiteConfig()
+const shareUrl = computed(() => `${site.url}/nuxters/${username}${period.value === 'all' ? '' : `?period=${period.value}`}`)
+const title = computed(() => period.value === 'all'
+  ? `${username} is a Nuxter`
+  : `${username}: Nuxter #${format(current.value.rank)} ${periodPhrase(period.value)}`)
+const description = computed(() => {
+  const n = current.value
+  if (period.value === 'all') {
+    return `Discover ${username}'s contributions to the Nuxt ecosystem: #${format(n.rank)} with ${format(n.score)} points.`
+  }
+  const made = (['mergedPullRequests', 'issues', 'comments'] as const)
+    .map(metric => `${format(metricValue(n, metric))} ${metricLabel(metric, metricValue(n, metric))}`)
+  return `${username} made ${made[0]}, ${made[1]} and ${made[2]} to the Nuxt ecosystem ${periodPhrase(period.value)}: #${format(n.rank)} with ${format(n.score)} points.`
+})
 useSeoMeta({
   title,
   description,
   ogTitle: title,
-  ogDescription: description
+  ogDescription: description,
+  ogUrl: shareUrl
 })
 useCanonical()
-defineOgImage('Nuxter.takumi', { username }, {
+// No `period` for all time: its image URL stays the same as before periods existed.
+defineOgImage('Nuxter.takumi', { username, period: () => period.value === 'all' ? undefined : period.value }, {
   // Stats change once a day
   cacheMaxAgeSeconds: 60 * 60
 })
@@ -196,7 +206,7 @@ defineOgImage('Nuxter.takumi', { username }, {
 
           <!-- Sharing is a desktop action (copying Markdown into a GitHub README) -->
           <div class="hidden lg:block">
-            <NuxtersShare :username="nuxter.username" />
+            <NuxtersShare :username="nuxter.username" :period="period" />
           </div>
         </div>
 
