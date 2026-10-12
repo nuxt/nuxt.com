@@ -146,6 +146,8 @@ export default defineNuxtConfig({
     // Discord role unlock on /nuxters. Off unless the guild, bot token and
     // `NUXT_OAUTH_DISCORD_CLIENT_ID`/`_SECRET` are all set.
     nuxters: {
+      // Secret of the nuxt/nuxters push webhook (POST /api/webhooks/nuxters)
+      webhookSecret: '',
       discord: {
         guildId: '',
         botToken: '',

@@ -10,7 +10,9 @@ import { syncNuxtersWorkflow } from '../../workflows/sync-nuxters'
  * GitHub gives up after 10 seconds, so this only starts the run and answers 202.
  */
 export default defineEventHandler(async (event) => {
-  const secret = useRuntimeConfig(event).webhookSecret || process.env.WEBHOOK_SECRET
+  // Its own secret, not the content `WEBHOOK_SECRET`: it is set in the nuxt/nuxters webhook settings,
+  // and it can be rotated without touching the webhooks of the content repositories.
+  const secret = useRuntimeConfig(event).nuxters.webhookSecret
   if (!secret) {
     throw createError({ statusCode: 501, statusMessage: 'Nuxters webhook is not configured' })
   }

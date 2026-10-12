@@ -9,17 +9,21 @@ import { FatalError } from 'workflow'
  * On Nitro v2 (Nuxt 4), Vercel builds workflows as standalone functions, outside the Nitro
  * bundle: steps have no `db` or `useRuntimeConfig`. So they call internal routes of the app.
  */
-export async function syncNuxtersWorkflow(input: { baseURL: string, sha: string }) {
+/**
+ * `sha`: the commit to import (the latest that changed the data when omitted).
+ * `force`: import the files again even if they did not change.
+ */
+export async function syncNuxtersWorkflow(input: { baseURL: string, sha?: string, force?: boolean }) {
   'use workflow'
 
-  const result = await importNuxters(input.baseURL, input.sha)
+  const result = await importNuxters(input.baseURL, input.sha, input.force)
   if (result.status === 'imported') {
     await purgeNuxtersPages(input.baseURL, [...result.imported.map(file => file.period), ...result.removed])
   }
   return result
 }
 
-async function importNuxters(baseURL: string, sha: string) {
+async function importNuxters(baseURL: string, sha?: string, force?: boolean) {
   'use step'
 
   return internalPost<{
@@ -28,7 +32,7 @@ async function importNuxters(baseURL: string, sha: string) {
     imported: Array<{ period: string, count: number }>
     removed: string[]
     unchanged: number
-  }>(baseURL, '/api/internal/nuxters/sync', { sha })
+  }>(baseURL, '/api/internal/nuxters/sync', { sha, force })
 }
 
 async function purgeNuxtersPages(baseURL: string, periods: string[]) {
