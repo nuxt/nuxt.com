@@ -414,6 +414,35 @@ export async function resolveSlackChannelRef(ref: string): Promise<ResolvedSlack
   return { id: match.id, name: match.name, ref: trimmed }
 }
 
+interface ConversationsMembersResponse {
+  ok: boolean
+  error?: string
+  members?: string[]
+  response_metadata?: {
+    next_cursor?: string
+  }
+}
+
+/** Whether `userId` is a member of the channel. Any Slack error counts as not a member. */
+export async function isSlackChannelMember(channelId: string, userId: string): Promise<boolean> {
+  let cursor: string | undefined
+
+  do {
+    const data = await slackApi<ConversationsMembersResponse>('conversations.members', {
+      channel: channelId,
+      limit: 1000,
+      ...(cursor ? { cursor } : {})
+    })
+
+    if (!data.ok) return false
+    if (data.members?.includes(userId)) return true
+
+    cursor = data.response_metadata?.next_cursor || undefined
+  } while (cursor)
+
+  return false
+}
+
 export async function fetchSlackChannelHistory({
   channelId,
   sinceHours,
