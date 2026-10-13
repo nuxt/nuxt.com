@@ -8,7 +8,7 @@ const MODEL = 'anthropic/claude-sonnet-4.6'
 const ANTHROPIC_OPTIONS = {
   thinking: {
     type: 'enabled',
-    budgetTokens: 2048
+    budgetTokens: 8192
   }
 }
 
