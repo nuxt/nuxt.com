@@ -2,6 +2,8 @@ import type { DynamicToolUIPart, ToolUIPart } from 'ai'
 import { describe, expect, it } from 'vitest'
 import {
   getModuleCards,
+  getToolIcon,
+  getToolSuffix,
   getToolText,
   isConnectionSearchTool,
   isModuleListTool,
@@ -77,6 +79,15 @@ describe('getToolText', () => {
 
   it('keeps working for local tools', () => {
     expect(getToolText(staticTool('show_module'))).toBe('Found module')
+  })
+
+  it('reads the Nuxters tools as a lookup and a search, with the username as suffix', () => {
+    const get = { ...dynamicTool('nuxt-mcp__get-nuxter'), input: { username: 'danielroe', period: '2024' } } as ToolPart
+    expect(getToolText(get)).toBe('Read nuxter')
+    expect(getToolSuffix(get)).toBe('danielroe')
+    expect(getToolText(dynamicTool('nuxt-mcp__list-nuxters'))).toBe('Searched nuxters')
+    expect(getToolIcon(get)).toBe('i-lucide-award')
+    expect(getToolIcon(dynamicTool('nuxt-mcp__list-nuxters'))).toBe('i-lucide-award')
   })
 })
 

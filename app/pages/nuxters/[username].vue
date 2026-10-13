@@ -159,7 +159,7 @@ defineOgImage('Nuxter.takumi', { username, period: () => period.value === 'all' 
             <div class="flex flex-col gap-1 lg:gap-2 min-w-0">
               <!-- Usernames go up to 39 characters: smaller title for long ones, full name on hover -->
               <h1
-                class="text-3xl sm:text-4xl font-bold text-highlighted truncate"
+                class="text-3xl sm:text-4xl font-bold text-highlighted truncate lg:leading-14"
                 :class="{ 'lg:text-5xl': nuxter.username.length <= 14 }"
                 :title="nuxter.username"
               >

@@ -582,7 +582,7 @@ export default defineNuxtConfig({
         endpoint: '/mcp',
         name: 'Nuxt',
         title: 'Nuxt MCP Server',
-        description: 'MCP server providing tools, resources and prompts to help AI agents build with Nuxt — search documentation, retrieve guides, fetch module metadata, and discover deployment providers.',
+        description: 'MCP server providing tools, resources and prompts to help AI agents build with Nuxt — search documentation, retrieve guides, fetch module metadata, discover deployment providers, and look up Nuxt contributors (Nuxters).',
         documentation: `/docs/${CURRENT_DOCS_VERSION}/guide/ai/mcp`,
         repository: 'https://github.com/nuxt/nuxt.com',
         license: 'MIT'

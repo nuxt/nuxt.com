@@ -86,6 +86,7 @@ const SUFFIX_KEYS = [
   'componentName',
   'composableName',
   'name',
+  'username',
   'repo',
   'section',
   'id'
@@ -264,6 +265,7 @@ export function getToolIcon(part: ToolPart): string {
   if (/changelog|release/.test(name)) return 'i-lucide-history'
   if (/deploy|hosting|provider/.test(name)) return 'i-lucide-cloud'
   if (/getting.?started|guide/.test(name)) return 'i-lucide-rocket'
+  if (/nuxter/.test(name)) return 'i-lucide-award'
   if (/issue|github/.test(name)) return 'i-simple-icons-github'
   if (/page|doc/.test(name)) {
     const isList = /^(?:list|search|find|query)[-_]/.test(name)

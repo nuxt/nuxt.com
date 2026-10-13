@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { NuxtersPage } from '#shared/types'
-import { NUXTERS_DEFAULT_PERIOD, isNuxtersPeriod, nuxtersPeriodLabel, nuxtersPeriodPhrase } from '#shared/utils/nuxters'
+import { NUXTERS_DEFAULT_PERIOD, isNuxtersPeriod, nuxtersPeriodPhrase } from '#shared/utils/nuxters'
 
 definePageMeta({
   heroBackground: 'opacity-70 -z-10'
@@ -28,7 +28,6 @@ const ways = [{
 }]
 
 const route = useRoute()
-const router = useRouter()
 const requestedPeriod = computed(() => isNuxtersPeriod(route.query.period) ? route.query.period : undefined)
 
 // First page server-rendered (ISR, one entry per `?period=`); the leaderboard loads the next ones.
@@ -49,32 +48,35 @@ const { data: leaderboard } = await useAsyncData(
 const period = computed(() => leaderboard.value?.period ?? NUXTERS_DEFAULT_PERIOD)
 const available = computed(() => leaderboard.value?.periods ?? [])
 // Links, not tabs: each leaderboard has its own URL, which works without JavaScript.
+// One segmented control for the period, the years in its last segment.
+const shortLabels: Record<string, string> = { '30d': '30 days', '12m': '12 months', 'all': 'All time' }
+const periodLink = (value: string) => ({ query: { ...route.query, period: value }, hash: '#leaderboard' })
 const tabs = computed(() => ['30d', '12m', 'all']
   .filter(value => available.value.includes(value))
-  .map(value => ({ label: nuxtersPeriodLabel(value), value, to: { query: { ...route.query, period: value }, hash: '#leaderboard' } })))
+  .map(value => ({ label: shortLabels[value], value, to: periodLink(value) })))
 const years = computed(() => available.value.filter(value => /^\d{4}$/.test(value)))
-
-function selectYear(value: string | number | undefined) {
-  if (!value || !isNuxtersPeriod(String(value))) return
-  router.replace({ query: { ...route.query, period: String(value) }, hash: '#leaderboard' })
-}
+const yearItems = computed(() => years.value.map(value => ({
+  label: value,
+  to: periodLink(value),
+  replace: true,
+  active: value === period.value
+})))
+const segment = (active: boolean) => active
+  ? 'bg-default text-highlighted shadow-xs ring ring-default hover:bg-default'
+  : 'text-muted hover:text-highlighted hover:bg-transparent'
 
 const { format } = new Intl.NumberFormat('en-US')
-const summary = computed(() => {
-  const page = leaderboard.value
-  if (!page?.total) return 'Ranked by score. Updated every day.'
-  const people = `${format(page.total)} ${page.total === 1 ? 'contributor' : 'contributors'}`
-  const made = `${format(page.totals.contributions)} ${page.totals.contributions === 1 ? 'contribution' : 'contributions'}`
-  // nuxt/framework and nuxt/docs are archived former homes of nuxt/nuxt: the score modal lists them.
-  return `${people} made ${made} ${periodPhrase(period.value)}. Ranked by score, where nuxt/nuxt counts double. Updated every day.`
-})
+// The hero stays the same for every period: the numbers sit right above the leaderboard.
+const heroTitle = 'Discover Nuxt contributors'
+// nuxt/framework and nuxt/docs are archived former homes of nuxt/nuxt: the score modal lists them.
+const heroDescription = 'Every contribution to the Nuxt ecosystem counts. Ranked by score, where nuxt/nuxt counts double. Updated every day.'
 // A shared `?period=` link shows that leaderboard: title, description, `og:url` and card.
 // The canonical URL has no `?period=`, and `/nuxters` alone keeps the generic texts.
 const site = useSiteConfig()
 const sharedPeriod = computed(() => requestedPeriod.value && leaderboard.value?.total ? period.value : undefined)
 const seo = computed(() => {
   if (!sharedPeriod.value) {
-    return { title: 'Nuxters', ogTitle: 'Are you a Nuxter?', description }
+    return { title: 'Nuxters', ogTitle: heroTitle, description }
   }
   const title = `Top Nuxters ${nuxtersPeriodPhrase(sharedPeriod.value)}`
   const page = leaderboard.value!
@@ -98,21 +100,21 @@ defineOgImage('Docs.takumi', {
 const breakdown = computed(() => {
   const totals = leaderboard.value?.totals
   if (!totals?.contributions) return []
+  const total = leaderboard.value!.total
   return [
+    { label: total === 1 ? 'contributor' : 'contributors', value: total, icon: 'i-lucide-users' },
     { label: totals.mergedPullRequests === 1 ? 'merged PR' : 'merged PRs', value: totals.mergedPullRequests, icon: 'i-lucide-git-merge' },
     { label: totals.issues === 1 ? 'issue' : 'issues', value: totals.issues, icon: 'i-lucide-circle-dot' },
     { label: totals.comments === 1 ? 'comment' : 'comments', value: totals.comments, icon: 'i-lucide-message-circle' }
   ]
 })
-
-const periodPhrase = nuxtersPeriodPhrase
 </script>
 
 <template>
   <UPage>
     <UPageHero
-      title="Are you a Nuxter?"
-      :description="description"
+      :title="heroTitle"
+      :description="heroDescription"
       orientation="horizontal"
     >
       <ClientOnly>
@@ -122,6 +124,64 @@ const periodPhrase = nuxtersPeriodPhrase
         </template>
       </ClientOnly>
     </UPageHero>
+
+    <!-- Right under the hero: the period, search and totals sit on top of the leaderboard -->
+    <UPageSection
+      id="leaderboard"
+      :ui="{ container: 'pt-0 sm:pt-0 lg:pt-0 pb-12 sm:pb-16 lg:pb-16' }"
+      class="scroll-mt-20"
+    >
+      <!-- One child: UPageSection spaces each child of its slot as a separate row -->
+      <div>
+        <h2 class="sr-only">
+          Leaderboard
+        </h2>
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+          <div
+            v-if="tabs.length + years.length > 1"
+            role="group"
+            aria-label="Leaderboard period"
+            class="flex sm:inline-flex items-center gap-0.5 rounded-lg bg-elevated/50 ring ring-default p-1 overflow-x-auto"
+          >
+            <UButton
+              v-for="tab in tabs"
+              :key="tab.value"
+              :label="tab.label"
+              :to="tab.to"
+              replace
+              color="neutral"
+              variant="ghost"
+              :class="['shrink-0 grow sm:grow-0 justify-center', segment(tab.value === period)]"
+              :aria-current="tab.value === period ? 'page' : undefined"
+            />
+            <UDropdownMenu v-if="years.length" :items="yearItems" :content="{ align: 'end' }">
+              <UButton
+                :label="years.includes(period) ? period : 'Year'"
+                trailing-icon="i-lucide-chevron-down"
+                color="neutral"
+                variant="ghost"
+                :class="['shrink-0 grow sm:grow-0 justify-center', segment(years.includes(period))]"
+                :aria-current="years.includes(period) ? 'page' : undefined"
+                aria-label="Leaderboard by year"
+              />
+            </UDropdownMenu>
+          </div>
+          <NuxtersSearch :period="period" />
+        </div>
+
+        <ul v-if="breakdown.length" class="flex flex-wrap items-center gap-x-5 gap-y-1.5 mt-4 mb-6 text-sm text-muted" aria-label="Contributions in this period">
+          <li v-for="item in breakdown" :key="item.icon" class="flex items-center gap-1.5">
+            <UIcon :name="item.icon" class="size-4 text-dimmed" />
+            <span><span class="font-semibold text-highlighted tabular-nums">{{ format(item.value) }}</span> {{ item.label }}</span>
+          </li>
+        </ul>
+
+        <NuxtersLeaderboard v-if="leaderboard?.total" :initial="leaderboard" />
+        <p v-else class="text-center text-muted">
+          No contributions on record for this period yet.
+        </p>
+      </div>
+    </UPageSection>
 
     <UPageSection
       title="How to become a Nuxter"
@@ -134,60 +194,8 @@ const periodPhrase = nuxtersPeriodPhrase
           :key="way.title"
           v-bind="way"
           variant="subtle"
-          spotlight
         />
       </UPageGrid>
-    </UPageSection>
-
-    <UPageSection
-      id="leaderboard"
-      title="They are already Nuxters"
-      :description="summary"
-      :ui="{ container: 'py-12 sm:py-16 lg:py-16' }"
-    >
-      <!-- One child: UPageSection spaces each child of its slot as a separate row -->
-      <div>
-        <div class="flex flex-wrap items-center justify-center gap-3 mb-6">
-          <UFieldGroup v-if="tabs.length > 1" aria-label="Leaderboard period">
-            <UButton
-              v-for="tab in tabs"
-              :key="tab.value"
-              :label="tab.label"
-              :to="tab.to"
-              replace
-              color="neutral"
-              :variant="tab.value === period ? 'solid' : 'outline'"
-              :aria-current="tab.value === period ? 'page' : undefined"
-            />
-          </UFieldGroup>
-          <USelect
-            v-if="years.length"
-            :model-value="years.includes(period) ? period : undefined"
-            :items="years"
-            placeholder="By year"
-            icon="i-lucide-calendar"
-            :color="years.includes(period) ? 'primary' : 'neutral'"
-            :highlight="years.includes(period)"
-            class="w-36"
-            :ui="{ base: 'text-sm/5' }"
-            aria-label="Leaderboard by year"
-            @update:model-value="selectYear"
-          />
-          <NuxtersSearch :period="period" />
-        </div>
-
-        <ul v-if="breakdown.length" class="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 mb-10 text-muted" aria-label="Contributions in this period">
-          <li v-for="item in breakdown" :key="item.icon" class="flex items-center gap-1.5">
-            <UIcon :name="item.icon" class="size-4 text-dimmed" />
-            <span><span class="font-semibold text-highlighted tabular-nums">{{ format(item.value) }}</span> {{ item.label }}</span>
-          </li>
-        </ul>
-
-        <NuxtersLeaderboard v-if="leaderboard?.total" :initial="leaderboard" />
-        <p v-else class="text-center text-muted">
-          No contributions on record for this period yet.
-        </p>
-      </div>
     </UPageSection>
 
     <UPageSection :ui="{ container: 'py-12 sm:py-16 lg:py-16' }">

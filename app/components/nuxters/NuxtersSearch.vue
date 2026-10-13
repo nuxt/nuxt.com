@@ -9,6 +9,7 @@ const props = defineProps<{
 
 const { format } = new Intl.NumberFormat('en-US')
 
+const input = useTemplateRef('input')
 const searchTerm = ref('')
 const results = ref<NuxterSummary[]>([])
 const loading = ref(false)
@@ -46,6 +47,10 @@ const items = computed<InputMenuItem[]>(() => results.value.map(nuxter => ({
   onSelect: () => open(nuxter.username)
 })))
 
+defineShortcuts({
+  '/': () => input.value?.inputRef?.focus()
+})
+
 function open(username: string) {
   searchTerm.value = ''
   results.value = []
@@ -55,6 +60,7 @@ function open(username: string) {
 
 <template>
   <UInputMenu
+    ref="input"
     v-model:search-term="searchTerm"
     :items="items"
     ignore-filter
@@ -65,8 +71,11 @@ function open(username: string) {
     :reset-search-term-on-blur="false"
     :trailing-icon="false"
     :ui="{ base: 'text-base/5 sm:text-sm/5', itemLeadingAvatar: 'rounded-md' }"
-    class="w-full sm:w-56"
+    class="w-full sm:w-64"
   >
+    <template #trailing>
+      <UKbd v-if="!searchTerm" value="/" class="hidden sm:flex" />
+    </template>
     <template #empty>
       {{ searchTerm.trim() && !loading ? 'No Nuxter found' : 'Type a GitHub username' }}
     </template>
