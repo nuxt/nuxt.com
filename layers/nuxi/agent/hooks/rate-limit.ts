@@ -27,10 +27,7 @@ export default defineHook({
         body: JSON.stringify({ userId: principalId })
       })
 
-      if (response.status === 429) {
-        const data = await response.json().catch(() => ({})) as { message?: string }
-        throw new RateLimitedError(data.message ?? 'Daily message limit reached.')
-      }
+      if (response.status === 429) throw new RateLimitedError()
 
       if (!response.ok) {
         const text = await response.text()

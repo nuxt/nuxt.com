@@ -11,7 +11,9 @@ import { resolveWorkflowSkill } from '../lib/gateway-attribution.js'
  */
 export default otelIntegration({
   runtimeContext({ session, modelInput }) {
-    const { surface } = resolveContext(session.auth.initiator ?? session.auth.current)
+    // Same principal the Gateway tags use (`agent.ts`): a person replying in a
+    // scheduled Slack thread is `slack`, not `schedule`.
+    const { surface } = resolveContext(session.auth.current)
     // Only readable when the trace policy captures inputs (schedules do).
     const feature = surface === 'schedule'
       ? resolveWorkflowSkill(modelInput.messages as readonly ModelMessage[])
