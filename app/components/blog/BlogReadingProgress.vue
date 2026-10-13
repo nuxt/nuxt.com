@@ -11,7 +11,10 @@ const reducedMotion = usePreferredReducedMotion()
 function update() {
   if (!props.target) return
   const rect = props.target.getBoundingClientRect()
-  progress.value = Math.min(1, Math.max(0, -rect.top / (rect.height - window.innerHeight)))
+  const range = rect.height - window.innerHeight
+  progress.value = range <= 0
+    ? (rect.bottom <= window.innerHeight ? 1 : 0)
+    : Math.min(1, Math.max(0, -rect.top / range))
 }
 
 let frame = 0

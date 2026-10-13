@@ -56,6 +56,7 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
           v-model="state.email"
           type="email"
           placeholder="you@domain.com"
+          :aria-label="label ? undefined : 'Email address'"
           required
           autocomplete="off"
           class="min-w-0 flex-1"

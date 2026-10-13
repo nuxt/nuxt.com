@@ -37,9 +37,15 @@ const category = computed({
   set: (value: string) => router.replace({ query: { ...route.query, category: value === 'all' ? undefined : value, page: undefined } })
 })
 
-const search = ref(typeof route.query.q === 'string' ? route.query.q : '')
+const routeQuery = computed(() => typeof route.query.q === 'string' ? route.query.q : '')
+const search = ref(routeQuery.value)
 const query = computed(() => search.value.trim())
-watchDebounced(query, value => router.replace({ query: { ...route.query, q: value || undefined, page: undefined } }), { debounce: 250 })
+watch(routeQuery, (value) => {
+  if (value !== query.value) search.value = value
+})
+watchDebounced(query, (value) => {
+  if (value !== routeQuery.value) router.replace({ query: { ...route.query, q: value || undefined, page: undefined } })
+}, { debounce: 250 })
 
 const searchInput = useTemplateRef('searchInput')
 defineShortcuts({
