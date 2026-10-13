@@ -84,7 +84,7 @@ export function sanitizeData(options: { blockedTags: string[] }): ContentPlugin 
         if (!file) return
 
         const removed = stripUnsafeData(file.data, options.blockedTags)
-        if (removed.length) {
+        if (import.meta.dev && removed.length) {
           content.logger.warn('sanitize-data', `${file.meta.key}: removed unsafe ${removed.map(path => `\`${path}\``).join(', ')}`)
         }
       })
