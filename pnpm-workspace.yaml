@@ -6,9 +6,10 @@ blockExoticSubdeps: false
 
 overrides:
   # TODO: back to the release once comarkdown/comark#486 ships.
-  comark: https://pkg.pr.new/comark@486
-  "@comark/vue": https://pkg.pr.new/@comark/vue@486
-  "@comark/nuxt": https://pkg.pr.new/@comark/nuxt@486
+  # Pinned to a commit: `@486` is republished on every push, which breaks the lockfile integrity.
+  comark: https://pkg.pr.new/comark@f6772a0
+  "@comark/vue": https://pkg.pr.new/@comark/vue@f6772a0
+  "@comark/nuxt": https://pkg.pr.new/@comark/nuxt@f6772a0
   nostics: ^1.3.0
   # chat@4.34.0 pins the 4.1.0-beta.2 prerelease, flagged as a downgrade by check-provenance
   "@workflow/serde": 4.1.2
