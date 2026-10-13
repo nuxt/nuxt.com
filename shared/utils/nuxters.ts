@@ -1,9 +1,9 @@
-import type { Nuxter, NuxterMergedPullRequests, NuxterProfile, NuxtersHackathon, NuxtersPeriod } from '../types/nuxters'
+import type { Nuxter, NuxterLinks, NuxterMergedPullRequests, NuxterProfile, NuxterSocialAccount, NuxtersHackathon, NuxtersPeriod } from '../types/nuxters'
 
 /**
  * Where the contributor stats come from: committed nightly by the nuxt/nuxters CI,
  * one file per period in `public/`: `contributors.json` (all time), `contributors-30d.json`,
- * `contributors-12m.json` and `contributors-<year>.json`.
+ * `contributors-12m.json` and `contributors-<year>.json`, plus `profiles.json` for the links of every contributor.
  */
 export const NUXTERS_SOURCE = {
   repo: 'nuxt/nuxters',
@@ -44,6 +44,9 @@ export function nuxtersPeriodFromFile(name: string): NuxtersPeriod | null {
   const period = match[1] ?? 'all'
   return isNuxtersPeriod(period) ? period : null
 }
+
+/** Name, website and social accounts of the contributors: not a period, imported on its own. */
+export const NUXTERS_PROFILES_FILE = 'profiles.json'
 
 export function nuxtersPeriodFile(period: NuxtersPeriod): string {
   return period === 'all' ? 'contributors.json' : `contributors-${period}.json`
@@ -89,6 +92,11 @@ export function nuxtersSourceUrl(sha: string, file: string): string {
   return `https://raw.githubusercontent.com/${NUXTERS_SOURCE.repo}/${sha}/${NUXTERS_SOURCE.dir}/${file}`
 }
 
+/** A file of the source that is imported: a period file or `profiles.json`. */
+export function isNuxtersSourceFile(name: string): boolean {
+  return name === NUXTERS_PROFILES_FILE || nuxtersPeriodFromFile(name) !== null
+}
+
 interface PushPayload {
   ref?: string
   after?: string
@@ -109,7 +117,7 @@ export function nuxtersPushSha(payload: PushPayload): { sha: string } | { skippe
   const prefix = `${NUXTERS_SOURCE.dir}/`
   const touched = (payload.commits ?? []).some(commit =>
     [...(commit.added ?? []), ...(commit.modified ?? [])].some(path =>
-      path.startsWith(prefix) && nuxtersPeriodFromFile(path.slice(prefix.length)) !== null
+      path.startsWith(prefix) && isNuxtersSourceFile(path.slice(prefix.length))
     )
   )
   return touched ? { sha: payload.after } : { skipped: 'contributors-unchanged' }
@@ -206,6 +214,69 @@ export function parseNuxtersFile(data: unknown): NuxterRow[] {
     row.rank = index + 1
   })
 
+  return rows
+}
+
+/** A row of the `nuxter_profiles` table, without the sync timestamp. */
+export interface NuxterProfileRow extends NuxterLinks {
+  githubId: number
+  username: string
+}
+
+const MAX_SOCIAL_ACCOUNTS = 10
+const MAX_TEXT_LENGTH = 200
+
+function text(value: unknown, max = MAX_TEXT_LENGTH): string | null {
+  return typeof value === 'string' && value.trim() ? value.trim().slice(0, max) : null
+}
+
+/** An `http(s)` URL, normalized, or `null`: profile links are user input, rendered as `href`. */
+export function safeNuxterUrl(value: unknown): string | null {
+  if (typeof value !== 'string' || value.length > 2048) return null
+  try {
+    const url = new URL(value.trim())
+    return url.protocol === 'https:' || url.protocol === 'http:' ? url.href : null
+  } catch {
+    return null
+  }
+}
+
+/**
+ * Validate `profiles.json` and turn it into table rows.
+ * Invalid entries and links are skipped, not fatal: one bad record must not block the import.
+ */
+export function parseNuxterProfilesFile(data: unknown): NuxterProfileRow[] {
+  if (!Array.isArray(data)) {
+    throw new TypeError('profiles.json must be an array')
+  }
+
+  const rows: NuxterProfileRow[] = []
+  const seen = new Set<number>()
+  for (const entry of data) {
+    if (!entry || typeof entry !== 'object') continue
+    const record = entry as Record<string, unknown>
+
+    const githubId = Number(record.githubId)
+    const username = text(record.username, 39)
+    if (!Number.isSafeInteger(githubId) || githubId <= 0 || !username || seen.has(githubId)) continue
+
+    const accounts = Array.isArray(record.social_accounts) ? record.social_accounts : []
+    const socialAccounts: NuxterSocialAccount[] = []
+    for (const account of accounts) {
+      if (socialAccounts.length >= MAX_SOCIAL_ACCOUNTS) break
+      if (!account || typeof account !== 'object') continue
+      const { provider, url, display_name: displayName } = account as Record<string, unknown>
+      const href = safeNuxterUrl(url)
+      if (typeof provider !== 'string' || !/^[a-z]{1,32}$/.test(provider) || !href) continue
+      socialAccounts.push({ provider, url: href, displayName: text(displayName) ?? href })
+    }
+
+    const name = text(record.name)
+    const website = safeNuxterUrl(record.website)
+    if (!name && !website && !socialAccounts.length) continue
+    seen.add(githubId)
+    rows.push({ githubId, username, name, website, socialAccounts })
+  }
   return rows
 }
 

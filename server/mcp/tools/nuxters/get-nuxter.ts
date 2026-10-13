@@ -16,7 +16,7 @@ PARAMETERS:
 - username (required): GitHub username, case-insensitive
 - period: "all" (default), "30d", "12m" or a year from 2016 ("2024")
 
-OUTPUT: The stats of the period, its rank and score, the rank and score of every other period the user contributed in, and the profile URL. Contributions in ${NUXTERS_CORE_REPOS.join(', ')} count ${NUXTERS_CORE_MULTIPLIER} times in the score (merged PRs, helpful issues and helpful comments only).`,
+OUTPUT: The stats of the period, its rank and score, the rank and score of every other period the user contributed in, the name, website and social accounts set on GitHub, and the profile URL. Contributions in ${NUXTERS_CORE_REPOS.join(', ')} count ${NUXTERS_CORE_MULTIPLIER} times in the score (merged PRs, helpful issues and helpful comments only).`,
   inputSchema: {
     username: z.string().trim().min(1).max(39).describe('GitHub username, case-insensitive (e.g., "danielroe")'),
     period: z.string().optional().default('all').describe('"all" (default), "30d", "12m", or a year from 2016 such as "2024"')
@@ -64,6 +64,8 @@ OUTPUT: The stats of the period, its rank and score, the rank and score of every
       },
       firstContributionAt: profile.firstContributionAt,
       hackathons: nuxterHackathons(profile.githubId).map(hackathon => hackathon.name),
+      // `null` when the GitHub profile sets none
+      links: profile.links,
       periods: [
         { period: 'all', rank: profile.rank, score: profile.score },
         ...profile.periods.map(row => ({ period: row.period, rank: row.rank, score: row.score }))

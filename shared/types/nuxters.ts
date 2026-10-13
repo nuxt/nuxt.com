@@ -39,9 +39,27 @@ export interface NuxterPeriodStats extends Omit<Nuxter, 'githubId' | 'username' 
   period: NuxtersPeriod
 }
 
+/** A link of a GitHub profile. */
+export interface NuxterSocialAccount {
+  /** `bluesky`, `twitter`, `linkedin`, `mastodon`, `youtube`, `npm`… or `generic` for any other URL. */
+  provider: string
+  url: string
+  displayName: string
+}
+
+/** What a contributor shows on their GitHub profile, collected nightly by nuxt/nuxters. */
+export interface NuxterLinks {
+  /** The GitHub display name, `null` when not set. */
+  name: string | null
+  website: string | null
+  socialAccounts: NuxterSocialAccount[]
+}
+
 /** /nuxters/[username]: all-time stats, plus every period the user contributed in. */
 export interface NuxterProfile extends Nuxter {
   periods: NuxterPeriodStats[]
+  /** `null` when the GitHub profile has no name, website or social account. */
+  links: NuxterLinks | null
 }
 
 /** The light shape of the leaderboard. */

@@ -27,6 +27,37 @@ const { format } = new Intl.NumberFormat('en-US')
 const username = nuxter.value.username
 const hackathons = computed(() => nuxterHackathons(nuxter.value?.githubId))
 
+// Links set on the GitHub profile, collected nightly by nuxt/nuxters.
+const socialIcons: Record<string, string> = {
+  twitter: 'i-simple-icons-x',
+  bluesky: 'i-simple-icons-bluesky',
+  linkedin: 'i-simple-icons-linkedin',
+  mastodon: 'i-simple-icons-mastodon',
+  youtube: 'i-simple-icons-youtube',
+  twitch: 'i-simple-icons-twitch',
+  instagram: 'i-simple-icons-instagram',
+  facebook: 'i-simple-icons-facebook',
+  threads: 'i-simple-icons-threads',
+  reddit: 'i-simple-icons-reddit',
+  npm: 'i-simple-icons-npm'
+}
+const displayName = computed(() => {
+  const name = nuxter.value?.links?.name
+  return name && name.toLowerCase() !== nuxter.value?.username.toLowerCase() ? name : null
+})
+const links = computed(() => {
+  const profile = nuxter.value?.links
+  if (!profile) return []
+  return [
+    ...(profile.website ? [{ url: profile.website, label: 'Website', icon: 'i-lucide-globe' }] : []),
+    ...profile.socialAccounts.map(account => ({
+      url: account.url,
+      label: account.displayName,
+      icon: socialIcons[account.provider] ?? 'i-lucide-link'
+    }))
+  ]
+})
+
 const since = computed(() => {
   const date = nuxter.value?.firstContributionAt
   return date ? new Intl.DateTimeFormat('en-US', { month: 'long', year: 'numeric', timeZone: 'UTC' }).format(new Date(date)) : null
@@ -154,14 +185,38 @@ defineOgImage('Nuxter.takumi', { username, period: () => period.value === 'all' 
               >
                 {{ nuxter.username }}
               </h1>
-              <ULink
-                :to="`https://github.com/${nuxter.username}`"
-                target="_blank"
-                class="inline-flex items-center gap-1.5 text-sm lg:text-base text-muted"
-              >
-                <UIcon name="i-simple-icons-github" class="size-4 shrink-0" />
-                <span class="truncate">github.com/{{ nuxter.username }}</span>
-              </ULink>
+              <p v-if="displayName" class="text-lg text-toned truncate -mt-1 lg:-mt-2">
+                {{ displayName }}
+              </p>
+              <div class="flex flex-wrap items-center gap-x-3 gap-y-1">
+                <ULink
+                  :to="`https://github.com/${nuxter.username}`"
+                  target="_blank"
+                  rel="me noopener"
+                  class="inline-flex items-center gap-1.5 text-sm lg:text-base text-muted min-w-0"
+                >
+                  <UIcon name="i-simple-icons-github" class="size-4 shrink-0" />
+                  <span class="truncate">github.com/{{ nuxter.username }}</span>
+                </ULink>
+                <!-- Set by the user on GitHub: never followed by crawlers, `me` for Mastodon verification -->
+                <ul v-if="links.length" class="flex items-center gap-0.5 -my-1" aria-label="Links">
+                  <li v-for="link in links" :key="link.url">
+                    <UTooltip :text="link.label">
+                      <UButton
+                        :to="link.url"
+                        target="_blank"
+                        rel="me nofollow noopener noreferrer"
+                        :icon="link.icon"
+                        :aria-label="link.label"
+                        color="neutral"
+                        variant="ghost"
+                        size="sm"
+                        class="text-muted hover:text-highlighted"
+                      />
+                    </UTooltip>
+                  </li>
+                </ul>
+              </div>
             </div>
           </div>
 

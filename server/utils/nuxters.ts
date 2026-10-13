@@ -4,14 +4,17 @@ import { join } from 'node:path'
 import type { H3Event } from 'h3'
 import type { BatchItem } from 'drizzle-orm/batch'
 import { and, asc, count, eq, inArray, sql, sum } from 'drizzle-orm'
-import type { NuxterBadges, NuxterProfile, NuxtersPage, NuxtersPeriod, NuxterSummary } from '#shared/types'
+import type { NuxterBadges, NuxterLinks, NuxterProfile, NuxtersPage, NuxtersPeriod, NuxterSummary } from '#shared/types'
 import {
   NUXTERS_MIN_ROWS,
+  NUXTERS_PROFILES_FILE,
   NUXTERS_SOURCE,
   canUnlockNuxterRole,
   nuxterHackathons,
   nuxtersPeriodFromFile,
+  isNuxtersPeriod,
   nuxtersSourceUrl,
+  parseNuxterProfilesFile,
   parseNuxtersFile,
   rowToNuxter,
   sortNuxtersPeriods
@@ -19,10 +22,12 @@ import {
 
 /** 18 columns per row: stays well under SQLite's 32,766 bound-variable limit. */
 const INSERT_CHUNK_SIZE = 500
+/** The `nuxters_syncs` key of `profiles.json`: never a period. */
+const PROFILES_SYNC_KEY = 'profiles'
 
 type NuxterDbRow = typeof schema.nuxters.$inferSelect
 
-function toProfile(rows: NuxterDbRow[]): NuxterProfile | null {
+function toProfile(rows: NuxterDbRow[], links: NuxterLinks | null): NuxterProfile | null {
   const allTime = rows.find(row => row.period === 'all')
   if (!allTime) return null
 
@@ -33,7 +38,8 @@ function toProfile(rows: NuxterDbRow[]): NuxterProfile | null {
     periods: sortNuxtersPeriods(rows.map(row => row.period).filter(period => period !== 'all')).map((period) => {
       const { githubId: _id, username: _username, firstContributionAt: _first, ...stats } = rowToNuxter(byPeriod.get(period)!)
       return { period, ...stats }
-    })
+    }),
+    links
   }
 }
 
@@ -50,8 +56,15 @@ export const nuxters = {
   async getByGithubId(githubId: number | string): Promise<NuxterProfile | null> {
     const id = Number(githubId)
     if (!Number.isSafeInteger(id)) return null
-    const rows = await db.select().from(schema.nuxters).where(eq(schema.nuxters.githubId, id))
-    return toProfile(rows)
+    const [rows, [links]] = await Promise.all([
+      db.select().from(schema.nuxters).where(eq(schema.nuxters.githubId, id)),
+      db.select({
+        name: schema.nuxterProfiles.name,
+        website: schema.nuxterProfiles.website,
+        socialAccounts: schema.nuxterProfiles.socialAccounts
+      }).from(schema.nuxterProfiles).where(eq(schema.nuxterProfiles.githubId, id))
+    ])
+    return toProfile(rows, links ?? null)
   },
 
   async list({ period = 'all', offset = 0, limit = 100 }: { period?: NuxtersPeriod, offset?: number, limit?: number } = {}): Promise<NuxtersPage> {
@@ -125,9 +138,10 @@ export const nuxters = {
     return new Map(rows.map(row => [row.usernameLower, row.score]))
   },
 
-  /** The imported files, one per period. */
+  /** The imported period files, one per period. */
   async syncs() {
-    return db.select().from(schema.nuxtersSyncs)
+    const syncs = await db.select().from(schema.nuxtersSyncs)
+    return syncs.filter(sync => isNuxtersPeriod(sync.period))
   },
 
   /** Badges are earned on all-time stats. */
@@ -155,7 +169,9 @@ interface NuxtersSourceFile {
 interface NuxtersSource {
   commitSha: string
   files: NuxtersSourceFile[]
-  read: (file: NuxtersSourceFile) => Promise<unknown>
+  /** `profiles.json`, missing from commits before it was collected. */
+  profiles: Omit<NuxtersSourceFile, 'period'> | null
+  read: (file: Pick<NuxtersSourceFile, 'name'>) => Promise<unknown>
 }
 
 export interface NuxtersSyncResult {
@@ -165,6 +181,8 @@ export interface NuxtersSyncResult {
   /** Periods whose file is no longer in the source: their rows are deleted. */
   removed: NuxtersPeriod[]
   unchanged: number
+  /** Profiles imported from `profiles.json`, `null` when the file did not change or is missing. */
+  profiles: number | null
 }
 
 /**
@@ -231,13 +249,42 @@ export async function syncNuxters(options: { sha?: string, force?: boolean, dir?
     ])
   }
 
+  const profiles = await importProfiles(source, options.force)
+
   return {
-    status: imported.length || removed.length ? 'imported' : 'skipped',
+    status: imported.length || removed.length || profiles !== null ? 'imported' : 'skipped',
     commitSha: source.commitSha,
     imported,
     removed,
-    unchanged: source.files.length - imported.length
+    unchanged: source.files.length - imported.length,
+    profiles
   }
+}
+
+/**
+ * Replace the links with `profiles.json`, when it changed. A missing file (older commit, or a collector
+ * run where GitHub failed to return them) keeps the current links: they are a bonus, not the reference.
+ */
+async function importProfiles(source: NuxtersSource, force?: boolean): Promise<number | null> {
+  const file = source.profiles
+  if (!file) return null
+  const [last] = await db.select({ sha: schema.nuxtersSyncs.sha }).from(schema.nuxtersSyncs)
+    .where(eq(schema.nuxtersSyncs.period, PROFILES_SYNC_KEY))
+  if (!force && last?.sha === file.sha) return null
+
+  const rows = parseNuxterProfilesFile(await source.read(file))
+  const syncedAt = new Date()
+  const statements: BatchItem<'sqlite'>[] = [db.delete(schema.nuxterProfiles)]
+  for (let index = 0; index < rows.length; index += INSERT_CHUNK_SIZE) {
+    statements.push(db.insert(schema.nuxterProfiles).values(rows.slice(index, index + INSERT_CHUNK_SIZE).map(row => ({ ...row, syncedAt }))))
+  }
+  const sync = { sha: file.sha, commitSha: source.commitSha, count: rows.length, syncedAt }
+  statements.push(db.insert(schema.nuxtersSyncs).values({ period: PROFILES_SYNC_KEY, ...sync }).onConflictDoUpdate({
+    target: schema.nuxtersSyncs.period,
+    set: sync
+  }))
+  await db.batch(statements as [BatchItem<'sqlite'>, ...BatchItem<'sqlite'>[]])
+  return rows.length
 }
 
 function githubHeaders() {
@@ -257,12 +304,14 @@ async function githubSource(sha?: string): Promise<NuxtersSource> {
     { query: { ref: commitSha }, headers: githubHeaders() }
   )
 
+  const profiles = entries.find(entry => entry.type === 'file' && entry.name === NUXTERS_PROFILES_FILE)
   return {
     commitSha,
     files: entries.flatMap((entry) => {
       const period = entry.type === 'file' ? nuxtersPeriodFromFile(entry.name) : null
       return period ? [{ period, name: entry.name, sha: entry.sha }] : []
     }),
+    profiles: profiles ? { name: profiles.name, sha: profiles.sha } : null,
     // raw.githubusercontent.com serves `text/plain`: parse it explicitly.
     read: (file): Promise<unknown> => {
       const url: string = nuxtersSourceUrl(commitSha, file.name)
@@ -273,15 +322,18 @@ async function githubSource(sha?: string): Promise<NuxtersSource> {
 
 async function localSource(dir: string): Promise<NuxtersSource> {
   const files: NuxtersSourceFile[] = []
+  let profiles: NuxtersSource['profiles'] = null
   for (const name of await readdir(dir)) {
     const period = nuxtersPeriodFromFile(name)
-    if (!period) continue
+    if (!period && name !== NUXTERS_PROFILES_FILE) continue
     const sha = createHash('sha1').update(await readFile(join(dir, name))).digest('hex')
-    files.push({ period, name, sha })
+    if (period) files.push({ period, name, sha })
+    else profiles = { name, sha }
   }
   return {
     commitSha: 'local',
     files,
+    profiles,
     read: async file => JSON.parse(await readFile(join(dir, file.name), 'utf8'))
   }
 }

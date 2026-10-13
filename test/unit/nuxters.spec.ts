@@ -12,8 +12,10 @@ import {
   nuxtersPushSha,
   nuxtersSourceUrl,
   sortNuxtersPeriods,
+  parseNuxterProfilesFile,
   parseNuxtersFile,
-  rowToNuxter
+  rowToNuxter,
+  safeNuxterUrl
 } from '../../shared/utils/nuxters'
 
 const SHA = '8fe4e110dfc34b8c2b975100a65323b8d0313ea9'
@@ -135,6 +137,10 @@ describe('nuxtersPushSha', () => {
     // The first file of a new year is added, not modified
     const year = new Date().getUTCFullYear()
     expect(nuxtersPushSha(push({ commits: [{ added: [`public/contributors-${year}.json`] }] }))).toEqual({ sha: SHA })
+  })
+
+  it('returns the head commit when only the profiles changed', () => {
+    expect(nuxtersPushSha(push({ commits: [{ modified: ['public/profiles.json'] }] }))).toEqual({ sha: SHA })
   })
 
   it('ignores pushes that do not change the data', () => {
@@ -285,5 +291,67 @@ describe('nuxterForPeriod', () => {
 
   it('returns null for a period without contributions', () => {
     expect(nuxterForPeriod(profile, '30d')).toBeNull()
+  })
+})
+
+describe('parseNuxterProfilesFile', () => {
+  const profile = (overrides: Record<string, unknown> = {}) => ({
+    username: 'onmax',
+    githubId: '22072217',
+    name: 'Max',
+    website: 'https://onmax.me/hire',
+    social_accounts: [
+      { provider: 'bluesky', url: 'https://bsky.app/profile/onmax.bsky.social', display_name: '@onmax.bsky.social' },
+      { provider: 'twitter', url: 'https://twitter.com/_onmax', display_name: '@_onmax' }
+    ],
+    ...overrides
+  })
+
+  it('maps a profile to a row', () => {
+    expect(parseNuxterProfilesFile([profile()])).toEqual([{
+      githubId: 22072217,
+      username: 'onmax',
+      name: 'Max',
+      website: 'https://onmax.me/hire',
+      socialAccounts: [
+        { provider: 'bluesky', url: 'https://bsky.app/profile/onmax.bsky.social', displayName: '@onmax.bsky.social' },
+        { provider: 'twitter', url: 'https://twitter.com/_onmax', displayName: '@_onmax' }
+      ]
+    }])
+  })
+
+  it('drops unsafe links and keeps the rest of the profile', () => {
+    const [row] = parseNuxterProfilesFile([profile({
+      website: 'javascript:alert(1)',
+      social_accounts: [
+        { provider: 'generic', url: 'data:text/html,hi', display_name: 'x' },
+        { provider: 'Not A Provider', url: 'https://example.com', display_name: 'x' },
+        { provider: 'mastodon', url: 'https://m.webtoo.ls/@onmax' }
+      ]
+    })])
+    expect(row!.website).toBeNull()
+    expect(row!.socialAccounts).toEqual([{ provider: 'mastodon', url: 'https://m.webtoo.ls/@onmax', displayName: 'https://m.webtoo.ls/@onmax' }])
+  })
+
+  it('skips invalid records, duplicates and profiles without any link', () => {
+    const rows = parseNuxterProfilesFile([
+      profile(),
+      profile({ username: 'renamed' }),
+      profile({ githubId: 'nope' }),
+      profile({ githubId: '1', name: '  ', website: null, social_accounts: [] }),
+      null
+    ])
+    expect(rows.map(row => row.username)).toEqual(['onmax'])
+    expect(() => parseNuxterProfilesFile({})).toThrow(TypeError)
+  })
+})
+
+describe('safeNuxterUrl', () => {
+  it('only keeps http(s) URLs', () => {
+    expect(safeNuxterUrl('https://roe.dev')).toBe('https://roe.dev/')
+    expect(safeNuxterUrl('http://example.com/a?b=1')).toBe('http://example.com/a?b=1')
+    expect(safeNuxterUrl('javascript:alert(1)')).toBeNull()
+    expect(safeNuxterUrl('roe.dev')).toBeNull()
+    expect(safeNuxterUrl(42)).toBeNull()
   })
 })

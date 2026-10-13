@@ -57,6 +57,13 @@
       "when": 1791555228285,
       "tag": "0007_nuxters",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "6",
+      "when": 1791895275741,
+      "tag": "0008_nuxter_profiles",
+      "breakpoints": true
     }
   ]
 }

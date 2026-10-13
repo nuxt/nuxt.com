@@ -32,6 +32,7 @@ async function importNuxters(baseURL: string, sha?: string, force?: boolean) {
     imported: Array<{ period: string, count: number }>
     removed: string[]
     unchanged: number
+    profiles: number | null
   }>(baseURL, '/api/internal/nuxters/sync', { sha, force })
 }
 

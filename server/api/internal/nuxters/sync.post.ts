@@ -1,6 +1,6 @@
 import { z } from 'zod'
 
-/** Called by `syncNuxtersWorkflow`: import the changed period files of a nuxt/nuxters commit. */
+/** Called by `syncNuxtersWorkflow`: import the changed period files and profiles of a nuxt/nuxters commit. */
 export default defineEventHandler(async (event) => {
   requireInternalRequest(event)
 
@@ -12,6 +12,7 @@ export default defineEventHandler(async (event) => {
   const result = await syncNuxters({ sha, force })
   const summary = result.imported.map(file => `${file.period}=${file.count}`).join(' ') || 'nothing'
   const removed = result.removed.length ? `, removed ${result.removed.join(' ')}` : ''
-  console.log(`[nuxters] sync ${result.commitSha}: imported ${summary}${removed}, ${result.unchanged} unchanged`)
+  const profiles = result.profiles === null ? '' : `, ${result.profiles} profiles`
+  console.log(`[nuxters] sync ${result.commitSha}: imported ${summary}${removed}${profiles}, ${result.unchanged} unchanged`)
   return result
 })

@@ -1,4 +1,5 @@
 import { sqliteTable, text, integer, uniqueIndex, index, primaryKey } from 'drizzle-orm/sqlite-core'
+import type { NuxterSocialAccount } from '../../shared/types/nuxters'
 
 const timestamps = {
   createdAt: integer('created_at', { mode: 'timestamp' }).notNull().$defaultFn(() => new Date())
@@ -73,7 +74,23 @@ export const nuxters = sqliteTable('nuxters', {
   index('nuxters_github_id_idx').on(table.githubId)
 ])
 
-/** One row per period file: the imported blob, to re-import only the files a commit changed. */
+/**
+ * Name, website and social accounts of the contributors who set any on GitHub, from `profiles.json`
+ * of github.com/nuxt/nuxters. One row per user: links do not depend on the period.
+ */
+export const nuxterProfiles = sqliteTable('nuxter_profiles', {
+  githubId: integer('github_id').primaryKey(),
+  username: text('username').notNull(),
+  name: text('name'),
+  website: text('website'),
+  socialAccounts: text('social_accounts', { mode: 'json' }).$type<NuxterSocialAccount[]>().notNull(),
+  syncedAt: integer('synced_at', { mode: 'timestamp' }).notNull()
+})
+
+/**
+ * One row per imported file: the blob sha, to re-import only the files a commit changed.
+ * Keyed by period, or `profiles` for `profiles.json`.
+ */
 export const nuxtersSyncs = sqliteTable('nuxters_syncs', {
   period: text('period').primaryKey(),
   // Git blob sha of the file
