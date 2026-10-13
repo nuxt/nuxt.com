@@ -1,13 +1,12 @@
 <script setup lang="ts">
 import type { Nuxter, NuxterPeriodStats, NuxterProfile, NuxtersPeriod } from '#shared/types'
-import { isNuxtersPeriod, nuxterForPeriod, nuxterHackathons, nuxtersPeriodLabel, nuxtersPeriodPhrase } from '#shared/utils/nuxters'
+import { isNuxtersPeriod, nuxterForPeriod, nuxterHackathons, nuxtersPeriodPhrase } from '#shared/utils/nuxters'
 
 definePageMeta({
   heroBackground: 'opacity-30 -z-10'
 })
 
 const route = useRoute()
-const router = useRouter()
 const param = String(route.params.username)
 
 // The profile has every period: switching period needs no request.
@@ -44,16 +43,6 @@ const rankOf = (value: NuxtersPeriod) => nuxterForPeriod(nuxter.value!, value)?.
 
 /** Profile links keep the default period out of the URL. */
 const periodQuery = (value: NuxtersPeriod) => ({ ...route.query, period: value === 'all' ? undefined : value })
-
-const tabs = computed(() => ['30d', '12m', 'all']
-  .filter(value => available.value.includes(value))
-  .map(value => ({ value, label: nuxtersPeriodLabel(value), rank: rankOf(value), to: { query: periodQuery(value) } })))
-const years = computed(() => available.value.filter(value => /^\d{4}$/.test(value)))
-
-function selectYear(value: string | number | undefined) {
-  if (!value || !isNuxtersPeriod(String(value))) return
-  router.replace({ query: periodQuery(String(value)) })
-}
 
 const periodPhrase = nuxtersPeriodPhrase
 
@@ -212,34 +201,12 @@ defineOgImage('Nuxter.takumi', { username, period: () => period.value === 'all' 
 
         <div class="flex flex-col gap-4 lg:col-span-3 xl:col-span-2">
           <div class="flex flex-wrap items-center lg:justify-end gap-3">
-            <UFieldGroup v-if="tabs.length > 1" aria-label="Profile period">
-              <UButton
-                v-for="tab in tabs"
-                :key="tab.value"
-                :to="tab.to"
-                replace
-                color="neutral"
-                :variant="tab.value === period ? 'solid' : 'outline'"
-                :aria-current="tab.value === period ? 'page' : undefined"
-                class="whitespace-nowrap"
-              >
-                {{ tab.label }}
-                <!-- The rank does not fit on small screens: the rank line above shows it -->
-                <span v-if="tab.rank" class="hidden sm:inline tabular-nums opacity-70">#{{ format(tab.rank) }}</span>
-              </UButton>
-            </UFieldGroup>
-            <USelect
-              v-if="years.length"
-              :model-value="years.includes(period) ? period : undefined"
-              :items="years"
-              placeholder="By year"
-              icon="i-lucide-calendar"
-              :color="years.includes(period) ? 'primary' : 'neutral'"
-              :highlight="years.includes(period)"
-              class="w-36"
-              :ui="{ base: 'text-sm/5' }"
-              aria-label="Profile by year"
-              @update:model-value="selectYear"
+            <NuxtersPeriodTabs
+              :period="period"
+              :periods="available"
+              :to="value => ({ query: periodQuery(value) })"
+              :rank="rankOf"
+              aria-label="Profile period"
             />
           </div>
 

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { NuxtersPage } from '#shared/types'
+import type { NuxtersPage, NuxtersPeriod } from '#shared/types'
 import { NUXTERS_DEFAULT_PERIOD, isNuxtersPeriod, nuxtersPeriodPhrase } from '#shared/utils/nuxters'
 
 definePageMeta({
@@ -47,23 +47,7 @@ const { data: leaderboard } = await useAsyncData(
 
 const period = computed(() => leaderboard.value?.period ?? NUXTERS_DEFAULT_PERIOD)
 const available = computed(() => leaderboard.value?.periods ?? [])
-// Links, not tabs: each leaderboard has its own URL, which works without JavaScript.
-// One segmented control for the period, the years in its last segment.
-const shortLabels: Record<string, string> = { '30d': '30 days', '12m': '12 months', 'all': 'All time' }
-const periodLink = (value: string) => ({ query: { ...route.query, period: value }, hash: '#leaderboard' })
-const tabs = computed(() => ['30d', '12m', 'all']
-  .filter(value => available.value.includes(value))
-  .map(value => ({ label: shortLabels[value], value, to: periodLink(value) })))
-const years = computed(() => available.value.filter(value => /^\d{4}$/.test(value)))
-const yearItems = computed(() => years.value.map(value => ({
-  label: value,
-  to: periodLink(value),
-  replace: true,
-  active: value === period.value
-})))
-const segment = (active: boolean) => active
-  ? 'bg-default text-highlighted shadow-xs ring ring-default hover:bg-default'
-  : 'text-muted hover:text-highlighted hover:bg-transparent'
+const periodLink = (value: NuxtersPeriod) => ({ query: { ...route.query, period: value }, hash: '#leaderboard' })
 
 const { format } = new Intl.NumberFormat('en-US')
 // The hero stays the same for every period: the numbers sit right above the leaderboard.
@@ -137,35 +121,7 @@ const breakdown = computed(() => {
           Leaderboard
         </h2>
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-          <div
-            v-if="tabs.length + years.length > 1"
-            role="group"
-            aria-label="Leaderboard period"
-            class="flex sm:inline-flex items-center gap-0.5 rounded-lg bg-elevated/50 ring ring-default p-1 overflow-x-auto"
-          >
-            <UButton
-              v-for="tab in tabs"
-              :key="tab.value"
-              :label="tab.label"
-              :to="tab.to"
-              replace
-              color="neutral"
-              variant="ghost"
-              :class="['shrink-0 grow sm:grow-0 justify-center', segment(tab.value === period)]"
-              :aria-current="tab.value === period ? 'page' : undefined"
-            />
-            <UDropdownMenu v-if="years.length" :items="yearItems" :content="{ align: 'end' }">
-              <UButton
-                :label="years.includes(period) ? period : 'Year'"
-                trailing-icon="i-lucide-chevron-down"
-                color="neutral"
-                variant="ghost"
-                :class="['shrink-0 grow sm:grow-0 justify-center', segment(years.includes(period))]"
-                :aria-current="years.includes(period) ? 'page' : undefined"
-                aria-label="Leaderboard by year"
-              />
-            </UDropdownMenu>
-          </div>
+          <NuxtersPeriodTabs :period="period" :periods="available" :to="periodLink" aria-label="Leaderboard period" />
           <NuxtersSearch :period="period" />
         </div>
 
