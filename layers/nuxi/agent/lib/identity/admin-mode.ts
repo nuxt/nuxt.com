@@ -21,3 +21,10 @@ export async function isAdminMode(auth: AuthContext | null | undefined): Promise
   const ctx = resolveContext(auth)
   return ADMIN_MODE_RULES[ctx.surface](ctx)
 }
+
+/** For admin tools' `execute`: a session can continue with a different caller than the one it started with. */
+export async function assertAdminMode(auth: AuthContext | null | undefined): Promise<void> {
+  if (!(await isAdminMode(auth))) {
+    throw new Error('This tool is only available in admin mode')
+  }
+}
