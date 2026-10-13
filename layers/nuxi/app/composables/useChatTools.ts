@@ -120,11 +120,117 @@ export function hasToolError(output: unknown): boolean {
   return !!(output as Record<string, unknown>).error
 }
 
+/** Cards only receive explicitly picked, type-checked fields from tool outputs. */
+function str(value: unknown): string | undefined {
+  return typeof value === 'string' && value.length > 0 ? value : undefined
+}
+
+function num(value: unknown): number | undefined {
+  return typeof value === 'number' && Number.isFinite(value) ? value : undefined
+}
+
+function httpUrl(value: unknown): string | undefined {
+  const s = str(value)
+  if (!s) return undefined
+  try {
+    const url = new URL(s)
+    return url.protocol === 'http:' || url.protocol === 'https:' ? url.href : undefined
+  } catch {
+    return undefined
+  }
+}
+
+function sitePath(value: unknown): string | undefined {
+  const s = str(value)
+  return s && s.startsWith('/') && !s.startsWith('//') && !s.includes('\\') ? s : undefined
+}
+
+function urlOrPath(value: unknown): string | undefined {
+  return sitePath(value) ?? httpUrl(value)
+}
+
+function githubRepo(value: unknown): string | undefined {
+  const s = str(value)
+  return s && /^[\w.-]+\/[\w.-]+$/.test(s) ? s : undefined
+}
+
+function slugLike(value: unknown): string | undefined {
+  const s = str(value)
+  return s && /^[\w.@/-]+$/.test(s) && !s.includes('..') ? s : undefined
+}
+
+function asRecord(value: unknown): Record<string, unknown> {
+  return value && typeof value === 'object' && !Array.isArray(value) ? value as Record<string, unknown> : {}
+}
+
+export function blogCardProps(output: unknown): BlogCardData | null {
+  const o = asRecord(output)
+  const title = str(o.title)
+  const path = sitePath(o.path)
+  if (!title || !path) return null
+  const authors = Array.isArray(o.authors)
+    ? o.authors.flatMap((a) => {
+        const author = asRecord(a)
+        const name = str(author.name)
+        return name ? [{ name, avatar: urlOrPath(author.avatar) }] : []
+      })
+    : undefined
+  return {
+    title,
+    path,
+    description: str(o.description),
+    date: str(o.date),
+    image: urlOrPath(o.image),
+    category: str(o.category),
+    authors
+  }
+}
+
+export function hostingCardProps(output: unknown): HostingCardData | null {
+  const o = asRecord(output)
+  const title = str(o.title)
+  const path = sitePath(o.path)
+  if (!title || !path) return null
+  return {
+    title,
+    path,
+    description: str(o.description),
+    logoSrc: urlOrPath(o.logoSrc),
+    logoIcon: str(o.logoIcon),
+    category: str(o.category),
+    nitroPreset: slugLike(o.nitroPreset),
+    website: httpUrl(o.website)
+  }
+}
+
+export function playgroundCardProps(output: unknown): PlaygroundCardData | null {
+  const o = asRecord(output)
+  const url = httpUrl(o.url)
+  const repo = str(o.repo)
+  if (!url || !repo) return null
+  return { url, repo, title: str(o.title), file: str(o.file), dir: str(o.dir) }
+}
+
+function templateCardProps(value: unknown): TemplateCardData | null {
+  const o = asRecord(value)
+  const name = str(o.name)
+  const slug = slugLike(o.slug)
+  if (!name || !slug) return null
+  return {
+    name,
+    slug,
+    description: str(o.description),
+    repo: githubRepo(o.repo),
+    demo: httpUrl(o.demo),
+    badge: str(o.badge),
+    purchase: httpUrl(o.purchase)
+  }
+}
+
 export function getTemplates(output: unknown): TemplateCardData[] {
-  if (!output || typeof output !== 'object') return []
-  const o = output as Record<string, unknown>
-  if (Array.isArray(o.templates)) return o.templates as TemplateCardData[]
-  return []
+  const templates = asRecord(output).templates
+  if (!Array.isArray(templates)) return []
+  return templates.map(templateCardProps).filter((t): t is TemplateCardData => t !== null)
 }
 
 export function hasTemplatesOutput(output: unknown): boolean {
@@ -227,8 +333,17 @@ export function isValidModuleCardData(output: unknown): output is ModuleCardData
 
 /** Maps API/tool `name` to `slug` so we never pass a `name` prop into ModuleCard (conflicts with Vue Router / NuxtLink). */
 export function moduleCardProps(data: ModuleCardData): Omit<ModuleCardData, 'name'> & { slug: string } {
-  const { name, ...rest } = data
-  return { ...rest, slug: name }
+  return {
+    slug: slugLike(data.name) ?? 'module',
+    npm: str(data.npm),
+    description: str(data.description),
+    icon: str(data.icon),
+    category: str(data.category),
+    repo: githubRepo(data.repo),
+    website: httpUrl(data.website),
+    downloads: num(data.downloads),
+    stars: num(data.stars)
+  }
 }
 
 export function getToolText(part: ToolPart) {
