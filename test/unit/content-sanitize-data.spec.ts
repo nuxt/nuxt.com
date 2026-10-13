@@ -50,12 +50,14 @@ describe('stripUnsafeData', () => {
         { label: 'b', href: ' JavaScript:void(0)' },
         { label: 'c', to: 'java\tscript:void(0)' },
         { 'label': 'd', 'xlink:href': 'vbscript:x' },
-        { label: 'e', src: 'data:text/html,x' }
+        { label: 'e', src: 'data:text/html,x' },
+        { label: 'f', src: 'data: text/html,x' },
+        { label: 'g', src: 'data:image/svg+xml,x' }
       ]
     })
 
-    expect(data.links).toEqual([{ label: 'a' }, { label: 'b' }, { label: 'c' }, { label: 'd' }, { label: 'e' }])
-    expect(removed).toEqual(['links.0.to', 'links.1.href', 'links.2.to', 'links.3.xlink:href', 'links.4.src'])
+    expect(data.links).toEqual([{ label: 'a' }, { label: 'b' }, { label: 'c' }, { label: 'd' }, { label: 'e' }, { label: 'f' }, { label: 'g' }])
+    expect(removed).toEqual(['links.0.to', 'links.1.href', 'links.2.to', 'links.3.xlink:href', 'links.4.src', 'links.5.src', 'links.6.src'])
   })
 
   it('keeps every URL a page links to', () => {

@@ -9,8 +9,7 @@ import type { ContentPlugin } from 'comark-content'
 /** Keys that write text or a document, or redirect a form, whatever their value: comark's list, plus `innerText`. */
 const UNSAFE_KEYS = new Set(['innertext', 'textcontent', 'srcdoc', 'formaction'])
 
-/** comark's protocol floor. */
-const UNSAFE_URL_PREFIXES = ['javascript:', 'vbscript:', 'data:text/html', 'data:text/javascript', 'data:text/vbscript', 'data:text/css', 'data:text/plain', 'data:text/xml']
+const UNSAFE_PROTOCOLS = new Set(['javascript:', 'vbscript:', 'data:'])
 
 /** Tags comark strips the props of, blocked or not. */
 const UNSAFE_TAGS = ['object']
@@ -19,8 +18,7 @@ function isUnsafeUrl(value: string): boolean {
   if (!value.includes(':')) return false
 
   try {
-    const href = new URL(value).href.toLowerCase()
-    return UNSAFE_URL_PREFIXES.some(prefix => href.startsWith(prefix))
+    return UNSAFE_PROTOCOLS.has(new URL(value).protocol)
   } catch {
     // Relative: no protocol to abuse.
     return false
