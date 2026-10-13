@@ -34,12 +34,12 @@ const router = useRouter()
 
 const category = computed({
   get: () => BLOG_CATEGORIES.find(item => item.slug === route.query.category)?.slug ?? 'all',
-  set: (value: string) => router.replace({ query: { ...route.query, category: value === 'all' ? undefined : value } })
+  set: (value: string) => router.replace({ query: { ...route.query, category: value === 'all' ? undefined : value, page: undefined } })
 })
 
 const search = ref(typeof route.query.q === 'string' ? route.query.q : '')
 const query = computed(() => search.value.trim())
-watchDebounced(query, value => router.replace({ query: { ...route.query, q: value || undefined } }), { debounce: 250 })
+watchDebounced(query, value => router.replace({ query: { ...route.query, q: value || undefined, page: undefined } }), { debounce: 250 })
 
 const searchInput = useTemplateRef('searchInput')
 defineShortcuts({
@@ -68,10 +68,8 @@ const articles = computed(() => {
 })
 
 const PAGE_SIZE = 12
-const limit = ref(PAGE_SIZE)
-watch([category, query], () => {
-  limit.value = PAGE_SIZE
-})
+const page = computed(() => Math.max(1, Number.parseInt(String(route.query.page), 10) || 1))
+const limit = computed(() => page.value * PAGE_SIZE)
 </script>
 
 <template>
@@ -180,8 +178,9 @@ watch([category, query], () => {
           label="Show More"
           color="neutral"
           variant="subtle"
+          :to="{ query: { ...route.query, page: page + 1 } }"
+          rel="next"
           class="self-center"
-          @click="limit += PAGE_SIZE"
         />
       </section>
     </UPageBody>
