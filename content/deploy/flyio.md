@@ -32,5 +32,5 @@ Nuxt supports deploying on [Fly.io](https://fly.io/) with minimal configuration.
 ## Learn more
 
 ::read-more{to="https://docs.fly.io/js/frameworks/nuxtjs" target="_blank"}
-Head over **Fly.io documentation** to learn more about running Nuxt on Fly.io.
+Head over to **Fly.io documentation** to learn more about running Nuxt on Fly.io.
 ::
