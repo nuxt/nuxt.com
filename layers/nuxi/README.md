@@ -149,8 +149,6 @@ Summarizes `#firehose-nuxt` (Octolens social mentions) and posts highlights to t
 
 The Nuxi Slack bot must be invited to `#firehose-nuxt`. Required Connect scopes: `channels:read`, `channels:history` (plus `groups:read`, `groups:history` for private channels).
 
-Schedules can read any channel the bot is in, and the configured digest/firehose channels are open to every admin session. Any other channel can only be read from Slack, by a member of that channel (checked with `conversations.members`).
-
 ### Discord mirror
 
 Set `discord.digestChannel` (raw Discord channel id) in Global Config to also post the weekly digest and firehose summary to a Discord channel — distinct from `discord.channels`, which only gates live @mentions. This reuses the Slack-generated text (no second agent run): `agent/lib/discord/digest-mirror.ts` reads the finished Slack session's final message, `agent/lib/discord/format.ts` converts Slack-only syntax (`<url|label>` links, `:nuxter:`-style emoji, bare `@names`) to Discord Markdown, then posts via the unwrapped Discord adapter (so conversion runs once). Conversion is best-effort — an emoji shortcode outside the known set passes through unchanged. Unset disables the mirror; a mirroring failure is logged and never affects the Slack post. The bot needs **View Channel** + **Send Messages** in the target channel.

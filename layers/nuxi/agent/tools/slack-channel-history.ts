@@ -1,7 +1,6 @@
 import { defineDynamic, defineTool } from 'eve/tools'
 import { z } from 'zod'
-import { assertAdminMode, isAdminMode } from '../lib/identity/admin-mode.js'
-import { canReadSlackChannel } from '../lib/slack/access.js'
+import { isAdminMode } from '../lib/identity/admin-mode.js'
 import {
   fetchSlackChannelHistory,
   firehoseSlackChannelRef,
@@ -21,14 +20,8 @@ export default defineDynamic({
             sinceHours: z.number().int().min(1).max(168).default(24),
             limit: z.number().int().min(1).max(200).default(200)
           }),
-          async execute({ channel, sinceHours, limit }, ctx) {
-            await assertAdminMode(ctx.session.auth.current)
-
+          async execute({ channel, sinceHours, limit }) {
             const resolved = await resolveSlackChannelRef(channel ?? await firehoseSlackChannelRef())
-            if (!(await canReadSlackChannel(ctx.session.auth.current, resolved.id))) {
-              throw new Error(`Not allowed to read #${resolved.name}: only its members can, from Slack`)
-            }
-
             const messages = await fetchSlackChannelHistory({
               channelId: resolved.id,
               sinceHours,
