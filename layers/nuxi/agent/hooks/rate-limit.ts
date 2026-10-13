@@ -1,5 +1,6 @@
 import { defineHook } from 'eve/hooks'
 import { appOrigin, chatIdFromContinuationToken, internalHeaders } from '../lib/internal-api.js'
+import { RateLimitedError } from '../lib/rate-limit-error.js'
 
 export default defineHook({
   events: {
@@ -28,7 +29,7 @@ export default defineHook({
 
       if (response.status === 429) {
         const data = await response.json().catch(() => ({})) as { message?: string }
-        throw new Error(data.message ?? 'Daily message limit reached.')
+        throw new RateLimitedError(data.message ?? 'Daily message limit reached.')
       }
 
       if (!response.ok) {

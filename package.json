@@ -54,6 +54,7 @@
     "@nuxtjs/mcp-toolkit": "^0.24.1",
     "@octokit/webhooks-methods": "^6.0.0",
     "@opentelemetry/api": "^1.9.1",
+    "@opentelemetry/instrumentation-undici": "^0.33.0",
     "@sqlite.org/sqlite-wasm": "3.53.0-build1",
     "@takumi-rs/core": "^2.14.0",
     "@vercel/analytics": "^2.0.1",

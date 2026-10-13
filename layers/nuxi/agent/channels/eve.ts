@@ -68,9 +68,12 @@ export default eveChannel({
           if (data.summary) {
             context.push(`Prior conversation (for context):\n${data.summary}`)
           }
+        } else {
+          console.warn('[nuxi:eve] prior chat context unavailable', { chatId, status: response.status })
         }
-      } catch {
+      } catch (error) {
         // Non-fatal — continue without prior context
+        console.warn('[nuxi:eve] prior chat context request errored', { chatId, error })
       }
     }
 
