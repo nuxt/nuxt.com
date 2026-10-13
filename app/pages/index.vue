@@ -266,7 +266,7 @@ const isMobile = useMediaQuery('(max-width: 1023.98px)')
           :in-view-options="{ once: true }"
         >
           <UPageFeature
-            v-bind="feature"
+            v-bind="pickFeature(feature)"
             orientation="vertical"
           />
         </Motion>
@@ -298,7 +298,7 @@ const isMobile = useMediaQuery('(max-width: 1023.98px)')
       }"
     >
       <UUser
-        v-bind="pageData.testimonial.author"
+        v-bind="pickUser(pageData.testimonial.author)"
         size="xl"
         class="justify-center"
       />
@@ -427,7 +427,7 @@ const isMobile = useMediaQuery('(max-width: 1023.98px)')
               <p class="text-muted text-center">
                 {{ pageData.stats.community.description }}
               </p>
-              <UButton class="mt-4 w-fit" v-bind="pageData.stats.cta" />
+              <UButton class="mt-4 w-fit" v-bind="pickLink(pageData.stats.cta)" />
             </div>
           </UPageCard>
         </div>
@@ -466,7 +466,7 @@ const isMobile = useMediaQuery('(max-width: 1023.98px)')
 
     <UPageSection
       :description="pageData.modules.description"
-      :links="pageData.modules.links"
+      :links="pickLinks(pageData.modules.links)"
       :ui="{
         root: 'bg-linear-to-b border-t border-default from-muted dark:from-muted/40 to-default',
         title: 'text-left',
@@ -498,7 +498,7 @@ const isMobile = useMediaQuery('(max-width: 1023.98px)')
     <UPageSection
       :title="pageData.deploy.title"
       :description="pageData.deploy.description"
-      :links="pageData.deploy.links"
+      :links="pickLinks(pageData.deploy.links)"
       orientation="horizontal"
       :ui="{
         root: 'bg-linear-to-b border-t border-default from-muted dark:from-muted/40 to-default'
@@ -517,7 +517,7 @@ const isMobile = useMediaQuery('(max-width: 1023.98px)')
     <UPageSection
       :title="pageData.contributors.title"
       :description="pageData.contributors.description"
-      :links="pageData.contributors.links"
+      :links="pickLinks(pageData.contributors.links)"
       orientation="horizontal"
       reverse
       :ui="{
@@ -593,7 +593,7 @@ const isMobile = useMediaQuery('(max-width: 1023.98px)')
     <UPageSection
       :title="pageData.sponsors.title"
       :description="pageData.sponsors.description"
-      :links="pageData.sponsors.links"
+      :links="pickLinks(pageData.sponsors.links)"
       class="relative"
       :ui="{
         root: 'bg-linear-to-b border-t border-default from-muted dark:from-muted/40 to-default',

@@ -2,62 +2,37 @@ import { mkdtemp, rm, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import fs from 'comark-content/sources/fs'
-import { afterEach, describe, expect, it, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { createBuildInstance } from '../../utils/factory'
-import { BLOCKED_TAGS } from '../../server/utils/content/plugins'
-import { sanitizeData, stripUnsafeData } from '../../server/utils/content/plugins/sanitize-data'
+import { SECURITY_OPTIONS, sanitizePlugin } from '../../server/utils/content/plugins'
+import { stripUnsafeData } from '../../server/utils/content/plugins/sanitize-data'
 
-/** Strip `data` with the chain's tags, returning what's left and what went. */
+/** Strip `data` with the chain's policy, returning what's left and what went. */
 function strip<T>(data: T) {
-  const removed = stripUnsafeData(data, BLOCKED_TAGS)
+  const removed = stripUnsafeData(data, SECURITY_OPTIONS)
   return { data, removed }
 }
 
 describe('stripUnsafeData', () => {
-  it('drops keys that write markup, whatever their case or depth', () => {
+  it('applies comark\'s rules at any depth', () => {
     expect(strip({
-      title: 'Page',
-      innerHTML: '<b>x</b>',
-      links: [{ label: 'Docs', TextContent: 'x', labelHtml: '<b>x</b>' }],
-      hero: { card: { outerHTML: '<b>x</b>', srcdoc: '<b>x</b>' } }
+      'title': 'Page',
+      'innerHTML': '<b>x</b>',
+      '^onclick': 'x()',
+      'links': [{ label: 'Docs', labelHtml: '<b>x</b>', to: 'javascript:void(0)' }],
+      'hero': { as: 'script', card: { is: 'object' } }
     })).toEqual({
       data: { title: 'Page', links: [{ label: 'Docs' }], hero: { card: {} } },
-      removed: ['innerHTML', 'links.0.TextContent', 'links.0.labelHtml', 'hero.card.outerHTML', 'hero.card.srcdoc']
+      removed: ['innerHTML', '^onclick', 'links.0.labelHtml', 'links.0.to', 'hero.as', 'hero.card.is']
     })
   })
 
-  it('drops event handler keys, lowercase or not', () => {
-    expect(strip({ onclick: 'x()', onMouseOver: 'x()', links: [{ label: 'Docs', onfocus: 'x()' }] }))
-      .toEqual({ data: { links: [{ label: 'Docs' }] }, removed: ['onclick', 'onMouseOver', 'links.0.onfocus'] })
-  })
-
-  it('sees through Vue\'s `.prop` and `^attr` key prefixes', () => {
-    expect(strip({
-      '^onclick': 'x()',
-      '^title': 'Page',
-      'links': [{ 'label': 'Docs', '.innerHTML': '<b>x</b>', '^href': 'javascript:void(0)', '.^srcdoc': '<b>x</b>' }],
-      'hero': { '^as': 'script' }
-    })).toEqual({
-      data: { '^title': 'Page', 'links': [{ label: 'Docs' }], 'hero': {} },
-      removed: ['^onclick', 'links.0..innerHTML', 'links.0.^href', 'links.0..^srcdoc', 'hero.^as']
-    })
-  })
-
-  it('drops script URLs in link and resource keys, however they are spelled', () => {
-    const { data, removed } = strip({
-      links: [
-        { label: 'a', to: 'javascript:void(0)' },
-        { label: 'b', href: ' JavaScript:void(0)' },
-        { label: 'c', to: 'java\tscript:void(0)' },
-        { 'label': 'd', 'xlink:href': 'vbscript:x' },
-        { label: 'e', src: 'data:text/html,x' },
-        { label: 'f', src: 'data: text/html,x' },
-        { label: 'g', src: 'data:image/svg+xml,x' }
-      ]
-    })
-
-    expect(data.links).toEqual([{ label: 'a' }, { label: 'b' }, { label: 'c' }, { label: 'd' }, { label: 'e' }, { label: 'f' }, { label: 'g' }])
-    expect(removed).toEqual(['links.0.to', 'links.1.href', 'links.2.to', 'links.3.xlink:href', 'links.4.src', 'links.5.src', 'links.6.src'])
+  it('drops script URLs under any key, which comark leaves to URL keys', () => {
+    expect(strip({ template: { demo: 'javascript:void(0)', repo: 'nuxt/starter' }, provider: { website: 'data:text/html,x' } }))
+      .toEqual({
+        data: { template: { repo: 'nuxt/starter' }, provider: {} },
+        removed: ['template.demo', 'provider.website']
+      })
   })
 
   it('keeps every URL a page links to', () => {
@@ -67,42 +42,29 @@ describe('stripUnsafeData', () => {
       { to: 'https://github.com/nuxt/nuxt' },
       { href: 'mailto:hello@nuxt.com' },
       { src: '/assets/blog/cover.png' },
-      { src: 'https://avatars.githubusercontent.com/u/1?v=4' }
+      { website: 'https://vercel.com' }
     ]
 
     expect(strip({ links: structuredClone(links) })).toEqual({ data: { links }, removed: [] })
   })
 
-  it('drops script URLs under any key, since pages bind them as links', () => {
-    expect(strip({ courses: [{ title: 'Course', url: 'javascript:void(0)' }], agency: { link: 'vbscript:x', website: 'https://nuxt.com' } }))
-      .toEqual({
-        data: { courses: [{ title: 'Course' }], agency: { website: 'https://nuxt.com' } },
-        removed: ['courses.0.url', 'agency.link']
-      })
-  })
-
-  it('keeps prose, unless it opens with a script scheme', () => {
-    expect(strip({ title: 'JavaScript: the good parts', description: 'Use javascript:void(0) sparingly', note: 'Note: none' }))
-      .toEqual({ data: { description: 'Use javascript:void(0) sparingly', note: 'Note: none' }, removed: ['title'] })
+  it('drops prose opening with a script scheme, the price of checking every key', () => {
+    expect(strip({ title: 'JavaScript: the good parts', description: 'Use javascript:void(0) sparingly' }))
+      .toEqual({ data: { description: 'Use javascript:void(0) sparingly' }, removed: ['title'] })
   })
 
   it('closes the hole a dropped array item leaves', () => {
-    const { data, removed } = strip({ links: ['/docs', 'javascript:void(0)', '/blog'] })
+    const { data, removed } = strip({ tags: ['nuxt', 'javascript:void(0)', 'vue'] })
 
-    expect(data.links).toEqual(['/docs', '/blog'])
-    expect(removed).toEqual(['links.1'])
-  })
-
-  it('drops an `as` naming a blocked tag, keeping any other', () => {
-    expect(strip({ hero: { as: 'SCRIPT' }, card: { as: 'object' }, section: { as: 'section' } }))
-      .toEqual({ data: { hero: {}, card: {}, section: { as: 'section' } }, removed: ['hero.as', 'card.as'] })
+    expect(data.tags).toEqual(['nuxt', 'vue'])
+    expect(removed).toEqual(['tags.1'])
   })
 
   it('walks a shared or nested object once', () => {
-    const link: Record<string, unknown> = { label: 'Docs', onclick: 'x()' }
-    link.self = link
+    const template: Record<string, unknown> = { title: 'Starter', demo: 'javascript:void(0)' }
+    template.self = template
 
-    expect(strip({ links: [link, link] }).removed).toEqual(['links.0.onclick'])
+    expect(strip({ templates: [template, template] }).removed).toEqual(['templates.0.demo'])
   })
 
   it('leaves scalars and safe data untouched', () => {
@@ -114,41 +76,42 @@ describe('stripUnsafeData', () => {
   })
 })
 
-describe('sanitizeData() plugin', () => {
+describe('sanitizePlugin', () => {
   function setupPlugin() {
     let onParsed: ((ctx: any) => void) | undefined
-    const warn = vi.fn()
-    sanitizeData({ blockedTags: BLOCKED_TAGS }).setup!({
-      logger: { warn },
+    sanitizePlugin.setup!({
+      logger: { warn: vi.fn() },
       hooks: { hook: (name: string, fn: (ctx: any) => void) => void (name === 'file:parsed' && (onParsed = fn)) }
     } as never)
 
-    return { warn, fireFileParsed: (ctx: any) => onParsed!(ctx) }
+    return (ctx: any) => onParsed!(ctx)
   }
 
-  it('strips a parsed file\'s data and names what it removed', () => {
-    const { warn, fireFileParsed } = setupPlugin()
+  it('strips a parsed file\'s data', () => {
+    const fireFileParsed = setupPlugin()
     const file = { data: { title: 'Page', innerHTML: '<b>x</b>' }, meta: { key: 'docs/1.page.md' } }
 
     fireFileParsed({ file })
-
     expect(file.data).toEqual({ title: 'Page' })
-    expect(warn).toHaveBeenCalledWith('sanitize-data', 'docs/1.page.md: removed unsafe `innerHTML`')
   })
 
-  it('stays quiet on safe data, and ignores a rejected parse', () => {
-    const { warn, fireFileParsed } = setupPlugin()
+  it('ignores a rejected parse', () => {
+    const fireFileParsed = setupPlugin()
 
-    fireFileParsed({ file: { data: { title: 'Page' }, meta: { key: 'docs/1.page.md' } } })
     expect(() => fireFileParsed({ file: null })).not.toThrow()
-    expect(warn).not.toHaveBeenCalled()
   })
 })
 
-describe('sanitizeData() in the instance chain', () => {
+describe('sanitizePlugin in the instance chain', () => {
   let dir: string | undefined
 
+  beforeEach(() => {
+    // comark's `security()` warns about each frontmatter key it removes.
+    vi.spyOn(console, 'warn').mockImplementation(() => {})
+  })
+
   afterEach(async () => {
+    vi.restoreAllMocks()
     if (dir) await rm(dir, { recursive: true, force: true })
     dir = undefined
   })
@@ -170,13 +133,30 @@ describe('sanitizeData() in the instance chain', () => {
       ''
     ].join('\n'))
 
-    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
     const content = createBuildInstance('docs:5.x', { source: fs(dir, { prefix: '/docs/5.x' }) })
     const page = await content.get('/docs/5.x/page')
 
     expect(page?.data).toEqual({ title: 'Page', navigation: {}, links: [{ label: 'Docs' }] })
-    expect(warn).toHaveBeenCalledWith('[comark-content@sanitize-data]', expect.stringContaining('`navigation.onclick`'))
-    warn.mockRestore()
+    await content.dispose()
+  })
+
+  it('sanitizes YAML files, which never go through comark', async () => {
+    dir = await mkdtemp(join(tmpdir(), 'nuxt-sanitize-'))
+    await writeFile(join(dir, 'index.yml'), [
+      'title: Home',
+      'hero:',
+      '  links:',
+      '    - label: Docs',
+      '      to: "javascript:void(0)"',
+      '      "^onclick": "x()"',
+      '  as: script',
+      ''
+    ].join('\n'))
+
+    const content = createBuildInstance('site', { source: fs(dir, { prefix: '/' }) })
+    const page = await content.get('/')
+
+    expect(page?.data).toEqual({ title: 'Home', hero: { links: [{ label: 'Docs' }] } })
     await content.dispose()
   })
 })

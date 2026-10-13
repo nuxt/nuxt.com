@@ -26,19 +26,24 @@ useCanonical()
 
 <template>
   <UPage v-if="pageData">
-    <UPageHero :title="pageData.title" :description="pageData.description" :links="pageData.hero.links">
+    <UPageHero :title="pageData.title" :description="pageData.description" :links="pickLinks(pageData.hero.links)">
       <UPageLogos marquee>
         <UColorModeImage
           v-for="company in pageData.logos"
           :key="company.alt"
-          v-bind="company"
+          :light="company.light"
+          :dark="company.dark"
+          :width="company.width"
+          :height="company.height"
+          :alt="company.alt"
           class="h-10 max-w-[120px] object-contain"
         />
       </UPageLogos>
     </UPageHero>
 
     <UPageSection
-      v-bind="pageData.service"
+      :title="pageData.service.title"
+      :description="pageData.service.description"
       :ui="{
         title: 'text-left',
         description: 'text-left',
@@ -47,12 +52,19 @@ useCanonical()
     >
       <template #links>
         <UPageGrid class="xl:grid-cols-4">
-          <UPageCard v-for="service in pageData.service.services" :key="service.title" v-bind="service" :ui="{ container: 'card-bg', leadingIcon: 'size-8' }" />
+          <UPageCard
+            v-for="service in pageData.service.services"
+            :key="service.title"
+            :icon="service.icon"
+            :title="service.title"
+            :description="service.description"
+            :ui="{ container: 'card-bg', leadingIcon: 'size-8' }"
+          />
         </UPageGrid>
       </template>
     </UPageSection>
 
-    <UPageSection v-bind="pageData.expertise">
+    <UPageSection :title="pageData.expertise.title" :description="pageData.expertise.description">
       <div class="flex justify-center w-full gap-4 sm:gap-x-16 md:gap-x-[92px]">
         <div v-for="logo in pageData.expertise.logos" :key="logo.src" class="flex items-center justify-center">
           <EnterpriseSupportExpertiseCircle :logo="logo" />
@@ -60,7 +72,7 @@ useCanonical()
       </div>
     </UPageSection>
 
-    <UPageSection v-bind="pageData.testimonials">
+    <UPageSection :title="pageData.testimonials.title" :description="pageData.testimonials.description">
       <UCarousel
         v-slot="{ item }"
         :items="(pageData.testimonials.items as any[])"
@@ -74,12 +86,13 @@ useCanonical()
           arrows: 'hidden 2xl:block'
         }"
       >
-        <EnterpriseSupportClientCard v-bind="item" />
+        <EnterpriseSupportClientCard :quote="item.quote" :author="item.author" :job="item.job" :logo="item.logo" :achievements="item.achievements" />
       </UCarousel>
     </UPageSection>
 
     <UPageSection
-      v-bind="pageData.project"
+      :title="pageData.project.title"
+      :description="pageData.project.description"
       orientation="horizontal"
       :ui="{
         links: 'mt-8 flex flex-wrap justify-center lg:justify-start gap-x-3 gap-y-1.5',

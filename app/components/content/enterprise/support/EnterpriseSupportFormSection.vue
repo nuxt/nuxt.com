@@ -115,7 +115,7 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
 
         <div class="flex justify-end">
           <UButton
-            v-bind="formProps.form.button"
+            v-bind="pickLink(formProps.form.button)"
             type="submit"
             color="neutral"
             class="w-fit pt-2"

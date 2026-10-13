@@ -1,18 +1,14 @@
+import { sanitizeData as sanitizeWithComark, type SanitizeDataOptions } from 'comark/utils'
 import type { ContentPlugin } from 'comark-content'
 
 /**
- * Pages spread content data into components (`v-bind="fm"`): Vue binds unknown keys to the DOM.
- * Apply comark's `security()` rules on Markdown bodies to every file's data.
- * Mirrors `comark/dist/internal/props-validation.js`
+ * comark's `security()` sanitizes frontmatter on a full Markdown parse only. It misses:
+ * - YAML and JSON files, which never go through comark
+ * - partial loads (listings, navigation), which read frontmatter without comark's plugins
+ * - keys plugins rewrite after comark: `dottedFrontmatter()` turns `hero.^onclick` into `hero: { '^onclick' }`
  */
 
-/** Keys that write text or a document, or redirect a form, whatever their value: comark's list, plus `innerText`. */
-const UNSAFE_KEYS = new Set(['innertext', 'textcontent', 'srcdoc', 'formaction'])
-
 const UNSAFE_PROTOCOLS = new Set(['javascript:', 'vbscript:', 'data:'])
-
-/** Tags comark strips the props of, blocked or not. */
-const UNSAFE_TAGS = ['object']
 
 function isUnsafeUrl(value: string): boolean {
   if (!value.includes(':')) return false
@@ -25,23 +21,12 @@ function isUnsafeUrl(value: string): boolean {
   }
 }
 
-function isUnsafeEntry(key: string, value: unknown, blockedTags: Set<string>): boolean {
-  // Vue binds a leading `.` as a DOM prop and `^` as an attribute: `^onclick` is `onclick`.
-  const name = key.toLowerCase().replace(/^[.^]+/, '').replace(/:/g, '')
-  if (name.startsWith('on') || name.endsWith('html') || UNSAFE_KEYS.has(name)) return true
-  if (typeof value !== 'string') return false
-  if (isUnsafeUrl(value)) return true
-
-  // `as` picks the element a component renders.
-  return name === 'as' && blockedTags.has(value.toLowerCase())
-}
-
 /**
- * Delete unsafe keys from `data` in place, at any depth.
- * Returns the dotted paths it removed.
+ * Delete script URLs under any key from `data` in place, returning the dotted paths it removed.
+ * comark only checks URL keys (`to`, `*url`, `*link`…), but templates bind others as links: `template.demo`, `providerData.website`.
+ * The price: prose opening with `javascript:` goes too.
  */
-export function stripUnsafeData(data: unknown, blockedTags: string[]): string[] {
-  const blocked = new Set([...blockedTags, ...UNSAFE_TAGS].map(tag => tag.toLowerCase()))
+function stripUnsafeUrls(data: unknown): string[] {
   const removed: string[] = []
   // YAML aliases can share or nest an object.
   const seen = new WeakSet<object>()
@@ -53,7 +38,7 @@ export function stripUnsafeData(data: unknown, blockedTags: string[]): string[] 
     let deleted = false
     for (const [key, child] of Object.entries(value)) {
       const at = path ? `${path}.${key}` : key
-      if (isUnsafeEntry(key, child, blocked)) {
+      if (typeof child === 'string' && isUnsafeUrl(child)) {
         Reflect.deleteProperty(value, key)
         removed.push(at)
         deleted = true
@@ -73,17 +58,25 @@ export function stripUnsafeData(data: unknown, blockedTags: string[]): string[] 
 }
 
 /**
- * Strip markup, event handler and script URL keys from every file's data.
+ * Delete unsafe entries from `data` in place: comark's rules, then script URLs under any key.
+ * Returns the dotted paths it removed.
+ */
+export function stripUnsafeData(data: unknown, options: SanitizeDataOptions): string[] {
+  return [...sanitizeWithComark(data, options), ...stripUnsafeUrls(data)]
+}
+
+/**
+ * Strip unsafe entries from every file's data.
  * Register it last: `file:parsed` hooks run in order, so it sees what the other plugins produced.
  */
-export function sanitizeData(options: { blockedTags: string[] }): ContentPlugin {
+export function sanitizeData(options: SanitizeDataOptions): ContentPlugin {
   return {
     name: 'nuxt-sanitize-data',
     setup(content) {
       content.hooks.hook('file:parsed', ({ file }) => {
         if (!file) return
 
-        const removed = stripUnsafeData(file.data, options.blockedTags)
+        const removed = stripUnsafeData(file.data, options)
         if (import.meta.dev && removed.length) {
           content.logger.warn('sanitize-data', `${file.meta.key}: removed unsafe ${removed.map(path => `\`${path}\``).join(', ')}`)
         }

@@ -7,8 +7,7 @@ import yaml from 'comark-content/plugins/yaml'
 import json from 'comark-content/plugins/json'
 import tracingOtel from 'comark-content/plugins/tracing/otel'
 import type { Tracer } from '@opentelemetry/api'
-import { BLOCKED_TAGS, comarkPlugins, instancePlugins } from '../server/utils/content/plugins'
-import { sanitizeData } from '../server/utils/content/plugins/sanitize-data'
+import { comarkPlugins, instancePlugins, sanitizePlugin } from '../server/utils/content/plugins'
 import { instanceSource, type InstanceSource } from '../server/utils/content/instances'
 import { instanceBasePath, type ContentInstanceKey } from '../shared/utils/content'
 import { contentTracer } from '../server/utils/tracer'
@@ -74,7 +73,7 @@ function create(key: ContentInstanceKey, options: InstanceOptions, tracer?: Trac
       yaml({ listingFields: definition.listingFields }),
       json({ listingFields: definition.listingFields }),
       ...instancePlugins(key),
-      sanitizeData({ blockedTags: BLOCKED_TAGS }),
+      sanitizePlugin,
       tracer && tracingOtel({ tracer })
     ],
     cache: options.cache
