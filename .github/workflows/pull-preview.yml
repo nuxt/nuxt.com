@@ -20,7 +20,6 @@ permissions: {}
 concurrency:
   group: pull-preview-${{ github.event.pull_request.number }}
   cancel-in-progress: false
-  # Keep every pending run: a replaced `labeled` run would never record the approval.
   queue: max
 
 jobs:
