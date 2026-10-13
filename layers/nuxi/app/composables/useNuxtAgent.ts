@@ -150,6 +150,7 @@ export const useNuxtAgent = createSharedComposable(() => {
     isAgentDocked,
     usage,
     rateLimitReached,
+    refreshUsage,
     onMessageSent,
     currentPage,
     pageContextDismissed,
