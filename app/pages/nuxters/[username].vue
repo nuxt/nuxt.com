@@ -24,6 +24,9 @@ if (param !== nuxter.value.username) {
 }
 
 const { format } = new Intl.NumberFormat('en-US')
+// By GitHub id: still the owner after a username change.
+const { user } = useUserSession()
+const isOwner = computed(() => !!user.value && user.value.providerId === String(nuxter.value?.githubId))
 const username = nuxter.value.username
 const hackathons = computed(() => nuxterHackathons(nuxter.value?.githubId))
 
@@ -41,10 +44,7 @@ const socialIcons: Record<string, string> = {
   reddit: 'i-simple-icons-reddit',
   npm: 'i-simple-icons-npm'
 }
-const displayName = computed(() => {
-  const name = nuxter.value?.links?.name
-  return name && name.toLowerCase() !== nuxter.value?.username.toLowerCase() ? name : null
-})
+const displayName = computed(() => nuxter.value?.links?.name || nuxter.value.username)
 const links = computed(() => {
   const username = nuxter.value!.username
   const profile = nuxter.value?.links
@@ -183,13 +183,12 @@ defineOgImage('Nuxter.takumi', { username, period: () => period.value === 'all' 
               <!-- Usernames go up to 39 characters: smaller title for long ones, full name on hover -->
               <h1
                 class="text-3xl sm:text-4xl font-bold text-highlighted truncate lg:leading-14"
-                :class="{ 'lg:text-5xl': nuxter.username.length <= 14 }"
-                :title="nuxter.username"
+                :title="displayName"
               >
-                {{ nuxter.username }}
-              </h1>
-              <p v-if="displayName" class="text-lg text-toned truncate -mt-1 lg:-mt-2">
                 {{ displayName }}
+              </h1>
+              <p class="text-lg text-toned truncate -mt-1 lg:-mt-2">
+                {{ nuxter.username }}
               </p>
               <!-- GitHub first, then the links set on it: those are never followed by crawlers, `me` for Mastodon verification -->
               <ul class="flex flex-wrap items-center gap-0.5 -ml-1.5" aria-label="Links">
@@ -240,10 +239,13 @@ defineOgImage('Nuxter.takumi', { username, period: () => period.value === 'all' 
             />
           </div>
 
-          <!-- Sharing is a desktop action (copying Markdown into a GitHub README) -->
-          <div class="hidden lg:block">
-            <NuxtersShare :username="nuxter.username" :period="period" />
-          </div>
+          <!-- Only for the owner: the page is cached for everyone, so the session is checked in the browser.
+               Sharing is a desktop action (copying Markdown into a GitHub README). -->
+          <ClientOnly>
+            <div v-if="isOwner" class="hidden lg:block">
+              <NuxtersShare :username="nuxter.username" :period="period" />
+            </div>
+          </ClientOnly>
         </div>
 
         <div class="flex flex-col gap-4 lg:col-span-3 xl:col-span-2">

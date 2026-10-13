@@ -148,6 +148,14 @@ onMounted(() => {
         </p>
       </div>
 
+      <!-- Sharing is the reward of an unlocked badge: the all-time profile, the card does not follow the leaderboard period -->
+      <div v-if="me.nuxter && badges.length" class="flex flex-col gap-2 pt-4 border-t border-default">
+        <p class="text-sm text-muted">
+          Share your Nuxter profile, or show your card on your GitHub profile.
+        </p>
+        <NuxtersShare :username="me.nuxter.username" />
+      </div>
+
       <div v-if="me.discord.enabled && badges.length" class="flex flex-wrap items-center gap-3 pt-4 border-t border-default">
         <UButton
           :label="me.discord.username ? 'Sync Discord roles' : 'Unlock Discord roles'"

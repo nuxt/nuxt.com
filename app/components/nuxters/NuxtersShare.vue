@@ -24,7 +24,8 @@ const markdown = computed(() => `[![${alt.value}](${cardUrl.value})](${profileUr
       label="Copy profile link"
       icon="i-lucide-link"
       color="neutral"
-      variant="outline"
+      variant="soft"
+      size="sm"
       @click="copy(profileUrl, { title: 'Profile link copied', icon: 'i-lucide-check' })"
     />
 
@@ -33,7 +34,7 @@ const markdown = computed(() => `[![${alt.value}](${cardUrl.value})](${profileUr
       description="Paste this Markdown in your GitHub profile README. The card updates every day."
       :ui="{ content: 'sm:max-w-2xl' }"
     >
-      <UButton label="Add to README" icon="i-lucide-id-card" color="neutral" variant="outline" />
+      <UButton label="Add to README" icon="i-lucide-id-card" color="neutral" variant="soft" size="sm" />
 
       <template #body>
         <div class="flex flex-col gap-4">
