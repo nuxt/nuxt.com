@@ -7,15 +7,9 @@ export default eventHandler(async (event) => {
     confirmation: z.string()
   }).parse)
 
-  const { apiKey, audienceId } = useRuntimeConfig(event).resend
-  if (!apiKey || !audienceId) {
-    throw createError({
-      statusCode: 500,
-      message: 'Missing Resend configuration'
-    })
-  }
+  const { apiKey, audienceId, secret } = useNewsletterConfig(event)
 
-  if (generateConfirmation(event, email) !== confirmation) {
+  if (generateConfirmation(secret, email) !== confirmation) {
     throw createError({
       statusCode: 400,
       message: 'Confirmation code is invalid.'
