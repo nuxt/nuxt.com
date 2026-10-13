@@ -127,7 +127,7 @@ defineOgImage('Nuxter.takumi', { username, period: () => period.value === 'all' 
     </UContainer>
 
     <!-- Profile on the left, stats on the right; stacked below lg -->
-    <UContainer id="profile" class="py-8 lg:py-20 scroll-mt-16">
+    <UContainer class="py-8 lg:py-20 scroll-mt-16">
       <!-- Stats get more room: 2/5 + 3/5 on lg, 1/3 + 2/3 from xl -->
       <div class="grid lg:grid-cols-5 xl:grid-cols-3 gap-8 lg:gap-12 items-center">
         <!-- Below lg: avatar next to the name, everything left-aligned and compact -->
@@ -244,7 +244,7 @@ defineOgImage('Nuxter.takumi', { username, period: () => period.value === 'all' 
               <li v-for="row in yearly" :key="row.period">
                 <!-- Selects the year on this profile, and scrolls back up to the stats -->
                 <NuxtLink
-                  :to="{ query: periodQuery(row.period), hash: '#profile' }"
+                  :to="{ query: periodQuery(row.period) }"
                   replace
                   :aria-current="row.period === period ? 'page' : undefined"
                   class="grid grid-cols-[4rem_1fr_auto] sm:grid-cols-[5rem_8rem_1fr_auto] items-center gap-4 px-4 sm:px-6 py-3 hover:bg-elevated/50 transition-colors"
