@@ -5,12 +5,19 @@ interface ToolCallState {
   kind?: string
 }
 
-function errorMessage(error: unknown): string | undefined {
+/**
+ * Upstream messages can quote credentials or conversation content, so only the
+ * error's class and code reach the logs. The full error stays on the Agent
+ * Runs span for the same session id.
+ */
+function errorKind(error: unknown): { name?: string, code?: string } | undefined {
   if (error === undefined || error === null) return undefined
-  if (error instanceof Error) return error.message
-  if (typeof error === 'string') return error
-  if (typeof error === 'object' && 'message' in error && typeof error.message === 'string') return error.message
-  return JSON.stringify(error)
+  if (typeof error !== 'object') return { name: typeof error }
+  const name = error instanceof Error ? error.name : error.constructor?.name
+  const code = 'code' in error && (typeof error.code === 'string' || typeof error.code === 'number')
+    ? String(error.code)
+    : undefined
+  return { ...(name ? { name } : {}), ...(code ? { code } : {}) }
 }
 
 /**
@@ -39,7 +46,7 @@ export default defineInstrumentation({
         kind: started?.kind,
         outcome,
         errorCode: event.errorCode,
-        error: errorMessage(event.error)
+        error: errorKind(event.error)
       })
     },
     'model.call.failed': (event) => {
@@ -47,21 +54,21 @@ export default defineInstrumentation({
         sessionId: event.scope.sessionId,
         turnId: event.scope.turnId,
         attempt: event.scope.attemptIndex,
-        error: errorMessage(event.error)
+        error: errorKind(event.error)
       })
     },
     'turn.failed': (event) => {
       console.error('[nuxi:turn] failed', {
         sessionId: event.sessionId,
         turnId: event.turnId,
-        error: errorMessage(event.error)
+        error: errorKind(event.error)
       })
     },
     'session.failed': (event) => {
       console.error('[nuxi:session] failed', {
         sessionId: event.sessionId,
         turnId: event.turnId,
-        error: errorMessage(event.error)
+        error: errorKind(event.error)
       })
     }
   }

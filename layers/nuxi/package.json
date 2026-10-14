@@ -17,6 +17,7 @@
     "ai": "^7.0.137",
     "chat": "^4.41.1",
     "eve": "^0.76.3",
+    "evlog": "^2.31.0",
     "zod": "^4.6.5"
   },
   "optionalDependencies": {
