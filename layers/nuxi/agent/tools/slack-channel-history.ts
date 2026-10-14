@@ -1,6 +1,6 @@
 import { defineDynamic, defineTool } from 'eve/tools'
 import { z } from 'zod'
-import { isAdminMode } from '../lib/identity/admin-mode.js'
+import { assertAdminMode, isAdminMode } from '../lib/identity/admin-mode.js'
 import {
   fetchSlackChannelHistory,
   firehoseSlackChannelRef,
@@ -20,7 +20,9 @@ export default defineDynamic({
             sinceHours: z.number().int().min(1).max(168).default(24),
             limit: z.number().int().min(1).max(200).default(200)
           }),
-          async execute({ channel, sinceHours, limit }) {
+          async execute({ channel, sinceHours, limit }, ctx) {
+            await assertAdminMode(ctx.session.auth.current)
+
             const resolved = await resolveSlackChannelRef(channel ?? await firehoseSlackChannelRef())
             const messages = await fetchSlackChannelHistory({
               channelId: resolved.id,
