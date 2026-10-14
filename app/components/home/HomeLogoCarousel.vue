@@ -74,14 +74,14 @@ const rows = computed(() => [
       :key="row.key"
       :aria-hidden="row.state === 'exit' || undefined"
       :inert="row.state === 'exit' || undefined"
-      class="[grid-area:1/1] flex items-center justify-between gap-4 lg:gap-6"
+      class="[grid-area:1/1] grid grid-cols-3 items-center gap-x-4 gap-y-8 lg:flex lg:justify-between lg:gap-6"
     >
       <li
         v-for="(company, index) in row.set"
         :key="company.alt"
         :data-state="row.state"
         :style="{ '--delay': `${index * STAGGER}s` }"
-        class="logo shrink-0 max-lg:nth-[n+5]:hidden"
+        class="logo shrink-0 justify-self-center max-lg:nth-[3n+1]:justify-self-start max-lg:nth-[3n]:justify-self-end max-lg:nth-[n+7]:hidden"
       >
         <NuxtLink :to="company.url" target="_blank" class="group block">
           <BrandLogo
@@ -90,7 +90,7 @@ const rows = computed(() => [
             :width="company.width"
             :height="company.height"
             :style="logoStyle(company)"
-            class="max-lg:max-w-[18vw] text-muted transition-colors group-hover:text-highlighted"
+            class="max-lg:max-w-[26vw] text-muted transition-colors group-hover:text-highlighted"
           />
         </NuxtLink>
       </li>
