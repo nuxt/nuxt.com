@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { asc, eq } from 'drizzle-orm'
+import { and, asc, eq } from 'drizzle-orm'
 
 function extractText(parts: MessagePart[]): string {
   return parts
@@ -9,7 +9,7 @@ function extractText(parts: MessagePart[]): string {
 }
 
 export default defineMcpTool({
-  description: `Retrieves a saved **web** chat session: messages (with extracted text), and per-message votes.
+  description: `Retrieves a saved **web** chat session: messages (with extracted text), and per-message votes. Only chats shared with admins or made public are available.
 
 WHEN TO USE: After \`list-agent-chats\`, read the transcript. Token/cost data for any channel is in Vercel Observability → Agent Runs; \`agentRunId\` is the run id to look up there (null for chats that never reached the agent).`,
   inputSchema: {
@@ -29,7 +29,7 @@ WHEN TO USE: After \`list-agent-chats\`, read the transcript. Token/cost data fo
     const [chat] = await db
       .select()
       .from(schema.chats)
-      .where(eq(schema.chats.id, chatId))
+      .where(and(eq(schema.chats.id, chatId), adminReadableChat()))
       .limit(1)
 
     if (!chat) {
