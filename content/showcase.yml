@@ -51,6 +51,12 @@ websites:
       userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36'
       styles: ['#axeptio_overlay { display: none !important; }']
       delay: 3
+  - name: Prada
+    url: https://www.prada.com/gb/en.html
+    screenshotOptions:
+      userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36'
+      styles: ['#__tealiumGDPRecModal { display: none !important; }']
+      delay: 3
   # - name: BackMarket
   #   url: https://www.backmarket.com/
   - name: Mc Donalds France
