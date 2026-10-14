@@ -45,6 +45,12 @@ websites:
     screenshotOptions:
       cookies: ['OptanonAlertBoxClosed=2025-05-02T22:04:35.770Z;']
       delay: 0.5
+  - name: Malt
+    url: https://www.malt.com/
+    screenshotOptions:
+      userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36'
+      styles: ['#axeptio_overlay { display: none !important; }']
+      delay: 3
   # - name: BackMarket
   #   url: https://www.backmarket.com/
   - name: Mc Donalds France
