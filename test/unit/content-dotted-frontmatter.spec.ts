@@ -1,11 +1,25 @@
 import { generateNavigation } from 'comark-content/utils'
-import { describe, expect, it } from 'vitest'
+import { afterEach, describe, expect, it } from 'vitest'
 import { dottedFrontmatter, hoistNavigationPrefix, unflattenDotted } from '../../server/utils/content/plugins/dotted-frontmatter'
 
 /** Minimal `ContentFile` for `file:parsed` — only what `dottedFrontmatter()` reads. */
 function file(stem: string, data: Record<string, unknown>, extension = '.md') {
   return { path: `/${stem}`, data, meta: { key: stem, source: 'docs', stem, extension, kind: 'document' as const, type: '', partial: false }, nodes: [] }
 }
+
+/** Fails if `result` or `Object.prototype` picked up `draft` from the payload. */
+function expectNoPollution(result: Record<string, unknown>) {
+  expect(({} as Record<string, unknown>).draft).toBeUndefined()
+  expect(Object.getPrototypeOf(result)).toBe(Object.prototype)
+  const keys: string[] = []
+  for (const key in result) keys.push(key)
+  expect(keys).toEqual(Object.keys(result))
+}
+
+// A regression would otherwise leak `draft` into every later test in this worker.
+afterEach(() => {
+  delete (Object.prototype as Record<string, unknown>).draft
+})
 
 describe('unflattenDotted', () => {
   it('expands a dotted key into a nested object', () => {
@@ -37,6 +51,36 @@ describe('unflattenDotted', () => {
     expect(unflattenDotted({ title: 'Utils', icon: 'i-lucide-square-function' }))
       .toEqual({ title: 'Utils', icon: 'i-lucide-square-function' })
   })
+
+  it('drops a __proto__.draft key instead of writing to Object.prototype', () => {
+    const result = unflattenDotted({ 'title': 'Page', '__proto__.draft': true })
+
+    expect(result).toEqual({ title: 'Page' })
+    expectNoPollution(result)
+  })
+
+  it('drops a constructor.prototype.draft key', () => {
+    const result = unflattenDotted({ 'title': 'Page', 'constructor.prototype.draft': true })
+
+    expect(result).toEqual({ title: 'Page' })
+    expectNoPollution(result)
+  })
+
+  it('drops a __proto__ segment nested under a real parent', () => {
+    const result = unflattenDotted({ 'navigation.icon': 'i-lucide-cog', 'navigation.__proto__.draft': true })
+
+    expect(result).toEqual({ navigation: { icon: 'i-lucide-cog' } })
+    expectNoPollution(result)
+    expectNoPollution(result.navigation as Record<string, unknown>)
+  })
+
+  it('skips a plain top-level __proto__ key', () => {
+    // `JSON.parse` keeps `__proto__` as an own key, like the YAML frontmatter parser.
+    const result = unflattenDotted(JSON.parse('{ "title": "Page", "__proto__": { "draft": true } }'))
+
+    expect(result).toEqual({ title: 'Page' })
+    expectNoPollution(result)
+  })
 })
 
 describe('hoistNavigationPrefix', () => {
@@ -53,6 +97,20 @@ describe('hoistNavigationPrefix', () => {
   it('leaves an unrelated navigation: false untouched', () => {
     expect(hoistNavigationPrefix({ icon: 'i-lucide-triangle-alert', navigation: false }))
       .toEqual({ icon: 'i-lucide-triangle-alert', navigation: false })
+  })
+
+  it('skips navigation.__proto__ instead of swapping the prototype', () => {
+    const result = hoistNavigationPrefix({ 'title': 'Utils', 'navigation.__proto__': { draft: true } })
+
+    expect(result).toEqual({ title: 'Utils' })
+    expectNoPollution(result)
+  })
+
+  it('skips a plain top-level __proto__ key', () => {
+    const result = hoistNavigationPrefix(JSON.parse('{ "title": "Utils", "__proto__": { "draft": true } }'))
+
+    expect(result).toEqual({ title: 'Utils' })
+    expectNoPollution(result)
   })
 })
 
@@ -91,6 +149,21 @@ describe('dottedFrontmatter() plugin', () => {
     fireFileParsed(ctx)
 
     expect(ctx.file.data).toEqual({ title: 'Utils', icon: 'i-lucide-square-function' })
+  })
+
+  it('drops navigation.__proto__ keys in a .navigation.yml', () => {
+    const { fireFileParsed } = setupPlugin()
+    const ctx = { file: file('4.api/3.utils/.navigation', {
+      'title': 'Utils',
+      'navigation.icon': 'i-lucide-square-function',
+      'navigation.__proto__': { draft: true },
+      'navigation.__proto__.draft': true
+    }, '.yml') }
+
+    fireFileParsed(ctx)
+
+    expect(ctx.file.data).toEqual({ title: 'Utils', icon: 'i-lucide-square-function' })
+    expectNoPollution(ctx.file.data)
   })
 
   it('ignores a null file (a rejected parse)', () => {
