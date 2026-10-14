@@ -377,6 +377,12 @@ export function useNuxiChat(options: UseNuxiChatOptions) {
     })
   })
 
+  // The server can stop a turn at the daily limit; resync so the limit banner shows.
+  watch(() => eveChat.status, (status, previous) => {
+    const wasBusy = previous === 'submitted' || previous === 'streaming'
+    if (wasBusy && status !== 'submitted' && status !== 'streaming') agent.refreshUsage()
+  })
+
   const chat = {
     get messages() {
       return eveChat.messages

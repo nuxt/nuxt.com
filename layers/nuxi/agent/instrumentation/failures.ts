@@ -1,5 +1,4 @@
 import { defineInstrumentation } from 'eve/instrumentation'
-import { isRateLimitedError } from '../lib/rate-limit-error.js'
 
 interface ToolCallState {
   toolName: string
@@ -52,10 +51,6 @@ export default defineInstrumentation({
       })
     },
     'turn.failed': (event) => {
-      if (isRateLimitedError(event.error)) {
-        console.warn('[nuxi:turn] rate limited', { sessionId: event.sessionId, turnId: event.turnId })
-        return
-      }
       console.error('[nuxi:turn] failed', {
         sessionId: event.sessionId,
         turnId: event.turnId,
@@ -63,7 +58,6 @@ export default defineInstrumentation({
       })
     },
     'session.failed': (event) => {
-      if (isRateLimitedError(event.error)) return
       console.error('[nuxi:session] failed', {
         sessionId: event.sessionId,
         turnId: event.turnId,

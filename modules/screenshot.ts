@@ -17,6 +17,12 @@ interface ScreenshotOptions {
 
 const CONTENT_DIR = join(process.cwd(), 'content')
 
+/**
+ * Chromium fails to resolve these hosts, so a listed site can't navigate or redirect the capture to local services.
+ * Patterns match `host:port`; `[*` covers every IPv6 literal.
+ */
+const LOCAL_HOSTS = ['localhost', '*.localhost', '[*', '0.*', '127.*', '10.*', '169.254.*', '192.168.*', ...Array.from({ length: 16 }, (_, i) => `172.${16 + i}.*`)]
+
 /** Every `.yml` directly under `content/<dir>` (`templates/`, `video-courses/`), parsed. */
 async function readYamlDir(dir: string): Promise<ScreenshotOptions[]> {
   const path = join(CONTENT_DIR, dir)
@@ -33,7 +39,10 @@ async function capture(url: string, filename: string, label: string, options: Re
   console.log(`Generating screenshot for ${label} hitting ${url}...`)
   await captureWebsite.file(url, filename, {
     ...options,
-    launchOptions: { headless: true },
+    launchOptions: {
+      headless: true,
+      args: [`--host-resolver-rules=${LOCAL_HOSTS.map(host => `MAP ${host} ~NOTFOUND`).join(', ')}`]
+    },
     width: 1280,
     height: 720,
     type: 'webp'
@@ -41,11 +50,13 @@ async function capture(url: string, filename: string, label: string, options: Re
 }
 
 /**
- * Screenshots for templates, video courses and showcase sites — build-time only, no runtime
- * impact. Reads `content/` directly (no content hook to plug into any more): skips anything
- * whose `.webp` already exists, so this is a no-op for every entry already committed.
+ * Screenshots for templates, video courses and showcase sites — `nuxt dev` only, so CI and
+ * builds never open contributed URLs. Reads `content/` directly (no content hook to plug into
+ * any more): skips anything whose `.webp` already exists, so this is a no-op for every entry already committed.
  */
-export default defineNuxtModule(async () => {
+export default defineNuxtModule(async (_options, nuxt) => {
+  if (!nuxt.options.dev || nuxt.options._prepare) return
+
   const templates = await readYamlDir('templates')
   for (const template of templates) {
     const url = template.screenshotUrl || template.demo

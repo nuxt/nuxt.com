@@ -1,4 +1,6 @@
 <script setup lang="ts">
+defineOptions({ inheritAttrs: false })
+
 /**
  * Prop is `slug` (catalog slug), not `name`, so Vue Router's NuxtLink never receives a `name` prop
  * (named route), which was hiding the title line when `npm` was absent.

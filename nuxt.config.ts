@@ -182,6 +182,9 @@ export default defineNuxtConfig({
     '/dashboard/**': { ssr: false },
     '/_eve_internal/**': { headers: { 'cache-control': 'no-store' } },
     '/api/internal/**': { headers: { 'cache-control': 'no-store' } },
+    // Static image: nothing in it should ever run, even when opened directly
+    // TODO: remove once @nuxtjs/mcp-toolkit ships nuxt-modules/mcp-toolkit#387, which sends this header itself
+    '/mcp/badge.svg': { headers: { 'content-security-policy': 'default-src \'none\'; style-src \'unsafe-inline\'; sandbox' } },
     // Main navigation
     '/api/navigation/**': { isr: CONTENT_ISR },
     '/api/content/blob/**': { isr: true },
