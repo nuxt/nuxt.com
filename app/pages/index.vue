@@ -132,9 +132,6 @@ const groupedFoundationItems = computed(() => {
 
 // Embla writes inline transforms on init, which @nuxt/hints flags as a hydration mismatch.
 const isMounted = useMounted()
-
-// The eight logos only fit on one row from `lg`; below that they scroll in a marquee.
-const isMobile = useMediaQuery('(max-width: 1023.98px)')
 </script>
 
 <template>
@@ -230,27 +227,7 @@ const isMobile = useMediaQuery('(max-width: 1023.98px)')
             <UIcon name="i-lucide-arrow-right" class="size-4 opacity-0 -translate-x-1 transition-[opacity,translate] duration-200 group-hover:opacity-100 group-hover:translate-x-0 group-focus-visible:opacity-100 group-focus-visible:translate-x-0 pointer-coarse:opacity-100 pointer-coarse:translate-x-0" />
           </NuxtLink>
         </h2>
-        <UPageLogos :marquee="isMobile" :ui="{ logos: isMobile ? 'mt-0' : 'mt-0 justify-between [--gap:--spacing(6)]' }">
-          <Motion
-            v-for="(company, index) in (pageData?.logos.companies as any[])"
-            :key="company.alt"
-            as-child
-            :initial="{ opacity: 0, transform: 'translateY(20px)' }"
-            :while-in-view="{ opacity: 1, transform: 'translateY(0)' }"
-            :transition="{ delay: 0.4 + 0.2 * index }"
-            :in-view-options="{ once: true }"
-          >
-            <NuxtLink :to="company.url" target="_blank" class="group opacity-0 shrink-0">
-              <BrandLogo
-                :src="company.src"
-                :alt="company.alt"
-                :height="company.height"
-                :width="company.width"
-                class="h-6 max-w-[140px] text-muted transition-colors group-hover:text-highlighted"
-              />
-            </NuxtLink>
-          </Motion>
-        </UPageLogos>
+        <HomeLogoCarousel :companies="pageData.logos.companies" />
       </div>
     </UPageSection>
     <UPageSection
