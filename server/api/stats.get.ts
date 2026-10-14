@@ -1,30 +1,33 @@
 import type { Stats } from '#shared/types'
+import type { NpmDownloadStats } from '../types/npm'
 import { satisfies } from 'verkit'
 
-// The same 30-day window as npm's `last-month`, shifted back one year.
-function lastMonthAYearAgo() {
+// The window npm used for `last-month`, shifted back one year.
+function lastMonthAYearAgo({ start, end }: NpmDownloadStats) {
   const day = 24 * 60 * 60 * 1000
-  const end = new Date(Date.now() - day)
-  end.setUTCFullYear(end.getUTCFullYear() - 1)
-  const start = new Date(end.getTime() - 29 * day)
-  return `${start.toISOString().slice(0, 10)}:${end.toISOString().slice(0, 10)}` as const
+  const endDate = end ? new Date(`${end}T00:00:00Z`) : new Date(Date.now() - day)
+  const startDate = start ? new Date(`${start}T00:00:00Z`) : new Date(endDate.getTime() - 29 * day)
+  startDate.setUTCFullYear(startDate.getUTCFullYear() - 1)
+  endDate.setUTCFullYear(endDate.getUTCFullYear() - 1)
+  return `${startDate.toISOString().slice(0, 10)}:${endDate.toISOString().slice(0, 10)}` as const
 }
 
 export default cachedEventHandler(async (event) => {
   const repo = await github.fetchRepo(event, 'nuxt', 'nuxt')
-  const [npmData, { downloads }, { downloads: downloadsLastYear }, modules] = await Promise.all([
+  const [npmData, lastMonth, modules] = await Promise.all([
     npm.fetchPackageVersion('nuxt', 'latest'),
     npm.fetchPackageStats('nuxt'),
-    npm.fetchPackageStats('nuxt', lastMonthAYearAgo()),
     fetchModules(event).then(modules => modules || []).catch(() => [])
   ])
+  const lastYear = await npm.fetchPackageStats('nuxt', lastMonthAYearAgo(lastMonth))
+  const version = npmData!.version
 
   return {
     ...repo,
-    version: npmData!.version,
-    monthlyDownloads: downloads,
-    monthlyDownloadsLastYear: downloadsLastYear,
-    modules: modules.filter(module => satisfies('3.999.999', module.compatibility.nuxt)).length
+    version,
+    monthlyDownloads: lastMonth.downloads,
+    monthlyDownloadsLastYear: lastYear.downloads,
+    modules: modules.filter(module => satisfies(version, module.compatibility.nuxt)).length
   } satisfies Stats
 }, {
   name: 'stats',
