@@ -1,4 +1,4 @@
-import type { UIMessage } from 'ai'
+import type { FileUIPart, UIMessage } from 'ai'
 import { format } from 'date-fns'
 
 export function dbRowsToUIMessages(rows: ChatMessageRow[]): UIMessage[] {
@@ -27,7 +27,10 @@ export function titleFromParts(parts: UIMessage['parts']): string {
     .join(' ')
     .trim()
 
-  if (!text) return 'Untitled'
+  if (!text) {
+    const file = parts.find((part): part is FileUIPart => part.type === 'file')
+    return file?.filename ?? 'Untitled'
+  }
   return text.length > 40 ? `${text.slice(0, 37)}…` : text
 }
 

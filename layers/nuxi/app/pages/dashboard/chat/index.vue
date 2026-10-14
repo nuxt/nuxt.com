@@ -16,7 +16,6 @@ const {
   onSubmit,
   handlePaste,
   removeAttachment,
-  restoreToInput,
   createFromSuggestion
 } = useStartChat('dashboard-home')
 
@@ -97,7 +96,6 @@ const suggestions = [
                   @submit="onSubmit"
                   @paste="handlePaste"
                   @remove-attachment="removeAttachment"
-                  @restore-attachment="restoreToInput"
                 />
               </div>
             </template>
@@ -116,7 +114,6 @@ const suggestions = [
               @submit="onSubmit"
               @paste="handlePaste"
               @remove-attachment="removeAttachment"
-              @restore-attachment="restoreToInput"
             />
           </div>
 
