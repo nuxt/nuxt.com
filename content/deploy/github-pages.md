@@ -27,6 +27,8 @@ Follow the steps to [create a GitHub Pages site](https://docs.github.com/en/page
 
 Here is an example GitHub Actions workflow to deploy your site to GitHub Pages using the `github_pages` preset:
 
+<!-- Supported Node versions: https://github.com/actions/setup-node#supported-version-syntax -->
+
 ```yaml [.github/workflows/deploy.yml]
 # https://github.com/actions/deploy-pages#usage
 name: Deploy to GitHub Pages
@@ -39,16 +41,18 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - run: corepack enable
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
         with:
-          node-version: "20"
+          persist-credentials: false
+      - run: corepack enable
+      - uses: actions/setup-node@v7
+        with:
+          node-version: "24"
       # Pick your own package manager and build script
       - run: npm install
       - run: npx nuxt build --preset github_pages
       - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-pages-artifact@v5
         with:
           path: ./.output/public
   # Deployment job
@@ -68,7 +72,7 @@ jobs:
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5
 ```
 
 ::read-more{to="https://nitro.unjs.io/deploy/providers/github-pages" target="_blank"}
