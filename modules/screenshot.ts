@@ -41,7 +41,11 @@ async function capture(url: string, filename: string, label: string, options: Re
     ...options,
     launchOptions: {
       headless: true,
-      args: [`--host-resolver-rules=${LOCAL_HOSTS.map(host => `MAP ${host} ~NOTFOUND`).join(', ')}`]
+      args: [
+        `--host-resolver-rules=${LOCAL_HOSTS.map(host => `MAP ${host} ~NOTFOUND`).join(', ')}`,
+        // Some sites render an error page instead of their homepage when `navigator.webdriver` is set.
+        '--disable-blink-features=AutomationControlled'
+      ]
     },
     width: 1280,
     height: 720,
