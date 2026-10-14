@@ -20,10 +20,12 @@ websites:
     url: https://traderepublic.com/
     screenshotOptions:
       cookies: ['analytics=grant;', 'marketing=grant;']
-  - name: Armani
-    url: https://www.armani.com/
+  - name: Prada
+    url: https://www.prada.com/gb/en.html
     screenshotOptions:
-      cookies: ['OptanonAlertBoxClosed=2025-05-02T22:04:35.770Z;']
+      userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36'
+      styles: ['#__tealiumGDPRecModal { display: none !important; }']
+      delay: 3
   - name: NASA Jet Propulsion Laboratory
     url: https://jpl.nasa.gov/
   - name: Google Ventures
@@ -51,6 +53,10 @@ websites:
       userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36'
       styles: ['#axeptio_overlay { display: none !important; }']
       delay: 3
+  - name: Armani
+    url: https://www.armani.com/
+    screenshotOptions:
+      cookies: ['OptanonAlertBoxClosed=2025-05-02T22:04:35.770Z;']
   # - name: BackMarket
   #   url: https://www.backmarket.com/
   - name: Mc Donalds France
