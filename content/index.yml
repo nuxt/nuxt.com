@@ -237,34 +237,42 @@ logos:
   companies:
     - src: /assets/brands/louis-vuitton.svg
       alt: Louis Vuitton
+      url: https://eu.louisvuitton.com/
       height: 16
       width: 152
     - src: /assets/brands/dassault-systemes.svg
       alt: Dassault Systemes
+      url: https://www.3ds.com/
       height: 28
       width: 93
     - src: /assets/brands/backmarket.svg
       alt: Back Market
+      url: https://www.backmarket.com/
       height: 18
       width: 161
     - src: /assets/brands/paul-smith.svg
       alt: Paul Smith
+      url: https://www.paulsmith.com/
       height: 26
       width: 144
     - src: /assets/brands/caudalie.svg
       alt: Caudalie
+      url: https://us.caudalie.com/
       height: 28
       width: 136
     - src: /assets/brands/blizzard.svg
       alt: Blizzard
+      url: https://www.blizzard.com/
       height: 28
       width: 55
     - src: /assets/brands/vans.svg
       alt: Vans
+      url: https://www.vans.com/
       height: 23
       width: 67
     - src: /assets/brands/deutsche-bahn.svg
       alt: Deutsche Bahn
+      url: https://www.bahn.de/
       height: 40
       width: 51
 features:
