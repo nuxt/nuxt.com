@@ -34,8 +34,9 @@ const modules = computed(() => [
 </script>
 
 <template>
-  <div class="flex flex-col rounded-lg border border-default bg-elevated/50 overflow-hidden">
-    <NuxtLink :to="path" class="flex items-center gap-3 p-3 hover:bg-elevated transition-colors">
+  <!-- One link for the whole card: no inner links or buttons -->
+  <NuxtLink :to="path" class="flex flex-col rounded-lg border border-default bg-elevated/50 overflow-hidden hover:bg-elevated transition-colors">
+    <div class="flex items-center gap-3 p-3">
       <!-- UAvatar renders with <NuxtImg> (IPX): the source path, not an IPX URL -->
       <UAvatar
         :src="`/gh_avatar/${username}`"
@@ -53,35 +54,25 @@ const modules = computed(() => [
           · <span class="font-medium text-highlighted">{{ format(score) }}</span> pts
         </p>
       </div>
-    </NuxtLink>
+    </div>
 
-    <ul class="grid grid-cols-2 sm:grid-cols-4 gap-x-3 gap-y-1.5 px-3 pb-3 text-xs text-muted" aria-label="Contributions">
-      <li v-for="stat in stats" :key="stat.icon" class="flex items-center gap-1.5 min-w-0">
+    <!-- Icons only: the label is for screen readers and the tooltip -->
+    <ul class="grid grid-cols-4 gap-x-3 px-3 pb-3 text-xs" aria-label="Contributions">
+      <li v-for="stat in stats" :key="stat.icon" class="flex items-center gap-1.5 min-w-0" :title="`${format(stat.value)} ${stat.label}`">
         <UIcon :name="stat.icon" class="size-3.5 shrink-0" :class="stat.text" aria-hidden="true" />
-        <span class="truncate"><span class="font-medium text-highlighted tabular-nums">{{ format(stat.value) }}</span> {{ stat.label }}</span>
+        <span class="font-medium text-highlighted tabular-nums truncate">{{ format(stat.value) }}<span class="sr-only"> {{ stat.label }}</span></span>
       </li>
     </ul>
 
-    <div class="flex items-center gap-2 px-3 py-1.5 border-t border-default">
-      <div class="flex flex-wrap items-center gap-x-2.5 gap-y-1 text-[11px] text-muted flex-1 min-w-0">
-        <span v-if="modules" class="flex items-center gap-1">
-          <UIcon name="i-lucide-puzzle" class="size-3" />
-          {{ modules }}
-        </span>
-        <span v-for="hackathon in hackathons" :key="hackathon" class="flex items-center gap-1">
-          <UIcon name="i-lucide-trophy" class="size-3" />
-          {{ hackathon }}
-        </span>
-      </div>
-
-      <UButton
-        icon="i-lucide-arrow-right"
-        label="Profile"
-        size="xs"
-        color="primary"
-        variant="soft"
-        :to="path"
-      />
+    <div v-if="modules || hackathons.length" class="flex flex-wrap items-center gap-x-2.5 gap-y-1 px-3 py-1.5 border-t border-default text-[11px] text-muted">
+      <span v-if="modules" class="flex items-center gap-1">
+        <UIcon name="i-lucide-puzzle" class="size-3" />
+        {{ modules }}
+      </span>
+      <span v-for="hackathon in hackathons" :key="hackathon" class="flex items-center gap-1">
+        <UIcon name="i-lucide-trophy" class="size-3" />
+        {{ hackathon }}
+      </span>
     </div>
-  </div>
+  </NuxtLink>
 </template>
