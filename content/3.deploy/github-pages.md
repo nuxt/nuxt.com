@@ -56,8 +56,10 @@ jobs:
           node-version: "20"
       # Pick your own package manager and build script
       - run: npm install
-      # Use NUXT_APP_BASE_URL="" if your GitHub Pages is configured for a custom domain
-      - run: NUXT_APP_BASE_URL="/${GITHUB_REPOSITORY##*/}/" npx nuxt build --preset github_pages
+      # Drop the env var below if your GitHub Pages is configured for a custom domain
+      - run: npx nuxt build --preset github_pages
+        env:
+          NUXT_APP_BASE_URL: /${{ github.event.repository.name }}/
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
