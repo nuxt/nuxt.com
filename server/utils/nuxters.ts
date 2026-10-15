@@ -293,6 +293,11 @@ async function importProfiles(source: NuxtersSource, force?: boolean): Promise<n
   if (!force && last?.sha === file.sha) return null
 
   const rows = parseNuxterProfilesFile(await source.read(file))
+  // Thousands of contributors set links: an empty file is a broken collection, keep the current ones.
+  if (!rows.length) {
+    console.warn(`[nuxters] ${NUXTERS_PROFILES_FILE} at ${source.commitSha} has no profiles, keeping the current links`)
+    return null
+  }
   const syncedAt = new Date()
   const statements: BatchItem<'sqlite'>[] = [db.delete(schema.nuxterProfiles)]
   for (let index = 0; index < rows.length; index += INSERT_CHUNK_SIZE) {

@@ -21,8 +21,9 @@ const modulesIndex = cachedFunction(async (event: H3Event): Promise<NuxterModule
     if (!module.stats) continue
     const { name, description, repo, npm, icon, website, category, type, sponsor, stats } = module
     index.modules[name] = { name, description, repo, npm, icon, website, category, type, sponsor, stats }
+    // The modules list is external data: skip a maintainer without a GitHub username.
     for (const maintainer of module.maintainers ?? []) {
-      (index.maintainers[maintainer.github.toLowerCase()] ??= []).push(name)
+      if (maintainer.github) (index.maintainers[maintainer.github.toLowerCase()] ??= []).push(name)
     }
     for (const contributor of module.contributors ?? []) {
       (index.contributors[String(contributor.id)] ??= []).push(name)

@@ -49,7 +49,7 @@ const links = computed(() => {
   const username = nuxter.value!.username
   const profile = nuxter.value?.links
   const rel = 'me nofollow noopener noreferrer'
-  return [
+  const all = [
     { url: `https://github.com/${username}`, label: `github.com/${username}`, icon: 'i-simple-icons-github', rel: 'me noopener' },
     ...(profile?.website ? [{ url: profile.website, label: 'Website', icon: 'i-lucide-globe', rel }] : []),
     ...(profile?.socialAccounts ?? []).map(account => ({
@@ -59,6 +59,8 @@ const links = computed(() => {
       rel
     }))
   ]
+  // A website can also be a social account: one icon per URL, the first wins.
+  return all.filter((link, index) => all.findIndex(other => other.url === link.url) === index)
 })
 
 const since = computed(() => {
