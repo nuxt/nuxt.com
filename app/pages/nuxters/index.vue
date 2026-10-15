@@ -98,10 +98,12 @@ const breakdown = computed(() => {
 
 <template>
   <UPage>
+    <!-- Out of scroll anchoring: the card swaps in after hydration, a `#leaderboard` arrival stays on the leaderboard -->
     <UPageHero
       :title="heroTitle"
       :description="heroDescription"
       orientation="horizontal"
+      class="[overflow-anchor:none]"
     >
       <ClientOnly>
         <NuxtersMeCard />
@@ -115,7 +117,7 @@ const breakdown = computed(() => {
     <UPageSection
       id="leaderboard"
       :ui="{ container: 'pt-0 sm:pt-0 lg:pt-0 pb-12 sm:pb-16 lg:pb-16' }"
-      class="scroll-mt-20"
+      class="scroll-mt-24"
     >
       <!-- One child: UPageSection spaces each child of its slot as a separate row -->
       <div>
