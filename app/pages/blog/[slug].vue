@@ -153,7 +153,7 @@ const links = [
       </template>
 
       <div class="mt-4 flex flex-wrap items-center gap-6">
-        <UUser v-for="(author, index) in articleData.authors" :key="index" v-bind="author" :description="author.to ? `@${author.to.split('/').pop()}` : undefined" />
+        <UUser v-for="(author, index) in articleData.authors" :key="index" v-bind="pickUser(author)" :description="author.to ? `@${author.to.split('/').pop()}` : undefined" />
       </div>
     </UPageHeader>
 

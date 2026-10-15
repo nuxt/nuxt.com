@@ -84,7 +84,7 @@ await fetchList()
               alt: `${article.title} image`
             }"
             :date="formatDateByLocale('en', article.date)"
-            :authors="article.authors.map(author => ({ ...author, avatar: { ...author.avatar, alt: `${author.name} avatar` } }))"
+            :authors="article.authors.map(author => pickUser({ ...author, avatar: { ...author.avatar, alt: `${author.name} avatar` } }))"
             :badge="{ label: article.category, color: 'primary', variant: 'subtle' }"
             :variant="index === 0 ? 'outline' : 'subtle'"
             :orientation="index === 0 ? 'horizontal' : 'vertical'"

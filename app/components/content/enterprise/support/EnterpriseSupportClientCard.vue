@@ -46,7 +46,7 @@ defineProps<{
 
       <ul class="flex gap-x-1 flex-wrap gap-2">
         <li v-for="achievement in achievements" :key="achievement.label">
-          <UBadge v-bind="achievement" variant="subtle" />
+          <UBadge :label="achievement.label" :color="achievement.color" variant="subtle" />
         </li>
       </ul>
     </div>
