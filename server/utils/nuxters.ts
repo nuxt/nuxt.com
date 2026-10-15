@@ -138,6 +138,26 @@ export const nuxters = {
     return new Map(rows.map(row => [row.usernameLower, row.score]))
   },
 
+  /**
+   * Which of these people have a Nuxter profile: GitHub ids (stable across renames) and lowercased usernames
+   * (for lists that only have the login, like module maintainers). Looked up 100 at a time: D1 binds 100 values at most.
+   */
+  async known({ githubIds = [], usernames = [] }: { githubIds?: number[], usernames?: string[] }): Promise<{ githubIds: Set<number>, usernames: Set<string> }> {
+    const chunks = <T>(values: T[]) => Array.from({ length: Math.ceil(values.length / 100) }, (_, index) => values.slice(index * 100, index * 100 + 100))
+    const ids = [...new Set(githubIds.filter(id => Number.isSafeInteger(id)))]
+    const logins = [...new Set(usernames.map(username => username.toLowerCase()))]
+    const rows = await Promise.all([
+      ...chunks(ids).map(chunk => db.select({ githubId: schema.nuxters.githubId, usernameLower: schema.nuxters.usernameLower }).from(schema.nuxters)
+        .where(and(eq(schema.nuxters.period, 'all'), inArray(schema.nuxters.githubId, chunk)))),
+      ...chunks(logins).map(chunk => db.select({ githubId: schema.nuxters.githubId, usernameLower: schema.nuxters.usernameLower }).from(schema.nuxters)
+        .where(and(eq(schema.nuxters.period, 'all'), inArray(schema.nuxters.usernameLower, chunk))))
+    ])
+    return {
+      githubIds: new Set(rows.flat().map(row => row.githubId)),
+      usernames: new Set(rows.flat().map(row => row.usernameLower))
+    }
+  },
+
   /** The imported period files, one per period. */
   async syncs() {
     const syncs = await db.select().from(schema.nuxtersSyncs)
