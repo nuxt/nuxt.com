@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { NuxterMe } from '#shared/types'
+import { NUXTERS_ME_CARD_CLASS } from '~/utils/nuxters-me-card'
 import { NUXTERS_HACKATHONS } from '#shared/utils/nuxters'
 
 const { loggedIn } = useUserSession()
@@ -7,7 +8,9 @@ const route = useRoute()
 const toast = useToast()
 const { format } = new Intl.NumberFormat('en-US')
 
-const { data: me, status } = await useFetch<NuxterMe>('/api/me/nuxter', {
+// Not awaited: the card mounts after hydration (ClientOnly), an await would render nothing until the
+// request ends. The skeleton shows instead, at the same height.
+const { data: me, status } = useFetch<NuxterMe>('/api/me/nuxter', {
   key: 'nuxters-me',
   server: false,
   immediate: loggedIn.value,
@@ -51,8 +54,10 @@ onMounted(() => {
 </script>
 
 <template>
-  <UPageCard variant="subtle" class="w-full">
-    <div v-if="!loggedIn" class="flex flex-col items-center gap-4 py-6 text-center">
+  <!-- Loading shows NuxtersMeCardSkeleton: same card and minimum height, the hero does not move -->
+  <NuxtersMeCardSkeleton v-if="loggedIn && (status !== 'success' || !me)" />
+  <UPageCard v-else variant="subtle" :class="NUXTERS_ME_CARD_CLASS" :ui="{ container: 'h-full', wrapper: 'h-full' }">
+    <div v-if="!loggedIn || !me" class="flex flex-col items-center justify-center gap-4 h-full text-center">
       <UIcon name="i-simple-icons-github" class="size-8" />
       <p class="text-lg font-medium text-highlighted">
         Discover your contributions
@@ -67,17 +72,6 @@ onMounted(() => {
         to="/api/auth/github?redirect=/nuxters"
         external
       />
-    </div>
-
-    <div v-else-if="status !== 'success' || !me" class="flex flex-col gap-4">
-      <div class="flex items-center gap-4">
-        <USkeleton class="size-16 rounded-full" />
-        <div class="flex flex-col gap-2">
-          <USkeleton class="h-5 w-40" />
-          <USkeleton class="h-4 w-24" />
-        </div>
-      </div>
-      <USkeleton class="h-24 w-full" />
     </div>
 
     <div v-else class="flex flex-col gap-6">
@@ -148,26 +142,21 @@ onMounted(() => {
         </p>
       </div>
 
-      <!-- Sharing is the reward of an unlocked badge: the all-time profile, the card does not follow the leaderboard period -->
-      <div v-if="me.nuxter && badges.length" class="flex flex-col gap-2 pt-4 border-t border-default">
-        <p class="text-sm text-muted">
-          Share your Nuxter profile, or show your card on your GitHub profile.
-        </p>
-        <NuxtersShare :username="me.nuxter.username" />
-      </div>
-
-      <div v-if="me.discord.enabled && badges.length" class="flex flex-wrap items-center gap-3 pt-4 border-t border-default">
-        <UButton
-          :label="me.discord.username ? 'Sync Discord roles' : 'Unlock Discord roles'"
-          icon="i-simple-icons-discord"
-          color="neutral"
-          :variant="me.discord.username ? 'outline' : 'solid'"
-          to="/api/auth/discord"
-          external
-        />
-        <span v-if="me.discord.username" class="text-sm text-muted">
-          Linked as <span class="text-highlighted">{{ me.discord.username }}</span>
-        </span>
+      <!-- One row of actions, unlocked with a badge: the card keeps its height with or without Discord.
+           Sharing is the all-time profile: the card does not follow the leaderboard period. -->
+      <div v-if="me.nuxter && badges.length" class="flex flex-wrap items-center gap-2 pt-4 border-t border-default">
+        <UTooltip v-if="me.discord.enabled" :text="me.discord.username ? `Linked as ${me.discord.username}` : 'Get your roles on the Nuxt Discord server'">
+          <UButton
+            :label="me.discord.username ? 'Sync Discord roles' : 'Unlock Discord roles'"
+            icon="i-simple-icons-discord"
+            color="neutral"
+            :variant="me.discord.username ? 'soft' : 'solid'"
+            size="sm"
+            to="/api/auth/discord"
+            external
+          />
+        </UTooltip>
+        <NuxtersShare :username="me.nuxter.username" :periods="me.nuxter.periods.map(row => row.period)" class="contents" />
       </div>
     </div>
   </UPageCard>

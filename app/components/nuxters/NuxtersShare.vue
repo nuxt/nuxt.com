@@ -1,21 +1,34 @@
 <script setup lang="ts">
 import type { NuxtersPeriod } from '#shared/types'
-import { nuxtersPeriodPhrase } from '#shared/utils/nuxters'
+import { nuxtersPeriodLabel, nuxtersPeriodPhrase, sortNuxtersPeriods } from '#shared/utils/nuxters'
 
 const props = defineProps<{
   username: string
   /** The link and the card share the period on screen (all time by default). */
   period?: NuxtersPeriod
+  /** The periods the user contributed in: the README card can show any of them. */
+  periods?: NuxtersPeriod[]
 }>()
 
 const site = useSiteConfig()
 const { copy } = useClipboard()
 
-const query = computed(() => !props.period || props.period === 'all' ? '' : `?period=${props.period}`)
-const profileUrl = computed(() => `${site.url}/nuxters/${props.username}${query.value}`)
-const cardUrl = computed(() => `${site.url}/nuxters/${props.username}/card.png${query.value}`)
-const alt = computed(() => `${props.username}'s Nuxter profile${query.value ? ` ${nuxtersPeriodPhrase(props.period!)}` : ''}`)
-const markdown = computed(() => `[![${alt.value}](${cardUrl.value})](${profileUrl.value})`)
+const queryOf = (period?: NuxtersPeriod) => !period || period === 'all' ? '' : `?period=${period}`
+const profileUrl = computed(() => `${site.url}/nuxters/${props.username}${queryOf(props.period)}`)
+
+// The README card starts on the period on screen, and can be switched in the modal.
+const open = ref(false)
+const cardPeriod = ref<NuxtersPeriod>(props.period ?? 'all')
+watch(open, (value) => {
+  if (value) cardPeriod.value = props.period ?? 'all'
+})
+const periodItems = computed(() => sortNuxtersPeriods(['all', ...(props.periods ?? [])])
+  .map(value => ({ label: nuxtersPeriodLabel(value), value })))
+const cardQuery = computed(() => queryOf(cardPeriod.value))
+const cardProfileUrl = computed(() => `${site.url}/nuxters/${props.username}${cardQuery.value}`)
+const cardUrl = computed(() => `${site.url}/nuxters/${props.username}/card.png${cardQuery.value}`)
+const alt = computed(() => `${props.username}'s Nuxter profile${cardQuery.value ? ` ${nuxtersPeriodPhrase(cardPeriod.value)}` : ''}`)
+const markdown = computed(() => `[![${alt.value}](${cardUrl.value})](${cardProfileUrl.value})`)
 </script>
 
 <template>
@@ -30,6 +43,7 @@ const markdown = computed(() => `[![${alt.value}](${cardUrl.value})](${profileUr
     />
 
     <UModal
+      v-model:open="open"
       title="Add your Nuxter card to GitHub"
       description="Paste this Markdown in your GitHub profile README. The card updates every day."
       :ui="{ content: 'sm:max-w-2xl' }"
@@ -38,7 +52,12 @@ const markdown = computed(() => `[![${alt.value}](${cardUrl.value})](${profileUr
 
       <template #body>
         <div class="flex flex-col gap-4">
+          <UFormField v-if="periodItems.length > 1" label="Period" orientation="horizontal" :ui="{ container: 'w-44' }">
+            <USelect v-model="cardPeriod" :items="periodItems" class="w-full" />
+          </UFormField>
+          <!-- Keyed by period: the previous card does not stay on screen while the new one loads -->
           <img
+            :key="cardUrl"
             :src="cardUrl"
             :alt="`${username}'s Nuxter card`"
             width="1200"

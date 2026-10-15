@@ -108,12 +108,15 @@ const breakdown = computed(() => {
       <template #headline>
         <UBadge label="Updated every day" icon="i-lucide-refresh-cw" variant="subtle" />
       </template>
-      <ClientOnly>
-        <NuxtersMeCard />
-        <template #fallback>
-          <USkeleton class="h-64 w-full rounded-lg" />
-        </template>
-      </ClientOnly>
+      <!-- The card sizes itself from this width: same height signed out, loading and signed in -->
+      <div class="@container">
+        <ClientOnly>
+          <NuxtersMeCard />
+          <template #fallback>
+            <NuxtersMeCardSkeleton />
+          </template>
+        </ClientOnly>
+      </div>
     </UPageHero>
 
     <!-- Right under the hero: the period, search and totals sit on top of the leaderboard -->

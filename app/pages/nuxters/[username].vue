@@ -272,7 +272,7 @@ defineOgImage('Nuxter.takumi', { username, period: () => period.value === 'all' 
                An empty fallback: the default `<span>` would take a gap of the column until hydration. -->
           <ClientOnly>
             <div v-if="isOwner" class="hidden lg:block">
-              <NuxtersShare :username="nuxter.username" :period="period" />
+              <NuxtersShare :username="nuxter.username" :period="period" :periods="available" />
             </div>
             <template #fallback />
           </ClientOnly>
