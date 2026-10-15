@@ -1,7 +1,7 @@
 import { createResolver } from 'nuxt/kit'
 import type { LLMsSection } from 'nuxt-llms'
 import { agentHowToCall, agentWhenToUse } from './shared/utils/agents'
-import { CURRENT_DOCS_VERSION, EXCLUDED_DOC_VERSIONS } from './shared/utils/docs'
+import { ARCHIVED_DOC_VERSIONS, CURRENT_DOCS_VERSION, NEXT_DOC_VERSIONS } from './shared/utils/docs'
 
 const { resolve } = createResolver(import.meta.url)
 
@@ -159,6 +159,7 @@ export default defineNuxtConfig({
     '/modules/**': { isr: 60 * 60 },
     '/changelog': { isr: 60 * 60 },
     '/docs/**': { isr: CONTENT_ISR },
+    '/docs/2.x/**': { robots: 'noindex' },
     '/blog': { isr: CONTENT_ISR },
     '/blog/**': { isr: CONTENT_ISR },
     '/deploy': { isr: CONTENT_ISR },
@@ -192,6 +193,15 @@ export default defineNuxtConfig({
     '/pull/**': { isr: CONTENT_ISR, robots: 'noindex, nofollow' },
     // Redirects
     '/docs': { redirect: '/docs/getting-started/introduction', prerender: false },
+    '/docs/2.x': { redirect: '/docs/2.x/getting-started/installation', prerender: false },
+    '/docs/2.x/getting-started': { redirect: '/docs/2.x/getting-started/installation', prerender: false },
+    '/docs/2.x/directory-structure': { redirect: '/docs/2.x/directory-structure/nuxt', prerender: false },
+    '/docs/2.x/guide': { redirect: '/docs/2.x/guide/concepts/views', prerender: false },
+    '/docs/2.x/guide/concepts': { redirect: '/docs/2.x/guide/concepts/views', prerender: false },
+    '/docs/2.x/api': { redirect: '/docs/2.x/api/configuration/configuration-alias', prerender: false },
+    '/docs/2.x/api/configuration': { redirect: '/docs/2.x/api/configuration/configuration-alias', prerender: false },
+    '/docs/2.x/api/internals': { redirect: '/docs/2.x/api/internals/context', prerender: false },
+    '/docs/2.x/api/components': { redirect: '/docs/2.x/api/components/fetch', prerender: false },
     '/docs/3.x': { redirect: '/docs/3.x/getting-started/introduction', prerender: false },
     '/docs/4.x': { redirect: '/docs/4.x/getting-started/introduction', prerender: false },
     '/docs/5.x': { redirect: '/docs/5.x/getting-started/introduction', prerender: false },
@@ -544,7 +554,9 @@ export default defineNuxtConfig({
     excludePrefixes: {
       extend: [
         // Nightly docs don't negotiate and stay out of sitemap.md / llms.txt (same as robots Disallow below)
-        ...EXCLUDED_DOC_VERSIONS.map(version => `/docs/${version}/`),
+        ...NEXT_DOC_VERSIONS.map(version => `/docs/${version}/`),
+        // Archived docs too, and their `/raw` twins 404: agents never get them
+        ...ARCHIVED_DOC_VERSIONS.map(version => `/docs/${version}/`),
         // Served by its own handler (server/routes/design.md.get.ts).
         '/design.md'
       ]
@@ -721,7 +733,7 @@ export default defineNuxtConfig({
     // The nightly docs version, carried over from the static public/robots.txt
     // this replaces. The agent Allow groups and Content-Signal come from
     // nuxt-agent-discovery through the robots:config hook.
-    disallow: [...EXCLUDED_DOC_VERSIONS.map(version => `/docs/${version}/`), '/pull/']
+    disallow: [...NEXT_DOC_VERSIONS.map(version => `/docs/${version}/`), '/pull/']
   },
   schemaOrg: {
     identity: {

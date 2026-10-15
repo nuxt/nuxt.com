@@ -90,6 +90,7 @@ describe('pullInstanceKey', () => {
   it('maps a base branch to the instance reading it', () => {
     expect(pullInstanceKey('nuxt/nuxt', 'main')).toBe('docs:5.x')
     expect(pullInstanceKey('nuxt/nuxt', '4.x')).toBe('docs:4.x')
+    expect(pullInstanceKey('nuxt/nuxt', '2.x')).toBe('docs:2.x')
     expect(pullInstanceKey('nuxt/nuxt.com', 'main')).toBe('site')
     expect(pullInstanceKey('nuxt/nuxt', 'feat/x')).toBeUndefined()
   })

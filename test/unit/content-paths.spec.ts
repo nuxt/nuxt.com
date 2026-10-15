@@ -73,7 +73,7 @@ describe('isCanonicalDocsPath', () => {
   })
 
   it('rejects stubs and unpublished versions, which must not be indexed', () => {
-    for (const path of ['/docs', '/docs/guide/introduction', '/docs/5.x', '/docs/5.x/guide', '/docs/4.xyz', '/blog']) {
+    for (const path of ['/docs', '/docs/guide/introduction', '/docs/5.x', '/docs/5.x/guide', '/docs/2.x/getting-started/installation', '/docs/4.xyz', '/blog']) {
       expect(isCanonicalDocsPath(path), path).toBe(false)
     }
   })
@@ -87,6 +87,14 @@ describe('isContentInstanceKey', () => {
       expect(isContentInstanceKey(`docs:${version}`)).toBe(true)
       expect(isContentInstanceKey(`cli:${version}`)).toBe(true)
     }
+  })
+
+  it('gives an archived version its docs but no command reference', () => {
+    // Nuxt 2 predates `nuxi`: a `cli:2.x` instance would read a `nuxt/cli` branch that doesn't exist.
+    expect(isContentInstanceKey('docs:2.x')).toBe(true)
+    expect(isContentInstanceKey('cli:2.x')).toBe(false)
+    expect(CONTENT_INSTANCE_KEYS).toContain('docs:2.x')
+    expect(CONTENT_INSTANCE_KEYS).not.toContain('cli:2.x')
   })
 
   it('rejects anything else', () => {

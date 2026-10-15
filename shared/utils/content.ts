@@ -1,4 +1,5 @@
-import { DOC_VERSIONS, isDocVersion, type DocVersion } from './docs'
+import { CLI_DOC_VERSIONS, hasCliDocs, type CliDocVersion } from './cli'
+import { DOC_VERSIONS, hasExamples, isDocVersion, type DocVersion } from './docs'
 
 /**
  * Identifies one of the content instances nuxt.com reads from.
@@ -9,7 +10,7 @@ import { DOC_VERSIONS, isDocVersion, type DocVersion } from './docs'
  *   under the docs URL tree (`/docs/<version>/api/commands`) but its own repo, so its own instance
  * - `examples` the `nuxt/examples` showcase
  */
-export type ContentInstanceKey = 'site' | 'examples' | `docs:${DocVersion}` | `cli:${DocVersion}`
+export type ContentInstanceKey = 'site' | 'examples' | `docs:${DocVersion}` | `cli:${CliDocVersion}`
 
 /** The docs instance serving `version`, e.g. `docsInstanceKey('4.x') === 'docs:4.x'`. */
 export function docsInstanceKey(version: DocVersion): ContentInstanceKey {
@@ -17,7 +18,7 @@ export function docsInstanceKey(version: DocVersion): ContentInstanceKey {
 }
 
 /** The cli instance backing `version`'s command reference, e.g. `cliInstanceKey('4.x') === 'cli:4.x'`. */
-export function cliInstanceKey(version: DocVersion): ContentInstanceKey {
+export function cliInstanceKey(version: CliDocVersion): ContentInstanceKey {
   return `cli:${version}`
 }
 
@@ -26,14 +27,18 @@ export const CONTENT_INSTANCE_KEYS: ContentInstanceKey[] = [
   'site',
   'examples',
   ...DOC_VERSIONS.map(docsInstanceKey),
-  ...DOC_VERSIONS.map(cliInstanceKey)
+  ...CLI_DOC_VERSIONS.map(cliInstanceKey)
 ]
 
 /**
  * Instances indexed for search.
  */
 export function searchInstanceKeys(version: DocVersion): ContentInstanceKey[] {
-  return [docsInstanceKey(version), cliInstanceKey(version), 'examples']
+  return [
+    docsInstanceKey(version),
+    ...(hasCliDocs(version) ? [cliInstanceKey(version)] : []),
+    ...(hasExamples(version) ? ['examples' as const] : [])
+  ]
 }
 
 /** Every instance whose sha-pinned search artifacts must stay fresh, across every docs version. */
@@ -49,7 +54,7 @@ export function isContentInstanceKey(value: string): value is ContentInstanceKey
   if (value === 'site' || value === 'examples') return true
   if (value.startsWith('docs:')) return isDocVersion(value.slice('docs:'.length))
 
-  return value.startsWith('cli:') && isDocVersion(value.slice('cli:'.length))
+  return value.startsWith('cli:') && hasCliDocs(value.slice('cli:'.length))
 }
 
 /** URL segment(s) an instance is served under — `docs:4.x` lives at `/api/content/docs/4.x`. */

@@ -2,9 +2,9 @@ import { createStorage } from 'unstorage'
 import type { H3Event } from 'h3'
 import type { ComarkContent, NavigationItem } from 'comark-content'
 import type { PullPreviewSummary } from '#shared/types'
-import { cliDocsPathPrefix } from '#shared/utils/cli'
+import { cliDocsPathPrefix, hasCliDocs } from '#shared/utils/cli'
 import { CONTENT_INSTANCE_KEYS, cliInstanceKey, docsInstanceKey, type ContentInstanceKey } from '#shared/utils/content'
-import { docsPathPrefix, EXAMPLES_PATH_PREFIX, type DocVersion } from '#shared/utils/docs'
+import { docsPathPrefix, EXAMPLES_PATH_PREFIX, hasExamples, type DocVersion } from '#shared/utils/docs'
 import { isPullContentPage, parsePullTarget, pullRepoName, type PullTarget } from '#shared/utils/pull'
 import { createRuntimeInstance } from '../../../utils/factory'
 
@@ -347,8 +347,8 @@ export async function pullNavigation(version: DocVersion, preview: PullPreview):
   const [[docs], commands, examples, blog] = await Promise.all([
     subtree(docsInstanceKey(version), prefix),
     // Optional grafts, as in production: losing one keeps the rest of the tree.
-    subtree(cliInstanceKey(version), cliDocsPathPrefix(version)).catch(() => []),
-    subtree('examples', EXAMPLES_PATH_PREFIX).catch(() => []),
+    hasCliDocs(version) ? subtree(cliInstanceKey(version), cliDocsPathPrefix(version)).catch(() => []) : [],
+    hasExamples(version) ? subtree('examples', EXAMPLES_PATH_PREFIX).catch(() => []) : [],
     subtree('site', '/blog').catch(() => [])
   ])
 
