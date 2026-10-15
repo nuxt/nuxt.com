@@ -47,7 +47,9 @@ const { data: leaderboard } = await useAsyncData(
 
 const period = computed(() => leaderboard.value?.period ?? NUXTERS_DEFAULT_PERIOD)
 const available = computed(() => leaderboard.value?.periods ?? [])
-const periodLink = (value: NuxtersPeriod) => ({ query: { ...route.query, period: value }, hash: '#leaderboard' })
+// Same page, no hash: the router keeps the scroll position. A `#leaderboard` arrival keeps its hash,
+// dropping it would scroll back to the top.
+const periodLink = (value: NuxtersPeriod) => ({ query: { ...route.query, period: value }, hash: route.hash })
 
 const { format } = new Intl.NumberFormat('en-US')
 // The hero stays the same for every period: the numbers sit right above the leaderboard.
