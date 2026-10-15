@@ -56,8 +56,9 @@ onMounted(() => {
 <template>
   <!-- Loading shows NuxtersMeCardSkeleton: same card and minimum height, the hero does not move -->
   <NuxtersMeCardSkeleton v-if="loggedIn && (status !== 'success' || !me)" />
-  <UPageCard v-else variant="subtle" :class="NUXTERS_ME_CARD_CLASS" :ui="{ container: 'h-full', wrapper: 'h-full' }">
-    <div v-if="!loggedIn || !me" class="flex flex-col items-center justify-center gap-4 h-full text-center">
+  <!-- A flex column (the container is a grid from lg): the signed-out content centers in the reserved height -->
+  <UPageCard v-else variant="subtle" :class="NUXTERS_ME_CARD_CLASS" :ui="{ container: 'flex flex-col lg:flex' }">
+    <div v-if="!loggedIn || !me" class="flex flex-col items-center gap-4 my-auto text-center">
       <UIcon name="i-simple-icons-github" class="size-8" />
       <p class="text-lg font-medium text-highlighted">
         Discover your contributions

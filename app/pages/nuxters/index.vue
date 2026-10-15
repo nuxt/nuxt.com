@@ -55,7 +55,7 @@ const { format } = new Intl.NumberFormat('en-US')
 // The hero stays the same for every period: the numbers sit right above the leaderboard.
 // People first: how the score works (nuxt/nuxt counts double) is in the score modal.
 const heroTitle = 'Meet the Nuxters'
-const heroDescription = 'The people behind Nuxt and its modules, ranked by their contributions.'
+const heroDescription = 'The people behind Nuxt and its modules, ranked by their contributions. Thanks to every one of them, Nuxt is a first-class framework and a true community project.'
 // A shared `?period=` link shows that leaderboard: title, description, `og:url` and card.
 // The canonical URL has no `?period=`, and `/nuxters` alone keeps the generic texts.
 const site = useSiteConfig()
@@ -106,7 +106,7 @@ const breakdown = computed(() => {
       class="[overflow-anchor:none]"
     >
       <template #headline>
-        <UBadge label="Updated every day" icon="i-lucide-refresh-cw" variant="subtle" />
+        <UBadge label="Updated every day" variant="subtle" />
       </template>
       <!-- The card sizes itself from this width: same height signed out, loading and signed in -->
       <div class="@container">
