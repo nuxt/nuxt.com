@@ -168,7 +168,7 @@ defineOgImage('Nuxter.takumi', { username, period: () => period.value === 'all' 
     <UContainer class="pt-8">
       <!-- Back to the leaderboard of the period on screen -->
       <UButton
-        :to="{ path: '/nuxters', query: { period }, hash: '#leaderboard' }"
+        :to="{ path: '/nuxters', query: { period } }"
         label="All Nuxters"
         icon="i-lucide-arrow-left"
         color="neutral"
