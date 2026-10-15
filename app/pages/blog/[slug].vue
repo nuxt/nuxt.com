@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { kebabCase } from 'scule'
+import { blogAuthors } from '#shared/utils/blog'
 import {
   DocsProseImg,
   AgentNuxiIcon,
@@ -84,9 +85,10 @@ function formatSocialIntentQueryText(handle: string | undefined): string {
   return encodeURIComponent(`${body}\n\n${link}`)
 }
 
+const authors = computed(() => blogAuthors(articleData.value?.authors))
 const authorHandles: { twitter?: string, bluesky?: string } = {
-  twitter: articleData.value.authors?.[0]?.twitter,
-  bluesky: articleData.value.authors?.[0]?.bluesky
+  twitter: authors.value[0]?.twitter,
+  bluesky: authors.value[0]?.bluesky
 }
 
 const socialLinks = computed(() =>
@@ -153,7 +155,14 @@ const links = [
       </template>
 
       <div class="mt-4 flex flex-wrap items-center gap-6">
-        <UUser v-for="(author, index) in articleData.authors" :key="index" v-bind="author" :description="author.to ? `@${author.to.split('/').pop()}` : undefined" />
+        <UUser
+          v-for="(author, index) in authors"
+          :key="index"
+          :name="author.name"
+          :avatar="author.avatar"
+          :to="author.to"
+          :description="author.username ? `@${author.username}` : undefined"
+        />
       </div>
     </UPageHeader>
 

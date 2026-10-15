@@ -12,5 +12,6 @@ export default defineEventHandler(async (event) => {
   }
 
   setResponseHeader(event, 'cache-control', 'public, max-age=0, s-maxage=600, stale-while-revalidate=3600')
-  return { ...nuxter, modules: await nuxterModules(event, nuxter) } satisfies NuxterProfilePage
+  const [modules, blogPosts] = await Promise.all([nuxterModules(event, nuxter), nuxterBlogPosts(nuxter.username)])
+  return { ...nuxter, modules, blogPosts } satisfies NuxterProfilePage
 })

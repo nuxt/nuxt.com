@@ -78,9 +78,21 @@ export interface NuxterModules {
   contributed: NuxterModuleLink[]
 }
 
-/** /api/nuxters/[username]: the profile and its modules. */
+/** A blog post of a Nuxter, as listed on their profile. */
+export interface NuxterBlogPost {
+  title: string
+  description: string
+  path: string
+  date: string
+  image?: string
+  category?: string
+}
+
+/** /api/nuxters/[username]: the profile, its modules and blog posts. */
 export interface NuxterProfilePage extends NuxterProfile {
   modules: NuxterModules
+  /** Newest first, matched on the `username` of the blog authors. */
+  blogPosts: NuxterBlogPost[]
 }
 
 /** The light shape of the leaderboard. */

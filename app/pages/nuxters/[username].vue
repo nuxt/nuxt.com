@@ -84,6 +84,7 @@ const yearly = computed(() => (nuxter.value?.periods ?? []).filter(row => /^\d{4
 // Maintainers get full cards, as on /modules; contributions are compact links (150+ for some).
 const maintained = computed(() => nuxter.value?.modules.maintained ?? [])
 const contributed = computed(() => nuxter.value?.modules.contributed ?? [])
+const blogPosts = computed(() => nuxter.value?.blogPosts ?? [])
 const CONTRIBUTED_PREVIEW = 12
 const showAllContributed = ref(false)
 const visibleContributed = computed(() => showAllContributed.value ? contributed.value : contributed.value.slice(0, CONTRIBUTED_PREVIEW))
@@ -318,6 +319,28 @@ defineOgImage('Nuxter.takumi', { username, period: () => period.value === 'all' 
                 :show-badge="false"
               />
             </UPageGrid>
+          </section>
+
+          <section v-if="blogPosts.length" aria-labelledby="blog-posts">
+            <h2 id="blog-posts" class="text-2xl font-bold text-highlighted mb-1">
+              Blog posts
+            </h2>
+            <p class="text-muted mb-6">
+              {{ blogPosts.length }} {{ blogPosts.length === 1 ? 'article' : 'articles' }} on the Nuxt blog.
+            </p>
+            <UBlogPosts class="md:grid-cols-2 lg:grid-cols-3">
+              <UBlogPost
+                v-for="post in blogPosts"
+                :key="post.path"
+                :to="post.path"
+                :title="post.title"
+                :description="post.description"
+                :image="post.image ? { src: post.image, width: 437, height: 246, alt: `${post.title} image` } : undefined"
+                :date="formatDateByLocale('en', post.date)"
+                :badge="post.category ? { label: post.category, color: 'primary', variant: 'subtle' } : undefined"
+                variant="subtle"
+              />
+            </UBlogPosts>
           </section>
 
           <section v-if="contributed.length" aria-labelledby="contributed-modules">
