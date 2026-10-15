@@ -186,7 +186,7 @@ const modelIconMap: Record<string, string> = {
   kimi: 'i-simple-icons-kimi',
   deepseek: 'i-simple-icons-deepseek',
   glm: 'i-simple-icons-zdotai',
-  grok: 'i-logos-grok-icon'
+  grok: 'i-custom-grok'
 }
 
 function getModelIcon(model: string): string {
