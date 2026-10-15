@@ -185,7 +185,8 @@ const modelIconMap: Record<string, string> = {
   minimax: 'i-simple-icons-minimax',
   kimi: 'i-simple-icons-kimi',
   deepseek: 'i-simple-icons-deepseek',
-  glm: 'i-simple-icons-zdotai'
+  glm: 'i-simple-icons-zdotai',
+  grok: 'i-logos-grok-icon'
 }
 
 function getModelIcon(model: string): string {
