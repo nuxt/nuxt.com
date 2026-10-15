@@ -1,4 +1,4 @@
-// Renders the showcase social card (public/showcase-social.gif): the logo wall cycling through sets.
+// Renders the showcase social card (public/showcase-social.gif): the title framed by a ring of logos cycling through sets.
 // Rerun after changing the first sites in content/showcase.yml: `node scripts/showcase-og.mjs`.
 // Needs ffmpeg, which encodes only what changes between frames; Takumi's own GIF encoder writes every frame in full.
 import { execFileSync } from 'node:child_process'
@@ -13,10 +13,10 @@ const OUTPUT = 'public/showcase-social.gif'
 const WIDTH = 1200
 const HEIGHT = 630
 const COLUMNS = 6
-const SET_SIZE = COLUMNS * 2
+const ROWS = 4
 const SETS = 3
 const CELL_WIDTH = WIDTH / COLUMNS
-const CELL_HEIGHT = CELL_WIDTH * 5 / 8
+const CELL_HEIGHT = HEIGHT / ROWS
 const BORDER = '1px solid rgba(255, 255, 255, 0.1)'
 const GREEN = '#00DC82'
 
@@ -24,12 +24,18 @@ const GREEN = '#00DC82'
 const FPS = 20
 const HOLD = 2600
 const TRANSITION = 900
-const STAGGER = 90
+const STAGGER = 110
 const SHIFT = 24
 const BLUR = 4
 
 const FONTS = [['Inter', 600], ['Outfit', 500]]
 const NUXT_LOGO = '<svg viewBox="0 0 256 168" xmlns="http://www.w3.org/2000/svg"><path fill="#00DC82" d="M143.618 167.029h95.166c3.023 0 5.992-.771 8.61-2.237a16.963 16.963 0 0 0 6.302-6.115 16.324 16.324 0 0 0 2.304-8.352c0-2.932-.799-5.811-2.312-8.35L189.778 34.6a16.966 16.966 0 0 0-6.301-6.113 17.626 17.626 0 0 0-8.608-2.238c-3.023 0-5.991.772-8.609 2.238a16.964 16.964 0 0 0-6.3 6.113l-16.342 27.473-31.95-53.724a16.973 16.973 0 0 0-6.304-6.112A17.638 17.638 0 0 0 96.754 0c-3.022 0-5.992.772-8.61 2.237a16.973 16.973 0 0 0-6.303 6.112L2.31 141.975A16.302 16.302 0 0 0 0 150.325c0 2.932.793 5.813 2.304 8.352a16.964 16.964 0 0 0 6.302 6.115 17.628 17.628 0 0 0 8.61 2.237h59.737c23.669 0 41.123-10.084 53.134-29.758l29.159-48.983 15.618-26.215 46.874 78.742h-62.492l-15.628 26.214Zm-67.64-26.24-41.688-.01L96.782 35.796l31.181 52.492-20.877 35.084c-7.976 12.765-17.037 17.416-31.107 17.416Z"/></svg>'
+
+/** The outer ring of the grid; the middle is left to the title. */
+const ring = Array.from({ length: COLUMNS * ROWS }, (_, i) => ({ column: i % COLUMNS, row: Math.floor(i / COLUMNS) }))
+  .filter(({ column, row }) => row === 0 || row === ROWS - 1 || column === 0 || column === COLUMNS - 1)
+  .map(cell => ({ ...cell, delay: Math.hypot(cell.column - (COLUMNS - 1) / 2, cell.row - (ROWS - 1) / 2) * STAGGER }))
+const SET_SIZE = ring.length
 
 const page = parseYAML(readFileSync('content/showcase.yml', 'utf8'))
 const sites = page.websites.filter(site => site.logo).slice(0, SET_SIZE * SETS)
@@ -66,42 +72,44 @@ function logo(site, { shift = 0, blur = 0, opacity = 1 } = {}) {
 
 const easeOut = t => 1 - (1 - t) ** 4
 
-/** One frame: `from` on its own, or `elapsed` ms into its swap for `to`, column by column. */
+/** One frame: `from` on its own, or `elapsed` ms into its swap for `to`, rippling out from the centre. */
 function frame(from, to, elapsed) {
-  const cells = from.map((site, i) => {
-    const column = i % COLUMNS
-    const row = Math.floor(i / COLUMNS)
-    let logos = [logo(site)]
+  const cells = ring.map(({ column, row, delay }, i) => {
+    const lastColumn = column === COLUMNS - 1
+    const lastRow = row === ROWS - 1
+    let logos = [logo(from[i])]
     if (elapsed !== undefined) {
-      const progress = easeOut(Math.min(1, Math.max(0, (elapsed - (column + row / 2) * STAGGER) / TRANSITION)))
+      const progress = easeOut(Math.min(1, Math.max(0, (elapsed - delay) / TRANSITION)))
       logos = [
-        logo(site, { shift: -SHIFT * progress, blur: BLUR * progress, opacity: 1 - progress }),
+        logo(from[i], { shift: -SHIFT * progress, blur: BLUR * progress, opacity: 1 - progress }),
         logo(to[i], { shift: SHIFT * (1 - progress), blur: BLUR * (1 - progress), opacity: progress })
       ].filter(node => node.style.opacity > 0.01)
     }
+    // Ring cells also draw the edges the empty middle would have drawn.
     return container({
-      position: 'relative',
+      position: 'absolute',
+      left: column * CELL_WIDTH,
+      top: row * CELL_HEIGHT,
       width: CELL_WIDTH,
       height: CELL_HEIGHT,
       overflow: 'hidden',
-      borderRight: (i + 1) % COLUMNS ? BORDER : 'none',
-      borderBottom: i < COLUMNS ? BORDER : 'none'
+      borderRight: lastColumn ? 'none' : BORDER,
+      borderBottom: lastRow ? 'none' : BORDER,
+      borderTop: lastRow && column > 0 && !lastColumn ? BORDER : 'none',
+      borderLeft: lastColumn && row > 0 && !lastRow ? BORDER : 'none'
     }, logos)
   })
 
-  return container({ width: WIDTH, height: HEIGHT, position: 'relative', display: 'flex', flexDirection: 'column', backgroundColor: '#0a0a0a' }, [
-    container({ position: 'absolute', inset: 0, backgroundImage: 'radial-gradient(ellipse 70% 60% at 50% 0%, rgba(0, 220, 130, 0.09), transparent)' }),
-    container({ position: 'relative', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', padding: '64px 72px 0' }, [
-      container({ display: 'flex', flexDirection: 'column' }, [
-        text('Nuxt Showcase', { fontFamily: 'Inter', fontWeight: 600, fontSize: 24, color: GREEN, marginBottom: 20 }),
-        container({ display: 'flex', flexDirection: 'column', fontFamily: 'Outfit', fontWeight: 500, fontSize: 68, lineHeight: 1.1 }, [
-          text(page.hero.title, { color: 'white' }),
-          text(page.hero.highlight, { color: GREEN })
-        ])
-      ]),
-      image('nuxt.svg', { width: 50, height: 33, marginTop: 8 })
-    ]),
-    container({ position: 'absolute', left: 0, right: 0, bottom: 0, display: 'flex', flexWrap: 'wrap', borderTop: BORDER }, cells)
+  return container({ width: WIDTH, height: HEIGHT, position: 'relative', backgroundColor: '#0a0a0a' }, [
+    ...cells,
+    container({ position: 'absolute', inset: 0, backgroundImage: 'radial-gradient(ellipse 30% 30% at 50% 50%, rgba(0, 220, 130, 0.06), transparent)' }),
+    container({ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }, [
+      image('nuxt.svg', { width: 50, height: 33, marginBottom: 22 }),
+      container({ display: 'flex', flexDirection: 'column', alignItems: 'center', fontFamily: 'Outfit', fontWeight: 500, fontSize: 64, lineHeight: 1.1 }, [
+        text(page.hero.title, { color: 'white' }),
+        text(page.hero.highlight, { color: GREEN })
+      ])
+    ])
   ])
 }
 
@@ -120,7 +128,7 @@ const images = [
 // Each hold is one long frame; only the swaps are sampled.
 const scenes = []
 const step = 1000 / FPS
-const swap = TRANSITION + (COLUMNS - 0.5) * STAGGER
+const swap = TRANSITION + Math.max(...ring.map(cell => cell.delay))
 sets.forEach((from, i) => {
   const to = sets[(i + 1) % SETS]
   scenes.push({ node: frame(from), duration: HOLD })
