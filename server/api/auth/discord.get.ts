@@ -2,8 +2,10 @@
  * Link a Discord account to the signed-in GitHub user, then unlock their Nuxters roles.
  * Returns 404 when Discord is not configured (see `runtimeConfig.nuxters.discord`).
  */
-const oauthHandler = defineOAuthDiscordEventHandler({
+// Built per request: the credentials can come from env vars outside the runtime config (`nuxtersDiscord.config`).
+const oauthHandler = (credentials: { clientId: string, clientSecret: string }) => defineOAuthDiscordEventHandler({
   config: {
+    ...credentials,
     scope: ['identify', 'guilds.join']
   },
   async onSuccess(event, { user: discordUser, tokens }) {
@@ -47,7 +49,8 @@ const oauthHandler = defineOAuthDiscordEventHandler({
 })
 
 export default defineEventHandler(async (event) => {
-  if (!nuxtersDiscord.config(event).enabled) {
+  const { enabled, clientId, clientSecret } = nuxtersDiscord.config(event)
+  if (!enabled) {
     throw createError({ statusCode: 404, statusMessage: 'Discord is not configured' })
   }
 
@@ -56,5 +59,5 @@ export default defineEventHandler(async (event) => {
     return sendRedirect(event, '/api/auth/github?redirect=/nuxters')
   }
 
-  return oauthHandler(event)
+  return oauthHandler({ clientId, clientSecret })(event)
 })

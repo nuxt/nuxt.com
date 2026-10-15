@@ -144,7 +144,8 @@ export default defineNuxtConfig({
       audienceId: ''
     },
     // Discord role unlock on /nuxters. Off unless the guild, bot token and
-    // `NUXT_OAUTH_DISCORD_CLIENT_ID`/`_SECRET` are all set.
+    // `NUXT_OAUTH_DISCORD_CLIENT_ID`/`_SECRET` are all set. `nuxtersDiscord.config()` also reads
+    // the `NUXT_DISCORD_*` names of the Vercel project at runtime.
     nuxters: {
       // Secret of the nuxt/nuxters push webhook (POST /api/webhooks/nuxters)
       webhookSecret: '',
