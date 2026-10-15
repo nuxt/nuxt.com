@@ -95,7 +95,7 @@ Favicons typically are expected at hosting domain root. In case of a GitHub Page
 For this reason favicon URLs should be defined for the pages header starting with the GitHub Pages base URL as absolute path to work for a single page app as well as for a multi-route app.
 
 ::note
-Favicon files should be maintained within the projects `public/` folder.
+Favicon files should be maintained within the project's `public/` folder.
 ::
 
 **Example:** If you have `public/favicon.ico` and `public/favicon-16x16.png` your `nuxt.config.ts` should start as follows:
