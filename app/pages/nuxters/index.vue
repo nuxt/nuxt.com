@@ -53,9 +53,9 @@ const periodLink = (value: NuxtersPeriod) => ({ query: { ...route.query, period:
 
 const { format } = new Intl.NumberFormat('en-US')
 // The hero stays the same for every period: the numbers sit right above the leaderboard.
-const heroTitle = 'Discover Nuxt contributors'
-// nuxt/framework and nuxt/docs are archived former homes of nuxt/nuxt: the score modal lists them.
-const heroDescription = 'Every contribution to the Nuxt ecosystem counts. Ranked by score, where nuxt/nuxt counts double. Updated every day.'
+// People first: how the score works (nuxt/nuxt counts double) is in the score modal.
+const heroTitle = 'Meet the Nuxters'
+const heroDescription = 'The people behind Nuxt and its modules, ranked by their contributions.'
 // A shared `?period=` link shows that leaderboard: title, description, `og:url` and card.
 // The canonical URL has no `?period=`, and `/nuxters` alone keeps the generic texts.
 const site = useSiteConfig()
@@ -105,6 +105,9 @@ const breakdown = computed(() => {
       orientation="horizontal"
       class="[overflow-anchor:none]"
     >
+      <template #headline>
+        <UBadge label="Updated every day" icon="i-lucide-refresh-cw" variant="subtle" />
+      </template>
       <ClientOnly>
         <NuxtersMeCard />
         <template #fallback>
