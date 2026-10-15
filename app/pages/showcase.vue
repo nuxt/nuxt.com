@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { joinURL } from 'ufo'
+
 definePageMeta({
   heroBackground: 'opacity-80 -z-10'
 })
@@ -25,19 +27,24 @@ const websites = computed(() => industry.value
 const title = pageData.value.head?.title || pageData.value.title
 const description = pageData.value.head?.description || pageData.value.description
 
+const site = useSiteConfig()
+
+// Rendered by `scripts/showcase-og.mjs`; platforms that don't animate GIFs show the first frame.
+const socialImage = joinURL(site.url, '/showcase-social.gif')
+
 useSeoMeta({
   titleTemplate: '%s',
   title,
   description,
   ogDescription: description,
-  ogTitle: title
+  ogTitle: title,
+  ogImage: socialImage,
+  ogImageType: 'image/gif',
+  ogImageWidth: 1200,
+  ogImageHeight: 630,
+  twitterImage: socialImage
 })
 useCanonical()
-defineOgImage('Docs.takumi', {
-  headline: 'Resources',
-  title,
-  description
-})
 </script>
 
 <template>
