@@ -127,5 +127,5 @@ export default defineNuxtConfig({
     // probable other app content ...
   },
   // other config ...
-)};
+});
 ```
