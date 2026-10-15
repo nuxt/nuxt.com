@@ -46,12 +46,13 @@ async function showMore() {
             :aria-label="`${nuxter.username}, #${format(nuxter.rank)}, ${points(nuxter.score)}`"
             class="block aspect-square rounded-lg overflow-hidden bg-muted ring ring-default hover:ring-primary transition"
           >
+            <!-- Cells are 123px at most (10 columns of the full container): 124px, and 248px on 2x screens -->
             <NuxtImg
               :src="`/gh_avatar/${nuxter.username}`"
               provider="ipx"
               densities="x1 x2"
-              width="80"
-              height="80"
+              width="124"
+              height="124"
               format="auto"
               loading="lazy"
               :alt="nuxter.username"
