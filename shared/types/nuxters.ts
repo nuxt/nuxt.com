@@ -1,3 +1,5 @@
+import type { Module } from './modules'
+
 export interface NuxterMergedPullRequests {
   feat: number
   fix: number
@@ -60,6 +62,25 @@ export interface NuxterProfile extends Nuxter {
   periods: NuxterPeriodStats[]
   /** `null` when the GitHub profile has no name, website or social account. */
   links: NuxterLinks | null
+}
+
+/** A module card on a profile: what `ModuleItem` shows, without the contributors and the readme. */
+export type NuxterModule = Pick<Module, 'name' | 'description' | 'repo' | 'npm' | 'icon' | 'website' | 'category' | 'type' | 'sponsor' | 'stats'>
+
+/** A compact module link: some contributors have 150+ modules. */
+export type NuxterModuleLink = Pick<Module, 'name' | 'npm' | 'icon' | 'category'>
+
+/** The modules of the official list a contributor maintains or contributed to, by downloads. */
+export interface NuxterModules {
+  /** Listed as a maintainer in nuxt/modules, by GitHub username. */
+  maintained: NuxterModule[]
+  /** In the contributors of the module repository, by GitHub id. Excludes the maintained ones. */
+  contributed: NuxterModuleLink[]
+}
+
+/** /api/nuxters/[username]: the profile and its modules. */
+export interface NuxterProfilePage extends NuxterProfile {
+  modules: NuxterModules
 }
 
 /** The light shape of the leaderboard. */

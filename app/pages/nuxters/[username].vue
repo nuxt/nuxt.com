@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Nuxter, NuxterPeriodStats, NuxterProfile, NuxtersPeriod } from '#shared/types'
+import type { Module, Nuxter, NuxterPeriodStats, NuxterProfilePage, NuxtersPeriod } from '#shared/types'
 import { isNuxtersPeriod, nuxterForPeriod, nuxterHackathons, nuxtersPeriodPhrase } from '#shared/utils/nuxters'
 
 definePageMeta({
@@ -10,7 +10,7 @@ const route = useRoute()
 const param = String(route.params.username)
 
 // The profile has every period: switching period needs no request.
-const { data: nuxter } = await useFetch<NuxterProfile>(`/api/nuxters/${param}`, {
+const { data: nuxter } = await useFetch<NuxterProfilePage>(`/api/nuxters/${param}`, {
   key: `nuxter-${param.toLowerCase()}`
 })
 
@@ -81,6 +81,13 @@ const periodQuery = (value: NuxtersPeriod) => ({ ...route.query, period: value =
 const periodPhrase = nuxtersPeriodPhrase
 
 const yearly = computed(() => (nuxter.value?.periods ?? []).filter(row => /^\d{4}$/.test(row.period)))
+// Maintainers get full cards, as on /modules; contributions are compact links (150+ for some).
+const maintained = computed(() => nuxter.value?.modules.maintained ?? [])
+const contributed = computed(() => nuxter.value?.modules.contributed ?? [])
+const CONTRIBUTED_PREVIEW = 12
+const showAllContributed = ref(false)
+const visibleContributed = computed(() => showAllContributed.value ? contributed.value : contributed.value.slice(0, CONTRIBUTED_PREVIEW))
+
 // Best rank; on a tie (#1 several years), the year with the most points.
 const best = computed(() => yearly.value.reduce<typeof yearly.value[number] | undefined>((top, row) =>
   !top || row.rank < top.rank || (row.rank === top.rank && row.score > top.score) ? row : top, undefined))
@@ -226,14 +233,25 @@ defineOgImage('Nuxter.takumi', { username, period: () => period.value === 'all' 
             <p v-if="since" class="text-sm lg:text-base text-muted">
               Contributing since {{ since }}
             </p>
+            <p v-if="best" class="text-sm lg:text-base text-muted">
+              Best year: {{ best.period }}, #{{ format(best.rank) }} with {{ format(best.score) }} pts
+            </p>
           </div>
 
-          <div v-if="hackathons.length" class="flex flex-wrap gap-2">
+          <div v-if="hackathons.length || maintained.length" class="flex flex-wrap gap-2">
             <UBadge
               v-for="hackathon in hackathons"
               :key="hackathon.id"
               :label="hackathon.name"
               icon="i-lucide-trophy"
+              variant="subtle"
+              class="lg:text-sm"
+            />
+            <UBadge
+              v-if="maintained.length"
+              label="Module author"
+              icon="i-lucide-puzzle"
+              color="neutral"
               variant="subtle"
               class="lg:text-sm"
             />
@@ -281,43 +299,64 @@ defineOgImage('Nuxter.takumi', { username, period: () => period.value === 'all' 
 
     <UPageBody class="mt-0">
       <UContainer>
-        <div v-if="yearly.length">
-          <h2 class="text-2xl font-bold text-highlighted mb-1">
-            Year by year
-          </h2>
-          <p v-if="best" class="text-muted mb-6">
-            Best year: {{ best.period }}, #{{ format(best.rank) }} with {{ format(best.score) }} points.
-          </p>
-          <UPageCard variant="subtle" :ui="{ container: 'p-0 sm:p-0' }">
-            <ul class="divide-y divide-default">
-              <li v-for="row in yearly" :key="row.period">
-                <!-- Selects the year on this profile, and scrolls back up to the stats -->
+        <div class="flex flex-col gap-12">
+          <section v-if="maintained.length" aria-labelledby="maintained-modules">
+            <h2 id="maintained-modules" class="text-2xl font-bold text-highlighted mb-1">
+              Maintained modules
+            </h2>
+            <p class="text-muted mb-6">
+              Maintainer of {{ maintained.length }} {{ maintained.length === 1 ? 'module' : 'modules' }} of the Nuxt ecosystem.
+            </p>
+            <UPageGrid class="lg:grid-cols-2 xl:grid-cols-3">
+              <!-- The card shape of /modules: the missing fields are only read by the project tools, off here -->
+              <ModuleItem
+                v-for="module in maintained"
+                :key="module.name"
+                :module="module as Module"
+                :is-added="false"
+                :show-add-button="false"
+                :show-badge="false"
+              />
+            </UPageGrid>
+          </section>
+
+          <section v-if="contributed.length" aria-labelledby="contributed-modules">
+            <h2 id="contributed-modules" class="text-2xl font-bold text-highlighted mb-1">
+              Contributed to
+            </h2>
+            <p class="text-muted mb-6">
+              Commits in {{ contributed.length }} {{ contributed.length === 1 ? 'module' : 'modules' }}{{ maintained.length ? ' maintained by others' : '' }}, by downloads.
+            </p>
+            <ul class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2">
+              <li v-for="module in visibleContributed" :key="module.name">
                 <NuxtLink
-                  :to="{ query: periodQuery(row.period) }"
-                  replace
-                  :aria-current="row.period === period ? 'page' : undefined"
-                  class="grid grid-cols-[4rem_1fr_auto] sm:grid-cols-[5rem_8rem_1fr_auto] items-center gap-4 px-4 sm:px-6 py-3 hover:bg-elevated/50 transition-colors"
-                  :class="{ 'bg-elevated/70': row.period === period }"
+                  :to="`/modules/${module.name}`"
+                  class="flex items-center gap-3 rounded-md px-3 py-2 ring ring-default hover:bg-elevated/50 transition-colors"
                 >
-                  <span class="font-semibold text-highlighted tabular-nums">{{ row.period }}</span>
-                  <span class="tabular-nums">#{{ format(row.rank) }}</span>
-                  <span class="hidden sm:flex items-center gap-4 text-sm text-muted tabular-nums">
-                    <span
-                      v-for="(style, metric) in METRICS"
-                      :key="metric"
-                      class="inline-flex items-center gap-1.5 w-20"
-                      :title="`${format(metricValue(row, metric))} ${metricLabel(metric, metricValue(row, metric))}`"
-                    >
-                      <UIcon :name="style.icon" class="size-4 shrink-0" :class="style.text" aria-hidden="true" />
-                      {{ format(metricValue(row, metric)) }}
-                      <span class="sr-only">{{ metricLabel(metric, metricValue(row, metric)) }}</span>
-                    </span>
+                  <UAvatar
+                    :src="moduleImage(module.icon)"
+                    :icon="moduleIcon(module.category)"
+                    :alt="module.name"
+                    size="sm"
+                    class="rounded-md bg-transparent"
+                  />
+                  <span class="min-w-0">
+                    <span class="block font-medium text-highlighted truncate">{{ module.name }}</span>
+                    <span class="block text-xs text-muted truncate">{{ module.npm }}</span>
                   </span>
-                  <span class="text-right tabular-nums"><span class="font-medium text-highlighted">{{ format(row.score) }}</span> pts</span>
                 </NuxtLink>
               </li>
             </ul>
-          </UPageCard>
+            <UButton
+              v-if="contributed.length > CONTRIBUTED_PREVIEW"
+              :label="showAllContributed ? 'Show less' : `Show all ${contributed.length}`"
+              :trailing-icon="showAllContributed ? 'i-lucide-chevron-up' : 'i-lucide-chevron-down'"
+              color="neutral"
+              variant="ghost"
+              class="mt-4"
+              @click="showAllContributed = !showAllContributed"
+            />
+          </section>
         </div>
       </UContainer>
     </UPageBody>

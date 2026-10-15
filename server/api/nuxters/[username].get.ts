@@ -1,3 +1,5 @@
+import type { NuxterProfilePage } from '#shared/types'
+
 export default defineEventHandler(async (event) => {
   const username = getRouterParam(event, 'username')
   if (!username || !/^[a-z0-9-]{1,39}$/i.test(username)) {
@@ -10,5 +12,5 @@ export default defineEventHandler(async (event) => {
   }
 
   setResponseHeader(event, 'cache-control', 'public, max-age=0, s-maxage=600, stale-while-revalidate=3600')
-  return nuxter
+  return { ...nuxter, modules: await nuxterModules(event, nuxter) } satisfies NuxterProfilePage
 })
