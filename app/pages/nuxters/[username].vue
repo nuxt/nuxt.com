@@ -85,9 +85,16 @@ const yearly = computed(() => (nuxter.value?.periods ?? []).filter(row => /^\d{4
 const maintained = computed(() => nuxter.value?.modules.maintained ?? [])
 const contributed = computed(() => nuxter.value?.modules.contributed ?? [])
 const blogPosts = computed(() => nuxter.value?.blogPosts ?? [])
-const CONTRIBUTED_PREVIEW = 12
-const showAllContributed = ref(false)
-const visibleContributed = computed(() => showAllContributed.value ? contributed.value : contributed.value.slice(0, CONTRIBUTED_PREVIEW))
+// Long lists show their first rows, "Show all" expands them.
+function usePreview<T>(items: Ref<T[]>, size: number) {
+  const expanded = ref(false)
+  const visible = computed(() => expanded.value ? items.value : items.value.slice(0, size))
+  const more = computed(() => items.value.length > size)
+  return reactive({ expanded, visible, more })
+}
+const maintainedPreview = usePreview(maintained, 6)
+const blogPostsPreview = usePreview(blogPosts, 12)
+const contributedPreview = usePreview(contributed, 12)
 
 // Best rank; on a tie (#1 several years), the year with the most points.
 const best = computed(() => yearly.value.reduce<typeof yearly.value[number] | undefined>((top, row) =>
@@ -96,10 +103,10 @@ const best = computed(() => yearly.value.reduce<typeof yearly.value[number] | un
 // One look per contribution type, for the stat cards and the year rows.
 // Same colors as the README card (OgImage/Nuxter.takumi.vue). Darker text in light mode, for contrast.
 const METRICS = {
-  mergedPullRequests: { one: 'merged PR', many: 'merged PRs', icon: 'i-lucide-git-merge', ring: 'ring-primary', text: 'text-primary' },
-  issues: { one: 'issue', many: 'issues', icon: 'i-lucide-circle-dot', ring: 'ring-sky-400', text: 'text-sky-600 dark:text-sky-400' },
-  comments: { one: 'comment', many: 'comments', icon: 'i-lucide-message-circle', ring: 'ring-violet-400', text: 'text-violet-600 dark:text-violet-400' },
-  reactions: { one: 'reaction', many: 'reactions', icon: 'i-lucide-smile-plus', ring: 'ring-yellow-400', text: 'text-amber-600 dark:text-yellow-400' }
+  mergedPullRequests: { one: 'merged PR', many: 'merged PRs', icon: 'i-lucide-git-merge', tint: 'ring-primary bg-primary/5', text: 'text-primary' },
+  issues: { one: 'issue', many: 'issues', icon: 'i-lucide-circle-dot', tint: 'ring-sky-400 bg-sky-400/5', text: 'text-sky-600 dark:text-sky-400' },
+  comments: { one: 'comment', many: 'comments', icon: 'i-lucide-message-circle', tint: 'ring-violet-400 bg-violet-400/5', text: 'text-violet-600 dark:text-violet-400' },
+  reactions: { one: 'reaction', many: 'reactions', icon: 'i-lucide-smile-plus', tint: 'ring-yellow-400 bg-yellow-400/5', text: 'text-amber-600 dark:text-yellow-400' }
 } as const
 type Metric = keyof typeof METRICS
 
@@ -283,7 +290,7 @@ defineOgImage('Nuxter.takumi', { username, period: () => period.value === 'all' 
               <UPageCard
                 :icon="stat.icon"
                 variant="subtle"
-                :class="['h-full', stat.ring]"
+                :class="['h-full', stat.tint]"
                 :ui="{ leadingIcon: stat.text }"
               >
                 <div class="flex flex-col gap-1">
@@ -311,7 +318,7 @@ defineOgImage('Nuxter.takumi', { username, period: () => period.value === 'all' 
             <UPageGrid class="lg:grid-cols-2 xl:grid-cols-3">
               <!-- The card shape of /modules: the missing fields are only read by the project tools, off here -->
               <ModuleItem
-                v-for="module in maintained"
+                v-for="module in maintainedPreview.visible"
                 :key="module.name"
                 :module="module as Module"
                 :is-added="false"
@@ -319,6 +326,15 @@ defineOgImage('Nuxter.takumi', { username, period: () => period.value === 'all' 
                 :show-badge="false"
               />
             </UPageGrid>
+            <UButton
+              v-if="maintainedPreview.more"
+              :label="maintainedPreview.expanded ? 'Show less' : `Show all ${maintained.length}`"
+              :trailing-icon="maintainedPreview.expanded ? 'i-lucide-chevron-up' : 'i-lucide-chevron-down'"
+              color="neutral"
+              variant="ghost"
+              class="mt-4"
+              @click="maintainedPreview.expanded = !maintainedPreview.expanded"
+            />
           </section>
 
           <section v-if="blogPosts.length" aria-labelledby="blog-posts">
@@ -328,19 +344,39 @@ defineOgImage('Nuxter.takumi', { username, period: () => period.value === 'all' 
             <p class="text-muted mb-6">
               {{ blogPosts.length }} {{ blogPosts.length === 1 ? 'article' : 'articles' }} on the Nuxt blog.
             </p>
-            <UBlogPosts class="md:grid-cols-2 lg:grid-cols-3">
-              <UBlogPost
-                v-for="post in blogPosts"
-                :key="post.path"
-                :to="post.path"
-                :title="post.title"
-                :description="post.description"
-                :image="post.image ? { src: post.image, width: 437, height: 246, alt: `${post.title} image` } : undefined"
-                :date="formatDateByLocale('en', post.date)"
-                :badge="post.category ? { label: post.category, color: 'primary', variant: 'subtle' } : undefined"
-                variant="subtle"
-              />
-            </UBlogPosts>
+            <!-- The rows of contributed modules: 30+ full cards for some -->
+            <ul class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2">
+              <li v-for="post in blogPostsPreview.visible" :key="post.path">
+                <NuxtLink
+                  :to="post.path"
+                  class="flex items-center gap-3 rounded-md px-3 py-2 ring ring-default hover:bg-elevated/50 transition-colors"
+                >
+                  <NuxtImg
+                    v-if="post.image"
+                    :src="post.image"
+                    width="57"
+                    height="32"
+                    densities="x1 x2"
+                    :alt="`${post.title} image`"
+                    loading="lazy"
+                    class="h-8 aspect-video shrink-0 rounded-md object-cover"
+                  />
+                  <span class="min-w-0">
+                    <span class="block font-medium text-highlighted truncate">{{ post.title }}</span>
+                    <span class="block text-xs text-muted truncate">{{ formatDateByLocale('en', post.date) }}</span>
+                  </span>
+                </NuxtLink>
+              </li>
+            </ul>
+            <UButton
+              v-if="blogPostsPreview.more"
+              :label="blogPostsPreview.expanded ? 'Show less' : `Show all ${blogPosts.length}`"
+              :trailing-icon="blogPostsPreview.expanded ? 'i-lucide-chevron-up' : 'i-lucide-chevron-down'"
+              color="neutral"
+              variant="ghost"
+              class="mt-4"
+              @click="blogPostsPreview.expanded = !blogPostsPreview.expanded"
+            />
           </section>
 
           <section v-if="contributed.length" aria-labelledby="contributed-modules">
@@ -351,7 +387,7 @@ defineOgImage('Nuxter.takumi', { username, period: () => period.value === 'all' 
               Commits in {{ contributed.length }} {{ contributed.length === 1 ? 'module' : 'modules' }}{{ maintained.length ? ' maintained by others' : '' }}, by downloads.
             </p>
             <ul class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2">
-              <li v-for="module in visibleContributed" :key="module.name">
+              <li v-for="module in contributedPreview.visible" :key="module.name">
                 <NuxtLink
                   :to="`/modules/${module.name}`"
                   class="flex items-center gap-3 rounded-md px-3 py-2 ring ring-default hover:bg-elevated/50 transition-colors"
@@ -371,13 +407,13 @@ defineOgImage('Nuxter.takumi', { username, period: () => period.value === 'all' 
               </li>
             </ul>
             <UButton
-              v-if="contributed.length > CONTRIBUTED_PREVIEW"
-              :label="showAllContributed ? 'Show less' : `Show all ${contributed.length}`"
-              :trailing-icon="showAllContributed ? 'i-lucide-chevron-up' : 'i-lucide-chevron-down'"
+              v-if="contributedPreview.more"
+              :label="contributedPreview.expanded ? 'Show less' : `Show all ${contributed.length}`"
+              :trailing-icon="contributedPreview.expanded ? 'i-lucide-chevron-up' : 'i-lucide-chevron-down'"
               color="neutral"
               variant="ghost"
               class="mt-4"
-              @click="showAllContributed = !showAllContributed"
+              @click="contributedPreview.expanded = !contributedPreview.expanded"
             />
           </section>
         </div>
