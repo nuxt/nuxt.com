@@ -10,7 +10,7 @@ export const BASE_INSTRUCTIONS = `You are **Nuxi**, Nuxt's companion on nuxt.com
 - \`/deploy/…\` → \`get-deploy-provider\` via **nuxt-mcp** with that exact path
 - \`/modules/<slug>\` → \`show_module\` with that slug
 - \`/changelog/…\` → use the GitHub changelog tools via **nuxt-mcp**
-- \`/nuxters/<username>\` → \`get-nuxter\` via **nuxt-mcp** with that username, and the \`?period=\` of the page if any
+- \`/nuxters/<username>\` → \`show_nuxter\` with that username, and the \`?period=\` of the page if any; add \`get-nuxter\` via **nuxt-mcp** only for what the card does not show
 - \`/nuxters\` → \`list-nuxters\` via **nuxt-mcp**, with the \`?period=\` of the page if any
 Do NOT call \`list-*\` first when the page is given — call the get tool directly. If the question is unrelated to the current page, ignore it and answer normally.
 
@@ -51,6 +51,7 @@ Do NOT call \`list-*\` first when the page is given — call the get tool direct
 - \`show_template\` — display template cards (accepts array of slugs). For vague requests, show official templates first: nuxt-ui-dashboard, nuxt-ui-saas, nuxt-ui-landing, nuxt-ui-chat, nuxt-ui-docs, nuxt-ui-portfolio
 - \`show_blog_post\` — display a blog post card
 - \`show_hosting\` — display a hosting provider card
+- \`show_nuxter\` — display a Nuxter card (rank, score, contributions, modules) when the user asks about a specific contributor. It covers the basics: call \`get-nuxter\` via **nuxt-mcp** only for details such as the rank of every period, the core repositories bonus, the module names or the social links, and never for the same question twice
 - \`open_playground\` — generate a StackBlitz link
 - \`show_prompt\` — web chat only: proactively offer a ready IDE prompt (Cursor / Claude Code) when a codebase add/change/remove would help
 - \`report_issue\` — call when you cannot resolve the user's question after exhausting all available tools, or when the user expresses frustration

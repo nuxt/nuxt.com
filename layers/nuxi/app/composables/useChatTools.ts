@@ -104,13 +104,14 @@ function parseToolName(toolName: string): { verb?: [string, string], label: stri
   return { label: parts.join(' ') || toolName }
 }
 
-type RichToolName = 'show_module' | 'show_template' | 'show_blog_post' | 'show_hosting' | 'open_playground' | 'report_issue' | 'show_prompt'
+type RichToolName = 'show_module' | 'show_template' | 'show_blog_post' | 'show_hosting' | 'show_nuxter' | 'open_playground' | 'report_issue' | 'show_prompt'
 
 const RICH_TOOL_HEADERS = {
   show_module: { loading: 'Loading module...', success: 'Found module', error: 'Module not found', icon: 'i-lucide-box' },
   show_template: { loading: 'Loading templates...', success: 'Found templates', error: 'Templates not found', icon: 'i-lucide-layout-template' },
   show_blog_post: { loading: 'Finding blog post...', success: 'Found blog post', error: 'Blog post not found', icon: 'i-lucide-newspaper' },
   show_hosting: { loading: 'Loading provider...', success: 'Found provider', error: 'Provider not found', icon: 'i-lucide-server' },
+  show_nuxter: { loading: 'Finding Nuxter...', success: 'Found Nuxter', error: 'Nuxter not found', icon: 'i-lucide-users' },
   open_playground: { loading: 'Generating playground...', success: 'Playground ready', error: 'Playground ready', icon: 'i-simple-icons-stackblitz' },
   report_issue: { loading: 'Preparing feedback form...', success: 'Help us improve', error: 'Help us improve', icon: 'i-lucide-message-circle-warning' },
   show_prompt: { loading: 'Preparing prompt...', success: 'Ready to apply', error: 'Prompt unavailable', icon: 'i-lucide-sparkles' }
@@ -204,6 +205,40 @@ export function hostingCardProps(output: unknown): HostingCardData | null {
   }
 }
 
+/** GitHub usernames: the card builds the avatar and profile links from it. */
+function githubUsername(value: unknown): string | undefined {
+  const s = str(value)
+  return s && /^[a-z0-9-]{1,39}$/i.test(s) ? s : undefined
+}
+
+function count(value: unknown): number {
+  const n = num(value)
+  return n !== undefined && n > 0 ? Math.round(n) : 0
+}
+
+export function nuxterCardProps(output: unknown): NuxterCardData | null {
+  const o = asRecord(output)
+  const username = githubUsername(o.username)
+  const path = sitePath(o.path)
+  const rank = num(o.rank)
+  if (!username || !path?.startsWith('/nuxters/') || !rank) return null
+  return {
+    username,
+    name: str(o.name),
+    periodPhrase: str(o.periodPhrase),
+    rank: Math.round(rank),
+    score: count(o.score),
+    mergedPullRequests: count(o.mergedPullRequests),
+    issues: count(o.issues),
+    comments: count(o.comments),
+    reactions: count(o.reactions),
+    maintainedModules: count(o.maintainedModules),
+    contributedModules: count(o.contributedModules),
+    hackathons: Array.isArray(o.hackathons) ? o.hackathons.map(str).filter((h): h is string => !!h) : [],
+    path
+  }
+}
+
 export function playgroundCardProps(output: unknown): PlaygroundCardData | null {
   const o = asRecord(output)
   const url = httpUrl(o.url)
@@ -275,6 +310,8 @@ function hasRichToolSuccess(part: ToolPart, toolName: RichToolName): boolean {
     case 'show_blog_post':
     case 'show_hosting':
       return !!part.output && !hasToolError(part.output)
+    case 'show_nuxter':
+      return !!nuxterCardProps(part.output)
     case 'open_playground':
       return !!part.output
     case 'report_issue':
