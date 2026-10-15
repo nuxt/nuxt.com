@@ -7,6 +7,11 @@ const { resolve } = createResolver(import.meta.url)
 
 const SITE_URL = 'https://nuxt.com'
 
+// A preview's absolute URLs (social images, raw markdown links) point at the preview itself, so a shared link unfurls.
+const PREVIEW_URL = process.env.VERCEL_ENV === 'preview' && process.env.VERCEL_BRANCH_URL
+  ? `https://${process.env.VERCEL_BRANCH_URL}`
+  : undefined
+
 // In `--ui-only` mode (default `pnpm dev`), skip the `eve/nuxt` module so the
 // Eve agent runtime is never spawned locally. The UI and server routes from
 // `layers/nuxi` are still loaded — only the agent itself is disabled.
@@ -100,7 +105,7 @@ export default defineNuxtConfig({
   css: ['~/assets/css/main.css'],
   site: {
     name: 'Nuxt',
-    url: SITE_URL,
+    url: PREVIEW_URL ?? SITE_URL,
     description: 'Build fast, production-ready web apps with Vue. File-based routing, auto-imports, and server-side rendering — all configured out of the box.',
     defaultLocale: 'en'
   },
