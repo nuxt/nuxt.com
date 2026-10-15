@@ -39,7 +39,7 @@ WHEN TO USE: Find web chats with downvotes or read metadata before opening a ful
     const downvotesExpr = sql<number>`coalesce(sum(case when ${schema.votes.isUpvoted} = 0 then 1 else 0 end), 0)`
     const messageCountExpr = sql<number>`(select count(*) from ${schema.messages} where ${schema.messages.chatId} = ${schema.chats.id})`
 
-    type ChatRow = Pick<Chat, 'id' | 'userId' | 'title' | 'visibility' | 'createdAt' | 'updatedAt'> & {
+    type ChatRow = Pick<Chat, 'id' | 'userId' | 'title' | 'visibility' | 'state' | 'createdAt' | 'updatedAt'> & {
       messageCount: number
       upvotes: number
       downvotes: number
@@ -51,6 +51,7 @@ WHEN TO USE: Find web chats with downvotes or read metadata before opening a ful
         userId: schema.chats.userId,
         title: schema.chats.title,
         visibility: schema.chats.visibility,
+        state: schema.chats.state,
         messageCount: messageCountExpr,
         upvotes: upvotesExpr,
         downvotes: downvotesExpr,
@@ -75,6 +76,7 @@ WHEN TO USE: Find web chats with downvotes or read metadata before opening a ful
         userId: r.userId,
         title: r.title,
         visibility: r.visibility,
+        agentRunId: r.state?.sessionId ?? null,
         messageCount: Number(r.messageCount),
         upvotes: Number(r.upvotes),
         downvotes: Number(r.downvotes),

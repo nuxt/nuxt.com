@@ -67,7 +67,6 @@ export function useStartChat(source: string) {
     onSubmit,
     handlePaste: paste.handlePaste,
     removeAttachment: paste.removeAttachment,
-    restoreToInput: paste.restoreToInput,
     createFromSuggestion
   }
 }

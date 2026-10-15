@@ -506,7 +506,6 @@ export function useNuxiChat(options: UseNuxiChatOptions) {
     askQuestion,
     handlePaste: paste.handlePaste,
     removeAttachment: paste.removeAttachment,
-    restoreToInput: paste.restoreToInput,
     hasAgentUser: () => eveChat.hasAgentMessage('user'),
     readAnonymousTitle: () => readAnonymousTitle(chatId.value)
   }

@@ -1,6 +1,8 @@
+import { createError } from 'h3'
 import { describe, expect, it, vi } from 'vitest'
 
 /** The middleware reaches for these through Nitro's auto-imports. */
+vi.stubGlobal('createError', createError)
 vi.stubGlobal('defineEventHandler', <T>(handler: T) => handler)
 vi.stubGlobal('sendRedirect', (_event: unknown, location: string, status: number) => ({ location, status }))
 
@@ -20,8 +22,17 @@ describe('pull preview middleware', () => {
     expect(middleware({ path: '/pull/nuxt/1/login?redirect=/admin' })).toEqual({ location: '/login?redirect=/admin', status: 302 })
   })
 
+  it.each(['//evil.com', '/\\evil.com', '/\\\\evil.com', '///evil.com'])('never redirects %s off the site', (rest) => {
+    expect(middleware({ path: `/pull/nuxt/1${rest}` })).toEqual({ location: '/evil.com', status: 302 })
+  })
+
+  it('refuses a path browsers read as another host', () => {
+    expect(() => middleware({ path: '/pull/nuxt/1/\t/evil.com' })).toThrow('Invalid preview path')
+  })
+
   it('ignores anything that is not a preview', () => {
     expect(middleware({ path: '/dashboard/chat' })).toBeUndefined()
     expect(middleware({ path: '/pull/ui/1/dashboard/chat' })).toBeUndefined()
+    expect(middleware({ path: '/pull/nuxt/1\\\\evil.com' })).toBeUndefined()
   })
 })

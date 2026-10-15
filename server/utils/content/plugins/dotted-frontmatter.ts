@@ -9,6 +9,9 @@ export const DOTTED_NAV_FIELDS = ['navigation.icon', 'navigation.title']
 const isPlainObject = (value: unknown): value is Record<string, unknown> =>
   value !== null && typeof value === 'object' && !Array.isArray(value)
 
+// Frontmatter is untrusted (PR previews): these segments reach `Object.prototype`.
+const UNSAFE_SEGMENTS = new Set(['__proto__', 'constructor', 'prototype'])
+
 /**
  * Expand dotted keys into nested objects (`{ 'a.b': 1 }` -> `{ a: { b: 1 } }`).
  */
@@ -16,27 +19,29 @@ export function unflattenDotted(data: Record<string, unknown>): Record<string, u
   const out: Record<string, unknown> = {}
 
   for (const [key, value] of Object.entries(data)) {
-    if (!key.includes('.')) out[key] = value
+    if (!key.includes('.') && key !== '__proto__') out[key] = value
   }
 
   for (const [key, value] of Object.entries(data)) {
     if (!key.includes('.')) continue
 
     const parts = key.split('.')
+    if (parts.some(part => UNSAFE_SEGMENTS.has(part))) continue
+
     const leaf = parts.at(-1)!
     let node = out
     let dropped = false
 
     for (const part of parts.slice(0, -1)) {
-      const current = node[part]
+      const current = Object.hasOwn(node, part) ? node[part] : undefined
       if (current !== undefined && (current === null || typeof current !== 'object' || Array.isArray(current))) {
         dropped = true
         break
       }
-      node = (node[part] ??= {}) as Record<string, unknown>
+      node = (current ?? (node[part] = {})) as Record<string, unknown>
     }
 
-    if (!dropped && !(leaf in node)) node[leaf] = value
+    if (!dropped && !Object.hasOwn(node, leaf)) node[leaf] = value
   }
 
   return out
@@ -50,12 +55,13 @@ export function hoistNavigationPrefix(data: Record<string, unknown>): Record<str
   const out: Record<string, unknown> = {}
 
   for (const [key, value] of Object.entries(data)) {
-    if (!key.startsWith('navigation.')) out[key] = value
+    if (!key.startsWith('navigation.') && key !== '__proto__') out[key] = value
   }
   for (const [key, value] of Object.entries(data)) {
     if (!key.startsWith('navigation.')) continue
     const leaf = key.slice('navigation.'.length)
-    if (!(leaf in out)) out[leaf] = value
+    // Dotted leaves like `__proto__.draft` are left to `unflattenDotted()` to drop.
+    if (leaf !== '__proto__' && !Object.hasOwn(out, leaf)) out[leaf] = value
   }
 
   return out
