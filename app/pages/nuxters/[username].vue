@@ -266,11 +266,13 @@ defineOgImage('Nuxter.takumi', { username, period: () => period.value === 'all' 
           </div>
 
           <!-- Only for the owner: the page is cached for everyone, so the session is checked in the browser.
-               Sharing is a desktop action (copying Markdown into a GitHub README). -->
+               Sharing is a desktop action (copying Markdown into a GitHub README).
+               An empty fallback: the default `<span>` would take a gap of the column until hydration. -->
           <ClientOnly>
             <div v-if="isOwner" class="hidden lg:block">
               <NuxtersShare :username="nuxter.username" :period="period" />
             </div>
+            <template #fallback />
           </ClientOnly>
         </div>
 
