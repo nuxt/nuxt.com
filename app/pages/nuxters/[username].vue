@@ -92,7 +92,7 @@ function usePreview<T>(items: Ref<T[]>, size: number) {
   const more = computed(() => items.value.length > size)
   return reactive({ expanded, visible, more })
 }
-const maintainedPreview = usePreview(maintained, 6)
+const maintainedPreview = usePreview(maintained, 8)
 const blogPostsPreview = usePreview(blogPosts, 12)
 const contributedPreview = usePreview(contributed, 12)
 
@@ -317,7 +317,7 @@ defineOgImage('Nuxter.takumi', { username, period: () => period.value === 'all' 
             <p class="text-muted mb-6">
               Maintainer of {{ maintained.length }} {{ maintained.length === 1 ? 'module' : 'modules' }} of the Nuxt ecosystem.
             </p>
-            <UPageGrid class="lg:grid-cols-2 xl:grid-cols-3">
+            <UPageGrid class="lg:grid-cols-2 xl:grid-cols-4 gap-4">
               <!-- The card shape of /modules: the missing fields are only read by the project tools, off here -->
               <ModuleItem
                 v-for="module in maintainedPreview.visible"
@@ -347,11 +347,11 @@ defineOgImage('Nuxter.takumi', { username, period: () => period.value === 'all' 
               {{ blogPosts.length }} {{ blogPosts.length === 1 ? 'article' : 'articles' }} on the Nuxt blog.
             </p>
             <!-- The rows of contributed modules: 30+ full cards for some -->
-            <ul class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2">
+            <ul class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
               <li v-for="post in blogPostsPreview.visible" :key="post.path">
                 <NuxtLink
                   :to="post.path"
-                  class="flex items-center gap-3 rounded-md px-3 py-2 ring ring-default hover:bg-elevated/50 transition-colors"
+                  class="flex items-center gap-3 rounded-lg px-3 py-2 ring ring-default hover:bg-elevated/50 transition-colors"
                 >
                   <NuxtImg
                     v-if="post.image"
@@ -364,7 +364,7 @@ defineOgImage('Nuxter.takumi', { username, period: () => period.value === 'all' 
                     class="h-8 aspect-video shrink-0 rounded-md object-cover"
                   />
                   <span class="min-w-0">
-                    <span class="block font-medium text-highlighted truncate">{{ post.title }}</span>
+                    <span class="block font-medium text-sm text-highlighted truncate">{{ post.title }}</span>
                     <span class="block text-xs text-muted truncate">{{ formatDateByLocale('en', post.date) }}</span>
                   </span>
                 </NuxtLink>
@@ -388,11 +388,11 @@ defineOgImage('Nuxter.takumi', { username, period: () => period.value === 'all' 
             <p class="text-muted mb-6">
               Commits in {{ contributed.length }} {{ contributed.length === 1 ? 'module' : 'modules' }}{{ maintained.length ? ' maintained by others' : '' }}, by downloads.
             </p>
-            <ul class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2">
+            <ul class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
               <li v-for="module in contributedPreview.visible" :key="module.name">
                 <NuxtLink
                   :to="`/modules/${module.name}`"
-                  class="flex items-center gap-3 rounded-md px-3 py-2 ring ring-default hover:bg-elevated/50 transition-colors"
+                  class="flex items-center gap-3 rounded-lg px-3 py-2 ring ring-default hover:bg-elevated/50 transition-colors"
                 >
                   <UAvatar
                     :src="moduleImage(module.icon)"
@@ -402,7 +402,7 @@ defineOgImage('Nuxter.takumi', { username, period: () => period.value === 'all' 
                     class="rounded-md bg-transparent"
                   />
                   <span class="min-w-0">
-                    <span class="block font-medium text-highlighted truncate">{{ module.name }}</span>
+                    <span class="block font-medium text-sm text-highlighted truncate">{{ module.name }}</span>
                     <span class="block text-xs text-muted truncate">{{ module.npm }}</span>
                   </span>
                 </NuxtLink>
