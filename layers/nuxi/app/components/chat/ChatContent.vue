@@ -107,12 +107,14 @@ function getUserTextParts(message: UIMessage) {
       <span class="text-xs text-muted">{{ getMessagePagePath(message)!.replace(/^\//, '') }}</span>
     </div>
 
-    <AgentPasteAttachment
-      v-for="(part, index) in getUserFileParts(message)"
-      :key="`${message.id}-file-${index}`"
-      :attachment="filePartToAttachment(part)"
-      variant="preview"
-    />
+    <div v-if="getUserFileParts(message).length" class="flex flex-wrap gap-1.5">
+      <AgentPasteAttachment
+        v-for="(part, index) in getUserFileParts(message)"
+        :key="`${message.id}-file-${index}`"
+        :attachment="filePartToAttachment(part)"
+        variant="preview"
+      />
+    </div>
 
     <p
       v-for="(part, partIndex) in getUserTextParts(message)"

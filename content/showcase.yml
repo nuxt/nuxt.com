@@ -9,14 +9,23 @@ websites:
     url: https://eu.louisvuitton.com/
     screenshotOptions:
       cookies: ['gtm_cookie_consent=functional:1|analytics:1|customization:1|advertising:1|livechat:1']
+  - name: Nintendo
+    url: https://www.nintendo.com/en-gb/
+    screenshotOptions:
+      cookies: ['OptanonAlertBoxClosed=2025-05-02T22:04:35.770Z;']
+      hideElements: ['#onetrust-consent-sdk']
+      scripts: ['[0, 1, 2].forEach(i => setTimeout(() => document.querySelector(".clm-generic-carousel__next")?.click(), 800 * i))']
+      delay: 4
   - name: Trade Republic
     url: https://traderepublic.com/
     screenshotOptions:
       cookies: ['analytics=grant;', 'marketing=grant;']
-  - name: Armani
-    url: https://www.armani.com/
+  - name: Prada
+    url: https://www.prada.com/gb/en.html
     screenshotOptions:
-      cookies: ['OptanonAlertBoxClosed=2025-05-02T22:04:35.770Z;']
+      userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36'
+      styles: ['#__tealiumGDPRecModal { display: none !important; }']
+      delay: 3
   - name: NASA Jet Propulsion Laboratory
     url: https://jpl.nasa.gov/
   - name: Google Ventures
@@ -38,6 +47,16 @@ websites:
     screenshotOptions:
       cookies: ['OptanonAlertBoxClosed=2025-05-02T22:04:35.770Z;']
       delay: 0.5
+  - name: Malt
+    url: https://www.malt.com/
+    screenshotOptions:
+      userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36'
+      styles: ['#axeptio_overlay { display: none !important; }']
+      delay: 3
+  - name: Armani
+    url: https://www.armani.com/
+    screenshotOptions:
+      cookies: ['OptanonAlertBoxClosed=2025-05-02T22:04:35.770Z;']
   # - name: BackMarket
   #   url: https://www.backmarket.com/
   - name: Mc Donalds France

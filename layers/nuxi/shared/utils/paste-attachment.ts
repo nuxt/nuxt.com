@@ -1,4 +1,4 @@
-import type { FileUIPart, UIMessage } from 'ai'
+import type { FileUIPart, UIMessage, UserContent } from 'ai'
 
 export const PASTE_ATTACHMENT_MIN_CHARS = 400
 export const PASTE_ATTACHMENT_MIN_LINES = 8
@@ -9,31 +9,31 @@ export interface TextPasteAttachment {
 }
 
 const EXTENSION_META = {
-  '.vue': { label: 'Vue', mediaType: 'text/plain', language: 'vue', icon: 'i-logos-vue' },
-  '.tsx': { label: 'TSX', mediaType: 'text/plain', language: 'tsx', icon: 'i-logos-typescript-icon' },
-  '.jsx': { label: 'JSX', mediaType: 'text/plain', language: 'jsx', icon: 'i-logos-javascript' },
-  '.mts': { label: 'TypeScript', mediaType: 'text/plain', language: 'typescript', icon: 'i-logos-typescript-icon' },
-  '.cts': { label: 'TypeScript', mediaType: 'text/plain', language: 'typescript', icon: 'i-logos-typescript-icon' },
-  '.ts': { label: 'TypeScript', mediaType: 'text/plain', language: 'typescript', icon: 'i-logos-typescript-icon' },
-  '.mjs': { label: 'JavaScript', mediaType: 'text/plain', language: 'javascript', icon: 'i-logos-javascript' },
-  '.cjs': { label: 'JavaScript', mediaType: 'text/plain', language: 'javascript', icon: 'i-logos-javascript' },
-  '.js': { label: 'JavaScript', mediaType: 'text/plain', language: 'javascript', icon: 'i-logos-javascript' },
-  '.json': { label: 'JSON', mediaType: 'application/json', language: 'json', icon: 'i-lucide-braces' },
-  '.yaml': { label: 'YAML', mediaType: 'text/yaml', language: 'yaml', icon: 'i-lucide-file-code' },
-  '.yml': { label: 'YAML', mediaType: 'text/yaml', language: 'yaml', icon: 'i-lucide-file-code' },
-  '.mdc': { label: 'Markdown', mediaType: 'text/markdown', language: 'markdown', icon: 'i-lucide-file-text' },
-  '.md': { label: 'Markdown', mediaType: 'text/markdown', language: 'markdown', icon: 'i-lucide-file-text' },
-  '.scss': { label: 'CSS', mediaType: 'text/plain', language: 'scss', icon: 'i-lucide-palette' },
-  '.css': { label: 'CSS', mediaType: 'text/plain', language: 'css', icon: 'i-lucide-palette' },
-  '.html': { label: 'HTML', mediaType: 'text/html', language: 'html', icon: 'i-lucide-file-code' },
-  '.env': { label: 'Env', mediaType: 'text/plain', language: 'shell', icon: 'i-lucide-file-text' }
+  '.vue': { label: 'Vue', mediaType: 'text/plain', language: 'vue', icon: 'i-vscode-icons-file-type-vue' },
+  '.tsx': { label: 'TSX', mediaType: 'text/plain', language: 'tsx', icon: 'i-vscode-icons-file-type-reactts' },
+  '.jsx': { label: 'JSX', mediaType: 'text/plain', language: 'jsx', icon: 'i-vscode-icons-file-type-reactjs' },
+  '.mts': { label: 'TypeScript', mediaType: 'text/plain', language: 'typescript', icon: 'i-vscode-icons-file-type-typescript' },
+  '.cts': { label: 'TypeScript', mediaType: 'text/plain', language: 'typescript', icon: 'i-vscode-icons-file-type-typescript' },
+  '.ts': { label: 'TypeScript', mediaType: 'text/plain', language: 'typescript', icon: 'i-vscode-icons-file-type-typescript' },
+  '.mjs': { label: 'JavaScript', mediaType: 'text/plain', language: 'javascript', icon: 'i-vscode-icons-file-type-js' },
+  '.cjs': { label: 'JavaScript', mediaType: 'text/plain', language: 'javascript', icon: 'i-vscode-icons-file-type-js' },
+  '.js': { label: 'JavaScript', mediaType: 'text/plain', language: 'javascript', icon: 'i-vscode-icons-file-type-js' },
+  '.json': { label: 'JSON', mediaType: 'application/json', language: 'json', icon: 'i-vscode-icons-file-type-json' },
+  '.yaml': { label: 'YAML', mediaType: 'text/yaml', language: 'yaml', icon: 'i-vscode-icons-file-type-yaml' },
+  '.yml': { label: 'YAML', mediaType: 'text/yaml', language: 'yaml', icon: 'i-vscode-icons-file-type-yaml' },
+  '.mdc': { label: 'Markdown', mediaType: 'text/markdown', language: 'markdown', icon: 'i-vscode-icons-file-type-markdown' },
+  '.md': { label: 'Markdown', mediaType: 'text/markdown', language: 'markdown', icon: 'i-vscode-icons-file-type-markdown' },
+  '.scss': { label: 'SCSS', mediaType: 'text/plain', language: 'scss', icon: 'i-vscode-icons-file-type-scss' },
+  '.css': { label: 'CSS', mediaType: 'text/plain', language: 'css', icon: 'i-vscode-icons-file-type-css' },
+  '.html': { label: 'HTML', mediaType: 'text/html', language: 'html', icon: 'i-vscode-icons-file-type-html' },
+  '.env': { label: 'Env', mediaType: 'text/plain', language: 'shell', icon: 'i-vscode-icons-file-type-dotenv' }
 } as const
 
 const DEFAULT_EXTENSION_META = {
   label: 'Text',
   mediaType: 'text/plain',
   language: 'text',
-  icon: 'i-lucide-file-text'
+  icon: 'i-vscode-icons-file-type-text'
 } as const
 
 const EXTENSIONS_BY_LENGTH = Object.keys(EXTENSION_META).sort((a, b) => b.length - a.length)
@@ -61,6 +61,10 @@ export function guessExtension(content: string): string {
   const trimmed = content.trimStart()
   const lines = firstNonEmptyLines(content)
   const first = lines[0] ?? ''
+
+  if (/^\w*(?:Error|Exception)\b/.test(first) || lines.some(line => /^at\s+\S/.test(line))) {
+    return '.txt'
+  }
 
   if (/^<(?:template|script|style)\b/.test(first) || lines.some(line => /^<(?:template|script|style)\b/.test(line))) {
     return '.vue'
@@ -204,10 +208,66 @@ export function filePartToAttachment(part: FileUIPart): TextPasteAttachment {
   }
 }
 
-export function attachmentPreview(content: string, maxLength = 64): string {
-  const line = content.trimStart().split('\n')[0]?.trim() ?? ''
-  if (line.length <= maxLength) return line
-  return `${line.slice(0, maxLength)}…`
+/**
+ * Eve stages file parts in the sandbox and only hands the model a path, which
+ * Nuxi can't open — text attachments travel inline as tagged blocks instead.
+ */
+const ATTACHMENT_BLOCK = /<attachment filename="([^"\n]+)">\n(`{3,})[^`\n]*\n([\s\S]*?)\n\2\n<\/attachment>/g
+
+export function attachmentToText({ name, content }: TextPasteAttachment): string {
+  const runs: string[] = content.match(/`+/g) ?? []
+  const longestRun = runs.reduce((max, run) => Math.max(max, run.length), 2)
+  const fence = '`'.repeat(longestRun + 1)
+  const { language } = getExtensionMeta(name)
+  return `<attachment filename="${name.replaceAll('"', '')}">\n${fence}${language}\n${content}\n${fence}\n</attachment>`
+}
+
+export function isTextFilePart(part: FileUIPart): boolean {
+  return (part.mediaType.startsWith('text/') || part.mediaType === 'application/json')
+    && getFilePartContent(part) !== null
+}
+
+/** Turns UI parts into Eve user content, inlining text attachments. */
+export function toEveUserContent(parts: UIMessage['parts']): string | UserContent | null {
+  const content: Exclude<UserContent, string> = []
+
+  for (const part of parts) {
+    if (part.type === 'text') {
+      const text = part.text.trim()
+      if (text) content.push({ type: 'text', text })
+    } else if (part.type === 'file') {
+      content.push(isTextFilePart(part)
+        ? { type: 'text', text: attachmentToText(filePartToAttachment(part)) }
+        : { type: 'file', data: part.url, mediaType: part.mediaType, filename: part.filename })
+    }
+  }
+
+  if (!content.length) return null
+  const [first] = content
+  return content.length === 1 && first?.type === 'text' ? first.text : content
+}
+
+/** Restores the file chips for attachment blocks found in user text parts. */
+export function expandAttachmentParts(parts: UIMessage['parts']): UIMessage['parts'] {
+  if (!parts.some(part => part.type === 'text' && part.text.includes('<attachment '))) return parts
+
+  return parts.flatMap((part) => {
+    if (part.type !== 'text') return [part]
+
+    const expanded: UIMessage['parts'] = []
+    let cursor = 0
+    for (const match of part.text.matchAll(ATTACHMENT_BLOCK)) {
+      const before = part.text.slice(cursor, match.index).trim()
+      if (before) expanded.push({ ...part, text: before })
+      expanded.push(attachmentToFilePart({ name: match[1]!, content: match[3]! }))
+      cursor = match.index + match[0].length
+    }
+    if (!cursor) return [part]
+
+    const after = part.text.slice(cursor).trim()
+    if (after) expanded.push({ ...part, text: after })
+    return expanded
+  })
 }
 
 export function getMessageTextLength(parts: UIMessage['parts']): number {

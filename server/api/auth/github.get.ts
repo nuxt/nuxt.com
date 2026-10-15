@@ -14,7 +14,7 @@ const oauthHandler = defineOAuthGitHubEventHandler({
       )
     })
 
-    const role: 'user' | 'admin' = (await isAuthorizedAdmin(ghUser.login)) ? 'admin' : 'user'
+    const role: 'user' | 'admin' = (await isAuthorizedAdmin(event, ghUser.login)) ? 'admin' : 'user'
 
     if (!user) {
       // New user: reuse `session.id` as the primary key so any anonymous chats

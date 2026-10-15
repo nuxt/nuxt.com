@@ -8,7 +8,6 @@ const props = withDefaults(defineProps<{
 
 defineEmits<{
   remove: []
-  restore: []
 }>()
 
 const open = ref(false)
@@ -16,10 +15,10 @@ const previewLoading = ref(false)
 
 const { height: windowHeight } = useWindowSize()
 
-const preview = computed(() => attachmentPreview(props.attachment.content, 56))
 const extensionMeta = computed(() => getExtensionMeta(props.attachment.name))
 const typeLabel = computed(() => extensionMeta.value.label)
 const icon = computed(() => extensionMeta.value.icon)
+const title = computed(() => /\.(?:txt|mdc?)$/.test(props.attachment.name) ? 'Pasted text' : 'Pasted code')
 const lineCount = computed(() => props.attachment.content.split('\n').length)
 const comarkContent = computed(() => attachmentToComark(props.attachment.content, props.attachment.name))
 const isMarkdown = computed(() => isRenderableMarkdown(props.attachment.name))
@@ -65,61 +64,41 @@ async function openPreview() {
 </script>
 
 <template>
-  <component
-    :is="variant === 'preview' ? 'button' : 'div'"
-    :type="variant === 'preview' ? 'button' : undefined"
-    class="items-center gap-2 rounded-md bg-muted/40 px-2.5 py-1.5 text-left transition-colors"
-    :class="[
-      variant === 'preview'
-        ? 'inline-flex w-fit min-w-0 max-w-full border border-default/60'
-        : 'inline-flex w-fit max-w-80 ring ring-default/60',
-      variant === 'preview' ? 'hover:bg-muted/60' : ''
-    ]"
-    @click="variant === 'preview' ? openPreview() : undefined"
-  >
-    <UIcon :name="icon" class="size-3.5 shrink-0" />
-
-    <div
-      class="min-w-0 leading-none"
-      :class="variant === 'preview' ? 'max-w-[14rem]' : 'max-w-60'"
+  <div class="group/chip relative w-fit min-w-0 max-w-full sm:max-w-64">
+    <button
+      type="button"
+      class="group flex w-full min-w-0 items-center gap-2.5 rounded-lg bg-muted/40 p-1.5 pr-3.5 text-left ring ring-default/60 transition-colors outline-none hover:bg-muted/70 focus-visible:ring-2 focus-visible:ring-primary"
+      :aria-label="`Preview ${title.toLowerCase()}, ${typeLabel}, ${lineCount} lines`"
+      @click="openPreview"
     >
-      <button
-        v-if="variant === 'composer'"
-        type="button"
-        class="block w-full truncate text-left font-mono text-[11px] text-highlighted hover:underline"
-        @click.stop="openPreview"
-      >
-        {{ preview }}
-      </button>
-      <span
-        v-else
-        class="block truncate font-mono text-[11px] text-highlighted"
-      >
-        {{ preview }}
+      <span class="grid size-8 shrink-0 place-items-center rounded-md bg-default ring ring-default/60">
+        <UIcon
+          :name="icon"
+          class="col-start-1 row-start-1 size-4 transition-opacity group-hover:opacity-0 group-focus-visible:opacity-0"
+        />
+        <UIcon
+          name="i-lucide-maximize-2"
+          class="col-start-1 row-start-1 size-3.5 text-muted opacity-0 transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100"
+        />
       </span>
+      <span class="flex min-w-0 flex-col gap-0.5">
+        <span class="truncate text-xs/4 font-medium text-highlighted">{{ title }}</span>
+        <span class="truncate text-[11px]/4 tabular-nums text-muted">
+          {{ typeLabel }} · {{ lineCount }} {{ lineCount === 1 ? 'line' : 'lines' }}
+        </span>
+      </span>
+    </button>
 
-      <UButton
-        v-if="variant === 'composer'"
-        variant="link"
-        size="xs"
-        color="primary"
-        label="Show in text field"
-        class="mt-0.5 h-auto p-0 text-[11px]"
-        @click.stop="$emit('restore')"
-      />
-    </div>
-
-    <UButton
+    <button
       v-if="variant === 'composer'"
-      icon="i-lucide-x"
-      color="neutral"
-      variant="ghost"
-      size="xs"
-      square
+      type="button"
+      class="absolute -top-1.5 -right-1.5 grid size-4.5 place-items-center rounded-full border border-default bg-elevated text-muted transition-[opacity,color,background-color] outline-none hover:bg-accented hover:text-highlighted focus-visible:ring-2 focus-visible:ring-primary pointer-fine:opacity-0 pointer-fine:group-hover/chip:opacity-100 pointer-fine:group-focus-within/chip:opacity-100"
       aria-label="Remove attachment"
-      @click.stop="$emit('remove')"
-    />
-  </component>
+      @click="$emit('remove')"
+    >
+      <UIcon name="i-lucide-x" class="size-2.5" />
+    </button>
+  </div>
 
   <UModal
     v-model:open="open"
