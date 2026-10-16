@@ -167,7 +167,8 @@ export default defineNuxtConfig({
           nuxter: '',
           moduleAuthor: '',
           // One key per hackathon id in `NUXTERS_HACKATHONS`
-          nuxtathon1: ''
+          nuxtathon1: '',
+          nuxtathon2: ''
         }
       }
     }
