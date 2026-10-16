@@ -1,4 +1,5 @@
 import type { BlogArticle } from '#shared/types'
+import { blogAuthors } from '#shared/utils/blog'
 
 export default defineMcpResource({
   uri: 'resource://nuxt-com/blog-posts',
@@ -24,7 +25,8 @@ export default defineMcpResource({
       date: post.date,
       category: post.category,
       tags: post.tags,
-      authors: post.authors,
+      // GitHub usernames: get-nuxter / show_nuxter take them
+      authors: blogAuthors(post.authors).map(({ name, username }) => ({ name, username })),
       image: post.image,
       url: `https://nuxt.com${post.path}`
     }))

@@ -23,15 +23,25 @@ export default defineCachedEventHandler(async (event) => {
     fetchModuleContributors(event, module),
     fetchModuleReadme(event, module)
   ])
+  // Who has a Nuxter profile, to link there instead of GitHub. Not blocking: GitHub links on an error.
+  const known = await nuxters.known({
+    githubIds: contributors.map(contributor => contributor.id),
+    usernames: module.maintainers?.flatMap(maintainer => maintainer.github ? [maintainer.github] : [])
+  }).catch((error) => {
+    console.error('Cannot load Nuxters for module', module.name, error)
+    return { githubIds: new Set<number>(), usernames: new Set<string>() }
+  })
+
   return {
     ...module,
+    maintainers: module.maintainers?.map(maintainer => ({ ...maintainer, nuxter: !!maintainer.github && known.usernames.has(maintainer.github.toLowerCase()) })),
     generatedAt: new Date().toISOString(),
-    contributors,
+    contributors: contributors.map(contributor => ({ ...contributor, nuxter: known.githubIds.has(contributor.id) })),
     stats,
     readme
   } satisfies Module
 }, {
-  name: 'modules:v2',
+  name: 'modules:v3',
   getKey: event => event.context.params!.name!,
   swr: true,
   maxAge: 60 * 60 // 1 hour

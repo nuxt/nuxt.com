@@ -25,8 +25,8 @@ test('builds and compares production bundle snapshots', async () => {
   await writeFile(join(assetDir, 'entry.js.map'), '{}')
   await writeFile(join(assetDir, 'chunk.js'), 'export const chunk = 1')
   await writeFile(join(assetDir, 'lazy.js'), 'export const lazy = 1')
-  // `/blog` as a flat file, `/` and a docs page as Nitro's default `index.html`.
-  await writeFile(join(publicDir, 'blog.html'), [
+  // `/updates` as a flat file, `/` and a docs page as Nitro's default `index.html`.
+  await writeFile(join(publicDir, 'updates.html'), [
     '<link rel="stylesheet" href="/_nuxt/entry.css" crossorigin>',
     '<link rel="modulepreload" as="script" crossorigin href="/_nuxt/entry.js">',
     '<link rel="modulepreload" as="script" crossorigin href=\'/_nuxt/chunk.js?v=1\'>',
@@ -62,18 +62,18 @@ test('builds and compares production bundle snapshots', async () => {
   head.totals.all.brotli += 10
   head.totals.all.gzip += 12
   head.modules['node_modules/example/index.js'].brotli += 10
-  head.routes['/blog'].javascript.brotli += 10
-  head.routes['/blog'].files += 1
+  head.routes['/updates'].javascript.brotli += 10
+  head.routes['/updates'].files += 1
 
   assert.equal(base.schemaVersion, 3)
   assert.equal(base.assets, undefined)
   assert.equal(base.modules['node_modules/example/index.js'].brotli, 60)
 
   // Entry is deduplicated, prefetched and unknown assets are skipped.
-  assert.deepEqual(Object.keys(base.routes), ['/', '/docs/4.x/getting-started/introduction', '/blog'])
-  assert.equal(base.routes['/blog'].files, 3)
-  assert.equal(base.routes['/blog'].javascript.raw, 'console.log("entry")'.length + 'export const chunk = 1'.length)
-  assert.equal(base.routes['/blog'].css.raw, 'body { color: green }'.length)
+  assert.deepEqual(Object.keys(base.routes), ['/', '/docs/4.x/getting-started/introduction', '/updates'])
+  assert.equal(base.routes['/updates'].files, 3)
+  assert.equal(base.routes['/updates'].javascript.raw, 'console.log("entry")'.length + 'export const chunk = 1'.length)
+  assert.equal(base.routes['/updates'].css.raw, 'body { color: green }'.length)
   assert.equal(base.routes['/'].files, 1)
   assert.equal(base.routes['/docs/4.x/getting-started/introduction'].files, 1)
 
@@ -81,7 +81,7 @@ test('builds and compares production bundle snapshots', async () => {
   assert.match(report, /Client JavaScript/)
   assert.match(report, /Largest module increases/)
   assert.match(report, /report-only/)
-  assert.match(report, /\| <code>\/blog<\/code> \| .+ \| \+10 B \(.+\) \| — \| \+1 \|/)
+  assert.match(report, /\| <code>\/updates<\/code> \| .+ \| \+10 B \(.+\) \| — \| \+1 \|/)
   assert.ok(report.indexOf('### Initial page load') < report.indexOf('### All client assets'))
 })
 
@@ -118,7 +118,7 @@ test('validates snapshots and safely renders module identifiers', () => {
     sha: 'b'.repeat(40),
     totals,
     routes: {
-      '/blog': { javascript: { ...size }, css: { ...size }, files: 1 }
+      '/updates': { javascript: { ...size }, css: { ...size }, files: 1 }
     },
     modules: {
       '`</code>|@nuxt<img src=x>`': size,
@@ -130,14 +130,14 @@ test('validates snapshots and safely renders module identifiers', () => {
   assert.doesNotMatch(report, /@nuxt|<img|\[click me\]/)
   assert.match(report, /&#96;&lt;\/code&gt;&#124;&#64;nuxt&lt;img src=x&gt;&#96;/)
   assert.match(report, /&#91;click me&#93;\(https:\/\/evil\.example\/\)/)
-  assert.match(report, /\| <code>\/blog<\/code> \| n\/a \| 1 B \| n\/a \| n\/a \| n\/a \|/)
+  assert.match(report, /\| <code>\/updates<\/code> \| n\/a \| 1 B \| n\/a \| n\/a \| n\/a \|/)
 
   assert.throws(
-    () => validateSnapshot({ ...head, routes: { '/<img src=x>': head.routes['/blog'] } }, { label: 'pr' }),
+    () => validateSnapshot({ ...head, routes: { '/<img src=x>': head.routes['/updates'] } }, { label: 'pr' }),
     /unexpected route/
   )
   assert.throws(
-    () => validateSnapshot({ ...head, routes: { '/blog': { ...head.routes['/blog'], files: 1.5 } } }, { label: 'pr' }),
+    () => validateSnapshot({ ...head, routes: { '/updates': { ...head.routes['/updates'], files: 1.5 } } }, { label: 'pr' }),
     /files must be an integer/
   )
   assert.throws(

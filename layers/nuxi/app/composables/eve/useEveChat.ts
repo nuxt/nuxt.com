@@ -1,6 +1,7 @@
 import type { EveAgentReducer, EveMessageData, UseEveAgentSnapshot } from 'eve/vue'
 import { defaultMessageReducer, useEveAgent } from 'eve/vue'
-import type { FileUIPart, UIMessage } from 'ai'
+import type { UIMessage } from 'ai'
+import { toEveUserContent } from '../../../shared/utils/paste-attachment'
 import { eveMessagesToUIMessages } from './adapter'
 import type { AgentChatHandle } from './types'
 
@@ -56,40 +57,8 @@ async function sendUserParts(
   agent: ReturnType<typeof useEveAgent>,
   parts: UIMessage['parts']
 ) {
-  const text = parts
-    .filter((part): part is { type: 'text', text: string } => part.type === 'text')
-    .map(part => part.text)
-    .join('\n')
-    .trim()
-
-  const fileParts = parts.filter((part): part is FileUIPart => part.type === 'file')
-
-  if (fileParts.length && text) {
-    await agent.send([
-      { type: 'text', text },
-      ...fileParts.map(part => ({
-        type: 'file' as const,
-        data: part.url,
-        mediaType: part.mediaType,
-        filename: part.filename
-      }))
-    ])
-    return
-  }
-
-  if (fileParts.length) {
-    await agent.send(fileParts.map(part => ({
-      type: 'file' as const,
-      data: part.url,
-      mediaType: part.mediaType,
-      filename: part.filename
-    })))
-    return
-  }
-
-  if (text) {
-    await agent.send(text)
-  }
+  const content = toEveUserContent(parts)
+  if (content) await agent.send(content)
 }
 
 export function useEveChat(options: UseEveChatOptions): AgentChatHandle & {

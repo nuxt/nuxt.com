@@ -11,13 +11,18 @@ const props = defineProps({
   size: {
     type: String as PropType<'lg' | 'xl'>,
     default: 'lg'
+  },
+  /** Set to `false` for values that must not reach analytics (tokens, private URLs). */
+  tracked: {
+    type: Boolean,
+    default: true
   }
 })
 const { copy, copied } = useClipboard()
 const { track } = useAnalytics()
 
 function copyValue() {
-  track('Command Copied', { value: props.value })
+  if (props.tracked) track('Command Copied', { value: props.value })
   copy(props.value)
 }
 </script>

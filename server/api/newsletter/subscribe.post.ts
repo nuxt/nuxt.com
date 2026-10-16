@@ -13,13 +13,7 @@ export default eventHandler(async (event) => {
     email: z.string().email().trim()
   }).parse)
 
-  const { apiKey, audienceId } = useRuntimeConfig(event).resend
-  if (!apiKey || !audienceId) {
-    throw createError({
-      statusCode: 500,
-      message: 'Missing Resend configuration'
-    })
-  }
+  const { apiKey, audienceId, secret } = useNewsletterConfig(event)
 
   const resend = new Resend(apiKey)
 
@@ -32,7 +26,7 @@ export default eventHandler(async (event) => {
     })
   }
 
-  const confirmation = generateConfirmation(event, email)
+  const confirmation = generateConfirmation(secret, email)
   const origin = import.meta.dev ? getRequestURL(event).origin : 'https://nuxt.com'
   const confirmationURL = withQuery(withTrailingSlash(origin), { email, confirmation })
 

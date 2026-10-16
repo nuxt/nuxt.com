@@ -4,10 +4,12 @@ import type { FormSubmitEvent } from '#ui/types'
 
 const {
   label = 'Subscribe to our newsletter',
-  description = 'Stay updated on new releases and features, guides, and community updates.'
+  description = 'Stay updated on new releases and features, guides, and community updates.',
+  size = 'lg'
 } = defineProps<{
   label?: string
   description?: string
+  size?: 'sm' | 'md' | 'lg'
 }>()
 
 const toast = useToast()
@@ -47,20 +49,20 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
 </script>
 
 <template>
-  <UForm :schema="schema" :state="state" class="block" @submit="onSubmit">
-    <UFormField name="email" :label="label" size="lg" :description="description" :ui="{ label: 'font-semibold', container: 'mt-3' }">
-      <UInput
-        v-model="state.email"
-        type="email"
-        placeholder="you@domain.com"
-        required
-        autocomplete="off"
-        class="max-w-sm w-full"
-      >
-        <template #trailing>
-          <UButton type="submit" size="xs" color="neutral" :label="loading ? 'Subscribing' : 'Subscribe'" :loading="loading" />
-        </template>
-      </UInput>
+  <UForm :schema="schema" :state="state" :validate-on="[]" class="block" @submit="onSubmit">
+    <UFormField name="email" :label="label" :size="size" :description="description" :ui="{ label: 'font-semibold', container: label ? 'mt-3' : '' }">
+      <UFieldGroup :size="size" class="max-w-sm w-full">
+        <UInput
+          v-model="state.email"
+          type="email"
+          placeholder="you@domain.com"
+          :aria-label="label ? undefined : 'Email address'"
+          required
+          autocomplete="off"
+          class="min-w-0 flex-1"
+        />
+        <UButton type="submit" color="neutral" :label="loading ? 'Subscribing' : 'Subscribe'" :loading="loading" />
+      </UFieldGroup>
     </UFormField>
   </UForm>
 </template>

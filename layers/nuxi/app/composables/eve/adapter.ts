@@ -1,9 +1,14 @@
 import type { UIMessage } from 'ai'
 import type { EveMessage } from 'eve/vue'
+import { expandAttachmentParts } from '../../../shared/utils/paste-attachment'
 import type { AgentChatStatus } from './types'
 
 export function eveMessagesToUIMessages(messages: readonly EveMessage[]): UIMessage[] {
-  return [...messages] as UIMessage[]
+  return (messages as readonly UIMessage[]).map((message) => {
+    if (message.role !== 'user') return message
+    const parts = expandAttachmentParts(message.parts)
+    return parts === message.parts ? message : { ...message, parts }
+  })
 }
 
 export function normalizeEveParts(parts: UIMessage['parts']): UIMessage['parts'] {

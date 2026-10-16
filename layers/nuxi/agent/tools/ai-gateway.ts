@@ -1,7 +1,7 @@
 import { defineDynamic, defineTool } from 'eve/tools'
 import { z } from 'zod'
 import { NUXI_GATEWAY_TAG } from '../../shared/utils/ai-gateway.js'
-import { isAdminMode } from '../lib/identity/admin-mode.js'
+import { assertAdminMode, isAdminMode } from '../lib/identity/admin-mode.js'
 
 export const AI_GATEWAY_INSTRUCTIONS = `**AI Gateway tools (\`ai_gateway__*\`, admin only) — tokens, cost, model usage:**
 - \`ai_gateway__credits\` — current credit balance and lifetime spend for the **entire** nuxt-js team account (not Nuxi-only)
@@ -90,7 +90,8 @@ function aiGatewayTools() {
     credits: defineTool({
       description: 'Admin: AI Gateway credit balance and lifetime spend for the entire nuxt-js team account (not Nuxi-scoped). Prefer ai_gateway__report for Nuxi digests.',
       inputSchema: z.object({}),
-      async execute() {
+      async execute(_input, ctx) {
+        await assertAdminMode(ctx.session.auth.current)
         return await gatewayFetch('/credits')
       }
     }),
@@ -111,7 +112,8 @@ function aiGatewayTools() {
         message: 'startDate must not be later than endDate',
         path: ['startDate']
       }),
-      async execute(input) {
+      async execute(input, ctx) {
+        await assertAdminMode(ctx.session.auth.current)
         const configuredKeyName = reportApiKeyName()
         // Key-name scope covers historical untagged traffic on a dedicated Nuxi
         // key, but it spends the single `group_by` slot on `api_key_name` to do
@@ -178,7 +180,8 @@ function aiGatewayTools() {
       inputSchema: z.object({
         id: z.string().min(1).describe('Generation id, e.g. gen_01ARZ3NDEKTSV4RRFFQ69G5FAV')
       }),
-      async execute(input) {
+      async execute(input, ctx) {
+        await assertAdminMode(ctx.session.auth.current)
         return await gatewayFetch('/generation', { id: input.id })
       }
     })
