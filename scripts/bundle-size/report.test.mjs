@@ -118,7 +118,8 @@ test('validates snapshots and safely renders module identifiers', () => {
     sha: 'b'.repeat(40),
     totals,
     routes: {
-      '/blog': { javascript: { ...size }, css: { ...size }, files: 1 }
+      '/blog': { javascript: { ...size }, css: { ...size }, files: 1 },
+      '/updates': { javascript: { ...size }, css: { ...size }, files: 1 }
     },
     modules: {
       '`</code>|@nuxt<img src=x>`': size,
@@ -131,11 +132,14 @@ test('validates snapshots and safely renders module identifiers', () => {
   assert.match(report, /&#96;&lt;\/code&gt;&#124;&#64;nuxt&lt;img src=x&gt;&#96;/)
   assert.match(report, /&#91;click me&#93;\(https:\/\/evil\.example\/\)/)
   assert.match(report, /\| <code>\/blog<\/code> \| n\/a \| 1 B \| n\/a \| n\/a \| n\/a \|/)
+  assert.match(report, /\| <code>\/updates<\/code> \| n\/a \| 1 B \| n\/a \| n\/a \| n\/a \|/)
 
-  assert.throws(
-    () => validateSnapshot({ ...head, routes: { '/<img src=x>': head.routes['/blog'] } }, { label: 'pr' }),
-    /unexpected route/
-  )
+  for (const route of ['/<img src=x>', '/a|b', '/[x](y)', 'blog', `/${'a'.repeat(256)}`, '/updates\n', '/updates\r\n', '/updates\u2028']) {
+    assert.throws(
+      () => validateSnapshot({ ...head, routes: { [route]: head.routes['/blog'] } }, { label: 'pr' }),
+      /invalid route/
+    )
+  }
   assert.throws(
     () => validateSnapshot({ ...head, routes: { '/blog': { ...head.routes['/blog'], files: 1.5 } } }, { label: 'pr' }),
     /files must be an integer/
