@@ -630,6 +630,11 @@ export default defineNuxtConfig({
       }
     }
   },
+  auth: {
+    // Pages are cached (ISR on Vercel): a session fetched while rendering would be cached with the
+    // page for every visitor, and the browser would never fetch its own. Always fetch it client-side.
+    loadStrategy: 'client-only'
+  },
   eslint: {
     config: {
       stylistic: {
