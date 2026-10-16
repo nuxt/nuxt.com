@@ -490,3 +490,11 @@ websites:
       userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36'
       hideElements: ['#usercentrics-cmp-ui']
       delay: 3
+  - name: Shaders
+    url: https://shaders.com/
+    industry: Software & Tech
+    logo:
+      width: 903
+      height: 169
+    screenshotOptions:
+      delay: 3
