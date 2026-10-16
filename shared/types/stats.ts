@@ -12,4 +12,9 @@ export interface GitHubRepository {
   defaultBranch: string
 }
 
-export type Stats = GitHubRepository & { version: string, monthlyDownloads: number }
+export type Stats = GitHubRepository & {
+  version: string
+  monthlyDownloads: number
+  monthlyDownloadsLastYear: number
+  modules: number
+}

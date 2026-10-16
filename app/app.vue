@@ -2,6 +2,7 @@
 import type { NavigationItem } from 'comark-content'
 import type { ContentShas } from '#shared/types'
 import { navigationPath, searchInstanceKeys } from '#shared/utils/content'
+import { pullNavigationPath } from '#shared/utils/pull'
 
 const colorMode = useColorMode()
 const route = useRoute()
@@ -28,11 +29,16 @@ watch(() => colorMode.preference, (newMode, oldMode) => {
   }
 })
 
-const { data: navigation } = await useFetch<NavigationItem[]>(computed(() => navigationPath(docsVersion.value)))
+const pull = usePullPreview()
+
+const { data: navigation } = await useFetch<NavigationItem[]>(() =>
+  pull.value ? pullNavigationPath(docsVersion.value, pull.value) : navigationPath(docsVersion.value), { key: 'navigation' })
 
 const searchKeys = computed(() => searchInstanceKeys(docsVersion.value))
 // Client-only: an SSR value gets baked into the page's ISR entry and would pin search to a stale commit.
 const { data: searchShas } = useAsyncData(
+  // A `computed()` key, not a getter: `experimental.extractAsyncDataHandlers` takes the first arrow
+  // function as the handler, so a getter key is extracted instead (NUXT_E3008 in production).
   computed(() => `content-heads:${searchKeys.value.join(',')}`),
   () => $fetch<ContentShas>('/api/content/heads', {
     query: { keys: searchKeys.value.join(',') }
