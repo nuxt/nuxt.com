@@ -94,7 +94,7 @@ provide('searchShas', searchShas)
 
 <template>
   <UApp :tooltip="{ delayDuration: 300 }">
-    <NuxtLoadingIndicator color="var(--ui-primary)" />
+    <!-- <NuxtLoadingIndicator color="var(--ui-primary)  /> -->
 
     <div class="flex">
       <div class="flex-1 min-w-0">
