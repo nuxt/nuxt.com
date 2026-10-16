@@ -181,8 +181,10 @@ export default defineNuxtConfig({
     '/modules': { isr: 60 * 60, prerender: false },
     '/modules/**': { isr: 60 * 60 },
     '/changelog': { isr: 60 * 60 },
+    // Lists blog posts and GitHub releases: purged on content push, refreshed hourly for releases.
+    '/updates': { isr: 60 * 60 },
     '/docs/**': { isr: CONTENT_ISR },
-    '/blog': { isr: CONTENT_ISR },
+    '/blog': { redirect: { to: '/updates', statusCode: 301 } },
     '/blog/**': { isr: CONTENT_ISR },
     '/deploy': { isr: CONTENT_ISR },
     '/deploy/**': { isr: CONTENT_ISR },
@@ -597,7 +599,8 @@ export default defineNuxtConfig({
       '/blog/**',
       '/deploy/**',
       { path: '/modules', raw: '/raw/modules.md' },
-      { path: '/changelog', raw: '/raw/changelog.md' }
+      { path: '/changelog', raw: '/raw/changelog.md' },
+      { path: '/updates', raw: '/raw/updates.md' }
     ],
     excludePrefixes: {
       extend: [
@@ -809,7 +812,7 @@ export default defineNuxtConfig({
     excludeAppSources: true,
     sources: ['/api/__sitemap__/urls'],
     // Nuxter profiles stay out: 26k near-identical stat pages would only dilute the docs.
-    urls: ['/', '/showcase', '/changelog', '/evals', '/nuxters'],
+    urls: ['/', '/showcase', '/changelog', '/updates', '/evals', '/nuxters'],
     // Belt and braces should an app source come back: keep legacy/nightly docs
     // versions and auth-only areas out.
     exclude: [
@@ -823,7 +826,9 @@ export default defineNuxtConfig({
       '/chat/**',
       '/enterprise',
       '/enterprise/support',
-      '/pull/**'
+      '/pull/**',
+      // Redirects to /updates
+      '/blog'
     ]
   },
   turnstile: {

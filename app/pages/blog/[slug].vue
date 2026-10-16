@@ -1,4 +1,8 @@
 <script setup lang="ts">
+import type { Node } from 'comark'
+import type { TocLink } from 'comark/plugins/toc'
+import type { DropdownMenuItem } from '@nuxt/ui'
+import type { BlogArticle } from '#shared/types'
 import { kebabCase } from 'scule'
 import { blogAuthors } from '#shared/utils/blog'
 import {
@@ -15,9 +19,10 @@ import {
   VideoAccordion,
   YoutubeDemo
 } from '#components'
+import { readingMinutes } from '#shared/utils/reading-time'
 
 definePageMeta({
-  heroBackground: 'opacity-30 -z-10'
+  heroBackground: false
 })
 
 const markdownComponents = {
@@ -52,10 +57,12 @@ if (!article.value) {
   throw createError({ statusCode: 404, statusMessage: 'Article not found', fatal: true })
 }
 
-const articleData = computed(() => article.value!.data)
+const articleData = computed(() => article.value!.data as BlogArticle)
+const category = computed(() => BLOG_CATEGORIES.find(item => item.value === articleData.value.category) ?? BLOG_CATEGORIES[0]!)
+const readingTime = computed(() => readingMinutes(article.value?.nodes as Node[] | undefined))
 
-const tocLinks = computed<any[]>(() => (article.value?.meta as Record<string, any>)?.toc?.links ?? [])
-const surround = computed(() => listSurround(articles.value, route.path))
+const tocLinks = computed(() => (article.value?.meta as { toc?: { links: TocLink[] } })?.toc?.links ?? [])
+const surround = computed(() => listSurround(articles.value.filter(item => item.category === 'Release'), route.path))
 
 const title = articleData.value.seo?.title || articleData.value.title
 const description = articleData.value.seo?.description || articleData.value.description
@@ -78,6 +85,14 @@ if (!articleData.value.image) {
   })
 }
 
+const articleBody = useTemplateRef<HTMLElement>('articleBody')
+const showToc = computed(() => !isAgentDocked.value && tocLinks.value.length > 1)
+
+function authorSeparator(index: number) {
+  const remaining = authors.value.length - index - 1
+  return remaining === 0 ? '' : remaining === 1 ? ' and ' : ', '
+}
+
 function formatSocialIntentQueryText(handle: string | undefined): string {
   const credit = handle ? ` by @${handle}` : ''
   const body = articleData.value.title + credit
@@ -91,27 +106,35 @@ const authorHandles: { twitter?: string, bluesky?: string } = {
   bluesky: authors.value[0]?.bluesky
 }
 
-const socialLinks = computed(() =>
+const socialLinks = computed<DropdownMenuItem[]>(() =>
   !articleData.value
     ? []
     : [
         {
+          label: 'Copy Link',
+          icon: 'i-lucide-link',
+          onSelect: copyLink
+        },
+        {
           label: 'LinkedIn',
           icon: 'i-simple-icons-linkedin',
           to: `https://www.linkedin.com/sharing/share-offsite/?url=https://nuxt.com${route.path}`,
-          onClick: () => track('Blog Share', { platform: 'LinkedIn', article: articleData.value?.title })
+          target: '_blank',
+          onSelect: () => track('Blog Share', { platform: 'LinkedIn', article: articleData.value?.title })
         },
         {
           label: 'Bluesky',
           icon: 'i-simple-icons-bluesky',
           to: `https://bsky.app/intent/compose?text=${formatSocialIntentQueryText(authorHandles.bluesky)}`,
-          onClick: () => track('Blog Share', { platform: 'Bluesky', article: articleData.value?.title })
+          target: '_blank',
+          onSelect: () => track('Blog Share', { platform: 'Bluesky', article: articleData.value?.title })
         },
         {
           label: 'X',
           icon: 'i-simple-icons-x',
           to: `https://x.com/intent/tweet?text=${formatSocialIntentQueryText(authorHandles.twitter)}`,
-          onClick: () => track('Blog Share', { platform: 'X', article: articleData.value?.title })
+          target: '_blank',
+          onSelect: () => track('Blog Share', { platform: 'X', article: articleData.value?.title })
         }
       ]
 )
@@ -120,100 +143,113 @@ function copyLink() {
   track('Blog Link Copied', { article: articleData.value?.title })
   copy(`https://nuxt.com${route.path}`, { title: 'Link copied to clipboard', icon: 'i-lucide-copy-check' })
 }
-
-const links = [
-  {
-    icon: 'i-lucide-pen',
-    label: 'Edit this article',
-    to: `https://github.com/nuxt/nuxt.com/edit/main/content/${article.value!.meta.stem}.md`,
-    target: '_blank'
-  }, {
-    icon: 'i-lucide-star',
-    label: 'Star on GitHub',
-    to: 'https://go.nuxt.com/github',
-    target: '_blank'
-  }, {
-    icon: 'i-lucide-hand-heart',
-    label: 'Become a Sponsor',
-    to: 'https://go.nuxt.com/sponsor',
-    target: '_blank'
-  }
-]
 </script>
 
 <template>
-  <UContainer v-if="articleData">
-    <UPageHeader :title="articleData.title" :description="articleData.description" :ui="{ headline: 'flex flex-col gap-y-8 items-start' }">
-      <template #headline>
-        <UBreadcrumb :items="[{ label: 'Blog', icon: 'i-lucide-newspaper', to: '/blog' }, { label: articleData.title }]" class="max-w-full" />
-        <div class="flex items-center space-x-2">
-          <span>
-            {{ articleData.category }}
-          </span>
-          <span class="text-muted">&middot;&nbsp;&nbsp;<time>{{ formatDateByLocale('en', articleData.date) }}</time></span>
-        </div>
-      </template>
-
-      <div class="mt-4 flex flex-wrap items-center gap-6">
-        <UUser
-          v-for="(author, index) in authors"
-          :key="index"
-          :name="author.name"
-          :avatar="author.avatar"
-          :to="author.to"
-          :description="author.username ? `@${author.username}` : undefined"
-        />
-      </div>
-    </UPageHeader>
-
-    <UPage
-      class="lg:gap-24"
-      :ui="isAgentDocked ? {
-        center: 'lg:col-span-10',
-        right: 'lg:hidden'
-      } : { root: 'lg:grid-cols-12', center: 'lg:col-span-9', right: 'lg:col-span-3' }"
+  <UContainer>
+    <article
+      class="mx-auto max-w-3xl pt-10 pb-20 sm:pt-16"
+      :class="showToc && 'xl:grid xl:max-w-none xl:grid-cols-[minmax(0,1fr)_minmax(0,48rem)_minmax(13rem,1fr)] xl:gap-x-12'"
     >
-      <UPageBody>
-        <MarkdownDocument v-if="article" :value="article" :components="markdownComponents" />
+      <header class="flex flex-col gap-6 pb-8 xl:col-start-2">
+        <p class="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-muted">
+          <NuxtLink
+            :to="`/updates?category=${category.slug}`"
+            class="font-medium text-primary hover:text-highlighted focus-visible:outline-primary"
+          >
+            {{ category.label }}
+          </NuxtLink>
+          <span aria-hidden="true">·</span>
+          <time :datetime="articleData.date">{{ formatShortDate(articleData.date) }}</time>
+          <span aria-hidden="true">·</span>
+          <span>{{ readingTime }} min read</span>
+        </p>
 
-        <div class="flex items-center justify-between mt-12 not-prose">
-          <ULink to="/blog" class="text-primary">
-            ← Back to blog
-          </ULink>
-          <div class="flex justify-end items-center gap-1.5">
-            <UButton icon="i-lucide-link" variant="ghost" color="neutral" @click="copyLink">
-              <span class="sr-only">Copy URL</span>
-              Copy URL
-            </UButton>
-            <UButton
-              v-for="(link, index) in socialLinks"
-              :key="index"
-              v-bind="link"
-              variant="ghost"
-              color="neutral"
-              target="_blank"
-            >
-              <span class="sr-only">Nuxt on {{ link.label }}</span>
-            </UButton>
+        <div class="flex flex-col gap-4">
+          <h1 class="text-3xl text-balance text-highlighted sm:text-4xl lg:text-5xl">
+            {{ articleData.title }}
+          </h1>
+          <p v-if="articleData.description" class="text-lg text-pretty text-muted sm:text-xl">
+            {{ articleData.description }}
+          </p>
+        </div>
+
+        <div class="flex flex-wrap items-center justify-between gap-x-6 gap-y-4">
+          <div class="flex items-center gap-2.5 text-sm text-muted">
+            <UAvatarGroup size="sm">
+              <UAvatar
+                v-for="author in authors"
+                :key="author.name"
+                :src="author.avatar?.src"
+                :alt="author.avatar?.alt ?? author.name"
+              />
+            </UAvatarGroup>
+            <span>
+              <template v-for="(author, index) in authors" :key="author.name">
+                <ULink
+                  :to="author.to"
+                  class="font-medium text-highlighted hover:text-primary focus-visible:outline-primary"
+                >{{ author.name }}</ULink>{{ authorSeparator(index) }}
+              </template>
+            </span>
+          </div>
+
+          <div class="flex items-center gap-1.5">
+            <PageHeaderLinks />
+            <UDropdownMenu :items="socialLinks" :content="{ align: 'end' }">
+              <UButton
+                icon="i-lucide-share"
+                color="neutral"
+                variant="soft"
+                size="sm"
+                aria-label="Share"
+                :ui="{ leadingIcon: 'size-3.5' }"
+              />
+            </UDropdownMenu>
           </div>
         </div>
+      </header>
 
-        <USeparator v-if="surround?.length" />
-
-        <UContentSurround :surround="surround" />
-      </UPageBody>
-
-      <template #right>
-        <UContentToc v-if="tocLinks.length" :links="tocLinks" title="Table of Contents" highlight highlight-variant="circuit">
+      <aside v-if="showToc" class="hidden xl:col-start-3 xl:row-start-2 xl:block">
+        <UContentToc
+          :links="tocLinks"
+          title="On This Page"
+          highlight
+          highlight-variant="circuit"
+          class="lg:backdrop-blur-none"
+        >
           <template #bottom>
-            <div class="hidden lg:block space-y-6">
-              <UPageLinks title="Links" :links="links" />
-              <USeparator type="dashed" />
-              <SocialLinks />
-            </div>
+            <BlogReadingProgress :reading-time="readingTime" :target="articleBody" />
           </template>
         </UContentToc>
-      </template>
-    </UPage>
+      </aside>
+
+      <div ref="articleBody" class="min-w-0 xl:col-start-2 xl:row-start-2">
+        <MarkdownDocument :value="article!" :components="markdownComponents" />
+
+        <div class="mt-16 border-t border-default pt-6">
+          <UButton
+            label="Edit This Post"
+            icon="i-lucide-pen"
+            :to="`https://github.com/nuxt/nuxt.com/edit/main/content/${article!.meta.stem}.md`"
+            target="_blank"
+            color="neutral"
+            variant="link"
+            class="px-0"
+          />
+        </div>
+      </div>
+    </article>
+
+    <section
+      v-if="category.value === 'Release'"
+      aria-labelledby="releases-heading"
+      class="flex flex-col gap-6 border-t border-default pt-12 pb-24"
+    >
+      <h2 id="releases-heading" class="text-2xl text-highlighted">
+        Release History
+      </h2>
+      <UContentSurround :surround="surround" />
+    </section>
   </UContainer>
 </template>
