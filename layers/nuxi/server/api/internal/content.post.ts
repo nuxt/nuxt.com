@@ -1,4 +1,6 @@
 import { z } from 'zod'
+import type { BlogAuthorFrontmatter } from '#shared/types'
+import { blogAuthors } from '#shared/utils/blog'
 
 const blogBodySchema = z.object({
   kind: z.literal('blog'),
@@ -48,9 +50,9 @@ export default defineEventHandler(async (event) => {
       date: post.date,
       image: post.image,
       category: post.category,
-      authors: (post.authors as Array<{ name: string, avatar?: { src?: string } }>)?.map(a => ({
-        name: a.name,
-        avatar: a.avatar?.src
+      authors: blogAuthors(post.authors as BlogAuthorFrontmatter[] | undefined).map(author => ({
+        name: author.name,
+        avatar: author.avatar?.src
       }))
     }
   }

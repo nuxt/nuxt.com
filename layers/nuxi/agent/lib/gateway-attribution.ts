@@ -25,7 +25,7 @@ const FALLBACK_MODELS = ['anthropic/claude-sonnet-4.5', 'google/gemini-3.6-flash
  * the first user message. Reading it back rather than matching a list of ids
  * means a new schedule is attributed without touching this file.
  */
-function resolveWorkflowSkill(messages: readonly ModelMessage[]): string | undefined {
+export function resolveWorkflowSkill(messages: readonly ModelMessage[]): string | undefined {
   const first = messages.find(message => message.role === 'user')
   if (!first) return undefined
 

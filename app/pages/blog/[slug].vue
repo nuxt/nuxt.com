@@ -4,6 +4,7 @@ import type { TocLink } from 'comark/plugins/toc'
 import type { DropdownMenuItem } from '@nuxt/ui'
 import type { BlogArticle } from '#shared/types'
 import { kebabCase } from 'scule'
+import { blogAuthors } from '#shared/utils/blog'
 import {
   DocsProseImg,
   AgentNuxiIcon,
@@ -88,7 +89,7 @@ const articleBody = useTemplateRef<HTMLElement>('articleBody')
 const showToc = computed(() => !isAgentDocked.value && tocLinks.value.length > 1)
 
 function authorSeparator(index: number) {
-  const remaining = (articleData.value.authors?.length ?? 0) - index - 1
+  const remaining = authors.value.length - index - 1
   return remaining === 0 ? '' : remaining === 1 ? ' and ' : ', '
 }
 
@@ -99,9 +100,10 @@ function formatSocialIntentQueryText(handle: string | undefined): string {
   return encodeURIComponent(`${body}\n\n${link}`)
 }
 
+const authors = computed(() => blogAuthors(articleData.value?.authors))
 const authorHandles: { twitter?: string, bluesky?: string } = {
-  twitter: articleData.value.authors?.[0]?.twitter,
-  bluesky: articleData.value.authors?.[0]?.bluesky
+  twitter: authors.value[0]?.twitter,
+  bluesky: authors.value[0]?.bluesky
 }
 
 const socialLinks = computed<DropdownMenuItem[]>(() =>
@@ -176,17 +178,16 @@ function copyLink() {
           <div class="flex items-center gap-2.5 text-sm text-muted">
             <UAvatarGroup size="sm">
               <UAvatar
-                v-for="author in articleData.authors"
+                v-for="author in authors"
                 :key="author.name"
                 :src="author.avatar?.src"
-                :alt="author.name"
+                :alt="author.avatar?.alt ?? author.name"
               />
             </UAvatarGroup>
             <span>
-              <template v-for="(author, index) in articleData.authors" :key="author.name">
+              <template v-for="(author, index) in authors" :key="author.name">
                 <ULink
                   :to="author.to"
-                  target="_blank"
                   class="font-medium text-highlighted hover:text-primary focus-visible:outline-primary"
                 >{{ author.name }}</ULink>{{ authorSeparator(index) }}
               </template>

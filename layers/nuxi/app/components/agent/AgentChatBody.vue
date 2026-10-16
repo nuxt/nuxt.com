@@ -40,7 +40,6 @@ const emit = defineEmits<{
   submit: []
   paste: [event: ClipboardEvent]
   removeAttachment: [index: number]
-  restoreAttachment: [index: number]
   vote: [message: UIMessage, isUpvoted: boolean]
   askQuestion: [question: string]
 }>()
@@ -95,7 +94,6 @@ defineExpose({
       @submit="emit('submit')"
       @paste="emit('paste', $event)"
       @remove-attachment="emit('removeAttachment', $event)"
-      @restore-attachment="emit('restoreAttachment', $event)"
     >
       <template v-if="$slots['prompt-footer-left']" #footer-left>
         <slot name="prompt-footer-left" />

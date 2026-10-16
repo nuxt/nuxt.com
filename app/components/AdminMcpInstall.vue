@@ -83,12 +83,12 @@ const { copy: copyJson, copied: jsonCopied } = useClipboard()
           <div class="space-y-3">
             <div class="space-y-1.5">
               <label class="text-xs font-medium text-muted uppercase tracking-wide">Server URL</label>
-              <UInputCopy :value="data.url" size="lg" />
+              <UInputCopy :value="data.url" size="lg" :tracked="false" />
             </div>
 
             <div class="space-y-1.5">
               <label class="text-xs font-medium text-muted uppercase tracking-wide">Bearer token</label>
-              <UInputCopy :value="data.token" size="lg" />
+              <UInputCopy :value="data.token" size="lg" :tracked="false" />
             </div>
 
             <div class="space-y-1.5">

@@ -39,10 +39,16 @@ describe('parsePullPath', () => {
     expect(parsePullPath('/pull/nuxt.com/7?x=1')?.path).toBe('/?x=1')
   })
 
+  it.each(['//evil.com', '/\\evil.com', '/\\\\evil.com', '///evil.com'])('keeps %s on the site', (rest) => {
+    expect(parsePullPath(`/pull/nuxt/1${rest}`)?.path).toBe('/evil.com')
+  })
+
   it('ignores anything else', () => {
     expect(parsePullPath('/docs/4.x/pull/nuxt/1')).toBeNull()
     expect(parsePullPath('/pull/ui/1/docs')).toBeNull()
     expect(parsePullPath('/pull/nuxt/1abc/docs')).toBeNull()
+    // A backslash right after the number is part of it, so not a preview.
+    expect(parsePullPath('/pull/nuxt/1\\\\evil.com')).toBeNull()
   })
 })
 
