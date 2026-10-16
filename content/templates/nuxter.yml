@@ -1,0 +1,7 @@
+name: 'Nuxter'
+slug: 'nuxter'
+description: 'A Nuxt 4 SaaS starter kit with auth, teams and billing on Cloudflare.'
+demo: 'https://demo.nuxter.app'
+purchase: 'https://nuxter.app/pricing'
+screenshotUrl: 'https://nuxter.app'
+badge: 'Premium'
