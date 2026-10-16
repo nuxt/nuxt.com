@@ -291,6 +291,26 @@ describe('pullLandingPath', () => {
 
     expect(path).toBe('/docs/5.x/getting-started/installation')
   })
+
+  it('skips navigation files, which comark-content resolves to an entry but no page', async () => {
+    const entries: Record<string, { path: string, data: { title: string } }> = {
+      '.navigation.yml': { path: '/docs/5.x/.navigation', data: { title: 'Docs' } },
+      '1.getting-started/.navigation.yml': { path: '/docs/5.x/getting-started/.navigation', data: { title: 'Get Started' } },
+      '1.getting-started/2.installation.md': { path: '/docs/5.x/getting-started/installation', data: { title: 'Installation' } }
+    }
+    pageStat.mockImplementation((key: string) => entries[key])
+
+    const path = await pullLandingPath({
+      target: { repo: 'nuxt', number: 1 },
+      title: '',
+      url: '',
+      sha: SHA,
+      instanceKey: 'docs:5.x',
+      files: changed('docs/.navigation.yml', 'docs/1.getting-started/.navigation.yml', 'docs/1.getting-started/2.installation.md')
+    })
+
+    expect(path).toBe('/docs/5.x/getting-started/installation')
+  })
 })
 
 describe('pullNavigation', () => {

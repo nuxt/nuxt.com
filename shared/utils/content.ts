@@ -79,6 +79,11 @@ export function instanceName(key: ContentInstanceKey): string {
   return key.split(':')[0]!
 }
 
+/** Directory configuration (`.navigation.yml`), which contributes to the tree rather than a page. */
+export function isNavigationConfig(file: string): boolean {
+  return file.split('/').pop()!.startsWith('.navigation')
+}
+
 /**
  * Where a version's navigation tree is served — `navigationPath('4.x') === '/api/navigation/4.x'`.
  */
