@@ -3,7 +3,8 @@ import type { NuxterMe } from '#shared/types'
 import { NUXTERS_ME_CARD_CLASS } from '~/utils/nuxters-me-card'
 import { NUXTERS_HACKATHONS } from '#shared/utils/nuxters'
 
-const { loggedIn } = useUserSession()
+// The session loads client-side (`auth.loadStrategy`): until `ready`, the visitor may be signed in.
+const { loggedIn, ready } = useUserSession()
 const route = useRoute()
 const toast = useToast()
 const { format } = new Intl.NumberFormat('en-US')
@@ -55,7 +56,7 @@ onMounted(() => {
 
 <template>
   <!-- Loading shows NuxtersMeCardSkeleton: same card and minimum height, the hero does not move -->
-  <NuxtersMeCardSkeleton v-if="loggedIn && (status !== 'success' || !me)" />
+  <NuxtersMeCardSkeleton v-if="!ready || (loggedIn && (status !== 'success' || !me))" />
   <!-- A flex column (the container is a grid from lg): the signed-out content centers in the reserved height -->
   <UPageCard v-else variant="subtle" :class="NUXTERS_ME_CARD_CLASS" :ui="{ container: 'flex flex-col lg:flex' }">
     <div v-if="!loggedIn || !me" class="flex flex-col items-center gap-4 my-auto text-center">
