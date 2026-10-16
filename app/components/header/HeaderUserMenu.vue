@@ -25,6 +25,10 @@ const items = computed<DropdownMenuItem[][]>(() => {
     label: 'Chats with Nuxi',
     icon: 'i-lucide-message-circle',
     to: '/dashboard/chat'
+  }, {
+    label: 'My Nuxter profile',
+    icon: 'i-lucide-award',
+    to: '/nuxters'
   }]
   if (user.value?.role === 'admin') {
     accountItems.push({

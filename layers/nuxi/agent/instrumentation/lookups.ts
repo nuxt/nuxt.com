@@ -23,6 +23,7 @@ const PUBLIC_TOOLS = new Set([
   'show_blog_post',
   'show_hosting',
   'show_module',
+  'show_nuxter',
   'show_template'
 ])
 

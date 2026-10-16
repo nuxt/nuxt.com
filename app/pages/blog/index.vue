@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { blogAuthors } from '#shared/utils/blog'
+
 const { data: page } = await useAsyncData('blog-landing', () => useContent('site').get('/blog'))
 if (!page.value) {
   throw createError({ statusCode: 404, statusMessage: 'Page not found', fatal: true })
@@ -84,7 +86,7 @@ await fetchList()
               alt: `${article.title} image`
             }"
             :date="formatDateByLocale('en', article.date)"
-            :authors="article.authors.map(author => ({ ...author, avatar: { ...author.avatar, alt: `${author.name} avatar` } }))"
+            :authors="blogAuthors(article.authors).map(({ name, avatar, to }) => ({ name, avatar, to }))"
             :badge="{ label: article.category, color: 'primary', variant: 'subtle' }"
             :variant="index === 0 ? 'outline' : 'subtle'"
             :orientation="index === 0 ? 'horizontal' : 'vertical'"

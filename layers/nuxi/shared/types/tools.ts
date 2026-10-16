@@ -41,6 +41,24 @@ export interface HostingCardData {
   website?: string
 }
 
+export interface NuxterCardData {
+  username: string
+  /** The GitHub display name, when set. */
+  name?: string
+  /** `undefined` for all time. */
+  periodPhrase?: string
+  rank: number
+  score: number
+  mergedPullRequests: number
+  issues: number
+  comments: number
+  reactions: number
+  maintainedModules: number
+  contributedModules: number
+  hackathons: string[]
+  path: string
+}
+
 export interface PlaygroundCardData {
   url: string
   repo: string
