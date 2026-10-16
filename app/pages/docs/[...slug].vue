@@ -179,9 +179,10 @@ useSeoMeta({
   titleTemplate,
   title
 })
-// Only emit canonical/markdown alternate where the URL is authoritative.
+// Only emit canonical where the URL is authoritative.
+// Archived versions get no markdown alternate (not exposed to agents)
 if (isCanonicalDocsPath(path.value)) {
-  useCanonical(() => `/raw${path.value}.md`)
+  useCanonical(() => isArchivedDocVersion(docsVersion.value) ? undefined : `/raw${path.value}.md`)
 }
 
 if (import.meta.server) {

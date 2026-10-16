@@ -15,7 +15,7 @@ export const DOCS_REFS = {
   '5.x': { branch: 'main', envOverride: 'NUXT_V5_PATH' }
 } as const satisfies Record<DocVersion, RepoRefs>
 
-// Archived: docs only (no command reference, no examples), noindex, and hidden from agents.
+// Archived: docs only (no command reference, no examples), indexed but hidden from agents.
 export const ARCHIVED_DOC_VERSIONS = ['2.x'] as const
 
 // Live: published and crawlable.
@@ -86,11 +86,11 @@ export function getVersionByPath(path: string): DocVersion | undefined {
 }
 
 /**
- * Whether a `/docs/*` URL is the authoritative one, so it can carry `rel="canonical"` and a markdown alternate.
+ * Whether a `/docs/*` URL is the authoritative one, so it can carry `rel="canonical"`.
  */
 export function isCanonicalDocsPath(path: string): boolean {
   const version = getVersionByPath(path)
-  if (version) return docsStatus(version) === 'live'
+  if (version) return docsStatus(version) !== 'next'
 
   return path === EXAMPLES_PATH_PREFIX || path.startsWith(`${EXAMPLES_PATH_PREFIX}/`)
 }

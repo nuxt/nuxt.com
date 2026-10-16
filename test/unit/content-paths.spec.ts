@@ -65,15 +65,16 @@ describe('navigation route', () => {
 })
 
 describe('isCanonicalDocsPath', () => {
-  it('accepts supported versions and the unversioned examples', () => {
+  it('accepts published versions, archived ones included, and the unversioned examples', () => {
     expect(isCanonicalDocsPath('/docs/4.x')).toBe(true)
     expect(isCanonicalDocsPath('/docs/3.x/guide/introduction')).toBe(true)
+    expect(isCanonicalDocsPath('/docs/2.x/getting-started/installation')).toBe(true)
     expect(isCanonicalDocsPath(EXAMPLES_PATH_PREFIX)).toBe(true)
     expect(isCanonicalDocsPath(`${EXAMPLES_PATH_PREFIX}/hello-world`)).toBe(true)
   })
 
   it('rejects stubs and unpublished versions, which must not be indexed', () => {
-    for (const path of ['/docs', '/docs/guide/introduction', '/docs/5.x', '/docs/5.x/guide', '/docs/2.x/getting-started/installation', '/docs/4.xyz', '/blog']) {
+    for (const path of ['/docs', '/docs/guide/introduction', '/docs/5.x', '/docs/5.x/guide', '/docs/4.xyz', '/blog']) {
       expect(isCanonicalDocsPath(path), path).toBe(false)
     }
   })

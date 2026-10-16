@@ -159,7 +159,6 @@ export default defineNuxtConfig({
     '/modules/**': { isr: 60 * 60 },
     '/changelog': { isr: 60 * 60 },
     '/docs/**': { isr: CONTENT_ISR },
-    '/docs/2.x/**': { robots: 'noindex' },
     '/blog': { isr: CONTENT_ISR },
     '/blog/**': { isr: CONTENT_ISR },
     '/deploy': { isr: CONTENT_ISR },
