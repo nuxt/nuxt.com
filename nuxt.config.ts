@@ -125,7 +125,13 @@ export default defineNuxtConfig({
   },
   runtimeConfig: {
     public: {
-      eveEnabled: nuxiEnabled
+      eveEnabled: nuxiEnabled,
+      // Nuxt UI prose headings read this MDC setting to render anchor links, which comark doesn't set.
+      mdc: {
+        headings: {
+          anchorLinks: { h2: true, h3: true, h4: true }
+        }
+      }
     },
     contactEmail: '',
     mcpAdminToken: '',
