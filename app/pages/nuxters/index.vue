@@ -62,7 +62,7 @@ const site = useSiteConfig()
 const sharedPeriod = computed(() => requestedPeriod.value && leaderboard.value?.total ? period.value : undefined)
 const seo = computed(() => {
   if (!sharedPeriod.value) {
-    return { title: 'Nuxters', ogTitle: heroTitle, description }
+    return { title: 'Meet the Nuxters', ogTitle: heroTitle, description }
   }
   const title = `Top Nuxters ${nuxtersPeriodPhrase(sharedPeriod.value)}`
   const page = leaderboard.value!
