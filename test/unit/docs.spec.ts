@@ -1,7 +1,8 @@
 import type { Node } from 'comark'
 import { describe, expect, it } from 'vitest'
 import { docsLinks } from '../../server/utils/content/plugins/docs-links'
-import type { DocVersion } from '../../shared/utils/docs'
+import { CLI_DOC_VERSIONS } from '../../shared/utils/cli'
+import { AGENT_DOC_VERSIONS, DOC_VERSIONS, docsStatus, getVersionByPath, hasExamples, type DocVersion } from '../../shared/utils/docs'
 
 /**
  * Runs the plugin's `file:parsed` hook against a hand-built tree.
@@ -86,5 +87,53 @@ describe('docsLinks', () => {
     ])
     expect(nodes[0]![1]).toEqual({ href: '/docs/5.x/guide/modules/module-dependencies' })
     expect(nodes[1]![1]).toEqual({ href: '/docs/4.x/guide/concepts/esm' })
+  })
+
+  it('versions the Nuxt 2 docs links, `$nuxt` slug included', () => {
+    const { nodes } = rewrite('2.x', [
+      ['a', { href: '/docs/guide/concepts/views' }],
+      ['read-more', { to: '/docs/api/internals/dollarnuxt' }]
+    ])
+    expect(nodes[0]![1]).toEqual({ href: '/docs/2.x/guide/concepts/views' })
+    expect(nodes[1]![1]).toEqual({ to: '/docs/2.x/api/internals/dollarnuxt' })
+  })
+})
+
+describe('docsStatus', () => {
+  it('reads each version\'s status from the list it belongs to', () => {
+    expect(docsStatus('2.x')).toBe('archived')
+    expect(docsStatus('3.x')).toBe('live')
+    expect(docsStatus('4.x')).toBe('live')
+    expect(docsStatus('5.x')).toBe('next')
+  })
+})
+
+describe('getVersionByPath', () => {
+  it('reads the version off a versioned docs path', () => {
+    expect(getVersionByPath('/docs/2.x')).toBe('2.x')
+    expect(getVersionByPath('/docs/2.x/getting-started/installation')).toBe('2.x')
+    expect(getVersionByPath('/docs/4.x/api/commands/dev')).toBe('4.x')
+  })
+
+  it('has no version outside the versioned docs', () => {
+    for (const path of ['/docs/2.xyz', '/docs/getting-started/installation', '/docs/examples/hello-world', '/blog']) {
+      expect(getVersionByPath(path), path).toBeUndefined()
+    }
+  })
+})
+
+describe('archived versions', () => {
+  it('are served, but left out of what agents read', () => {
+    expect(DOC_VERSIONS).toContain('2.x')
+    expect(AGENT_DOC_VERSIONS).not.toContain('2.x')
+  })
+
+  it('have no command reference', () => {
+    expect(CLI_DOC_VERSIONS).not.toContain('2.x')
+  })
+
+  it('don\'t list the Nuxt 3+ examples', () => {
+    expect(hasExamples('2.x')).toBe(false)
+    expect(hasExamples('4.x')).toBe(true)
   })
 })
