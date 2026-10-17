@@ -80,7 +80,7 @@
     "h3": "^1.15.11",
     "little-date": "^1.2.1",
     "motion-v": "^2.6.0",
-    "nuxt": "^4.6.1",
+    "nuxt": "^4.6.2",
     "nuxt-auth-utils": "^0.5.31",
     "nuxt-charts": "^2.2.3",
     "nuxt-llms": "https://pkg.pr.new/nuxt-content/nuxt-llms/nuxt-llms@f6a9730",
