@@ -34,10 +34,14 @@ function onEnter() {
   el.style.width = `${toWidth}px`
 }
 
+// Also runs on `transitioncancel` (e.g. reduced motion turned on mid-animation)
 function onWidthTransitionEnd(event: TransitionEvent) {
-  if (event.target === event.currentTarget && event.propertyName === 'width') {
-    authActions.value?.style.removeProperty('width')
-  }
+  const el = authActions.value
+  if (!el || event.target !== el || event.propertyName !== 'width') return
+  // A newer swap restarted the width transition: keep its inline width
+  if (el.getAnimations().some(animation => animation instanceof CSSTransition && animation.transitionProperty === 'width')) return
+
+  el.style.removeProperty('width')
 }
 </script>
 
@@ -71,6 +75,7 @@ function onWidthTransitionEnd(event: TransitionEvent) {
         ref="authActions"
         class="relative flex items-center justify-end transition-[width] duration-300 ease-out motion-reduce:transition-none"
         @transitionend="onWidthTransitionEnd"
+        @transitioncancel="onWidthTransitionEnd"
       >
         <Transition
           enter-active-class="transition duration-300 ease-out motion-reduce:transition-none"
@@ -80,7 +85,7 @@ function onWidthTransitionEnd(event: TransitionEvent) {
           @before-leave="onBeforeLeave"
           @enter="onEnter"
         >
-          <div v-if="!loggedIn" key="guest" class="flex items-center gap-1.5">
+          <div v-if="!loggedIn" key="guest" class="flex items-center gap-1.5 origin-right">
             <UTooltip text="Toggle theme" :kbds="['d']">
               <UColorModeButton />
             </UTooltip>
