@@ -1,5 +1,6 @@
 import { z } from 'zod'
 import type { Module } from '#shared/types'
+import { resolveReadmeUrls } from '../../../utils/content/readme'
 
 export default defineCachedEventHandler(async (event) => {
   const { name } = await getValidatedRouterParams(event, z.object({
@@ -38,10 +39,11 @@ export default defineCachedEventHandler(async (event) => {
     generatedAt: new Date().toISOString(),
     contributors: contributors.map(contributor => ({ ...contributor, nuxter: known.githubIds.has(contributor.id) })),
     stats,
-    readme
+    readme: resolveReadmeUrls(readme, module.repo, stats.defaultBranch)
   } satisfies Module
 }, {
-  name: 'modules:v3',
+  // Bumped when the payload changes: `modules:v3` READMEs still carry relative URLs.
+  name: 'modules:v4',
   getKey: event => event.context.params!.name!,
   swr: true,
   maxAge: 60 * 60 // 1 hour
