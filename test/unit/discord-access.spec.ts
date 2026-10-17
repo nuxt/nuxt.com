@@ -8,6 +8,7 @@ vi.mock('@vercel/global-config', () => ({ getAll: vi.fn() }))
 const mockedGetAll = vi.mocked(getAll)
 
 beforeEach(() => {
+  vi.stubEnv('GLOBAL_CONFIG', 'https://edge-config.vercel.com/ecfg_test?token=test')
   mockedGetAll.mockReset()
   resetGlobalConfigCache()
 })
