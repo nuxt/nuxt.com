@@ -38,7 +38,6 @@ export default defineNuxtConfig({
     '@nuxt/image',
     '@nuxt/eslint',
     '@nuxt/scripts',
-    '@nuxtjs/turnstile',
     '@vueuse/nuxt',
     'nuxt-og-image',
     'motion-v/nuxt',
@@ -133,7 +132,6 @@ export default defineNuxtConfig({
         }
       }
     },
-    contactEmail: '',
     mcpAdminToken: '',
     github: {
       token: ''
@@ -832,13 +830,9 @@ export default defineNuxtConfig({
       '/chat',
       '/chat/**',
       '/enterprise',
-      '/enterprise/support',
       '/pull/**',
       // Redirects to /updates
       '/blog'
     ]
-  },
-  turnstile: {
-    siteKey: '0x4AAAAAAAP2vNBsTBT3ucZi'
   }
 })

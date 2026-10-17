@@ -111,7 +111,6 @@ export const PULL_CONTENT_PAGES = [
   '/enterprise/agencies/**',
   '/enterprise/jobs',
   '/enterprise/sponsors',
-  '/enterprise/support',
   '/evals',
   '/modules',
   '/newsletter',
