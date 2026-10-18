@@ -154,6 +154,14 @@ export default defineEventHandler(async (event) => {
       }
     }
 
+    // `/updates` lists every blog post.
+    if (pagePaths.some(path => path.startsWith('/blog/'))) {
+      addPath(instanceKey, 'linked', '/updates')
+      addPath(instanceKey, 'linked', payloadUrlForPage('/updates', buildId))
+      const rawPath = rawUrlForPage(event, '/updates')
+      if (rawPath) addPath(instanceKey, 'linked', rawPath)
+    }
+
     // Purge the artifacts for the docs instance to ensure search is updated
     if (isInstanceIndexedForSearch(instanceKey)) {
       const artifactBase = instanceBlobPath(instanceKey, headSha)

@@ -5,6 +5,7 @@ import { isPartStreaming, isToolStreaming } from '@nuxt/ui/utils/ai'
 import {
   blogCardProps,
   hostingCardProps,
+  nuxterCardProps,
   playgroundCardProps,
   getFeedbackOutput,
   getModuleCards,
@@ -195,6 +196,14 @@ function getUserTextParts(message: UIMessage) {
         <ToolsHostingCard
           v-if="showCardOutput(part as ToolPart) && hostingCardProps(part.output)"
           v-bind="hostingCardProps(part.output)!"
+        />
+      </template>
+
+      <template v-else-if="isToolUIPart(part) && resolvedToolName(part) === 'show_nuxter'">
+        <UChatTool v-bind="getRichToolHeader(part as ToolPart, 'show_nuxter')" />
+        <ToolsNuxterCard
+          v-if="showCardOutput(part as ToolPart) && nuxterCardProps(part.output)"
+          v-bind="nuxterCardProps(part.output)!"
         />
       </template>
 

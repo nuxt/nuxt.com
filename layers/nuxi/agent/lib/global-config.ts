@@ -39,7 +39,13 @@ export async function readGlobalConfig<T extends Record<string, unknown>>(
   const existing = inflight.get(cacheKey)
   if (existing) return existing as Promise<Partial<T>>
 
-  const promise = getAll<T>([...keys])
+  // No store configured (e.g. local dev without `GLOBAL_CONFIG`): nothing to read
+  if (!process.env.GLOBAL_CONFIG && !process.env.EDGE_CONFIG) return {}
+
+  // The SDK creates its client lazily and throws synchronously on an invalid
+  // connection string, so call it inside the chain to route that to `.catch`
+  const promise = Promise.resolve()
+    .then(() => getAll<T>([...keys]))
     .then((value) => {
       cache.set(cacheKey, { value, expiresAt: Date.now() + TTL_MS })
       return value

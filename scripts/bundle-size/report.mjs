@@ -139,7 +139,7 @@ export function initialAssetPaths(html) {
 }
 
 async function readRouteHtml(publicDir, route) {
-  // `autoSubfolderIndex: false` writes `/blog` as `blog.html`, the Nitro default is `blog/index.html`.
+  // `autoSubfolderIndex: false` writes `/updates` as `updates.html`, the Nitro default is `updates/index.html`.
   const files = route === '/' ? ['/index.html'] : [`${route}.html`, `${route}/index.html`]
   for (const file of files) {
     try {
