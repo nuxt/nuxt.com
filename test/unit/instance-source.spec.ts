@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 import { CONTENT_INSTANCE_KEYS } from '../../shared/utils/content'
 import { instanceSource } from '../../server/utils/content/instances'
 
@@ -40,5 +40,36 @@ describe('instanceSource', () => {
 
   it('rejects an unknown instance key', () => {
     expect(() => instanceSource('docs:9.x' as never)).toThrow()
+  })
+
+  describe('site ref', () => {
+    const SHA = 'a'.repeat(40)
+
+    afterEach(() => vi.unstubAllEnvs())
+
+    it('reads main in production', () => {
+      vi.stubEnv('VERCEL_ENV', 'production')
+      vi.stubEnv('VERCEL_GIT_COMMIT_SHA', SHA)
+      expect(instanceSource('site').source.branch).toBe('main')
+    })
+
+    it('reads the built commit on a preview, so its code and content match', () => {
+      vi.stubEnv('VERCEL_ENV', 'preview')
+      vi.stubEnv('VERCEL_GIT_COMMIT_SHA', SHA)
+      expect(instanceSource('site').source.branch).toBe(SHA)
+    })
+
+    it('lets NUXT_COM_BRANCH override the preview commit', () => {
+      vi.stubEnv('VERCEL_ENV', 'preview')
+      vi.stubEnv('VERCEL_GIT_COMMIT_SHA', SHA)
+      vi.stubEnv('NUXT_COM_BRANCH', 'feat/x')
+      expect(instanceSource('site').source.branch).toBe('feat/x')
+    })
+
+    it('leaves other instances on their branch', () => {
+      vi.stubEnv('VERCEL_ENV', 'preview')
+      vi.stubEnv('VERCEL_GIT_COMMIT_SHA', SHA)
+      expect(instanceSource('examples').source.branch).toBe('main')
+    })
   })
 })

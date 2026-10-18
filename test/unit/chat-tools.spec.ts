@@ -2,10 +2,13 @@ import type { DynamicToolUIPart, ToolUIPart } from 'ai'
 import { describe, expect, it } from 'vitest'
 import {
   getModuleCards,
+  getToolIcon,
+  getToolSuffix,
   getToolText,
   isConnectionSearchTool,
   isModuleListTool,
   normalizeToolName,
+  nuxterCardProps,
   type ToolPart
 } from '../../layers/nuxi/app/composables/useChatTools'
 
@@ -78,6 +81,15 @@ describe('getToolText', () => {
   it('keeps working for local tools', () => {
     expect(getToolText(staticTool('show_module'))).toBe('Found module')
   })
+
+  it('reads the Nuxters tools as a lookup and a search, with the username as suffix', () => {
+    const get = { ...dynamicTool('nuxt-mcp__get-nuxter'), input: { username: 'danielroe', period: '2024' } } as ToolPart
+    expect(getToolText(get)).toBe('Read nuxter')
+    expect(getToolSuffix(get)).toBe('danielroe')
+    expect(getToolText(dynamicTool('nuxt-mcp__list-nuxters'))).toBe('Searched nuxters')
+    expect(getToolIcon(get)).toBe('i-lucide-award')
+    expect(getToolIcon(dynamicTool('nuxt-mcp__list-nuxters'))).toBe('i-lucide-award')
+  })
 })
 
 describe('getModuleCards', () => {
@@ -117,5 +129,54 @@ describe('getModuleCards', () => {
   it('ignores tools that carry no module payload', () => {
     expect(isModuleListTool(dynamicTool('nuxt-mcp__get-documentation-page', { title: 'Routing' }))).toBe(false)
     expect(getModuleCards(dynamicTool('nuxt-mcp__get-module', mcpTextOutput({ error: 'not found' })))).toEqual([])
+  })
+})
+
+describe('nuxterCardProps', () => {
+  const output = {
+    username: 'harlan-zw',
+    name: 'Harlan Wilton',
+    period: '12m',
+    periodPhrase: 'in the last 12 months',
+    rank: 2,
+    score: 3367,
+    mergedPullRequests: 448,
+    issues: 5,
+    comments: 697,
+    reactions: 629,
+    maintainedModules: 10,
+    contributedModules: 13,
+    hackathons: ['Nuxtathon #1'],
+    path: '/nuxters/harlan-zw?period=12m'
+  }
+
+  it('picks the card fields', () => {
+    expect(nuxterCardProps(output)).toEqual({
+      username: 'harlan-zw',
+      name: 'Harlan Wilton',
+      periodPhrase: 'in the last 12 months',
+      rank: 2,
+      score: 3367,
+      mergedPullRequests: 448,
+      issues: 5,
+      comments: 697,
+      reactions: 629,
+      maintainedModules: 10,
+      contributedModules: 13,
+      hackathons: ['Nuxtathon #1'],
+      path: '/nuxters/harlan-zw?period=12m'
+    })
+  })
+
+  it('rejects an error, an unsafe username or a path outside /nuxters', () => {
+    expect(nuxterCardProps({ error: 'No Nuxter found for "nope"' })).toBeNull()
+    expect(nuxterCardProps({ ...output, username: '../admin' })).toBeNull()
+    expect(nuxterCardProps({ ...output, path: 'https://evil.example/nuxters/x' })).toBeNull()
+    expect(nuxterCardProps({ ...output, path: '/admin' })).toBeNull()
+  })
+
+  it('treats missing or invalid counts as zero', () => {
+    const card = nuxterCardProps({ ...output, name: null, periodPhrase: null, issues: 'many', hackathons: 'x' })
+    expect(card).toMatchObject({ name: undefined, periodPhrase: undefined, issues: 0, hackathons: [] })
   })
 })

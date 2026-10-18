@@ -3,14 +3,19 @@ strictPeerDependencies: false
 
 overrides:
   nostics: ^1.3.0
-  # chat@4.34.0 pins the 4.1.0-beta.2 prerelease, flagged as a downgrade by check-provenance
-  "@workflow/serde": 4.1.2
+  # chat@4.34.0 pins the 4.1.0-beta.2 prerelease, flagged as a downgrade by check-provenance.
+  # Scoped to `chat`: `workflow` needs its own `@workflow/serde` major.
+  "chat>@workflow/serde": 4.1.2
+  "@ai-sdk/provider-utils>@workflow/serde": 4.1.2
 
 patchedDependencies:
   "@chat-adapter/discord@4.41.1": patches/@chat-adapter__discord@4.41.1.patch
   unstorage@1.17.5: patches/unstorage@1.17.5.patch
 
 allowBuilds:
+  # `workflow` deps: the native bindings ship as optional packages, the build scripts are not needed.
+  "@swc/core": false
+  cbor-extract: false
   esbuild: true
   rolldown: true
   sharp: true
