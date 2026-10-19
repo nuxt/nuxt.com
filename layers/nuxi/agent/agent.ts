@@ -7,9 +7,9 @@ const MODEL = 'anthropic/claude-haiku-5.5'
 
 const ANTHROPIC_OPTIONS = {
   thinking: {
-    type: 'enabled',
-    budgetTokens: 8192
-  }
+    type: 'adaptive'
+  },
+  effort: 'medium'
 }
 
 /**
