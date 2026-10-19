@@ -264,8 +264,9 @@ describe('nuxter scoring', () => {
 
 describe('nuxterHackathons', () => {
   it('matches participants by GitHub id, as a string or a number', () => {
-    expect(nuxterHackathons('28706372').map(hackathon => hackathon.id)).toEqual(['nuxtathon1'])
-    expect(nuxterHackathons(28706372).map(hackathon => hackathon.id)).toEqual(['nuxtathon1'])
+    expect(nuxterHackathons('28706372').map(hackathon => hackathon.id)).toEqual(['nuxtathon1', 'nuxtathon2'])
+    expect(nuxterHackathons(28706372).map(hackathon => hackathon.id)).toEqual(['nuxtathon1', 'nuxtathon2'])
+    expect(nuxterHackathons('739984').map(hackathon => hackathon.id)).toEqual(['nuxtathon2'])
     expect(nuxterHackathons('1')).toEqual([])
     expect(nuxterHackathons(undefined)).toEqual([])
   })
