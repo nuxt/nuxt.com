@@ -1,20 +1,27 @@
 import type { ModelMessage } from 'ai'
 import { defineAgent, defineDynamic } from 'eve'
-import type { AuthContext } from './lib/identity/context.js'
+import { resolveContext, type AuthContext } from './lib/identity/context.js'
 import { nuxiGatewayOptions } from './lib/gateway-attribution.js'
 
 const MODEL = 'anthropic/claude-haiku-5.5'
 
-const ANTHROPIC_OPTIONS = {
-  thinking: {
-    type: 'adaptive'
-  },
-  effort: 'medium'
+/**
+ * Low effort keeps chat replies fast; schedules have no one waiting on them and
+ * chain many tool calls into a digest, so they keep the extra reasoning.
+ */
+function anthropicOptions(auth: AuthContext | null | undefined) {
+  return {
+    thinking: {
+      type: 'adaptive'
+    },
+    effort: resolveContext(auth).surface === 'schedule' ? 'medium' : 'low'
+  }
 }
 
 /**
- * Same model on every scope — only the gateway options vary, to carry the
- * `surface:*` / `feature:*` tags a digest needs to break spend down per channel.
+ * Same model on every scope — only the gateway options and thinking effort
+ * vary. The gateway options carry the `surface:*` / `feature:*` tags a digest
+ * needs to break spend down per channel.
  * Resolving on both scopes is deliberate: `session.started` guarantees the tags
  * from the first call, `turn.started` refines them once the prompt is in history
  * (that is where a schedule's skill id becomes visible).
@@ -25,7 +32,7 @@ function selectModel(auth: AuthContext | null | undefined, messages: readonly Mo
     modelOptions: {
       providerOptions: {
         gateway: nuxiGatewayOptions(auth, messages),
-        anthropic: ANTHROPIC_OPTIONS
+        anthropic: anthropicOptions(auth)
       }
     }
   }
