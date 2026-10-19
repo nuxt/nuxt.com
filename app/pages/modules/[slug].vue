@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { Module } from '#shared/types'
+import { supportsNuxt3OrLater } from '#shared/utils/modules'
 import { ModuleProseA, ModuleProseKbd, ModuleProseImg } from '#components'
 
 definePageMeta({
@@ -114,7 +115,7 @@ if (import.meta.server) {
 
 <template>
   <UContainer v-if="module">
-    <div v-if="!module.compatibility?.nuxt?.includes('^3') && !module.compatibility?.nuxt?.includes('>=3')" class="pt-8">
+    <div v-if="!supportsNuxt3OrLater(module.compatibility?.nuxt)" class="pt-8">
       <UAlert
         icon="i-lucide-triangle-alert"
         variant="subtle"

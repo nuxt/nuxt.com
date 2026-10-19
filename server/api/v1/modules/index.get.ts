@@ -1,5 +1,6 @@
 import { z } from 'zod'
 import { satisfies } from 'verkit'
+import { supportsNuxt3OrLater } from '#shared/utils/modules'
 
 export default defineCachedEventHandler(async (event) => {
   const { version, category } = await getValidatedQuery(event, z.object({
@@ -13,12 +14,16 @@ export default defineCachedEventHandler(async (event) => {
   if (version !== 'all') {
     const major = (version === '2-bridge' ? '2' : version) satisfies '2' | '3'
     const testableVersion = `${major}.999.999`
+    const isDefault = !getQuery(event).version
 
     // Filter out modules by compatibility
     modules = modules.filter((module) => {
       // Nuxt 2 + bridge
       if (version === '2-bridge' && !module.compatibility.requires?.bridge) {
         return false
+      }
+      if (isDefault) {
+        return supportsNuxt3OrLater(module.compatibility.nuxt)
       }
       return satisfies(testableVersion, module.compatibility.nuxt)
     })
@@ -104,7 +109,7 @@ export default defineCachedEventHandler(async (event) => {
   swr: true,
   getKey(event) {
     const query = getQuery(event)
-    return `${query?.version || '3'}-${query?.category || 'all'}`
+    return `${query?.version || 'default'}-${query?.category || 'all'}`
   },
   maxAge: 60 * 60 // 1 hour
 })
