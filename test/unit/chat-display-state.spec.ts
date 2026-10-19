@@ -1,6 +1,6 @@
 import type { UIMessage } from 'ai'
 import { describe, expect, it } from 'vitest'
-import { resolveChatDisplayState } from '../../layers/nuxi/app/composables/eve/adapter'
+import { isBetweenSteps, resolveChatDisplayState } from '../../layers/nuxi/app/composables/eve/adapter'
 
 const user: UIMessage = { id: 'u1', role: 'user', parts: [{ type: 'text', text: 'How do I add auth?' }] }
 
@@ -29,5 +29,28 @@ describe('resolveChatDisplayState', () => {
 
     expect(state.displayStatus).toBe('streaming')
     expect(state.displayMessages).toEqual([user, reply])
+  })
+})
+
+describe('isBetweenSteps', () => {
+  const searched = { type: 'dynamic-tool', toolName: 'search_docs', toolCallId: 't1', state: 'output-available', input: {}, output: {} } as const
+
+  it('is true once the tool result is back and the next step has not streamed yet', () => {
+    const reply = assistant([{ type: 'reasoning', text: 'Check the docs.', state: 'done' }, searched])
+    expect(isBetweenSteps([user, reply], 'streaming')).toBe(true)
+  })
+
+  it('is false while a part is still streaming or a tool is running', () => {
+    expect(isBetweenSteps([user, assistant([{ type: 'text', text: 'Use', state: 'streaming' }])], 'streaming')).toBe(false)
+    expect(isBetweenSteps([user, assistant([{ ...searched, state: 'input-available', output: undefined }])], 'streaming')).toBe(false)
+  })
+
+  it('is false while a tool waits for approval, and once the turn is over', () => {
+    expect(isBetweenSteps([user, assistant([{ ...searched, state: 'approval-requested', output: undefined, approval: { id: 'a' } }])], 'streaming')).toBe(false)
+    expect(isBetweenSteps([user, assistant([searched])], 'ready')).toBe(false)
+  })
+
+  it('leaves the empty-reply case to the main indicator', () => {
+    expect(isBetweenSteps([user, assistant([{ type: 'reasoning', text: '', state: 'done' }])], 'streaming')).toBe(false)
   })
 })
