@@ -5,3 +5,4 @@ demo: 'https://nuxt-planner-demo.nuxtcharts.com?via=nuxt'
 purchase: 'https://nuxtcharts.com/templates/nuxt-planner?via=nuxt'
 badge: 'Premium'
 featured: true
+category: 'dashboard'

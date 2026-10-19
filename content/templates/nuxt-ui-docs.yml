@@ -4,3 +4,5 @@ description: "A documentation template made with Nuxt UI."
 repo: 'nuxt-ui-templates/docs'
 demo: 'https://docs-template.nuxt.dev'
 screenshotUrl: 'https://docs-template.nuxt.dev/getting-started'
+category: 'docs'
+official: true
