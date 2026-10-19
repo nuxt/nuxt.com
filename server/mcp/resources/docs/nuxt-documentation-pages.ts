@@ -1,12 +1,12 @@
 import { cliInstanceKey, docsInstanceKey } from '#shared/utils/content'
-import { DOC_VERSIONS } from '#shared/utils/docs'
+import { AGENT_DOC_VERSIONS } from '#shared/utils/docs'
 
 export default defineMcpResource({
   uri: 'resource://nuxt-com/documentation-pages',
   description: 'Complete list of available Nuxt documentation pages across v3.x, v4.x, and v5.x',
   cache: '1h',
   async handler(uri: URL) {
-    const results = await Promise.all(DOC_VERSIONS.map(async (version) => {
+    const results = await Promise.all(AGENT_DOC_VERSIONS.map(async (version) => {
       const [docs, cli] = await Promise.all([
         listInstancePages(docsInstanceKey(version)),
         listInstancePages(cliInstanceKey(version)).catch(() => [])

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { UIMessage } from 'ai'
 import type { AgentChatHandle } from '../../composables/eve/types'
-import { resolveChatDisplayState } from '../../composables/eve/adapter'
+import { isBetweenSteps, resolveChatDisplayState } from '../../composables/eve/adapter'
 
 const props = withDefaults(defineProps<{
   chat: AgentChatHandle
@@ -30,6 +30,29 @@ const emit = defineEmits<{
 const display = computed(() =>
   resolveChatDisplayState(props.chat.messages, props.chat.status)
 )
+
+/**
+ * Mounted after a short delay, so the pause between the final text and the end of the turn
+ * does not flash an indicator under every answer.
+ */
+const betweenStepsMessageId = ref<string>()
+let betweenStepsTimer: ReturnType<typeof setTimeout> | undefined
+
+watch(
+  () => isBetweenSteps(props.chat.messages, props.chat.status) ? props.chat.messages.at(-1)?.id : undefined,
+  (id) => {
+    clearTimeout(betweenStepsTimer)
+    if (!id) {
+      betweenStepsMessageId.value = undefined
+      return
+    }
+    betweenStepsTimer = setTimeout(() => {
+      betweenStepsMessageId.value = id
+    }, 400)
+  }
+)
+
+onBeforeUnmount(() => clearTimeout(betweenStepsTimer))
 
 function isAssistantPending(message: UIMessage): boolean {
   if (message.role !== 'assistant') return false
@@ -83,6 +106,12 @@ defineShortcuts({
 
       <template #content="{ message }">
         <ChatContent :message="message" />
+        <Transition
+          enter-from-class="opacity-0"
+          enter-active-class="transition-opacity duration-200"
+        >
+          <AgentIndicator v-if="message.id === betweenStepsMessageId" class="mt-2" />
+        </Transition>
       </template>
 
       <template v-if="showActions" #actions="{ message }">

@@ -8,6 +8,7 @@ function _useHeaderLinks() {
 
   const headerLinks = computed(() => {
     const to = docsMeta.value.path
+    const archived = docsMeta.value.status === 'archived'
 
     return [{
       label: 'Docs',
@@ -39,25 +40,29 @@ function _useHeaderLinks() {
         icon: 'i-lucide-code-xml',
         to: `${to}/api`,
         active: route.path.startsWith(`${to}/api`)
-      }, {
-        label: 'Deploy',
-        description: 'Deploy your Nuxt project anywhere.',
-        icon: 'i-lucide-cloud',
-        to: '/deploy',
-        active: route.path.startsWith('/deploy')
-      }, {
-        label: 'Examples',
-        description: 'Discover and explore official and community examples.',
-        icon: 'i-lucide-app-window-mac',
-        to: '/docs/examples',
-        active: route.path.startsWith('/docs/examples')
-      }, {
-        label: 'Community',
-        description: 'Find answers and support from the community.',
-        icon: 'i-lucide-messages-square',
-        to: `${to}/community`,
-        active: route.path.startsWith(`${to}/community`)
-      }]
+      },
+      // Archived versions have no deploy guides, examples or community section.
+      ...(archived
+        ? []
+        : [{
+            label: 'Deploy',
+            description: 'Deploy your Nuxt project anywhere.',
+            icon: 'i-lucide-cloud',
+            to: '/deploy',
+            active: route.path.startsWith('/deploy')
+          }, {
+            label: 'Examples',
+            description: 'Discover and explore official and community examples.',
+            icon: 'i-lucide-app-window-mac',
+            to: '/docs/examples',
+            active: route.path.startsWith('/docs/examples')
+          }, {
+            label: 'Community',
+            description: 'Find answers and support from the community.',
+            icon: 'i-lucide-messages-square',
+            to: `${to}/community`,
+            active: route.path.startsWith(`${to}/community`)
+          }])]
     }, {
       label: 'Modules',
       icon: 'i-lucide-puzzle',
