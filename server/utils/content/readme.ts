@@ -46,7 +46,14 @@ export function resolveReadmeUrls(tree: MarkdownDocument, repo: string, branch?:
   function resolve(url: string, kind: 'raw' | 'blob'): string {
     if (isAbsolute(url)) return url
     // `URL` does the `./`, `../` and root-relative work, and stops `..` at the repository root.
-    const { pathname, search, hash } = new URL(url, base)
+    let parsed: URL
+    try {
+      parsed = new URL(url, base)
+    } catch {
+      // Malformed (e.g. `\\[x.png`): keep it as written rather than failing the whole module response.
+      return url
+    }
+    const { pathname, search, hash } = parsed
     const prefix = kind === 'raw'
       ? `https://raw.githubusercontent.com/${owner}/${name}/${ref}`
       : `https://github.com/${owner}/${name}/blob/${ref}`

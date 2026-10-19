@@ -71,6 +71,15 @@ describe('resolveReadmeUrls', () => {
     ])
   })
 
+  it('keeps a malformed relative url as written instead of throwing', async () => {
+    const markdown = '<img src="\\\\[x.png"> <img src="./ok.png">'
+
+    expect(await urls(markdown, 'owner/repo#main/packages/nuxt')).toEqual([
+      ['img', 'src', '\\\\[x.png'],
+      ['img', 'src', 'https://raw.githubusercontent.com/owner/repo/main/packages/nuxt/ok.png']
+    ])
+  })
+
   it('keeps the descriptors of every srcset candidate', async () => {
     const markdown = '<img srcset="./a.png 1x, ./b.png 2x" src="./a.png">'
 
