@@ -109,7 +109,7 @@ export default defineCachedEventHandler(async (event) => {
   swr: true,
   getKey(event) {
     const query = getQuery(event)
-    return `${query?.version === undefined ? 'default' : `v${query.version}`}-${query?.category || 'all'}`
+    return `${query?.version || 'default'}-${query?.category || 'all'}`
   },
   maxAge: 60 * 60 // 1 hour
 })
