@@ -39,13 +39,16 @@ async function fetchPageMarkdown(pagePath: string): Promise<string | null> {
 }
 
 export default defineTool({
-  description: 'Read a nuxt.com page as Markdown: a docs page (`/docs/4.x/…`, also `/docs/3.x/…` and `/docs/5.x/…`), a deployment guide (`/deploy/…`), a blog post (`/blog/…`), an example, or a module\'s README (`/modules/<slug>`). Pass `sections` with h2/h3 titles to get only those parts of a long page; omit it for a summary of the whole page.',
+  description: 'Read a nuxt.com page as Markdown: a docs page (`/docs/4.x/…`, also `/docs/3.x/…`; not `/docs/5.x/…`), a deployment guide (`/deploy/…`), a blog post (`/blog/…`), an example, or a module\'s README (`/modules/<slug>`). Pass `sections` with h2/h3 titles to get only those parts of a long page; omit it for a summary of the whole page.',
   inputSchema: z.object({
     path: z.string().describe('Root-relative path or nuxt.com URL, e.g. "/docs/4.x/getting-started/state-management"'),
     sections: z.array(z.string()).optional().describe('Heading titles to keep (case-insensitive substring match)')
   }),
   async execute({ path, sections }) {
     const pagePath = normalizePagePath(path)
+    if (pagePath.startsWith('/docs/5.x/')) {
+      return { error: `Nightly docs are not served as Markdown here. Call nuxt-mcp__get-documentation-page with { path: "${pagePath}" } instead.` }
+    }
     const markdown = await fetchPageMarkdown(pagePath)
     if (markdown === null) {
       return { error: `No page at ${pagePath}. Use search_docs (or search_modules) to find the right path.` }

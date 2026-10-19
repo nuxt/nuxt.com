@@ -107,12 +107,29 @@ export function stripFrontmatter(markdown: string): string {
   return markdown.startsWith('---\n') ? markdown.slice(markdown.indexOf('\n---', 4) + 4).trimStart() : markdown
 }
 
+interface Fence {
+  char: string
+  length: number
+}
+
+/**
+ * Code fence state after `line`. A fence closes only on the same character, at least as long as
+ * the opener and with nothing after it, so a ```` ``` ```` inside a ````` ```` ````` block (or a `~~~` one) stays code.
+ */
+function trackFence(open: Fence | null, line: string): Fence | null {
+  const marker = line.match(/^ {0,3}(`{3,}|~{3,})/)
+  if (!marker) return open
+  const run = marker[1]!
+  if (!open) return { char: run[0]!, length: run.length }
+  return run[0] === open.char && run.length >= open.length && !line.slice(marker[0].length).trim() ? null : open
+}
+
 /** Split on h2/h3 outside code fences; the intro before the first h2 is its own section. */
 export function splitSections(markdown: string): { headings: string[], text: string }[] {
   const sections: { headings: string[], text: string }[] = []
   let h2 = ''
   let current: { headings: string[], lines: string[] } = { headings: [], lines: [] }
-  let inFence = false
+  let fence: Fence | null = null
 
   const flush = () => {
     const text = current.lines.join('\n').trim()
@@ -120,8 +137,8 @@ export function splitSections(markdown: string): { headings: string[], text: str
   }
 
   for (const line of markdown.split('\n')) {
-    if (/^\s*(?:```|~~~)/.test(line)) inFence = !inFence
-    const heading = inFence ? null : line.match(/^(##|###) (.+)$/)
+    fence = trackFence(fence, line)
+    const heading = fence ? null : line.match(/^(##|###) (.+)$/)
     if (heading) {
       flush()
       const title = heading[2]!.trim()
@@ -203,6 +220,8 @@ export function buildIndex(pages: DocPage[], bodies: (string | null)[]): DocsInd
 }
 
 let indexPromise: Promise<DocsIndex> | null = null
+/** One background reload at a time once the TTL passes; the stale index keeps serving meanwhile. */
+let refreshing: Promise<void> | null = null
 
 async function loadIndex(): Promise<DocsIndex> {
   const origin = appOrigin()
@@ -219,14 +238,16 @@ export function getDocsIndex(): Promise<DocsIndex> {
       indexPromise = null
       throw error
     })
-  } else {
-    void indexPromise.then((index) => {
-      if (Date.now() - index.loadedAt > INDEX_TTL_MS) {
-        loadIndex().then((fresh) => {
-          indexPromise = Promise.resolve(fresh)
-        }, () => {})
-      }
-    })
+  } else if (!refreshing) {
+    refreshing = indexPromise
+      .then(async (index) => {
+        if (Date.now() - index.loadedAt <= INDEX_TTL_MS) return
+        indexPromise = Promise.resolve(await loadIndex())
+      })
+      .catch(() => {})
+      .finally(() => {
+        refreshing = null
+      })
   }
   return indexPromise
 }
@@ -234,8 +255,9 @@ export function getDocsIndex(): Promise<DocsIndex> {
 function truncate(text: string, max: number): string {
   if (text.length <= max) return text
   const cut = text.slice(0, max)
-  const fences = cut.match(/^\s*```/gm)?.length ?? 0
-  return `${cut.slice(0, cut.lastIndexOf('\n') > max * 0.6 ? cut.lastIndexOf('\n') : max)}${fences % 2 ? '\n```' : ''}\n…`
+  const kept = cut.slice(0, cut.lastIndexOf('\n') > max * 0.6 ? cut.lastIndexOf('\n') : max)
+  const open = kept.split('\n').reduce<Fence | null>(trackFence, null)
+  return `${kept}${open ? `\n${open.char.repeat(open.length)}` : ''}\n…`
 }
 
 export function searchIndex(index: DocsIndex, query: string, options: { limit: number, perSectionChars: number, prefix?: string }): DocsHit[] {

@@ -1,5 +1,5 @@
-import { describe, expect, it } from 'vitest'
-import { buildIndex, parseLlmsIndex, searchIndex, splitSections, tokenize } from '../../layers/nuxi/agent/lib/docs-index'
+import { describe, expect, it, vi } from 'vitest'
+import { buildIndex, getDocsIndex, parseLlmsIndex, searchIndex, splitSections, tokenize } from '../../layers/nuxi/agent/lib/docs-index'
 
 const LLMS = `# Nuxt Docs
 
@@ -71,6 +71,19 @@ describe('docs index', () => {
     expect(sections[1]!.text).toContain('// ## not a heading')
   })
 
+  it('only closes a fence on a matching marker', () => {
+    const markdown = ['## Writing docs', '````md', '```ts', '## not a heading', '```', '````', '~~~', '```', '## still code', '~~~', '## After']
+      .join('\n')
+    expect(splitSections(markdown).map(section => section.headings.join())).toEqual(['Writing docs', 'After'])
+  })
+
+  it('closes a fence cut off by truncation with the opening marker', () => {
+    const body = `## Long\n\n~~~~ts\n${'const a = 1\n'.repeat(80)}~~~~\n`
+    const index = buildIndex(parseLlmsIndex(LLMS), [body, null, null])
+    const [hit] = searchIndex(index, 'long', { limit: 1, perSectionChars: 200 })
+    expect(hit?.content).toMatch(/\n~~~~\n…$/)
+  })
+
   it('splits camelCase identifiers and pairs adjacent words', () => {
     expect(tokenize('useAsyncData')).toEqual(expect.arrayContaining(['useasyncdata', 'async', 'data']))
     expect(tokenize('Nuxt instance unavailable')).toContain('instance+unavailable')
@@ -87,6 +100,28 @@ describe('docs index', () => {
     expect(state?.section).toBe('Best Practices')
 
     expect(searchIndex(index, 'pinia', { limit: 3, perSectionChars: 500, prefix: '/deploy/' })).toEqual([])
+  })
+
+  it('runs one background refresh at a time once the index is stale', async () => {
+    vi.useFakeTimers({ toFake: ['Date'] })
+    let llmsFetches = 0
+    vi.stubGlobal('fetch', vi.fn(async (url: string) => {
+      if (url.endsWith('/llms.txt')) llmsFetches++
+      return new Response(url.endsWith('/llms.txt') ? LLMS : NUXT_APP)
+    }))
+    try {
+      const first = await getDocsIndex()
+      expect(llmsFetches).toBe(1)
+
+      vi.setSystemTime(Date.now() + 2 * 60 * 60 * 1000)
+      const during = await Promise.all([getDocsIndex(), getDocsIndex(), getDocsIndex()])
+      expect(during.every(index => index === first)).toBe(true)
+      await vi.waitFor(async () => expect(await getDocsIndex()).not.toBe(first))
+      expect(llmsFetches).toBe(2)
+    } finally {
+      vi.unstubAllGlobals()
+      vi.useRealTimers()
+    }
   })
 
   it('falls back to the description when a page could not be fetched', () => {
