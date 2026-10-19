@@ -3,7 +3,7 @@ const { meta: docsMeta } = useDocsVersion()
 </script>
 
 <template>
-  <div v-if="docsMeta.endOfLife" class="py-4 sm:py-6">
+  <div v-if="docsMeta.endOfLife" class="pt-4 sm:pt-6">
     <UAlert
       icon="i-lucide-triangle-alert"
       variant="subtle"
