@@ -1,7 +1,9 @@
 import type { AuthFn } from 'eve/channels/auth'
 import { localDev, vercelOidc } from 'eve/channels/auth'
 import { defaultEveAuth, eveChannel } from 'eve/channels/eve'
+import { checkBotId } from 'botid/server'
 import { appOrigin, internalHeaders } from '../lib/internal-api.js'
+import { anonymousIpKey, clientIp } from '../../shared/utils/rate-limit.js'
 
 interface SessionPrincipal {
   principalId: string
@@ -21,6 +23,12 @@ function nuxtSessionAuth(): AuthFn<Request> {
     if (!cookie) return null
 
     try {
+      // Only POSTs carry the BotID challenge header; stream reconnects are GETs.
+      if (request.method === 'POST') {
+        const verification = await checkBotId()
+        if (verification.isBot) return null
+      }
+
       const response = await fetch(`${appOrigin()}/api/internal/session`, {
         headers: internalHeaders({ cookie })
       })
@@ -29,8 +37,16 @@ function nuxtSessionAuth(): AuthFn<Request> {
 
       const data = await response.json() as SessionPrincipal
 
+      const attributes: Record<string, string> = { ...data.attributes }
+      if (data.principalType === 'anonymous') {
+        // Anonymous ids are just a cookie, so `hooks/rate-limit.ts` also meters per IP.
+        const ip = clientIp(name => request.headers.get(name))
+        const ipKey = ip ? await anonymousIpKey(ip) : undefined
+        if (ipKey) attributes.ip_key = ipKey
+      }
+
       return {
-        attributes: data.attributes ?? {},
+        attributes,
         authenticator: data.authenticated ? 'github' : 'anonymous',
         issuer: 'nuxt.com',
         principalId: data.principalId,
@@ -68,9 +84,12 @@ export default eveChannel({
           if (data.summary) {
             context.push(`Prior conversation (for context):\n${data.summary}`)
           }
+        } else {
+          console.warn('[nuxi:eve] prior chat context unavailable', { chatId, status: response.status })
         }
-      } catch {
+      } catch (error) {
         // Non-fatal — continue without prior context
+        console.warn('[nuxi:eve] prior chat context request errored', { chatId, error })
       }
     }
 

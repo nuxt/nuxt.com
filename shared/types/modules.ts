@@ -25,6 +25,8 @@ export type BaseModule = {
     github: string
     twitter?: string
     bluesky?: string
+    /** Has a Nuxter profile (/nuxters/<github>), set by the module page API. */
+    nuxter?: boolean
   }>
 }
 
@@ -36,6 +38,8 @@ export interface ModuleContributor {
   id: number
   username: string
   contributions?: number
+  /** Has a Nuxter profile (/nuxters/<username>), set by the module page API. */
+  nuxter?: boolean
 }
 
 export interface ModuleMaintainer {
@@ -43,6 +47,8 @@ export interface ModuleMaintainer {
   github: string
   twitter?: string
   bluesky?: string
+  /** Has a Nuxter profile (/nuxters/<github>), set by the module page API. */
+  nuxter?: boolean
 }
 
 export interface ModuleStats {

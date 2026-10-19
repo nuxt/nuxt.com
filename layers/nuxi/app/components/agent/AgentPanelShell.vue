@@ -5,7 +5,10 @@ defineProps<{
   docked: boolean
 }>()
 
+// Collapsed only slides off-screen, so hide it from focus and extensions like Grammarly (keep the rail to reopen it)
 const panelUi = {
+  container: 'data-[state=collapsed]:invisible transition-[inset-inline-start,inset-inline-end,width,visibility]',
+  rail: 'visible',
   body: 'p-0 gap-0 overflow-hidden',
   actions: 'gap-0.5'
 } as const

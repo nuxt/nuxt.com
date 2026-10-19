@@ -17,7 +17,7 @@ function trackTemplateAction(action: 'Demo' | 'GitHub' | 'Purchase') {
     :ui="{
       container: 'p-0 sm:p-0',
       body: 'p-4 h-[105px]',
-      header: 'relative mb-0 aspect-video',
+      header: 'relative mb-0 w-full aspect-video',
       title: 'flex items-center w-full',
       description: 'line-clamp-2',
       footer: 'mt-0 px-4 pb-4 w-full'

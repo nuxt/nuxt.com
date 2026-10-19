@@ -14,8 +14,7 @@ const ETAGGABLE_PREFIXES = [
   '/design-kit',
   '/newsletter',
   '/video-courses',
-  '/enterprise/agencies',
-  '/enterprise/support'
+  '/enterprise/agencies'
 ]
 
 function isEtaggablePayload(pagePath: string): boolean {

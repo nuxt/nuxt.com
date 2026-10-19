@@ -47,6 +47,7 @@ jobs:
           dlx nuxt analyze
           --extends=../scripts/bundle-size/nuxt-layer
           --no-serve
+          --prerender
           --logLevel=info
         env:
           NODE_OPTIONS: --max-old-space-size=8192
@@ -60,7 +61,7 @@ jobs:
           --sha ${{ github.event.pull_request.base.sha }}
           --output ${{ runner.temp }}/bundle-size/base.json
       - name: Upload base bundle snapshot
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: bundle-size-base
           path: ${{ runner.temp }}/bundle-size/base.json
@@ -88,6 +89,7 @@ jobs:
           dlx nuxt analyze
           --extends=./scripts/bundle-size/nuxt-layer
           --no-serve
+          --prerender
           --logLevel=info
         env:
           NODE_OPTIONS: --max-old-space-size=8192
@@ -101,7 +103,7 @@ jobs:
           --sha ${{ github.event.pull_request.head.sha }}
           --output ${{ runner.temp }}/bundle-size/pr.json
       - name: Upload PR bundle snapshot
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: bundle-size-pr
           path: ${{ runner.temp }}/bundle-size/pr.json
@@ -113,16 +115,16 @@ jobs:
     needs:
       - analyze-base
       - analyze-pr
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-slim
     timeout-minutes: 10
     steps:
       - name: Download base bundle snapshot
-        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:
           name: bundle-size-base
           path: ${{ runner.temp }}/bundle-size
       - name: Download PR bundle snapshot
-        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:
           name: bundle-size-pr
           path: ${{ runner.temp }}/bundle-size
@@ -131,7 +133,7 @@ jobs:
           PR_NUMBER: ${{ github.event.pull_request.number }}
         run: printf '{"prNumber":%s}\n' "$PR_NUMBER" > "$RUNNER_TEMP/bundle-size/context.json"
       - name: Upload bundle snapshots
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: bundle-size-report
           path: ${{ runner.temp }}/bundle-size

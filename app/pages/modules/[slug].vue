@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { Module } from '#shared/types'
-import { ModuleProseA, ModuleProseKbd, ModuleProseImg } from '#components'
+import { ModuleProseA, ModuleProseKbd, ModuleProseImg, ModuleProsePicture } from '#components'
 
 definePageMeta({
   heroBackground: 'opacity-30 -z-10'
@@ -10,6 +10,7 @@ const markdownComponents = {
   ...proseComponents,
   ProseA: ModuleProseA,
   ProseImg: ModuleProseImg,
+  ProsePicture: ModuleProsePicture,
   ProseKbd: ModuleProseKbd
 }
 
@@ -61,9 +62,10 @@ const links = computed(() => module.value
   : [])
 
 const contributors = computed(() => {
+  // A Nuxter profile when the contributor has one, GitHub otherwise (module repositories outside the Nuxt orgs).
   const allContributors = module.value.contributors.map(contributor => ({
     label: contributor.username,
-    to: `https://github.com/${contributor.username}`,
+    to: contributor.nuxter ? `/nuxters/${contributor.username}` : `https://github.com/${contributor.username}`,
     avatar: {
       provider: 'ipx',
       src: `https://ipx.nuxt.com/f_auto,s_20x20/gh_avatar/${contributor.username}`,
@@ -207,7 +209,11 @@ if (import.meta.server) {
         <div class="mx-3 h-6 border-l border-gray-200 dark:border-gray-800 w-px hidden lg:block" />
 
         <div v-for="(maintainer, index) in module.maintainers" :key="maintainer.github" class="flex items-center gap-3">
-          <NuxtLink :to="`https://github.com/${maintainer.github}`" target="_blank" class="flex items-center gap-1.5 hover:text-primary">
+          <NuxtLink
+            :to="maintainer.nuxter ? `/nuxters/${maintainer.github}` : `https://github.com/${maintainer.github}`"
+            :target="maintainer.nuxter ? undefined : '_blank'"
+            class="flex items-center gap-1.5 hover:text-primary"
+          >
             <UAvatar provider="ipx" :src="`https://ipx.nuxt.com/f_auto,s_20x20/gh_avatar/${maintainer.github}`" :srcset="`https://ipx.nuxt.com/f_auto,s_40x40/gh_avatar/${maintainer.github} 2x`" :alt="maintainer.github" size="xs" />
             <span class="text-sm font-medium">{{ maintainer.github }}</span>
           </NuxtLink>

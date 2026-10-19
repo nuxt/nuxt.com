@@ -27,18 +27,31 @@ export async function ensureRateLimitPrincipalId(event: H3Event): Promise<string
   return anonymousUserId
 }
 
-export async function checkAgentRateLimit(event: H3Event): Promise<{ used: number, remaining: number, limit: number }> {
-  const userId = await ensureRateLimitPrincipalId(event)
-  const dayKey = today()
+async function readUsage(userId: string, defaultLimit: number): Promise<{ used: number, remaining: number, limit: number }> {
   const [row] = await db.select().from(schema.agentDailyUsage)
-    .where(and(eq(schema.agentDailyUsage.userId, userId), eq(schema.agentDailyUsage.dayKey, dayKey)))
+    .where(and(eq(schema.agentDailyUsage.userId, userId), eq(schema.agentDailyUsage.dayKey, today())))
     .limit(1)
-  const limit = row?.limitOverride ?? DEFAULT_DAILY_LIMIT
+  const limit = row?.limitOverride ?? defaultLimit
   const used = row?.count ?? 0
   return { used, remaining: Math.max(0, limit - used), limit }
 }
 
-export async function consumeAgentRateLimitForUser(userId: string): Promise<{ used: number, remaining: number, limit: number }> {
+export async function checkAgentRateLimit(event: H3Event): Promise<{ used: number, remaining: number, limit: number }> {
+  const userId = await ensureRateLimitPrincipalId(event)
+  const usage = await readUsage(userId, DEFAULT_DAILY_LIMIT)
+
+  // Anonymous visitors also share a per-IP budget (see the agent's rate-limit hook).
+  const session = await getUserSession(event)
+  const ip = session.user ? undefined : clientIp(name => getRequestHeader(event, name))
+  const ipKey = ip ? await anonymousIpKey(ip) : undefined
+  if (!ipKey) return usage
+
+  const ipUsage = await readUsage(ipKey, ANONYMOUS_IP_DAILY_LIMIT)
+  const remaining = Math.min(usage.remaining, ipUsage.remaining)
+  return { used: usage.limit - remaining, remaining, limit: usage.limit }
+}
+
+export async function consumeAgentRateLimitForUser(userId: string, defaultLimit = DEFAULT_DAILY_LIMIT): Promise<{ used: number, remaining: number, limit: number }> {
   const dayKey = today()
 
   return await db.transaction(async (tx: DbTransaction) => {
@@ -49,7 +62,7 @@ export async function consumeAgentRateLimitForUser(userId: string): Promise<{ us
       })
     const [row] = await tx.select().from(schema.agentDailyUsage)
       .where(and(eq(schema.agentDailyUsage.userId, userId), eq(schema.agentDailyUsage.dayKey, dayKey)))
-    const limit = row?.limitOverride ?? DEFAULT_DAILY_LIMIT
+    const limit = row?.limitOverride ?? defaultLimit
     const used = row!.count
     if (used > limit) {
       throw createError({

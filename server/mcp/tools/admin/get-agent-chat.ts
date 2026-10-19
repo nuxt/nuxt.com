@@ -11,7 +11,7 @@ function extractText(parts: MessagePart[]): string {
 export default defineMcpTool({
   description: `Retrieves a saved **web** chat session: messages (with extracted text), and per-message votes.
 
-WHEN TO USE: After \`list-agent-chats\`, read the transcript. Token/cost data for any channel is in Vercel Observability → Agent Runs.`,
+WHEN TO USE: After \`list-agent-chats\`, read the transcript. Token/cost data for any channel is in Vercel Observability → Agent Runs; \`agentRunId\` is the run id to look up there (null for chats that never reached the agent).`,
   inputSchema: {
     chatId: z.string().min(1).describe('The chat session id (UUID-style string returned by list_agent_chats).'),
     includeRawParts: z.boolean().default(false).describe('If true, include the raw `parts` array on every message. Off by default to keep responses small.')
@@ -76,6 +76,7 @@ WHEN TO USE: After \`list-agent-chats\`, read the transcript. Token/cost data fo
       userId: chat.userId,
       title: chat.title,
       visibility: chat.visibility,
+      agentRunId: chat.state?.sessionId ?? null,
       messageCount: messages.length,
       votes: {
         upvotes: votes.filter((v: VoteRow) => v.isUpvoted).length,
