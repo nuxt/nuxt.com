@@ -32,7 +32,7 @@ watch(() => colorMode.preference, (newMode, oldMode) => {
 const pull = usePullPreview()
 
 const { data: navigation } = await useFetch<NavigationItem[]>(() =>
-  pull.value ? pullNavigationPath(docsVersion.value, pull.value) : navigationPath(docsVersion.value), { key: 'navigation' })
+  pull.value ? pullNavigationPath(docsVersion.value, pull.value) : navigationPath(docsVersion.value), { key: () => `navigation:${docsVersion.value}` })
 
 const searchKeys = computed(() => searchInstanceKeys(docsVersion.value))
 // Client-only: an SSR value gets baked into the page's ISR entry and would pin search to a stale commit.
