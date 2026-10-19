@@ -2,4 +2,13 @@ name: 'Nuxt Shopify Template'
 slug: 'nuxt-shopify'
 description: 'Shopify template using Nuxt 4 and Nuxt UI.'
 repo: 'nuxt-modules/shopify'
+source: 'gh:nuxt-modules/shopify/template'
 demo: 'https://nuxt-shopify.vercel.app/'
+category: 'ecommerce'
+official: true
+deploy:
+  repositoryUrl: 'https://github.com/nuxt-modules/shopify/tree/main/template'
+  env:
+    - NUXT_SHOPIFY_NAME
+    - NUXT_SHOPIFY_CLIENTS_STOREFRONT_API_VERSION
+    - NUXT_SHOPIFY_CLIENTS_STOREFRONT_PUBLIC_ACCESS_TOKEN
