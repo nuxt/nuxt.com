@@ -6,9 +6,10 @@ import { NUXI_GATEWAY_TAG } from '../../shared/utils/ai-gateway.js'
 
 /**
  * Fallback chain for the primary model, only used when the primary fails — the
- * nominal path is unchanged. `claude-sonnet-4.5` accepts the same
- * `thinking.budgetTokens` as 4.6; `gemini-3.6-flash` ignores the `anthropic`
- * provider key and runs with its own default reasoning.
+ * nominal path is unchanged. Every link must accept the primary's adaptive
+ * thinking: `claude-sonnet-4.5` rejects it with a 400, `claude-sonnet-5.5`
+ * takes it as is, and `gemini-3.6-flash` ignores the `anthropic` provider key
+ * and runs with its own default reasoning.
  *
  * Both links are probed against the team's Gateway under `zeroDataRetention`,
  * which every request below sets: a model with no ZDR-attested provider throws
@@ -17,7 +18,7 @@ import { NUXI_GATEWAY_TAG } from '../../shared/utils/ai-gateway.js'
  * and could never have engaged. Nothing in the model catalog lets you check
  * this statically — `regions` reads like it should and does not.
  */
-const FALLBACK_MODELS = ['anthropic/claude-sonnet-4.5', 'google/gemini-3.6-flash']
+const FALLBACK_MODELS = ['anthropic/claude-sonnet-5.5', 'google/gemini-3.6-flash']
 
 /**
  * Schedules dispatch through Slack with an app principal, so the workflow is
