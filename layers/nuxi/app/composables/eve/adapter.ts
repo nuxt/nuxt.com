@@ -42,7 +42,13 @@ export function resolveChatDisplayState(
   }
 
   const last = messages.at(-1)
-  if (last?.role === 'assistant' && !hasVisibleParts(last.parts)) {
+  // The stream can open before the assistant message exists; UChatMessages
+  // hides its indicator for `streaming` unless the last message is an assistant.
+  if (last?.role !== 'assistant') {
+    return { displayStatus: 'submitted', displayMessages: withoutEmptyAssistantMessages(messages) }
+  }
+
+  if (!hasVisibleParts(last.parts)) {
     return {
       displayStatus: 'submitted',
       displayMessages: withoutEmptyAssistantMessages(messages.slice(0, -1))
