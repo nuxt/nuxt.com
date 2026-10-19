@@ -1,6 +1,6 @@
 import type { Stats } from '#shared/types'
 import type { NpmDownloadStats } from '../types/npm'
-import { satisfies } from 'verkit'
+import { supportsNuxt3OrLater } from '#shared/utils/modules'
 
 // The window npm used for `last-month`, shifted back one year.
 function lastMonthAYearAgo({ start, end }: NpmDownloadStats) {
@@ -27,7 +27,7 @@ export default cachedEventHandler(async (event) => {
     version,
     monthlyDownloads: lastMonth.downloads,
     monthlyDownloadsLastYear: lastYear.downloads,
-    modules: modules.filter(module => satisfies(version, module.compatibility.nuxt)).length
+    modules: modules.filter(module => supportsNuxt3OrLater(module.compatibility.nuxt)).length
   } satisfies Stats
 }, {
   name: 'stats',
