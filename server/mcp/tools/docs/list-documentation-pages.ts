@@ -1,7 +1,8 @@
 import { z } from 'zod'
 import { getAgentSiteUrl } from '#agent-discovery'
 import { cliInstanceKey, docsInstanceKey } from '#shared/utils/content'
-import { DOC_VERSIONS, type DocVersion } from '#shared/utils/docs'
+import type { CliDocVersion } from '#shared/utils/cli'
+import { AGENT_DOC_VERSIONS } from '#shared/utils/docs'
 
 export default defineMcpTool({
   description: `Lists Nuxt documentation pages, optionally filtered by search term.
@@ -27,7 +28,7 @@ TIPS: Always pass a search term to narrow results — avoids dumping the entire 
     const event = useEvent()
     let allDocs: { title: string, path: string, description: string }[] = []
 
-    const versions: DocVersion[] = version === 'all' ? [...DOC_VERSIONS] : [version as DocVersion]
+    const versions: CliDocVersion[] = version === 'all' ? [...AGENT_DOC_VERSIONS] : [version as CliDocVersion]
 
     for (const docsVersion of versions) {
       const docs = await listInstancePages(docsInstanceKey(docsVersion))

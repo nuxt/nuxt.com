@@ -24,7 +24,6 @@ const navigationUtils = await import('../../server/utils/content/navigation')
 const { blogTree, cliTree, docTree, examplesTree, findByPath } = navigationUtils
 
 vi.stubGlobal('docTree', docTree)
-vi.stubGlobal('examplesTree', examplesTree)
 vi.stubGlobal('findByPath', findByPath)
 vi.stubGlobal('blogTree', blogTree)
 vi.stubGlobal('defineEventHandler', <T>(handler: T) => handler)
@@ -80,24 +79,31 @@ describe('examplesTree', () => {
 
 describe('docTree', () => {
   it('grafts the examples in after the API docs', async () => {
-    expect(childPaths(await docTree(VERSION, await examplesTree()))).toEqual([
+    expect(childPaths(await docTree(VERSION))).toEqual([
       `${docsPathPrefix(VERSION)}/getting-started`,
       `${docsPathPrefix(VERSION)}/api`,
       EXAMPLES_PATH_PREFIX
     ])
   })
 
+  it('leaves the examples out on request, for callers listing them once', async () => {
+    expect(childPaths(await docTree(VERSION, { withExamples: false }))).toEqual([
+      `${docsPathPrefix(VERSION)}/getting-started`,
+      `${docsPathPrefix(VERSION)}/api`
+    ])
+  })
+
   it('rejects when the docs instance fails', async () => {
     navigations.set(docsInstanceKey(VERSION), new Error('github is down'))
 
-    await expect(docTree(VERSION, [])).rejects.toThrow('github is down')
+    await expect(docTree(VERSION)).rejects.toThrow('github is down')
   })
 
   it('degrades to nothing when the cli instance fails', async () => {
     navigations.set(cliInstanceKey(VERSION), new Error('github is down'))
 
     await expect(cliTree(VERSION)).resolves.toEqual([])
-    await expect(docTree(VERSION, [])).resolves.toHaveLength(1)
+    await expect(docTree(VERSION)).resolves.toHaveLength(1)
   })
 })
 
@@ -116,6 +122,20 @@ describe('GET /api/navigation/:version', () => {
 
   it('404s an unknown version', async () => {
     await expect(handler({ version: 'nope' })).rejects.toMatchObject({ statusCode: 404 })
+  })
+
+  it('serves an archived version without the Nuxt 3+ examples', async () => {
+    const archived = docsPathPrefix('2.x')
+    navigations.set(docsInstanceKey('2.x'), [{
+      title: 'Docs',
+      path: archived,
+      children: [{ title: 'Get Started', path: `${archived}/getting-started` }]
+    }] as unknown as NavigationItem[])
+
+    const tree = await handler({ version: '2.x' })
+
+    expect(tree.map(item => item.path)).toEqual([archived, '/blog'])
+    expect(tree[0]?.children?.map(child => child.path)).toEqual([`${archived}/getting-started`])
   })
 
   /**

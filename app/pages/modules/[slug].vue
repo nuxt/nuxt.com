@@ -122,8 +122,8 @@ if (import.meta.server) {
         title="This module is not yet compatible with Nuxt 3"
       >
         <template #description>
-          Head over to <NuxtLink to="https://v2.nuxt.com" target="_blank" class="underline">
-            v2.nuxt.com
+          Head over to the <NuxtLink to="/docs/2.x/getting-started/installation" class="underline">
+            Nuxt 2 docs
           </NuxtLink>
         </template>
       </UAlert>

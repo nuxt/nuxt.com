@@ -1,15 +1,11 @@
-import { SUPPORTED_DOC_VERSIONS, EXCLUDED_DOC_VERSIONS, CURRENT_DOCS_VERSION, docsPathPrefix } from '#shared/utils/docs'
-
-// Versions kept here as a fast prefix scan — the canonical list lives in
-// `shared/utils/docs.ts` (SUPPORTED_DOC_VERSIONS + EXCLUDED_DOC_VERSIONS).
-const KNOWN_DOC_VERSIONS = [...SUPPORTED_DOC_VERSIONS, ...EXCLUDED_DOC_VERSIONS]
+import { CURRENT_DOCS_VERSION, docsPathPrefix, getVersionByPath } from '#shared/utils/docs'
 
 export default defineNuxtRouteMiddleware((to) => {
   // If the path does not start with /docs/, return.
   if (!to.path.startsWith('/docs/')) return
 
   // If the path starts with a known version, return.
-  if (KNOWN_DOC_VERSIONS.some(v => to.path.startsWith(docsPathPrefix(v)))) return
+  if (getVersionByPath(to.path)) return
 
   // Examples are not versioned.
   if (to.path.startsWith('/docs/examples')) return

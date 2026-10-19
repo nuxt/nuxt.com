@@ -46,6 +46,7 @@ describe('impactedInstances', () => {
   it('maps each content repo/branch to the instances reading it', () => {
     expect(impactedInstances('nuxt/nuxt.com', 'main')).toEqual(['site'])
     expect(impactedInstances('nuxt/examples', 'main')).toEqual(['examples'])
+    expect(impactedInstances('nuxt/nuxt', '2.x')).toEqual(['docs:2.x'])
     expect(impactedInstances('nuxt/nuxt', '4.x')).toEqual(['docs:4.x'])
     expect(impactedInstances('nuxt/nuxt', 'main')).toEqual(['docs:5.x'])
   })

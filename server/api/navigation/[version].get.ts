@@ -19,7 +19,7 @@ export default defineEventHandler(async (event): Promise<NavigationItem[]> => {
     throw createError({ statusCode: 404, statusMessage: 'Unknown docs version' })
   }
   const [tree, blog] = await Promise.all([
-    docTree(version, await examplesTree()),
+    docTree(version),
     blogTree().catch(() => [])
   ])
 
