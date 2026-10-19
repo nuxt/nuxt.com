@@ -1,8 +1,14 @@
 import { Resend } from 'resend'
 import { z } from 'zod'
 import { withQuery, withTrailingSlash } from 'ufo'
+import { checkBotId } from 'botid/server'
 
 export default eventHandler(async (event) => {
+  const verification = await checkBotId()
+  if (verification.isBot) {
+    throw createError({ statusCode: 403, statusMessage: 'Forbidden' })
+  }
+
   const { email } = await readValidatedBody(event, z.object({
     email: z.string().email().trim()
   }).parse)

@@ -3,8 +3,8 @@ import { readFile, readdir } from 'node:fs/promises'
 import { defineNuxtModule } from '@nuxt/kit'
 import { join } from 'pathe'
 import captureWebsite from 'capture-website'
-import { kebabCase } from 'scule'
 import { parseYAML } from 'confbox/yaml'
+import { getWebsiteScreenShotUrl } from '../app/utils/showcase'
 
 interface ScreenshotOptions {
   slug?: string
@@ -96,7 +96,7 @@ export default defineNuxtModule(async (_options, nuxt) => {
         continue
       }
 
-      const filename = join(process.cwd(), 'public/assets/websites', `${kebabCase(website.name.replace(/ /g, ''))}.webp`)
+      const filename = join(process.cwd(), 'public', getWebsiteScreenShotUrl(website))
       await capture(website.url, filename, `Showcase ${website.name}`, website.screenshotOptions).catch((err) => {
         console.warn(`Could not generate screenshot for ${website.url}: ${err.message}`)
       })

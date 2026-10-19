@@ -237,36 +237,125 @@ logos:
   companies:
     - src: /assets/brands/louis-vuitton.svg
       alt: Louis Vuitton
+      url: https://eu.louisvuitton.com/
       height: 16
       width: 152
-    - src: /assets/brands/dassault-systemes.svg
-      alt: Dassault Systemes
-      height: 28
-      width: 93
+    - src: /assets/websites/logos/nintendo.svg
+      alt: Nintendo
+      url: https://www.nintendo.com/
+      height: 32
+      width: 128
+    - src: /assets/websites/logos/git-lab.svg
+      alt: GitLab
+      url: https://about.gitlab.com/
+      height: 120
+      width: 394
+    - src: /assets/websites/logos/prada.svg
+      alt: Prada
+      url: https://www.prada.com/
+      height: 20
+      width: 128
     - src: /assets/brands/backmarket.svg
       alt: Back Market
+      url: https://www.backmarket.com/
       height: 18
       width: 161
+    - src: /assets/websites/logos/microsoft-edge-developer.svg
+      alt: Microsoft
+      url: https://developer.microsoft.com/en-us/microsoft-edge
+      height: 26
+      width: 120
     - src: /assets/brands/paul-smith.svg
       alt: Paul Smith
+      url: https://www.paulsmith.com/
       height: 26
       width: 144
+    - src: /assets/websites/logos/stack-overflow.svg
+      alt: Stack Overflow
+      url: https://stackoverflow.co/
+      height: 22
+      width: 175
+    - src: /assets/websites/logos/adyen.svg
+      alt: Adyen
+      url: https://www.adyen.com/
+      height: 26
+      width: 80
+    - src: /assets/websites/logos/harrods.svg
+      alt: Harrods
+      url: https://www.harrods.com/
+      height: 75
+      width: 160
+    - src: /assets/websites/logos/n8n.svg
+      alt: n8n
+      url: https://n8n.io/
+      height: 24
+      width: 87
     - src: /assets/brands/caudalie.svg
       alt: Caudalie
+      url: https://us.caudalie.com/
       height: 28
       width: 136
-    - src: /assets/brands/blizzard.svg
-      alt: Blizzard
+    - src: /assets/websites/logos/trade-republic.svg
+      alt: Trade Republic
+      url: https://traderepublic.com/
+      height: 19
+      width: 211
+    - src: /assets/websites/logos/la-poste.svg
+      alt: La Poste
+      url: https://www.laposte.fr/
+      height: 24
+      width: 162
+    - src: /assets/brands/dassault-systemes.svg
+      alt: Dassault Systemes
+      url: https://www.3ds.com/
       height: 28
-      width: 55
+      width: 93
     - src: /assets/brands/vans.svg
       alt: Vans
+      url: https://www.vans.com/
       height: 23
       width: 67
-    - src: /assets/brands/deutsche-bahn.svg
-      alt: Deutsche Bahn
-      height: 40
-      width: 51
+    - src: /assets/websites/logos/armani.svg
+      alt: Armani
+      url: https://www.armani.com/
+      height: 24
+      width: 101
+    - src: /assets/websites/logos/upwork.svg
+      alt: Upwork
+      url: https://upwork.com/
+      height: 28
+      width: 102
+    - src: /assets/websites/logos/abnamro.svg
+      alt: ABN AMRO
+      url: https://www.abnamro.nl/
+      height: 73
+      width: 295
+      scale: 1.2
+    - src: /assets/websites/logos/the-north-face.svg
+      alt: The North Face
+      url: https://www.thenorthface.com/
+      height: 32
+      width: 70
+    - src: /assets/websites/logos/shopware.svg
+      alt: Shopware
+      url: https://www.shopware.com/
+      height: 69
+      width: 320
+    - src: /assets/websites/logos/kpn.svg
+      alt: KPN
+      url: https://www.kpn.com/
+      height: 42
+      width: 110
+    - src: /assets/websites/logos/jumbo.svg
+      alt: Jumbo
+      url: https://www.jumbo.com/
+      height: 30
+      width: 150
+    - src: /assets/websites/logos/tchibo.svg
+      alt: Tchibo
+      url: https://www.tchibo.de/
+      height: 24
+      width: 80
 features:
   title: Everything you need, nothing you don't
   description: Nuxt handles the architecture so you can focus on building.
@@ -407,8 +496,7 @@ contributors:
   description: 'Hundreds of contributors making Nuxt better every day. Join us.'
   links:
     - label: Nuxters
-      to: https://nuxters.nuxt.com
-      target: _blank
+      to: /nuxters
       icon: i-simple-icons-nuxtdotjs
       color: neutral
       title: See your own profile on Nuxters
@@ -433,37 +521,6 @@ contributors:
       variant: ghost
       size: lg
       title: Nuxt on Bluesky
-support:
-  title: Nuxt Enterprise Support
-  description: |
-    To ensure your Nuxt projects reach their full potential, our Nuxt Experts team, featuring :icon{name=i-custom-vue .align-middle} Vue, :icon{name=i-custom-nuxt .align-middle} Nuxt and :icon{name=i-custom-vite .align-middle} Vite, core contributors — offers a complete suite of services.
-  features:
-    - title: Performance optimization
-      description: Boost Nuxt performance and reliability with our expert optimizations.
-      icon: i-lucide-rocket
-    - title: Migration to Nuxt
-      description: Ensure successful, painless migrations from start to deployment.
-      icon: i-lucide-circle-arrow-up
-    - title: Nuxt Workshop
-      description: Develop expert teams through training and support.
-      icon: i-lucide-school
-  companies:
-    - src: /assets/enterprise/support/malt.svg
-      alt: Malt
-    - src: /assets/enterprise/support/zadig-and-voltaire.svg
-      alt: Zadig & Voltaire
-    - src: /assets/enterprise/support/adyen.svg
-      alt: Adyen
-    - src: /assets/enterprise/support/world-wide-technology.svg
-      alt: World Wide Technology
-    - src: /assets/enterprise/support/cora.svg
-      alt: Cora
-  links:
-    - label: Talk to a Nuxt Expert
-      to: /enterprise/support
-      icon: i-lucide-arrow-right
-      color: neutral
-      trailing: true
 sponsors:
   title: Sponsors
   description: Nuxt is and will always remain free and open source under the MIT License, thanks to our contributors and sponsors.

@@ -1,6 +1,7 @@
 import type { AuthFn } from 'eve/channels/auth'
 import { localDev, vercelOidc } from 'eve/channels/auth'
 import { defaultEveAuth, eveChannel } from 'eve/channels/eve'
+import { checkBotId } from 'botid/server'
 import { appOrigin, internalHeaders } from '../lib/internal-api.js'
 import { anonymousIpKey, clientIp } from '../../shared/utils/rate-limit.js'
 
@@ -22,6 +23,12 @@ function nuxtSessionAuth(): AuthFn<Request> {
     if (!cookie) return null
 
     try {
+      // Only POSTs carry the BotID challenge header; stream reconnects are GETs.
+      if (request.method === 'POST') {
+        const verification = await checkBotId()
+        if (verification.isBot) return null
+      }
+
       const response = await fetch(`${appOrigin()}/api/internal/session`, {
         headers: internalHeaders({ cookie })
       })

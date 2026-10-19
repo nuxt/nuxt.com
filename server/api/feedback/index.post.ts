@@ -1,4 +1,5 @@
 import type { H3Event } from 'h3'
+import { checkBotId } from 'botid/server'
 
 export async function generateHash(
   today: string,
@@ -19,7 +20,7 @@ export async function generateHash(
 }
 
 async function getFingerprint(event: H3Event): Promise<string> {
-  const ip = event.context.cf?.ip || 'unknown'
+  const ip = getRequestIP(event, { xForwardedFor: true }) || 'unknown'
   const userAgent = getHeader(event, 'user-agent') || 'unknown'
   const domain = getHeader(event, 'host') || 'localhost'
   const today = new Date().toISOString().split('T')[0]!
@@ -28,9 +29,14 @@ async function getFingerprint(event: H3Event): Promise<string> {
 }
 
 export default defineEventHandler(async (event: H3Event) => {
+  const verification = await checkBotId()
+  if (verification.isBot) {
+    throw createError({ statusCode: 403, statusMessage: 'Forbidden' })
+  }
+
   const data: FeedbackInput = await readValidatedBody(event, feedbackSchema.parse)
 
-  const country = event.context.cf?.country || 'unknown'
+  const country = getHeader(event, 'x-vercel-ip-country') || 'unknown'
   const fingerprint = await getFingerprint(event)
 
   await db.insert(schema.feedback).values({

@@ -1,4 +1,4 @@
-import { afterEach, describe, expect, it, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { isAdminMode } from '../../layers/nuxi/agent/lib/identity/admin-mode'
 
 vi.mock('@vercel/global-config', () => ({
@@ -13,6 +13,10 @@ const localDevAuth = {
 } as const
 
 describe('isAdminMode', () => {
+  beforeEach(() => {
+    vi.stubEnv('GLOBAL_CONFIG', 'https://edge-config.vercel.com/ecfg_test?token=test')
+  })
+
   afterEach(() => {
     vi.unstubAllEnvs()
   })

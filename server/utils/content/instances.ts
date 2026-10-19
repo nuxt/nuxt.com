@@ -68,6 +68,15 @@ function branchFor(key: ContentInstanceKey, fallback: string): string {
 }
 
 /**
+ * The site's content ships with its code, so a preview deployment reads the commit it was built from:
+ * a PR changing a page and its content renders as it will once merged, and hits its own build snapshot.
+ */
+function siteRef(): string {
+  const sha = process.env.VERCEL_ENV === 'preview' ? process.env.VERCEL_GIT_COMMIT_SHA?.trim() : undefined
+  return branchFor('site', sha || 'main')
+}
+
+/**
  * Markdown held inside data files, parsed by `markdownFields()` instead of at render time.
  */
 const SITE_SCHEMA: JsonSchema = {
@@ -95,7 +104,7 @@ export function instanceSource(key: ContentInstanceKey): { name: string, source:
   if (key === 'site') {
     return {
       name: 'site',
-      source: { repo: 'nuxt/nuxt.com', branch: branchFor('site', 'main'), contentDir: 'content', prefix: '/', local: true, schema: SITE_SCHEMA }
+      source: { repo: 'nuxt/nuxt.com', branch: siteRef(), contentDir: 'content', prefix: '/', local: true, schema: SITE_SCHEMA }
     }
   }
   if (key === 'examples') {
