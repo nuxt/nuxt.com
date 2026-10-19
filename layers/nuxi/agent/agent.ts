@@ -3,7 +3,7 @@ import { defineAgent, defineDynamic } from 'eve'
 import type { AuthContext } from './lib/identity/context.js'
 import { nuxiGatewayOptions } from './lib/gateway-attribution.js'
 
-const MODEL = 'anthropic/claude-sonnet-4.6'
+const MODEL = 'anthropic/claude-haiku-5.5'
 
 const ANTHROPIC_OPTIONS = {
   thinking: {

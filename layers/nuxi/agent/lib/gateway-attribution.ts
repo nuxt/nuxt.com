@@ -7,8 +7,8 @@ import { NUXI_GATEWAY_TAG } from '../../shared/utils/ai-gateway.js'
 /**
  * Fallback chain for the primary model, only used when the primary fails — the
  * nominal path is unchanged. `claude-sonnet-4.5` accepts the same
- * `thinking.budgetTokens` as 4.6; `gemini-3.6-flash` ignores the `anthropic`
- * provider key and runs with its own default reasoning.
+ * `thinking.budgetTokens` as the primary; `gemini-3.6-flash` ignores the
+ * `anthropic` provider key and runs with its own default reasoning.
  *
  * Both links are probed against the team's Gateway under `zeroDataRetention`,
  * which every request below sets: a model with no ZDR-attested provider throws
