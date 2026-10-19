@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { Module } from '#shared/types'
-import { ModuleProseA, ModuleProseKbd, ModuleProseImg, ModuleProsePicture } from '#components'
+import { ModuleProseA, ModuleProseKbd, ModuleProseImg } from '#components'
 
 definePageMeta({
   heroBackground: 'opacity-30 -z-10'
@@ -10,7 +10,6 @@ const markdownComponents = {
   ...proseComponents,
   ProseA: ModuleProseA,
   ProseImg: ModuleProseImg,
-  ProsePicture: ModuleProsePicture,
   ProseKbd: ModuleProseKbd
 }
 
