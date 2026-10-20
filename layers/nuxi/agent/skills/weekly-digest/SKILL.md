@@ -70,7 +70,7 @@ Docs feedback:
 
 AI agent:
 8. `admin-mcp__agent-usage-stats` — web chat counts and vote quality
-9. `admin-mcp__list-agent-chats` — `hasDownvotes=true`, `limit=5`
+9. `admin-mcp__list-agent-chats` — `hasDownvotes=true`, `limit=5` (shared or public chats only; private chats are never readable)
 10. `admin-mcp__list-agent-votes` — `onlyDownvotes=true`, `limit=15`
 11. `vercel-mcp__list_agent_runs` over the window → Slack / Discord / web run split (discover eve project via `list_agent_run_projects` first).
 12. `ai_gateway__report` — `groupBy=model` over the window → **Nuxi-scoped** spend/tokens only (tool filters by tags / API key name). Asking for a `groupBy` always forces tag scoping when an API key name is configured — check `scope.mode`, not `scope.matchedRows`: whenever `scope.mode` is `"tags"` and `scope.note` names an API key, that result only covers tagged traffic and can undercount the real historical total, even if `scope.matchedRows` is non-zero. Re-run with no `groupBy` for the full key-name-scoped total. If that ungrouped report is still unavailable or empty, present the tagged numbers but label them explicitly as partial (tagged traffic only) — never as the complete historical spend. If both come back empty, say spend is not attributable yet — **never** quote account-wide / other-product totals (no fable, no team-wide $).
