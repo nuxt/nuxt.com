@@ -3,6 +3,8 @@ import { internalFetch } from '../lib/internal-api.js'
 
 const REQUEST_TIMEOUT_MS = 240_000
 
+// TODO: once on Nuxt 5 / Nitro v3 (scheduled tasks deploy as Vercel cron jobs), run
+// `purgeExpiredSiteData` from a scheduled task in the main app and keep only the Nuxi purge here.
 export default defineSchedule({
   cron: '30 3 * * *',
   async run({ waitUntil }) {

@@ -88,12 +88,12 @@ Dispatch is restricted to channels listed under `discord.channels.admin`, `.publ
 
 ## Data retention
 
-`agent/schedules/data-retention.ts` calls `POST /api/internal/data-retention` daily at 3:30 UTC. The route (`server/utils/data-retention.ts`) deletes:
+`agent/schedules/data-retention.ts` calls `POST /api/internal/data-retention` daily at 3:30 UTC. The route runs `purgeExpiredNuxiData` (`server/utils/data-retention.ts`), which deletes:
 
 - chats not updated for 12 months (their messages and votes cascade)
-- accounts not seen for 12 months that have no chat updated in that window (`users.last_seen_at` is set on sign-in and refreshed at most daily when the session is fetched)
-- page feedback older than 12 months
 - `agent_daily_usage` counters older than 7 days
+
+It then runs the main app's `purgeExpiredSiteData`, which deletes accounts not seen for 12 months and page feedback older than 12 months.
 
 Each run deletes at most 5,000 rows per table, so a backlog drains over several runs. Test locally with `curl -X POST "http://localhost:3000/eve/v1/dev/schedules/data-retention"`.
 

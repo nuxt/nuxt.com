@@ -6,7 +6,8 @@ import { drizzle, type LibSQLDatabase } from 'drizzle-orm/libsql'
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 import { feedback, users } from '../../server/db/schema'
 import { agentDailyUsage, chats, messages, votes } from '../../layers/nuxi/server/db/schema'
-import { purgeExpiredData } from '../../layers/nuxi/server/utils/data-retention'
+import { purgeExpiredSiteData } from '../../server/utils/data-retention'
+import { purgeExpiredNuxiData } from '../../layers/nuxi/server/utils/data-retention'
 
 const migrationsDir = new URL('../../server/db/migrations/sqlite/', import.meta.url)
 const journal = JSON.parse(readFileSync(new URL('meta/_journal.json', migrationsDir), 'utf8')) as { entries: { tag: string }[] }
@@ -50,7 +51,44 @@ function feedbackRow(path: string, at: Date) {
   return { rating: 'good', path, title: path, stem: path, country: 'FR', fingerprint: path, createdAt: at, updatedAt: at }
 }
 
-describe('purgeExpiredData', () => {
+describe('purgeExpiredSiteData', () => {
+  beforeEach(() => applyMigrations(client))
+
+  it('deletes accounts inactive for 12 months with their chats', async () => {
+    await db.insert(users).values([
+      user('inactive', STALE),
+      user('active', RECENT, STALE),
+      user('never-seen', null, STALE)
+    ])
+    await seedChat('old', 'inactive', RECENT)
+    await seedChat('kept', 'active', STALE)
+
+    const result = await purgeExpiredSiteData(db, { now: NOW })
+
+    expect(result.users).toBe(2)
+    expect((await db.select({ id: users.id }).from(users)).map(row => row.id)).toEqual(['active'])
+    expect((await db.select({ id: chats.id }).from(chats)).map(row => row.id)).toEqual(['kept'])
+  })
+
+  it('deletes feedback older than 12 months', async () => {
+    await db.insert(feedback).values([feedbackRow('/old', STALE), feedbackRow('/new', RECENT)])
+
+    const result = await purgeExpiredSiteData(db, { now: NOW })
+
+    expect(result.feedback).toBe(1)
+    expect((await db.select({ path: feedback.path }).from(feedback)).map(row => row.path)).toEqual(['/new'])
+  })
+
+  it('bounds deletions per run and is safe to repeat', async () => {
+    await db.insert(feedback).values(Array.from({ length: 5 }, (_, i) => feedbackRow(`/old-${i}`, STALE)))
+
+    expect((await purgeExpiredSiteData(db, { now: NOW, batchSize: 2, maxBatches: 2 })).feedback).toBe(4)
+    expect((await purgeExpiredSiteData(db, { now: NOW, batchSize: 2, maxBatches: 2 })).feedback).toBe(1)
+    expect(await purgeExpiredSiteData(db, { now: NOW, batchSize: 2, maxBatches: 2 })).toEqual({ users: 0, feedback: 0 })
+  })
+})
+
+describe('purgeExpiredNuxiData', () => {
   beforeEach(() => applyMigrations(client))
 
   it('deletes chats not updated for 12 months with their messages and votes', async () => {
@@ -60,38 +98,12 @@ describe('purgeExpiredData', () => {
     await seedChat('revived', 'u1', RECENT, STALE)
     await seedChat('fresh', 'u1', null, RECENT)
 
-    const result = await purgeExpiredData(db, { now: NOW })
+    const result = await purgeExpiredNuxiData(db, { now: NOW })
 
     expect(result.chats).toBe(2)
     expect((await db.select({ id: chats.id }).from(chats)).map(row => row.id).sort()).toEqual(['fresh', 'revived'])
     expect((await db.select().from(messages)).map(row => row.chatId).sort()).toEqual(['fresh', 'revived'])
     expect((await db.select().from(votes)).map(row => row.chatId).sort()).toEqual(['fresh', 'revived'])
-  })
-
-  it('deletes accounts inactive for 12 months', async () => {
-    await db.insert(users).values([
-      user('inactive', STALE),
-      user('active', RECENT, STALE),
-      user('never-seen', null, STALE),
-      user('chatting', STALE)
-    ])
-    await seedChat('old', 'inactive', STALE)
-    await seedChat('recent', 'chatting', RECENT)
-
-    const result = await purgeExpiredData(db, { now: NOW })
-
-    expect(result.users).toBe(2)
-    expect((await db.select({ id: users.id }).from(users)).map(row => row.id).sort()).toEqual(['active', 'chatting'])
-    expect((await db.select({ id: chats.id }).from(chats)).map(row => row.id)).toEqual(['recent'])
-  })
-
-  it('deletes feedback older than 12 months', async () => {
-    await db.insert(feedback).values([feedbackRow('/old', STALE), feedbackRow('/new', RECENT)])
-
-    const result = await purgeExpiredData(db, { now: NOW })
-
-    expect(result.feedback).toBe(1)
-    expect((await db.select({ path: feedback.path }).from(feedback)).map(row => row.path)).toEqual(['/new'])
   })
 
   it('deletes daily agent usage older than 7 days', async () => {
@@ -102,18 +114,10 @@ describe('purgeExpiredData', () => {
       { userId: 'u1', dayKey: '2025-01-01', count: 5 }
     ])
 
-    const result = await purgeExpiredData(db, { now: NOW })
+    const result = await purgeExpiredNuxiData(db, { now: NOW })
 
     expect(result.agentDailyUsage).toBe(2)
     expect((await db.select({ dayKey: agentDailyUsage.dayKey }).from(agentDailyUsage)).map(row => row.dayKey).sort()).toEqual(['2026-10-07', '2026-10-14'])
-  })
-
-  it('bounds deletions per run and is safe to repeat', async () => {
-    await db.insert(feedback).values(Array.from({ length: 5 }, (_, i) => feedbackRow(`/old-${i}`, STALE)))
-
-    expect((await purgeExpiredData(db, { now: NOW, batchSize: 2, maxBatches: 2 })).feedback).toBe(4)
-    expect((await purgeExpiredData(db, { now: NOW, batchSize: 2, maxBatches: 2 })).feedback).toBe(1)
-    expect(await purgeExpiredData(db, { now: NOW, batchSize: 2, maxBatches: 2 })).toEqual({ chats: 0, users: 0, feedback: 0, agentDailyUsage: 0 })
   })
 })
 
@@ -129,10 +133,10 @@ describe('users.last_seen_at migration', () => {
     await applyMigrations(client, tags.slice(index))
 
     const migratedAt = new Date()
-    expect((await purgeExpiredData(db, { now: migratedAt })).users).toBe(0)
+    expect((await purgeExpiredSiteData(db, { now: migratedAt })).users).toBe(0)
 
     const later = new Date(migratedAt)
     later.setUTCMonth(later.getUTCMonth() + 13)
-    expect((await purgeExpiredData(db, { now: later })).users).toBe(1)
+    expect((await purgeExpiredSiteData(db, { now: later })).users).toBe(1)
   })
 })
