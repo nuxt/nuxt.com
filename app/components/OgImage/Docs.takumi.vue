@@ -18,7 +18,7 @@ defineProps<{
       <p v-if="headline" class="text-2xl text-green-400 mb-4 font-semibold">
         {{ headline }}
       </p>
-      <h1 class="text-6xl font-semibold text-white mb-4 max-w-[950px]">
+      <h1 class="text-6xl font-semibold text-center text-white mb-4 max-w-[950px]">
         {{ title }}
       </h1>
       <p v-if="description" class="text-3xl leading-relaxed text-center text-neutral-400 max-w-[850px]" :style="{ lineClamp: 2, textOverflow: 'ellipsis' }">
