@@ -26,6 +26,7 @@ const { format } = new Intl.NumberFormat('en-US')
 const label = (value: number, one: string, many: string) => value === 1 ? one : many
 
 // Two explicit rows: takumi does not wrap flex items.
+// The card background is its color at 5% (`0D`), like `bg-*/5` on the profile page.
 const rows = [
   [
     { label: label(nuxter.mergedPullRequests.all, 'Merged PR', 'Merged PRs'), value: nuxter.mergedPullRequests.all, color: '#00DC82' },
@@ -80,8 +81,8 @@ const rows = [
         <div
           v-for="stat in row"
           :key="stat.label"
-          class="flex flex-col justify-end flex-1 h-[220px] rounded-3xl bg-neutral-900 p-8"
-          :style="{ border: `2px solid ${stat.color}` }"
+          class="flex flex-col justify-end flex-1 h-[220px] rounded-3xl p-8"
+          :style="{ border: `2px solid ${stat.color}`, backgroundColor: `${stat.color}0D` }"
         >
           <p class="text-6xl font-semibold">
             {{ format(stat.value) }}
