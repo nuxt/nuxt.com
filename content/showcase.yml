@@ -498,3 +498,15 @@ websites:
       height: 169
     screenshotOptions:
       delay: 3
+  - name: Stagemarkt
+    url: https://stagemarkt.nl/
+    industry: Public & Services
+    logo:
+      width: 326
+      height: 89
+  - name: Leerbanenmarkt
+    url: https://leerbanenmarkt.nl/
+    industry: Public & Services
+    logo:
+      width: 326
+      height: 89
