@@ -341,6 +341,44 @@ defineOgImage('Nuxter.takumi', { username, period: () => period.value === 'all' 
             />
           </section>
 
+          <section v-if="contributed.length" aria-labelledby="contributed-modules">
+            <h2 id="contributed-modules" class="text-2xl font-bold text-highlighted mb-1">
+              Contributed to
+            </h2>
+            <p class="text-muted mb-6">
+              Commits in {{ contributed.length }} {{ contributed.length === 1 ? 'module' : 'modules' }}{{ maintained.length ? ' maintained by others' : '' }}, by downloads.
+            </p>
+            <ul class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+              <li v-for="module in contributedPreview.visible" :key="module.name">
+                <NuxtLink
+                  :to="`/modules/${module.name}`"
+                  class="flex items-center gap-3 rounded-lg px-3 py-2 ring ring-default hover:bg-elevated/50 transition-colors"
+                >
+                  <UAvatar
+                    :src="moduleImage(module.icon)"
+                    :icon="moduleIcon(module.category)"
+                    :alt="module.name"
+                    size="sm"
+                    class="rounded-md bg-transparent"
+                  />
+                  <span class="min-w-0">
+                    <span class="block font-medium text-sm text-highlighted truncate">{{ module.name }}</span>
+                    <span class="block text-xs text-muted truncate">{{ module.npm }}</span>
+                  </span>
+                </NuxtLink>
+              </li>
+            </ul>
+            <UButton
+              v-if="contributedPreview.more"
+              :label="contributedPreview.expanded ? 'Show less' : `Show all ${contributed.length}`"
+              :trailing-icon="contributedPreview.expanded ? 'i-lucide-chevron-up' : 'i-lucide-chevron-down'"
+              color="neutral"
+              variant="ghost"
+              class="mt-4"
+              @click="contributedPreview.expanded = !contributedPreview.expanded"
+            />
+          </section>
+
           <section v-if="blogPosts.length" aria-labelledby="blog-posts">
             <h2 id="blog-posts" class="text-2xl font-bold text-highlighted mb-1">
               Blog posts
@@ -380,44 +418,6 @@ defineOgImage('Nuxter.takumi', { username, period: () => period.value === 'all' 
               variant="ghost"
               class="mt-4"
               @click="blogPostsPreview.expanded = !blogPostsPreview.expanded"
-            />
-          </section>
-
-          <section v-if="contributed.length" aria-labelledby="contributed-modules">
-            <h2 id="contributed-modules" class="text-2xl font-bold text-highlighted mb-1">
-              Contributed to
-            </h2>
-            <p class="text-muted mb-6">
-              Commits in {{ contributed.length }} {{ contributed.length === 1 ? 'module' : 'modules' }}{{ maintained.length ? ' maintained by others' : '' }}, by downloads.
-            </p>
-            <ul class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-              <li v-for="module in contributedPreview.visible" :key="module.name">
-                <NuxtLink
-                  :to="`/modules/${module.name}`"
-                  class="flex items-center gap-3 rounded-lg px-3 py-2 ring ring-default hover:bg-elevated/50 transition-colors"
-                >
-                  <UAvatar
-                    :src="moduleImage(module.icon)"
-                    :icon="moduleIcon(module.category)"
-                    :alt="module.name"
-                    size="sm"
-                    class="rounded-md bg-transparent"
-                  />
-                  <span class="min-w-0">
-                    <span class="block font-medium text-sm text-highlighted truncate">{{ module.name }}</span>
-                    <span class="block text-xs text-muted truncate">{{ module.npm }}</span>
-                  </span>
-                </NuxtLink>
-              </li>
-            </ul>
-            <UButton
-              v-if="contributedPreview.more"
-              :label="contributedPreview.expanded ? 'Show less' : `Show all ${contributed.length}`"
-              :trailing-icon="contributedPreview.expanded ? 'i-lucide-chevron-up' : 'i-lucide-chevron-down'"
-              color="neutral"
-              variant="ghost"
-              class="mt-4"
-              @click="contributedPreview.expanded = !contributedPreview.expanded"
             />
           </section>
         </div>
