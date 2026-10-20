@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { applyCheckReport, emptyCheckRow, type CheckRow } from '../../server/utils/templates/check-report'
+import { applyCheckReport, emptyCheckRow, stopCheckRow, type CheckRow } from '../../server/utils/templates/check-report'
 
 const started = new Date('2026-10-20T04:00:00Z')
 const later = new Date('2026-10-20T04:01:30Z')
@@ -23,7 +23,7 @@ describe('applyCheckReport', () => {
     expect(row).toMatchObject({ state: 'running', runId: 'wrun_2', phase: 'setup', phases: [{ phase: 'setup', startedAt: started.getTime() }], startedAt: started, status: 'passed' })
   })
 
-  it('refuses to start a check that is no longer queued or queued by another run', () => {
+  it('refuses to start a check that was stopped or queued by another run', () => {
     expect(applyCheckReport({ ...queued, state: 'idle' }, { kind: 'start', slug: 'minimal', runId: 'wrun_2', batchId: 'batch_2' }, started).accepted).toBe(false)
     expect(applyCheckReport(queued, { kind: 'start', slug: 'minimal', runId: 'wrun_2', batchId: 'batch_1' }, started).accepted).toBe(false)
     expect(applyCheckReport(undefined, { kind: 'start', slug: 'docus', runId: 'wrun_3', batchId: 'batch_2' }, started).accepted).toBe(false)
@@ -67,5 +67,17 @@ describe('applyCheckReport', () => {
   it('keeps the last result when a check ends without one', () => {
     const { row } = applyCheckReport(running, { kind: 'finish', slug: 'minimal', runId: 'wrun_2', log: 'The check stopped before a result: timeout' }, finished)
     expect(row).toMatchObject({ state: 'idle', status: 'passed', snapshotId: 'snap_old', checkedAt: passing.checkedAt, log: 'The check stopped before a result: timeout' })
+  })
+})
+
+describe('stopCheckRow', () => {
+  it('says which phase a running check was stopped in and keeps the last result', () => {
+    const row = stopCheckRow(running, 'HugoRCD', later)
+    expect(row).toMatchObject({ state: 'idle', phase: null, sandbox: null, status: 'passed', snapshotId: 'snap_old', log: 'Stopped by HugoRCD during build.' })
+    expect(row.phases!.at(-1)).toMatchObject({ phase: 'build', seconds: 30 })
+  })
+
+  it('stops a queued check before it started', () => {
+    expect(stopCheckRow(queued, 'HugoRCD', later)).toMatchObject({ state: 'idle', log: 'Stopped by HugoRCD before it started.' })
   })
 })

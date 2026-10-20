@@ -129,13 +129,13 @@ export const templateChecks = sqliteTable('template_checks', {
   passedAt: integer('passed_at', { mode: 'timestamp' })
 })
 
-/** One `checkTemplatesWorkflow` run: who started it and its shared Chromium sandbox. */
+/** One `checkTemplatesWorkflow` run: who started it and its shared Chromium sandbox, to stop it. */
 export const templateCheckRuns = sqliteTable('template_check_runs', {
   id: text('id').primaryKey().$defaultFn(() => crypto.randomUUID()),
   // Workflow run, set once it started
   runId: text('run_id'),
-  state: text('state', { enum: ['running', 'finished'] }).notNull(),
-  trigger: text('trigger', { enum: ['cron', 'task'] }).notNull(),
+  state: text('state', { enum: ['running', 'finished', 'stopped'] }).notNull(),
+  trigger: text('trigger', { enum: ['cron', 'admin', 'task'] }).notNull(),
   startedBy: text('started_by'),
   total: integer('total').notNull(),
   browser: text('browser'),

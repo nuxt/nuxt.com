@@ -1,4 +1,18 @@
-import type { PackageManager, Template, TemplateCategory, TemplateHealth, TemplateModule } from '../types/templates'
+import type { PackageManager, Template, TemplateCategory, TemplateCheckPhase, TemplateHealth, TemplateModule } from '../types/templates'
+
+export const TEMPLATE_CHECK_PHASE_LABELS: Record<TemplateCheckPhase, string> = {
+  setup: 'Setting up',
+  install: 'Installing',
+  build: 'Building',
+  start: 'Starting',
+  snapshot: 'Snapshotting'
+}
+
+/** `45s`, `3m 12s`. */
+export function formatCheckDuration(seconds: number): string {
+  const minutes = Math.floor(seconds / 60)
+  return minutes ? `${minutes}m ${String(seconds % 60).padStart(2, '0')}s` : `${seconds}s`
+}
 
 export const TEMPLATE_CATEGORIES: Array<{ value: TemplateCategory, label: string, icon: string }> = [
   { value: 'saas', label: 'SaaS', icon: 'i-lucide-rocket' },

@@ -110,3 +110,43 @@ export interface TemplateCheckPhaseTiming {
   /** Set once the phase ended. */
   seconds?: number
 }
+
+/** One row of `/admin/templates`. */
+export interface TemplateCheckRow {
+  slug: string
+  name: string
+  repo: string
+  repoUrl: string
+  live: boolean
+  state: 'idle' | 'queued' | 'running'
+  phase: TemplateCheckPhase | null
+  phases: TemplateCheckPhaseTiming[]
+  status: 'passed' | 'failed' | null
+  step: TemplateCheckStep | null
+  nuxt: string | null
+  hasSnapshot: boolean
+  runId: string | null
+  hasLog: boolean
+  /** Why the last check failed, in one line. */
+  error: string | null
+  seconds: number | null
+  startedAt: string | null
+  checkedAt: string | null
+  passedAt: string | null
+}
+
+/** A `checkTemplatesWorkflow` run, with how far it got. */
+export interface TemplateCheckRunSummary {
+  id: string
+  /** The parent workflow run. */
+  runId: string | null
+  state: 'running' | 'finished' | 'stopped'
+  trigger: 'cron' | 'admin' | 'task'
+  startedBy: string | null
+  total: number
+  done: number
+  running: number
+  queued: number
+  startedAt: string
+  finishedAt: string | null
+}

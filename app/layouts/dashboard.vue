@@ -50,6 +50,10 @@ const adminNavItems = computed<NavigationMenuItem[][]>(() => {
     label: 'Analytics',
     icon: 'i-lucide-chart-bar',
     to: '/admin/analytics'
+  }, {
+    label: 'Templates',
+    icon: 'i-lucide-layout-template',
+    to: '/admin/templates'
   }]]
 })
 

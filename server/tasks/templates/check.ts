@@ -1,5 +1,5 @@
 /**
- * Check templates from the terminal: `pnpm templates:check` (needs `pnpm dev` running).
+ * Check templates from the terminal: `pnpm templates:check` (needs `pnpm dev` running), same as "Check All" in /admin/templates.
  * - `--payload '{"slugs":["minimal","docus"]}'` checks some of them.
  * - `--payload '{"failing":true}'` checks the ones that don't pass.
  * - `--payload '{"baseURL":"http://localhost:3001"}'` when the dev server runs on another port.

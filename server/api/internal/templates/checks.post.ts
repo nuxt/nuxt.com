@@ -7,7 +7,7 @@ const log = z.string().transform(log => log.slice(-16000))
 
 /**
  * Called by `checkTemplatesWorkflow` as a template check starts, moves to a new phase and finishes.
- * `stopped: true` tells the check another run took over its template. A passing finish returns the snapshot it replaced, to delete.
+ * `stopped: true` tells the check it was stopped from /admin/templates. A passing finish returns the snapshot it replaced, to delete.
  */
 export default defineEventHandler(async (event) => {
   requireInternalRequest(event)

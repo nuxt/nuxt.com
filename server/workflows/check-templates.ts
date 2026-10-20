@@ -12,7 +12,7 @@ import { SERVE_SCRIPT_PATH, STATIC_SERVER, STATIC_SERVER_PATH } from '../utils/t
  * Results go to the `template_checks` table through `/api/internal/templates/checks`. Templates that run without secrets are
  * snapshotted once they pass, live previews restore that snapshot, and only the latest passing snapshot is kept.
  *
- * Started daily by the cron (`/api/cron/templates-check`) and by `pnpm templates:check`. Each template is a child run, so it has
+ * Started daily by the cron (`/api/cron/templates-check`) and from `/admin/templates`. Each template is a child run, so it has
  * its own log, retries and failure scope in the Vercel dashboard (Observability → Workflows).
  *
  * On Nitro v2 (Nuxt 4), Vercel builds workflows outside the Nitro bundle: steps have no `db` or auto-imports, so they import
@@ -30,8 +30,8 @@ const MAX_POLLS = 4 * 30
 
 type CheckResult = { slug: string, status: 'passed' | 'failed' | 'stopped', step?: TemplateCheckStep, nuxt?: string, live: boolean }
 
-/** The token a template's child run resumes once it finishes. */
-function completionToken(batchId: string, slug: string) {
+/** The token a template's child run resumes once it finishes. An admin who stops the child resumes it instead. */
+export function completionToken(batchId: string, slug: string) {
   return `template-check:${batchId}:${slug}`
 }
 
@@ -94,7 +94,7 @@ function createReporter(baseURL: string, slug: string, runId: string) {
 
 async function checkTemplate(report: Reporter, batchId: string, template: TemplateToCheck, browser?: string): Promise<CheckResult> {
   const stopped: CheckResult = { slug: template.slug, status: 'stopped', live: false }
-  // Refused when another run queued this template since.
+  // Refused when an admin stopped this template while it was queued.
   if ((await report.start(batchId)).stopped) return stopped
 
   const fail = async (step: TemplateCheckStep, log: string): Promise<CheckResult> => {
@@ -142,7 +142,7 @@ async function checkTemplate(report: Reporter, batchId: string, template: Templa
 
 /**
  * Runs a script in the background and checks on it every `POLL_INTERVAL`, so the workflow sleeps instead of holding a function open.
- * With `progress`, each check also sends the end of `progress.log` to the template's row, so its log can be followed live.
+ * With `progress`, each check also sends the end of `progress.log` to the template's row, so /admin/templates shows it live.
  */
 async function runDetached(sandbox: string, id: string, script: string, progress?: { report: Reporter, phase: TemplateCheckPhase, log: string }, cwd = WORKDIR) {
   await startScript(sandbox, id, script, cwd)
@@ -159,6 +159,7 @@ async function runDetached(sandbox: string, id: string, script: string, progress
 // Native modules without a prebuilt binary need a compiler, which most development machines have and the sandbox image doesn't.
 const PM = '$(if [ -f pnpm-lock.yaml ]; then echo pnpm; elif [ -f yarn.lock ]; then echo yarn; elif [ -f bun.lock ] || [ -f bun.lockb ]; then echo bun; else echo npm; fi)'
 // The error is often far above the end of the log (prerender output follows it): failures print every error line, then the end.
+// `==> ` lines are section titles for /admin/templates.
 const FAIL_WITH = `fail_with() {
   echo "$1"
   errors=$(sed -E 's/\\x1b\\[[0-9;]*[A-Za-z]//g' "$2" | grep -iE '(^|[^a-z])(error|err!|fatal|failed|cannot find|not found|exception|enoent|eaddrinuse)' | grep -viE '^[[:space:]]*(warn|⚠)' | awk '!seen[$0]++' | tail -25)
@@ -291,7 +292,7 @@ async function startScript(name: string, id: string, script: string, cwd: string
 
 /**
  * `null` while the script runs, then its exit and the end of its output.
- * With `progress`, a running script also sends the end of its log, and `stopped` comes back once the check no longer owns the row.
+ * With `progress`, a running script also sends the end of its log, and `stopped` comes back once an admin stopped the check.
  */
 async function readScript(name: string, id: string, progress?: { baseURL: string, slug: string, runId: string, phase: TemplateCheckPhase, log: string }) {
   'use step'
@@ -383,7 +384,7 @@ async function stopSandbox(name: string) {
 }
 
 /**
- * Writes to `template_checks`. `stopped` means the row no longer belongs to this check (another run queued the template), so the check ends.
+ * Writes to `template_checks`. `stopped` means the row no longer belongs to this check (an admin stopped it), so the check ends.
  * A passing finish returns the snapshot it replaced, to delete it.
  */
 async function recordCheck(baseURL: string, body: CheckReport) {

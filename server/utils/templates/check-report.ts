@@ -23,7 +23,7 @@ function closePhases(phases: TemplateCheckPhaseTiming[] | null, now: Date) {
 }
 
 /**
- * The row after a check reports, or `accepted: false` when the report comes from a check that no longer owns the row: the template was queued again since.
+ * The row after a check reports, or `accepted: false` when the report comes from a check that was stopped or replaced.
  * A passing check replaces the snapshot and returns the old one, to delete.
  * A failing check keeps the last passing snapshot and `passedAt`, so the template "now fails" and its preview stays off until it passes again.
  */
@@ -69,4 +69,10 @@ export function applyCheckReport(previous: CheckRow | undefined, report: CheckRe
     row: { ...result, step: null, nuxt: report.nuxt ?? null, log: null, snapshotId, passedAt: now },
     previousSnapshotId: base.snapshotId && base.snapshotId !== snapshotId ? base.snapshotId : undefined
   }
+}
+
+/** The row once an admin stops its check. Its last result stays. */
+export function stopCheckRow(row: CheckRow, by: string, now: Date): CheckRow {
+  const during = row.state === 'running' && row.phase ? ` during ${row.phase}` : ' before it started'
+  return { ...row, state: 'idle', phase: null, phases: row.state === 'running' ? closePhases(row.phases, now) : row.phases, sandbox: null, log: `Stopped by ${by}${during}.` }
 }
