@@ -9,7 +9,13 @@ const root = join(process.cwd(), process.argv[2] || '.output/public')
 const types = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript', '.mjs': 'text/javascript', '.css': 'text/css', '.json': 'application/json', '.txt': 'text/plain', '.xml': 'application/xml', '.svg': 'image/svg+xml', '.png': 'image/png', '.jpg': 'image/jpeg', '.webp': 'image/webp', '.avif': 'image/avif', '.ico': 'image/x-icon', '.woff2': 'font/woff2' }
 
 createServer((req, res) => {
-  const path = normalize(decodeURIComponent(new URL(req.url, 'http://localhost').pathname)).replace(/^(\\.\\.[/\\\\])+/, '')
+  let pathname
+  try {
+    pathname = decodeURIComponent(new URL(req.url, 'http://localhost').pathname)
+  } catch {
+    return res.writeHead(400).end()
+  }
+  const path = normalize(pathname).replace(/^(\\.\\.[/\\\\])+/, '')
   for (const [candidate, status] of [[path, 200], [join(path, 'index.html'), 200], [path + '.html', 200], ['/200.html', 200], ['/404.html', 404]]) {
     const file = join(root, candidate)
     try {

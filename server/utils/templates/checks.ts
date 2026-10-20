@@ -12,7 +12,14 @@ export async function recordTemplateCheck(report: CheckReport) {
   const [previous] = await db.select().from(schema.templateChecks).where(eq(schema.templateChecks.slug, report.slug))
   const { accepted, row, previousSnapshotId } = applyCheckReport(previous, report, new Date())
   if (!accepted) return { stopped: true }
-  await db.insert(schema.templateChecks).values(row).onConflictDoUpdate({ target: schema.templateChecks.slug, set: row })
+  // Only while the row is still the one the report was checked against: another run may have queued the template since.
+  const owner = report.kind === 'start'
+    ? and(eq(schema.templateChecks.state, 'queued'), eq(schema.templateChecks.batchId, report.batchId))
+    : and(eq(schema.templateChecks.state, 'running'), eq(schema.templateChecks.runId, report.runId))
+  const updated = await db.update(schema.templateChecks).set(row)
+    .where(and(eq(schema.templateChecks.slug, report.slug), owner))
+    .returning({ slug: schema.templateChecks.slug })
+  if (!updated.length) return { stopped: true }
   if (report.kind === 'finish' && report.status) await clearHealthCache()
   return { stopped: false, previousSnapshotId }
 }

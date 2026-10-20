@@ -43,19 +43,22 @@ export async function startPreview(template: Template, owner: string) {
     persistent: false,
     tags: { ...PREVIEW_TAGS, template: template.slug, owner }
   })
-  await sandbox.runCommand({
-    cmd: 'bash',
-    args: ['-c', `export PORT=${PREVIEW_PORT} HOST=0.0.0.0; exec bash ${SERVE_SCRIPT_PATH}`],
-    cwd: WORKDIR,
-    detached: true
-  })
-
-  const url = sandbox.domain(PREVIEW_PORT)
-  if (!await waitUntilServing(url, 20_000)) {
+  try {
+    await sandbox.runCommand({
+      cmd: 'bash',
+      args: ['-c', `export PORT=${PREVIEW_PORT} HOST=0.0.0.0; exec bash ${SERVE_SCRIPT_PATH}`],
+      cwd: WORKDIR,
+      detached: true
+    })
+    const url = sandbox.domain(PREVIEW_PORT)
+    if (!await waitUntilServing(url, 20_000)) {
+      throw createError({ statusCode: 504, message: 'The preview server did not start.' })
+    }
+    return { id: sandbox.name, url }
+  } catch (error) {
     await sandbox.stop().catch(() => {})
-    throw createError({ statusCode: 504, message: 'The preview server did not start.' })
+    throw error
   }
-  return { id: sandbox.name, url }
 }
 
 export async function getPreviewSandbox(id: string, owner: string) {
