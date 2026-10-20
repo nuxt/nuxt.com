@@ -1,5 +1,6 @@
 import { z } from 'zod'
 import { getAgentDocument } from '#agent-discovery'
+import { getVersionByPath, isArchivedDocVersion } from '#shared/utils/docs'
 
 export default defineMcpTool({
   description: `Retrieves the full content and details of a specific Nuxt documentation page.
@@ -56,7 +57,11 @@ Common Issues:
       document = await getAgentDocument(event, document.redirect, { sections, includeExcluded: true })
     }
 
-    if (!document || 'redirect' in document) {
+    const version = document && !('redirect' in document) ? getVersionByPath(new URL(document.canonicalUrl).pathname) : undefined
+
+    const isArchived = version && isArchivedDocVersion(version)
+
+    if (!document || 'redirect' in document || isArchived) {
       throw createError({ statusCode: 404, message: `Documentation page not found: ${path}` })
     }
 

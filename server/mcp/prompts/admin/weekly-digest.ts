@@ -16,7 +16,7 @@ Steps to follow (run them in parallel where possible):
 3. \`list-feedback\` with \`ratings=["not-helpful", "confusing"]\`, \`sinceDays=${sinceDays}\`, \`limit=30\`.
 4. For worst feedback pages, weigh by real visit counts from step 1.
 5. \`agent-usage-stats\` with \`sinceDays=${sinceDays}\`.
-6. \`list-agent-chats\` with \`sinceDays=${sinceDays}\`, \`hasDownvotes=true\`, \`limit=5\`.
+6. \`list-agent-chats\` with \`sinceDays=${sinceDays}\`, \`hasDownvotes=true\`, \`limit=5\` (shared or public chats only).
 7. \`list-agent-votes\` with \`onlyDownvotes=true\`, \`sinceDays=${sinceDays}\`, \`limit=15\`.
 8. Agent runs (Slack / Discord / web) and Nuxi-scoped AI Gateway spend if available — never quote account-wide / other-product totals.
 

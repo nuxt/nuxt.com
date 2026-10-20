@@ -1,6 +1,6 @@
 import type { ComarkContent, NavigationItem } from 'comark-content'
 import { createComarkSource } from '#agent-discovery/comark'
-import { DOC_VERSIONS } from '#shared/utils/docs'
+import { AGENT_DOC_VERSIONS } from '#shared/utils/docs'
 
 /**
  * Content source for nuxt-agent-discovery, bridging the comark instances.
@@ -26,9 +26,8 @@ const facade = {
     const [site, examplesContent, versions] = await Promise.all([
       getInstanceAtHead('site').then(content => content.navigation()),
       getInstanceAtHead('examples').catch(() => null),
-      // Examples are not passed into the version trees: they are one shared
-      // subtree, listed once below rather than under every version.
-      Promise.all(DOC_VERSIONS.map(version => docTree(version, []).catch(() => [] as NavigationItem[])))
+      // Examples are left out of the version trees
+      Promise.all(AGENT_DOC_VERSIONS.map(version => docTree(version, { withExamples: false }).catch(() => [] as NavigationItem[])))
     ])
 
     const examples = examplesContent ? findByPath(await examplesContent.navigation(), '/docs/examples') : undefined
