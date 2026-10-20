@@ -1,15 +1,14 @@
 import type { Node } from 'comark'
 import { visit } from 'comark/utils'
 import type { ContentPlugin } from 'comark-content'
-import { CLI_DOCS_REFS, CLI_DOCS_REPO } from '../../../../shared/utils/cli'
-import type { DocVersion } from '../../../../shared/utils/docs'
+import { CLI_DOCS_REFS, CLI_DOCS_REPO, type CliDocVersion } from '../../../../shared/utils/cli'
 
 const isImage = (node: Node): boolean => Array.isArray(node) && node[0] === 'img'
 
 /**
  * Resolve the `nuxt/cli` command reference's image sources.
  */
-export function cliDocs(version: DocVersion): ContentPlugin {
+export function cliDocs(version: CliDocVersion): ContentPlugin {
   return {
     name: 'nuxt-cli-docs',
     setup(content) {

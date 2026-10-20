@@ -1,30 +1,35 @@
 import type { BadgeProps } from '@nuxt/ui'
-import { CURRENT_DOCS_VERSION, docsMajor, docsPathPrefix, DOC_VERSIONS, type DocVersion, type Major } from '#shared/utils/docs'
+import { CURRENT_DOCS_VERSION, docsMajor, docsPathPrefix, docsStatus, DOC_VERSIONS, getVersionByPath, type DocsStatus, type DocVersion, type Major } from '#shared/utils/docs'
 import { docsInstanceKey, type ContentInstanceKey } from '#shared/utils/content'
 
 interface DocsMeta {
   label: string
-  /** `'2'` only for the legacy Nuxt 2 entry, which has no `DocVersion`. */
-  major: Major | '2'
+  major: Major
   path: string
+  status: DocsStatus
   tagColor: BadgeProps['color']
-  /** `unsupported` versions are end of life: no bug fixes, no security patches. */
-  status?: 'prerelease' | 'stable' | 'unsupported'
-  /** Date the version reached end of life, for `unsupported` versions. */
+  /** Set once the version is end of life: no bug fixes, no security patches. */
   endOfLife?: string
-  /** Third-party extended support offering, for `unsupported` versions. */
+  /** Third-party extended support offering, for end-of-life versions. */
   extendedSupport?: string
+  /** Where the end-of-life alert sends readers. */
+  upgradePath?: string
 }
 
-/** What can't be derived from the `DocVersion` itself — everything else (`label`, `major`, `path`) is computed below. */
-const DOCS_META_OVERRIDES: Record<DocVersion, Pick<DocsMeta, 'tagColor' | 'status' | 'endOfLife' | 'extendedSupport'>> = {
-  '5.x': { tagColor: 'warning', status: 'prerelease' },
-  '4.x': { tagColor: 'primary', status: 'stable' },
+const DOCS_META_OVERRIDES: Record<DocVersion, Pick<DocsMeta, 'tagColor' | 'endOfLife' | 'extendedSupport' | 'upgradePath'>> = {
+  '5.x': { tagColor: 'warning' },
+  '4.x': { tagColor: 'primary' },
   '3.x': {
     tagColor: 'neutral',
-    status: 'unsupported',
     endOfLife: '31 July 2026',
-    extendedSupport: 'https://www.herodevs.com/support/nuxt-nes?utm_source=nuxtjs&utm_medium=affiliate&utm_campaign=nuxt3eol&utm_content=link'
+    extendedSupport: 'https://www.herodevs.com/support/nuxt-nes?utm_source=nuxtjs&utm_medium=affiliate&utm_campaign=nuxt3eol&utm_content=link',
+    upgradePath: '/docs/4.x/getting-started/upgrade'
+  },
+  '2.x': {
+    tagColor: 'neutral',
+    endOfLife: '30 June 2024',
+    extendedSupport: 'https://www.herodevs.com/support/nuxt-nes?utm_source=nuxt&utm_medium=nuxt-eol-article',
+    upgradePath: '/docs/4.x/migration/overview'
   }
 }
 
@@ -33,21 +38,12 @@ const docsMetaByVersion: Record<DocVersion, DocsMeta> = Object.fromEntries(DOC_V
   label: `Version ${docsMajor(v)}`,
   major: docsMajor(v),
   path: docsPathPrefix(v),
+  status: docsStatus(v),
   ...DOCS_META_OVERRIDES[v]
 }])) as Record<DocVersion, DocsMeta>
 
-/** Nuxt 2: no content instance, no `DocVersion` — an external link kept in the switcher for history's sake. */
-const legacyMeta: DocsMeta = {
-  label: 'Version 2',
-  major: '2',
-  path: 'https://v2.nuxt.com',
-  tagColor: 'neutral',
-  status: 'unsupported',
-  endOfLife: '30 June 2024'
-}
-
-/** Newest first, legacy last — the order the switcher lists them in. */
-const metaList: DocsMeta[] = [...[...DOC_VERSIONS].reverse().map(v => docsMetaByVersion[v]), legacyMeta]
+/** Newest first, the order the switcher lists them in. */
+const metaList: DocsMeta[] = [...DOC_VERSIONS].reverse().map(v => docsMetaByVersion[v])
 
 export type Tags = Record<DocVersion, string>
 
@@ -71,14 +67,13 @@ export const useDocsVersion = () => {
   const { track } = useAnalytics()
 
   /** The active `DocVersion`, from the route */
-  const version = computed<DocVersion>(() =>
-    DOC_VERSIONS.find(v => route.path.startsWith(docsPathPrefix(v))) ?? CURRENT_DOCS_VERSION)
+  const version = computed<DocVersion>(() => getVersionByPath(route.path) ?? CURRENT_DOCS_VERSION)
 
   const meta = computed(() => docsMetaByVersion[version.value])
 
   const items = computed(() => metaList.map(v => ({
     ...v,
-    label: v.status === 'unsupported' ? `${v.label} (EOL)` : v.label,
+    label: v.endOfLife ? `${v.label} (EOL)` : v.label,
     ...(v.path === meta.value.path
       ? {
           checked: true,
@@ -86,7 +81,7 @@ export const useDocsVersion = () => {
           type: 'checkbox' as const
         }
       : {
-          to: v.path === legacyMeta.path ? v.path : route.path.replace(meta.value.path, v.path),
+          to: v.status === 'archived' || meta.value.status === 'archived' ? v.path : route.path.replace(meta.value.path, v.path),
           onSelect: () => track('Version Switched', { version: `v${v.major}` })
         })
   })))

@@ -1,7 +1,7 @@
 import { createResolver } from 'nuxt/kit'
 import type { LLMsSection } from 'nuxt-llms'
 import { agentHowToCall, agentWhenToUse } from './shared/utils/agents'
-import { CURRENT_DOCS_VERSION, EXCLUDED_DOC_VERSIONS } from './shared/utils/docs'
+import { ARCHIVED_DOC_VERSIONS, CURRENT_DOCS_VERSION, NEXT_DOC_VERSIONS } from './shared/utils/docs'
 
 const { resolve } = createResolver(import.meta.url)
 
@@ -227,6 +227,15 @@ export default defineNuxtConfig({
     '/pull/**': { isr: CONTENT_ISR, robots: 'noindex, nofollow' },
     // Redirects
     '/docs': { redirect: '/docs/getting-started/introduction', prerender: false },
+    '/docs/2.x': { redirect: '/docs/2.x/getting-started/installation', prerender: false },
+    '/docs/2.x/getting-started': { redirect: '/docs/2.x/getting-started/installation', prerender: false },
+    '/docs/2.x/directory-structure': { redirect: '/docs/2.x/directory-structure/nuxt', prerender: false },
+    '/docs/2.x/guide': { redirect: '/docs/2.x/guide/concepts/views', prerender: false },
+    '/docs/2.x/guide/concepts': { redirect: '/docs/2.x/guide/concepts/views', prerender: false },
+    '/docs/2.x/api': { redirect: '/docs/2.x/api/configuration/configuration-alias', prerender: false },
+    '/docs/2.x/api/configuration': { redirect: '/docs/2.x/api/configuration/configuration-alias', prerender: false },
+    '/docs/2.x/api/internals': { redirect: '/docs/2.x/api/internals/context', prerender: false },
+    '/docs/2.x/api/components': { redirect: '/docs/2.x/api/components/fetch', prerender: false },
     '/docs/3.x': { redirect: '/docs/3.x/getting-started/introduction', prerender: false },
     '/docs/4.x': { redirect: '/docs/4.x/getting-started/introduction', prerender: false },
     '/docs/5.x': { redirect: '/docs/5.x/getting-started/introduction', prerender: false },
@@ -610,7 +619,9 @@ export default defineNuxtConfig({
     excludePrefixes: {
       extend: [
         // Nightly docs don't negotiate and stay out of sitemap.md / llms.txt (same as robots Disallow below)
-        ...EXCLUDED_DOC_VERSIONS.map(version => `/docs/${version}/`),
+        ...NEXT_DOC_VERSIONS.map(version => `/docs/${version}/`),
+        // Archived docs too, and their `/raw` twins 404: agents never get them
+        ...ARCHIVED_DOC_VERSIONS.map(version => `/docs/${version}/`),
         // Served by its own handler (server/routes/design.md.get.ts).
         '/design.md'
       ]
@@ -697,9 +708,11 @@ export default defineNuxtConfig({
       // so they don't pop in on client-side navigation. Regenerate when docs change.
       icons: [
         'logos:bun', 'lucide:alert-triangle', 'lucide:arrow-left-right', 'lucide:bell-dot',
-        'lucide:bug-off', 'lucide:cable', 'lucide:cog', 'lucide:container', 'lucide:cooking-pot',
-        'lucide:map', 'lucide:panels-top-left', 'lucide:play', 'lucide:ship',
-        'lucide:square-check', 'lucide:square-terminal', 'lucide:test-tube', 'lucide:toggle-right',
+        'lucide:bug-off', 'lucide:cable', 'lucide:cog', 'lucide:component', 'lucide:container',
+        'lucide:cooking-pot', 'lucide:cpu', 'lucide:eye', 'lucide:flag', 'lucide:folder-tree',
+        'lucide:map', 'lucide:monitor-cog', 'lucide:panels-top-left', 'lucide:play', 'lucide:route',
+        'lucide:scan-search', 'lucide:ship', 'lucide:square-check', 'lucide:square-terminal',
+        'lucide:test-tube', 'lucide:toggle-right',
         'simple-icons:codesandbox', 'simple-icons:git', 'simple-icons:google', 'simple-icons:googlechrome',
         'simple-icons:mdnwebdocs', 'simple-icons:vite', 'simple-icons:w3c', 'simple-icons:webpack',
         'vscode-icons:default-folder', 'vscode-icons:file-type-dotenv', 'vscode-icons:file-type-git', 'vscode-icons:file-type-light-config',
@@ -708,7 +721,8 @@ export default defineNuxtConfig({
         'vscode-icons:file-type-bun', 'vscode-icons:file-type-deno', 'vscode-icons:file-type-sass', 'vscode-icons:file-type-scss',
         'vscode-icons:file-type-config', 'vscode-icons:file-type-ejs', 'vscode-icons:file-type-nuxt', 'vscode-icons:file-type-tsconfig',
         'vscode-icons:file-type-typescript', 'vscode-icons:file-type-vue', 'vscode-icons:default-file',
-        'vscode-icons:folder-type-app', 'vscode-icons:folder-type-asset', 'vscode-icons:folder-type-component', 'vscode-icons:folder-type-log',
+        'vscode-icons:folder-type-app', 'vscode-icons:folder-type-asset', 'vscode-icons:folder-type-component', 'vscode-icons:folder-type-db',
+        'vscode-icons:folder-type-dist', 'vscode-icons:folder-type-log',
         'vscode-icons:folder-type-middleware', 'vscode-icons:folder-type-node', 'vscode-icons:folder-type-nuxt', 'vscode-icons:folder-type-package',
         'vscode-icons:folder-type-plugin', 'vscode-icons:folder-type-public', 'vscode-icons:folder-type-server', 'vscode-icons:folder-type-shared',
         'vscode-icons:folder-type-src', 'vscode-icons:folder-type-temp', 'vscode-icons:folder-type-tools', 'vscode-icons:folder-type-view'
@@ -792,7 +806,7 @@ export default defineNuxtConfig({
     // The nightly docs version, carried over from the static public/robots.txt
     // this replaces. The agent Allow groups and Content-Signal come from
     // nuxt-agent-discovery through the robots:config hook.
-    disallow: [...EXCLUDED_DOC_VERSIONS.map(version => `/docs/${version}/`), '/pull/']
+    disallow: [...NEXT_DOC_VERSIONS.map(version => `/docs/${version}/`), '/pull/']
   },
   schemaOrg: {
     identity: {
