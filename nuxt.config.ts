@@ -561,10 +561,7 @@ export default defineNuxtConfig({
     }
   },
   hub: {
-    db: {
-      dialect: 'sqlite',
-      applyMigrationsDuringBuild: false
-    },
+    db: 'sqlite',
     kv: true,
     cache: true
   },
