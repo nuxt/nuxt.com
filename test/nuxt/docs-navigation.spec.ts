@@ -1,5 +1,5 @@
 import type { NavigationItem } from 'comark-content'
-import { mountSuspended, registerEndpoint } from '@nuxt/test-utils/runtime'
+import { mockComponent, mountSuspended, registerEndpoint } from '@nuxt/test-utils/runtime'
 import { describe, expect, it, vi } from 'vitest'
 import { defineComponent, h, inject, type Ref } from 'vue'
 import { navigationPath } from '#shared/utils/content'
@@ -10,6 +10,10 @@ for (const version of ['3.x', '4.x'] as const) {
   registerEndpoint(navigationPath(version), () => [{ title: 'Docs', path: `/docs/${version}` }])
 }
 registerEndpoint('/api/content/heads', () => ({}))
+
+// `app.vue` lazy loads the agent, whose imports can still be in flight when the environment tears down.
+mockComponent('AgentPanel', { render: () => null })
+mockComponent('AgentFloatingInput', { render: () => null })
 
 // Stands in for the layout, and renders the roots of the tree `app.vue` provides.
 const NavigationRoots = defineComponent(() => {
