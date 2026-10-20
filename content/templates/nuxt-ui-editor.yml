@@ -6,6 +6,3 @@ demo: 'https://editor-template.nuxt.dev'
 featured: true
 category: 'ai'
 official: true
-deploy:
-  env:
-    - 'NUXT_PUBLIC_PARTYKIT_HOST'
