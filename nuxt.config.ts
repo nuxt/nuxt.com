@@ -1,11 +1,16 @@
 import { createResolver } from 'nuxt/kit'
 import type { LLMsSection } from 'nuxt-llms'
 import { agentHowToCall, agentWhenToUse } from './shared/utils/agents'
-import { CURRENT_DOCS_VERSION, EXCLUDED_DOC_VERSIONS } from './shared/utils/docs'
+import { ARCHIVED_DOC_VERSIONS, CURRENT_DOCS_VERSION, NEXT_DOC_VERSIONS } from './shared/utils/docs'
 
 const { resolve } = createResolver(import.meta.url)
 
 const SITE_URL = 'https://nuxt.com'
+
+// A preview's absolute URLs (social images, raw markdown links) point at the preview itself, so a shared link unfurls.
+const PREVIEW_URL = process.env.VERCEL_ENV === 'preview' && process.env.VERCEL_BRANCH_URL
+  ? `https://${process.env.VERCEL_BRANCH_URL}`
+  : undefined
 
 // In `--ui-only` mode (default `pnpm dev`), skip the `eve/nuxt` module so the
 // Eve agent runtime is never spawned locally. The UI and server routes from
@@ -33,7 +38,6 @@ export default defineNuxtConfig({
     '@nuxt/image',
     '@nuxt/eslint',
     '@nuxt/scripts',
-    '@nuxtjs/turnstile',
     '@vueuse/nuxt',
     'nuxt-og-image',
     'motion-v/nuxt',
@@ -51,6 +55,7 @@ export default defineNuxtConfig({
     '@vercel/speed-insights',
     'evlog/nuxt',
     'nuxt-workers',
+    'workflow/nuxt',
     ...(nuxiEnabled ? ['eve/nuxt'] : [])
   ],
 
@@ -100,7 +105,7 @@ export default defineNuxtConfig({
   css: ['~/assets/css/main.css'],
   site: {
     name: 'Nuxt',
-    url: SITE_URL,
+    url: PREVIEW_URL ?? SITE_URL,
     description: 'Build fast, production-ready web apps with Vue. File-based routing, auto-imports, and server-side rendering — all configured out of the box.',
     defaultLocale: 'en'
   },
@@ -119,9 +124,14 @@ export default defineNuxtConfig({
   },
   runtimeConfig: {
     public: {
-      eveEnabled: nuxiEnabled
+      eveEnabled: nuxiEnabled,
+      // Nuxt UI prose headings read this MDC setting to render anchor links, which comark doesn't set.
+      mdc: {
+        headings: {
+          anchorLinks: { h2: true, h3: true, h4: true }
+        }
+      }
     },
-    contactEmail: '',
     mcpAdminToken: '',
     github: {
       token: ''
@@ -141,6 +151,24 @@ export default defineNuxtConfig({
     resend: {
       apiKey: '',
       audienceId: ''
+    },
+    // Discord role unlock on /nuxters. Off unless the guild, bot token and
+    // `NUXT_OAUTH_DISCORD_CLIENT_ID`/`_SECRET` are all set. `nuxtersDiscord.config()` also reads
+    // the `NUXT_DISCORD_*` names of the Vercel project at runtime.
+    nuxters: {
+      // Secret of the nuxt/nuxters push webhook (POST /api/webhooks/nuxters)
+      webhookSecret: '',
+      discord: {
+        guildId: '',
+        botToken: '',
+        roles: {
+          nuxter: '',
+          moduleAuthor: '',
+          // One key per hackathon id in `NUXTERS_HACKATHONS`
+          nuxtathon1: '',
+          nuxtathon2: ''
+        }
+      }
     }
   },
   routeRules: {
@@ -158,8 +186,10 @@ export default defineNuxtConfig({
     '/modules': { isr: 60 * 60, prerender: false },
     '/modules/**': { isr: 60 * 60 },
     '/changelog': { isr: 60 * 60 },
+    // Lists blog posts and GitHub releases: purged on content push, refreshed hourly for releases.
+    '/updates': { isr: 60 * 60 },
     '/docs/**': { isr: CONTENT_ISR },
-    '/blog': { isr: CONTENT_ISR },
+    '/blog': { redirect: { to: '/updates', statusCode: 301 } },
     '/blog/**': { isr: CONTENT_ISR },
     '/deploy': { isr: CONTENT_ISR },
     '/deploy/**': { isr: CONTENT_ISR },
@@ -171,6 +201,11 @@ export default defineNuxtConfig({
     '/design-kit': { isr: CONTENT_ISR },
     '/video-courses': { isr: CONTENT_ISR },
     '/newsletter': { isr: CONTENT_ISR },
+    // Stats change once a day (nuxt/nuxters CI); the import purges /nuxters itself.
+    // One cache entry per `?period=` (and only that query: no entry per utm_* link).
+    '/nuxters': { isr: { expiration: 60 * 60, allowQuery: ['period'], passQuery: true } },
+    // Profiles too: `?period=` selects the stats on screen.
+    '/nuxters/**': { isr: { expiration: 60 * 60, allowQuery: ['period'], passQuery: true } },
     // API
     '/api/v1/teams': { isr: 60 * 60 },
     // Admin
@@ -182,6 +217,9 @@ export default defineNuxtConfig({
     '/dashboard/**': { ssr: false },
     '/_eve_internal/**': { headers: { 'cache-control': 'no-store' } },
     '/api/internal/**': { headers: { 'cache-control': 'no-store' } },
+    // Static image: nothing in it should ever run, even when opened directly
+    // TODO: remove once @nuxtjs/mcp-toolkit ships nuxt-modules/mcp-toolkit#387, which sends this header itself
+    '/mcp/badge.svg': { headers: { 'content-security-policy': 'default-src \'none\'; style-src \'unsafe-inline\'; sandbox' } },
     // Main navigation
     '/api/navigation/**': { isr: CONTENT_ISR },
     '/api/content/blob/**': { isr: true },
@@ -189,6 +227,15 @@ export default defineNuxtConfig({
     '/pull/**': { isr: CONTENT_ISR, robots: 'noindex, nofollow' },
     // Redirects
     '/docs': { redirect: '/docs/getting-started/introduction', prerender: false },
+    '/docs/2.x': { redirect: '/docs/2.x/getting-started/installation', prerender: false },
+    '/docs/2.x/getting-started': { redirect: '/docs/2.x/getting-started/installation', prerender: false },
+    '/docs/2.x/directory-structure': { redirect: '/docs/2.x/directory-structure/nuxt', prerender: false },
+    '/docs/2.x/guide': { redirect: '/docs/2.x/guide/concepts/views', prerender: false },
+    '/docs/2.x/guide/concepts': { redirect: '/docs/2.x/guide/concepts/views', prerender: false },
+    '/docs/2.x/api': { redirect: '/docs/2.x/api/configuration/configuration-alias', prerender: false },
+    '/docs/2.x/api/configuration': { redirect: '/docs/2.x/api/configuration/configuration-alias', prerender: false },
+    '/docs/2.x/api/internals': { redirect: '/docs/2.x/api/internals/context', prerender: false },
+    '/docs/2.x/api/components': { redirect: '/docs/2.x/api/components/fetch', prerender: false },
     '/docs/3.x': { redirect: '/docs/3.x/getting-started/introduction', prerender: false },
     '/docs/4.x': { redirect: '/docs/4.x/getting-started/introduction', prerender: false },
     '/docs/5.x': { redirect: '/docs/5.x/getting-started/introduction', prerender: false },
@@ -458,7 +505,28 @@ export default defineNuxtConfig({
     '/docs/5.x/guide/directory-structure/hooks': { redirect: '/docs/4.x/api/advanced/hooks', prerender: false },
     '/docs/4.x/robots.txt': { redirect: '/robots.txt', prerender: false },
     '/docs/5.x/robots.txt': { redirect: '/robots.txt', prerender: false },
-    '/deploy/nuxthub': { redirect: '/deploy/vercel', prerender: false }
+    '/deploy/nuxthub': { redirect: '/deploy/vercel', prerender: false },
+    // Nuxt 2 modules removed from nuxt/modules
+    '/modules/auth': { redirect: { to: '/modules/auth-utils', statusCode: 301 }, prerender: false },
+    '/modules/axios': { redirect: { to: '/docs/getting-started/data-fetching', statusCode: 301 }, prerender: false },
+    '/modules/dotenv': { redirect: { to: '/docs/directory-structure/env', statusCode: 301 }, prerender: false },
+    '/modules/feed': { redirect: { to: '/modules/module-feed', statusCode: 301 }, prerender: false },
+    '/modules/firebase': { redirect: { to: '/modules/vuefire', statusCode: 301 }, prerender: false },
+    '/modules/fontawesome': { redirect: { to: '/modules/nuxt-fontawesome', statusCode: 301 }, prerender: false },
+    '/modules/google-analytics': { redirect: { to: '/modules/scripts', statusCode: 301 }, prerender: false },
+    '/modules/google-gtag': { redirect: { to: '/modules/scripts', statusCode: 301 }, prerender: false },
+    '/modules/gtm': { redirect: { to: '/modules/scripts', statusCode: 301 }, prerender: false },
+    '/modules/laravel-echo': { redirect: { to: '/modules/nuxt-laravel-echo', statusCode: 301 }, prerender: false },
+    '/modules/markdownit': { redirect: { to: '/modules/comark', statusCode: 301 }, prerender: false },
+    '/modules/mdx': { redirect: { to: '/modules/comark', statusCode: 301 }, prerender: false },
+    '/modules/nuxt2-sentry': { redirect: { to: '/modules/sentry', statusCode: 301 }, prerender: false },
+    '/modules/proxy': { redirect: { to: '/docs/guide/concepts/rendering#route-rules', statusCode: 301 }, prerender: false },
+    '/modules/pwa': { redirect: { to: '/modules/vite-pwa-nuxt', statusCode: 301 }, prerender: false },
+    '/modules/redirect': { redirect: { to: '/docs/guide/concepts/rendering#route-rules', statusCode: 301 }, prerender: false },
+    '/modules/router': { redirect: { to: '/docs/guide/recipes/custom-routing', statusCode: 301 }, prerender: false },
+    '/modules/separate-env': { redirect: { to: '/docs/guide/going-further/runtime-config', statusCode: 301 }, prerender: false },
+    '/modules/svg': { redirect: { to: '/modules/nuxt-svgo', statusCode: 301 }, prerender: false },
+    '/modules/vuetify': { redirect: { to: '/modules/vuetify-nuxt-module', statusCode: 301 }, prerender: false }
   },
   sourcemap: true,
   experimental: {
@@ -476,6 +544,15 @@ export default defineNuxtConfig({
   },
   compatibilityDate: '2026-01-14',
   nitro: {
+    experimental: {
+      // `pnpm nuxters:sync` (server/tasks/nuxters/sync.ts)
+      tasks: true
+    },
+    // Only scan this directory for `'use workflow'` files.
+    // @ts-expect-error `@workflow/nitro` does not augment Nuxt's Nitro config type
+    workflow: {
+      dirs: ['server/workflows']
+    },
     vercel: {
       config: {
         // Required for `x-prerender-revalidate` to purge an ISR route.
@@ -536,12 +613,15 @@ export default defineNuxtConfig({
       '/blog/**',
       '/deploy/**',
       { path: '/modules', raw: '/raw/modules.md' },
-      { path: '/changelog', raw: '/raw/changelog.md' }
+      { path: '/changelog', raw: '/raw/changelog.md' },
+      { path: '/updates', raw: '/raw/updates.md' }
     ],
     excludePrefixes: {
       extend: [
         // Nightly docs don't negotiate and stay out of sitemap.md / llms.txt (same as robots Disallow below)
-        ...EXCLUDED_DOC_VERSIONS.map(version => `/docs/${version}/`),
+        ...NEXT_DOC_VERSIONS.map(version => `/docs/${version}/`),
+        // Archived docs too, and their `/raw` twins 404: agents never get them
+        ...ARCHIVED_DOC_VERSIONS.map(version => `/docs/${version}/`),
         // Served by its own handler (server/routes/design.md.get.ts).
         '/design.md'
       ]
@@ -551,7 +631,7 @@ export default defineNuxtConfig({
         endpoint: '/mcp',
         name: 'Nuxt',
         title: 'Nuxt MCP Server',
-        description: 'MCP server providing tools, resources and prompts to help AI agents build with Nuxt — search documentation, retrieve guides, fetch module metadata, and discover deployment providers.',
+        description: 'MCP server providing tools, resources and prompts to help AI agents build with Nuxt — search documentation, retrieve guides, fetch module metadata, discover deployment providers, and look up Nuxt contributors (Nuxters).',
         documentation: `/docs/${CURRENT_DOCS_VERSION}/guide/ai/mcp`,
         repository: 'https://github.com/nuxt/nuxt.com',
         license: 'MIT'
@@ -573,6 +653,11 @@ export default defineNuxtConfig({
         }
       }
     }
+  },
+  auth: {
+    // Pages are cached (ISR on Vercel): a session fetched while rendering would be cached with the
+    // page for every visitor, and the browser would never fetch its own. Always fetch it client-side.
+    loadStrategy: 'client-only'
   },
   eslint: {
     config: {
@@ -623,9 +708,11 @@ export default defineNuxtConfig({
       // so they don't pop in on client-side navigation. Regenerate when docs change.
       icons: [
         'logos:bun', 'lucide:alert-triangle', 'lucide:arrow-left-right', 'lucide:bell-dot',
-        'lucide:bug-off', 'lucide:cable', 'lucide:cog', 'lucide:container', 'lucide:cooking-pot',
-        'lucide:map', 'lucide:panels-top-left', 'lucide:play', 'lucide:ship',
-        'lucide:square-check', 'lucide:square-terminal', 'lucide:test-tube', 'lucide:toggle-right',
+        'lucide:bug-off', 'lucide:cable', 'lucide:cog', 'lucide:component', 'lucide:container',
+        'lucide:cooking-pot', 'lucide:cpu', 'lucide:eye', 'lucide:flag', 'lucide:folder-tree',
+        'lucide:map', 'lucide:monitor-cog', 'lucide:panels-top-left', 'lucide:play', 'lucide:route',
+        'lucide:scan-search', 'lucide:ship', 'lucide:square-check', 'lucide:square-terminal',
+        'lucide:test-tube', 'lucide:toggle-right',
         'simple-icons:codesandbox', 'simple-icons:git', 'simple-icons:google', 'simple-icons:googlechrome',
         'simple-icons:mdnwebdocs', 'simple-icons:vite', 'simple-icons:w3c', 'simple-icons:webpack',
         'vscode-icons:default-folder', 'vscode-icons:file-type-dotenv', 'vscode-icons:file-type-git', 'vscode-icons:file-type-light-config',
@@ -634,7 +721,8 @@ export default defineNuxtConfig({
         'vscode-icons:file-type-bun', 'vscode-icons:file-type-deno', 'vscode-icons:file-type-sass', 'vscode-icons:file-type-scss',
         'vscode-icons:file-type-config', 'vscode-icons:file-type-ejs', 'vscode-icons:file-type-nuxt', 'vscode-icons:file-type-tsconfig',
         'vscode-icons:file-type-typescript', 'vscode-icons:file-type-vue', 'vscode-icons:default-file',
-        'vscode-icons:folder-type-app', 'vscode-icons:folder-type-asset', 'vscode-icons:folder-type-component', 'vscode-icons:folder-type-log',
+        'vscode-icons:folder-type-app', 'vscode-icons:folder-type-asset', 'vscode-icons:folder-type-component', 'vscode-icons:folder-type-db',
+        'vscode-icons:folder-type-dist', 'vscode-icons:folder-type-log',
         'vscode-icons:folder-type-middleware', 'vscode-icons:folder-type-node', 'vscode-icons:folder-type-nuxt', 'vscode-icons:folder-type-package',
         'vscode-icons:folder-type-plugin', 'vscode-icons:folder-type-public', 'vscode-icons:folder-type-server', 'vscode-icons:folder-type-shared',
         'vscode-icons:folder-type-src', 'vscode-icons:folder-type-temp', 'vscode-icons:folder-type-tools', 'vscode-icons:folder-type-view'
@@ -718,7 +806,7 @@ export default defineNuxtConfig({
     // The nightly docs version, carried over from the static public/robots.txt
     // this replaces. The agent Allow groups and Content-Signal come from
     // nuxt-agent-discovery through the robots:config hook.
-    disallow: [...EXCLUDED_DOC_VERSIONS.map(version => `/docs/${version}/`), '/pull/']
+    disallow: [...NEXT_DOC_VERSIONS.map(version => `/docs/${version}/`), '/pull/']
   },
   schemaOrg: {
     identity: {
@@ -742,7 +830,8 @@ export default defineNuxtConfig({
     // counterpart are listed explicitly.
     excludeAppSources: true,
     sources: ['/api/__sitemap__/urls'],
-    urls: ['/', '/showcase', '/changelog', '/evals'],
+    // Nuxter profiles stay out: 26k near-identical stat pages would only dilute the docs.
+    urls: ['/', '/showcase', '/changelog', '/updates', '/evals', '/nuxters'],
     // Belt and braces should an app source come back: keep legacy/nightly docs
     // versions and auth-only areas out.
     exclude: [
@@ -755,11 +844,9 @@ export default defineNuxtConfig({
       '/chat',
       '/chat/**',
       '/enterprise',
-      '/enterprise/support',
-      '/pull/**'
+      '/pull/**',
+      // Redirects to /updates
+      '/blog'
     ]
-  },
-  turnstile: {
-    siteKey: '0x4AAAAAAAP2vNBsTBT3ucZi'
   }
 })

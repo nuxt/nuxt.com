@@ -10,6 +10,7 @@ import { docsLinks } from './docs-links'
 import { cliDocs } from './cli-docs'
 import { configDocs } from './config-docs'
 import { sanitizeData } from './sanitize-data'
+import type { CliDocVersion } from '../../../../shared/utils/cli'
 import type { DocVersion } from '../../../../shared/utils/docs'
 import type { ContentInstanceKey } from '../../../../shared/utils/content'
 
@@ -43,7 +44,7 @@ export function instancePlugins(key: ContentInstanceKey): ContentPlugin[] {
   if (key === 'site') return [markdownFields()]
   if (key === 'examples') return [dottedFrontmatter()]
   if (key.startsWith('cli:')) {
-    const version = key.slice('cli:'.length) as DocVersion
+    const version = key.slice('cli:'.length) as CliDocVersion
     // Command pages are written with the same unversioned `/docs/*` links as the docs.
     return [dottedFrontmatter(), docsLinks(version), cliDocs(version)]
   }

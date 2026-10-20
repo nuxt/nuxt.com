@@ -3,7 +3,7 @@ import { markdownField } from 'comark-content/plugins/markdown-fields'
 import type { JsonSchema } from 'comark-content'
 import type { GithubSource } from 'comark-content/sources/github'
 import type { FSSourceOptions } from 'comark-content/sources/fs'
-import { CLI_DOCS_REFS, CLI_DOCS_REPO, CLI_DOCS_PREFIX, cliDocsPathPrefix } from '../../../shared/utils/cli'
+import { CLI_DOCS_REFS, CLI_DOCS_REPO, CLI_DOCS_PREFIX, cliDocsPathPrefix, hasCliDocs, type CliDocVersion } from '../../../shared/utils/cli'
 import { DOCS_REFS, DOCS_REPO, docsPathPrefix, isDocVersion, type DocVersion } from '../../../shared/utils/docs'
 import { CONTENT_INSTANCE_KEYS, isContentInstanceKey, cliInstanceKey, docsInstanceKey, type ContentInstanceKey } from '../../../shared/utils/content'
 
@@ -48,6 +48,7 @@ const DOCS_EXCLUDE = ['README.md', '**/*.json']
 const BRANCH_ENV: Record<ContentInstanceKey, string> = {
   'site': 'NUXT_COM_BRANCH',
   'examples': 'NUXT_EXAMPLES_BRANCH',
+  'docs:2.x': 'NUXT_V2_BRANCH',
   'docs:3.x': 'NUXT_V3_BRANCH',
   'docs:4.x': 'NUXT_V4_BRANCH',
   'docs:5.x': 'NUXT_V5_BRANCH',
@@ -64,6 +65,15 @@ function branchFor(key: ContentInstanceKey, fallback: string): string {
     console.warn(`[content] branch override active in production: ${envVar}=${override} (${key})`)
   }
   return override || fallback
+}
+
+/**
+ * The site's content ships with its code, so a preview deployment reads the commit it was built from:
+ * a PR changing a page and its content renders as it will once merged, and hits its own build snapshot.
+ */
+function siteRef(): string {
+  const sha = process.env.VERCEL_ENV === 'preview' ? process.env.VERCEL_GIT_COMMIT_SHA?.trim() : undefined
+  return branchFor('site', sha || 'main')
 }
 
 /**
@@ -94,7 +104,7 @@ export function instanceSource(key: ContentInstanceKey): { name: string, source:
   if (key === 'site') {
     return {
       name: 'site',
-      source: { repo: 'nuxt/nuxt.com', branch: branchFor('site', 'main'), contentDir: 'content', prefix: '/', local: true, schema: SITE_SCHEMA }
+      source: { repo: 'nuxt/nuxt.com', branch: siteRef(), contentDir: 'content', prefix: '/', local: true, schema: SITE_SCHEMA }
     }
   }
   if (key === 'examples') {
@@ -113,7 +123,7 @@ export function instanceSource(key: ContentInstanceKey): { name: string, source:
   }
   if (key.startsWith('cli:')) {
     const version = key.slice('cli:'.length)
-    if (!isDocVersion(version)) {
+    if (!hasCliDocs(version)) {
       throw createError({ statusCode: 404, statusMessage: `Unknown content instance: ${key}` })
     }
     return {
@@ -189,7 +199,7 @@ export function instanceKeyFromSegments(segments: string[]): ContentInstanceKey 
 
   let key: string
   if (first === 'docs') key = docsInstanceKey(version)
-  else if (first === 'cli') key = cliInstanceKey(version)
+  else if (first === 'cli') key = cliInstanceKey(version as CliDocVersion)
   else key = first ?? ''
 
   if (isContentInstanceKey(key)) return key

@@ -1,7 +1,8 @@
 export default defineEventHandler(async (event) => {
   const { user } = await requireUserSession(event)
 
-  if (user.role !== 'admin') {
+  // The session role was set at sign-in; re-check before handing out the shared token.
+  if (user.role !== 'admin' || !(await isAuthorizedAdmin(event, user.username))) {
     throw createError({ statusCode: 403, statusMessage: 'Admin access required' })
   }
 

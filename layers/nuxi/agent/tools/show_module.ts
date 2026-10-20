@@ -19,6 +19,12 @@ function slugCandidates(raw: string): string[] {
     set.add('hub')
   }
 
+  // npm names → catalog slugs: @nuxtjs/tailwindcss, @nuxt/image, nuxt-auth-utils, @pinia/nuxt
+  const unscoped = lower.replace(/^@nuxtjs\/|^@nuxt\//, '').replace(/^nuxt-/, '')
+  set.add(unscoped)
+  const scopedNuxt = lower.match(/^@([^/]+)\/nuxt$/)
+  if (scopedNuxt?.[1]) set.add(scopedNuxt[1])
+
   return [...set].filter(Boolean)
 }
 

@@ -28,17 +28,6 @@ export function usePasteAttachment(input: Ref<string>) {
     attachments.value.splice(index, 1)
   }
 
-  function restoreToInput(index: number) {
-    const attachment = attachments.value[index]
-    if (!attachment) return
-
-    const content = attachment.content
-    input.value = input.value.trim()
-      ? `${content}\n\n${input.value.trim()}`
-      : content
-    attachments.value.splice(index, 1)
-  }
-
   function clearAttachments() {
     attachments.value = []
   }
@@ -53,7 +42,6 @@ export function usePasteAttachment(input: Ref<string>) {
     canSubmit,
     handlePaste,
     removeAttachment,
-    restoreToInput,
     buildMessageParts: (): UIMessage['parts'] => buildMessageParts(input.value, attachments.value),
     clearAttachments,
     prompt

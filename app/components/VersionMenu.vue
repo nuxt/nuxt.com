@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { isVersionedDocsPath } from '#shared/utils/docs'
+import { getVersionByPath } from '#shared/utils/docs'
 
 const { meta: docsMeta, version: docsVersion, items } = useDocsVersion()
 const { tags } = useDocsTags()
 const route = useRoute()
 
-const switchable = computed(() => isVersionedDocsPath(route.path))
+const switchable = computed(() => !!getVersionByPath(route.path))
 </script>
 
 <template>

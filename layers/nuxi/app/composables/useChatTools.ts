@@ -86,6 +86,7 @@ const SUFFIX_KEYS = [
   'componentName',
   'composableName',
   'name',
+  'username',
   'repo',
   'section',
   'id'
@@ -103,13 +104,14 @@ function parseToolName(toolName: string): { verb?: [string, string], label: stri
   return { label: parts.join(' ') || toolName }
 }
 
-type RichToolName = 'show_module' | 'show_template' | 'show_blog_post' | 'show_hosting' | 'open_playground' | 'report_issue' | 'show_prompt'
+type RichToolName = 'show_module' | 'show_template' | 'show_blog_post' | 'show_hosting' | 'show_nuxter' | 'open_playground' | 'report_issue' | 'show_prompt'
 
 const RICH_TOOL_HEADERS = {
   show_module: { loading: 'Loading module...', success: 'Found module', error: 'Module not found', icon: 'i-lucide-box' },
   show_template: { loading: 'Loading templates...', success: 'Found templates', error: 'Templates not found', icon: 'i-lucide-layout-template' },
   show_blog_post: { loading: 'Finding blog post...', success: 'Found blog post', error: 'Blog post not found', icon: 'i-lucide-newspaper' },
   show_hosting: { loading: 'Loading provider...', success: 'Found provider', error: 'Provider not found', icon: 'i-lucide-server' },
+  show_nuxter: { loading: 'Finding Nuxter...', success: 'Found Nuxter', error: 'Nuxter not found', icon: 'i-lucide-users' },
   open_playground: { loading: 'Generating playground...', success: 'Playground ready', error: 'Playground ready', icon: 'i-simple-icons-stackblitz' },
   report_issue: { loading: 'Preparing feedback form...', success: 'Help us improve', error: 'Help us improve', icon: 'i-lucide-message-circle-warning' },
   show_prompt: { loading: 'Preparing prompt...', success: 'Ready to apply', error: 'Prompt unavailable', icon: 'i-lucide-sparkles' }
@@ -120,11 +122,151 @@ export function hasToolError(output: unknown): boolean {
   return !!(output as Record<string, unknown>).error
 }
 
+/** Cards only receive explicitly picked, type-checked fields from tool outputs. */
+function str(value: unknown): string | undefined {
+  return typeof value === 'string' && value.length > 0 ? value : undefined
+}
+
+function num(value: unknown): number | undefined {
+  return typeof value === 'number' && Number.isFinite(value) ? value : undefined
+}
+
+function httpUrl(value: unknown): string | undefined {
+  const s = str(value)
+  if (!s) return undefined
+  try {
+    const url = new URL(s)
+    return url.protocol === 'http:' || url.protocol === 'https:' ? url.href : undefined
+  } catch {
+    return undefined
+  }
+}
+
+function sitePath(value: unknown): string | undefined {
+  const s = str(value)
+  return s && s.startsWith('/') && !s.startsWith('//') && !s.includes('\\') ? s : undefined
+}
+
+function urlOrPath(value: unknown): string | undefined {
+  return sitePath(value) ?? httpUrl(value)
+}
+
+function githubRepo(value: unknown): string | undefined {
+  const s = str(value)
+  return s && /^[\w.-]+\/[\w.-]+$/.test(s) ? s : undefined
+}
+
+function slugLike(value: unknown): string | undefined {
+  const s = str(value)
+  return s && /^[\w.@/-]+$/.test(s) && !s.includes('..') ? s : undefined
+}
+
+function asRecord(value: unknown): Record<string, unknown> {
+  return value && typeof value === 'object' && !Array.isArray(value) ? value as Record<string, unknown> : {}
+}
+
+export function blogCardProps(output: unknown): BlogCardData | null {
+  const o = asRecord(output)
+  const title = str(o.title)
+  const path = sitePath(o.path)
+  if (!title || !path) return null
+  const authors = Array.isArray(o.authors)
+    ? o.authors.flatMap((a) => {
+        const author = asRecord(a)
+        const name = str(author.name)
+        return name ? [{ name, avatar: urlOrPath(author.avatar) }] : []
+      })
+    : undefined
+  return {
+    title,
+    path,
+    description: str(o.description),
+    date: str(o.date),
+    image: urlOrPath(o.image),
+    category: str(o.category),
+    authors
+  }
+}
+
+export function hostingCardProps(output: unknown): HostingCardData | null {
+  const o = asRecord(output)
+  const title = str(o.title)
+  const path = sitePath(o.path)
+  if (!title || !path) return null
+  return {
+    title,
+    path,
+    description: str(o.description),
+    logoSrc: urlOrPath(o.logoSrc),
+    logoIcon: str(o.logoIcon),
+    category: str(o.category),
+    nitroPreset: slugLike(o.nitroPreset),
+    website: httpUrl(o.website)
+  }
+}
+
+/** GitHub usernames: the card builds the avatar and profile links from it. */
+function githubUsername(value: unknown): string | undefined {
+  const s = str(value)
+  return s && /^[a-z0-9-]{1,39}$/i.test(s) ? s : undefined
+}
+
+function count(value: unknown): number {
+  const n = num(value)
+  return n !== undefined && n > 0 ? Math.round(n) : 0
+}
+
+export function nuxterCardProps(output: unknown): NuxterCardData | null {
+  const o = asRecord(output)
+  const username = githubUsername(o.username)
+  const path = sitePath(o.path)
+  const rank = num(o.rank)
+  if (!username || !path?.startsWith('/nuxters/') || !rank) return null
+  return {
+    username,
+    name: str(o.name),
+    periodPhrase: str(o.periodPhrase),
+    rank: Math.round(rank),
+    score: count(o.score),
+    mergedPullRequests: count(o.mergedPullRequests),
+    issues: count(o.issues),
+    comments: count(o.comments),
+    reactions: count(o.reactions),
+    maintainedModules: count(o.maintainedModules),
+    contributedModules: count(o.contributedModules),
+    hackathons: Array.isArray(o.hackathons) ? o.hackathons.map(str).filter((h): h is string => !!h) : [],
+    path
+  }
+}
+
+export function playgroundCardProps(output: unknown): PlaygroundCardData | null {
+  const o = asRecord(output)
+  const url = httpUrl(o.url)
+  const repo = str(o.repo)
+  if (!url || !repo) return null
+  return { url, repo, title: str(o.title), file: str(o.file), dir: str(o.dir) }
+}
+
+function templateCardProps(value: unknown): TemplateCardData | null {
+  const o = asRecord(value)
+  const name = str(o.name)
+  const slug = slugLike(o.slug)
+  if (!name || !slug) return null
+  return {
+    name,
+    slug,
+    description: str(o.description),
+    repo: githubRepo(o.repo),
+    demo: httpUrl(o.demo),
+    badge: str(o.badge),
+    purchase: httpUrl(o.purchase)
+  }
+}
+
 export function getTemplates(output: unknown): TemplateCardData[] {
-  if (!output || typeof output !== 'object') return []
-  const o = output as Record<string, unknown>
-  if (Array.isArray(o.templates)) return o.templates as TemplateCardData[]
-  return []
+  const templates = asRecord(output).templates
+  if (!Array.isArray(templates)) return []
+  return templates.map(templateCardProps).filter((t): t is TemplateCardData => t !== null)
 }
 
 export function hasTemplatesOutput(output: unknown): boolean {
@@ -168,6 +310,8 @@ function hasRichToolSuccess(part: ToolPart, toolName: RichToolName): boolean {
     case 'show_blog_post':
     case 'show_hosting':
       return !!part.output && !hasToolError(part.output)
+    case 'show_nuxter':
+      return !!nuxterCardProps(part.output)
     case 'open_playground':
       return !!part.output
     case 'report_issue':
@@ -227,8 +371,17 @@ export function isValidModuleCardData(output: unknown): output is ModuleCardData
 
 /** Maps API/tool `name` to `slug` so we never pass a `name` prop into ModuleCard (conflicts with Vue Router / NuxtLink). */
 export function moduleCardProps(data: ModuleCardData): Omit<ModuleCardData, 'name'> & { slug: string } {
-  const { name, ...rest } = data
-  return { ...rest, slug: name }
+  return {
+    slug: slugLike(data.name) ?? 'module',
+    npm: str(data.npm),
+    description: str(data.description),
+    icon: str(data.icon),
+    category: str(data.category),
+    repo: githubRepo(data.repo),
+    website: httpUrl(data.website),
+    downloads: num(data.downloads),
+    stars: num(data.stars)
+  }
 }
 
 export function getToolText(part: ToolPart) {
@@ -264,6 +417,7 @@ export function getToolIcon(part: ToolPart): string {
   if (/changelog|release/.test(name)) return 'i-lucide-history'
   if (/deploy|hosting|provider/.test(name)) return 'i-lucide-cloud'
   if (/getting.?started|guide/.test(name)) return 'i-lucide-rocket'
+  if (/nuxter/.test(name)) return 'i-lucide-award'
   if (/issue|github/.test(name)) return 'i-simple-icons-github'
   if (/page|doc/.test(name)) {
     const isList = /^(?:list|search|find|query)[-_]/.test(name)
