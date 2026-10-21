@@ -1,5 +1,5 @@
 /**
- * Every country of GeoNames `countryInfo.txt` (CC BY 4.0), by ISO 3166-1 alpha-2 code: its English name, and where
+ * Every current country of GeoNames `countryInfo.txt` (CC BY 4.0), by ISO 3166-1 alpha-2 code: its English name, and where
  * it sits on the globe, the mean position of its cities of 15,000+ people (`cities15000`) weighted by log2(population).
  * Latitude, longitude; `null` without such a city. The nuxt/nuxters collector writes codes from the same file.
  * A static table, not `Intl.DisplayNames`: Node and browsers name some regions differently (hydration mismatch).
@@ -12,7 +12,6 @@ export const COUNTRIES: Record<string, { name: string, location: readonly [numbe
   AI: { name: 'Anguilla', location: [18.22, -63.06] },
   AL: { name: 'Albania', location: [41.05, 19.87] },
   AM: { name: 'Armenia', location: [40.25, 44.65] },
-  AN: { name: 'Netherlands Antilles', location: null },
   AO: { name: 'Angola', location: [-10.31, 15.06] },
   AQ: { name: 'Antarctica', location: null },
   AR: { name: 'Argentina', location: [-33.01, -61.58] },
@@ -56,7 +55,6 @@ export const COUNTRIES: Record<string, { name: string, location: readonly [numbe
   CN: { name: 'China', location: [33.06, 110.84] },
   CO: { name: 'Colombia', location: [6.34, -74.95] },
   CR: { name: 'Costa Rica', location: [10.00, -84.19] },
-  CS: { name: 'Serbia and Montenegro', location: null },
   CU: { name: 'Cuba', location: [22.05, -79.83] },
   CV: { name: 'Cabo Verde', location: [15.91, -23.80] },
   CW: { name: 'Curacao', location: [12.11, -68.86] },
