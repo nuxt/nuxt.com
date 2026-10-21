@@ -37,7 +37,7 @@
     "@chat-adapter/discord": "^4.42.0",
     "@chat-adapter/state-memory": "^4.42.0",
     "@chat-adapter/state-redis": "^4.42.0",
-    "@comark/nuxt": "^0.7.0",
+    "@comark/nuxt": "https://pkg.pr.new/@comark/nuxt@3e16f23",
     "@iconify-json/heroicons": "^1.2.3",
     "@iconify-json/logos": "^1.2.17",
     "@iconify-json/lucide": "^1.2.146",
