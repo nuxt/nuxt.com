@@ -2,10 +2,19 @@
 import { motion, AnimatePresence } from 'motion-v'
 import type { DropdownMenuItem } from '@nuxt/ui'
 import type { Module } from '#shared/types'
-import { joinURL } from 'ufo'
+import { joinURL, withQuery } from 'ufo'
+import { resolveModuleCategory } from '#shared/utils/modules'
 
 definePageMeta({
-  heroBackground: 'opacity-50'
+  heroBackground: 'opacity-50',
+  middleware: [
+    function (to) {
+      const category = to.query.category
+      if (typeof category === 'string' && resolveModuleCategory(category) !== category) {
+        return navigateTo({ ...to, query: { ...to.query, category: resolveModuleCategory(category) } }, { redirectCode: 301 })
+      }
+    }
+  ]
 })
 
 const input = useTemplateRef('input')
@@ -39,21 +48,35 @@ if (!page.value) {
 
 const pageData = computed(() => page.value!.data)
 
+const site = useSiteConfig()
 const title = pageData.value.head?.title || pageData.value.title
 const description = pageData.value.head?.description || pageData.value.description
 
+// `?category=` is server-rendered (ISR entry per category), so each category is indexed as its own page.
+const seo = computed(() => {
+  const category = selectedCategory.value?.key as string | undefined
+  if (!category) return { title, description }
+  const count = modules.value.filter(m => category === 'Official' ? m.type === 'official' : m.category === category).length
+  return moduleCategorySeo(category, count)
+})
+
 useSeoMeta({
   titleTemplate: '%s',
-  title,
-  description
+  title: () => seo.value.title,
+  description: () => seo.value.description,
+  ogTitle: () => seo.value.title,
+  ogDescription: () => seo.value.description
 })
 useCanonical('/raw/modules.md')
+// useCanonical() drops the query: a category page is its own canonical URL (the last canonical link wins).
+useHead({
+  link: () => selectedCategory.value
+    ? [{ rel: 'canonical', href: withQuery(joinURL(site.url, '/modules'), { category: selectedCategory.value.key }) }]
+    : []
+})
 
 if (import.meta.server) {
-  const site = useSiteConfig()
   useSeoMeta({
-    ogDescription: description,
-    ogTitle: title,
     ogImage: joinURL(site.url, '/modules-social-card.jpg'),
     twitterImage: joinURL(site.url, '/modules-social-card.jpg')
   })
@@ -245,7 +268,7 @@ const clearAllModules = () => {
       class="z-20 relative pt-24"
       :ui="{
         title: 'text-4xl sm:text-7xl text-balance max-w-4xl mx-auto',
-        links: 'max-w-2xl mx-auto'
+        links: 'max-w-6xl mx-auto'
       }"
     >
       <template #title>
@@ -257,7 +280,7 @@ const clearAllModules = () => {
       </template>
 
       <template #links>
-        <div class="flex flex-col w-full gap-3">
+        <div class="flex flex-col w-full max-w-2xl mx-auto gap-3">
           <div class="flex flex-col sm:flex-row w-full gap-2 relative">
             <UInput
               ref="input"
@@ -316,6 +339,7 @@ const clearAllModules = () => {
               color="neutral"
               variant="outline"
               class="flex-1"
+              :ui="{ content: 'min-w-fit' }"
               placeholder="Select category"
               @update:model-value="replaceRoute('category', $event)"
             />
@@ -405,7 +429,7 @@ const clearAllModules = () => {
             </template>
           </UPageGrid>
 
-          <EmptyCard v-else :label="`There is no module found for ${q} yet. Become the first one to create it!`">
+          <EmptyCard v-else :label="`There is no module found for ${q || selectedCategory?.label} yet. Become the first one to create it!`">
             <UButton
               label="Contribute on GitHub"
               color="neutral"
