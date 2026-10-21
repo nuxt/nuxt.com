@@ -183,7 +183,9 @@ export default defineNuxtConfig({
     '/design.md': { isr: CONTENT_ISR, robots: 'noindex' },
     '/openapi.json': { isr: CONTENT_ISR },
     '/nuxt-brand-assets.zip': { prerender: true },
-    '/modules': { isr: 60 * 60, prerender: false },
+    // The listing is filtered from the query: without `allowQuery`, Vercel serves the unfiltered
+    // cached page for every `?category=` and hydration mismatches. Other query params (utm_*) are ignored.
+    '/modules': { isr: { expiration: 60 * 60, allowQuery: ['category', 'q', 'sortBy', 'orderBy'], passQuery: true }, prerender: false },
     '/modules/**': { isr: 60 * 60 },
     '/changelog': { isr: 60 * 60 },
     // Lists blog posts and GitHub releases: purged on content push, refreshed hourly for releases.
@@ -565,10 +567,7 @@ export default defineNuxtConfig({
     }
   },
   hub: {
-    db: {
-      dialect: 'sqlite',
-      applyMigrationsDuringBuild: false
-    },
+    db: 'sqlite',
     kv: true,
     cache: true
   },

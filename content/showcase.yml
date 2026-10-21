@@ -498,3 +498,29 @@ websites:
       height: 169
     screenshotOptions:
       delay: 3
+  - name: Rema 1000
+    url: https://shop.rema1000.dk/
+    industry: Retail & Food
+    logo:
+      width: 162
+      height: 24
+    screenshotOptions:
+      hideElements: ['#cookie-information-template-wrapper']
+      delay: 2
+  - name: Liverpool FC
+    url: https://store.liverpoolfc.com/
+    industry: Travel & Leisure
+    logo:
+      width: 76
+      height: 139
+    screenshotOptions:
+      cookies: ['OptanonAlertBoxClosed=2025-05-02T22:04:35.770Z']
+      hideElements: ['#onetrust-consent-sdk']
+      delay: 2
+  # franprix.fr answers 403 to headless browsers; the screenshot was captured from a Wayback Machine snapshot.
+  - name: Franprix
+    url: https://www.franprix.fr/
+    industry: Retail & Food
+    logo:
+      width: 600
+      height: 116.96
