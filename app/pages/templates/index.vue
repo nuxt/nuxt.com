@@ -20,8 +20,12 @@ const category = computed({
   get: () => TEMPLATE_CATEGORIES.find(item => item.value === route.query.category)?.value,
   set: (value?: TemplateCategory) => router.replace({ query: { ...route.query, category: value } })
 })
-const search = ref(typeof route.query.q === 'string' ? route.query.q : '')
-watchDebounced(search, value => router.replace({ query: { ...route.query, q: value || undefined } }), { debounce: 250 })
+const queryText = () => typeof route.query.q === 'string' ? route.query.q : ''
+const search = ref(queryText())
+watch(() => route.query.q, () => search.value = queryText())
+watchDebounced(search, (value) => {
+  if (value !== queryText()) router.replace({ query: { ...route.query, q: value || undefined } })
+}, { debounce: 250 })
 
 const status = computed({
   get: () => TEMPLATE_STATUS_FILTERS.find(item => item.value === route.query.status)?.value ?? 'all',
