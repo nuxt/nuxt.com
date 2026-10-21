@@ -13,6 +13,8 @@ export const PREVIEW_PORT = 3000
 /** Where `checkTemplatesWorkflow` copies each template before installing it. */
 const WORKDIR = '/vercel/app'
 const PREVIEW_TAGS = { app: 'nuxt-com', purpose: 'templates-preview' }
+/** Bounds what anonymous previews can cost at once. Not a per-visitor limit: a visitor already has one preview at a time. */
+const MAX_RUNNING_PREVIEWS = 50
 
 async function waitUntilServing(url: string, timeoutMs: number) {
   const deadline = Date.now() + timeoutMs
@@ -32,6 +34,12 @@ async function stopPreviews(owner: string) {
     .map(sandbox => Sandbox.get({ name: sandbox.name }).then(running => running.stop()).catch(() => {})))
 }
 
+/** Previews run for at most 10 minutes, so the running ones are always among the newest. */
+async function countRunningPreviews() {
+  const { sandboxes } = await Sandbox.list({ tags: { purpose: PREVIEW_TAGS.purpose }, limit: 100, sortBy: 'createdAt', sortOrder: 'desc' })
+  return sandboxes.filter(sandbox => sandbox.status === 'running' || sandbox.status === 'pending').length
+}
+
 /**
  * Restores the snapshot of a template's last passing check and starts its production server. Resolves once it answers, in about 3s.
  * The sandbox stops after 10 minutes, or once its owner starts another preview.
@@ -43,6 +51,9 @@ export async function startPreview(template: Template, owner: string, onStep?: (
   }
 
   await stopPreviews(owner)
+  if (await countRunningPreviews() >= MAX_RUNNING_PREVIEWS) {
+    throw createError({ statusCode: 503, message: 'Live previews are busy right now. Try again in a few minutes.' })
+  }
   const sandbox = await Sandbox.create({
     source: { type: 'snapshot', snapshotId },
     ports: [PREVIEW_PORT],
