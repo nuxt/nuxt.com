@@ -11,7 +11,8 @@ const props = defineProps<{
 const STEPS = ['install', 'build', 'start'] as const
 
 const failed = computed(() => props.health?.check?.status === 'failed' ? props.health.check : undefined)
-const outdated = computed(() => !failed.value && isOutdated(props.health))
+const archived = computed(() => !failed.value && !!props.health?.archived)
+const outdated = computed(() => !failed.value && !archived.value && isOutdated(props.health))
 const failedAt = computed(() => STEPS.findIndex(step => step === failed.value?.step))
 const verb = computed(() => failed.value?.step === 'start' ? 'start' : 'build')
 const issuesUrl = computed(() => props.template.repo && `https://github.com/${props.template.repo}/issues`)
@@ -21,14 +22,14 @@ const alternatives = computed(() => ({ path: '/templates', query: { status: 'wor
 
 <template>
   <div
-    v-if="failed || outdated"
+    v-if="failed || archived || outdated"
     role="status"
     class="rounded-lg ring ring-default bg-elevated/30 p-4 sm:px-5 flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-8"
   >
     <div class="min-w-0 flex-1 flex flex-col gap-1">
       <p class="flex items-center gap-2 text-sm font-medium text-highlighted">
         <span class="size-1.5 shrink-0 rounded-full" :class="failed ? 'bg-error' : 'bg-warning'" />
-        {{ failed ? (failed.passedAt ? `It no longer ${verb}s` : `It doesn't ${verb} right now`) : `Still on Nuxt ${health?.nuxtMajor}` }}
+        {{ failed ? (failed.passedAt ? `It no longer ${verb}s` : `It doesn't ${verb} right now`) : archived ? 'Archived by its author' : `Still on Nuxt ${health?.nuxtMajor}` }}
       </p>
       <p class="text-sm text-muted text-pretty">
         <template v-if="failed?.passedAt">
@@ -39,6 +40,9 @@ const alternatives = computed(() => ({ path: '/templates', query: { status: 'wor
         </template>
         <template v-else-if="failed">
           The daily check stopped at the {{ failed.step }} step, so expect to fix it before building on it.
+        </template>
+        <template v-else-if="archived">
+          Its repository is archived, so it won't get fixes or Nuxt upgrades.
         </template>
         <template v-else>
           It hasn't moved to Nuxt {{ CURRENT_NUXT_MAJOR }} yet, so expect an upgrade before building on it.
@@ -57,9 +61,9 @@ const alternatives = computed(() => ({ path: '/templates', query: { status: 'wor
     </ol>
 
     <div class="flex items-center gap-1 shrink-0 -ms-2.5 sm:ms-0">
-      <template v-if="failed">
+      <template v-if="failed || archived">
         <UButton
-          v-if="issuesUrl"
+          v-if="failed && issuesUrl"
           :to="issuesUrl"
           target="_blank"
           label="Issues"
@@ -74,6 +78,7 @@ const alternatives = computed(() => ({ path: '/templates', query: { status: 'wor
           color="neutral"
           variant="subtle"
           size="sm"
+          class="ring-default"
         />
       </template>
       <UButton
@@ -84,6 +89,7 @@ const alternatives = computed(() => ({ path: '/templates', query: { status: 'wor
         color="neutral"
         variant="subtle"
         size="sm"
+        class="ring-default"
       />
     </div>
   </div>
