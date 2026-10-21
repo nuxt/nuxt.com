@@ -51,6 +51,10 @@ function logoWidth({ logo }: Website) {
           :style="{ width: logoWidth(website) }"
           class="text-highlighted transition-[color,scale] duration-500 ease-out group-hover:text-white group-hover:scale-105 group-focus-visible:text-white pointer-coarse:text-white"
         />
+        <!-- Logos are masks, so this is the only text the browser's find-in-page can match. -->
+        <span aria-hidden="true" class="absolute inset-x-3 bottom-3 truncate text-center text-xs text-transparent">
+          {{ website.name }}
+        </span>
         <UIcon name="i-lucide-arrow-up-right" class="absolute top-3 right-3 size-4 text-white opacity-0 transition-opacity duration-300 group-hover:opacity-100 group-focus-visible:opacity-100" />
       </a>
     </li>
