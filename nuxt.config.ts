@@ -196,6 +196,8 @@ export default defineNuxtConfig({
     '/raw/**': { isr: CONTENT_ISR, robots: 'noindex' },
     '/enterprise/**': { isr: CONTENT_ISR },
     '/templates': { isr: CONTENT_ISR },
+    // nuxt.new redirects here (`nuxt.new/s/ui` → `/new/s/ui`).
+    '/new': { redirect: '/templates' },
     '/showcase': { isr: CONTENT_ISR },
     '/team': { isr: CONTENT_ISR },
     '/design-kit': { isr: CONTENT_ISR },

@@ -1,0 +1,10 @@
+name: 'Nuxt 5 Nightly'
+slug: 'v5-nightly'
+kind: 'starter'
+template: 'v5-nightly'
+order: 5
+description: 'Minimal starter on the nightly build of Nuxt 5, to try what comes next.'
+icon: 'i-lucide-flask-conical'
+repo: 'nuxt/starter'
+branch: 'v5-nightly'
+docs: '/docs/5.x/getting-started/installation'
