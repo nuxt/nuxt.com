@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { RouteLocationRaw } from 'vue-router'
 import type { NuxtersMap, NuxterSummary } from '#shared/types'
 import { countryFlag, countryName } from '~/utils/nuxters-countries'
 
@@ -7,7 +8,7 @@ const props = defineProps<{
   /** The best ranked Nuxters of the selected country: the first page of its leaderboard. */
   people: NuxterSummary[]
   /** Where "See them all" goes: the leaderboard, filtered on the country. */
-  leaderboard: string
+  leaderboard: RouteLocationRaw
 }>()
 const country = defineModel<string | null>({ default: null })
 

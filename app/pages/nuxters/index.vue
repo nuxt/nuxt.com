@@ -177,7 +177,7 @@ const breakdown = computed(() => {
         v-model="country"
         :map="map"
         :people="leaderboard?.country === country ? leaderboard?.items ?? [] : []"
-        :leaderboard="`${route.fullPath.split('#')[0]}#leaderboard`"
+        :leaderboard="{ query: route.query, hash: '#leaderboard' }"
       />
     </UPageSection>
 

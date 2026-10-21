@@ -32,22 +32,13 @@ const markers = computed(() => props.countries
   // The selected country first: it keeps its marker when others overlap it.
   .sort((a, b) => Number(b.code === props.selected) - Number(a.code === props.selected) || b.count - a.count))
 
-// WebGL, observers and the frame-by-frame camera stay local: none of it is state to share or serialize.
+// WebGL and the frame-by-frame camera stay local: none of it is state to share or serialize.
 let globe: Globe | undefined
-let frame = 0
-let width = 1
-let height = 1
 let resized = true
-let visible = false
-let disposed = false
-let previousTime = 0
 const camera = { ...DEFAULT_CAMERA }
 let phi = camera.phi
 let theta = camera.theta
 let currentZoom = camera.zoom
-let sizeObserver: ResizeObserver | undefined
-let visibilityObserver: IntersectionObserver | undefined
-let reducedMotion: MediaQueryList | undefined
 const pointers = new Map<number, { x: number, y: number }>()
 let pinchDistance = 0
 const projection = { depth: 0, x: 0, y: 0 }
@@ -64,23 +55,22 @@ const palette = () => colorMode.value === 'dark'
   ? { dark: 1, diffuse: 1.2, mapBrightness: 4, mapBaseBrightness: 0.03, baseColor: [0.32, 0.36, 0.4] as [number, number, number], glowColor: [0.06, 0.08, 0.1] as [number, number, number] }
   : { dark: 0, diffuse: 1.4, mapBrightness: 8, mapBaseBrightness: 0, baseColor: [0.94, 0.95, 0.96] as [number, number, number], glowColor: [0.92, 0.93, 0.95] as [number, number, number] }
 
+const size = useElementSize(container)
+// Frames run only while the globe is on screen, in a visible tab, and moving.
+const onScreen = useElementVisibility(container)
+const tab = useDocumentVisibility()
+const still = computed(() => usePreferredReducedMotion().value === 'reduce')
+const { pause, resume } = useRafFn(({ delta }) => render(Math.min(delta, 64)), { immediate: false })
+
 function schedule() {
-  if (!frame && globe && visible && !document.hidden && !disposed) {
-    previousTime = performance.now()
-    frame = requestAnimationFrame(render)
-  }
+  if (globe && onScreen.value && tab.value === 'visible') resume()
 }
-function stop() {
-  cancelAnimationFrame(frame)
-  frame = 0
-}
-function render(now: number) {
-  frame = 0
-  const elapsed = Math.min(now - previousTime, 64)
-  previousTime = now
-  const rotating = !paused.value && !pointers.size && !reducedMotion?.matches
+function render(elapsed: number) {
+  const width = Math.max(1, Math.round(size.width.value))
+  const height = Math.max(1, Math.round(size.height.value))
+  const rotating = !paused.value && !pointers.size && !still.value
   if (rotating) camera.phi += elapsed * 0.00006
-  const progress = reducedMotion?.matches || pointers.size ? 1 : 1 - Math.exp(-elapsed / 110)
+  const progress = still.value || pointers.size ? 1 : 1 - Math.exp(-elapsed / 110)
   phi += angleDelta(phi, camera.phi) * progress
   theta += (camera.theta - theta) * progress
   currentZoom += (camera.zoom - currentZoom) * progress
@@ -117,7 +107,7 @@ function render(now: number) {
   }
   const moving = Math.abs(angleDelta(phi, camera.phi)) > 0.0001 || Math.abs(theta - camera.theta) > 0.0001 || Math.abs(currentZoom - camera.zoom) > 0.0001
   // Paused and settled: no more frames until something moves.
-  if (rotating || moving) frame = requestAnimationFrame(render)
+  if (!rotating && !moving) pause()
 }
 
 function setZoom(value: number) {
@@ -191,17 +181,21 @@ function wheel(event: WheelEvent) {
   // Trackpad pinch is a Ctrl+wheel: a plain wheel keeps scrolling the page.
   if (!event.ctrlKey) return
   event.preventDefault()
-  const delta = event.deltaY * (event.deltaMode === 1 ? 16 : event.deltaMode === 2 ? height : 1)
+  const delta = event.deltaY * (event.deltaMode === 1 ? 16 : event.deltaMode === 2 ? size.height.value : 1)
   setZoom(camera.zoom * Math.exp(-delta * 0.01))
 }
-function documentVisibility() {
-  if (document.hidden) {
-    pointers.clear()
-    stop()
-  } else schedule()
-}
+useEventListener(container, 'wheel', wheel, { passive: false })
 
-watch([markers, paused, avatars], schedule, { flush: 'post' })
+watch([size.width, size.height], () => {
+  resized = true
+  schedule()
+})
+watch([onScreen, tab], () => {
+  if (tab.value !== 'visible') pointers.clear()
+  if (onScreen.value && tab.value === 'visible') schedule()
+  else pause()
+})
+watch([markers, paused, avatars, still], schedule, { flush: 'post' })
 watch(() => props.selected, focusSelected)
 watch(() => colorMode.value, () => {
   globe?.update(palette())
@@ -209,8 +203,7 @@ watch(() => colorMode.value, () => {
 })
 
 onMounted(() => {
-  if (!canvas.value || !container.value) return
-  reducedMotion = matchMedia('(prefers-reduced-motion: reduce)')
+  if (!canvas.value) return
   try {
     if (!canvas.value.getContext('webgl2') && !canvas.value.getContext('webgl')) throw new Error('WebGL unavailable')
     globe = createGlobe(canvas.value, {
@@ -229,36 +222,15 @@ onMounted(() => {
     failed.value = true
     return
   }
-  sizeObserver = new ResizeObserver(([entry]) => {
-    if (!entry) return
-    width = Math.max(1, Math.round(entry.contentRect.width))
-    height = Math.max(1, Math.round(entry.contentRect.height))
-    resized = true
-    schedule()
-  })
-  sizeObserver.observe(container.value)
-  visibilityObserver = new IntersectionObserver(([entry]) => {
-    visible = entry?.isIntersecting ?? false
-    if (visible) schedule()
-    else stop()
-  })
-  visibilityObserver.observe(container.value)
-  container.value.addEventListener('wheel', wheel, { passive: false })
-  document.addEventListener('visibilitychange', documentVisibility)
-  reducedMotion.addEventListener('change', schedule)
   ready.value = true
   focusSelected()
+  schedule()
 })
 
 onBeforeUnmount(() => {
-  disposed = true
-  stop()
-  sizeObserver?.disconnect()
-  visibilityObserver?.disconnect()
-  container.value?.removeEventListener('wheel', wheel)
-  document.removeEventListener('visibilitychange', documentVisibility)
-  reducedMotion?.removeEventListener('change', schedule)
+  pause()
   globe?.destroy()
+  globe = undefined
   markerElements.clear()
 })
 </script>
@@ -278,7 +250,7 @@ onBeforeUnmount(() => {
       @pointercancel="pointerEnd"
       @lostpointercapture="pointerEnd"
       @keydown="keydown"
-      @webglcontextlost.prevent="failed = true; stop()"
+      @webglcontextlost.prevent="failed = true; pause()"
     />
 
     <template v-if="ready && !failed">
