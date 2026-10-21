@@ -36,7 +36,7 @@ const country = computed({
   set: value => navigateTo({ query: { ...route.query, country: value ?? undefined }, hash: route.hash }, { replace: true })
 })
 
-// First page server-rendered (ISR, one entry per `?period=`); the leaderboard loads the next ones.
+// First page server-rendered (ISR, one entry per `?period=` and `?country=`); the leaderboard loads the next ones.
 const { data: leaderboard } = await useAsyncData(
   // A `computed()` key, not a getter: `experimental.extractAsyncDataHandlers` takes the first arrow
   // function as the handler, so a getter key is extracted instead (NUXT_E3008 in production).
