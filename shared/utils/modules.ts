@@ -24,5 +24,6 @@ const renamedModuleCategories: Record<string, string> = {
 
 /** Maps a former module category name (case-insensitive) to its current name, so old links and API calls keep working. */
 export function resolveModuleCategory(category: string) {
-  return renamedModuleCategories[category.toLowerCase()] || category
+  const key = category.toLowerCase()
+  return Object.hasOwn(renamedModuleCategories, key) ? renamedModuleCategories[key]! : category
 }
