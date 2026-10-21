@@ -49,8 +49,8 @@ OUTPUT: Ranked entries (username, rank, score, profile URL), the contributor and
     if (!isNuxtersPeriod(period)) {
       throw createError({ statusCode: 400, message: `Invalid period "${period}": use all, 30d, 12m or a year from 2016` })
     }
-    const country = requestedCountry ? nuxterCountryCode(requestedCountry) : null
-    if (requestedCountry && !country) {
+    const country = requestedCountry === undefined ? null : nuxterCountryCode(requestedCountry)
+    if (requestedCountry !== undefined && !country) {
       throw createError({ statusCode: 400, message: `Invalid country "${requestedCountry}": use an ISO 3166-1 alpha-2 code such as FR` })
     }
 

@@ -18,8 +18,16 @@ const rankOf = (code: string) => props.map.countries.findIndex(item => item.code
 const largest = computed(() => props.map.countries[0]?.count ?? 1)
 
 // The globe (and cobe, its WebGL library) loads once the section comes near: the leaderboard does not pay for it.
+// Latched: once loaded it stays, and stops drawing by itself off screen. (`once` would keep a first `false` after
+// the section starts in view and the page scrolls away.)
 const globeBox = useTemplateRef('globeBox')
-const nearby = useElementVisibility(globeBox, { rootMargin: '400px', once: true })
+const { isVisible, stop } = useElementVisibility(globeBox, { rootMargin: '400px', controls: true })
+const nearby = ref(false)
+watch(isVisible, (visible) => {
+  if (!visible) return
+  nearby.value = true
+  stop()
+}, { immediate: true })
 </script>
 
 <template>
