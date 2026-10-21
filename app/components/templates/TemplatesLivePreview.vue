@@ -19,7 +19,6 @@ const STEPS: Array<{ key: PreviewStep | 'mounted', pending: string, done: string
 ]
 
 const colorMode = useColorMode()
-const { track } = useAnalytics()
 
 const status = ref<LivePreviewStatus>('booting')
 const preview = ref<{ id: string, url: string } | null>(null)
@@ -273,7 +272,7 @@ onBeforeUnmount(stop)
               size="sm"
               icon="i-lucide-rotate-ccw"
               class="self-start ring-default"
-              @click="start(); track('Template Action', { template: template.name, action: 'Retry Live Preview' })"
+              @click="start"
             />
           </template>
         </div>
