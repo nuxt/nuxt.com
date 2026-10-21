@@ -15,17 +15,22 @@ const { format } = new Intl.NumberFormat('en-US')
 const selected = computed(() => props.map.countries.find(item => item.code === country.value))
 const rankOf = (code: string) => props.map.countries.findIndex(item => item.code === code) + 1
 const largest = computed(() => props.map.countries[0]?.count ?? 1)
+
+// The globe (and cobe, its WebGL library) loads once the section comes near: the leaderboard does not pay for it.
+const globeBox = useTemplateRef('globeBox')
+const nearby = useElementVisibility(globeBox, { rootMargin: '400px', once: true })
 </script>
 
 <template>
   <div class="grid lg:grid-cols-[minmax(0,1fr)_minmax(0,24rem)] gap-8 lg:gap-12 items-center">
-    <div class="aspect-square w-full max-w-[36rem] mx-auto">
-      <ClientOnly>
-        <NuxtersGlobe :countries="map.countries" :selected="country" @select="country = $event" />
-        <template #fallback>
-          <div class="size-full rounded-full bg-elevated/50 ring ring-default" />
-        </template>
-      </ClientOnly>
+    <div ref="globeBox" class="aspect-square w-full max-w-[36rem] mx-auto">
+      <LazyNuxtersGlobe
+        v-if="nearby"
+        :countries="map.countries"
+        :selected="country"
+        @select="country = $event"
+      />
+      <div v-else class="size-full rounded-full bg-elevated/50 ring ring-default" />
     </div>
 
     <div class="flex flex-col gap-4 min-w-0">
