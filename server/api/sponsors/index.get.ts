@@ -23,6 +23,8 @@ export default cachedEventHandler(async (event) => {
 
   for (const chunk of sponsors) {
     for (const sponsor of chunk) {
+      if (isBlockedSponsor(sponsor)) continue
+
       const tier = getTierByAmount(sponsor.monthlyPriceInDollars)
 
       sponsorsByTier[tier] ||= []

@@ -86,6 +86,17 @@ Dispatch is restricted to channels listed under `discord.channels.admin`, `.publ
 
 `agent/lib/identity/context.ts` resolves `Context.person` (id, name, bot flag) for every surface, and `agent/lib/identity/caller-instructions.ts` renders it into the always-on prompt so "who am I?" has an answer. Discord's display name (`global_name`) comes for free from the inbound message payload; the `@`-mention handle (`username`) is still kept on the auth context for future use, it's just not what the model sees. Slack's `app_mention`/`message` events only carry a user id — `channels/slack.ts` resolves the real name via `users.info` (`agent/lib/slack/api.ts`, cached 1h per user), which needs the **`users:read`** bot scope on top of the ones above; without it, Slack callers fall back to their user id.
 
+## Data retention
+
+`agent/schedules/data-retention.ts` calls `POST /api/internal/data-retention` daily at 3:30 UTC. The route runs `purgeExpiredNuxiData` (`server/utils/data-retention.ts`), which deletes:
+
+- chats not updated for 12 months (their messages and votes cascade)
+- `agent_daily_usage` counters older than 7 days
+
+It then runs the main app's `purgeExpiredSiteData`, which deletes accounts not seen for 12 months and page feedback older than 12 months.
+
+Each run deletes at most 5,000 rows per table, so a backlog drains over several runs. Test locally with `curl -X POST "http://localhost:3000/eve/v1/dev/schedules/data-retention"`.
+
 ## Scheduled Slack workflows
 
 Shared helpers live in `agent/lib/workflow/shared.ts` (`sendToSlack`, auth, config). Each workflow keeps its own prompt, cron, and runner in `agent/schedules/<id>.ts`, with the procedure in `agent/skills/<id>/SKILL.md`.
