@@ -225,10 +225,10 @@ export interface NuxterProfileRow extends NuxterLinks {
   country: string | null
 }
 
-/** An ISO 3166-1 alpha-2 country code of `COUNTRIES`, uppercased (`fr` → `FR`), or `null`. */
+/** A known ISO 3166-1 alpha-2 country code, uppercased (`fr` → `FR`), or `null`. */
 export function nuxterCountryCode(value: unknown): string | null {
-  const code = typeof value === 'string' ? value.toUpperCase() : null
-  return code && Object.hasOwn(COUNTRIES, code) ? code : null
+  const code = typeof value === 'string' ? value.toUpperCase() : ''
+  return Object.hasOwn(COUNTRIES, code) ? code : null
 }
 
 const MAX_SOCIAL_ACCOUNTS = 10

@@ -165,7 +165,7 @@ export const nuxters = {
    * Usernames containing `query` in a period: names starting with it first, then by rank.
    * About 27k rows at most per period, so a scan is fast enough and needs no extra index.
    */
-  async search({ query, period = 'all', limit = 8 }: { query: string, period?: NuxtersPeriod, limit?: number }): Promise<NuxterSummary[]> {
+  async search({ query, period = 'all', country = null, limit = 8 }: { query: string, period?: NuxtersPeriod, country?: string | null, limit?: number }): Promise<NuxterSummary[]> {
     const term = query.trim().toLowerCase()
     if (!term) return []
     const position = sql`instr(${schema.nuxters.usernameLower}, ${term})`
@@ -175,7 +175,7 @@ export const nuxters = {
       rank: schema.nuxters.rank,
       score: schema.nuxters.score
     }).from(schema.nuxters)
-      .where(and(eq(schema.nuxters.period, period), sql`${position} > 0`))
+      .where(and(inPeriod(period, country), sql`${position} > 0`))
       .orderBy(sql`case when ${position} = 1 then 0 else 1 end`, asc(schema.nuxters.rank))
       .limit(limit)
   },

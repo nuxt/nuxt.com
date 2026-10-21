@@ -1,9 +1,10 @@
 /**
- * Every country with a city of 15,000+ people in GeoNames `cities15000` (CC BY 4.0): its English name, and
- * where it sits on the globe, the mean position of those cities weighted by log2(population). Latitude, longitude.
+ * Every country of GeoNames `countryInfo.txt` (CC BY 4.0), by ISO 3166-1 alpha-2 code: its English name, and where
+ * it sits on the globe, the mean position of its cities of 15,000+ people (`cities15000`) weighted by log2(population).
+ * Latitude, longitude; `null` without such a city. The nuxt/nuxters collector writes codes from the same file.
  * A static table, not `Intl.DisplayNames`: Node and browsers name some regions differently (hydration mismatch).
  */
-export const COUNTRIES: Record<string, { name: string, location: readonly [number, number] }> = {
+export const COUNTRIES: Record<string, { name: string, location: readonly [number, number] | null }> = {
   AD: { name: 'Andorra', location: [42.51, 1.53] },
   AE: { name: 'United Arab Emirates', location: [25.09, 55.34] },
   AF: { name: 'Afghanistan', location: [34.97, 67.22] },
@@ -11,7 +12,9 @@ export const COUNTRIES: Record<string, { name: string, location: readonly [numbe
   AI: { name: 'Anguilla', location: [18.22, -63.06] },
   AL: { name: 'Albania', location: [41.05, 19.87] },
   AM: { name: 'Armenia', location: [40.25, 44.65] },
+  AN: { name: 'Netherlands Antilles', location: null },
   AO: { name: 'Angola', location: [-10.31, 15.06] },
+  AQ: { name: 'Antarctica', location: null },
   AR: { name: 'Argentina', location: [-33.01, -61.58] },
   AS: { name: 'American Samoa', location: [-14.28, -170.70] },
   AT: { name: 'Austria', location: [47.74, 14.79] },
@@ -36,6 +39,7 @@ export const COUNTRIES: Record<string, { name: string, location: readonly [numbe
   BR: { name: 'Brazil', location: [-15.84, -45.72] },
   BS: { name: 'Bahamas', location: [25.78, -78.01] },
   BT: { name: 'Bhutan', location: [27.24, 89.75] },
+  BV: { name: 'Bouvet Island', location: null },
   BW: { name: 'Botswana', location: [-23.39, 25.96] },
   BY: { name: 'Belarus', location: [53.53, 27.63] },
   BZ: { name: 'Belize', location: [17.58, -88.50] },
@@ -52,6 +56,7 @@ export const COUNTRIES: Record<string, { name: string, location: readonly [numbe
   CN: { name: 'China', location: [33.06, 110.84] },
   CO: { name: 'Colombia', location: [6.34, -74.95] },
   CR: { name: 'Costa Rica', location: [10.00, -84.19] },
+  CS: { name: 'Serbia and Montenegro', location: null },
   CU: { name: 'Cuba', location: [22.05, -79.83] },
   CV: { name: 'Cabo Verde', location: [15.91, -23.80] },
   CW: { name: 'Curacao', location: [12.11, -68.86] },
@@ -97,6 +102,7 @@ export const COUNTRIES: Record<string, { name: string, location: readonly [numbe
   GW: { name: 'Guinea-Bissau', location: [11.91, -15.40] },
   GY: { name: 'Guyana', location: [6.38, -58.00] },
   HK: { name: 'Hong Kong', location: [22.34, 114.16] },
+  HM: { name: 'Heard Island and McDonald Islands', location: null },
   HN: { name: 'Honduras', location: [14.87, -87.54] },
   HR: { name: 'Croatia', location: [45.22, 16.61] },
   HT: { name: 'Haiti', location: [18.87, -72.52] },
@@ -106,6 +112,7 @@ export const COUNTRIES: Record<string, { name: string, location: readonly [numbe
   IL: { name: 'Israel', location: [32.20, 35.00] },
   IM: { name: 'Isle of Man', location: [54.15, -4.48] },
   IN: { name: 'India', location: [20.38, 78.75] },
+  IO: { name: 'British Indian Ocean Territory', location: null },
   IQ: { name: 'Iraq', location: [33.95, 44.67] },
   IR: { name: 'Iran', location: [33.84, 51.64] },
   IS: { name: 'Iceland', location: [64.33, -21.54] },
@@ -219,6 +226,7 @@ export const COUNTRIES: Record<string, { name: string, location: readonly [numbe
   TG: { name: 'Togo', location: [8.23, 1.02] },
   TH: { name: 'Thailand', location: [13.91, 100.86] },
   TJ: { name: 'Tajikistan', location: [38.79, 69.32] },
+  TK: { name: 'Tokelau', location: null },
   TL: { name: 'Timor Leste', location: [-8.73, 125.73] },
   TM: { name: 'Turkmenistan', location: [39.11, 59.70] },
   TN: { name: 'Tunisia', location: [35.79, 10.15] },
@@ -230,6 +238,7 @@ export const COUNTRIES: Record<string, { name: string, location: readonly [numbe
   TZ: { name: 'Tanzania', location: [-5.66, 35.16] },
   UA: { name: 'Ukraine', location: [49.14, 32.71] },
   UG: { name: 'Uganda', location: [0.69, 31.99] },
+  UM: { name: 'United States Minor Outlying Islands', location: null },
   US: { name: 'United States', location: [39.18, -92.26] },
   UY: { name: 'Uruguay', location: [-33.68, -56.40] },
   UZ: { name: 'Uzbekistan', location: [40.64, 68.06] },

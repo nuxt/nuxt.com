@@ -27,8 +27,8 @@ const DEFAULT_CAMERA = { phi: 0, theta: 0.2, zoom: 1 }
 const MAX_ZOOM = 3
 const markers = computed(() => props.countries
   .flatMap((country) => {
-    const known = COUNTRIES[country.code]
-    return known ? [{ ...country, ...known }] : []
+    const location = COUNTRIES[country.code]?.location
+    return location ? [{ ...country, name: COUNTRIES[country.code]!.name, location }] : []
   })
   // The selected country first: it keeps its marker when others overlap it.
   .sort((a, b) => Number(b.code === props.selected) - Number(a.code === props.selected) || b.count - a.count))
@@ -60,7 +60,8 @@ const size = useElementSize(container)
 // Frames run only while the globe is on screen, in a visible tab, and moving.
 const onScreen = useElementVisibility(container)
 const tab = useDocumentVisibility()
-const still = computed(() => usePreferredReducedMotion().value === 'reduce')
+const motion = usePreferredReducedMotion()
+const still = computed(() => motion.value === 'reduce')
 const { pause, resume } = useRafFn(({ delta }) => render(Math.min(delta, 64)), { immediate: false })
 
 function schedule() {

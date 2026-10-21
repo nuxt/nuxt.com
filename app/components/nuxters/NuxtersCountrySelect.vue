@@ -8,12 +8,18 @@ const props = defineProps<{
 const country = defineModel<string | null>({ default: null })
 
 const { format } = new Intl.NumberFormat('en-US')
-const items = computed(() => props.countries.map(item => ({
-  label: countryName(item.code),
-  value: item.code,
-  icon: countryFlag(item.code),
-  count: format(item.count)
-})))
+const items = computed(() => {
+  // A country picked in another period keeps showing, with no Nuxters in this one.
+  const countries = country.value && !props.countries.some(item => item.code === country.value)
+    ? [{ code: country.value, count: 0 }, ...props.countries]
+    : props.countries
+  return countries.map(item => ({
+    label: countryName(item.code),
+    value: item.code,
+    icon: countryFlag(item.code),
+    count: format(item.count)
+  }))
+})
 const selected = computed(() => items.value.find(item => item.value === country.value))
 </script>
 
