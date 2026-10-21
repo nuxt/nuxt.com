@@ -38,7 +38,7 @@ defineOgImage('Docs.takumi', {
     <UPageHero
       :title="pageData.title"
       :description="pageData.description"
-      :links="pageData.links"
+      :links="pickLinks(pageData.links)"
     />
     <UPageBody>
       <UContainer>
