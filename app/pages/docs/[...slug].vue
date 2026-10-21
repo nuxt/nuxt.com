@@ -317,10 +317,11 @@ const noRightAside = computed(() => route.path.includes('/examples/'))
         </UPageAside>
       </template>
       <UPageHeader
+        :title="fm.title"
+        :description="fm.description"
         :ui="{
           wrapper: 'flex-row items-center flex-wrap justify-between'
         }"
-        v-bind="fm"
       >
         <template #headline>
           <UBreadcrumb :items="breadcrumb" />
@@ -347,10 +348,10 @@ const noRightAside = computed(() => route.path.includes('/examples/'))
             color="neutral"
             variant="soft"
             :target="link.to.startsWith('http') ? '_blank' : undefined"
-            v-bind="{ ...link, size: 'sm' }"
+            v-bind="{ ...pickLink(link), size: 'sm' }"
           >
             <template v-if="link.avatar" #leading>
-              <UAvatar v-bind="link.avatar" size="2xs" :alt="`${link.label} avatar`" />
+              <UAvatar v-bind="pickAvatar(link.avatar)" size="2xs" :alt="`${link.label} avatar`" />
             </template>
           </UButton>
 

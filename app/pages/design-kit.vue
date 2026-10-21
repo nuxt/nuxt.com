@@ -35,7 +35,7 @@ defineOgImage('Docs.takumi', {
   <UPage v-if="pageData">
     <UPageHero
       :title="pageData.title"
-      :links="pageData.links"
+      :links="pickLinks(pageData.links)"
       :description="pageData.description"
       :ui="{
         title: 'text-left',

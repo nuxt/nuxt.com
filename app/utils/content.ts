@@ -1,4 +1,5 @@
 import type { NavigationItem } from 'comark-content'
+import type { AvatarProps, ButtonProps, PageFeatureProps, UserProps } from '@nuxt/ui'
 
 export function navPageFromPath(path: string, tree: NavigationItem[]): NavigationItem | undefined {
   for (const file of tree) {
@@ -95,4 +96,51 @@ export function listSurround(
     item ? { title: item.title, description: item.description, path: item.path } : null
 
   return [link(items?.[index - 1]), link(items?.[index + 1])]
+}
+
+/**
+ * Content data reaches components through these picks, never a `v-bind` spread.
+ * - Vue binds every unknown key to the DOM, so a spread lets content set any attribute.
+ * - Nuxt UI spreads each `links` item onto a `UButton`, each `authors` item onto a `UUser`…
+ * Keys are the ones content uses: add one here before content can set it.
+ */
+
+type ContentObject = Record<string, any> | null | undefined
+
+function pick<T>(data: ContentObject, keys: readonly string[]): T {
+  const picked: Record<string, unknown> = {}
+  for (const key of keys) {
+    if (data?.[key] !== undefined) picked[key] = data[key]
+  }
+  return picked as T
+}
+
+const AVATAR_KEYS = ['src', 'srcset', 'alt', 'text', 'icon', 'provider', 'loading']
+const LINK_KEYS = ['label', 'to', 'target', 'title', 'icon', 'leadingIcon', 'trailingIcon', 'trailing', 'color', 'variant', 'size', 'download', 'external']
+const FEATURE_KEYS = ['title', 'description', 'icon', 'to', 'target']
+const USER_KEYS = ['name', 'description', 'to', 'target']
+
+export function pickAvatar(avatar: ContentObject): AvatarProps | undefined {
+  return avatar ? pick<AvatarProps>(avatar, AVATAR_KEYS) : undefined
+}
+
+export function pickLink(link: ContentObject): ButtonProps {
+  const picked = pick<ButtonProps>(link, LINK_KEYS)
+  if (link?.avatar) picked.avatar = pickAvatar(link.avatar)
+  return picked
+}
+
+/** `undefined` stays `undefined`, so components still skip an absent `links`. */
+export function pickLinks(links: ContentObject[] | null | undefined): ButtonProps[] | undefined {
+  return links?.map(pickLink)
+}
+
+export function pickFeature(feature: ContentObject): PageFeatureProps {
+  return pick<PageFeatureProps>(feature, FEATURE_KEYS)
+}
+
+export function pickUser(user: ContentObject): UserProps {
+  const picked = pick<UserProps>(user, USER_KEYS)
+  if (user?.avatar) picked.avatar = pickAvatar(user.avatar)
+  return picked
 }
