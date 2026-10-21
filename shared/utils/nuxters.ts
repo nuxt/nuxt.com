@@ -221,6 +221,12 @@ export function parseNuxtersFile(data: unknown): NuxterRow[] {
 export interface NuxterProfileRow extends NuxterLinks {
   githubId: number
   username: string
+  country: string | null
+}
+
+/** An ISO 3166-1 alpha-2 country code, uppercased (`fr` → `FR`), or `null`. */
+export function nuxterCountryCode(value: unknown): string | null {
+  return typeof value === 'string' && /^[a-z]{2}$/i.test(value) ? value.toUpperCase() : null
 }
 
 const MAX_SOCIAL_ACCOUNTS = 10
@@ -273,9 +279,10 @@ export function parseNuxterProfilesFile(data: unknown): NuxterProfileRow[] {
 
     const name = text(record.name)
     const website = safeNuxterUrl(record.website)
-    if (!name && !website && !socialAccounts.length) continue
+    const country = nuxterCountryCode(record.country)
+    if (!name && !website && !socialAccounts.length && !country) continue
     seen.add(githubId)
-    rows.push({ githubId, username, name, website, socialAccounts })
+    rows.push({ githubId, username, name, website, socialAccounts, country })
   }
   return rows
 }

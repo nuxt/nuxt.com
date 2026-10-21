@@ -305,6 +305,7 @@ describe('parseNuxterProfilesFile', () => {
       { provider: 'bluesky', url: 'https://bsky.app/profile/onmax.bsky.social', display_name: '@onmax.bsky.social' },
       { provider: 'twitter', url: 'https://twitter.com/_onmax', display_name: '@_onmax' }
     ],
+    country: 'ES',
     ...overrides
   })
 
@@ -317,8 +318,17 @@ describe('parseNuxterProfilesFile', () => {
       socialAccounts: [
         { provider: 'bluesky', url: 'https://bsky.app/profile/onmax.bsky.social', displayName: '@onmax.bsky.social' },
         { provider: 'twitter', url: 'https://twitter.com/_onmax', displayName: '@_onmax' }
-      ]
+      ],
+      country: 'ES'
     }])
+  })
+
+  it('keeps a profile with a country only, and drops invalid country codes', () => {
+    const rows = parseNuxterProfilesFile([
+      profile({ name: null, website: null, social_accounts: [], country: 'fr' }),
+      profile({ githubId: '2', username: 'nowhere', country: 'France' })
+    ])
+    expect(rows.map(row => [row.username, row.country])).toEqual([['onmax', 'FR'], ['nowhere', null]])
   })
 
   it('drops unsafe links and keeps the rest of the profile', () => {
@@ -339,7 +349,7 @@ describe('parseNuxterProfilesFile', () => {
       profile(),
       profile({ username: 'renamed' }),
       profile({ githubId: 'nope' }),
-      profile({ githubId: '1', name: '  ', website: null, social_accounts: [] }),
+      profile({ githubId: '1', name: '  ', website: null, social_accounts: [], country: null }),
       null
     ])
     expect(rows.map(row => row.username)).toEqual(['onmax'])

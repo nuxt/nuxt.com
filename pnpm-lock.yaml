@@ -167,6 +167,9 @@ overrides:
   chat>@workflow/serde: 4.1.2
   '@ai-sdk/provider-utils>@workflow/serde': 4.1.2
 
+patchedDependencies:
+  cobe@2.0.1: 2b377974f1a55a236275fd7de9361973b6acbfeea119d879ad64f3a9264ee1c7
+
 importers:
 
   .:
@@ -186,6 +189,9 @@ importers:
       '@comark/nuxt':
         specifier: ^0.7.0
         version: 0.7.0(magicast@0.5.5)(nuxt@4.6.2(e23abfa95f47d2654a3d6b3d5c49ae8e))(rangi@2.2.0)(shiki@4.5.0)(vue@3.5.44(typescript@6.0.3))
+      '@iconify-json/circle-flags':
+        specifier: ^1.2.12
+        version: 1.2.12
       '@iconify-json/heroicons':
         specifier: ^1.2.3
         version: 1.2.3
@@ -285,6 +291,9 @@ importers:
       chat:
         specifier: ^4.42.0
         version: 4.42.0(ai@7.0.143(zod@4.6.7))(supports-color@8.1.1)(workflow@5.2.2(@aws-sdk/credential-provider-web-identity@3.972.49)(@nestjs/common@12.1.3(reflect-metadata@0.2.2)(rxjs@7.8.2)(supports-color@8.1.1))(@nestjs/core@12.1.3(@nestjs/common@12.1.3(reflect-metadata@0.2.2)(rxjs@7.8.2)(supports-color@8.1.1))(reflect-metadata@0.2.2)(rxjs@7.8.2))(@opentelemetry/api@1.9.1)(@swc/cli@0.8.1(@swc/core@1.15.3(@swc/helpers@0.5.23))(chokidar@5.0.0)(supports-color@8.1.1))(@swc/core@1.15.3(@swc/helpers@0.5.23))(@swc/helpers@0.5.23)(magicast@0.5.5)(react@19.3.0)(supports-color@8.1.1)(typescript@6.0.3)(ws@8.22.0))(zod@4.6.7)
+      cobe:
+        specifier: 2.0.1
+        version: 2.0.1(patch_hash=2b377974f1a55a236275fd7de9361973b6acbfeea119d879ad64f3a9264ee1c7)
       comark-content:
         specifier: ^0.4.1
         version: 0.4.1(@vercel/functions@3.10.1(@aws-sdk/credential-provider-web-identity@3.972.49)(ws@8.22.0))(db0@0.3.4(@libsql/client@0.18.0)(drizzle-orm@0.45.4(@cloudflare/workers-types@4.20260702.1)(@libsql/client@0.18.0)(@opentelemetry/api@1.9.1)))(ioredis@5.11.1(supports-color@8.1.1))(rangi@2.2.0)(shiki@4.5.0)
@@ -1649,6 +1658,9 @@ packages:
   '@iconify-json/carbon@1.2.28':
     resolution: {integrity: sha512-dog92E0fGszJSrmeikPQmFrd4ptbdapogEhtZ9MCA9KiCNacYb2/nDi0euwsK0kTevsFiTy7Mte6QvRq3LDyHQ==}
 
+  '@iconify-json/circle-flags@1.2.12':
+    resolution: {integrity: sha512-TPuLJF7uDjqR2ZA7FldWEGz7gZijhnMG5K7B3nKKyJdGYU8KLHh7F4VcrFjUTJHG+ttGglYrHbw0GoIqCqoOyw==}
+
   '@iconify-json/heroicons@1.2.3':
     resolution: {integrity: sha512-n+vmCEgTesRsOpp5AB5ILB6srsgsYK+bieoQBNlafvoEhjVXLq8nIGN4B0v/s4DUfa0dOrjwE/cKJgIKdJXOEg==}
 
@@ -2667,6 +2679,7 @@ packages:
   '@opentelemetry/sdk-trace-base@2.11.0':
     resolution: {integrity: sha512-H19x/TX/LZdqiYOjM7fqtSxwlplC5pgelavqbQdHbhdq0q/AI/TGkM2dfGuuynTXmJPeF2HoZVoPDu+TGoW78A==}
     engines: {node: ^18.19.0 || >=20.6.0}
+    deprecated: Use @opentelemetry/sdk-trace package
     peerDependencies:
       '@opentelemetry/api': '>=1.3.0 <1.10.0'
 
@@ -6158,6 +6171,9 @@ packages:
   cluster-key-slot@1.1.2:
     resolution: {integrity: sha512-RMr0FhtfXemyinomL4hrWcYJxmX6deFdCxpJzhDttxgO1+bcCnkk+9drydLVDmAMG7NE6aN/fl4F7ucU/90gAA==}
     engines: {node: '>=0.10.0'}
+
+  cobe@2.0.1:
+    resolution: {integrity: sha512-aaa6vcIlaC8C1SF50LDH0Anybo/EAXnrxqe+bwvr4+YUtZydqjeBjTTD7ziCCkbRrRGSns3I3F6cZsf3W+L+ag==}
 
   color-convert@2.0.1:
     resolution: {integrity: sha512-RRECPsj7iu/xb5oKYcsFHSppFNnsj/52OVTRKb4zP5onXwVF3zVmmToNcOfGC+CRDpfK/U584fMg38ZHCaElKQ==}
@@ -12879,6 +12895,10 @@ snapshots:
     dependencies:
       '@iconify/types': 2.0.0
 
+  '@iconify-json/circle-flags@1.2.12':
+    dependencies:
+      '@iconify/types': 2.0.0
+
   '@iconify-json/heroicons@1.2.3':
     dependencies:
       '@iconify/types': 2.0.0
@@ -18199,6 +18219,8 @@ snapshots:
   cluster-key-slot@1.1.1: {}
 
   cluster-key-slot@1.1.2: {}
+
+  cobe@2.0.1(patch_hash=2b377974f1a55a236275fd7de9361973b6acbfeea119d879ad64f3a9264ee1c7): {}
 
   color-convert@2.0.1:
     dependencies:

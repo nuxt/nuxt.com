@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import type { NuxtersPage, NuxtersPeriod } from '#shared/types'
-import { NUXTERS_DEFAULT_PERIOD, isNuxtersPeriod, nuxtersPeriodPhrase } from '#shared/utils/nuxters'
+import type { NuxtersMap, NuxtersPage, NuxtersPeriod } from '#shared/types'
+import { NUXTERS_DEFAULT_PERIOD, isNuxtersPeriod, nuxterCountryCode, nuxtersPeriodPhrase } from '#shared/utils/nuxters'
 
 definePageMeta({
   heroBackground: 'opacity-70 -z-10'
@@ -29,23 +29,36 @@ const ways = [{
 
 const route = useRoute()
 const requestedPeriod = computed(() => isNuxtersPeriod(route.query.period) ? route.query.period : undefined)
+// `?country=FR`: the leaderboard of one country, picked in the filter or on the globe.
+const country = computed({
+  get: () => nuxterCountryCode(route.query.country),
+  // Same page, no new history entry: the scroll position stays.
+  set: value => navigateTo({ query: { ...route.query, country: value ?? undefined }, hash: route.hash }, { replace: true })
+})
 
 // First page server-rendered (ISR, one entry per `?period=`); the leaderboard loads the next ones.
 const { data: leaderboard } = await useAsyncData(
   // A `computed()` key, not a getter: `experimental.extractAsyncDataHandlers` takes the first arrow
   // function as the handler, so a getter key is extracted instead (NUXT_E3008 in production).
-  computed(() => `nuxters-leaderboard-${requestedPeriod.value ?? 'default'}`),
+  computed(() => `nuxters-leaderboard-${requestedPeriod.value ?? 'default'}-${country.value ?? 'all'}`),
   async () => {
-    const page = await $fetch<NuxtersPage>('/api/nuxters', { query: { period: requestedPeriod.value ?? NUXTERS_DEFAULT_PERIOD, limit: 100 } })
+    const query = { country: country.value ?? undefined, limit: 100 }
+    const page = await $fetch<NuxtersPage>('/api/nuxters', { query: { ...query, period: requestedPeriod.value ?? NUXTERS_DEFAULT_PERIOD } })
     // The default period has no data yet (first import): fall back to all time.
     if (!requestedPeriod.value && !page.periods.includes(page.period) && page.periods.includes('all')) {
-      return $fetch<NuxtersPage>('/api/nuxters', { query: { period: 'all', limit: 100 } })
+      return $fetch<NuxtersPage>('/api/nuxters', { query: { ...query, period: 'all' } })
     }
     return page
   }
 )
 
 const period = computed(() => leaderboard.value?.period ?? NUXTERS_DEFAULT_PERIOD)
+// Countries of the same period: the filter and the globe. Not blocking: the leaderboard comes first.
+const { data: map } = useFetch<NuxtersMap>('/api/map/nuxters', {
+  key: computed(() => `nuxters-map-${period.value}`),
+  query: { period },
+  lazy: true
+})
 const available = computed(() => leaderboard.value?.periods ?? [])
 // Same page, no hash: the router keeps the scroll position. A `#leaderboard` arrival keeps its hash,
 // dropping it would scroll back to the top.
@@ -132,7 +145,10 @@ const breakdown = computed(() => {
         </h2>
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           <NuxtersPeriodTabs :period="period" :periods="available" :to="periodLink" aria-label="Leaderboard period" />
-          <NuxtersSearch :period="period" />
+          <div class="flex flex-col sm:flex-row gap-3">
+            <NuxtersCountrySelect v-model="country" :countries="map?.countries ?? []" />
+            <NuxtersSearch :period="period" />
+          </div>
         </div>
 
         <ul v-if="breakdown.length" class="flex flex-wrap items-center gap-x-5 gap-y-1.5 mt-4 mb-6 text-sm text-muted" aria-label="Contributions in this period">
@@ -147,6 +163,22 @@ const breakdown = computed(() => {
           No contributions on record for this period yet.
         </p>
       </div>
+    </UPageSection>
+
+    <UPageSection
+      v-if="map?.countries.length"
+      id="world"
+      title="Nuxters around the world"
+      :description="`Nuxters from ${format(map.countries.length)} countries ${nuxtersPeriodPhrase(period)}. Pick a country to see its best ranked contributors.`"
+      :ui="{ container: 'py-12 sm:py-16 lg:py-16' }"
+      class="scroll-mt-24"
+    >
+      <NuxtersWorld
+        v-model="country"
+        :map="map"
+        :people="leaderboard?.country === country ? leaderboard?.items ?? [] : []"
+        :leaderboard="`${route.fullPath.split('#')[0]}#leaderboard`"
+      />
     </UPageSection>
 
     <UPageSection

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { Module, Nuxter, NuxterPeriodStats, NuxterProfilePage, NuxtersPeriod } from '#shared/types'
 import { isNuxtersPeriod, nuxterForPeriod, nuxterHackathons, nuxtersPeriodPhrase } from '#shared/utils/nuxters'
+import { countryFlag, countryName } from '~/utils/nuxters-countries'
 
 definePageMeta({
   heroBackground: 'opacity-30 -z-10'
@@ -240,6 +241,13 @@ defineOgImage('Nuxter.takumi', { username, period: () => period.value === 'all' 
                 <NuxtersScoreBreakdown :nuxter="current" />
               </span>
             </div>
+            <p v-if="nuxter.country" class="text-sm lg:text-base text-muted">
+              <!-- The leaderboard of the same country and period -->
+              <NuxtLink :to="{ path: '/nuxters', query: { period, country: nuxter.country }, hash: '#leaderboard' }" class="inline-flex items-center gap-1.5 hover:text-highlighted transition-colors">
+                <UIcon :name="countryFlag(nuxter.country)" class="size-4" />
+                {{ countryName(nuxter.country) }}
+              </NuxtLink>
+            </p>
             <p v-if="since" class="text-sm lg:text-base text-muted">
               Contributing since {{ since }}
             </p>
