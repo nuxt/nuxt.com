@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { NuxtersCountry } from '#shared/types'
-import { countryFlag, countryName } from '~/utils/nuxters-countries'
+import { countryFlag, countryName } from '#shared/utils/nuxters-countries'
 
 const props = defineProps<{
   countries: NuxtersCountry[]

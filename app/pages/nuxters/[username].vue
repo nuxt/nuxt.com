@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { Module, Nuxter, NuxterPeriodStats, NuxterProfilePage, NuxtersPeriod } from '#shared/types'
 import { isNuxtersPeriod, nuxterForPeriod, nuxterHackathons, nuxtersPeriodPhrase } from '#shared/utils/nuxters'
-import { countryFlag, countryName } from '~/utils/nuxters-countries'
+import { countryFlag, countryName } from '#shared/utils/nuxters-countries'
 
 definePageMeta({
   heroBackground: 'opacity-30 -z-10'

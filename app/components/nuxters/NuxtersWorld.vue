@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { RouteLocationRaw } from 'vue-router'
 import type { NuxtersMap, NuxterSummary } from '#shared/types'
-import { countryFlag, countryName } from '~/utils/nuxters-countries'
+import { countryFlag, countryName } from '#shared/utils/nuxters-countries'
 
 const props = defineProps<{
   map: NuxtersMap

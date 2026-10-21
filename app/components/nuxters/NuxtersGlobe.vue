@@ -2,7 +2,8 @@
 import type { NuxtersCountry } from '#shared/types'
 import type { Globe } from 'cobe'
 import createGlobe from 'cobe'
-import { COUNTRIES, faceOnGlobe, projectOnGlobe } from '~/utils/nuxters-countries'
+import { COUNTRIES } from '#shared/utils/nuxters-countries'
+import { faceOnGlobe, projectOnGlobe } from '~/utils/nuxters-globe'
 
 const props = defineProps<{
   countries: NuxtersCountry[]

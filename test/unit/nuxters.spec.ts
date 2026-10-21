@@ -326,9 +326,10 @@ describe('parseNuxterProfilesFile', () => {
   it('keeps a profile with a country only, and drops invalid country codes', () => {
     const rows = parseNuxterProfilesFile([
       profile({ name: null, website: null, social_accounts: [], country: 'fr' }),
-      profile({ githubId: '2', username: 'nowhere', country: 'France' })
+      profile({ githubId: '2', username: 'nowhere', country: 'France' }),
+      profile({ githubId: '3', username: 'unknown', country: 'ZZ' })
     ])
-    expect(rows.map(row => [row.username, row.country])).toEqual([['onmax', 'FR'], ['nowhere', null]])
+    expect(rows.map(row => [row.username, row.country])).toEqual([['onmax', 'FR'], ['nowhere', null], ['unknown', null]])
   })
 
   it('drops unsafe links and keeps the rest of the profile', () => {
