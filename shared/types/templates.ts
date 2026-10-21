@@ -66,6 +66,17 @@ export interface TemplateModule {
   description?: string
 }
 
+/** The stages a live preview reports while it boots, in order. */
+export type PreviewStep = 'restored' | 'serving'
+
+/** One line of the `POST /api/templates/preview` NDJSON stream. */
+export type PreviewEvent
+  = | { type: 'step', step: PreviewStep }
+    | { type: 'ready', id: string, url: string }
+    /** The app moved to another server of the same sandbox. The page loads it out of sight and swaps over once it mounts. */
+    | { type: 'url', url: string }
+    | { type: 'error', message: string }
+
 /** What nuxt.com reads from a template's repository and its nightly preview build, so listings stay current without manual edits. */
 export interface TemplateHealth {
   /** The `nuxt` range in `package.json`, e.g. `^4.2.0`. */

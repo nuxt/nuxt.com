@@ -26,6 +26,9 @@ export const CURRENT_NUXT_MAJOR = 4
 
 export const SITE_URL = 'https://nuxt.com'
 
+/** How long a live preview sandbox runs before Vercel stops it. */
+export const PREVIEW_TIMEOUT_MS = 10 * 60 * 1000
+
 const MODULE_LABELS: Record<string, string> = {
   '@nuxt/ui': 'Nuxt UI',
   '@nuxt/content': 'Content',

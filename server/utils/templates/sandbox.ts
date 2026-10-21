@@ -1,6 +1,13 @@
 import { Sandbox } from '@vercel/sandbox'
-import type { Template } from '#shared/types'
+import type { PreviewEvent, PreviewStep, Template } from '#shared/types'
 import { SERVE_SCRIPT_PATH } from './static-server'
+
+declare module 'nitropack/types' {
+  interface NitroRuntimeHooks {
+    /** Runs once a live preview serves, while its stream is still open: a Nitro plugin can keep working on the sandbox and `send` more events. */
+    'templates:preview': (context: { template: Template, owner: string, sandbox: Sandbox, send: (event: PreviewEvent) => void }) => Promise<void> | void
+  }
+}
 
 export const PREVIEW_PORT = 3000
 /** Where `checkTemplatesWorkflow` copies each template before installing it. */
@@ -29,7 +36,7 @@ async function stopPreviews(owner: string) {
  * Restores the snapshot of a template's last passing check and starts its production server. Resolves once it answers, in about 3s.
  * The sandbox stops after 10 minutes, or once its owner starts another preview.
  */
-export async function startPreview(template: Template, owner: string) {
+export async function startPreview(template: Template, owner: string, onStep?: (step: PreviewStep) => void) {
   const snapshotId = await getPassingSnapshotId(template.slug)
   if (!snapshotId) {
     throw createError({ statusCode: 409, message: 'This template has no live preview right now.' })
@@ -39,10 +46,11 @@ export async function startPreview(template: Template, owner: string) {
   const sandbox = await Sandbox.create({
     source: { type: 'snapshot', snapshotId },
     ports: [PREVIEW_PORT],
-    timeout: 10 * 60 * 1000,
+    timeout: PREVIEW_TIMEOUT_MS,
     persistent: false,
     tags: { ...PREVIEW_TAGS, template: template.slug, owner }
   })
+  onStep?.('restored')
   try {
     await sandbox.runCommand({
       cmd: 'bash',
@@ -54,7 +62,8 @@ export async function startPreview(template: Template, owner: string) {
     if (!await waitUntilServing(url, 20_000)) {
       throw createError({ statusCode: 504, message: 'The preview server did not start.' })
     }
-    return { id: sandbox.name, url }
+    onStep?.('serving')
+    return { id: sandbox.name, url, sandbox }
   } catch (error) {
     await sandbox.stop().catch(() => {})
     throw error
