@@ -3,9 +3,18 @@ import { motion, AnimatePresence } from 'motion-v'
 import type { DropdownMenuItem } from '@nuxt/ui'
 import type { Module } from '#shared/types'
 import { joinURL } from 'ufo'
+import { resolveModuleCategory } from '#shared/utils/modules'
 
 definePageMeta({
-  heroBackground: 'opacity-50'
+  heroBackground: 'opacity-50',
+  middleware: [
+    function (to) {
+      const category = to.query.category
+      if (typeof category === 'string' && resolveModuleCategory(category) !== category) {
+        return navigateTo({ ...to, query: { ...to.query, category: resolveModuleCategory(category) } }, { redirectCode: 301 })
+      }
+    }
+  ]
 })
 
 const input = useTemplateRef('input')
@@ -316,6 +325,7 @@ const clearAllModules = () => {
               color="neutral"
               variant="outline"
               class="flex-1"
+              :ui="{ content: 'min-w-fit' }"
               placeholder="Select category"
               @update:model-value="replaceRoute('category', $event)"
             />
