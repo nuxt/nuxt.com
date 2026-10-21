@@ -2,7 +2,7 @@
 import { motion, AnimatePresence } from 'motion-v'
 import type { DropdownMenuItem } from '@nuxt/ui'
 import type { Module } from '#shared/types'
-import { joinURL } from 'ufo'
+import { joinURL, withQuery } from 'ufo'
 import { resolveModuleCategory } from '#shared/utils/modules'
 
 definePageMeta({
@@ -48,21 +48,35 @@ if (!page.value) {
 
 const pageData = computed(() => page.value!.data)
 
+const site = useSiteConfig()
 const title = pageData.value.head?.title || pageData.value.title
 const description = pageData.value.head?.description || pageData.value.description
 
+// `?category=` is server-rendered (ISR entry per category), so each category is indexed as its own page.
+const seo = computed(() => {
+  const category = selectedCategory.value?.key as string | undefined
+  if (!category) return { title, description }
+  const count = modules.value.filter(m => category === 'Official' ? m.type === 'official' : m.category === category).length
+  return moduleCategorySeo(category, count)
+})
+
 useSeoMeta({
   titleTemplate: '%s',
-  title,
-  description
+  title: () => seo.value.title,
+  description: () => seo.value.description,
+  ogTitle: () => seo.value.title,
+  ogDescription: () => seo.value.description
 })
 useCanonical('/raw/modules.md')
+// useCanonical() drops the query: a category page is its own canonical URL (the last canonical link wins).
+useHead({
+  link: () => selectedCategory.value
+    ? [{ rel: 'canonical', href: withQuery(joinURL(site.url, '/modules'), { category: selectedCategory.value.key }) }]
+    : []
+})
 
 if (import.meta.server) {
-  const site = useSiteConfig()
   useSeoMeta({
-    ogDescription: description,
-    ogTitle: title,
     ogImage: joinURL(site.url, '/modules-social-card.jpg'),
     twitterImage: joinURL(site.url, '/modules-social-card.jpg')
   })
