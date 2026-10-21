@@ -14,7 +14,7 @@ const categoriesMap: Record<string, { icon: string, purpose: string }> = {
   'Charts & Maps': { icon: 'i-lucide-chart-pie', purpose: 'displaying charts and maps in your Nuxt application' },
   'CMS & Content': { icon: 'i-lucide-pencil', purpose: 'managing the content of your Nuxt application' },
   'CSS & Theming': { icon: 'i-lucide-palette', purpose: 'styling and theming your Nuxt application' },
-  'Deployment': { icon: 'i-lucide-rocket', purpose: 'deploying your Nuxt application' },
+  'Deployment': { icon: 'i-lucide-rocket', purpose: 'shipping your Nuxt application safely, with feature flags, hosting platform integrations and skew protection' },
   'Devtools': { icon: 'i-lucide-wrench', purpose: 'improving the developer experience of your Nuxt application' },
   'Ecommerce & Payments': { icon: 'i-lucide-shopping-cart', purpose: 'selling products and accepting payments in your Nuxt application' },
   'Email & Notifications': { icon: 'i-lucide-mail', purpose: 'sending emails and notifications from your Nuxt application' },
