@@ -2,6 +2,7 @@
   "name": "nuxt.com",
   "version": "0.3.11",
   "packageManager": "pnpm@12.14.0",
+  "private": true,
   "devEngines": {
     "runtime": {
       "name": "node",
