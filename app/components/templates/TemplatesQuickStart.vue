@@ -36,7 +36,7 @@ const starter = computed(() => props.starters.find(item => item.slug === selecte
         trailing-icon="i-lucide-arrow-right"
         color="neutral"
         variant="subtle"
-        class="h-10 ring-default"
+        class="h-10 ring-default hover:bg-elevated"
         @click="track('Template Action', { template: starter.name, action: 'Preview Starter' })"
       />
     </div>
