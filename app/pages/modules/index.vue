@@ -254,7 +254,7 @@ const clearAllModules = () => {
       class="z-20 relative pt-24"
       :ui="{
         title: 'text-4xl sm:text-7xl text-balance max-w-4xl mx-auto',
-        links: 'max-w-2xl mx-auto'
+        links: 'max-w-6xl mx-auto'
       }"
     >
       <template #title>
@@ -266,7 +266,7 @@ const clearAllModules = () => {
       </template>
 
       <template #links>
-        <div class="flex flex-col w-full gap-3">
+        <div class="flex flex-col w-full max-w-2xl mx-auto gap-3">
           <div class="flex flex-col sm:flex-row w-full gap-2 relative">
             <UInput
               ref="input"
