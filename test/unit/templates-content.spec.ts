@@ -34,8 +34,14 @@ describe('template content', () => {
     for (const key of ['demo', 'purchase']) {
       if (data[key] !== undefined) expect(isHttps(data[key]), key).toBe(true)
     }
-    if (data.deploy?.repositoryUrl !== undefined) expect(data.deploy.repositoryUrl).toMatch(/^https:\/\/github\.com\/[\w.-]+\/[\w.-]+(?:\/tree\/[\w./-]+)?$/)
-    for (const name of data.deploy?.env ?? []) expect(name).toMatch(/^[A-Z][A-Z0-9_]*$/)
+    if (data.deploy?.repositoryUrl !== undefined) {
+      const [, repo, tree] = data.deploy.repositoryUrl.match(/^https:\/\/github\.com\/([^/]+\/[^/]+)(?:\/tree\/(.+))?$/) ?? []
+      expect(repo !== undefined && segments(repo, 2) && (tree === undefined || segments(tree)), 'deploy.repositoryUrl').toBe(true)
+    }
+    if (data.deploy?.env !== undefined) {
+      expect(Array.isArray(data.deploy.env), 'deploy.env').toBe(true)
+      for (const name of data.deploy.env) expect(name).toMatch(/^[A-Z][A-Z0-9_]*$/)
+    }
   })
 
   it('rejects shell syntax and parent directories', () => {
@@ -43,5 +49,6 @@ describe('template content', () => {
     expect(segments('owner/$(id)', 2)).toBe(false)
     expect(segments('owner/..', 2)).toBe(false)
     expect(segments('nuxt/starter', 2)).toBe(true)
+    expect(segments('main/../other')).toBe(false)
   })
 })
