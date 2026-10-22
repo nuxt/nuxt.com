@@ -35,6 +35,43 @@ const country = computed({
   // Same page, no new history entry: the scroll position stays.
   set: value => navigateTo({ query: { ...route.query, country: value ?? undefined }, hash: route.hash }, { replace: true })
 })
+// The globe, its card and the filter follow a pick right away; the route (and the leaderboard) once its first page loaded.
+const picked = ref(country.value)
+watch(country, (value) => {
+  picked.value = value
+})
+function pick(value: string | null) {
+  picked.value = value
+  country.value = value
+}
+
+// Nuxt scrolls to the hash on every navigation that keeps one: after a `#leaderboard` arrival,
+// another country or period would jump back to the leaderboard. Only the query changed: stay.
+if (import.meta.client) {
+  const router = useRouter()
+  const scrollBehavior = router.options.scrollBehavior
+  router.options.scrollBehavior = (to, from, savedPosition) => to.path === from.path && to.hash === from.hash && to.fullPath !== from.fullPath
+    ? false
+    : scrollBehavior?.(to, from, savedPosition)
+  onScopeDispose(() => {
+    router.options.scrollBehavior = scrollBehavior
+  })
+}
+
+// The leaderboard sits above the globe and changes height with the country (a small one has fewer
+// rows): a pick from the globe keeps the globe where it is once that leaderboard renders.
+let keepWorld = false
+let worldTop = 0
+const worldSection = () => document.getElementById('world')
+function pickInWorld(value: string | null) {
+  keepWorld = true
+  pick(value)
+}
+
+function showLeaderboard() {
+  keepWorld = false
+  document.getElementById('leaderboard')?.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth' })
+}
 
 // First page server-rendered (ISR, one entry per `?period=` and `?country=`); the leaderboard loads the next ones.
 const { data: leaderboard } = await useAsyncData(
@@ -51,6 +88,17 @@ const { data: leaderboard } = await useAsyncData(
     return page
   }
 )
+
+// Measured right before and right after the leaderboard renders: nothing else can scroll in between.
+watch(leaderboard, () => {
+  if (keepWorld) worldTop = worldSection()?.getBoundingClientRect().top ?? 0
+}, { flush: 'pre' })
+watch(leaderboard, () => {
+  if (!keepWorld) return
+  const top = worldSection()?.getBoundingClientRect().top
+  if (top !== undefined && top !== worldTop) scrollBy({ top: top - worldTop, behavior: 'instant' })
+  if (leaderboard.value?.country === picked.value) keepWorld = false
+}, { flush: 'post' })
 
 const period = computed(() => leaderboard.value?.period ?? NUXTERS_DEFAULT_PERIOD)
 // Countries of the same period: the filter and the globe. Not blocking: the leaderboard comes first.
@@ -146,7 +194,7 @@ const breakdown = computed(() => {
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           <NuxtersPeriodTabs :period="period" :periods="available" :to="periodLink" aria-label="Leaderboard period" />
           <div class="flex flex-col sm:flex-row gap-3">
-            <NuxtersCountrySelect v-model="country" :countries="map?.countries ?? []" />
+            <NuxtersCountrySelect :model-value="picked" :countries="map?.countries ?? []" @update:model-value="pick" />
             <NuxtersSearch :period="period" />
           </div>
         </div>
@@ -174,10 +222,11 @@ const breakdown = computed(() => {
       class="scroll-mt-24"
     >
       <NuxtersWorld
-        v-model="country"
+        :model-value="picked"
         :map="map"
-        :people="leaderboard?.country === country ? leaderboard?.items ?? [] : []"
-        :leaderboard="{ query: route.query, hash: '#leaderboard' }"
+        :people="leaderboard?.country === picked ? leaderboard?.items ?? [] : []"
+        @update:model-value="pickInWorld"
+        @leaderboard="showLeaderboard"
       />
     </UPageSection>
 

@@ -1,19 +1,21 @@
 <script setup lang="ts">
-import type { RouteLocationRaw } from 'vue-router'
-import type { NuxtersMap, NuxterSummary } from '#shared/types'
+import type { NuxtersCountry, NuxtersMap, NuxterSummary } from '#shared/types'
 import { countryFlag, countryName } from '#shared/utils/nuxters-countries'
 
 const props = defineProps<{
   map: NuxtersMap
-  /** The best ranked Nuxters of the selected country: the first page of its leaderboard. */
+  /** The best ranked Nuxters of the selected country: the first page of its leaderboard, empty while it loads. */
   people: NuxterSummary[]
-  /** Where "See them all" goes: the leaderboard, filtered on the country. */
-  leaderboard: RouteLocationRaw
 }>()
+const emit = defineEmits<{ leaderboard: [] }>()
 const country = defineModel<string | null>({ default: null })
 
 const { format } = new Intl.NumberFormat('en-US')
 const selected = computed(() => props.map.countries.find(item => item.code === country.value))
+// The card of the selected country: floating on the globe, or at the bottom of the screen on phones.
+const [DefineCard, ReuseCard] = createReusableTemplate<{ country: NuxtersCountry }>()
+// One tile per Nuxter shown, known from the count: the card keeps its size while they load.
+const tiles = computed(() => Array.from({ length: Math.min(12, selected.value?.count ?? 0) }, (_, index) => props.people[index]))
 const rankOf = (code: string) => props.map.countries.findIndex(item => item.code === code) + 1
 const largest = computed(() => props.map.countries[0]?.count ?? 1)
 
@@ -32,26 +34,16 @@ watch(isVisible, (visible) => {
 
 <template>
   <div class="grid lg:grid-cols-[minmax(0,1fr)_minmax(0,24rem)] gap-8 lg:gap-12 items-center">
-    <div ref="globeBox" class="aspect-square w-full max-w-[36rem] mx-auto">
-      <LazyNuxtersGlobe
-        v-if="nearby"
-        :countries="map.countries"
-        :selected="country"
-        @select="country = $event"
-      />
-      <div v-else class="size-full rounded-full bg-elevated/50 ring ring-default" />
-    </div>
-
-    <div class="flex flex-col gap-4 min-w-0">
-      <div v-if="selected" class="rounded-lg ring ring-default bg-elevated/50 p-4">
+    <DefineCard v-slot="{ country: shown }">
+      <div class="rounded-lg ring ring-default bg-default/90 backdrop-blur shadow-lg p-4">
         <div class="flex items-center gap-3">
-          <UIcon :name="countryFlag(selected.code)" class="size-8 shrink-0" />
+          <UIcon :name="countryFlag(shown.code)" class="size-8 shrink-0" />
           <div class="min-w-0 flex-1">
             <p class="font-semibold text-highlighted truncate">
-              {{ countryName(selected.code) }}
+              {{ countryName(shown.code) }}
             </p>
             <p class="text-sm text-muted">
-              {{ format(selected.count) }} {{ selected.count === 1 ? 'Nuxter' : 'Nuxters' }} · #{{ rankOf(selected.code) }} country
+              {{ format(shown.count) }} {{ shown.count === 1 ? 'Nuxter' : 'Nuxters' }} · #{{ rankOf(shown.code) }} country
             </p>
           </div>
           <UButton
@@ -63,10 +55,10 @@ watch(isVisible, (visible) => {
             @click="country = null"
           />
         </div>
-        <ul v-if="people.length" class="grid grid-cols-6 gap-2 mt-4">
-          <li v-for="nuxter in people.slice(0, 12)" :key="nuxter.githubId">
-            <UTooltip :text="`${nuxter.username} · #${format(nuxter.rank)}`">
-              <NuxtLink :to="`/nuxters/${nuxter.username}`" :aria-label="`${nuxter.username}, #${format(nuxter.rank)}`" class="block aspect-square rounded-md overflow-hidden bg-muted ring ring-default hover:ring-primary transition">
+        <ul class="grid grid-cols-6 gap-2 mt-4" :aria-busy="!people.length || undefined">
+          <li v-for="(nuxter, index) in tiles" :key="nuxter?.githubId ?? `tile-${index}`" class="aspect-square">
+            <UTooltip v-if="nuxter" :text="`${nuxter.username} · #${format(nuxter.rank)}`">
+              <NuxtLink :to="`/nuxters/${nuxter.username}`" :aria-label="`${nuxter.username}, #${format(nuxter.rank)}`" class="block size-full rounded-md overflow-hidden bg-muted ring ring-default hover:ring-primary transition">
                 <NuxtImg
                   :src="`/gh_avatar/${nuxter.username}`"
                   provider="ipx"
@@ -80,18 +72,41 @@ watch(isVisible, (visible) => {
                 />
               </NuxtLink>
             </UTooltip>
+            <USkeleton v-else class="size-full rounded-md" />
           </li>
         </ul>
         <UButton
-          :to="leaderboard"
-          :label="`See the ${selected.count === 1 ? 'Nuxter' : `${format(selected.count)} Nuxters`} from ${countryName(selected.code)}`"
+          :label="`See the ${shown.count === 1 ? 'Nuxter' : `${format(shown.count)} Nuxters`} from ${countryName(shown.code)}`"
           trailing-icon="i-lucide-arrow-up"
           color="neutral"
           variant="link"
           class="px-0 mt-3"
+          @click="emit('leaderboard')"
         />
       </div>
+    </DefineCard>
 
+    <!-- The card floats on the globe: picking a country moves nothing on the page -->
+    <div ref="globeBox" class="relative aspect-square w-full max-w-[36rem] mx-auto">
+      <LazyNuxtersGlobe
+        v-if="nearby"
+        :countries="map.countries"
+        :selected="country"
+        @select="country = $event"
+      />
+      <div v-else class="size-full rounded-full bg-elevated/50 ring ring-default" />
+
+      <Transition
+        enter-active-class="transition duration-150 ease-out motion-reduce:transition-none"
+        enter-from-class="opacity-0 translate-y-1"
+        leave-active-class="transition duration-100 ease-in motion-reduce:transition-none"
+        leave-to-class="opacity-0 translate-y-1"
+      >
+        <ReuseCard v-if="selected" :country="selected" class="max-sm:hidden absolute right-0 bottom-0 w-80" />
+      </Transition>
+    </div>
+
+    <div class="flex flex-col gap-4 min-w-0">
       <ol class="max-h-96 overflow-y-auto -mx-2 pr-1" aria-label="Countries, from the most Nuxters">
         <li v-for="item in map.countries" :key="item.code">
           <button
@@ -114,5 +129,16 @@ watch(isVisible, (visible) => {
         From the location on each GitHub profile, matched to a country: {{ format(map.located) }} of {{ format(map.total) }} Nuxters set one.
       </p>
     </div>
+
+    <!-- Phones: the globe is too small to float on, and often scrolled away from the list. A sheet at the
+         bottom of the screen instead, sticky within the section -->
+    <Transition
+      enter-active-class="transition duration-150 ease-out motion-reduce:transition-none"
+      enter-from-class="opacity-0 translate-y-1"
+      leave-active-class="transition duration-100 ease-in motion-reduce:transition-none"
+      leave-to-class="opacity-0 translate-y-1"
+    >
+      <ReuseCard v-if="selected" :country="selected" class="sm:hidden sticky bottom-4 z-10" />
+    </Transition>
   </div>
 </template>
