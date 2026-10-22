@@ -10,8 +10,8 @@ const props = defineProps<{
 
 const STEPS = ['install', 'build', 'start'] as const
 
-const failed = computed(() => props.health?.check?.status === 'failed' ? props.health.check : undefined)
-const archived = computed(() => !failed.value && !!props.health?.archived)
+const archived = computed(() => !!props.health?.archived)
+const failed = computed(() => !archived.value && props.health?.check?.status === 'failed' ? props.health.check : undefined)
 const outdated = computed(() => !failed.value && !archived.value && isOutdated(props.health))
 const failedAt = computed(() => STEPS.findIndex(step => step === failed.value?.step))
 const verb = computed(() => failed.value?.step === 'start' ? 'start' : 'build')
