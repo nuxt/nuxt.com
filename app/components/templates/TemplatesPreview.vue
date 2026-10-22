@@ -39,6 +39,8 @@ function start() {
 }
 
 function onStatus(value: LivePreviewStatus, ms?: number) {
+  // "Try Again" boots a new sandbox, with a new timeout.
+  if (value === 'booting') startedAt.value = Date.now()
   status.value = value
   if (ms) readyIn.value = ms
 }

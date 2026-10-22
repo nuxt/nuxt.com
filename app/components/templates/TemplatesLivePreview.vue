@@ -189,7 +189,8 @@ useEventListener(import.meta.client ? window : undefined, 'message', (event: Mes
   }
   if (!preview.value || event.origin !== new URL(preview.value.url).origin) return
   if (event.data.type === 'ready') mounted()
-  if (event.data.type === 'route' && typeof event.data.message === 'string' && shared.preview.value) {
+  // A path, never a host: it's appended to the sandbox URL in the address bar and the "Open in new tab" link.
+  if (event.data.type === 'route' && typeof event.data.message === 'string' && event.data.message.startsWith('/') && shared.preview.value) {
     shared.preview.value = { ...shared.preview.value, path: event.data.message }
   }
   if (event.data.type === 'error') {
@@ -198,6 +199,7 @@ useEventListener(import.meta.client ? window : undefined, 'message', (event: Mes
       if (shared.preview.value) shared.preview.value = { ...shared.preview.value, error: event.data.message }
       return
     }
+    stop()
     status.value = 'failed'
     error.value = `${props.template.name} crashed while starting: ${event.data.message}`
   }
@@ -207,6 +209,12 @@ useEventListener(import.meta.client ? window : undefined, 'blur', () => {
   if (document.activeElement?.tagName === 'IFRAME') touched = true
 })
 useEventListener(import.meta.client ? window : undefined, 'pagehide', stop)
+// Back from the back/forward cache, `pagehide` already stopped the sandbox.
+useEventListener(import.meta.client ? window : undefined, 'pageshow', (event: PageTransitionEvent) => {
+  if (!event.persisted || status.value === 'failed') return
+  status.value = 'failed'
+  error.value = 'The preview stopped when you left the page.'
+})
 onMounted(start)
 onBeforeUnmount(stop)
 </script>
