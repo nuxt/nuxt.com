@@ -49,7 +49,8 @@ onBeforeUnmount(removeAfterEach)
 // Filtering happens in memory, so only mirror the filters in the URL: a router navigation
 // would fetch `_payload.json` for this ISR route on every keystroke.
 watch(Object.values(filters), () => {
-  const query = Object.fromEntries(Object.entries(filters).map(([key, filter]) => [key, filter.value || undefined]))
+  // Keep unrelated params (e.g. `utm_*`) from the last navigation.
+  const query = { ...route.query, ...Object.fromEntries(Object.entries(filters).map(([key, filter]) => [key, filter.value || undefined])) }
   const { fullPath, href } = router.resolve({ path: route.path, query, hash: route.hash })
   // vue-router writes `state.current` back to the URL on the next push, so keep it in sync.
   history.replaceState({ ...history.state, current: fullPath }, '', href)
