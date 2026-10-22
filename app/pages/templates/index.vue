@@ -179,9 +179,6 @@ defineOgImage('Docs.takumi', {
             @click="search = ''; router.replace({ query: {} })"
           />
         </div>
-        <div class="mt-8 flex justify-center">
-          <TemplatesPoweredBy />
-        </div>
       </UContainer>
 
       <UContainer>
