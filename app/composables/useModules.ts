@@ -157,8 +157,6 @@ const orders: Filter[] = [
 ]
 
 export const useModules = () => {
-  const route = useRoute()
-  const router = useRouter()
   const { data, execute } = useFetch('/api/v1/modules', {
     immediate: false,
     default: () => ({
@@ -185,44 +183,49 @@ export const useModules = () => {
     return execute()
   }
 
+  // Filters are local state: `/modules` syncs them with the URL without navigating.
+  const q = ref('')
+  const category = ref('')
+  const sortBy = ref('')
+  const orderBy = ref('')
+
   // Data
 
   const categories = computed<Filter[]>(() => {
     return Object.keys(categoriesMap)
-      .map((category) => {
+      .map((name) => {
         return {
-          key: category,
-          label: category,
-          active: route.query.category === category,
-          to: { name: 'modules', query: category === route.query.category ? undefined : { category }, state: { smooth: '#smooth' } },
-          icon: categoriesMap[category]!.icon,
-          click: (e: Event) => {
-            if (route.query.category !== category) {
-              return
-            }
-
+          key: name,
+          label: name,
+          active: category.value === name,
+          // Same filters as a click, which only changes the category, for links opened in a new tab.
+          to: {
+            name: 'modules',
+            query: { q: q.value || undefined, category: name === category.value ? undefined : name, sortBy: sortBy.value || undefined, orderBy: orderBy.value || undefined },
+            state: { smooth: '#smooth' }
+          },
+          // Clicks filter in memory, so prefetching each category's `_payload.json` is wasted.
+          prefetch: false,
+          icon: categoriesMap[name]!.icon,
+          onClick: (e: MouseEvent) => {
+            if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return
             e.preventDefault()
-
-            router.replace({ query: { ...route.query, category: undefined } })
+            category.value = category.value === name ? '' : name
           }
         }
       })
   })
 
   const selectedCategory = computed(() => {
-    return categories.value.find(category => category.label === route.query.category)
+    return categories.value.find(item => item.key === category.value)
   })
 
   const selectedSort = computed(() => {
-    return sorts.find(sort => sort.key === route.query.sortBy) || sorts[0]
+    return sorts.find(sort => sort.key === sortBy.value) || sorts[0]
   })
 
   const selectedOrder = computed(() => {
-    return orders.find(order => order.key === route.query.orderBy) || orders[0]
-  })
-
-  const q = computed<string>(() => {
-    return route.query.q as string
+    return orders.find(order => order.key === orderBy.value) || orders[0]
   })
 
   const isSponsorOrOfficial = (a: Module, b: Module) => {
@@ -270,7 +273,7 @@ export const useModules = () => {
     }
 
     // sponsored & official modules in first place if no sort or order by
-    if (!route.query.sortBy && !route.query.orderBy) {
+    if (!sortBy.value && !orderBy.value) {
       return filteredModules.sort(isSponsorOrOfficial)
     }
     return filteredModules
@@ -297,6 +300,9 @@ export const useModules = () => {
     // selectedVersion,
     selectedSort,
     selectedOrder,
-    q
+    q,
+    category,
+    sortBy,
+    orderBy
   }
 }
