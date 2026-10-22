@@ -198,7 +198,12 @@ export const useModules = () => {
           key: name,
           label: name,
           active: category.value === name,
-          to: { name: 'modules', query: name === category.value ? undefined : { category: name }, state: { smooth: '#smooth' } },
+          // Same filters as a click, which only changes the category, for links opened in a new tab.
+          to: {
+            name: 'modules',
+            query: { q: q.value || undefined, category: name === category.value ? undefined : name, sortBy: sortBy.value || undefined, orderBy: orderBy.value || undefined },
+            state: { smooth: '#smooth' }
+          },
           // Clicks filter in memory, so prefetching each category's `_payload.json` is wasted.
           prefetch: false,
           icon: categoriesMap[name]!.icon,

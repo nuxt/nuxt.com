@@ -44,6 +44,10 @@ watch(Object.values(filters), () => {
   history.replaceState({ ...history.state, current: fullPath }, '', href)
 })
 
+function resetFilters() {
+  for (const filter of Object.values(filters)) filter.value = ''
+}
+
 function filterKey(param: string | { key: string | number }) {
   return typeof param === 'string' ? param : String(param?.key ?? '')
 }
@@ -464,7 +468,7 @@ const clearAllModules = () => {
               to="https://github.com/nuxt/modules"
               target="_blank"
               size="md"
-              @click="$router.replace({ query: {} })"
+              @click="resetFilters"
             />
             <UButton to="/docs/guide/going-further/modules" color="neutral" size="md" label="How to create a module?" />
           </EmptyCard>
