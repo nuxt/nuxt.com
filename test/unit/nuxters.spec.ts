@@ -3,6 +3,7 @@ import {
   canUnlockNuxterRole,
   isNuxtersPeriod,
   nuxterForPeriod,
+  nuxterGithubSearchUrl,
   nuxterHackathons,
   nuxterScoreBreakdown,
   nuxtersPeriodFile,
@@ -292,6 +293,30 @@ describe('nuxterForPeriod', () => {
 
   it('returns null for a period without contributions', () => {
     expect(nuxterForPeriod(profile, '30d')).toBeNull()
+  })
+})
+
+describe('nuxterGithubSearchUrl', () => {
+  const ORGS = 'org:nuxt org:nuxt-community org:nuxt-content org:nuxt-hub org:nuxt-modules org:nuxt-ui-templates'
+  const today = new Date('2026-03-01T10:00:00Z')
+  const search = (...args: Parameters<typeof nuxterGithubSearchUrl>) => {
+    const url = new URL(nuxterGithubSearchUrl(...args))
+    return { type: url.searchParams.get('type'), q: url.searchParams.get('q') }
+  }
+
+  it('searches merged PRs by merge day, over a rolling window ending today', () => {
+    // 2026 is not a leap year: 30 days before March 1st is January 30th.
+    expect(search('atinux', 'mergedPullRequests', '30d', today)).toEqual({ type: 'pullrequests', q: `is:pr is:merged author:atinux merged:>=2026-01-30 ${ORGS}` })
+    expect(search('atinux', 'mergedPullRequests', '12m', today).q).toContain('merged:>=2025-03-01 ')
+  })
+
+  it('searches issues by creation day, over a whole UTC year or all time', () => {
+    expect(search('atinux', 'issues', '2024', today)).toEqual({ type: 'issues', q: `is:issue author:atinux created:2024-01-01..2024-12-31 ${ORGS}` })
+    expect(search('atinux', 'issues', 'all', today).q).toBe(`is:issue author:atinux ${ORGS}`)
+  })
+
+  it('lists the threads commented on that existed and were active in a year', () => {
+    expect(search('atinux', 'comments', '2024', today)).toEqual({ type: 'issues', q: `commenter:atinux updated:>=2024-01-01 created:<=2024-12-31 ${ORGS}` })
   })
 })
 
