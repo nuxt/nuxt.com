@@ -14,6 +14,12 @@ export const NUXTERS_SOURCE = {
 export const NUXTERS_FIRST_YEAR = 2016
 
 /**
+ * The organizations whose public repositories are collected (forks excluded, archived ones included).
+ * Keep in sync with `ORGS` in the nuxt/nuxters collector.
+ */
+export const NUXTERS_ORGS = ['nuxt', 'nuxt-community', 'nuxt-content', 'nuxt-hub', 'nuxt-modules', 'nuxt-ui-templates'] as const
+
+/**
  * The framework repository and its former homes (Nuxt 3 was built in nuxt/framework, the docs lived
  * in nuxt/docs). Merged PRs, helpful issues and helpful comments there count `NUXTERS_CORE_MULTIPLIER` times.
  * Keep in sync with `CORE_REPOS` in the nuxt/nuxters collector.
@@ -85,6 +91,35 @@ export function nuxterForPeriod(profile: NuxterProfile, period: NuxtersPeriod): 
   if (!stats) return null
   const { period: _period, ...rest } = stats
   return { githubId: profile.githubId, username: profile.username, firstContributionAt: profile.firstContributionAt, ...rest }
+}
+
+const DAY = 24 * 60 * 60 * 1000
+const ROLLING_DAYS: Record<string, number> = { '30d': 30, '12m': 365 }
+
+/**
+ * A GitHub search of what a stat card counts over `period`, in the collected organizations.
+ * Merged PRs and issues match the collector, which dates them by merge and creation day.
+ * GitHub cannot search comments, so the comments link lists the issues and pull requests the user
+ * commented on that were active in the period: a superset of the threads behind the count.
+ * Rolling windows end on `today`: the collector runs nightly, so they can be a day off.
+ */
+export function nuxterGithubSearchUrl(username: string, metric: 'mergedPullRequests' | 'issues' | 'comments', period: NuxtersPeriod, today: Date): string {
+  const year = /^\d{4}$/.test(period) ? period : null
+  const days = ROLLING_DAYS[period]
+  const start = year ? `${year}-01-01` : days ? new Date(today.getTime() - days * DAY).toISOString().slice(0, 10) : null
+  const end = year ? `${year}-12-31` : null
+  const range = start && (end ? `${start}..${end}` : `>=${start}`)
+
+  const filters = {
+    mergedPullRequests: [`is:pr is:merged author:${username}`, range && `merged:${range}`],
+    issues: [`is:issue author:${username}`, range && `created:${range}`],
+    // `updated` is the last activity: a thread commented on in a year may have been updated since.
+    comments: [`commenter:${username}`, start && `updated:>=${start}`, end && `created:<=${end}`]
+  }[metric]
+  // Repeated `org:` qualifiers are combined with OR.
+  const q = [...filters.filter(Boolean), ...NUXTERS_ORGS.map(org => `org:${org}`)].join(' ')
+  // The issues tab lists pull requests too, which comments are also made on.
+  return `https://github.com/search?${new URLSearchParams({ q, type: metric === 'mergedPullRequests' ? 'pullrequests' : 'issues' })}`
 }
 
 /** Pinned to a commit: the branch URL is CDN-cached for 5 minutes and can serve the previous file. */
