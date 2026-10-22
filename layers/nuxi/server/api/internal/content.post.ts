@@ -17,14 +17,28 @@ const templatesBodySchema = z.object({
   names: z.array(z.string().trim().min(1)).min(1)
 })
 
+const showcaseBodySchema = z.object({
+  kind: z.literal('showcase')
+})
+
 export default defineEventHandler(async (event) => {
   requireInternalRequest(event)
 
   const body = await readValidatedBody(event, z.discriminatedUnion('kind', [
     blogBodySchema,
     deployBodySchema,
-    templatesBodySchema
+    templatesBodySchema,
+    showcaseBodySchema
   ]).parse)
+
+  if (body.kind === 'showcase') {
+    const page = await (await getInstanceAtHead('site')).get('/showcase')
+    const websites = (page?.data?.websites ?? []) as Array<{ name: string, url: string, industry?: string }>
+
+    return {
+      websites: websites.map(({ name, url, industry }) => ({ name, url, industry }))
+    }
+  }
 
   if (body.kind === 'blog') {
     const posts = (await listByDir('/blog'))
