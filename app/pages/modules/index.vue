@@ -29,12 +29,15 @@ const { openInCursor, openInClaudeCode, openInVSCode } = useIdeDeeplink()
 
 // Merge via computed, not mutation: useFetch `data` is a shallowRef (Nuxt 4
 // default), so writing module.health in place would not trigger a re-render.
-const filteredModulesWithHealth = computed(() =>
-  filteredModules.value.map(m => ({
+const filteredModulesWithHealth = computed(() => {
+  const query = q.value ? searchTextRegExp(q.value) : undefined
+  return filteredModules.value.map(m => ({
     ...m,
-    health: health.value[m.name] ?? m.health ?? null
+    health: health.value[m.name] ?? m.health ?? null,
+    // Shows why a module matched when only one of its providers did (e.g. "cloudinary" → @nuxt/image).
+    matchedProvider: query && !moduleMatchesSearch(m, query) ? findModuleProvider(m, query) : undefined
   }))
-)
+})
 
 const cacheControl = useResponseHeader('Cache-Control')
 const cdnCacheControl = useResponseHeader('CDN-Cache-Control')
@@ -406,6 +409,7 @@ const clearAllModules = () => {
               v-for="module in displayedModules"
               :key="module.name"
               :module="module"
+              :provider="module.matchedProvider"
               :is-added="addedModuleNames.has(module.name)"
               :sort-key="String(selectedSort.key)"
               selectable

@@ -1,6 +1,16 @@
 import type { MarkdownDocument } from 'comark'
 import type NuxtModules from '@nuxt/modules/modules.json'
 
+/** A third-party service the module integrates with, from the `providers` field of the modules registry. */
+export interface ModuleProvider {
+  name: string
+  label: string
+  /** Iconify name, `collection:icon` */
+  icon?: string
+  category?: string
+  docs?: string
+}
+
 export type BaseModule = {
   name: string
   description: string
@@ -14,6 +24,7 @@ export type BaseModule = {
   categories?: string[]
   type: string
   sponsor?: boolean
+  providers?: ModuleProvider[]
   compatibility: {
     nuxt: string
     requires?: {
