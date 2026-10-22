@@ -1,0 +1,10 @@
+name: 'Module'
+slug: 'module'
+kind: 'starter'
+template: 'module'
+order: 4
+description: 'Starter to create and publish your first Nuxt module.'
+icon: 'i-lucide-box'
+repo: 'nuxt/starter'
+branch: 'module'
+docs: '/docs/guide/modules'
