@@ -171,7 +171,7 @@ function stop() {
               class="rounded-full px-3.5 transition-transform duration-150 ease-snappy active:scale-[0.97]"
               @click="start"
             />
-            <span class="hidden sm:inline text-xs text-muted">Use it in your browser, nothing to install</span>
+            <span class="hidden sm:inline text-xs text-muted">A real Nuxt app, right in your browser</span>
           </div>
         </div>
       </Transition>
