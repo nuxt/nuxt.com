@@ -35,6 +35,7 @@ const frames = computed(() => [retiringUrl.value, preview.value?.url, pendingUrl
 const frameEls = new Map<string, HTMLIFrameElement>()
 
 const current = computed(() => STEPS.findIndex(step => !doneAt.value[step.key]))
+const stepLabel = computed(() => current.value === -1 ? STEPS.at(-1)!.done : `${STEPS[current.value]!.pending}…`)
 const seconds = (at: number) => ((at - startedAt.value) / 1000).toFixed(1)
 
 watch(status, value => emit('status', value, value === 'live' && doneAt.value.mounted ? doneAt.value.mounted - startedAt.value : undefined))
@@ -240,7 +241,7 @@ onBeforeUnmount(stop)
       leave-to-class="opacity-0 scale-[0.98]"
     >
       <div v-if="status !== 'live'" class="absolute inset-0 flex items-center justify-center p-6">
-        <div class="w-full max-w-xs rounded-xl bg-default/80 backdrop-blur-xl ring ring-default shadow-xl shadow-black/10 p-4 flex flex-col gap-3" role="status" aria-live="polite">
+        <div class="w-full max-w-xs rounded-xl bg-default/80 backdrop-blur-xl ring ring-default shadow-xl shadow-black/10 p-3.5 flex flex-col gap-2.5" role="status" aria-live="polite">
           <template v-if="status === 'booting' || status === 'mounting'">
             <div class="flex items-baseline justify-between gap-3">
               <p class="text-sm font-medium text-highlighted truncate">
@@ -248,23 +249,20 @@ onBeforeUnmount(stop)
               </p>
               <span class="font-mono text-xs text-muted tabular-nums">{{ seconds(now) }}s</span>
             </div>
-            <ol class="flex flex-col gap-2">
-              <li
+            <div class="grid grid-cols-3 gap-1" aria-hidden="true">
+              <span
                 v-for="(step, index) in STEPS"
                 :key="step.key"
-                class="flex items-center gap-2.5 text-xs transition-colors duration-200"
-                :class="doneAt[step.key] ? 'text-default' : index === current ? 'text-highlighted' : 'text-dimmed'"
-              >
-                <span class="relative size-4 shrink-0 flex items-center justify-center">
-                  <UIcon v-if="doneAt[step.key]" name="i-lucide-check" class="size-3.5 text-primary" />
-                  <span v-else-if="index === current" class="size-3 rounded-full border-[1.5px] border-current border-t-transparent animate-spin" />
-                  <span v-else class="size-1.5 rounded-full bg-current" />
-                </span>
-                <span class="flex-1 truncate">{{ doneAt[step.key] ? step.done : step.pending }}</span>
-                <span v-if="doneAt[step.key]" class="font-mono text-muted tabular-nums">{{ seconds(doneAt[step.key]!) }}s</span>
-              </li>
-            </ol>
-            <TemplatesPoweredBy class="mt-1 text-[10px] text-dimmed" />
+                class="h-1 rounded-full transition-colors duration-300"
+                :class="doneAt[step.key] ? 'bg-primary' : index === current ? 'bg-primary/40 animate-pulse' : 'bg-accented'"
+              />
+            </div>
+            <div class="flex items-center justify-between gap-3">
+              <p class="text-xs text-muted truncate">
+                {{ stepLabel }}
+              </p>
+              <TemplatesPoweredBy class="shrink-0 text-[10px] text-dimmed" />
+            </div>
           </template>
 
           <template v-else>
