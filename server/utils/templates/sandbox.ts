@@ -1,4 +1,5 @@
 import { Sandbox } from '@vercel/sandbox'
+import { and, eq, lt, sql } from 'drizzle-orm'
 import type { PreviewEvent, PreviewStep, Template } from '#shared/types'
 import { SERVE_SCRIPT_PATH } from './static-server'
 
@@ -34,10 +35,30 @@ async function stopPreviews(owner: string) {
     .map(sandbox => Sandbox.get({ name: sandbox.name }).then(running => running.stop()).catch(() => {})))
 }
 
-/** Previews run for at most 10 minutes, so the running ones are always among the newest. One page is enough: the API returns at most 50, the cap. */
-async function countRunningPreviews() {
-  const { sandboxes } = await Sandbox.list({ tags: { purpose: PREVIEW_TAGS.purpose }, limit: MAX_RUNNING_PREVIEWS, sortBy: 'createdAt', sortOrder: 'desc' })
-  return sandboxes.filter(sandbox => sandbox.status === 'running' || sandbox.status === 'pending').length
+/**
+ * Takes a preview slot for `owner`, replacing the one it held. A single statement, so parallel starts can't take more than `MAX_RUNNING_PREVIEWS`.
+ * The slot lasts as long as the sandbox can run, plus the time to create it.
+ */
+async function reservePreview(owner: string, id: string) {
+  const now = Math.floor(Date.now() / 1000)
+  const expiresAt = now + PREVIEW_TIMEOUT_MS / 1000 + 60
+  await db.delete(schema.templatePreviews).where(lt(schema.templatePreviews.expiresAt, new Date()))
+  const reserved = await db.all(sql`
+    INSERT INTO template_previews (owner, id, expires_at)
+    SELECT ${owner}, ${id}, ${expiresAt}
+    WHERE (SELECT count(*) FROM template_previews WHERE expires_at > ${now} AND owner != ${owner}) < ${MAX_RUNNING_PREVIEWS}
+    ON CONFLICT (owner) DO UPDATE SET id = excluded.id, expires_at = excluded.expires_at
+    RETURNING id`)
+  return reserved.length > 0
+}
+
+async function holdsPreview(owner: string, id: string) {
+  const [row] = await db.select({ id: schema.templatePreviews.id }).from(schema.templatePreviews).where(eq(schema.templatePreviews.owner, owner))
+  return row?.id === id
+}
+
+export async function releasePreview(owner: string, id: string) {
+  await db.delete(schema.templatePreviews).where(and(eq(schema.templatePreviews.owner, owner), eq(schema.templatePreviews.id, id)))
 }
 
 /**
@@ -50,20 +71,31 @@ export async function startPreview(template: Template, owner: string, onStep?: (
     throw createError({ statusCode: 409, message: 'This template has no live preview right now.' })
   }
 
-  await stopPreviews(owner)
-  if (await countRunningPreviews() >= MAX_RUNNING_PREVIEWS) {
+  const name = `templates-preview-${template.slug}-${crypto.randomUUID().slice(0, 8)}`
+  if (!await reservePreview(owner, name)) {
     throw createError({ statusCode: 503, message: 'Live previews are busy right now. Try again in a few minutes.' })
   }
-  const sandbox = await Sandbox.create({
-    name: `templates-preview-${template.slug}-${crypto.randomUUID().slice(0, 8)}`,
-    source: { type: 'snapshot', snapshotId },
-    ports: [PREVIEW_PORT],
-    timeout: PREVIEW_TIMEOUT_MS,
-    persistent: false,
-    tags: { ...PREVIEW_TAGS, template: template.slug, owner }
-  })
+  let sandbox: Sandbox
+  try {
+    await stopPreviews(owner)
+    sandbox = await Sandbox.create({
+      name,
+      source: { type: 'snapshot', snapshotId },
+      ports: [PREVIEW_PORT],
+      timeout: PREVIEW_TIMEOUT_MS,
+      persistent: false,
+      tags: { ...PREVIEW_TAGS, template: template.slug, owner }
+    })
+  } catch (error) {
+    await releasePreview(owner, name)
+    throw error
+  }
   onStep?.('restored')
   try {
+    // Another start from the same visitor took the slot while this sandbox was created, and its `stopPreviews` may have run too early to see it.
+    if (!await holdsPreview(owner, name)) {
+      throw createError({ statusCode: 409, message: 'Another preview started in this browser.' })
+    }
     await sandbox.runCommand({
       cmd: 'bash',
       args: ['-c', `export PORT=${PREVIEW_PORT} HOST=0.0.0.0; exec bash ${SERVE_SCRIPT_PATH}`],
@@ -78,6 +110,7 @@ export async function startPreview(template: Template, owner: string, onStep?: (
     return { id: sandbox.name, url, sandbox }
   } catch (error) {
     await sandbox.stop().catch(() => {})
+    await releasePreview(owner, name)
     throw error
   }
 }

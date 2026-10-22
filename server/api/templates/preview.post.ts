@@ -25,10 +25,14 @@ export default defineEventHandler(async (event) => {
   // A visitor who leaves before the stream ends never gets the preview: its sandbox stops instead of running for 10 minutes.
   let left = false
   let started: Sandbox | undefined
+  const stop = (sandbox: Sandbox) => {
+    sandbox.stop().catch(() => {})
+    releasePreview(owner, sandbox.name).catch(() => {})
+  }
   const leave = () => {
     if (left) return
     left = true
-    started?.stop().catch(() => {})
+    if (started) stop(started)
   }
   event.node.res.once('close', () => {
     if (!event.node.res.writableFinished) leave()
@@ -42,7 +46,7 @@ export default defineEventHandler(async (event) => {
       try {
         const { sandbox, ...preview } = await startPreview(template, owner, step => send({ type: 'step', step }))
         started = sandbox
-        if (left) return void sandbox.stop().catch(() => {})
+        if (left) return stop(sandbox)
         send({ type: 'ready', ...preview })
         await useNitroApp().hooks.callHook('templates:preview', { template, owner, sandbox, send })
       } catch (error) {
