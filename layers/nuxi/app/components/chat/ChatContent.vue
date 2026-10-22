@@ -3,6 +3,10 @@ import type { ToolUIPart, DynamicToolUIPart, UIMessage } from 'ai'
 import { isFileUIPart, isToolUIPart, isReasoningUIPart, isTextUIPart, getToolName } from 'ai'
 import { isPartStreaming, isToolStreaming } from '@nuxt/ui/utils/ai'
 import {
+  blogCardProps,
+  hostingCardProps,
+  nuxterCardProps,
+  playgroundCardProps,
   getFeedbackOutput,
   getModuleCards,
   getPromptOutput,
@@ -104,12 +108,14 @@ function getUserTextParts(message: UIMessage) {
       <span class="text-xs text-muted">{{ getMessagePagePath(message)!.replace(/^\//, '') }}</span>
     </div>
 
-    <AgentPasteAttachment
-      v-for="(part, index) in getUserFileParts(message)"
-      :key="`${message.id}-file-${index}`"
-      :attachment="filePartToAttachment(part)"
-      variant="preview"
-    />
+    <div v-if="getUserFileParts(message).length" class="flex flex-wrap gap-1.5">
+      <AgentPasteAttachment
+        v-for="(part, index) in getUserFileParts(message)"
+        :key="`${message.id}-file-${index}`"
+        :attachment="filePartToAttachment(part)"
+        variant="preview"
+      />
+    </div>
 
     <p
       v-for="(part, partIndex) in getUserTextParts(message)"
@@ -180,24 +186,32 @@ function getUserTextParts(message: UIMessage) {
       <template v-else-if="isToolUIPart(part) && resolvedToolName(part) === 'show_blog_post'">
         <UChatTool v-bind="getRichToolHeader(part as ToolPart, 'show_blog_post')" />
         <ToolsBlogCard
-          v-if="showCardOutput(part as ToolPart)"
-          v-bind="part.output as BlogCardData"
+          v-if="showCardOutput(part as ToolPart) && blogCardProps(part.output)"
+          v-bind="blogCardProps(part.output)!"
         />
       </template>
 
       <template v-else-if="isToolUIPart(part) && resolvedToolName(part) === 'show_hosting'">
         <UChatTool v-bind="getRichToolHeader(part as ToolPart, 'show_hosting')" />
         <ToolsHostingCard
-          v-if="showCardOutput(part as ToolPart)"
-          v-bind="part.output as HostingCardData"
+          v-if="showCardOutput(part as ToolPart) && hostingCardProps(part.output)"
+          v-bind="hostingCardProps(part.output)!"
+        />
+      </template>
+
+      <template v-else-if="isToolUIPart(part) && resolvedToolName(part) === 'show_nuxter'">
+        <UChatTool v-bind="getRichToolHeader(part as ToolPart, 'show_nuxter')" />
+        <ToolsNuxterCard
+          v-if="showCardOutput(part as ToolPart) && nuxterCardProps(part.output)"
+          v-bind="nuxterCardProps(part.output)!"
         />
       </template>
 
       <template v-else-if="isToolUIPart(part) && resolvedToolName(part) === 'open_playground'">
         <UChatTool v-bind="getRichToolHeader(part as ToolPart, 'open_playground')" />
         <ToolsPlaygroundCard
-          v-if="showPlaygroundCard(part as ToolPart)"
-          v-bind="part.output as PlaygroundCardData"
+          v-if="showPlaygroundCard(part as ToolPart) && playgroundCardProps(part.output)"
+          v-bind="playgroundCardProps(part.output)!"
         />
       </template>
 

@@ -1,12 +1,14 @@
 import type { NavigationItem } from 'comark-content'
-import { docsPathPrefix, EXAMPLES_PATH_PREFIX, type DocVersion } from '#shared/utils/docs'
+import { docsPathPrefix, EXAMPLES_PATH_PREFIX, hasExamples, type DocVersion } from '#shared/utils/docs'
 import { cliInstanceKey, docsInstanceKey } from '#shared/utils/content'
-import { cliDocsPathPrefix } from '#shared/utils/cli'
+import { cliDocsPathPrefix, hasCliDocs } from '#shared/utils/cli'
 
 /**
  * The command reference subtree for `version`.
  */
 export async function cliTree(version: DocVersion): Promise<NavigationItem[]> {
+  if (!hasCliDocs(version)) return []
+
   const content = await getInstanceAtHead(cliInstanceKey(version)).catch(() => null)
   if (!content) return []
 
@@ -31,11 +33,15 @@ export async function examplesTree(): Promise<NavigationItem[]> {
   return examples ? [examples] : []
 }
 
-/** One doc version's tree, with the shared examples and the command reference grafted in. */
-export async function docTree(version: DocVersion, examples: NavigationItem[]): Promise<NavigationItem[]> {
-  const [content, commands] = await Promise.all([
+/**
+ * One doc version's tree, with the shared examples and the command reference grafted in.
+ * `withExamples: false` leaves the examples out, for callers that list them once on their own.
+ */
+export async function docTree(version: DocVersion, { withExamples = hasExamples(version) } = {}): Promise<NavigationItem[]> {
+  const [content, commands, examples] = await Promise.all([
     getInstanceAtHead(docsInstanceKey(version)),
-    cliTree(version)
+    cliTree(version),
+    withExamples ? examplesTree() : []
   ])
   const nav = await content.navigation()
 

@@ -14,7 +14,7 @@ const oauthHandler = defineOAuthGitHubEventHandler({
       )
     })
 
-    const role: 'user' | 'admin' = (await isAuthorizedAdmin(ghUser.login)) ? 'admin' : 'user'
+    const role: 'user' | 'admin' = (await isAuthorizedAdmin(event, ghUser.login)) ? 'admin' : 'user'
 
     if (!user) {
       // New user: reuse `session.id` as the primary key so any anonymous chats
@@ -36,11 +36,10 @@ const oauthHandler = defineOAuthGitHubEventHandler({
       await db.update(schema.chats).set({ userId: user!.id })
         .where(eq(schema.chats.userId, session.id))
 
-      if (user.role !== role) {
-        [user] = await db.update(schema.users).set({ role })
-          .where(eq(schema.users.id, user.id))
-          .returning()
-      }
+      const [updated] = await db.update(schema.users).set({ role, lastSeenAt: new Date() })
+        .where(eq(schema.users.id, user.id))
+        .returning()
+      user = updated
     }
 
     await setUserSession(event, { user })

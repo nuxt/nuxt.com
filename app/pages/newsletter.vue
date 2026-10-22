@@ -33,13 +33,18 @@ defineOgImage('Docs.takumi', {
       :description="pageData.description"
     >
       <template #links>
-        <NewsletterForm class="flex-1 max-w-xs" :label="undefined" :description="undefined" />
+        <NewsletterForm class="w-full max-w-sm" label="" description="" />
       </template>
     </UPageHero>
 
     <UPageBody>
       <UContainer>
-        <UPageCTA v-bind="pageData.cta" />
+        <UPageCTA
+          :headline="pageData.cta.headline"
+          :title="pageData.cta.title"
+          :description="pageData.cta.description"
+          :links="pickLinks(pageData.cta.links)"
+        />
       </UContainer>
     </UPageBody>
   </UPage>

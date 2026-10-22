@@ -9,8 +9,24 @@ import { dottedFrontmatter } from './dotted-frontmatter'
 import { docsLinks } from './docs-links'
 import { cliDocs } from './cli-docs'
 import { configDocs } from './config-docs'
+import { sanitizeData } from './sanitize-data'
+import type { CliDocVersion } from '../../../../shared/utils/cli'
 import type { DocVersion } from '../../../../shared/utils/docs'
 import type { ContentInstanceKey } from '../../../../shared/utils/content'
+
+/** One policy for Markdown (`security()`) and every file's data (`sanitizeData()`). */
+export const SECURITY_OPTIONS = {
+  blockedTags: ['script', 'iframe', 'embed', 'form', 'base', 'meta', 'link', 'style'],
+  allowDataImages: false
+}
+
+/** Sanitizes Markdown bodies and their frontmatter, on a full parse. */
+const securityPlugin = security(SECURITY_OPTIONS)
+
+/**
+ * Sanitizes every file's data (YAML not handled by `security()`)
+ */
+export const sanitizePlugin = sanitizeData(SECURITY_OPTIONS)
 
 /**
  * The comark plugin chain every instance parses markdown with.
@@ -20,10 +36,7 @@ export const comarkPlugins = [
   highlightPlugin,
   toc({ depth: 3 }),
   emoji(),
-  security({
-    blockedTags: ['script', 'iframe', 'embed', 'form', 'base', 'meta', 'link', 'style'],
-    allowDataImages: false
-  })
+  securityPlugin
 ]
 
 /** Per-instance plugins, on top of the shared `markdown()`/`yaml()`/`json()` chain. */
@@ -31,7 +44,7 @@ export function instancePlugins(key: ContentInstanceKey): ContentPlugin[] {
   if (key === 'site') return [markdownFields()]
   if (key === 'examples') return [dottedFrontmatter()]
   if (key.startsWith('cli:')) {
-    const version = key.slice('cli:'.length) as DocVersion
+    const version = key.slice('cli:'.length) as CliDocVersion
     // Command pages are written with the same unversioned `/docs/*` links as the docs.
     return [dottedFrontmatter(), docsLinks(version), cliDocs(version)]
   }

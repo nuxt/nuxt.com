@@ -1,3 +1,4 @@
+import { withLeadingSlash } from 'ufo'
 import type { ContentInstanceKey } from './content'
 import type { DocVersion } from './docs'
 
@@ -91,9 +92,10 @@ export function parsePullPath(url: string): { target: PullTarget, path: string }
   const target = match && parsePullTarget(match[1], match[2])
   if (!match || !target) return null
 
-  const rest = url.slice(match[0].length)
+  // A path starting with `//` or `/\` is protocol-relative, so `/pull/nuxt/1//evil.com` would leave the site.
+  const rest = url.slice(match[0].length).replace(/^[/\\]+/, '')
 
-  return { target, path: rest.startsWith('/') ? rest : `/${rest}` }
+  return { target, path: withLeadingSlash(rest) }
 }
 
 /**
@@ -109,7 +111,6 @@ export const PULL_CONTENT_PAGES = [
   '/enterprise/agencies/**',
   '/enterprise/jobs',
   '/enterprise/sponsors',
-  '/enterprise/support',
   '/evals',
   '/modules',
   '/newsletter',

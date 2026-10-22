@@ -1,39 +1,30 @@
 import { defineHook } from 'eve/hooks'
-import { appOrigin, chatIdFromContinuationToken, internalHeaders } from '../lib/internal-api.js'
+import { resolveContext } from '../lib/identity/context.js'
+import { consumeDailyQuota } from '../lib/rate-limit.js'
+import { ANONYMOUS_IP_DAILY_LIMIT } from '../../shared/utils/rate-limit.js'
 
 export default defineHook({
   events: {
     async 'turn.started'(_event, ctx) {
-      // This quota exists to throttle anonymous abuse of the public web chat
-      // widget (see `ensureRateLimitPrincipalId`: "browser-facing routes
-      // only"). Slack/Discord are trusted, allowlisted team channels, and a
-      // single request there can fan out into many subagent turns that each
-      // fire `turn.started` under the same principal — so metering them here
-      // burns through the daily quota almost instantly for legitimate use.
-      // Only meter sessions that map to a real web chat id, same check
-      // `chat-title.ts` uses to scope itself to the web chat widget.
-      if (!chatIdFromContinuationToken(ctx.channel.continuationToken)) return
+      // Web chat quota. Discord public channels are metered before dispatch
+      // (`channels/discord.ts`) so the user gets a reply; Slack and admin
+      // surfaces are unmetered. Subagent turns never count: one message can fan
+      // out into many of them under the same principal.
+      if (ctx.session.parent) return
+      const auth = ctx.session.auth.current
+      if (resolveContext(auth).surface !== 'web' || !auth?.principalId) return
 
-      const principalId = ctx.session.auth.current?.principalId
-      if (!principalId) return
-
-      // `HookContext` is session/agent/channel only — there is no inbound
-      // request here, so the browser cookie cannot be forwarded. The consume
-      // route accepts the bearer secret alone for exactly this caller.
-      const response = await fetch(`${appOrigin()}/api/internal/agent/rate-limit/consume`, {
-        method: 'POST',
-        headers: internalHeaders(),
-        body: JSON.stringify({ userId: principalId })
-      })
-
-      if (response.status === 429) {
-        const data = await response.json().catch(() => ({})) as { message?: string }
-        throw new Error(data.message ?? 'Daily message limit reached.')
+      // Throwing from a hook doesn't stop the turn; `ctx.cancel()` does, before the
+      // model runs. The web client refetches its usage after each turn and shows the limit.
+      if (await consumeDailyQuota(auth.principalId) === 'limited') {
+        ctx.cancel()
+        return
       }
 
-      if (!response.ok) {
-        const text = await response.text()
-        throw new Error(`Rate limit check failed: ${text}`)
+      // A fresh cookie is a fresh anonymous id, so anonymous visitors also share a per-IP budget.
+      const ipKey = auth.principalType === 'anonymous' ? auth.attributes?.ip_key : undefined
+      if (typeof ipKey === 'string' && await consumeDailyQuota(ipKey, ANONYMOUS_IP_DAILY_LIMIT) === 'limited') {
+        ctx.cancel()
       }
     }
   }
