@@ -6,6 +6,7 @@ import type { TemplateCheckPhase, TemplateCheckStep, TemplateToCheck } from '../
 import type { CheckReport } from '../utils/templates/check-report'
 import { PREVIEW_BRIDGE_PLUGIN } from '../utils/templates/preview-bridge'
 import { SERVE_SCRIPT_PATH, STATIC_SERVER, STATIC_SERVER_PATH } from '../utils/templates/static-server'
+import { TEMPLATE_SNAPSHOT_TTL_MS } from '../../shared/utils/templates'
 
 /**
  * Installs, builds and starts templates in a clean Vercel Sandbox, the way `create nuxt` gets them, then opens them in Chromium.
@@ -253,7 +254,13 @@ async function createBrowser() {
 
 async function createBrowserSandbox() {
   'use step'
-  const sandbox = await Sandbox.create({ timeout: 45 * 60 * 1000, persistent: false, resources: { vcpus: 4 }, tags: { app: 'nuxt-com', purpose: 'templates-check-browser' } })
+  const sandbox = await Sandbox.create({
+    name: `templates-check-browser-${crypto.randomUUID().slice(0, 8)}`,
+    timeout: 45 * 60 * 1000,
+    persistent: false,
+    resources: { vcpus: 4 },
+    tags: { app: 'nuxt-com', purpose: 'templates-check-browser' }
+  })
   await sandbox.writeFiles([{ path: `${BROWSER_DIR}/visit.mjs`, content: VISIT_SCRIPT }])
   return sandbox.name
 }
@@ -263,6 +270,8 @@ async function createCheckSandbox(template: TemplateToCheck) {
   const [, repoName, ...subdir] = template.source ? template.source.replace(/^gh:/, '').split('/') : template.repo.split('/')
   const clone = `/vercel/${repoName}${subdir.length ? `/${subdir.join('/')}` : ''}`
   const sandbox = await Sandbox.create({
+    // Snapshots can't be named: the dashboard and `Snapshot.list({ name })` identify them by this sandbox.
+    name: `templates-check-${template.slug}-${crypto.randomUUID().slice(0, 8)}`,
     source: { type: 'git', url: `https://github.com/${template.repo}.git`, depth: 1, ...(template.branch ? { revision: template.branch } : {}) },
     ports: [PORT],
     timeout: 45 * 60 * 1000,
@@ -363,10 +372,10 @@ async function browserTest(browser: Sandbox, url: string) {
   throw new StartError([details, ...errors.slice(0, 3)].join('\n'))
 }
 
-/** Never expires: the next passing check replaces it. Stops the sandbox. */
+/** The next passing check replaces it, well before it expires. Stops the sandbox. */
 async function snapshotSandbox(name: string) {
   'use step'
-  const snapshot = await (await getSandbox(name)).snapshot({ expiration: 0 })
+  const snapshot = await (await getSandbox(name)).snapshot({ expiration: TEMPLATE_SNAPSHOT_TTL_MS })
   return snapshot.snapshotId
 }
 

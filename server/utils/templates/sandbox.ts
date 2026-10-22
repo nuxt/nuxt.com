@@ -55,6 +55,7 @@ export async function startPreview(template: Template, owner: string, onStep?: (
     throw createError({ statusCode: 503, message: 'Live previews are busy right now. Try again in a few minutes.' })
   }
   const sandbox = await Sandbox.create({
+    name: `templates-preview-${template.slug}-${crypto.randomUUID().slice(0, 8)}`,
     source: { type: 'snapshot', snapshotId },
     ports: [PREVIEW_PORT],
     timeout: PREVIEW_TIMEOUT_MS,

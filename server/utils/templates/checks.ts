@@ -48,12 +48,14 @@ export async function listTemplateChecks() {
   return db.select().from(schema.templateChecks)
 }
 
-/** The snapshot of the last check, only while it passes: a failing template keeps its snapshot but has no live preview. */
+/** The snapshot of the last check, only while it passes and hasn't expired. A failing template keeps its snapshot until it expires, but has no live preview. */
 export async function getPassingSnapshotId(slug: string) {
-  const [row] = await db.select({ status: schema.templateChecks.status, snapshotId: schema.templateChecks.snapshotId })
+  const [row] = await db.select({ status: schema.templateChecks.status, snapshotId: schema.templateChecks.snapshotId, passedAt: schema.templateChecks.passedAt })
     .from(schema.templateChecks)
     .where(eq(schema.templateChecks.slug, slug))
-  return row?.status === 'passed' ? row.snapshotId ?? undefined : undefined
+  // An hour short of the expiry, so a preview never restores a snapshot that expires while it boots.
+  const fresh = !!row?.passedAt && Date.now() - row.passedAt.getTime() < TEMPLATE_SNAPSHOT_TTL_MS - 60 * 60 * 1000
+  return row?.status === 'passed' && fresh ? row.snapshotId ?? undefined : undefined
 }
 
 /** Templates with a public repository: the ones the check can install. */

@@ -29,6 +29,9 @@ export const SITE_URL = 'https://nuxt.com'
 /** How long a live preview sandbox runs before Vercel stops it. */
 export const PREVIEW_TIMEOUT_MS = 10 * 60 * 1000
 
+/** Each passing daily check replaces its template's snapshot. The expiry removes the ones nothing replaces: removed or failing templates, lost reports, and runs from local dev or preview deployments. */
+export const TEMPLATE_SNAPSHOT_TTL_MS = 3 * 24 * 60 * 60 * 1000
+
 const MODULE_LABELS: Record<string, string> = {
   '@nuxt/ui': 'Nuxt UI',
   '@nuxt/content': 'Content',
