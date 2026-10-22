@@ -253,7 +253,13 @@ async function createBrowser() {
 
 async function createBrowserSandbox() {
   'use step'
-  const sandbox = await Sandbox.create({ timeout: 45 * 60 * 1000, persistent: false, resources: { vcpus: 4 }, tags: { app: 'nuxt-com', purpose: 'templates-check-browser' } })
+  const sandbox = await Sandbox.create({
+    name: `templates-check-browser-${crypto.randomUUID().slice(0, 8)}`,
+    timeout: 45 * 60 * 1000,
+    persistent: false,
+    resources: { vcpus: 4 },
+    tags: { app: 'nuxt-com', purpose: 'templates-check-browser' }
+  })
   await sandbox.writeFiles([{ path: `${BROWSER_DIR}/visit.mjs`, content: VISIT_SCRIPT }])
   return sandbox.name
 }
@@ -263,6 +269,8 @@ async function createCheckSandbox(template: TemplateToCheck) {
   const [, repoName, ...subdir] = template.source ? template.source.replace(/^gh:/, '').split('/') : template.repo.split('/')
   const clone = `/vercel/${repoName}${subdir.length ? `/${subdir.join('/')}` : ''}`
   const sandbox = await Sandbox.create({
+    // Snapshots can't be named: the dashboard and `Snapshot.list({ name })` identify them by this sandbox.
+    name: `templates-check-${template.slug}-${crypto.randomUUID().slice(0, 8)}`,
     source: { type: 'git', url: `https://github.com/${template.repo}.git`, depth: 1, ...(template.branch ? { revision: template.branch } : {}) },
     ports: [PORT],
     timeout: 45 * 60 * 1000,
