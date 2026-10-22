@@ -138,9 +138,10 @@ const stats = computed(() => {
       : {
           url: nuxterGithubSearchUrl(username, metric, period.value, new Date(today.value)),
           hover: METRICS[metric].hover,
+          // The link covers the card: its name also says the count.
           label: metric === 'comments'
-            ? `Issues and pull requests ${username} commented on, on GitHub`
-            : `${capitalize(METRICS[metric].many)} of ${username} ${periodPhrase(period.value)}, on GitHub`
+            ? `${format(n.comments)} ${metricLabel(metric, n.comments)} ${periodPhrase(period.value)}: issues and pull requests ${username} commented on, on GitHub`
+            : `${format(metricValue(n, metric))} ${metricLabel(metric, metricValue(n, metric))} of ${username} ${periodPhrase(period.value)}, on GitHub`
         }
   }))
 })
