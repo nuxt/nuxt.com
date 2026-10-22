@@ -45,8 +45,10 @@ export default defineEventHandler(async (event) => {
         if (left) return void sandbox.stop().catch(() => {})
         send({ type: 'ready', ...preview })
         await useNitroApp().hooks.callHook('templates:preview', { template, owner, sandbox, send })
-      } catch (error: any) {
-        send({ type: 'error', message: error?.message || 'The preview could not start.' })
+      } catch (error) {
+        // Only errors `startPreview` raises on purpose reach visitors: upstream ones can carry request or account details.
+        if (!isError(error)) console.error('[templates] preview failed', error)
+        send({ type: 'error', message: isError(error) && error.message ? error.message : 'The preview could not start.' })
       } finally {
         if (!left) controller.close()
       }
