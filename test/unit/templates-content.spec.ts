@@ -27,6 +27,8 @@ function isHttps(value: string) {
 describe('template content', () => {
   it.each(templates)('$file only uses safe values', ({ data }) => {
     expect(data.slug).toMatch(/^[a-z0-9]+(?:-[a-z0-9]+)*$/)
+    if (data.category !== undefined) expect(['saas', 'dashboard', 'ai', 'docs', 'content', 'landing', 'portfolio', 'ecommerce', 'app']).toContain(data.category)
+    if (data.official !== undefined) expect(typeof data.official).toBe('boolean')
     if (data.template !== undefined) expect(data.template).toMatch(/^[a-z0-9]+(?:-[a-z0-9]+)*$/)
     if (data.repo !== undefined) expect(segments(data.repo, 2)).toBe(true)
     if (data.branch !== undefined) expect(segments(data.branch)).toBe(true)
