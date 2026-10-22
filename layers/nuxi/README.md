@@ -160,6 +160,17 @@ Summarizes `#firehose-nuxt` (Octolens social mentions) and posts highlights to t
 
 The Nuxi Slack bot must be invited to `#firehose-nuxt`. Required Connect scopes: `channels:read`, `channels:history` (plus `groups:read`, `groups:history` for private channels).
 
+### Showcase check
+
+Fetches the homepage of every site on `/showcase` and flags the ones that no longer serve Nuxt, so they can be removed or updated in `content/showcase.yml`.
+
+- Schedule: `agent/schedules/showcase-check.ts` — Monday 6:00 UTC
+- Skill: `agent/skills/showcase-check/SKILL.md`
+- Tool: `check_showcase_sites` (`agent/tools/check_showcase_sites.ts`, admin only) — also answers ad-hoc questions such as "is Upwork still on Nuxt?"
+- Preview trigger: `POST /eve/v1/ops/showcase-check/trigger`
+
+The site list comes from `POST /api/internal/content` (`kind: "showcase"`), so the check always matches what is live. Detection lives in `agent/lib/showcase/check.ts`: any Nuxt marker (`__NUXT_DATA__`, `window.__NUXT__`, `#__nuxt`, `/_nuxt/`, `data-n-head`) confirms a site. A site is only reported as switched when it served a real page without one. Sites behind bot protection (Cloudflare, Akamai, Vercel challenge) often reject requests from Vercel's datacenter IPs, and which ones do changes from run to run; they are listed as "couldn't check", never as switched.
+
 ### Discord mirror
 
 Set `discord.digestChannel` (raw Discord channel id) in Global Config to also post the weekly digest and firehose summary to a Discord channel — distinct from `discord.channels`, which only gates live @mentions. This reuses the Slack-generated text (no second agent run): `agent/lib/discord/digest-mirror.ts` reads the finished Slack session's final message, `agent/lib/discord/format.ts` converts Slack-only syntax (`<url|label>` links, `:nuxter:`-style emoji, bare `@names`) to Discord Markdown, then posts via the unwrapped Discord adapter (so conversion runs once). Conversion is best-effort — an emoji shortcode outside the known set passes through unchanged. Unset disables the mirror; a mirroring failure is logged and never affects the Slack post. The bot needs **View Channel** + **Send Messages** in the target channel.
@@ -171,6 +182,7 @@ With the dev server running (`pnpm dev` from repo root — Eve is bundled via th
 ```sh
 curl -X POST "http://localhost:3000/eve/v1/dev/schedules/weekly-digest"
 curl -X POST "http://localhost:3000/eve/v1/dev/schedules/firehose-summary"
+curl -X POST "http://localhost:3000/eve/v1/dev/schedules/showcase-check"
 # -> { "scheduleId": "...", "sessionIds": ["..."] }
 ```
 
@@ -181,6 +193,9 @@ curl -X POST "https://<preview-url>/eve/v1/ops/weekly-digest/trigger?sinceDays=7
   -H "Authorization: Bearer $INTERNAL_API_SECRET"
 
 curl -X POST "https://<preview-url>/eve/v1/ops/firehose-summary/trigger?sinceHours=24" \
+  -H "Authorization: Bearer $INTERNAL_API_SECRET"
+
+curl -X POST "https://<preview-url>/eve/v1/ops/showcase-check/trigger" \
   -H "Authorization: Bearer $INTERNAL_API_SECRET"
 ```
 
