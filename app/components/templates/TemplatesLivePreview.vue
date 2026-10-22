@@ -241,7 +241,7 @@ onBeforeUnmount(stop)
       leave-to-class="opacity-0 scale-[0.98]"
     >
       <div v-if="status !== 'live'" class="absolute inset-0 flex items-center justify-center p-6">
-        <div class="w-full max-w-xs rounded-xl bg-default/80 backdrop-blur-xl ring ring-default shadow-xl shadow-black/10 p-3.5 flex flex-col gap-2.5" role="status" aria-live="polite">
+        <div class="w-full rounded-xl bg-default/80 backdrop-blur-xl ring ring-default shadow-xl shadow-black/10 p-3.5 flex flex-col gap-2.5" :class="status === 'failed' ? 'max-w-sm' : 'max-w-xs'" role="status" aria-live="polite">
           <template v-if="status === 'booting' || status === 'mounting'">
             <div class="flex items-baseline justify-between gap-3">
               <p class="text-sm font-medium text-highlighted truncate">
@@ -265,23 +265,21 @@ onBeforeUnmount(stop)
             </div>
           </template>
 
-          <template v-else>
-            <div class="flex items-start gap-2.5">
-              <UIcon name="i-lucide-circle-x" class="size-4 mt-0.5 shrink-0 text-error" />
-              <p class="text-sm text-muted text-pretty">
-                {{ error }}
-              </p>
-            </div>
+          <div v-else class="flex items-center gap-3">
+            <UIcon name="i-lucide-circle-x" class="size-4 shrink-0 text-error" />
+            <p class="flex-1 text-sm text-muted text-pretty">
+              {{ error }}
+            </p>
             <UButton
               label="Try Again"
               color="neutral"
               variant="subtle"
               size="sm"
               icon="i-lucide-rotate-ccw"
-              class="self-start ring-default"
+              class="shrink-0 ring-default"
               @click="start"
             />
-          </template>
+          </div>
         </div>
       </div>
     </Transition>
