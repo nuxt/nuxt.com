@@ -13,17 +13,23 @@ test.describe('Modules Page', () => {
   })
 
   test('has search/filter functionality', async ({ page, goto }) => {
-    await goto('/modules')
+    await goto('/modules', { waitUntil: 'hydration' })
 
     const searchInput = page.getByRole('textbox').first()
     await expect(searchInput).toBeVisible()
     await expect(searchInput).toBeEditable()
 
-    // Filtering is client-side from the in-memory list.
-    await searchInput.fill('nonexistent-module-xyz')
+    // Filtering is client-side from the in-memory list: typing only mirrors the query in the URL.
+    const payloadRequests: string[] = []
+    page.on('request', (request) => {
+      if (request.url().includes('_payload.json')) payloadRequests.push(request.url())
+    })
+    await searchInput.pressSequentially('nonexistent-module-xyz')
 
     const moduleLinks = page.locator('a[href^="/modules/"]')
     await expect(moduleLinks).toHaveCount(0)
+    await expect(page).toHaveURL(/[?&]q=nonexistent-module-xyz/)
+    expect(payloadRequests).toEqual([])
 
     await searchInput.fill('')
     await expect.poll(async () => moduleLinks.count()).toBeGreaterThan(0)

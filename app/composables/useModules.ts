@@ -156,12 +156,7 @@ const orders: Filter[] = [
   { key: 'asc', label: 'Asc', icon: 'i-lucide-arrow-up-wide-narrow' }
 ]
 
-function queryValue(value: unknown) {
-  return typeof value === 'string' ? value : ''
-}
-
 export const useModules = () => {
-  const route = useRoute()
   const { data, execute } = useFetch('/api/v1/modules', {
     immediate: false,
     default: () => ({
@@ -188,47 +183,11 @@ export const useModules = () => {
     return execute()
   }
 
-  // Input → refs → filteredModules. URL is only a mirror (replaceState), not part of the filter path.
-  const q = ref(queryValue(route.query.q))
-  const category = ref(queryValue(route.query.category))
-  const sortBy = ref(queryValue(route.query.sortBy))
-  const orderBy = ref(queryValue(route.query.orderBy))
-
-  function reflectFiltersInUrl() {
-    if (!import.meta.client) return
-
-    const params = new URLSearchParams()
-    if (q.value) params.set('q', q.value)
-    if (category.value) params.set('category', category.value)
-    if (sortBy.value) params.set('sortBy', sortBy.value)
-    if (orderBy.value) params.set('orderBy', orderBy.value)
-
-    const search = params.toString()
-    const next = `${window.location.pathname}${search ? `?${search}` : ''}${window.location.hash}`
-    const current = `${window.location.pathname}${window.location.search}${window.location.hash}`
-    if (next === current) return
-
-    window.history.replaceState(window.history.state, '', next)
-  }
-
-  watch([q, category, sortBy, orderBy], reflectFiltersInUrl)
-
-  watch(
-    () => [route.query.q, route.query.category, route.query.sortBy, route.query.orderBy] as const,
-    ([nextQ, nextCategory, nextSort, nextOrder]) => {
-      const search = queryValue(nextQ)
-      if (q.value !== search) q.value = search
-
-      const nextCategoryValue = queryValue(nextCategory)
-      if (category.value !== nextCategoryValue) category.value = nextCategoryValue
-
-      const nextSortValue = queryValue(nextSort)
-      if (sortBy.value !== nextSortValue) sortBy.value = nextSortValue
-
-      const nextOrderValue = queryValue(nextOrder)
-      if (orderBy.value !== nextOrderValue) orderBy.value = nextOrderValue
-    }
-  )
+  // Filters are local state: `/modules` syncs them with the URL without navigating.
+  const q = ref('')
+  const category = ref('')
+  const sortBy = ref('')
+  const orderBy = ref('')
 
   // Data
 
@@ -240,8 +199,11 @@ export const useModules = () => {
           label: name,
           active: category.value === name,
           to: { name: 'modules', query: name === category.value ? undefined : { category: name }, state: { smooth: '#smooth' } },
+          // Clicks filter in memory, so prefetching each category's `_payload.json` is wasted.
+          prefetch: false,
           icon: categoriesMap[name]!.icon,
-          click: (e: Event) => {
+          onClick: (e: MouseEvent) => {
+            if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return
             e.preventDefault()
             category.value = category.value === name ? '' : name
           }

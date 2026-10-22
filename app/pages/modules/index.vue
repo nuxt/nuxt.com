@@ -21,11 +21,33 @@ const input = useTemplateRef('input')
 const modulesToAdd = ref<Module[]>([])
 const el = useTemplateRef<HTMLElement>('el')
 
+const route = useRoute()
+const router = useRouter()
 const { fetchList, filteredModules, q, categories, modules, stats, selectedSort, selectedOrder, selectedCategory, sorts, category, sortBy, orderBy } = useModules()
+
+const filters = { q, category, sortBy, orderBy }
+
+// A navigation to `/modules?…` (shared link, back/forward, a link elsewhere) sets the filters.
+watch(() => route.query, (query) => {
+  for (const [key, filter] of Object.entries(filters)) {
+    const value = query[key]
+    filter.value = typeof value === 'string' ? value : ''
+  }
+}, { immediate: true })
+
+// Filtering happens in memory, so only mirror the filters in the URL: a router navigation
+// would fetch `_payload.json` for this ISR route on every keystroke.
+watch(Object.values(filters), () => {
+  const query = Object.fromEntries(Object.entries(filters).map(([key, filter]) => [key, filter.value || undefined]))
+  const { fullPath, href } = router.resolve({ path: route.path, query, hash: route.hash })
+  // vue-router writes `state.current` back to the URL on the next push, so keep it in sync.
+  history.replaceState({ ...history.state, current: fullPath }, '', href)
+})
 
 function filterKey(param: string | { key: string | number }) {
   return typeof param === 'string' ? param : String(param?.key ?? '')
 }
+
 const { health } = useModuleHealth()
 const { track } = useAnalytics()
 const { openInCursor, openInClaudeCode, openInVSCode } = useIdeDeeplink()
