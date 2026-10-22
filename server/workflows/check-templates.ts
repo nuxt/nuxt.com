@@ -6,6 +6,7 @@ import type { TemplateCheckPhase, TemplateCheckStep, TemplateToCheck } from '../
 import type { CheckReport } from '../utils/templates/check-report'
 import { PREVIEW_BRIDGE_PLUGIN } from '../utils/templates/preview-bridge'
 import { SERVE_SCRIPT_PATH, STATIC_SERVER, STATIC_SERVER_PATH } from '../utils/templates/static-server'
+import { TEMPLATE_SNAPSHOT_TTL_MS } from '../../shared/utils/templates'
 
 /**
  * Installs, builds and starts templates in a clean Vercel Sandbox, the way `create nuxt` gets them, then opens them in Chromium.
@@ -371,10 +372,10 @@ async function browserTest(browser: Sandbox, url: string) {
   throw new StartError([details, ...errors.slice(0, 3)].join('\n'))
 }
 
-/** Never expires: the next passing check replaces it. Stops the sandbox. */
+/** The next passing check replaces it, well before it expires. Stops the sandbox. */
 async function snapshotSandbox(name: string) {
   'use step'
-  const snapshot = await (await getSandbox(name)).snapshot({ expiration: 0 })
+  const snapshot = await (await getSandbox(name)).snapshot({ expiration: TEMPLATE_SNAPSHOT_TTL_MS })
   return snapshot.snapshotId
 }
 
