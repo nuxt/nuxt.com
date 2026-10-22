@@ -238,7 +238,8 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <div ref="container" class="nuxters-globe relative size-full isolate" :data-ready="ready || undefined">
+  <div ref="container" class="nuxters-globe relative size-full isolate overflow-hidden" :data-ready="ready || undefined">
+    <!-- Clipped: a hidden marker keeps its last position, out of the frame it would widen the page -->
     <canvas
       v-show="!failed"
       ref="canvas"
