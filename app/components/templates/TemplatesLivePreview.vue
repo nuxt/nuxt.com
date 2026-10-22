@@ -264,6 +264,7 @@ onBeforeUnmount(stop)
                 <span v-if="doneAt[step.key]" class="font-mono text-muted tabular-nums">{{ seconds(doneAt[step.key]!) }}s</span>
               </li>
             </ol>
+            <TemplatesPoweredBy class="mt-1 text-[10px] text-dimmed" />
           </template>
 
           <template v-else>
