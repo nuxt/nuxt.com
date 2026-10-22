@@ -105,7 +105,7 @@
   "devDependencies": {
     "@nuxt/devtools": "^3.4.3",
     "@nuxt/eslint": "^1.17.0",
-    "@nuxt/modules": "^0.6.0-fde89f",
+    "@nuxt/modules": "0.6.0-db22b9",
     "@nuxt/test-utils": "^4.3.4",
     "@nuxtjs/robots": "^6.2.4",
     "@nuxtjs/sitemap": "^8.6.2",

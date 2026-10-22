@@ -58,6 +58,15 @@ export function moduleCategorySeo(category: string, count: number) {
   return { title: `Nuxt modules for ${category}`, description: `Discover ${count} Nuxt modules by the community for ${categoriesMap[category]!.purpose}.` }
 }
 
+export function moduleMatchesSearch(module: Module, query: RegExp) {
+  return [module.name, module.npm, module.category, module.description, module.repo].some(value => typeof value === 'string' && value.search(query) !== -1)
+}
+
+/** First provider whose label matches, so searching "cloudinary" finds Nuxt Image. */
+export function findModuleProvider(module: Module, query: RegExp) {
+  return module.providers?.find(provider => provider.label.search(query) !== -1)
+}
+
 export type ModulePromptInfo = Pick<Module, 'name' | 'npm' | 'description' | 'website' | 'repo'>
 
 export function buildModuleInstallCommand(names: string | string[]): string {
@@ -242,7 +251,7 @@ export const useModules = () => {
           }
         }
         const queryRegExp = searchTextRegExp(q.value as string)
-        if (q.value && !['name', 'npm', 'category', 'description', 'repo'].map(field => module[field as keyof Module]).filter(Boolean).some(value => typeof value === 'string' && value.search(queryRegExp) !== -1)) {
+        if (q.value && !moduleMatchesSearch(module, queryRegExp) && !findModuleProvider(module, queryRegExp)) {
           return false
         }
 

@@ -105,7 +105,8 @@ export default defineCachedEventHandler(async (event) => {
     modules
   }
 }, {
-  name: 'modules',
+  // Bumped when the payload changes: `modules` entries predate `providers`.
+  name: 'modules-list:v2',
   swr: true,
   getKey(event) {
     const query = getQuery(event)
