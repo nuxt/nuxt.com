@@ -47,7 +47,10 @@ const FRAMEWORK_HINTS: Array<[name: string, pattern: RegExp]> = [
 const GENERATOR_META = /<meta[^>]+name="generator"[^>]+content="([^"]+)"/i
 
 /** Bot-protection interstitials served with a 2xx status. */
-const CHALLENGE_PAGE = /<title>\s*(?:Just a moment|Access Denied|Attention Required|Request Rejected|Pardon Our Interruption)|cf-chl-|_Incapsula_Resource|px-captcha|\/_sec\/cp_challenge/i
+const CHALLENGE_PAGE = /<title[^>]*>\s*(?:Just a moment|Access Denied|Attention Required|Request Rejected|Pardon Our Interruption|Verify you are (?:a )?human)|cf-chl-|_Incapsula_Resource|px-captcha|\/_sec\/cp_challenge/i
+
+const HTML_CONTENT_TYPE = /^\s*(?:text\/html|application\/xhtml\+xml)\b/i
+const HTML_DOCUMENT = /<(?:!doctype\s+html|html|head|body)\b/i
 
 const MIN_PAGE_BYTES = 512
 
@@ -66,7 +69,7 @@ function detectFramework(html: string): string | undefined {
  * Blocked, failed and interstitial responses are `unverified`: bot protection on datacenter
  * IPs changes from one run to the next, and that says nothing about the stack.
  */
-export function classifyShowcaseResponse({ status, html }: { status: number, html: string }): Pick<ShowcaseCheck, 'verdict' | 'framework' | 'reason'> {
+export function classifyShowcaseResponse({ status, html, contentType }: { status: number, html: string, contentType?: string }): Pick<ShowcaseCheck, 'verdict' | 'framework' | 'reason'> {
   if (NUXT_MARKERS.some(pattern => pattern.test(html))) {
     return { verdict: 'nuxt' }
   }
@@ -75,6 +78,9 @@ export function classifyShowcaseResponse({ status, html }: { status: number, htm
   }
   if (CHALLENGE_PAGE.test(html)) {
     return { verdict: 'unverified', reason: 'bot challenge page' }
+  }
+  if ((contentType && !HTML_CONTENT_TYPE.test(contentType)) || !HTML_DOCUMENT.test(html)) {
+    return { verdict: 'unverified', reason: `not an HTML page${contentType ? ` (${contentType.split(';')[0]!.trim()})` : ''}` }
   }
   if (html.length < MIN_PAGE_BYTES) {
     return { verdict: 'unverified', reason: 'empty page' }
@@ -106,9 +112,10 @@ export async function checkShowcaseWebsite(website: ShowcaseWebsite, signal?: Ab
       ...base,
       status: response.status,
       ...(redirectedTo ? { redirectedTo } : {}),
-      ...classifyShowcaseResponse({ status: response.status, html })
+      ...classifyShowcaseResponse({ status: response.status, html, contentType: response.headers.get('content-type') ?? undefined })
     }
   } catch (error) {
+    if (signal?.aborted) throw signal.reason ?? error
     const cause = (error as { cause?: { code?: string } }).cause?.code
     const reason = cause ?? (error instanceof Error && error.name === 'TimeoutError' ? 'timeout' : String(error))
     return { ...base, verdict: 'unverified', reason }
@@ -121,6 +128,7 @@ export async function checkShowcaseWebsites(websites: ShowcaseWebsite[], signal?
 
   await Promise.all(Array.from({ length: Math.min(CONCURRENCY, websites.length) }, async () => {
     while (next < websites.length) {
+      signal?.throwIfAborted()
       const index = next++
       results[index] = await checkShowcaseWebsite(websites[index]!, signal)
     }

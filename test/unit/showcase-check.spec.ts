@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import { checkShowcaseWebsite, classifyShowcaseResponse } from '../../layers/nuxi/agent/lib/showcase/check'
+import { checkShowcaseWebsite, checkShowcaseWebsites, classifyShowcaseResponse } from '../../layers/nuxi/agent/lib/showcase/check'
 
 const filler = `<p>${'Lorem ipsum dolor sit amet. '.repeat(40)}</p>`
 
@@ -58,6 +58,19 @@ describe('classifyShowcaseResponse', () => {
     expect(classifyShowcaseResponse({ status: 200, html })).toEqual({ verdict: 'unverified', reason: 'bot challenge page' })
   })
 
+  it('treats a full-size "Verify you are human" page served with a 200 as unverified', () => {
+    const html = page('<title>Verify you are human</title>')
+    expect(html.length).toBeGreaterThan(512)
+    expect(classifyShowcaseResponse({ status: 200, html })).toEqual({ verdict: 'unverified', reason: 'bot challenge page' })
+  })
+
+  it('treats a non-HTML response as unverified', () => {
+    const json = JSON.stringify({ items: filler })
+    expect(classifyShowcaseResponse({ status: 200, html: json, contentType: 'application/json; charset=utf-8' })).toEqual({ verdict: 'unverified', reason: 'not an HTML page (application/json)' })
+    expect(classifyShowcaseResponse({ status: 200, html: filler.replace(/<\/?p>/g, '') })).toEqual({ verdict: 'unverified', reason: 'not an HTML page' })
+    expect(classifyShowcaseResponse({ status: 200, html: page(''), contentType: 'text/plain' })).toEqual({ verdict: 'unverified', reason: 'not an HTML page (text/plain)' })
+  })
+
   it('treats a near-empty page as unverified', () => {
     expect(classifyShowcaseResponse({ status: 200, html: '<html><body></body></html>' })).toEqual({ verdict: 'unverified', reason: 'empty page' })
   })
@@ -72,6 +85,7 @@ describe('checkShowcaseWebsite', () => {
     vi.stubGlobal('fetch', vi.fn(async () => ({
       status: 200,
       url: 'https://directus.com/',
+      headers: new Headers({ 'content-type': 'text/html; charset=utf-8' }),
       text: async () => page('<meta name="generator" content="Framer 4c7be26">')
     })))
 
@@ -89,6 +103,7 @@ describe('checkShowcaseWebsite', () => {
     vi.stubGlobal('fetch', vi.fn(async () => ({
       status: 200,
       url: 'https://www.upwork.com/',
+      headers: new Headers({ 'content-type': 'text/html' }),
       text: async () => page('', '<div id="__nuxt"></div>')
     })))
 
@@ -111,5 +126,18 @@ describe('checkShowcaseWebsite', () => {
       verdict: 'unverified',
       reason: 'ENOTFOUND'
     })
+  })
+
+  it('stops the batch instead of returning verdicts when the caller aborts', async () => {
+    const controller = new AbortController()
+    const fetchMock = vi.fn(async (_url: string, init: RequestInit) => {
+      controller.abort()
+      throw init.signal!.reason
+    })
+    vi.stubGlobal('fetch', fetchMock)
+
+    const websites = Array.from({ length: 20 }, (_, i) => ({ name: `Site ${i}`, url: `https://site-${i}.example/` }))
+    await expect(checkShowcaseWebsites(websites, controller.signal)).rejects.toMatchObject({ name: 'AbortError' })
+    expect(fetchMock.mock.calls.length).toBeLessThan(websites.length)
   })
 })
