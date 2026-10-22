@@ -197,7 +197,8 @@ export default defineNuxtConfig({
     '/deploy/**': { isr: CONTENT_ISR },
     '/raw/**': { isr: CONTENT_ISR, robots: 'noindex' },
     '/enterprise/**': { isr: CONTENT_ISR },
-    '/templates': { isr: CONTENT_ISR },
+    // Filtered from the query, like `/modules`.
+    '/templates': { isr: { expiration: CONTENT_ISR, allowQuery: ['category', 'status', 'sort', 'q'], passQuery: true } },
     // nuxt.new redirects here (`nuxt.new/s/ui` → `/new/s/ui`).
     '/new': { redirect: '/templates' },
     '/showcase': { isr: CONTENT_ISR },
