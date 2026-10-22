@@ -170,7 +170,8 @@ const items = computed(() => [
 
       <template #footer>
         <p v-if="provider" class="flex items-center gap-1.5 mb-3 text-sm text-muted">
-          <UIcon :name="provider.icon || 'i-lucide-plug'" class="size-4 shrink-0" />
+          <!-- Keyed by name: Nuxt Icon's CSS mode writes a late-loading icon under the current name, so a reused instance can show the previous provider's icon. -->
+          <UIcon :key="provider.icon" :name="provider.icon || 'i-lucide-plug'" class="size-4 shrink-0" />
           <span>Supports <span class="font-medium text-highlighted">{{ provider.label }}</span></span>
         </p>
 
