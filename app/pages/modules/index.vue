@@ -4,6 +4,8 @@ import type { DropdownMenuItem } from '@nuxt/ui'
 import type { Module } from '#shared/types'
 import { joinURL, withQuery } from 'ufo'
 import { resolveModuleCategory } from '#shared/utils/modules'
+import { isNavigationFailure, NavigationFailureType } from 'vue-router'
+import type { LocationQuery } from 'vue-router'
 
 definePageMeta({
   heroBackground: 'opacity-50',
@@ -27,13 +29,22 @@ const { fetchList, filteredModules, q, categories, modules, stats, selectedSort,
 
 const filters = { q, category, sortBy, orderBy }
 
-// A navigation to `/modules?…` (shared link, back/forward, a link elsewhere) sets the filters.
-watch(() => route.query, (query) => {
+function applyQuery(query: LocationQuery) {
   for (const [key, filter] of Object.entries(filters)) {
     const value = query[key]
     filter.value = typeof value === 'string' ? value : ''
   }
-}, { immediate: true })
+}
+
+// A navigation to `/modules?…` (shared link, back/forward, a link elsewhere) sets the filters.
+watch(() => route.query, applyQuery, { immediate: true })
+
+// The router does not see filter changes, so a link to the route it is still on (such as the
+// header "Modules" link after a search) is a duplicated navigation that leaves `route.query` unchanged.
+const removeAfterEach = router.afterEach((to, _from, failure) => {
+  if (isNavigationFailure(failure, NavigationFailureType.duplicated)) applyQuery(to.query)
+})
+onBeforeUnmount(removeAfterEach)
 
 // Filtering happens in memory, so only mirror the filters in the URL: a router navigation
 // would fetch `_payload.json` for this ISR route on every keystroke.
