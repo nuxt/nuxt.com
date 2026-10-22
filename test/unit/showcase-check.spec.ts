@@ -81,13 +81,12 @@ describe('checkShowcaseWebsite', () => {
     vi.unstubAllGlobals()
   })
 
+  function respond(url: string, body: BodyInit, contentType = 'text/html; charset=utf-8') {
+    return Object.defineProperty(new Response(body, { headers: { 'content-type': contentType } }), 'url', { value: url })
+  }
+
   it('reports a redirect to another host', async () => {
-    vi.stubGlobal('fetch', vi.fn(async () => ({
-      status: 200,
-      url: 'https://directus.com/',
-      headers: new Headers({ 'content-type': 'text/html; charset=utf-8' }),
-      text: async () => page('<meta name="generator" content="Framer 4c7be26">')
-    })))
+    vi.stubGlobal('fetch', vi.fn(async () => respond('https://directus.com/', page('<meta name="generator" content="Framer 4c7be26">'))))
 
     expect(await checkShowcaseWebsite({ name: 'Directus', url: 'https://directus.io/' })).toEqual({
       name: 'Directus',
@@ -100,12 +99,7 @@ describe('checkShowcaseWebsite', () => {
   })
 
   it('ignores a redirect that only adds or drops www', async () => {
-    vi.stubGlobal('fetch', vi.fn(async () => ({
-      status: 200,
-      url: 'https://www.upwork.com/',
-      headers: new Headers({ 'content-type': 'text/html' }),
-      text: async () => page('', '<div id="__nuxt"></div>')
-    })))
+    vi.stubGlobal('fetch', vi.fn(async () => respond('https://www.upwork.com/', page('', '<div id="__nuxt"></div>'))))
 
     expect(await checkShowcaseWebsite({ name: 'Upwork', url: 'https://upwork.com/' })).toEqual({
       name: 'Upwork',
@@ -113,6 +107,42 @@ describe('checkShowcaseWebsite', () => {
       status: 200,
       verdict: 'nuxt'
     })
+  })
+
+  it('skips the body of a non-HTML response', async () => {
+    const pull = vi.fn()
+    const body = new ReadableStream({ pull }, { highWaterMark: 0 })
+    vi.stubGlobal('fetch', vi.fn(async () => respond('https://api.example/', body, 'application/json')))
+
+    expect(await checkShowcaseWebsite({ name: 'API', url: 'https://api.example/' })).toEqual({
+      name: 'API',
+      url: 'https://api.example/',
+      status: 200,
+      verdict: 'unverified',
+      reason: 'not an HTML page (application/json)'
+    })
+    expect(pull).not.toHaveBeenCalled()
+  })
+
+  it('stops reading a page past the size cap', async () => {
+    const chunk = new TextEncoder().encode('<div>'.repeat(200_000))
+    let sent = 0
+    const body = new ReadableStream({
+      pull(controller) {
+        sent++
+        controller.enqueue(chunk)
+      }
+    })
+    vi.stubGlobal('fetch', vi.fn(async () => respond('https://huge.example/', body)))
+
+    expect(await checkShowcaseWebsite({ name: 'Huge', url: 'https://huge.example/' })).toEqual({
+      name: 'Huge',
+      url: 'https://huge.example/',
+      status: 200,
+      verdict: 'unverified',
+      reason: 'page larger than 5 MB'
+    })
+    expect(sent).toBeLessThan(10)
   })
 
   it('reports network failures as unverified', async () => {

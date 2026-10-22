@@ -53,6 +53,7 @@ const HTML_CONTENT_TYPE = /^\s*(?:text\/html|application\/xhtml\+xml)\b/i
 const HTML_DOCUMENT = /<(?:!doctype\s+html|html|head|body)\b/i
 
 const MIN_PAGE_BYTES = 512
+const MAX_PAGE_BYTES = 5 * 1024 * 1024
 
 const USER_AGENT = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36'
 const FETCH_TIMEOUT_MS = 15_000
@@ -92,6 +93,25 @@ function bareHost(url: string): string {
   return new URL(url).hostname.replace(/^www\./, '')
 }
 
+/** Reads the body as text, or returns `undefined` once it grows past `maxBytes`. */
+async function readCappedText(response: Response, maxBytes: number): Promise<string | undefined> {
+  if (!response.body) return ''
+  const reader = response.body.getReader()
+  const decoder = new TextDecoder()
+  let text = ''
+  let bytes = 0
+  while (true) {
+    const { done, value } = await reader.read()
+    if (done) return text + decoder.decode()
+    bytes += value.byteLength
+    if (bytes > maxBytes) {
+      await reader.cancel()
+      return undefined
+    }
+    text += decoder.decode(value, { stream: true })
+  }
+}
+
 export async function checkShowcaseWebsite(website: ShowcaseWebsite, signal?: AbortSignal): Promise<ShowcaseCheck> {
   const base = { name: website.name, url: website.url }
 
@@ -105,15 +125,22 @@ export async function checkShowcaseWebsite(website: ShowcaseWebsite, signal?: Ab
         'accept-language': 'en-GB,en;q=0.9'
       }
     })
-    const html = await response.text()
+    const contentType = response.headers.get('content-type') ?? undefined
     const redirectedTo = response.url && bareHost(response.url) !== bareHost(website.url) ? response.url : undefined
+    const result = { ...base, status: response.status, ...(redirectedTo ? { redirectedTo } : {}) }
 
-    return {
-      ...base,
-      status: response.status,
-      ...(redirectedTo ? { redirectedTo } : {}),
-      ...classifyShowcaseResponse({ status: response.status, html, contentType: response.headers.get('content-type') ?? undefined })
+    let html = ''
+    if (contentType && !HTML_CONTENT_TYPE.test(contentType)) {
+      await response.body?.cancel()
+    } else {
+      const text = await readCappedText(response, MAX_PAGE_BYTES)
+      if (text === undefined) {
+        return { ...result, verdict: 'unverified', reason: `page larger than ${MAX_PAGE_BYTES / 1024 / 1024} MB` }
+      }
+      html = text
     }
+
+    return { ...result, ...classifyShowcaseResponse({ status: response.status, html, contentType }) }
   } catch (error) {
     if (signal?.aborted) throw signal.reason ?? error
     const cause = (error as { cause?: { code?: string } }).cause?.code
