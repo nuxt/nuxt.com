@@ -13,9 +13,9 @@ const emit = defineEmits<{
 }>()
 
 const STEPS: Array<{ key: PreviewStep | 'mounted', pending: string, done: string }> = [
-  { key: 'restored', pending: 'Restoring the checked build', done: 'Restored the checked build' },
-  { key: 'serving', pending: 'Starting the server', done: 'Server is up' },
-  { key: 'mounted', pending: 'Opening the app', done: 'App is ready' }
+  { key: 'restored', pending: 'Loading the template', done: 'Template loaded' },
+  { key: 'serving', pending: 'Starting the app', done: 'App started' },
+  { key: 'mounted', pending: 'Opening it here', done: 'Ready to use' }
 ]
 
 const colorMode = useColorMode()

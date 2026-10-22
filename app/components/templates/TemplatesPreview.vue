@@ -20,7 +20,7 @@ const image = computed(() => templateImage(props.template))
 const canGoLive = computed(() => canLivePreview(props.template) && !!props.health?.check?.live)
 const booting = computed(() => live.value && status.value !== 'live')
 const livePage = computed(() => liveUrl.value && `${liveUrl.value}${livePreview.value?.path ?? ''}`)
-const address = computed(() => (live.value ? livePage.value || 'Starting a sandbox…' : props.template.demo || templateRepoUrl(props.template))?.replace(/^https?:\/\//, '').replace(/\/$/, ''))
+const address = computed(() => (live.value ? livePage.value || 'Starting the preview…' : props.template.demo || templateRepoUrl(props.template))?.replace(/^https?:\/\//, '').replace(/\/$/, ''))
 const openUrl = computed(() => live.value ? livePage.value : props.template.demo)
 
 const startedAt = ref(0)
@@ -67,7 +67,7 @@ function stop() {
           <span class="font-medium text-highlighted">{{ status === 'live' ? 'Live' : status === 'failed' ? 'Stopped' : 'Starting' }}</span>
           <UTooltip
             v-if="status === 'live'"
-            :text="`${readyIn ? `Ready in ${(readyIn / 1000).toFixed(1)}s. ` : ''}The sandbox stops on its own after ${PREVIEW_TIMEOUT_MS / 60_000} minutes.`"
+            :text="`${readyIn ? `Ready in ${(readyIn / 1000).toFixed(1)}s. ` : ''}This preview closes on its own after ${PREVIEW_TIMEOUT_MS / 60_000} minutes.`"
             :ui="{ content: 'max-w-xs h-auto py-1.5', text: 'whitespace-normal text-pretty' }"
           >
             <span class="hidden sm:inline font-mono text-muted tabular-nums cursor-default" :class="remaining < 60_000 && 'text-warning'">{{ countdown }} left</span>
@@ -169,7 +169,7 @@ function stop() {
               class="rounded-full px-3.5 transition-transform duration-150 ease-snappy active:scale-[0.97]"
               @click="start"
             />
-            <span class="hidden sm:inline text-xs text-muted">Boots the checked build in about 3s</span>
+            <span class="hidden sm:inline text-xs text-muted">Use it in your browser, nothing to install</span>
           </div>
         </div>
       </Transition>
