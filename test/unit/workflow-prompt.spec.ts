@@ -19,8 +19,14 @@ describe('workflowSkillId', () => {
 
     for (const skillId of skillIds) {
       expect(workflowSkillId(skillWorkflowMessage(skillId, 7))).toBe(skillId)
+      expect(workflowSkillId(skillWorkflowMessage(skillId))).toBe(skillId)
       expect(workflowSkillId(skillFirehoseWorkflowMessage(skillId, 24, 'nuxt-firehose'))).toBe(skillId)
     }
+  })
+
+  it('only mentions a time window when one is given', () => {
+    expect(skillWorkflowMessage('weekly-digest', 7)).toMatch(/^Load the `weekly-digest` skill and follow it for the last 7 days\.\n/)
+    expect(skillWorkflowMessage('showcase-check')).toMatch(/^Load the `showcase-check` skill and follow it\.\n/)
   })
 
   it('survives the prompt being serialised as message parts', () => {
