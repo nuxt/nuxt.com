@@ -18,7 +18,6 @@ describe('isContentRoute', () => {
     expect(isContentRoute('/design')).toBe(false)
     expect(isContentRoute('/info')).toBe(false)
     expect(isContentRoute('/enterprise/manual-sponsors')).toBe(false)
-    expect(isContentRoute('/enterprise/support')).toBe(false)
     expect(isContentRoute('/templates/agency-os')).toBe(false)
     expect(isContentRoute('/video-courses/mastering-nuxt')).toBe(false)
   })

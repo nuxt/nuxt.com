@@ -18,8 +18,8 @@ export const ADMIN_MCP_INSTRUCTIONS = `**Admin MCP connection (\`admin-mcp__*\`,
 - \`admin-mcp__feedback-stats\` — aggregated docs feedback metrics
 - \`admin-mcp__list-feedback\` — individual feedback entries
 - \`admin-mcp__agent-usage-stats\` — web chat counts and vote quality (NOT tokens/cost — use \`vercel-mcp__*\` for runs, \`ai_gateway__*\` for tokens/cost)
-- \`admin-mcp__list-agent-chats\` / \`admin-mcp__get-agent-chat\` — saved web chat sessions and transcripts
-- \`admin-mcp__list-agent-votes\` — message upvotes/downvotes
+- \`admin-mcp__list-agent-chats\` / \`admin-mcp__get-agent-chat\` — web chats shared with admins or made public, and their transcripts (private chats are excluded)
+- \`admin-mcp__list-agent-votes\` — message upvotes/downvotes on those same chats
 - For runs, Slack / Discord / web, duration: **Vercel Agent Runs** via \`vercel-mcp__*\` (see below)
 - For tokens, cost, model usage: **AI Gateway** via \`ai_gateway__*\` (see below)
 - Do not invent token/cost numbers from local DB.
@@ -53,7 +53,7 @@ async function adminOnlyToken(ctx: SessionContext) {
 
 export default defineMcpClientConnection({
   url: `${appOrigin()}/mcp/admin`,
-  description: 'Nuxi admin analytics: docs feedback ratings, saved web chat transcripts, and per-message votes. Admin/Slack/Discord/schedule sessions only.',
+  description: 'Nuxi admin analytics: docs feedback ratings, shared web chat transcripts, and per-message votes. Admin/Slack/Discord/schedule sessions only.',
   tools: { allow: ALLOWED_TOOLS },
   auth: adminOnlyToken
 })

@@ -2,26 +2,37 @@ type ModuleStatsKeys = 'version' | 'downloads' | 'stars' | 'publishedAt' | 'crea
 import type { Module } from '#shared/types'
 import type { Filter } from '~/types'
 
-const iconsMap = {
-  Official: 'i-lucide-medal',
-  AI: 'i-lucide-brain',
-  Analytics: 'i-lucide-bar-chart',
-  CMS: 'i-lucide-pencil',
-  CSS: 'i-lucide-palette',
-  Database: 'i-lucide-database',
-  Devtools: 'i-lucide-wrench',
-  Ecommerce: 'i-lucide-shopping-cart',
-  Extensions: 'i-lucide-puzzle',
-  Fonts: 'i-lucide-type',
-  Images: 'i-lucide-image',
-  Libraries: 'i-lucide-library',
-  Monitoring: 'i-lucide-timer',
-  Payment: 'i-lucide-credit-card',
-  Performance: 'i-lucide-gauge',
-  Request: 'i-lucide-unplug',
-  Security: 'i-lucide-shield',
-  SEO: 'i-lucide-search',
-  UI: 'i-lucide-layout'
+// `purpose` completes "Discover N Nuxt modules by the community for …" in a category's meta description.
+const categoriesMap: Record<string, { icon: string, purpose: string }> = {
+  'Official': { icon: 'i-lucide-medal', purpose: '' },
+  'AI': { icon: 'i-lucide-brain', purpose: 'adding AI features to your Nuxt application' },
+  'Analytics': { icon: 'i-lucide-chart-bar', purpose: 'adding analytics to your Nuxt application' },
+  'Animation': { icon: 'i-lucide-sparkles', purpose: 'adding animations to your Nuxt application' },
+  'API & Data Fetching': { icon: 'i-lucide-unplug', purpose: 'fetching data and calling APIs in your Nuxt application' },
+  'Authentication': { icon: 'i-lucide-key-round', purpose: 'adding authentication to your Nuxt application' },
+  'Backend & Database': { icon: 'i-lucide-database', purpose: 'connecting your Nuxt application to a backend or database' },
+  'Charts & Maps': { icon: 'i-lucide-chart-pie', purpose: 'displaying charts and maps in your Nuxt application' },
+  'CMS & Content': { icon: 'i-lucide-pencil', purpose: 'managing the content of your Nuxt application' },
+  'CSS & Theming': { icon: 'i-lucide-palette', purpose: 'styling and theming your Nuxt application' },
+  'Deployment': { icon: 'i-lucide-rocket', purpose: 'shipping your Nuxt application safely, with feature flags, hosting platform integrations and skew protection' },
+  'Devtools': { icon: 'i-lucide-wrench', purpose: 'improving the developer experience of your Nuxt application' },
+  'Ecommerce & Payments': { icon: 'i-lucide-shopping-cart', purpose: 'selling products and accepting payments in your Nuxt application' },
+  'Email & Notifications': { icon: 'i-lucide-mail', purpose: 'sending emails and notifications from your Nuxt application' },
+  'Forms & Validation': { icon: 'i-lucide-text-cursor-input', purpose: 'building and validating forms in your Nuxt application' },
+  'i18n': { icon: 'i-lucide-languages', purpose: 'translating and localizing your Nuxt application' },
+  'Icons & Fonts': { icon: 'i-lucide-shapes', purpose: 'adding icons and fonts to your Nuxt application' },
+  'Images & Media': { icon: 'i-lucide-image', purpose: 'optimizing images and media in your Nuxt application' },
+  'Mobile & Desktop': { icon: 'i-lucide-smartphone', purpose: 'turning your Nuxt application into a mobile or desktop app' },
+  'Monitoring & Logging': { icon: 'i-lucide-activity', purpose: 'monitoring and logging your Nuxt application' },
+  'Performance': { icon: 'i-lucide-gauge', purpose: 'improving the performance of your Nuxt application' },
+  'Realtime': { icon: 'i-lucide-radio', purpose: 'adding realtime features to your Nuxt application' },
+  'Security': { icon: 'i-lucide-shield', purpose: 'securing your Nuxt application' },
+  'SEO': { icon: 'i-lucide-search', purpose: 'improving the SEO of your Nuxt application' },
+  'State Management': { icon: 'i-lucide-layers', purpose: 'managing the state of your Nuxt application' },
+  'UI Components': { icon: 'i-lucide-component', purpose: 'adding UI components to your Nuxt application' },
+  'UI Frameworks': { icon: 'i-lucide-layout-dashboard', purpose: 'building the interface of your Nuxt application with a UI framework' },
+  'Utilities': { icon: 'i-lucide-puzzle', purpose: 'adding utilities to your Nuxt application' },
+  'Widgets & Embeds': { icon: 'i-lucide-app-window', purpose: 'embedding widgets in your Nuxt application' }
 }
 
 export const moduleImage = function (icon: string = '', _size: number = 80) {
@@ -36,7 +47,15 @@ export const moduleImage = function (icon: string = '', _size: number = 80) {
 }
 
 export const moduleIcon = function (category: string) {
-  return iconsMap[category as keyof typeof iconsMap] || 'i-lucide-box'
+  return categoriesMap[category]?.icon || 'i-lucide-box'
+}
+
+/** Title and meta description of the modules listing filtered by `category`. */
+export function moduleCategorySeo(category: string, count: number) {
+  if (category === 'Official') {
+    return { title: 'Official Nuxt modules', description: `Discover ${count} official Nuxt modules, built and maintained by the Nuxt team.` }
+  }
+  return { title: `Nuxt modules for ${category}`, description: `Discover ${count} Nuxt modules by the community for ${categoriesMap[category]!.purpose}.` }
 }
 
 export type ModulePromptInfo = Pick<Module, 'name' | 'npm' | 'description' | 'website' | 'repo'>
@@ -160,14 +179,14 @@ export const useModules = () => {
   // Data
 
   const categories = computed<Filter[]>(() => {
-    return Object.keys(iconsMap)
+    return Object.keys(categoriesMap)
       .map((category) => {
         return {
           key: category,
           label: category,
           active: route.query.category === category,
           to: { name: 'modules', query: category === route.query.category ? undefined : { category }, state: { smooth: '#smooth' } },
-          icon: iconsMap[category as keyof typeof iconsMap] || undefined,
+          icon: categoriesMap[category]!.icon,
           click: (e: Event) => {
             if (route.query.category !== category) {
               return

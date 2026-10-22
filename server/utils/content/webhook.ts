@@ -1,6 +1,6 @@
 import type { ContentListFile } from 'comark-content'
 import type { GitHubPushCommit } from '../../types/github'
-import { CONTENT_INSTANCE_KEYS } from '#shared/utils/content'
+import { CONTENT_INSTANCE_KEYS, isNavigationConfig } from '#shared/utils/content'
 
 /** How a push changed one source's files, already filtered to that source's `contentDir`. */
 export interface ContentChanges {
@@ -38,7 +38,7 @@ export function changesForSource(sourceName: string, contentDir: string, commits
     const key = manifestKeyFor(file, sourceName, contentDir)
     if (!key) return
 
-    if (isNavConfig(file)) navTouched = true
+    if (isNavigationConfig(file)) navTouched = true
     else into.add(key)
   }
 
@@ -66,11 +66,6 @@ function manifestKeyFor(file: string, sourceName: string, contentDir: string): s
   if (!CONTENT_EXTENSIONS.some(extension => file.endsWith(extension))) return null
 
   return `${sourceName}/${file.slice(prefix.length)}`
-}
-
-/** Directory configuration (`.navigation.yml`), which contributes to the tree rather than a page. */
-function isNavConfig(file: string): boolean {
-  return file.split('/').pop()!.startsWith('.navigation')
 }
 
 /**

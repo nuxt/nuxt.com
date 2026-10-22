@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { Module } from '#shared/types'
-import { ModuleProseA, ModuleProseKbd, ModuleProseImg, ModuleProsePicture } from '#components'
+import { supportsNuxt3OrLater } from '#shared/utils/modules'
+import { ModuleProseA, ModuleProseKbd, ModuleProseImg } from '#components'
 
 definePageMeta({
   heroBackground: 'opacity-30 -z-10'
@@ -10,7 +11,6 @@ const markdownComponents = {
   ...proseComponents,
   ProseA: ModuleProseA,
   ProseImg: ModuleProseImg,
-  ProsePicture: ModuleProsePicture,
   ProseKbd: ModuleProseKbd
 }
 
@@ -115,15 +115,15 @@ if (import.meta.server) {
 
 <template>
   <UContainer v-if="module">
-    <div v-if="!module.compatibility?.nuxt?.includes('^3') && !module.compatibility?.nuxt?.includes('>=3')" class="pt-8">
+    <div v-if="!supportsNuxt3OrLater(module.compatibility?.nuxt)" class="pt-8">
       <UAlert
         icon="i-lucide-triangle-alert"
         variant="subtle"
         title="This module is not yet compatible with Nuxt 3"
       >
         <template #description>
-          Head over to <NuxtLink to="https://v2.nuxt.com" target="_blank" class="underline">
-            v2.nuxt.com
+          Head over to the <NuxtLink to="/docs/2.x/getting-started/installation" class="underline">
+            Nuxt 2 docs
           </NuxtLink>
         </template>
       </UAlert>
