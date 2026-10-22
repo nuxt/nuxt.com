@@ -34,9 +34,9 @@ async function stopPreviews(owner: string) {
     .map(sandbox => Sandbox.get({ name: sandbox.name }).then(running => running.stop()).catch(() => {})))
 }
 
-/** Previews run for at most 10 minutes, so the running ones are always among the newest. */
+/** Previews run for at most 10 minutes, so the running ones are always among the newest. One page is enough: the API returns at most 50, the cap. */
 async function countRunningPreviews() {
-  const { sandboxes } = await Sandbox.list({ tags: { purpose: PREVIEW_TAGS.purpose }, limit: 100, sortBy: 'createdAt', sortOrder: 'desc' })
+  const { sandboxes } = await Sandbox.list({ tags: { purpose: PREVIEW_TAGS.purpose }, limit: MAX_RUNNING_PREVIEWS, sortBy: 'createdAt', sortOrder: 'desc' })
   return sandboxes.filter(sandbox => sandbox.status === 'running' || sandbox.status === 'pending').length
 }
 
