@@ -71,6 +71,20 @@
       "when": 1792502147701,
       "tag": "0009_users_last_seen",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "6",
+      "when": 1792508990381,
+      "tag": "0010_template_checks",
+      "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "6",
+      "when": 1792682590177,
+      "tag": "0011_template_previews",
+      "breakpoints": true
     }
   ]
 }

@@ -262,6 +262,9 @@ importers:
       '@vercel/otel':
         specifier: ^2.1.3
         version: 2.1.3(@opentelemetry/api-logs@0.223.0)(@opentelemetry/api@1.9.1)(@opentelemetry/instrumentation@0.223.0(@opentelemetry/api@1.9.1)(supports-color@8.1.1))(@opentelemetry/resources@2.11.0(@opentelemetry/api@1.9.1))(@opentelemetry/sdk-logs@0.222.0(@opentelemetry/api@1.9.1))(@opentelemetry/sdk-metrics@2.11.0(@opentelemetry/api@1.9.1))(@opentelemetry/sdk-trace-base@2.11.0(@opentelemetry/api@1.9.1))
+      '@vercel/sandbox':
+        specifier: ^3.8.0
+        version: 3.8.0
       '@vercel/speed-insights':
         specifier: ^2.0.0
         version: 2.0.0(nuxt@4.6.2(e23abfa95f47d2654a3d6b3d5c49ae8e))(react@19.3.0)(vue@3.5.44(typescript@6.0.3))
@@ -358,6 +361,9 @@ importers:
       ufo:
         specifier: ^1.6.4
         version: 1.6.4
+      undici:
+        specifier: ^7.30.0
+        version: 7.30.0
       unstorage:
         specifier: ^1.17.6
         version: 1.17.6(@vercel/functions@3.10.1(@aws-sdk/credential-provider-web-identity@3.972.49)(ws@8.22.0))(db0@0.3.4(@libsql/client@0.18.0)(drizzle-orm@0.45.4(@cloudflare/workers-types@4.20260702.1)(@libsql/client@0.18.0)(@opentelemetry/api@1.9.1)))(ioredis@5.11.1(supports-color@8.1.1))
@@ -5184,6 +5190,10 @@ packages:
       eve:
         optional: true
 
+  '@vercel/detect-agent@1.2.5':
+    resolution: {integrity: sha512-0krENrjuitlW8s6TJu0MlqCevyCU7K7JK63jZAf7xZ6n17tx+vUEwzHT3sTxawtwZxaW21hu+oFUpoOrm49FsQ==}
+    engines: {node: '>=14'}
+
   '@vercel/functions@3.10.1':
     resolution: {integrity: sha512-Ca7peSyID6CW5a9Pyu6rDK2AC3n9hyJD0aTBuO74x9eL50Z+rgXIR0H0umI6j0gb9NMG7jvrx7DUhMGuuOFxsg==}
     engines: {node: '>= 20'}
@@ -5220,6 +5230,10 @@ packages:
     resolution: {integrity: sha512-UycprH3T6n3jH0k44NHMa7pnFHGu/N05MjojYr+Mc6I7obkoLIJujSWwin1pCvdy/eOxrI/l3uDLQsmcrOb4ug==}
     engines: {node: '>= 20'}
 
+  '@vercel/oidc@4.0.0':
+    resolution: {integrity: sha512-ko6ATeRUlHZMB5hLFdC7+/Q1dI2f3NX3gZHxtpALdkxurwjD5HFHGWYF+4o+4SF0E47jg6KzcHknmRpHcKgJ5A==}
+    engines: {node: '>= 20'}
+
   '@vercel/oidc@4.0.1':
     resolution: {integrity: sha512-l//xMmDTj2WR6EMtfA2BEF2oR7ViKCD1SCxqFKCn1/8wOZBxgxhxkegSGi90ICTc1rB50ZbKuPIslc8aJxAqew==}
     engines: {node: '>= 20'}
@@ -5244,6 +5258,9 @@ packages:
     peerDependenciesMeta:
       '@opentelemetry/api':
         optional: true
+
+  '@vercel/sandbox@3.8.0':
+    resolution: {integrity: sha512-2ib+Dl8WG898OBmtep33UtE6pGbvNA9WClT7NHqQ0tch1Lq1OjQ/gmfjDT32C3HvyPA4YBXoLiJDVWZXURQW8w==}
 
   '@vercel/speed-insights@2.0.0':
     resolution: {integrity: sha512-jwkNcrTeafWxjmWq4AHBaptSqZiJkYU5adLC9QBSqeim0GcqDMgN5Ievh8OG1rJ6W3A4l1oiP7qr9CWxGuzu3w==}
@@ -5536,6 +5553,9 @@ packages:
   '@workflow/rollup@5.0.5':
     resolution: {integrity: sha512-0khDeWl1DcSXno6FGyDlqk1ipQ9v6W8JDiSsmIlygnZHUMAaPbI9F5aBcF1mGyPxOuPL7R5Wsaop3qDsf7ODcA==}
 
+  '@workflow/serde@4.1.0-beta.2':
+    resolution: {integrity: sha512-8kkeoQKLDaKXefjV5dbhBj2aErfKp1Mc4pb6tj8144cF+Em5SPbyMbyLCHp+BVrFfFVCBluCtMx+jjvaFVZGww==}
+
   '@workflow/serde@4.1.2':
     resolution: {integrity: sha512-KkkSUddEcaIvW7/QfVUk2PR93117HkDum45cXQEGkoxEmHOmqfOLJ4T1m4a1QABVC7O9TIqPxsBtDPgKIO+LOw==}
 
@@ -5802,6 +5822,9 @@ packages:
 
   async-lock@1.4.1:
     resolution: {integrity: sha512-Az2ZTpuytrtqENulXwO3GGv1Bztugx6TT37NIo7imr/Qo0gsYiGtSdBa2B6fsXhTpVZDNfu1Qn3pk531e3q+nQ==}
+
+  async-retry@1.3.3:
+    resolution: {integrity: sha512-wfr/jstw9xNi/0teMHrRW7dsz3Lt5ARhYNZ2ewpadnhaIp5mbALhOAP+EAdsC7t4Z6wqsDVv9+W6gm1Dk9mEyw==}
 
   async-sema@3.1.1:
     resolution: {integrity: sha512-tLRNUXati5MFePdAk8dw7Qt7DpxPB60ofAgn8WRhW6a2rcimZnYBP9oxHiv0OHy+Wz7kPMG+t4LGdt31+4EmGg==}
@@ -8368,6 +8391,9 @@ packages:
   jose@6.2.12:
     resolution: {integrity: sha512-9NiFmJEex0sy2Dk58j2UGBSHgUs2ypF9eZSu4L6vjOX3Dp96Sw1F3uL+H+D1sx02jZZdzUT0HgvCy59CuvXcWw==}
 
+  jose@6.2.3:
+    resolution: {integrity: sha512-YYVDInQKFJfR/xa3ojUTl8c2KoTwiL1R5Wg9YCydwH0x0B9grbzlg5HC7mMjCtUJjbQ/YnGEZIhI5tCgfTb4Hw==}
+
   js-base64@3.9.4:
     resolution: {integrity: sha512-PtOMXpEGuP0RRiRXsjzHzl44dMHxSu2CPvAhinupR1tBa88me+1DPqsobl7eupn5UukjLkln1ZnAOAOXOrYG0Q==}
 
@@ -8444,6 +8470,9 @@ packages:
 
   jsonfile@6.2.1:
     resolution: {integrity: sha512-zwOTdL3rFQ/lRdBnntKVOX6k5cKJwEc1HdilT71BWEu7J41gXIB2MRp+vxduPSwZJPWBxEzv4yH1wYLJGUHX4Q==}
+
+  jsonlines@0.1.1:
+    resolution: {integrity: sha512-ekDrAGso79Cvf+dtm+mL8OBI2bmAOt3gssYs833De/C9NmIpWDWyUO4zPgB5x2/OhY366dkhgfPMYfwZF7yOZA==}
 
   kdbush@3.0.0:
     resolution: {integrity: sha512-hRkd6/XW4HTsA9vjVpY9tuXJYLSlelnkTmVFu4M9/7MIYQtFcHpbugAU7UbOfjOiVSVYl2fqgBuJ32JUmRo5Ew==}
@@ -10107,6 +10136,10 @@ packages:
 
   retry@0.12.0:
     resolution: {integrity: sha512-9LkiTwjUh6rT555DtE9rTX+BKByPfrMzEAtnlEtdEwr3Nkffwiihqe2bWADg+OQRjt9gl6ICdmB/ZFDCGAtSow==}
+    engines: {node: '>= 4'}
+
+  retry@0.13.1:
+    resolution: {integrity: sha512-XQBQ3I8W1Cge0Seh+6gjj03LbmRFWuoszgK9ooCpwYIrhhoO80pfq4cUkU5DkknwfOfFteRwlZ56PYOGYyFWdg==}
     engines: {node: '>= 4'}
 
   reusify@1.1.0:
@@ -16956,6 +16989,8 @@ snapshots:
       ai: 7.0.143(zod@4.6.7)
       eve: 0.80.1(@opentelemetry/api@1.9.1)(ai@7.0.143(zod@4.6.7))(chat@4.42.0(ai@7.0.143(zod@4.6.7))(supports-color@8.1.1)(workflow@5.2.2(@aws-sdk/credential-provider-web-identity@3.972.49)(@nestjs/common@12.1.3(reflect-metadata@0.2.2)(rxjs@7.8.2)(supports-color@8.1.1))(@nestjs/core@12.1.3(@nestjs/common@12.1.3(reflect-metadata@0.2.2)(rxjs@7.8.2)(supports-color@8.1.1))(reflect-metadata@0.2.2)(rxjs@7.8.2))(@opentelemetry/api@1.9.1)(@swc/cli@0.8.1(@swc/core@1.15.3(@swc/helpers@0.5.23))(chokidar@5.0.0)(supports-color@8.1.1))(@swc/core@1.15.3(@swc/helpers@0.5.23))(@swc/helpers@0.5.23)(magicast@0.5.5)(react@19.3.0)(supports-color@8.1.1)(typescript@6.0.3)(ws@8.22.0))(zod@4.6.7))(microsandbox@0.7.8)
 
+  '@vercel/detect-agent@1.2.5': {}
+
   '@vercel/functions@3.10.1(@aws-sdk/credential-provider-web-identity@3.972.49)(ws@8.22.0)':
     dependencies:
       '@vercel/oidc': 4.0.1
@@ -16992,6 +17027,12 @@ snapshots:
 
   '@vercel/oidc@3.2.0': {}
 
+  '@vercel/oidc@4.0.0':
+    dependencies:
+      '@vercel/cli-config': 0.3.1
+      '@vercel/cli-exec': 1.0.1
+      jose: 5.10.0
+
   '@vercel/oidc@4.0.1':
     dependencies:
       '@vercel/cli-config': 0.3.1
@@ -17016,6 +17057,25 @@ snapshots:
       picocolors: 1.1.1
     optionalDependencies:
       '@opentelemetry/api': 1.9.1
+
+  '@vercel/sandbox@3.8.0':
+    dependencies:
+      '@vercel/detect-agent': 1.2.5
+      '@vercel/oidc': 4.0.0
+      '@workflow/serde': 4.1.0-beta.2
+      async-retry: 1.3.3
+      jose: 6.2.3
+      jsonlines: 0.1.1
+      lru-cache: 10.4.3
+      ms: 2.1.3
+      picocolors: 1.1.1
+      tar-stream: 3.1.7
+      undici: 7.30.0
+      xdg-app-paths: 5.1.0
+      zod: 4.6.7
+    transitivePeerDependencies:
+      - bare-abort-controller
+      - react-native-b4a
 
   '@vercel/speed-insights@2.0.0(nuxt@4.6.2(e23abfa95f47d2654a3d6b3d5c49ae8e))(react@19.3.0)(vue@3.5.44(typescript@6.0.3))':
     optionalDependencies:
@@ -17509,6 +17569,8 @@ snapshots:
       - utf-8-validate
       - ws
 
+  '@workflow/serde@4.1.0-beta.2': {}
+
   '@workflow/serde@4.1.2': {}
 
   '@workflow/serde@5.0.0': {}
@@ -17861,6 +17923,10 @@ snapshots:
 
   async-lock@1.4.1:
     optional: true
+
+  async-retry@1.3.3:
+    dependencies:
+      retry: 0.13.1
 
   async-sema@3.1.1: {}
 
@@ -20608,6 +20674,8 @@ snapshots:
 
   jose@6.2.12: {}
 
+  jose@6.2.3: {}
+
   js-base64@3.9.4: {}
 
   js-beautify@2.0.3:
@@ -20673,6 +20741,8 @@ snapshots:
       universalify: 2.0.1
     optionalDependencies:
       graceful-fs: 4.2.11
+
+  jsonlines@0.1.1: {}
 
   kdbush@3.0.0: {}
 
@@ -23411,6 +23481,8 @@ snapshots:
   ret@0.5.0: {}
 
   retry@0.12.0: {}
+
+  retry@0.13.1: {}
 
   reusify@1.1.0: {}
 
