@@ -458,9 +458,6 @@ websites:
       removeElements: ['.relative.z-10.bg-black.text-white']
       styles: ['.hero { height: 100vh !important; }']
       delay: 3
-  - name: Red Hat Documentation
-    url: https://docs.redhat.com/
-    industry: Software & Tech
   - name: Zadig & Voltaire
     url: https://www.zadig-et-voltaire.com/eu/uk/
     industry: Fashion & Beauty
@@ -527,3 +524,9 @@ websites:
     logo:
       width: 600
       height: 116.96
+  - name: Red Hat Documentation
+    url: https://docs.redhat.com/
+    industry: Software & Tech
+    logo:
+      width: 613
+      height: 145
