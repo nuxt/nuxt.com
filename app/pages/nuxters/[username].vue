@@ -66,7 +66,7 @@ const links = computed(() => {
 
 const since = computed(() => {
   const date = nuxter.value?.firstContributionAt
-  return date ? new Intl.DateTimeFormat('en-US', { month: 'long', year: 'numeric', timeZone: 'UTC' }).format(new Date(date)) : null
+  return date ? new Intl.DateTimeFormat('en-US', { month: 'short', year: 'numeric', timeZone: 'UTC' }).format(new Date(date)) : null
 })
 
 // `?period=`: all time by default, or any period the user contributed in.
@@ -243,32 +243,18 @@ defineOgImage('Nuxter.takumi', { username, period: () => period.value === 'all' 
             </div>
           </div>
 
-          <div class="flex flex-col gap-1 lg:gap-3">
-            <div class="flex flex-wrap items-center gap-x-3 gap-y-1 lg:text-lg">
-              <span class="tabular-nums">
-                <template v-if="period === 'all'">Nuxter #{{ format(current.rank) }}</template>
-                <template v-else>#{{ format(current.rank) }} {{ periodPhrase(period) }}</template>
-              </span>
-              <span class="text-dimmed">·</span>
-              <span class="flex items-center gap-1">
-                <span class="font-semibold text-highlighted tabular-nums">{{ format(current.score) }}</span> pts
-                <NuxtersScoreBreakdown :nuxter="current" />
-              </span>
-            </div>
-            <p v-if="nuxter.country" class="text-sm lg:text-base text-muted">
-              <!-- The leaderboard of the same country and period -->
-              <NuxtLink :to="{ path: '/nuxters', query: { period, country: nuxter.country }, hash: '#leaderboard' }" class="inline-flex items-center gap-1.5 hover:text-highlighted transition-colors">
-                <UIcon :name="countryFlag(nuxter.country)" class="size-4" />
-                {{ countryName(nuxter.country) }}
-              </NuxtLink>
-            </p>
-            <p v-if="since" class="text-sm lg:text-base text-muted">
+          <!-- Who they are, the same for every period: the rank and points sit with the period tabs -->
+          <p v-if="nuxter.country || since" class="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm lg:text-base text-muted">
+            <!-- The leaderboard of the same country and period -->
+            <NuxtLink v-if="nuxter.country" :to="{ path: '/nuxters', query: { period, country: nuxter.country }, hash: '#leaderboard' }" class="inline-flex items-center gap-1.5 hover:text-highlighted transition-colors">
+              <UIcon :name="countryFlag(nuxter.country)" class="size-4" />
+              {{ countryName(nuxter.country) }}
+            </NuxtLink>
+            <span v-if="since" class="inline-flex items-center gap-1.5">
+              <UIcon name="i-lucide-calendar" class="size-4" />
               Contributing since {{ since }}
-            </p>
-            <p v-if="best" class="text-sm lg:text-base text-muted">
-              Best year: {{ best.period }}, #{{ format(best.rank) }} with {{ format(best.score) }} pts
-            </p>
-          </div>
+            </span>
+          </p>
 
           <div v-if="hackathons.length || maintained.length" class="flex flex-wrap gap-2">
             <UBadge
@@ -301,14 +287,36 @@ defineOgImage('Nuxter.takumi', { username, period: () => period.value === 'all' 
         </div>
 
         <div class="flex flex-col gap-4 lg:col-span-3 xl:col-span-2">
-          <div class="flex flex-wrap items-center lg:justify-end gap-3">
-            <NuxtersPeriodTabs
-              :period="period"
-              :periods="available"
-              :to="value => ({ query: periodQuery(value) })"
-              :rank="rankOf"
-              aria-label="Profile period"
-            />
+          <!-- Tabs first, then the rank and points of the period they select; on one row from xl, the numbers on the left -->
+          <div class="flex flex-col xl:flex-row-reverse xl:items-center xl:justify-between gap-3 lg:gap-4">
+            <div class="flex lg:justify-end">
+              <NuxtersPeriodTabs
+                :period="period"
+                :periods="available"
+                :to="value => ({ query: periodQuery(value) })"
+                :rank="rankOf"
+                aria-label="Profile period"
+              />
+            </div>
+            <div class="flex flex-wrap items-center justify-between xl:justify-start gap-x-4 gap-y-2">
+              <p class="flex items-baseline gap-2 lg:text-lg">
+                <span class="text-3xl font-bold text-highlighted tabular-nums">
+                  <span class="sr-only">Nuxter </span>#{{ format(current.rank) }}<span class="sr-only"> {{ periodPhrase(period) }}</span>
+                </span>
+                <span class="text-dimmed" aria-hidden="true">·</span>
+                <span><span class="font-semibold text-highlighted tabular-nums">{{ format(current.score) }}</span> pts</span>
+                <span class="self-center"><NuxtersScoreBreakdown :nuxter="current" /></span>
+              </p>
+              <UButton
+                v-if="best"
+                :to="{ query: periodQuery(best.period) }"
+                :label="`Best year ${best.period} · #${format(best.rank)}`"
+                color="neutral"
+                variant="subtle"
+                size="xs"
+                class="tabular-nums"
+              />
+            </div>
           </div>
 
           <ul class="grid grid-cols-2 gap-4" :aria-label="`Contributions ${periodPhrase(period)}`">
