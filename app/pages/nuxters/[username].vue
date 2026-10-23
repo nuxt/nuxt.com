@@ -268,7 +268,7 @@ defineOgImage('Nuxter.takumi', { username, period: () => period.value === 'all' 
               <!-- Opens that year -->
               <NuxtLink v-if="best" :to="{ query: periodQuery(best.period) }" class="inline-flex items-center gap-1.5 hover:text-highlighted transition-colors tabular-nums">
                 <UIcon name="i-lucide-award" class="size-4" />
-                Best year {{ best.period }}, #{{ format(best.rank) }}
+                Best year {{ best.period }}, #{{ format(best.rank) }} with {{ format(best.score) }} pts
               </NuxtLink>
             </p>
           </div>
