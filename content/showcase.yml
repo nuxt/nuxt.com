@@ -458,6 +458,10 @@ websites:
       removeElements: ['.relative.z-10.bg-black.text-white']
       styles: ['.hero { height: 100vh !important; }']
       delay: 3
+  - name: Sukuk Capital
+    url: https://sukuk.sa/
+    screenshotOptions:
+      hideElements: ['#cookie-consent-banner']
   - name: Zadig & Voltaire
     url: https://www.zadig-et-voltaire.com/eu/uk/
     industry: Fashion & Beauty
