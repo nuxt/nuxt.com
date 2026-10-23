@@ -28,6 +28,9 @@ const MAX_ZOOM = 3
 // Zoomed in, the globe outgrows the canvas: it fades out from 82% of the radius (the mask in the styles) instead of
 // ending on a hard edge. Markers stay inside the part that still shows.
 const FRAME = 0.88
+// A marker stands above its place, the tip of its tail on it: centered, it hid small islands like Mauritius and
+// seemed to float on the ocean. The length of the tail in the styles.
+const TAIL = 6
 const markers = computed(() => props.countries
   .flatMap((country) => {
     const location = COUNTRIES[country.code]?.location
@@ -86,18 +89,19 @@ function render(elapsed: number) {
   // Markers are HTML on top of the canvas: hide the ones behind the globe, out of the frame, or over another.
   const occupied: Array<{ x: number, y: number, width: number }> = []
   const frame = Math.min(width, height) / 2 * FRAME
+  const markerHeight = avatars.value ? 32 : 28
   for (const country of markers.value) {
     const element = markerElements.get(country.code)
     if (!element) continue
     projectOnGlobe(projection, country.location, phi, theta, scale)
     const x = width / 2 + projection.x * height / 2
-    const y = height / 2 + projection.y * height / 2
+    const y = height / 2 + projection.y * height / 2 - TAIL - markerHeight / 2
     const markerWidth = avatars.value
       ? (country.code === props.selected ? 32 + (country.top.length - 1) * 24 : 32)
       : 20 + format(country.count).length * 7
     const wasVisible = element.dataset.visible === 'true'
     const front = projection.depth > (wasVisible ? 0.1 : 0.14)
-    const fits = Math.hypot(x - width / 2, y - height / 2) < frame - Math.max(markerWidth, 28) / 2
+    const fits = Math.hypot(x - width / 2, y - height / 2) < frame - Math.max(markerWidth, markerHeight) / 2
     const gap = wasVisible ? 4 : 8
     const hasRoom = occupied.every(other => Math.abs(other.x - x) > (other.width + markerWidth) / 2 + gap || Math.abs(other.y - y) > 28 + gap)
     const show = front && fits && hasRoom
@@ -398,6 +402,36 @@ onBeforeUnmount(() => {
   padding: 0;
   border: 0;
   background: transparent;
+}
+/* The tail, `TAIL` long, under the marker: its own stacking context keeps it above the canvas */
+.nuxters-globe__marker {
+  isolation: isolate;
+}
+.nuxters-globe__marker::after {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  top: calc(100% - 4px);
+  left: calc(50% - 5px);
+  width: 10px;
+  height: 10px;
+  border-right: 1px solid var(--ui-border-accented);
+  border-bottom: 1px solid var(--ui-border-accented);
+  border-bottom-right-radius: 2px;
+  background: var(--ui-bg);
+  transform: rotate(45deg);
+}
+.nuxters-globe__marker.is-avatars::after {
+  border: 0;
+  background: var(--ui-text-highlighted);
+}
+.nuxters-globe__marker:hover::after,
+.nuxters-globe__marker:focus-visible::after,
+.nuxters-globe__marker.is-selected::after {
+  border-color: var(--ui-primary);
+}
+.nuxters-globe__marker.is-avatars:is(:hover, :focus-visible, .is-selected)::after {
+  background: var(--ui-primary);
 }
 .nuxters-globe-marker-enter-active,
 .nuxters-globe-marker-leave-active {
