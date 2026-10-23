@@ -8,6 +8,7 @@ import {
 } from '../lib/workflow/shared.js'
 import { runDiscordGateway } from '../schedules/discord-gateway.js'
 import { runFirehoseSummary } from '../schedules/firehose-summary.js'
+import { runShowcaseCheck } from '../schedules/showcase-check.js'
 import { runWeeklyDigest } from '../schedules/weekly-digest.js'
 
 export default defineChannel({
@@ -66,6 +67,18 @@ export default defineChannel({
       }))
 
       return Response.json({ ok: true, sinceHours: parsedSinceHours.value ?? null })
+    }),
+    POST('/eve/v1/ops/showcase-check/trigger', async (req, args) => {
+      if (!(await isManualWorkflowTriggerAllowed())) {
+        return Response.json({ error: 'Manual workflow trigger is disabled' }, { status: 404 })
+      }
+      if (!verifyWorkflowTriggerAuth(req)) {
+        return Response.json({ error: 'Unauthorized' }, { status: 401 })
+      }
+
+      args.waitUntil(runShowcaseCheck({ to: args.to, appAuth: scheduleAppAuth }))
+
+      return Response.json({ ok: true })
     })
   ]
 })

@@ -48,3 +48,7 @@ permissions:
     skills: false
   nuxtseo-layer-devtools:
     skills: false
+
+patchedDependencies:
+  # Redraw once the map texture loads, and free it on destroy: https://github.com/shuding/cobe/pull/125
+  cobe@2.0.1: patches/cobe@2.0.1.patch

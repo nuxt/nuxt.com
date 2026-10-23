@@ -10,6 +10,9 @@ const MAX_SNAPSHOT_BYTES = 5 * 1024 * 1024
 const MAX_MODULES = 25_000
 const MAX_MODULE_ID_LENGTH = 2_048
 const MAX_ROUTE_FILES = 1_000
+const MAX_ROUTES = 50
+// Snapshots come from untrusted PR builds that may add or rename routes, so route keys are checked by shape rather than against the trusted ROUTES list.
+const ROUTE_PATTERN = /^\/[\w\-./]{0,255}$/
 
 function addSizes(target, sizes) {
   target.raw += sizes.raw
@@ -275,9 +278,13 @@ export function validateSnapshot(snapshot, { label, sha } = {}) {
   if (!isRecord(snapshot.routes)) {
     throw new Error('Snapshot routes must be an object')
   }
-  for (const [route, sizes] of Object.entries(snapshot.routes)) {
-    if (!ROUTES.includes(route)) {
-      throw new Error('Snapshot contains an unexpected route')
+  const routes = Object.entries(snapshot.routes)
+  if (routes.length > MAX_ROUTES) {
+    throw new Error(`Snapshot contains more than ${MAX_ROUTES} routes`)
+  }
+  for (const [route, sizes] of routes) {
+    if (!ROUTE_PATTERN.test(route)) {
+      throw new Error('Snapshot contains an invalid route')
     }
     const path = `Snapshot route ${JSON.stringify(route)}`
     if (!isRecord(sizes)) {
@@ -370,7 +377,10 @@ function formatCountDelta(base, head) {
 }
 
 function routeRows(base, head) {
-  return ROUTES.filter(route => Object.hasOwn(base.routes, route) || Object.hasOwn(head.routes, route)).map((route) => {
+  const extraRoutes = [...new Set([...Object.keys(base.routes), ...Object.keys(head.routes)])]
+    .filter(route => !ROUTES.includes(route))
+    .sort()
+  return [...ROUTES, ...extraRoutes].filter(route => Object.hasOwn(base.routes, route) || Object.hasOwn(head.routes, route)).map((route) => {
     const baseRoute = Object.hasOwn(base.routes, route) ? base.routes[route] : undefined
     const headRoute = Object.hasOwn(head.routes, route) ? head.routes[route] : undefined
     const baseJs = baseRoute ? formatBytes(baseRoute.javascript.brotli) : 'n/a'
