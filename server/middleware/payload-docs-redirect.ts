@@ -1,4 +1,4 @@
-import { CURRENT_DOCS_VERSION, EXAMPLES_PATH_PREFIX, docsPathPrefix, isVersionedDocsPath } from '#shared/utils/docs'
+import { CURRENT_DOCS_VERSION, EXAMPLES_PATH_PREFIX, docsPathPrefix, getVersionByPath } from '#shared/utils/docs'
 
 /**
  * Redirect unversioned docs payloads to the current version, keeping the `/_payload.json` suffix.
@@ -12,7 +12,7 @@ export default defineEventHandler((event) => {
   if (!url.pathname.startsWith('/docs/') || !url.pathname.endsWith('/_payload.json')) return
 
   const pagePath = url.pathname.slice(0, -'/_payload.json'.length)
-  if (isVersionedDocsPath(pagePath)) return
+  if (getVersionByPath(pagePath)) return
   if (pagePath === EXAMPLES_PATH_PREFIX || pagePath.startsWith(`${EXAMPLES_PATH_PREFIX}/`)) return
 
   // 302 for the same reason as the route middleware: the target flips on each major release.

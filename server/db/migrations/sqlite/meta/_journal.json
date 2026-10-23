@@ -64,6 +64,20 @@
       "when": 1791895275741,
       "tag": "0008_nuxter_profiles",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "6",
+      "when": 1792502147701,
+      "tag": "0009_users_last_seen",
+      "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "6",
+      "when": 1792565712004,
+      "tag": "0010_nuxter_profiles_country",
+      "breakpoints": true
     }
   ]
 }

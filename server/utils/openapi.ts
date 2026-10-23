@@ -67,8 +67,8 @@ export const apiPaths: Record<string, unknown> = {
         {
           name: 'version',
           in: 'query',
-          description: 'Nuxt major version the modules must be compatible with.',
-          schema: { type: 'string', enum: ['2', '2-bridge', '3', 'all'], default: '3' }
+          description: 'Nuxt major version the modules must be compatible with. Omit it to list modules for Nuxt 3 and later.',
+          schema: { type: 'string', enum: ['2', '2-bridge', '3', 'all'] }
         },
         {
           name: 'category',
@@ -232,6 +232,21 @@ export function createOpenApiDocument(options: { url: string, discovery: OpenApi
             stats: { type: 'object', additionalProperties: true },
             maintainers: { type: 'array', items: { type: 'object', additionalProperties: true } },
             contributors: { type: 'array', items: { type: 'object', additionalProperties: true } },
+            providers: {
+              type: 'array',
+              description: 'Third-party services the module integrates with (image CDNs, font providers, analytics scripts...).',
+              items: {
+                type: 'object',
+                required: ['name', 'label'],
+                properties: {
+                  name: { type: 'string', description: 'Unique within the module, usually the key used in the module options.' },
+                  label: { type: 'string' },
+                  icon: { type: 'string', description: 'Iconify icon name, `collection:icon`.' },
+                  category: { type: 'string' },
+                  docs: { type: 'string', format: 'uri' }
+                }
+              }
+            },
             readme: { type: 'string', description: 'Rendered readme, only on `getModule`.' }
           }
         },

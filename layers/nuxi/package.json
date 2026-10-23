@@ -8,17 +8,17 @@
     "start": "eve start"
   },
   "dependencies": {
-    "@ai-sdk/gateway": "^4.0.110",
-    "@chat-adapter/discord": "^4.41.1",
-    "@chat-adapter/state-memory": "^4.41.1",
-    "@chat-adapter/state-redis": "^4.41.1",
+    "@ai-sdk/gateway": "^4.0.116",
+    "@chat-adapter/discord": "^4.42.0",
+    "@chat-adapter/state-memory": "^4.42.0",
+    "@chat-adapter/state-redis": "^4.42.0",
     "@opentelemetry/instrumentation-undici": "^0.33.0",
     "@vercel/global-config": "^1.5.1",
-    "ai": "^7.0.137",
-    "chat": "^4.41.1",
-    "eve": "^0.76.3",
-    "evlog": "^2.31.0",
-    "zod": "^4.6.5"
+    "ai": "^7.0.143",
+    "chat": "^4.42.0",
+    "eve": "^0.80.1",
+    "evlog": "^2.33.0",
+    "zod": "^4.6.7"
   },
   "optionalDependencies": {
     "zlib-sync": "^0.1.10"

@@ -2,7 +2,7 @@ import { z } from 'zod'
 import { and, desc, eq, gte, lte, sql, type SQL } from 'drizzle-orm'
 
 export default defineMcpTool({
-  description: `Lists persisted **web** chat sessions (signed-in users on nuxt.com) with message counts and vote tallies. Does not include Slack threads or Vercel o11y runs — use Observability → Agent Runs for those.
+  description: `Lists persisted **web** chat sessions (signed-in users on nuxt.com) with message counts and vote tallies. Only includes chats shared with admins or made public. Does not include Slack threads or Vercel o11y runs — use Observability → Agent Runs for those.
 
 WHEN TO USE: Find web chats with downvotes or read metadata before opening a full transcript via \`get-agent-chat\`.`,
   inputSchema: {
@@ -23,7 +23,7 @@ WHEN TO USE: Find web chats with downvotes or read metadata before opening a ful
   ],
   enabled: event => isMcpAdmin(event),
   async handler({ sinceDays, until, hasDownvotes, sortBy, limit, offset }) {
-    const filters: SQL[] = []
+    const filters: SQL[] = [adminReadableChat()]
     if (sinceDays) {
       const since = new Date(Date.now() - sinceDays * 24 * 60 * 60 * 1000)
       filters.push(gte(schema.chats.createdAt, since))
@@ -60,7 +60,7 @@ WHEN TO USE: Find web chats with downvotes or read metadata before opening a ful
       })
       .from(schema.chats)
       .leftJoin(schema.votes, eq(schema.votes.chatId, schema.chats.id))
-      .where(filters.length ? and(...filters) : undefined)
+      .where(and(...filters))
       .groupBy(schema.chats.id)
       .having(hasDownvotes ? sql`${downvotesExpr} > 0` : undefined)
       .orderBy(desc(sortColumn))

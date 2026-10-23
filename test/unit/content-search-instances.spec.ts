@@ -14,6 +14,10 @@ describe('searchInstanceKeys', () => {
     }
   })
 
+  it('searches only its own docs on an archived version, without the Nuxt 3+ examples', () => {
+    expect(searchInstanceKeys('2.x')).toEqual(['docs:2.x'])
+  })
+
   it('gives every composed instance a unique name — contentHub() throws on a duplicate', () => {
     // `docs:*` and `cli:*` are all named `docs`/`cli` respectively across versions; a hub only
     // works because one version's set never repeats a name (`examples` is shared, not versioned).

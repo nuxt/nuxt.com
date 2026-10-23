@@ -9,7 +9,7 @@ function extractText(parts: MessagePart[]): string {
 }
 
 export default defineMcpTool({
-  description: `Lists per-message votes (upvotes/downvotes) on AI agent answers, joined with chat metadata and the actual voted message text.
+  description: `Lists per-message votes (upvotes/downvotes) on AI agent answers, joined with chat metadata and the actual voted message text. Only includes chats shared with admins or made public.
 
 WHEN TO USE: Use this tool to read what users actually disliked. Default sort is most recent vote first; pass \`onlyDownvotes\` to focus on negative signal.`,
   inputSchema: {
@@ -33,7 +33,7 @@ WHEN TO USE: Use this tool to read what users actually disliked. Default sort is
       throw createError({ statusCode: 400, message: 'Pass at most one of `onlyDownvotes` / `onlyUpvotes`.' })
     }
 
-    const filters: SQL[] = []
+    const filters: SQL[] = [adminReadableChat()]
     if (onlyDownvotes) filters.push(eq(schema.votes.isUpvoted, false))
     if (onlyUpvotes) filters.push(eq(schema.votes.isUpvoted, true))
     if (sinceDays) {
@@ -65,7 +65,7 @@ WHEN TO USE: Use this tool to read what users actually disliked. Default sort is
         eq(schema.messages.chatId, schema.votes.chatId),
         eq(schema.messages.id, schema.votes.messageId)
       ))
-      .where(filters.length ? and(...filters) : undefined)
+      .where(and(...filters))
       .orderBy(desc(schema.chats.createdAt))
       .limit(limit)
       .offset(offset)

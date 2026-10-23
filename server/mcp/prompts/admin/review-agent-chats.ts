@@ -12,7 +12,7 @@ export default defineMcpPrompt({
 
 Steps to follow:
 1. Call \`agent-usage-stats\` with \`sinceDays=${sinceDays}\` for web chat counts and vote totals. For runs/tokens/cost, tell the reader to check Vercel Observability → Agent Runs.
-2. Call \`list-agent-chats\` with \`sinceDays=${sinceDays}\`, \`hasDownvotes=true\`, \`limit=${worst}\` to find the worst-rated sessions (most recently updated first).
+2. Call \`list-agent-chats\` with \`sinceDays=${sinceDays}\`, \`hasDownvotes=true\`, \`limit=${worst}\` to find the worst-rated sessions (most recently updated first). Only chats shared with admins or made public are returned; private chats never leave the owner's dashboard.
 3. For each of those ${worst} chats, call \`get-agent-chat\` with the chat \`id\` to read the full transcript and the per-message votes.
 4. Optionally, call \`list-agent-votes\` with \`onlyDownvotes=true\`, \`sinceDays=${sinceDays}\`, \`limit=20\` to surface recurring downvoted answers across chats.
 

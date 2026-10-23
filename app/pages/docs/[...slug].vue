@@ -2,9 +2,9 @@
 import { kebabCase } from 'scule'
 import type { NavigationItem } from 'comark-content'
 import { DocsProseImg, Browser, CodeExplorer, Important, LinkExample, ReadMore, VideoAccordion } from '#components'
-import { CLI_DOCS_REFS, CLI_DOCS_REPO, cliDocsPathPrefix } from '#shared/utils/cli'
+import { CLI_DOCS_REFS, CLI_DOCS_REPO, cliDocsPathPrefix, hasCliDocs } from '#shared/utils/cli'
 import { cliInstanceKey } from '#shared/utils/content'
-import { DOCS_REFS, DOCS_REPO, isCanonicalDocsPath, isVersionedDocsPath } from '#shared/utils/docs'
+import { DOCS_REFS, DOCS_REPO, getVersionByPath, isArchivedDocVersion, isCanonicalDocsPath } from '#shared/utils/docs'
 
 definePageMeta({
   heroBackground: false,
@@ -62,16 +62,20 @@ function paintResponse() {
 
 const pageKey = computed(() => kebabCase(path.value))
 
-const versioned = computed(() => isVersionedDocsPath(path.value))
+const versioned = computed(() => !!getVersionByPath(path.value))
 
-const isCliPage = computed(() => {
-  const prefix = cliDocsPathPrefix(docsVersion.value)
-  return path.value === prefix || path.value.startsWith(`${prefix}/`)
+/** The version's command reference, when this page belongs to it. */
+const cliVersion = computed(() => {
+  const version = docsVersion.value
+  if (!hasCliDocs(version)) return undefined
+
+  const prefix = cliDocsPathPrefix(version)
+  return path.value === prefix || path.value.startsWith(`${prefix}/`) ? version : undefined
 })
 
 const instanceKey = computed(() => {
   if (!versioned.value) return 'examples' as const
-  return isCliPage.value ? cliInstanceKey(docsVersion.value) : docsInstanceKey.value
+  return cliVersion.value ? cliInstanceKey(cliVersion.value) : docsInstanceKey.value
 })
 
 const { data: page, status } = await useAsyncData(pageKey, () => {
@@ -138,8 +142,8 @@ const editLink = computed(() => {
     return `https://github.com/nuxt/examples/edit/main/.docs/${meta.stem}${meta.extension}`
   }
 
-  if (isCliPage.value) {
-    const ref = CLI_DOCS_REFS[docsVersion.value].branch
+  if (cliVersion.value) {
+    const ref = CLI_DOCS_REFS[cliVersion.value].branch
     return `https://github.com/${CLI_DOCS_REPO}/edit/${ref}/docs/${meta.stem}${meta.extension}`
   }
 
@@ -175,9 +179,10 @@ useSeoMeta({
   titleTemplate,
   title
 })
-// Only emit canonical/markdown alternate where the URL is authoritative.
+// Only emit canonical where the URL is authoritative.
+// Archived versions get no markdown alternate (not exposed to agents)
 if (isCanonicalDocsPath(path.value)) {
-  useCanonical(() => `/raw${path.value}.md`)
+  useCanonical(() => isArchivedDocVersion(docsVersion.value) ? undefined : `/raw${path.value}.md`)
 }
 
 if (import.meta.server) {
@@ -312,10 +317,11 @@ const noRightAside = computed(() => route.path.includes('/examples/'))
         </UPageAside>
       </template>
       <UPageHeader
+        :title="fm.title"
+        :description="fm.description"
         :ui="{
           wrapper: 'flex-row items-center flex-wrap justify-between'
         }"
-        v-bind="fm"
       >
         <template #headline>
           <UBreadcrumb :items="breadcrumb" />
@@ -342,13 +348,14 @@ const noRightAside = computed(() => route.path.includes('/examples/'))
             color="neutral"
             variant="soft"
             :target="link.to.startsWith('http') ? '_blank' : undefined"
-            v-bind="{ ...link, size: 'sm' }"
+            v-bind="{ ...pickLink(link), size: 'sm' }"
           >
             <template v-if="link.avatar" #leading>
-              <UAvatar v-bind="link.avatar" size="2xs" :alt="`${link.label} avatar`" />
+              <UAvatar v-bind="pickAvatar(link.avatar)" size="2xs" :alt="`${link.label} avatar`" />
             </template>
           </UButton>
-          <PageHeaderLinks :key="page.path" />
+
+          <PageHeaderLinks v-if="!isArchivedDocVersion(docsVersion)" :key="page.path" />
         </template>
       </UPageHeader>
 

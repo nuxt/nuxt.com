@@ -3,8 +3,8 @@ import { readdir, readFile } from 'node:fs/promises'
 import { join } from 'node:path'
 import type { H3Event } from 'h3'
 import type { BatchItem } from 'drizzle-orm/batch'
-import { and, asc, count, eq, inArray, sql, sum } from 'drizzle-orm'
-import type { NuxterBadges, NuxterLinks, NuxterProfile, NuxtersPage, NuxtersPeriod, NuxterSummary } from '#shared/types'
+import { and, asc, count, desc, eq, inArray, isNotNull, lte, sql, sum } from 'drizzle-orm'
+import type { NuxterBadges, NuxterLinks, NuxterProfile, NuxtersMap, NuxtersPage, NuxtersPeriod, NuxterSummary } from '#shared/types'
 import {
   NUXTERS_MIN_ROWS,
   NUXTERS_PROFILES_FILE,
@@ -27,7 +27,7 @@ const PROFILES_SYNC_KEY = 'profiles'
 
 type NuxterDbRow = typeof schema.nuxters.$inferSelect
 
-function toProfile(rows: NuxterDbRow[], links: NuxterLinks | null): NuxterProfile | null {
+function toProfile(rows: NuxterDbRow[], profile: (NuxterLinks & { country: string | null }) | null): NuxterProfile | null {
   const allTime = rows.find(row => row.period === 'all')
   if (!allTime) return null
 
@@ -39,8 +39,22 @@ function toProfile(rows: NuxterDbRow[], links: NuxterLinks | null): NuxterProfil
       const { githubId: _id, username: _username, firstContributionAt: _first, ...stats } = rowToNuxter(byPeriod.get(period)!)
       return { period, ...stats }
     }),
-    links
+    // A profile row can hold a country only: no links to show then.
+    links: profile && (profile.name || profile.website || profile.socialAccounts.length)
+      ? { name: profile.name, website: profile.website, socialAccounts: profile.socialAccounts }
+      : null,
+    country: profile?.country ?? null
   }
+}
+
+/** The leaderboard of a period, or of the Nuxters of one country in it. */
+function inPeriod(period: NuxtersPeriod, country?: string | null) {
+  return and(
+    eq(schema.nuxters.period, period),
+    country
+      ? inArray(schema.nuxters.githubId, db.select({ githubId: schema.nuxterProfiles.githubId }).from(schema.nuxterProfiles).where(eq(schema.nuxterProfiles.country, country)))
+      : undefined
+  )
 }
 
 export const nuxters = {
@@ -56,18 +70,20 @@ export const nuxters = {
   async getByGithubId(githubId: number | string): Promise<NuxterProfile | null> {
     const id = Number(githubId)
     if (!Number.isSafeInteger(id)) return null
-    const [rows, [links]] = await Promise.all([
+    const [rows, [profile]] = await Promise.all([
       db.select().from(schema.nuxters).where(eq(schema.nuxters.githubId, id)),
       db.select({
         name: schema.nuxterProfiles.name,
         website: schema.nuxterProfiles.website,
-        socialAccounts: schema.nuxterProfiles.socialAccounts
+        socialAccounts: schema.nuxterProfiles.socialAccounts,
+        country: schema.nuxterProfiles.country
       }).from(schema.nuxterProfiles).where(eq(schema.nuxterProfiles.githubId, id))
     ])
-    return toProfile(rows, links ?? null)
+    return toProfile(rows, profile ?? null)
   },
 
-  async list({ period = 'all', offset = 0, limit = 100 }: { period?: NuxtersPeriod, offset?: number, limit?: number } = {}): Promise<NuxtersPage> {
+  /** `country`: the Nuxters of this ISO code only, still with their rank among everyone. */
+  async list({ period = 'all', country = null, offset = 0, limit = 100 }: { period?: NuxtersPeriod, country?: string | null, offset?: number, limit?: number } = {}): Promise<NuxtersPage> {
     const [items, [totals], syncs] = await Promise.all([
       db.select({
         githubId: schema.nuxters.githubId,
@@ -75,7 +91,7 @@ export const nuxters = {
         rank: schema.nuxters.rank,
         score: schema.nuxters.score
       }).from(schema.nuxters)
-        .where(eq(schema.nuxters.period, period))
+        .where(inPeriod(period, country))
         .orderBy(asc(schema.nuxters.rank))
         .limit(limit)
         .offset(offset),
@@ -85,7 +101,7 @@ export const nuxters = {
         mergedPullRequests: sum(schema.nuxters.prAll),
         issues: sum(schema.nuxters.issues),
         comments: sum(schema.nuxters.comments)
-      }).from(schema.nuxters).where(eq(schema.nuxters.period, period)),
+      }).from(schema.nuxters).where(inPeriod(period, country)),
       nuxters.syncs()
     ])
     // SQLite `SUM` is `NULL` on an empty period, and drizzle returns it as a string.
@@ -94,6 +110,7 @@ export const nuxters = {
     const comments = Number(totals?.comments ?? 0)
     return {
       period,
+      country,
       periods: sortNuxtersPeriods(syncs.filter(sync => sync.count > 0).map(sync => sync.period)),
       total: totals?.contributors ?? 0,
       totals: {
@@ -108,10 +125,47 @@ export const nuxters = {
   },
 
   /**
+   * The Nuxters of a period by country, with the 3 best ranked of each.
+   * Only profiles with a location GitHub resolved to a country are counted.
+   */
+  async map(period: NuxtersPeriod = 'all'): Promise<NuxtersMap> {
+    const located = and(eq(schema.nuxters.period, period), isNotNull(schema.nuxterProfiles.country))
+    const ranked = db.select({
+      country: schema.nuxterProfiles.country,
+      username: schema.nuxters.username,
+      position: sql<number>`row_number() over (partition by ${schema.nuxterProfiles.country} order by ${schema.nuxters.rank})`.as('position')
+    }).from(schema.nuxters)
+      .innerJoin(schema.nuxterProfiles, eq(schema.nuxterProfiles.githubId, schema.nuxters.githubId))
+      .where(located)
+      .as('ranked')
+    const [counts, top, [all]] = await Promise.all([
+      db.select({ code: schema.nuxterProfiles.country, count: count() })
+        .from(schema.nuxters)
+        .innerJoin(schema.nuxterProfiles, eq(schema.nuxterProfiles.githubId, schema.nuxters.githubId))
+        .where(located)
+        .groupBy(schema.nuxterProfiles.country)
+        .orderBy(desc(count()), asc(schema.nuxterProfiles.country)),
+      db.select({ country: ranked.country, username: ranked.username }).from(ranked)
+        .where(lte(ranked.position, 3))
+        .orderBy(asc(ranked.position)),
+      db.select({ total: count() }).from(schema.nuxters).where(eq(schema.nuxters.period, period))
+    ])
+    const countries = counts.flatMap(({ code, count }) => code
+      ? [{ code, count, top: top.filter(row => row.country === code).map(row => row.username) }]
+      : [])
+    return {
+      period,
+      total: all?.total ?? 0,
+      located: countries.reduce((sum, country) => sum + country.count, 0),
+      countries
+    }
+  },
+
+  /**
    * Usernames containing `query` in a period: names starting with it first, then by rank.
    * About 27k rows at most per period, so a scan is fast enough and needs no extra index.
    */
-  async search({ query, period = 'all', limit = 8 }: { query: string, period?: NuxtersPeriod, limit?: number }): Promise<NuxterSummary[]> {
+  async search({ query, period = 'all', country = null, limit = 8 }: { query: string, period?: NuxtersPeriod, country?: string | null, limit?: number }): Promise<NuxterSummary[]> {
     const term = query.trim().toLowerCase()
     if (!term) return []
     const position = sql`instr(${schema.nuxters.usernameLower}, ${term})`
@@ -121,7 +175,7 @@ export const nuxters = {
       rank: schema.nuxters.rank,
       score: schema.nuxters.score
     }).from(schema.nuxters)
-      .where(and(eq(schema.nuxters.period, period), sql`${position} > 0`))
+      .where(and(inPeriod(period, country), sql`${position} > 0`))
       .orderBy(sql`case when ${position} = 1 then 0 else 1 end`, asc(schema.nuxters.rank))
       .limit(limit)
   },
