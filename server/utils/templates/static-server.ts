@@ -16,7 +16,9 @@ createServer((req, res) => {
     return res.writeHead(400).end()
   }
   const path = normalize(pathname).replace(/^(\\.\\.[/\\\\])+/, '')
-  for (const [candidate, status] of [[path, 200], [join(path, 'index.html'), 200], [path + '.html', 200], ['/200.html', 200], ['/404.html', 404]]) {
+  // A missing asset is a 404, never the app shell: the check would count it as loaded.
+  const fallbacks = extname(path) && extname(path) !== '.html' ? [] : [['/200.html', 200], ['/404.html', 404]]
+  for (const [candidate, status] of [[path, 200], [join(path, 'index.html'), 200], [path + '.html', 200], ...fallbacks]) {
     const file = join(root, candidate)
     try {
       if (!statSync(file).isFile()) continue

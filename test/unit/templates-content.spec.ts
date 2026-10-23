@@ -36,6 +36,9 @@ describe('template content', () => {
     for (const key of ['demo', 'purchase']) {
       if (data[key] !== undefined) expect(isHttps(data[key]), key).toBe(true)
     }
+    if (data.deploy !== undefined) {
+      expect(data.deploy !== null && typeof data.deploy === 'object' && !Array.isArray(data.deploy), 'deploy').toBe(true)
+    }
     if (data.deploy?.repositoryUrl !== undefined) {
       const [, repo, tree] = data.deploy.repositoryUrl.match(/^https:\/\/github\.com\/([^/]+\/[^/]+)(?:\/tree\/(.+))?$/) ?? []
       expect(repo !== undefined && segments(repo, 2) && (tree === undefined || segments(tree)), 'deploy.repositoryUrl').toBe(true)

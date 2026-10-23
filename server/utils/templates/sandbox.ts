@@ -109,10 +109,20 @@ export async function startPreview(template: Template, owner: string, onStep?: (
     onStep?.('serving')
     return { id: sandbox.name, url, sandbox }
   } catch (error) {
-    await sandbox.stop().catch(() => {})
-    await releasePreview(owner, name)
+    await stopPreview(owner, sandbox)
     throw error
   }
+}
+
+/** Stops a preview's sandbox, then frees its slot. A sandbox that fails to stop keeps its slot until it expires, so it still counts toward `MAX_RUNNING_PREVIEWS`. */
+export async function stopPreview(owner: string, sandbox: Sandbox) {
+  try {
+    await sandbox.stop()
+  } catch (error) {
+    console.error('[templates] preview stop failed', error)
+    return
+  }
+  await releasePreview(owner, sandbox.name)
 }
 
 export async function getPreviewSandbox(id: string, owner: string) {
