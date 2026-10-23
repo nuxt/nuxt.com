@@ -26,8 +26,7 @@ export default defineEventHandler(async (event) => {
   let left = false
   let started: Sandbox | undefined
   const stop = (sandbox: Sandbox) => {
-    sandbox.stop().catch(() => {})
-    releasePreview(owner, sandbox.name).catch(() => {})
+    stopPreview(owner, sandbox).catch(() => {})
   }
   const leave = () => {
     if (left) return

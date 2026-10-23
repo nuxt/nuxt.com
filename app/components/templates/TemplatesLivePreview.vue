@@ -101,7 +101,8 @@ async function start() {
   } catch (err: any) {
     if (err?.name === 'AbortError') return
     status.value = 'failed'
-    error.value = err?.message || 'The preview could not start.'
+    // A response that isn't the expected stream would otherwise show the parser's message.
+    error.value = err instanceof SyntaxError ? 'The preview could not start.' : err?.message || 'The preview could not start.'
     clearInterval(ticker)
   }
 }
