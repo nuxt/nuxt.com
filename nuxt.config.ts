@@ -204,8 +204,8 @@ export default defineNuxtConfig({
     '/video-courses': { isr: CONTENT_ISR },
     '/newsletter': { isr: CONTENT_ISR },
     // Stats change once a day (nuxt/nuxters CI); the import purges /nuxters itself.
-    // One cache entry per `?period=` (and only that query: no entry per utm_* link).
-    '/nuxters': { isr: { expiration: 60 * 60, allowQuery: ['period'], passQuery: true } },
+    // One cache entry per `?period=` and `?country=` (and only those: no entry per utm_* link).
+    '/nuxters': { isr: { expiration: 60 * 60, allowQuery: ['period', 'country'], passQuery: true } },
     // Profiles too: `?period=` selects the stats on screen.
     '/nuxters/**': { isr: { expiration: 60 * 60, allowQuery: ['period'], passQuery: true } },
     // API

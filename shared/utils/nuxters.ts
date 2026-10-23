@@ -1,4 +1,5 @@
 import type { Nuxter, NuxterLinks, NuxterMergedPullRequests, NuxterProfile, NuxterSocialAccount, NuxtersHackathon, NuxtersPeriod } from '../types/nuxters'
+import { COUNTRIES } from './nuxters-countries'
 
 /**
  * Where the contributor stats come from: committed nightly by the nuxt/nuxters CI,
@@ -256,6 +257,13 @@ export function parseNuxtersFile(data: unknown): NuxterRow[] {
 export interface NuxterProfileRow extends NuxterLinks {
   githubId: number
   username: string
+  country: string | null
+}
+
+/** A known ISO 3166-1 alpha-2 country code, uppercased (`fr` → `FR`), or `null`. */
+export function nuxterCountryCode(value: unknown): string | null {
+  const code = typeof value === 'string' ? value.toUpperCase() : ''
+  return Object.hasOwn(COUNTRIES, code) ? code : null
 }
 
 const MAX_SOCIAL_ACCOUNTS = 10
@@ -308,9 +316,10 @@ export function parseNuxterProfilesFile(data: unknown): NuxterProfileRow[] {
 
     const name = text(record.name)
     const website = safeNuxterUrl(record.website)
-    if (!name && !website && !socialAccounts.length) continue
+    const country = nuxterCountryCode(record.country)
+    if (!name && !website && !socialAccounts.length && !country) continue
     seen.add(githubId)
-    rows.push({ githubId, username, name, website, socialAccounts })
+    rows.push({ githubId, username, name, website, socialAccounts, country })
   }
   return rows
 }
