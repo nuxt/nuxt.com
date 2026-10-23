@@ -4,3 +4,4 @@ description: 'A beautiful dashboard template built with shadcn/vue and Nuxt Char
 demo: 'https://nuxt-shadcn-dashboard-demo.nuxtcharts.com/monitor?via=nuxt' 
 purchase: 'https://nuxtcharts.com/templates/nuxt-shadcn-dashboard?via=nuxt'
 badge: 'Premium'
+category: 'dashboard'

@@ -4,3 +4,8 @@ description: "Write beautiful docs with Markdown and Vue Components."
 repo: 'nuxt-content/docus'
 demo: 'https://docus.dev'
 featured: true
+category: 'docs'
+official: true
+source: 'gh:nuxt-content/docus/.starters/default'
+deploy:
+  repositoryUrl: 'https://github.com/nuxt-content/docus/tree/main/.starters/default'
