@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { Module, Nuxter, NuxterPeriodStats, NuxterProfilePage, NuxtersPeriod } from '#shared/types'
 import { isNuxtersPeriod, nuxterForPeriod, nuxterGithubSearchUrl, nuxterHackathons, nuxtersPeriodPhrase } from '#shared/utils/nuxters'
-import { countryFlag, countryName } from '#shared/utils/nuxters-countries'
+import { countryName } from '#shared/utils/nuxters-countries'
 
 definePageMeta({
   heroBackground: 'opacity-30 -z-10'
@@ -247,7 +247,7 @@ defineOgImage('Nuxter.takumi', { username, period: () => period.value === 'all' 
           <p v-if="nuxter.country || since" class="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm lg:text-base text-muted">
             <!-- The leaderboard of the same country and period -->
             <NuxtLink v-if="nuxter.country" :to="{ path: '/nuxters', query: { period, country: nuxter.country }, hash: '#leaderboard' }" class="inline-flex items-center gap-1.5 hover:text-highlighted transition-colors">
-              <UIcon :name="countryFlag(nuxter.country)" class="size-4" />
+              <UIcon name="i-lucide-map-pin" class="size-4" />
               {{ countryName(nuxter.country) }}
             </NuxtLink>
             <span v-if="since" class="inline-flex items-center gap-1.5">
