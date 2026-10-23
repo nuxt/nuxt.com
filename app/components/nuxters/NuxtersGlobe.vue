@@ -110,7 +110,8 @@ function render(elapsed: number) {
       element.inert = !show
     }
     if (show || wasVisible) {
-      const transform = `translate3d(${Math.round(x)}px, ${Math.round(y)}px, 0) translate(-50%, -50%)`
+      // Sub-pixel, like the globe under it: whole pixels made the markers step while it turned smoothly.
+      const transform = `translate3d(${x.toFixed(1)}px, ${y.toFixed(1)}px, 0) translate(-50%, -50%)`
       if (element.style.transform !== transform) element.style.transform = transform
     }
     if (show) occupied.push({ x, y, width: markerWidth })
@@ -367,6 +368,7 @@ onBeforeUnmount(() => {
 .nuxters-globe__marker {
   position: absolute;
   inset: 0 auto auto 0;
+  will-change: transform;
   display: flex;
   align-items: center;
   height: 28px;
