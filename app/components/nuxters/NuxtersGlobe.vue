@@ -405,14 +405,15 @@ onBeforeUnmount(() => {
   border: 0;
   background: transparent;
 }
-/* The tail, `TAIL` long, under the marker: its own stacking context keeps it above the canvas */
+/* The tail, `TAIL` long, under the marker. Over a count it covers the bottom border, and its two edges carry the
+   outline on: one shape, no line across. Its own stacking context keeps it above the canvas */
 .nuxters-globe__marker {
   isolation: isolate;
 }
 .nuxters-globe__marker::after {
   content: "";
   position: absolute;
-  z-index: -1;
+  z-index: 1;
   top: calc(100% - 4px);
   left: calc(50% - 5px);
   width: 10px;
@@ -424,6 +425,7 @@ onBeforeUnmount(() => {
   transform: rotate(45deg);
 }
 .nuxters-globe__marker.is-avatars::after {
+  z-index: -1;
   border: 0;
   background: var(--ui-text-highlighted);
 }
