@@ -25,6 +25,9 @@ const avatars = computed(() => zoom.value >= 1.6)
 
 const DEFAULT_CAMERA = { phi: 0, theta: 0.2, zoom: 1 }
 const MAX_ZOOM = 3
+// Zoomed in, the globe outgrows the canvas: it fades out from 82% of the radius (the mask in the styles) instead of
+// ending on a hard edge. Markers stay inside the part that still shows.
+const FRAME = 0.88
 const markers = computed(() => props.countries
   .flatMap((country) => {
     const location = COUNTRIES[country.code]?.location
@@ -53,8 +56,8 @@ const clamp = (value: number, low: number, high: number) => Math.min(high, Math.
 const angleDelta = (from: number, to: number) => ((to - from + Math.PI) % (Math.PI * 2) + Math.PI * 2) % (Math.PI * 2) - Math.PI
 
 const palette = () => colorMode.value === 'dark'
-  ? { dark: 1, diffuse: 1.2, mapBrightness: 4, mapBaseBrightness: 0.03, baseColor: [0.32, 0.36, 0.4] as [number, number, number], glowColor: [0.06, 0.08, 0.1] as [number, number, number] }
-  : { dark: 0, diffuse: 1.4, mapBrightness: 8, mapBaseBrightness: 0, baseColor: [0.94, 0.95, 0.96] as [number, number, number], glowColor: [0.92, 0.93, 0.95] as [number, number, number] }
+  ? { dark: 1, diffuse: 1.2, mapBrightness: 4, mapBaseBrightness: 0.03, baseColor: [0.32, 0.36, 0.4] as [number, number, number], glowColor: [0, 0.4, 0.24] as [number, number, number] }
+  : { dark: 0, diffuse: 1.4, mapBrightness: 8, mapBaseBrightness: 0, baseColor: [0.94, 0.95, 0.96] as [number, number, number], glowColor: [0.7, 0.94, 0.83] as [number, number, number] }
 
 const size = useElementSize(container)
 // Frames run only while the globe is on screen, in a visible tab, and moving.
@@ -82,6 +85,7 @@ function render(elapsed: number) {
 
   // Markers are HTML on top of the canvas: hide the ones behind the globe, out of the frame, or over another.
   const occupied: Array<{ x: number, y: number, width: number }> = []
+  const frame = Math.min(width, height) / 2 * FRAME
   for (const country of markers.value) {
     const element = markerElements.get(country.code)
     if (!element) continue
@@ -93,7 +97,7 @@ function render(elapsed: number) {
       : 20 + format(country.count).length * 7
     const wasVisible = element.dataset.visible === 'true'
     const front = projection.depth > (wasVisible ? 0.1 : 0.14)
-    const fits = x > markerWidth / 2 && x < width - markerWidth / 2 && y > 20 && y < height - 20
+    const fits = Math.hypot(x - width / 2, y - height / 2) < frame - Math.max(markerWidth, 28) / 2
     const gap = wasVisible ? 4 : 8
     const hasRoom = occupied.every(other => Math.abs(other.x - x) > (other.width + markerWidth) / 2 + gap || Math.abs(other.y - y) > 28 + gap)
     const show = front && fits && hasRoom
@@ -246,7 +250,7 @@ onBeforeUnmount(() => {
       tabindex="0"
       role="img"
       aria-label="Nuxters around the world. Arrow keys rotate the globe, plus and minus zoom, zero resets. Every country is also in the list."
-      class="block size-full cursor-grab active:cursor-grabbing touch-none rounded-full focus-visible:outline-2 focus-visible:outline-primary focus-visible:-outline-offset-4"
+      class="nuxters-globe__canvas block size-full cursor-grab active:cursor-grabbing touch-none outline-none"
       @pointerdown="pointerDown"
       @pointermove="pointerMove"
       @pointerup="pointerEnd"
@@ -336,6 +340,26 @@ onBeforeUnmount(() => {
 </template>
 
 <style scoped>
+/* The atmosphere: a green halo around the globe, under the canvas. Its rim is the glow of cobe (`glowColor`) */
+.nuxters-globe {
+  background: radial-gradient(closest-side, color-mix(in oklab, var(--ui-primary) 14%, transparent) 70%, transparent);
+}
+:global(.dark) .nuxters-globe {
+  background: radial-gradient(closest-side, color-mix(in oklab, var(--ui-primary) 24%, transparent) 70%, transparent);
+}
+/* A fade, not a clip: zoomed in, a rounded canvas cut the globe along a false horizon */
+.nuxters-globe__canvas {
+  mask-image: radial-gradient(closest-side, #000 82%, transparent);
+}
+/* The mask would hide an outline on the canvas */
+.nuxters-globe:has(.nuxters-globe__canvas:focus-visible)::after {
+  content: "";
+  position: absolute;
+  inset: 4px;
+  border-radius: 999px;
+  outline: 2px solid var(--ui-primary);
+  pointer-events: none;
+}
 .nuxters-globe__marker {
   position: absolute;
   inset: 0 auto auto 0;
