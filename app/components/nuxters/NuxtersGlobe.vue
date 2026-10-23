@@ -3,7 +3,7 @@ import type { NuxtersCountry } from '#shared/types'
 import type { Globe } from 'cobe'
 import createGlobe from 'cobe'
 import { COUNTRIES } from '#shared/utils/nuxters-countries'
-import { faceOnGlobe, projectOnGlobe } from '~/utils/nuxters-globe'
+import { faceOnGlobe, pinPath, projectOnGlobe } from '~/utils/nuxters-globe'
 
 const props = defineProps<{
   countries: NuxtersCountry[]
@@ -34,7 +34,9 @@ const TAIL = 6
 const markers = computed(() => props.countries
   .flatMap((country) => {
     const location = COUNTRIES[country.code]?.location
-    return location ? [{ ...country, name: COUNTRIES[country.code]!.name, location }] : []
+    // A count marker is as wide as its digits: its outline is drawn for that width.
+    const width = Math.max(28, 20 + format(country.count).length * 7)
+    return location ? [{ ...country, name: COUNTRIES[country.code]!.name, location, width }] : []
   })
   // The selected country first: it keeps its marker when others overlap it.
   .sort((a, b) => Number(b.code === props.selected) - Number(a.code === props.selected) || b.count - a.count))
@@ -98,7 +100,7 @@ function render(elapsed: number) {
     const y = height / 2 + projection.y * height / 2 - TAIL - markerHeight / 2
     const markerWidth = avatars.value
       ? (country.code === props.selected ? 32 + (country.top.length - 1) * 24 : 32)
-      : 20 + format(country.count).length * 7
+      : country.width
     const wasVisible = element.dataset.visible === 'true'
     const front = projection.depth > (wasVisible ? 0.1 : 0.14)
     const fits = Math.hypot(x - width / 2, y - height / 2) < frame - Math.max(markerWidth, markerHeight) / 2
@@ -277,9 +279,19 @@ onBeforeUnmount(() => {
         :class="{ 'is-selected': selected === country.code, 'is-avatars': avatars }"
         :aria-label="`${country.name}, ${format(country.count)} ${country.count === 1 ? 'Nuxter' : 'Nuxters'}`"
         :aria-pressed="selected === country.code"
+        :style="avatars ? undefined : { width: `${country.width}px` }"
         @click="emit('select', selected === country.code ? null : country.code)"
       >
-        <span class="nuxters-globe__tail" aria-hidden="true" />
+        <svg
+          v-if="!avatars"
+          class="nuxters-globe__pin"
+          :width="country.width"
+          :height="28 + TAIL"
+          :viewBox="`0 0 ${country.width} ${28 + TAIL}`"
+          aria-hidden="true"
+        >
+          <path :d="pinPath(country.width, 28, TAIL)" />
+        </svg>
         <Transition name="nuxters-globe-marker" mode="out-in" @after-enter="schedule">
           <span v-if="avatars" key="avatars" class="flex pl-2" aria-hidden="true">
             <NuxtImg
@@ -372,10 +384,9 @@ onBeforeUnmount(() => {
   will-change: transform;
   display: flex;
   align-items: center;
+  justify-content: center;
   height: 28px;
-  padding: 0 10px;
   border-radius: 999px;
-  background: var(--ui-border-accented);
   color: var(--ui-text-highlighted);
   font: 600 11px/1 var(--font-sans);
   font-variant-numeric: tabular-nums;
@@ -403,55 +414,37 @@ onBeforeUnmount(() => {
   padding: 0;
   background: transparent;
 }
-/* A count and its tail, `TAIL` long, are one shape with a 1px outline: both drawn in the outline color, then both
-   again 1px inside in the fill color. Borders on each piece left a line or a notch where they met. The marker's own
-   stacking context keeps the layers above the canvas */
+/* A count and its tail, `TAIL` long, are one path. Its own stacking context keeps it above the canvas */
 .nuxters-globe__marker {
   isolation: isolate;
 }
-.nuxters-globe__marker::before,
-.nuxters-globe__marker::after,
-.nuxters-globe__tail {
+.nuxters-globe__pin {
+  position: absolute;
+  inset: 0 auto auto 0;
+  z-index: -1;
+  overflow: visible;
+  fill: var(--ui-bg);
+  stroke: var(--ui-border-accented);
+  stroke-linejoin: round;
+}
+.nuxters-globe__marker:is(:hover, :focus-visible, .is-selected) .nuxters-globe__pin {
+  stroke: var(--ui-primary);
+}
+/* Avatars: a tail behind them, no outline */
+.nuxters-globe__marker.is-avatars::after {
   content: "";
   position: absolute;
-}
-.nuxters-globe__marker::before {
   z-index: -1;
-  inset: 1px;
-  border-radius: inherit;
-  background: var(--ui-bg);
-}
-.nuxters-globe__marker::after {
-  z-index: -2;
   top: calc(100% - 5px);
   left: calc(50% - 5px);
   width: 10px;
   height: 10px;
   border-bottom-right-radius: 2px;
-  background: var(--ui-border-accented);
-  transform: rotate(45deg);
-}
-.nuxters-globe__tail {
-  z-index: -1;
-  top: calc(100% - 4px);
-  left: calc(50% - 4px);
-  width: 8px;
-  height: 8px;
-  border-bottom-right-radius: 1px;
-  background: var(--ui-bg);
-  transform: rotate(45deg);
-}
-.nuxters-globe__marker:not(.is-avatars):is(:hover, :focus-visible, .is-selected),
-.nuxters-globe__marker:is(:hover, :focus-visible, .is-selected)::after {
-  background: var(--ui-primary);
-}
-/* Avatars have no outline: the tail alone, behind them */
-.nuxters-globe__marker.is-avatars::before,
-.nuxters-globe__marker.is-avatars .nuxters-globe__tail {
-  display: none;
-}
-.nuxters-globe__marker.is-avatars:not(:hover, :focus-visible, .is-selected)::after {
   background: var(--ui-text-highlighted);
+  transform: rotate(45deg);
+}
+.nuxters-globe__marker.is-avatars:is(:hover, :focus-visible, .is-selected)::after {
+  background: var(--ui-primary);
 }
 .nuxters-globe-marker-enter-active,
 .nuxters-globe-marker-leave-active {
