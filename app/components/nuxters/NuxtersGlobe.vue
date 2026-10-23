@@ -305,7 +305,7 @@ onBeforeUnmount(() => {
               format="auto"
               loading="lazy"
               alt=""
-              class="size-8 max-w-none -ml-2 rounded-full ring-2 ring-default object-cover"
+              class="size-8 max-w-none -ml-2 rounded-full ring-2 ring-default bg-muted object-cover"
             />
           </span>
           <span v-else key="count">{{ format(country.count) }}</span>
