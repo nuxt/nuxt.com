@@ -3,7 +3,7 @@ import type { Module } from '#shared/types'
 import { supportsNuxt3OrLater } from '#shared/utils/modules'
 import { MODULE_DOCS, hasModuleDocs, moduleDocsPathPrefix } from '#shared/utils/module-docs'
 import { moduleInstanceKey } from '#shared/utils/content'
-import { DocsProseImg, ModuleProseA, ModuleProseKbd, ModuleProseImg } from '#components'
+import { LazyDocsProseImg, ModuleProseA, ModuleProseKbd, ModuleProseImg } from '#components'
 
 definePageMeta({
   heroBackground: 'opacity-30 -z-10',
@@ -19,9 +19,10 @@ const markdownComponents = {
 }
 
 // Hosted docs are authored for nuxt.com, so their links and images need no README rewriting.
+// Docs-only components are `Lazy*` throughout: modules without docs never load them.
 const docsMarkdownComponents = {
   ...proseComponents,
-  ProseImg: DocsProseImg
+  ProseImg: LazyDocsProseImg
 }
 
 const route = useRoute()
@@ -321,7 +322,7 @@ if (import.meta.server) {
       v-if="docsNavigation.length"
       class="lg:hidden sticky top-(--ui-header-height) z-10 bg-default/75 backdrop-blur -mx-4 sm:-mx-6 p-6 border-b border-dashed border-default flex justify-between"
     >
-      <UDrawer
+      <LazyUDrawer
         v-model:open="menuDrawerOpen"
         direction="left"
         :title="module.npm"
@@ -339,15 +340,15 @@ if (import.meta.server) {
           class="-m-4"
         />
         <template #body>
-          <UContentNavigation
+          <LazyUContentNavigation
             :navigation="docsNavigation"
             :collapsible="false"
             :ui="{ link: 'data-[state=open]:text-muted data-[state=open]:hover:text-highlighted', trigger: 'font-normal' }"
             highlight
           />
         </template>
-      </UDrawer>
-      <UDrawer
+      </LazyUDrawer>
+      <LazyUDrawer
         v-if="tocLinks.length"
         v-model:open="onThisPageDrawerOpen"
         direction="right"
@@ -377,7 +378,7 @@ if (import.meta.server) {
             }"
           />
         </template>
-      </UDrawer>
+      </LazyUDrawer>
     </div>
 
     <UPage
@@ -390,14 +391,14 @@ if (import.meta.server) {
         : { root: 'lg:grid-cols-12', center: 'lg:col-span-9', right: 'lg:col-span-3' }"
     >
       <template v-if="docsNavigation.length" #left>
-        <UPageAside>
-          <UContentNavigation
+        <LazyUPageAside>
+          <LazyUContentNavigation
             :navigation="docsNavigation"
             :collapsible="false"
             :ui="{ link: 'data-[state=open]:text-muted data-[state=open]:hover:text-highlighted', trigger: 'font-normal' }"
             highlight
           />
-        </UPageAside>
+        </LazyUPageAside>
       </template>
 
       <UPageBody>
@@ -453,7 +454,7 @@ if (import.meta.server) {
                 label="Edit this page on GitHub"
               />
             </USeparator>
-            <UContentSurround :surround="surround" />
+            <LazyUContentSurround :surround="surround" />
           </div>
         </template>
 
