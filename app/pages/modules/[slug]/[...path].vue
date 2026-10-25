@@ -226,6 +226,15 @@ if (import.meta.server) {
         </template>
       </UAlert>
     </div>
+    <!-- Docs-only UI is `Lazy*` at the `ModuleDocs*` boundary: modules without docs never load it.
+         On mobile its bar comes first, under the site header, as on `/docs`. -->
+    <LazyModuleDocsMobileBar
+      v-if="docsNavigation.length"
+      :title="module.npm"
+      :navigation="docsNavigation"
+      :toc-links="tocLinks"
+    />
+
     <!-- The module header belongs to the module page; docs pages only keep the breadcrumb. -->
     <div v-if="isDocsPage" class="pt-8">
       <UBreadcrumb :items="breadcrumb.full" class="hidden lg:block" />
@@ -329,14 +338,6 @@ if (import.meta.server) {
       <ModuleInstallGroup :module="module" class="w-full mt-6 lg:hidden" />
     </UPageHeader>
 
-    <!-- Docs-only UI is `Lazy*` at the `ModuleDocs*` boundary: modules without docs never load it. -->
-    <LazyModuleDocsMobileBar
-      v-if="docsNavigation.length"
-      :title="module.npm"
-      :navigation="docsNavigation"
-      :toc-links="tocLinks"
-    />
-
     <UPage
       :ui="isAgentDocked ? {
         center: docsNavigation.length ? 'lg:col-span-8' : 'lg:col-span-10',
@@ -350,7 +351,8 @@ if (import.meta.server) {
         <LazyModuleDocsAside :navigation="docsNavigation" />
       </template>
 
-      <UPageBody>
+      <!-- Docs pages: the title sits under the breadcrumb on mobile, as on `/docs`. -->
+      <UPageBody :class="{ 'mt-4 lg:mt-8': isDocsPage }">
         <section v-if="!isDocsPage && module.providers?.length" class="mb-10">
           <h2 class="flex items-center gap-2 mb-4 text-lg font-semibold text-highlighted">
             Supported providers
