@@ -82,7 +82,7 @@ const breadcrumb = computed(() => {
   return {
     full: [
       { label: 'Modules', to: '/modules' },
-      { to: { name: 'modules', query: { category: module.value!.category } }, label: module.value!.category },
+      { to: `/modules?category=${encodeURIComponent(module.value!.category)}`, label: module.value!.category },
       moduleLink,
       ...trail
     ],
@@ -193,12 +193,29 @@ if (import.meta.server) {
     ogTitle: `${title.value} · Nuxt Modules`
   })
 
+  // A docs page reads like `/docs` ones: the trail above the page title, e.g. `@nuxt/icon > Guide` + `Server Bundle`.
   defineOgImage('Module.takumi', {
     icon: module.value?.icon,
-    headline: 'Nuxt Modules',
-    title: title.value,
+    headline: isDocsPage.value ? breadcrumb.value.compact.slice(0, -1).map(item => item.label).join(' > ') : 'Nuxt Modules',
+    title: isDocsPage.value ? docsFm.value.title : module.value!.npm,
     description: description.value
   })
+
+  if (isDocsPage.value) {
+    useSchemaOrg([
+      defineArticle({
+        '@type': 'TechArticle',
+        'headline': docsFm.value.title,
+        'description': description.value
+      }),
+      defineBreadcrumb({
+        // Sections without a page of their own (`Guide`) have no URL to point at.
+        itemListElement: breadcrumb.value.full
+          .filter((item, index, all) => item.to || index === all.length - 1)
+          .map(item => ({ name: item.label, item: item.to }))
+      })
+    ])
+  }
 }
 </script>
 
