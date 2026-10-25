@@ -3,6 +3,7 @@
  *
  * Keyed by the module's `name` in the `nuxt/modules` registry. A module without an entry keeps
  * the README-only page: the docs navigation only exists when a source is configured here.
+ * The source's `index.md` replaces the README on the module page, so it must have one.
  */
 export const MODULE_DOCS = {
   // TODO: back to `main` once nuxt/icon's `docs` branch is merged.

@@ -3,7 +3,7 @@ import type { Module } from '#shared/types'
 import { supportsNuxt3OrLater } from '#shared/utils/modules'
 import { MODULE_DOCS, hasModuleDocs, moduleDocsPathPrefix } from '#shared/utils/module-docs'
 import { moduleInstanceKey } from '#shared/utils/content'
-import { LazyDocsProseImg, ModuleProseA, ModuleProseKbd, ModuleProseImg } from '#components'
+import { ModuleProseA, ModuleProseKbd, ModuleProseImg } from '#components'
 
 definePageMeta({
   heroBackground: 'opacity-30 -z-10',
@@ -18,48 +18,40 @@ const markdownComponents = {
   ProseKbd: ModuleProseKbd
 }
 
-// Hosted docs are authored for nuxt.com, so their links and images need no README rewriting.
-// Docs-only components are `Lazy*` throughout: modules without docs never load them.
-const docsMarkdownComponents = {
-  ...proseComponents,
-  ProseImg: LazyDocsProseImg
-}
-
 const route = useRoute()
 const { isAgentDocked } = useNuxtAgent()
 
-const { data: module } = await useFetch<Module>(`/api/v1/modules/${route.params.slug}`, { key: `module-${route.params.slug}` })
-if (!module.value) {
-  throw createError({ statusCode: 404, statusMessage: 'Module not found', fatal: true })
-}
-
-// Docs navigation and pages only exist for modules with a configured docs source.
-const docsName = hasModuleDocs(module.value.name) ? module.value.name : undefined
+// The slug is the module's registry name, so the docs can be fetched alongside the module.
+const slug = route.params.slug as string
+const docsName = hasModuleDocs(slug) ? slug : undefined
 const docsRoot = docsName && moduleDocsPathPrefix(docsName)
 const docsContent = docsName && useContent(moduleInstanceKey(docsName))
 const pagePath = computed(() => route.path.replace(/\/$/, ''))
 /** A docs page below the module page, as opposed to the module page itself. */
 const isDocsPage = computed(() => !!docsRoot && pagePath.value !== docsRoot)
+// A `computed` key, not a getter: the build's async-data handler extraction mistakes a getter key for a handler.
+const docsPageKey = computed(() => `module-docs-page-${pagePath.value}`)
 
-const { data: docsNavigation } = await useAsyncData(`module-docs-nav-${route.params.slug}`, async () => {
-  if (!docsContent || !docsRoot) return []
-  const tree = await docsContent.navigation()
-  const children = navPageFromPath(docsRoot, tree)?.children ?? []
-  // The docs `index.md` is the module page; without one, the README stands in for it.
-  const items = children.some(item => item.path === docsRoot) ? children : [{ title: 'Overview', path: docsRoot }, ...children]
-  // Every docs path starts with the module page's, so only an exact match makes it active.
-  return items.map(item => item.path === docsRoot ? { ...item, exact: true } : item)
-}, { default: () => [] })
-
-const { data: docsPage, status: docsStatus } = await useAsyncData(
-  () => `module-docs-page-${pagePath.value}`,
-  () => docsContent ? docsContent.get(pagePath.value) : Promise.resolve(null)
-)
+const [{ data: module }, { data: docsNavigation }, { data: docsPage, status: docsStatus }] = await Promise.all([
+  useFetch<Module>(`/api/v1/modules/${slug}`, { key: `module-${slug}` }),
+  // Fetched once per module: the page instance is kept across its docs pages (`key` above).
+  useAsyncData(`module-docs-nav-${slug}`, async () => {
+    if (!docsContent || !docsRoot) return []
+    const tree = await docsContent.navigation()
+    // Every docs path starts with the module page's (the docs `index.md`), so only an exact match makes it active.
+    return (navPageFromPath(docsRoot, tree)?.children ?? [])
+      .map(item => item.path === docsRoot ? { ...item, exact: true } : item)
+  }, { default: () => [] }),
+  useAsyncData(docsPageKey, () => docsContent ? docsContent.get(pagePath.value) : Promise.resolve(null))
+])
+if (!module.value) {
+  throw createError({ statusCode: 404, statusMessage: 'Module not found', fatal: true })
+}
 
 watch([pagePath, docsStatus], () => {
   if (docsStatus.value === 'pending') return
   // `/modules/<name>` always renders (docs index or README); any other path must be a docs page.
-  if (pagePath.value !== `/modules/${route.params.slug}` && !(isDocsPage.value && docsPage.value)) {
+  if (pagePath.value !== `/modules/${slug}` && !(isDocsPage.value && docsPage.value)) {
     throw createError({ statusCode: 404, statusMessage: 'Page not found', fatal: true })
   }
 }, { immediate: true })
@@ -91,14 +83,6 @@ const breadcrumb = computed(() => {
   }
 })
 const surround = computed(() => findSurroundLinks(docsNavigation.value, pagePath.value))
-
-// Below `lg` the asides collapse into drawers, as on `/docs`.
-const menuDrawerOpen = ref(false)
-const onThisPageDrawerOpen = ref(false)
-watch(pagePath, () => {
-  menuDrawerOpen.value = false
-  onThisPageDrawerOpen.value = false
-})
 const docsEditLink = computed(() => {
   const meta = docsPage.value?.meta
   if (!docsName || !meta) return ''
@@ -234,7 +218,9 @@ if (import.meta.server) {
         </template>
       </UAlert>
     </div>
+    <!-- On a docs page, the page's own title is the h1 heading. -->
     <UPageHeader
+      :as="{ title: isDocsPage ? 'div' : 'h1' }"
       :description="module.description"
       :ui="{
         // On a mobile docs page, the breadcrumb and module name are enough context above the content.
@@ -335,68 +321,13 @@ if (import.meta.server) {
       <ModuleInstallGroup v-if="!isDocsPage" :module="module" class="w-full mt-6 lg:hidden" />
     </UPageHeader>
 
-    <div
+    <!-- Docs-only UI is `Lazy*` at the `ModuleDocs*` boundary: modules without docs never load it. -->
+    <LazyModuleDocsMobileBar
       v-if="docsNavigation.length"
-      class="lg:hidden sticky top-(--ui-header-height) z-10 bg-default/75 backdrop-blur -mx-4 sm:-mx-6 p-6 border-b border-dashed border-default flex justify-between"
-    >
-      <LazyUDrawer
-        v-model:open="menuDrawerOpen"
-        direction="left"
-        :title="module.npm"
-        inset
-        :handle="false"
-        :ui="{ content: 'w-full max-w-2/3' }"
-      >
-        <UButton
-          label="Menu"
-          icon="i-lucide-text-align-start"
-          color="neutral"
-          variant="link"
-          size="xs"
-          aria-label="Open navigation"
-          class="-m-4"
-        />
-        <template #body>
-          <LazyUContentNavigation
-            :navigation="docsNavigation"
-            :collapsible="false"
-            :ui="{ link: 'data-[state=open]:text-muted data-[state=open]:hover:text-highlighted', trigger: 'font-normal' }"
-            highlight
-          />
-        </template>
-      </LazyUDrawer>
-      <LazyUDrawer
-        v-if="tocLinks.length"
-        v-model:open="onThisPageDrawerOpen"
-        direction="right"
-        :handle="false"
-        inset
-        no-body-styles
-        :ui="{ content: 'w-full max-w-2/3' }"
-      >
-        <UButton
-          label="On this page"
-          trailing-icon="i-lucide-chevron-right"
-          color="neutral"
-          variant="link"
-          size="xs"
-          aria-label="Open on this page"
-          class="-m-4"
-        />
-        <template #body>
-          <UContentToc
-            :links="tocLinks"
-            :open="true"
-            default-open
-            :ui="{
-              root: '!mx-0 !px-1 top-0 overflow-visible',
-              container: '!pt-0 border-b-0',
-              trailingIcon: 'hidden'
-            }"
-          />
-        </template>
-      </LazyUDrawer>
-    </div>
+      :title="module.npm"
+      :navigation="docsNavigation"
+      :toc-links="tocLinks"
+    />
 
     <UPage
       :ui="isAgentDocked ? {
@@ -408,14 +339,7 @@ if (import.meta.server) {
         : { root: 'lg:grid-cols-12', center: 'lg:col-span-9', right: 'lg:col-span-3' }"
     >
       <template v-if="docsNavigation.length" #left>
-        <LazyUPageAside>
-          <LazyUContentNavigation
-            :navigation="docsNavigation"
-            :collapsible="false"
-            :ui="{ link: 'data-[state=open]:text-muted data-[state=open]:hover:text-highlighted', trigger: 'font-normal' }"
-            highlight
-          />
-        </LazyUPageAside>
+        <LazyModuleDocsAside :navigation="docsNavigation" />
       </template>
 
       <UPageBody>
@@ -450,31 +374,13 @@ if (import.meta.server) {
           </div>
         </section>
 
-        <template v-if="docsPage">
-          <div v-if="isDocsPage">
-            <h1 class="text-3xl font-bold text-highlighted">
-              {{ docsFm.title }}
-            </h1>
-            <p v-if="docsFm.description" class="mt-2 text-lg text-muted">
-              {{ docsFm.description }}
-            </p>
-          </div>
-          <MarkdownDocument v-if="docsPage.nodes?.length" :value="docsPage" :components="docsMarkdownComponents" />
-          <div>
-            <USeparator class="mt-6 mb-10">
-              <UButton
-                size="sm"
-                variant="link"
-                color="neutral"
-                :to="docsEditLink"
-                target="_blank"
-                label="Edit this page on GitHub"
-              />
-            </USeparator>
-            <LazyUContentSurround :surround="surround" />
-          </div>
-        </template>
-
+        <LazyModuleDocsPage
+          v-if="docsPage"
+          :page="docsPage"
+          :with-title="isDocsPage"
+          :edit-link="docsEditLink"
+          :surround="surround"
+        />
         <MarkdownDocument
           v-else-if="!isDocsPage && module.readme?.nodes?.length"
           :value="module.readme"
