@@ -279,59 +279,64 @@ if (import.meta.server) {
         <ModuleInstallGroup :module="module" class="hidden lg:flex" />
       </template>
 
+      <!-- Stats, then maintainers: one line each on mobile (wrapping on narrow screens), a single line on desktop. -->
       <div class="flex flex-col lg:flex-row lg:items-center gap-3 mt-4">
-        <UTooltip text="Monthly NPM Downloads">
-          <NuxtLink class="flex items-center gap-1.5" :to="`https://npmx.dev/package-stats/${module.npm}/v/${module.stats.version}?granularity=monthly`" target="_blank">
-            <UIcon name="i-lucide-circle-arrow-down" class="size-5 shrink-0" />
-            <span class="text-sm font-medium">{{ formatNumber(module.stats.downloads) }} downloads</span>
-          </NuxtLink>
-        </UTooltip>
-
-        <span class="hidden lg:block text-muted">&bull;</span>
-
-        <UTooltip text="GitHub Stars">
-          <NuxtLink class="flex items-center gap-1.5" :to="`https://github.com/${(module.repo || '').split('#')[0]}`" target="_blank">
-            <UIcon name="i-lucide-star" class="size-5 shrink-0" />
-            <span class="text-sm font-medium">{{ formatNumber(module.stats.stars || 0) }} stars</span>
-          </NuxtLink>
-        </UTooltip>
-
-        <span class="hidden lg:block text-muted">&bull;</span>
-
-        <UTooltip text="Latest Version">
-          <NuxtLink class="flex items-center gap-1.5" :to="`${(module.github || '').split('/tree/main/')[0]}/releases`" target="_blank">
-            <UIcon name="i-lucide-tag" class="size-5 shrink-0" />
-            <span class="text-sm font-medium">v{{ module.stats.version }}</span>
-          </NuxtLink>
-        </UTooltip>
-
-        <template v-if="module.health">
-          <span class="hidden lg:block text-muted">&bull;</span>
-          <UTooltip :text="`Health: ${module.health.status} - ${module.health.score}/100`">
-            <NuxtLink
-              :to="`https://nuxt.care/?search=npm:${module.npm}`"
-              class="flex items-center gap-1.5"
-              target="_blank"
-            >
-              <UIcon name="i-lucide-heart-pulse" class="size-5 shrink-0" :style="{ color: module.health.color }" />
-              <span class="text-sm font-medium">{{ module.health.score }}</span>
+        <div class="flex flex-wrap items-center gap-x-4 gap-y-2 lg:gap-x-3">
+          <UTooltip text="Monthly NPM Downloads">
+            <NuxtLink class="flex items-center gap-1.5" :to="`https://npmx.dev/package-stats/${module.npm}/v/${module.stats.version}?granularity=monthly`" target="_blank">
+              <UIcon name="i-lucide-circle-arrow-down" class="size-5 shrink-0" />
+              <span class="text-sm font-medium">{{ formatNumber(module.stats.downloads) }}<span class="max-sm:sr-only"> downloads</span></span>
             </NuxtLink>
           </UTooltip>
-        </template>
+
+          <span class="hidden lg:block text-muted">&bull;</span>
+
+          <UTooltip text="GitHub Stars">
+            <NuxtLink class="flex items-center gap-1.5" :to="`https://github.com/${(module.repo || '').split('#')[0]}`" target="_blank">
+              <UIcon name="i-lucide-star" class="size-5 shrink-0" />
+              <span class="text-sm font-medium">{{ formatNumber(module.stats.stars || 0) }}<span class="max-sm:sr-only"> stars</span></span>
+            </NuxtLink>
+          </UTooltip>
+
+          <span class="hidden lg:block text-muted">&bull;</span>
+
+          <UTooltip text="Latest Version">
+            <NuxtLink class="flex items-center gap-1.5" :to="`${(module.github || '').split('/tree/main/')[0]}/releases`" target="_blank">
+              <UIcon name="i-lucide-tag" class="size-5 shrink-0" />
+              <span class="text-sm font-medium">v{{ module.stats.version }}</span>
+            </NuxtLink>
+          </UTooltip>
+
+          <template v-if="module.health">
+            <span class="hidden lg:block text-muted">&bull;</span>
+            <UTooltip :text="`Health: ${module.health.status} - ${module.health.score}/100`">
+              <NuxtLink
+                :to="`https://nuxt.care/?search=npm:${module.npm}`"
+                class="flex items-center gap-1.5"
+                target="_blank"
+              >
+                <UIcon name="i-lucide-heart-pulse" class="size-5 shrink-0" :style="{ color: module.health.color }" />
+                <span class="text-sm font-medium">{{ module.health.score }}</span>
+              </NuxtLink>
+            </UTooltip>
+          </template>
+        </div>
 
         <div class="mx-3 h-6 border-l border-gray-200 dark:border-gray-800 w-px hidden lg:block" />
 
-        <div v-for="(maintainer, index) in module.maintainers" :key="maintainer.github" class="flex items-center gap-3">
-          <NuxtLink
-            :to="maintainer.nuxter ? `/nuxters/${maintainer.github}` : `https://github.com/${maintainer.github}`"
-            :target="maintainer.nuxter ? undefined : '_blank'"
-            class="flex items-center gap-1.5 hover:text-primary"
-          >
-            <UAvatar provider="ipx" :src="`https://ipx.nuxt.com/f_auto,s_20x20/gh_avatar/${maintainer.github}`" :srcset="`https://ipx.nuxt.com/f_auto,s_40x40/gh_avatar/${maintainer.github} 2x`" :alt="maintainer.github" size="xs" />
-            <span class="text-sm font-medium">{{ maintainer.github }}</span>
-          </NuxtLink>
+        <div class="flex flex-wrap items-center gap-x-4 gap-y-2 lg:gap-x-3">
+          <div v-for="(maintainer, index) in module.maintainers" :key="maintainer.github" class="flex items-center gap-3">
+            <NuxtLink
+              :to="maintainer.nuxter ? `/nuxters/${maintainer.github}` : `https://github.com/${maintainer.github}`"
+              :target="maintainer.nuxter ? undefined : '_blank'"
+              class="flex items-center gap-1.5 hover:text-primary"
+            >
+              <UAvatar provider="ipx" :src="`https://ipx.nuxt.com/f_auto,s_20x20/gh_avatar/${maintainer.github}`" :srcset="`https://ipx.nuxt.com/f_auto,s_40x40/gh_avatar/${maintainer.github} 2x`" :alt="maintainer.github" size="xs" />
+              <span class="text-sm font-medium">{{ maintainer.github }}</span>
+            </NuxtLink>
 
-          <span v-if="index < module.maintainers.length - 1" class="hidden lg:block text-muted">&bull;</span>
+            <span v-if="index < module.maintainers.length - 1" class="hidden lg:block text-muted">&bull;</span>
+          </div>
         </div>
       </div>
 
