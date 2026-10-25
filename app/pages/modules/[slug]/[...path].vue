@@ -62,7 +62,14 @@ const tocLinks = computed<any[]>(() => docsPage.value
   : module.value?.readme?.meta?.toc?.links ?? [])
 
 const breadcrumb = computed(() => {
-  const moduleLink = { label: module.value!.npm, to: isDocsPage.value ? docsRoot : undefined }
+  // On docs pages the module header is gone: its icon marks the module in the breadcrumb instead.
+  const moduleLink = isDocsPage.value
+    ? {
+        label: module.value!.npm,
+        to: docsRoot,
+        avatar: { src: moduleImage(module.value!.icon), icon: moduleIcon(module.value!.category), alt: module.value!.name, class: 'rounded-none bg-transparent' }
+      }
+    : { label: module.value!.npm }
   // Sections without a page of their own (`Guide`) are not links, and the current page is the last item.
   const trail = isDocsPage.value
     ? findBreadcrumb(docsNavigation.value, pagePath.value).map((item, index, all) => ({
@@ -219,15 +226,16 @@ if (import.meta.server) {
         </template>
       </UAlert>
     </div>
-    <!-- On a docs page, the page's own title is the h1 heading. -->
+    <!-- The module header belongs to the module page; docs pages only keep the breadcrumb. -->
+    <div v-if="isDocsPage" class="pt-8">
+      <UBreadcrumb :items="breadcrumb.full" class="hidden lg:block" />
+      <UBreadcrumb :items="breadcrumb.compact" class="lg:hidden" />
+    </div>
     <UPageHeader
-      :as="{ title: isDocsPage ? 'div' : 'h1' }"
+      v-else
       :description="module.description"
       :ui="{
-        // On a mobile docs page, the breadcrumb and module name are enough context above the content.
-        root: isDocsPage ? 'py-6 lg:py-8' : '',
-        headline: isDocsPage ? 'mb-4 lg:mb-8' : 'mb-8',
-        description: isDocsPage ? 'hidden lg:block' : '',
+        headline: 'mb-8',
         wrapper: isAgentDocked
           ? 'flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between'
           : 'flex flex-col gap-4 lg:grid lg:grid-cols-12 lg:gap-10 lg:items-center',
@@ -236,8 +244,7 @@ if (import.meta.server) {
       }"
     >
       <template #headline>
-        <UBreadcrumb :items="breadcrumb.full" :class="isDocsPage ? 'hidden lg:block' : ''" />
-        <UBreadcrumb v-if="isDocsPage" :items="breadcrumb.compact" class="lg:hidden" />
+        <UBreadcrumb :items="breadcrumb.full" />
       </template>
       <template #title>
         <div class="flex items-center gap-4">
@@ -263,7 +270,7 @@ if (import.meta.server) {
         <ModuleInstallGroup :module="module" class="hidden lg:flex" />
       </template>
 
-      <div class="flex-col lg:flex-row lg:items-center gap-3 mt-4" :class="isDocsPage ? 'hidden lg:flex' : 'flex'">
+      <div class="flex flex-col lg:flex-row lg:items-center gap-3 mt-4">
         <UTooltip text="Monthly NPM Downloads">
           <NuxtLink class="flex items-center gap-1.5" :to="`https://npmx.dev/package-stats/${module.npm}/v/${module.stats.version}?granularity=monthly`" target="_blank">
             <UIcon name="i-lucide-circle-arrow-down" class="size-5 shrink-0" />
@@ -319,7 +326,7 @@ if (import.meta.server) {
         </div>
       </div>
 
-      <ModuleInstallGroup v-if="!isDocsPage" :module="module" class="w-full mt-6 lg:hidden" />
+      <ModuleInstallGroup :module="module" class="w-full mt-6 lg:hidden" />
     </UPageHeader>
 
     <!-- Docs-only UI is `Lazy*` at the `ModuleDocs*` boundary: modules without docs never load it. -->
