@@ -1,10 +1,14 @@
 <script setup lang="ts">
 import type { Module } from '#shared/types'
 import { supportsNuxt3OrLater } from '#shared/utils/modules'
-import { ModuleProseA, ModuleProseKbd, ModuleProseImg } from '#components'
+import { MODULE_DOCS, hasModuleDocs, moduleDocsPathPrefix } from '#shared/utils/module-docs'
+import { moduleInstanceKey } from '#shared/utils/content'
+import { DocsProseImg, ModuleProseA, ModuleProseKbd, ModuleProseImg } from '#components'
 
 definePageMeta({
-  heroBackground: 'opacity-30 -z-10'
+  heroBackground: 'opacity-30 -z-10',
+  // One page instance per module: moving between its docs pages swaps the content, not the header.
+  key: route => `module-${route.params.slug}`
 })
 
 const markdownComponents = {
@@ -14,6 +18,12 @@ const markdownComponents = {
   ProseKbd: ModuleProseKbd
 }
 
+// Hosted docs are authored for nuxt.com, so their links and images need no README rewriting.
+const docsMarkdownComponents = {
+  ...proseComponents,
+  ProseImg: DocsProseImg
+}
+
 const route = useRoute()
 const { isAgentDocked } = useNuxtAgent()
 
@@ -21,6 +31,79 @@ const { data: module } = await useFetch<Module>(`/api/v1/modules/${route.params.
 if (!module.value) {
   throw createError({ statusCode: 404, statusMessage: 'Module not found', fatal: true })
 }
+
+// Docs navigation and pages only exist for modules with a configured docs source.
+const docsName = hasModuleDocs(module.value.name) ? module.value.name : undefined
+const docsRoot = docsName && moduleDocsPathPrefix(docsName)
+const docsContent = docsName && useContent(moduleInstanceKey(docsName))
+const pagePath = computed(() => route.path.replace(/\/$/, ''))
+/** A docs page below the module page, as opposed to the module page itself. */
+const isDocsPage = computed(() => !!docsRoot && pagePath.value !== docsRoot)
+
+const { data: docsNavigation } = await useAsyncData(`module-docs-nav-${route.params.slug}`, async () => {
+  if (!docsContent || !docsRoot) return []
+  const tree = await docsContent.navigation()
+  const children = navPageFromPath(docsRoot, tree)?.children ?? []
+  // The docs `index.md` is the module page; without one, the README stands in for it.
+  const items = children.some(item => item.path === docsRoot) ? children : [{ title: 'Overview', path: docsRoot }, ...children]
+  // Every docs path starts with the module page's, so only an exact match makes it active.
+  return items.map(item => item.path === docsRoot ? { ...item, exact: true } : item)
+}, { default: () => [] })
+
+const { data: docsPage, status: docsStatus } = await useAsyncData(
+  () => `module-docs-page-${pagePath.value}`,
+  () => docsContent ? docsContent.get(pagePath.value) : Promise.resolve(null)
+)
+
+watch([pagePath, docsStatus], () => {
+  if (docsStatus.value === 'pending') return
+  // `/modules/<name>` always renders (docs index or README); any other path must be a docs page.
+  if (pagePath.value !== `/modules/${route.params.slug}` && !(isDocsPage.value && docsPage.value)) {
+    throw createError({ statusCode: 404, statusMessage: 'Page not found', fatal: true })
+  }
+}, { immediate: true })
+
+const docsFm = computed<Record<string, any>>(() => docsPage.value?.data ?? {})
+const tocLinks = computed<any[]>(() => docsPage.value
+  ? (docsPage.value.meta as any)?.toc?.links ?? []
+  : module.value?.readme?.meta?.toc?.links ?? [])
+
+const breadcrumb = computed(() => {
+  const moduleLink = { label: module.value!.npm, to: isDocsPage.value ? docsRoot : undefined }
+  // Sections without a page of their own (`Guide`) are not links, and the current page is the last item.
+  const trail = isDocsPage.value
+    ? findBreadcrumb(docsNavigation.value, pagePath.value).map((item, index, all) => ({
+        label: item.title,
+        to: index < all.length - 1 ? item.path : undefined
+      }))
+    : []
+
+  return {
+    full: [
+      { label: 'Modules', to: '/modules' },
+      { to: { name: 'modules', query: { category: module.value!.category } }, label: module.value!.category },
+      moduleLink,
+      ...trail
+    ],
+    // Mobile docs pages: the module and the docs trail only.
+    compact: [moduleLink, ...trail]
+  }
+})
+const surround = computed(() => findSurroundLinks(docsNavigation.value, pagePath.value))
+
+// Below `lg` the asides collapse into drawers, as on `/docs`.
+const menuDrawerOpen = ref(false)
+const onThisPageDrawerOpen = ref(false)
+watch(pagePath, () => {
+  menuDrawerOpen.value = false
+  onThisPageDrawerOpen.value = false
+})
+const docsEditLink = computed(() => {
+  const meta = docsPage.value?.meta
+  if (!docsName || !meta) return ''
+  const { repo, branch, contentDir } = MODULE_DOCS[docsName]
+  return `https://github.com/${repo}/edit/${branch}/${contentDir}/${meta.stem}${meta.extension}`
+})
 
 // Reassign the ref (not module.value.health = ...): useFetch `data` is a
 // shallowRef, so an in-place nested write would not trigger reactivity.
@@ -91,8 +174,8 @@ const contributors = computed(() => {
 const PROVIDERS_PREVIEW = 12
 const showAllProviders = ref(false)
 
-const title = module.value.npm
-const description = module.value.description || 'A Nuxt module'
+const title = computed(() => isDocsPage.value ? `${docsFm.value.title} · ${module.value!.npm}` : module.value!.npm)
+const description = computed(() => (isDocsPage.value && docsFm.value.description) || module.value!.description || 'A Nuxt module')
 const publishedAgo = useTimeAgo(module.value.stats.publishedAt)
 const createdAgo = useTimeAgo(module.value.stats.createdAt)
 
@@ -106,14 +189,14 @@ useCanonical()
 if (import.meta.server) {
   useSeoMeta({
     ogDescription: description,
-    ogTitle: `${title} · Nuxt Modules`
+    ogTitle: `${title.value} · Nuxt Modules`
   })
 
   defineOgImage('Module.takumi', {
     icon: module.value?.icon,
     headline: 'Nuxt Modules',
-    title,
-    description
+    title: title.value,
+    description: description.value
   })
 }
 </script>
@@ -136,7 +219,10 @@ if (import.meta.server) {
     <UPageHeader
       :description="module.description"
       :ui="{
-        headline: 'mb-8',
+        // On a mobile docs page, the breadcrumb and module name are enough context above the content.
+        root: isDocsPage ? 'py-6 lg:py-8' : '',
+        headline: isDocsPage ? 'mb-4 lg:mb-8' : 'mb-8',
+        description: isDocsPage ? 'hidden lg:block' : '',
         wrapper: isAgentDocked
           ? 'flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between'
           : 'flex flex-col gap-4 lg:grid lg:grid-cols-12 lg:gap-10 lg:items-center',
@@ -145,7 +231,8 @@ if (import.meta.server) {
       }"
     >
       <template #headline>
-        <UBreadcrumb :items="[{ label: 'Modules', to: '/modules' }, { to: { name: 'modules', query: { category: module.category } }, label: module.category }, { label: module.npm }]" />
+        <UBreadcrumb :items="breadcrumb.full" :class="isDocsPage ? 'hidden lg:block' : ''" />
+        <UBreadcrumb v-if="isDocsPage" :items="breadcrumb.compact" class="lg:hidden" />
       </template>
       <template #title>
         <div class="flex items-center gap-4">
@@ -171,7 +258,7 @@ if (import.meta.server) {
         <ModuleInstallGroup :module="module" class="hidden lg:flex" />
       </template>
 
-      <div class="flex flex-col lg:flex-row lg:items-center gap-3 mt-4">
+      <div class="flex-col lg:flex-row lg:items-center gap-3 mt-4" :class="isDocsPage ? 'hidden lg:flex' : 'flex'">
         <UTooltip text="Monthly NPM Downloads">
           <NuxtLink class="flex items-center gap-1.5" :to="`https://npmx.dev/package-stats/${module.npm}/v/${module.stats.version}?granularity=monthly`" target="_blank">
             <UIcon name="i-lucide-circle-arrow-down" class="size-5 shrink-0" />
@@ -227,17 +314,94 @@ if (import.meta.server) {
         </div>
       </div>
 
-      <ModuleInstallGroup :module="module" class="w-full mt-6 lg:hidden" />
+      <ModuleInstallGroup v-if="!isDocsPage" :module="module" class="w-full mt-6 lg:hidden" />
     </UPageHeader>
+
+    <div
+      v-if="docsNavigation.length"
+      class="lg:hidden sticky top-(--ui-header-height) z-10 bg-default/75 backdrop-blur -mx-4 sm:-mx-6 p-6 border-b border-dashed border-default flex justify-between"
+    >
+      <UDrawer
+        v-model:open="menuDrawerOpen"
+        direction="left"
+        :title="module.npm"
+        inset
+        :handle="false"
+        :ui="{ content: 'w-full max-w-2/3' }"
+      >
+        <UButton
+          label="Menu"
+          icon="i-lucide-text-align-start"
+          color="neutral"
+          variant="link"
+          size="xs"
+          aria-label="Open navigation"
+          class="-m-4"
+        />
+        <template #body>
+          <UContentNavigation
+            :navigation="docsNavigation"
+            :collapsible="false"
+            :ui="{ link: 'data-[state=open]:text-muted data-[state=open]:hover:text-highlighted', trigger: 'font-normal' }"
+            highlight
+          />
+        </template>
+      </UDrawer>
+      <UDrawer
+        v-if="tocLinks.length"
+        v-model:open="onThisPageDrawerOpen"
+        direction="right"
+        :handle="false"
+        inset
+        no-body-styles
+        :ui="{ content: 'w-full max-w-2/3' }"
+      >
+        <UButton
+          label="On this page"
+          trailing-icon="i-lucide-chevron-right"
+          color="neutral"
+          variant="link"
+          size="xs"
+          aria-label="Open on this page"
+          class="-m-4"
+        />
+        <template #body>
+          <UContentToc
+            :links="tocLinks"
+            :open="true"
+            default-open
+            :ui="{
+              root: '!mx-0 !px-1 top-0 overflow-visible',
+              container: '!pt-0 border-b-0',
+              trailingIcon: 'hidden'
+            }"
+          />
+        </template>
+      </UDrawer>
+    </div>
 
     <UPage
       :ui="isAgentDocked ? {
-        center: 'lg:col-span-10',
+        center: docsNavigation.length ? 'lg:col-span-8' : 'lg:col-span-10',
         right: 'lg:hidden'
-      } : { root: 'lg:grid-cols-12', center: 'lg:col-span-9', right: 'lg:col-span-3' }"
+      } : docsNavigation.length
+        // The mobile bar above replaces the right aside's collapsible table of contents.
+        ? { root: 'lg:grid-cols-12', left: 'lg:col-span-2', center: 'lg:col-span-7', right: 'hidden lg:flex lg:col-span-3' }
+        : { root: 'lg:grid-cols-12', center: 'lg:col-span-9', right: 'lg:col-span-3' }"
     >
+      <template v-if="docsNavigation.length" #left>
+        <UPageAside>
+          <UContentNavigation
+            :navigation="docsNavigation"
+            :collapsible="false"
+            :ui="{ link: 'data-[state=open]:text-muted data-[state=open]:hover:text-highlighted', trigger: 'font-normal' }"
+            highlight
+          />
+        </UPageAside>
+      </template>
+
       <UPageBody>
-        <section v-if="module.providers?.length" class="mb-10">
+        <section v-if="!isDocsPage && module.providers?.length" class="mb-10">
           <h2 class="flex items-center gap-2 mb-4 text-lg font-semibold text-highlighted">
             Supported providers
             <UBadge :label="String(module.providers.length)" color="neutral" variant="subtle" size="sm" class="rounded-full" />
@@ -268,8 +432,33 @@ if (import.meta.server) {
           </div>
         </section>
 
+        <template v-if="docsPage">
+          <div v-if="isDocsPage">
+            <h1 class="text-3xl font-bold text-highlighted">
+              {{ docsFm.title }}
+            </h1>
+            <p v-if="docsFm.description" class="mt-2 text-lg text-muted">
+              {{ docsFm.description }}
+            </p>
+          </div>
+          <MarkdownDocument v-if="docsPage.nodes?.length" :value="docsPage" :components="docsMarkdownComponents" />
+          <div>
+            <USeparator class="mt-6 mb-10">
+              <UButton
+                size="sm"
+                variant="link"
+                color="neutral"
+                :to="docsEditLink"
+                target="_blank"
+                label="Edit this page on GitHub"
+              />
+            </USeparator>
+            <UContentSurround :surround="surround" />
+          </div>
+        </template>
+
         <MarkdownDocument
-          v-if="module.readme?.nodes?.length"
+          v-else-if="!isDocsPage && module.readme?.nodes?.length"
           :value="module.readme"
           :components="markdownComponents"
           class="first:[&_picture]:block first:[&_picture]:mb-4"
@@ -277,7 +466,7 @@ if (import.meta.server) {
       </UPageBody>
 
       <template #right>
-        <UContentToc :links="module.readme?.meta?.toc?.links">
+        <UContentToc :links="tocLinks">
           <template #bottom>
             <div class="hidden lg:block space-y-6">
               <UPageLinks title="Links" :links="links" />

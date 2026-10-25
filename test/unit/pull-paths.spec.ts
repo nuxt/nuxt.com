@@ -75,7 +75,8 @@ describe('pull paths', () => {
 describe('instanceRepo', () => {
   it('agrees with `instanceSource(key).source.repo` for every instance', () => {
     for (const key of CONTENT_INSTANCE_KEYS) {
-      expect(pullRepoName(instanceRepo(key)), key).toBe(instanceSource(key).source.repo)
+      const repo = instanceRepo(key)
+      if (repo) expect(pullRepoName(repo), key).toBe(instanceSource(key).source.repo)
     }
   })
 })
@@ -99,6 +100,9 @@ describe('isPullContentPage', () => {
 /** Docs tree pages rendering docs data without `useContent()`. */
 const DOCS_PAGES_WITHOUT_CONTENT = new Set(['app/pages/docs/[version]/errors/index.vue'])
 
+/** Pages calling `useContent()` only for module docs, which have no previews. */
+const PAGES_WITHOUT_PREVIEWABLE_CONTENT = new Set(['app/pages/modules/[slug]/[...path].vue'])
+
 /** A URL a page file serves: `blog/[slug].vue` → `/blog/x`, `docs/[...slug].vue` → `/docs/x/y`. */
 function samplePath(file: string): string {
   return file
@@ -117,7 +121,8 @@ describe('PULL_CONTENT_PAGES', () => {
       .map(file => `${dir}/${file}`))
 
   it.each(pages)('previews %s only if it renders content', (file) => {
-    const rendersContent = DOCS_PAGES_WITHOUT_CONTENT.has(file) || readFileSync(join(root, file), 'utf8').includes('useContent(')
+    const rendersContent = DOCS_PAGES_WITHOUT_CONTENT.has(file)
+      || (!PAGES_WITHOUT_PREVIEWABLE_CONTENT.has(file) && readFileSync(join(root, file), 'utf8').includes('useContent('))
 
     expect(isPullContentPage(samplePath(file))).toBe(rendersContent)
   })

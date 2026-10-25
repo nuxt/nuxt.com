@@ -71,12 +71,14 @@ export function pullNavigationPath(version: DocVersion, pull: PullTarget): strin
 }
 
 /**
- * The `nuxt` org repo `key` reads from, as `/pull/:repo` names it.
+ * The `nuxt` org repo `key` reads from, as `/pull/:repo` names it — `undefined` for module docs,
+ * which have no previews.
  * Pinned to `instanceSource(key).source.repo` by `test/unit/pull-paths.spec.ts`.
  */
-export function instanceRepo(key: ContentInstanceKey): PullRepo {
+export function instanceRepo(key: ContentInstanceKey): PullRepo | undefined {
   if (key === 'site') return 'nuxt.com'
   if (key === 'examples') return 'examples'
+  if (key.startsWith('module:')) return undefined
 
   return key.startsWith('cli:') ? 'cli' : 'nuxt'
 }

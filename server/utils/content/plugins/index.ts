@@ -11,6 +11,7 @@ import { repoImages } from './repo-images'
 import { configDocs } from './config-docs'
 import { sanitizeData } from './sanitize-data'
 import { CLI_DOCS_REFS, CLI_DOCS_REPO, type CliDocVersion } from '../../../../shared/utils/cli'
+import { MODULE_DOCS, type ModuleDocsName } from '../../../../shared/utils/module-docs'
 import type { DocVersion } from '../../../../shared/utils/docs'
 import type { ContentInstanceKey } from '../../../../shared/utils/content'
 
@@ -47,6 +48,10 @@ export function instancePlugins(key: ContentInstanceKey): ContentPlugin[] {
     const version = key.slice('cli:'.length) as CliDocVersion
     // Command pages are written with the same unversioned `/docs/*` links as the docs.
     return [dottedFrontmatter(), docsLinks(version), repoImages(CLI_DOCS_REPO, CLI_DOCS_REFS[version].branch)]
+  }
+  if (key.startsWith('module:')) {
+    const { repo, branch } = MODULE_DOCS[key.slice('module:'.length) as ModuleDocsName]
+    return [dottedFrontmatter(), repoImages(repo, branch)]
   }
 
   const version = key.slice('docs:'.length) as DocVersion
