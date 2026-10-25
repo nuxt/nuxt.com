@@ -1,12 +1,14 @@
 import type { ComarkContent, NavigationItem } from 'comark-content'
 import { createComarkSource } from '#agent-discovery/comark'
 import { AGENT_DOC_VERSIONS } from '#shared/utils/docs'
+import { moduleInstanceKey } from '#shared/utils/content'
+import { MODULE_DOCS_NAMES, moduleDocsPathPrefix } from '#shared/utils/module-docs'
 
 /**
  * Content source for nuxt-agent-discovery, bridging the comark instances.
  *
  * The module's comark adapter works on one content surface; nuxt.com serves
- * eight instances (see `server/utils/content/instances.ts`). This facade
+ * several instances (see `server/utils/content/instances.ts`). This facade
  * routes `get()` to the instance owning the path and merges every instance's
  * navigation for `list()`/`firstLeaf()` (the cli reference grafted into its
  * docs version through the same `docTree()` the UI navigation uses), so the
@@ -23,11 +25,19 @@ function prune(items: NavigationItem[]): NavigationItem[] {
 
 const facade = {
   async navigation() {
-    const [site, examplesContent, versions] = await Promise.all([
+    const [site, examplesContent, versions, moduleDocs] = await Promise.all([
       getInstanceAtHead('site').then(content => content.navigation()),
       getInstanceAtHead('examples').catch(() => null),
       // Examples are left out of the version trees
-      Promise.all(AGENT_DOC_VERSIONS.map(version => docTree(version, { withExamples: false }).catch(() => [] as NavigationItem[])))
+      Promise.all(AGENT_DOC_VERSIONS.map(version => docTree(version, { withExamples: false }).catch(() => [] as NavigationItem[]))),
+      // Each module's docs, rooted at its module page
+      Promise.all(MODULE_DOCS_NAMES.map(name => getInstanceAtHead(moduleInstanceKey(name))
+        .then(async (content) => {
+          const root = findByPath(await content.navigation(), moduleDocsPathPrefix(name))
+          // The root already is the module page (`index.md`): drop its duplicate `Overview` child.
+          return root && { ...root, children: root.children?.filter(item => item.path !== root.path) }
+        })
+        .catch(() => undefined)))
     ])
 
     const examples = examplesContent ? findByPath(await examplesContent.navigation(), '/docs/examples') : undefined
@@ -35,7 +45,8 @@ const facade = {
     return [
       ...prune(site),
       ...versions.flat(),
-      ...(examples ? [examples] : [])
+      ...(examples ? [examples] : []),
+      ...moduleDocs.filter(item => !!item)
     ]
   },
   async get(path: string) {

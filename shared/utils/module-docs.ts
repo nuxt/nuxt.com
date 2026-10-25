@@ -7,8 +7,15 @@
  */
 export const MODULE_DOCS = {
   // TODO: back to `main` once nuxt/icon's `docs` branch is merged.
-  icon: { repo: 'nuxt/icon', branch: 'docs', contentDir: 'docs', envOverride: 'NUXT_ICON_PATH' }
-} as const satisfies Record<string, { repo: string, branch: string, contentDir: string, envOverride?: string }>
+  icon: { title: 'Nuxt Icon', repo: 'nuxt/icon', branch: 'docs', contentDir: 'docs', envOverride: 'NUXT_ICON_PATH' }
+} as const satisfies Record<string, {
+  /** Names the docs where the registry data is not at hand: `/llms.txt` sections. */
+  title: string
+  repo: string
+  branch: string
+  contentDir: string
+  envOverride?: string
+}>
 
 /** Modules with hosted docs. */
 export type ModuleDocsName = keyof typeof MODULE_DOCS

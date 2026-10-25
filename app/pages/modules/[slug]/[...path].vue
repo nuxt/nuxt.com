@@ -169,7 +169,8 @@ useSeoMeta({
   title,
   description
 })
-useCanonical()
+// Hosted docs have a markdown twin for agents, like `/docs` pages.
+useCanonical(() => docsName ? `/raw${pagePath.value}.md` : undefined)
 
 if (import.meta.server) {
   useSeoMeta({
