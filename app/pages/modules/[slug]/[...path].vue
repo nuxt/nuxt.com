@@ -97,15 +97,10 @@ const docsEditLink = computed(() => {
   return `https://github.com/${repo}/edit/${branch}/${contentDir}/${meta.stem}${meta.extension}`
 })
 
-// Reassign the ref (not module.value.health = ...): useFetch `data` is a
-// shallowRef, so an in-place nested write would not trigger reactivity.
+// Read from the shared map, not copied in by a watcher: arriving from `/modules`, the map is
+// already loaded, so a watcher would never fire and the score would stay hidden.
 const { health } = useModuleHealth()
-watch(health, (map) => {
-  const m = module.value
-  if (m && map[m.name] && m.health !== map[m.name]) {
-    module.value = { ...m, health: map[m.name] }
-  }
-})
+const moduleHealth = computed(() => health.value[module.value!.name] ?? module.value!.health)
 
 const ownerName = computed(() => {
   const [owner, name] = module.value!.repo.split('#')[0].split('/')
@@ -307,16 +302,16 @@ if (import.meta.server) {
             </NuxtLink>
           </UTooltip>
 
-          <template v-if="module.health">
+          <template v-if="moduleHealth">
             <span class="hidden lg:block text-muted">&bull;</span>
-            <UTooltip :text="`Health: ${module.health.status} - ${module.health.score}/100`">
+            <UTooltip :text="`Health: ${moduleHealth.status} - ${moduleHealth.score}/100`">
               <NuxtLink
                 :to="`https://nuxt.care/?search=npm:${module.npm}`"
                 class="flex items-center gap-1.5"
                 target="_blank"
               >
-                <UIcon name="i-lucide-heart-pulse" class="size-5 shrink-0" :style="{ color: module.health.color }" />
-                <span class="text-sm font-medium">{{ module.health.score }}</span>
+                <UIcon name="i-lucide-heart-pulse" class="size-5 shrink-0" :style="{ color: moduleHealth.color }" />
+                <span class="text-sm font-medium">{{ moduleHealth.score }}</span>
               </NuxtLink>
             </UTooltip>
           </template>
