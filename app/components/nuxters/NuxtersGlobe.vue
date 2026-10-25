@@ -317,7 +317,7 @@ onBeforeUnmount(() => {
       The globe needs WebGL. Every country is in the list.
     </p>
 
-    <div v-if="ready && !failed" class="absolute left-0 bottom-0 flex gap-0.5 p-1 rounded-lg bg-default/80 ring ring-default backdrop-blur" role="group" aria-label="Globe controls">
+    <div v-if="ready && !failed" class="absolute left-1 bottom-1 flex gap-0.5 p-1 rounded-lg bg-default/80 ring ring-default backdrop-blur" role="group" aria-label="Globe controls">
       <UButton
         :icon="paused ? 'i-lucide-play' : 'i-lucide-pause'"
         :aria-label="paused ? 'Resume rotation' : 'Pause rotation'"
