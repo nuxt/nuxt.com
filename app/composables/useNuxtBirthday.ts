@@ -2,14 +2,14 @@ const HOVER_DELAY = 150
 const HOVER_COOLDOWN = 1500
 const CLICK_COOLDOWN = 350
 
-// Nuxt's first commit landed on October 26, 2016. The date is only ever checked
-// in the browser: pages are cached (ISR), so the server can't know the day.
-// Keep both checks in sync.
+// Nuxt's first commit landed on October 26, 2016, and the copy says "10 years",
+// so only October 26, 2026 counts. The date is only ever checked in the browser:
+// pages are cached (ISR), so the server can't know the day. Keep both checks in sync.
 function isBirthdayToday() {
   const now = new Date()
-  return now.getMonth() === 9 && now.getDate() === 26
+  return now.getFullYear() === 2026 && now.getMonth() === 9 && now.getDate() === 26
 }
-const BIRTHDAY_HEAD_SCRIPT = `(function(){var d=new Date();if(d.getMonth()===9&&d.getDate()===26)document.documentElement.setAttribute('data-nuxt-birthday','')})()`
+const BIRTHDAY_HEAD_SCRIPT = `(function(){var d=new Date();if(d.getFullYear()===2026&&d.getMonth()===9&&d.getDate()===26)document.documentElement.setAttribute('data-nuxt-birthday','')})()`
 
 let lastBurst = 0
 
@@ -26,9 +26,32 @@ export function useNuxtBirthday() {
     }]
   })
 
-  onMounted(() => {
+  // Re-check at midnight and when a suspended tab comes back, so a page left
+  // open across the day boundary doesn't keep the wrong state
+  let midnightTimer: ReturnType<typeof setTimeout> | undefined
+
+  function syncBirthday() {
     isBirthday.value = isBirthdayToday()
     document.documentElement.toggleAttribute('data-nuxt-birthday', isBirthday.value)
+
+    clearTimeout(midnightTimer)
+    const nextMidnight = new Date()
+    nextMidnight.setHours(24, 0, 0, 0)
+    midnightTimer = setTimeout(syncBirthday, nextMidnight.getTime() - Date.now())
+  }
+
+  function onVisibilityChange() {
+    if (document.visibilityState === 'visible') syncBirthday()
+  }
+
+  onMounted(() => {
+    syncBirthday()
+    document.addEventListener('visibilitychange', onVisibilityChange)
+  })
+
+  onBeforeUnmount(() => {
+    clearTimeout(midnightTimer)
+    document.removeEventListener('visibilitychange', onVisibilityChange)
   })
 
   function celebrate(container?: EventTarget | null, cooldown = CLICK_COOLDOWN) {
