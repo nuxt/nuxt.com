@@ -34,6 +34,7 @@ minimumReleaseAgeExclude:
   - vue
   - '@vue/*'
   - nuxt-agent-discovery@0.8.1
+
 permissions:
   '@nuxtjs/sitemap':
     skills: false
