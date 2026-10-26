@@ -61,11 +61,12 @@ export async function fetchOpenCollectiveSponsors(): Promise<OpenCollectiveSpons
   // Orders are public, and an API key without the `orders` scope makes this query fail, so no key is sent.
   const sponsorsById = new Map<string, OpenCollectiveSponsor>()
   const first = 100
-  let offset: number | null = null
-  do {
+  let offset = 0
+  let hasMore = true
+  while (hasMore) {
     const query: string = `query {
       account(slug: "nuxtjs", throwIfMissing: true) {
-        orders(filter: INCOMING, status: [ACTIVE], frequency: [MONTHLY, YEARLY], limit: ${first}${offset ? ` offset: ${offset}` : ''}) {
+        orders(filter: INCOMING, status: [ACTIVE], frequency: [MONTHLY, YEARLY], limit: ${first}, offset: ${offset}) {
           nodes {
             createdAt
             frequency
@@ -121,7 +122,8 @@ export async function fetchOpenCollectiveSponsors(): Promise<OpenCollectiveSpons
     }
 
     const nodes = data?.account?.orders?.nodes || []
-    offset = nodes.length === first ? (offset ?? 0) + nodes.length : null
+    offset += nodes.length
+    hasMore = nodes.length === first
 
     for (const { createdAt, frequency, amount, fromAccount } of nodes) {
       if (inactiveSponsors.includes(fromAccount.slug)) continue
@@ -157,7 +159,7 @@ export async function fetchOpenCollectiveSponsors(): Promise<OpenCollectiveSpons
         since: createdAt
       })
     }
-  } while (offset)
+  }
 
   const response = withManualSponsors(sponsorsById)
   await kv.set(key, response, { ttl: 60 * 60 * 24 }) // cache for 1 day
