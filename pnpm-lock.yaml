@@ -435,8 +435,8 @@ importers:
         specifier: ^0.7.11
         version: 0.7.11
       nuxt-agent-discovery:
-        specifier: ^0.8.0
-        version: 0.8.0(aeb36006deee80a7e0ebfefaaa4b4eb4)
+        specifier: ^0.8.1
+        version: 0.8.1(aeb36006deee80a7e0ebfefaaa4b4eb4)
       nuxtseo-layer-devtools:
         specifier: ^6.0.2
         version: 6.0.2(2fe0a9fe7b2582ac5f802d6b65d7a7ab)
@@ -8984,13 +8984,13 @@ packages:
   nth-check@2.1.1:
     resolution: {integrity: sha512-lqjrjmaOoAnWfMmBPL+XNnynZh2+swxiX3WUE0s4yEHI6m+AwrK2UZOimIRl3X/4QctVqS8AiZjFqyOGrMXb/w==}
 
-  nuxt-agent-discovery@0.8.0:
-    resolution: {integrity: sha512-hOH+4VaiEwOafMKF8av7J/VoSxQ8KdQ1Bi/YD0v4FTu5ZQbjz8ntTn7BtPhn0GHNjxNVYdFZ1EXVt0tfM4h/uA==}
+  nuxt-agent-discovery@0.8.1:
+    resolution: {integrity: sha512-dx44F/zHtxfbg+YoSX1aoCAwxuFmls8uphkxLBXvCInLBoTdw7htwZmL15XyLMuGtGdlQmfZoclx52vekVi7og==}
     peerDependencies:
-      '@nuxt/content': ^3.0.0
+      '@nuxt/content': ^3.7.0
       '@nuxtjs/mcp-toolkit': '>=0.19.0'
-      '@nuxtjs/robots': ^6.0.0
-      '@nuxtjs/sitemap': ^8.0.0
+      '@nuxtjs/robots': ^6.0.0 || ^7.0.0
+      '@nuxtjs/sitemap': ^8.0.0 || ^9.0.0
       comark: 0.8.1
       nuxt-llms: '>=0.1.0'
     peerDependenciesMeta:
@@ -21239,7 +21239,7 @@ snapshots:
     dependencies:
       boolbase: 1.0.0
 
-  nuxt-agent-discovery@0.8.0(aeb36006deee80a7e0ebfefaaa4b4eb4):
+  nuxt-agent-discovery@0.8.1(aeb36006deee80a7e0ebfefaaa4b4eb4):
     dependencies:
       '@nuxt/kit': 4.6.2(@nuxt/schema@4.6.2)(confbox@0.3.1)(dotenv@17.4.2)(giget@3.3.1)(jiti@2.7.0)(magic-string@1.4.3)(mlly@1.8.2)(oxc-parser@0.153.0)(rolldown@1.2.14)(unplugin@3.4.0(esbuild@0.28.2)(rolldown@1.2.14)(rollup@4.63.5)(vite@8.3.4(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1)))
       defu: 6.1.7
