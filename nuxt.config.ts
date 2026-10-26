@@ -145,9 +145,6 @@ export default defineNuxtConfig({
       secret: ''
     },
     webhookSecret: '',
-    openCollective: {
-      apiKey: ''
-    },
     resend: {
       apiKey: '',
       audienceId: ''
