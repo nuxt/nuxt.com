@@ -4,6 +4,7 @@ import type { DropdownMenuItem } from '@nuxt/ui'
 const { user, clear } = useUserSession()
 const colorMode = useColorMode()
 const route = useRoute()
+const deleteAccount = useDeleteAccount()
 
 // Middleware that require a session, see app/middleware/
 const AUTH_MIDDLEWARE = ['auth', 'admin']
@@ -71,6 +72,11 @@ const items = computed<DropdownMenuItem[][]>(() => {
     label: 'Sign out',
     icon: 'i-lucide-log-out',
     onSelect: logout
+  }, {
+    label: 'Delete account',
+    icon: 'i-lucide-user-x',
+    color: 'error',
+    onSelect: deleteAccount
   }])
 
   return groups

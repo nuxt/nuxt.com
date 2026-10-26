@@ -10,6 +10,7 @@ export default defineConfig({
         resolve: {
           alias: {
             '#shared': fileURLToPath(new URL('./shared', import.meta.url)),
+            '#server': fileURLToPath(new URL('./server', import.meta.url)),
             '#agent-discovery': fileURLToPath(new URL('./test/stubs/agent-discovery.ts', import.meta.url))
           }
         },

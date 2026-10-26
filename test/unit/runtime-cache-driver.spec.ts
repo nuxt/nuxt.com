@@ -21,7 +21,7 @@ function inRequest(client: ReturnType<typeof requestClient>) {
   vi.stubGlobal(REQUEST_CONTEXT, { get: () => ({ cache: client }) })
 }
 
-// Guards `patches/unstorage@1.17.5.patch`: the stock driver keeps the first request's client for the instance's life.
+// Guards the per-request client lookup from unstorage 1.17.6: 1.17.5 kept the first request's client for the instance's life.
 describe('vercel-runtime-cache driver', () => {
   afterEach(() => vi.unstubAllGlobals())
 

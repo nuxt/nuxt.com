@@ -21,10 +21,12 @@ Nuxt supports deploying on the [DigitalOcean App Platform](https://docs.digitalo
 
 3. You will need to ensure you set an `engines.node` field in your app's `package.json` to ensure DigitalOcean uses a supported version of Node.js:
 
+    <!-- Supported Node versions: https://docs.digitalocean.com/products/app-platform/reference/buildpacks/nodejs/ -->
+
     ```json [package.json]
     {
       "engines": {
-          "node": "20.x"
+          "node": "24.x"
       }
     }
     ```

@@ -115,9 +115,11 @@ const currentSectionTitle = computed(() =>
   || '')
 
 const breadcrumb = computed(() => {
-  const links = findBreadcrumb(navigation.value, path.value).map(item => ({
+  // `path` is kept for structured data even when the item is not linked.
+  const links: Array<{ label: string, to?: string, path?: string }> = findBreadcrumb(navigation.value, path.value).map(item => ({
     label: item.title,
-    to: item.path
+    to: item.page ? item.path : undefined,
+    path: item.path
   })).slice(1)
 
   if (path.value.startsWith(`${docsMeta.value.path}/bridge`) || path.value.startsWith(`${docsMeta.value.path}/migration`)) {
@@ -192,10 +194,12 @@ if (import.meta.server) {
       'headline': fm.value.title,
       'description': fm.value.seo?.description || fm.value.description
     }),
+    // Google requires `item` on every entry but the last, so directories
+    // without a page use their path, which redirects to their first page.
     defineBreadcrumb({
       itemListElement: breadcrumb.value.map(item => ({
         name: item.label,
-        item: item.to
+        item: item.to || item.path
       }))
     })
   ])
@@ -317,10 +321,11 @@ const noRightAside = computed(() => route.path.includes('/examples/'))
         </UPageAside>
       </template>
       <UPageHeader
+        :title="fm.title"
+        :description="fm.description"
         :ui="{
           wrapper: 'flex-row items-center flex-wrap justify-between'
         }"
-        v-bind="fm"
       >
         <template #headline>
           <UBreadcrumb :items="breadcrumb" />
@@ -347,10 +352,10 @@ const noRightAside = computed(() => route.path.includes('/examples/'))
             color="neutral"
             variant="soft"
             :target="link.to.startsWith('http') ? '_blank' : undefined"
-            v-bind="{ ...link, size: 'sm' }"
+            v-bind="{ ...pickLink(link), size: 'sm' }"
           >
             <template v-if="link.avatar" #leading>
-              <UAvatar v-bind="link.avatar" size="2xs" :alt="`${link.label} avatar`" />
+              <UAvatar v-bind="pickAvatar(link.avatar)" size="2xs" :alt="`${link.label} avatar`" />
             </template>
           </UButton>
 

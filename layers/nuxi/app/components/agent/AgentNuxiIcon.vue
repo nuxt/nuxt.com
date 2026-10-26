@@ -37,6 +37,18 @@ const {
   handleSvgClick
 } = useNuxiIcon(props, emit)
 
+const { isBirthday, startHoverCelebrate, cancelHoverCelebrate } = useNuxtBirthday()
+
+function onMouseEnter() {
+  handleMouseEnter()
+  if (props.interactive) startHoverCelebrate(svgEl.value)
+}
+
+function onMouseLeave() {
+  handleMouseLeave()
+  cancelHoverCelebrate()
+}
+
 const isSleeping = computed(() => effectiveMood.value === 'sleeping')
 const isConfused = computed(() => effectiveMood.value === 'confused')
 </script>
@@ -48,13 +60,22 @@ const isConfused = computed(() => effectiveMood.value === 'confused')
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
     style="overflow: visible;"
-    @mouseenter="handleMouseEnter"
-    @mouseleave="handleMouseLeave"
+    @mouseenter="onMouseEnter"
+    @mouseleave="onMouseLeave"
     @click="handleSvgClick"
   >
     <defs>
       <mask :id="`nuxi-face-mask-${maskId}`">
         <rect width="300" height="200" fill="white" />
+        <path
+          v-if="isBirthday"
+          d="M113 -40L149 48Q113 60 77 48Z"
+          transform="rotate(-6 113 50)"
+          fill="black"
+          stroke="black"
+          stroke-width="30"
+          stroke-linejoin="round"
+        />
         <g :style="{ transform: faceTransform }">
           <path
             class="nuxi-eye"
@@ -113,13 +134,52 @@ const isConfused = computed(() => effectiveMood.value === 'confused')
       </mask>
     </defs>
 
-    <path
-      class="nuxi-body"
-      :class="bodyClass"
-      d="M20 200H279C282.542 200 285.932 198.756 289 197C292.068 195.244 295.23 193.041 297 190C298.77 186.959 300.002 183.51 300 179.999C299.998 176.488 298.773 173.04 297 170.001L222 41C220.23 37.96 218.067 35.7552 215 34C211.933 32.2448 207.542 31 204 31C200.458 31 197.067 32.2448 194 34C190.933 35.7552 188.77 37.96 187 41L168 74L130 9.99764C128.228 6.95784 126.068 3.75491 123 2C119.932 0.245087 116.542 0 113 0C109.458 0 106.068 0.245087 103 2C99.9323 3.75491 96.7717 6.95784 95 9.99764L2.00001 170.001C0.226985 173.04 0.00154882 176.488 7.60801e-06 179.999C-0.0015336 183.51 0.229654 186.959 2.00001 190C3.77036 193.04 6.93246 195.244 10 197C13.0676 198.756 16.4578 200 20 200Z"
-      fill="currentColor"
-      :mask="`url(#nuxi-face-mask-${maskId})`"
-    />
+    <g class="nuxi-body" :class="bodyClass">
+      <path
+        d="M20 200H279C282.542 200 285.932 198.756 289 197C292.068 195.244 295.23 193.041 297 190C298.77 186.959 300.002 183.51 300 179.999C299.998 176.488 298.773 173.04 297 170.001L222 41C220.23 37.96 218.067 35.7552 215 34C211.933 32.2448 207.542 31 204 31C200.458 31 197.067 32.2448 194 34C190.933 35.7552 188.77 37.96 187 41L168 74L130 9.99764C128.228 6.95784 126.068 3.75491 123 2C119.932 0.245087 116.542 0 113 0C109.458 0 106.068 0.245087 103 2C99.9323 3.75491 96.7717 6.95784 95 9.99764L2.00001 170.001C0.226985 173.04 0.00154882 176.488 7.60801e-06 179.999C-0.0015336 183.51 0.229654 186.959 2.00001 190C3.77036 193.04 6.93246 195.244 10 197C13.0676 198.756 16.4578 200 20 200Z"
+        fill="currentColor"
+        :mask="`url(#nuxi-face-mask-${maskId})`"
+      />
+
+      <g v-if="isBirthday" data-confetti-origin>
+        <g class="nuxi-hat-pop">
+          <g transform="rotate(-6 113 50)">
+            <mask :id="`nuxi-hat-cone-${maskId}`">
+              <path
+                d="M113 -40L149 48Q113 60 77 48Z"
+                fill="white"
+                stroke="white"
+                stroke-width="14"
+                stroke-linejoin="round"
+              />
+            </mask>
+            <clipPath :id="`nuxi-hat-pompom-${maskId}`">
+              <circle cx="113" cy="-50" r="15" />
+            </clipPath>
+
+            <g :mask="`url(#nuxi-hat-cone-${maskId})`">
+              <rect x="60" y="-60" width="110" height="130" fill="#00DC82" />
+              <g stroke="white" stroke-opacity="0.6" stroke-width="9" fill="none">
+                <path d="M96 -6Q113 0 130 -6" />
+                <path d="M84 22Q113 32 142 22" />
+              </g>
+              <path d="M78 53Q113 66 148 53" stroke="#00A562" stroke-width="10" fill="none" />
+              <path d="M113 -60L127 70H180V-60Z" fill="black" fill-opacity="0.16" />
+            </g>
+
+            <circle cx="113" cy="-50" r="15" fill="currentColor" />
+            <circle
+              cx="121"
+              cy="-43"
+              r="15"
+              fill="black"
+              fill-opacity="0.18"
+              :clip-path="`url(#nuxi-hat-pompom-${maskId})`"
+            />
+          </g>
+        </g>
+      </g>
+    </g>
 
     <g
       v-if="isSleeping"
@@ -157,6 +217,16 @@ const isConfused = computed(() => effectiveMood.value === 'confused')
 .nuxi-eye {
   transform-box: fill-box;
   transform-origin: center;
+}
+
+.nuxi-hat-pop {
+  transform-box: fill-box;
+  transform-origin: center bottom;
+  animation: nuxi-hat-pop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes nuxi-hat-pop {
+  from { transform: translateY(-20px) scale(0.5); opacity: 0; }
 }
 
 .nuxi-mouth {
@@ -257,6 +327,7 @@ const isConfused = computed(() => effectiveMood.value === 'confused')
 @media (prefers-reduced-motion: reduce) {
   .nuxi-body,
   .nuxi-z,
+  .nuxi-hat-pop,
   .nuxi-question {
     animation: none !important;
   }

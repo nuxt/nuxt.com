@@ -4,8 +4,8 @@ import { initLogger, log } from 'evlog'
 /**
  * Tools that only read public nuxt.com data and take identifiers or short
  * filters (paths, slugs, search terms the model picks) as arguments. Tools
- * whose arguments are written from the user's message (`search_github_issues`,
- * `web_search`, `show_prompt`) are left out.
+ * whose arguments are written from the user's message (`search_docs`,
+ * `search_github_issues`, `web_search`, `show_prompt`) are left out.
  */
 const PUBLIC_TOOLS = new Set([
   // nuxt-mcp
@@ -19,6 +19,9 @@ const PUBLIC_TOOLS = new Set([
   'list-deploy-providers',
   'list-documentation-pages',
   'list-modules',
+  // Local lookups
+  'read_page',
+  'search_modules',
   // Cards
   'show_blog_post',
   'show_hosting',
