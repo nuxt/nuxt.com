@@ -132,6 +132,8 @@ const groupedFoundationItems = computed(() => {
 
 // Embla writes inline transforms on init, which @nuxt/hints flags as a hydration mismatch.
 const isMounted = useMounted()
+
+useNuxtBirthday()
 </script>
 
 <template>
@@ -146,7 +148,8 @@ const isMounted = useMounted()
       }"
     >
       <template #headline>
-        <NuxtLink :to="pageData.hero.cta.to">
+        <HomeBirthdayBadge class="[html:not([data-nuxt-birthday])_&]:hidden" />
+        <NuxtLink :to="pageData.hero.cta.to" class="[html[data-nuxt-birthday]_&]:hidden">
           <UBadge variant="subtle" size="lg" class="px-3 relative rounded-full font-semibold dark:hover:bg-primary-400/15 dark:hover:ring-primary-700">
             {{ pageData?.hero.cta.label }}
             <UIcon
