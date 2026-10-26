@@ -48,12 +48,12 @@ export default defineAgent({
       'turn.started': (_event, ctx) => selectModel(ctx.session.auth.current, ctx.messages)
     }
   }),
-  // Eve's default is 40M input tokens per session, which caps nothing in
+  // Eve's default is 40M new input tokens per window, which caps nothing in
   // practice. Kept generous on purpose: schedules and other task-mode sessions
-  // cannot ask a human to continue, they fail with SESSION_TOKEN_LIMIT_REACHED.
+  // cannot ask a human to continue, they fail with SESSION_USAGE_LIMIT_REACHED.
   // No output cap for the same reason — thinking tokens count towards it.
   limits: {
-    maxInputTokensPerSession: 4_000_000
+    sessionUsage: ({ window }) => window.inputTokens >= 4_000_000
   },
   // Keep Discord (and its optional native zlib) out of the Rolldown graph —
   // discord.js uses direct `eval` and `@discordjs/ws` optionally imports
