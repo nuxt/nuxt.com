@@ -115,9 +115,11 @@ const currentSectionTitle = computed(() =>
   || '')
 
 const breadcrumb = computed(() => {
-  const links = findBreadcrumb(navigation.value, path.value).map(item => ({
+  // `path` is kept for structured data even when the item is not linked.
+  const links: Array<{ label: string, to?: string, path?: string }> = findBreadcrumb(navigation.value, path.value).map(item => ({
     label: item.title,
-    to: item.path
+    to: item.page ? item.path : undefined,
+    path: item.path
   })).slice(1)
 
   if (path.value.startsWith(`${docsMeta.value.path}/bridge`) || path.value.startsWith(`${docsMeta.value.path}/migration`)) {
@@ -192,10 +194,12 @@ if (import.meta.server) {
       'headline': fm.value.title,
       'description': fm.value.seo?.description || fm.value.description
     }),
+    // Google requires `item` on every entry but the last, so directories
+    // without a page use their path, which redirects to their first page.
     defineBreadcrumb({
       itemListElement: breadcrumb.value.map(item => ({
         name: item.label,
-        item: item.to
+        item: item.to || item.path
       }))
     })
   ])
