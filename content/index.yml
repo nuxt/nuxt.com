@@ -531,6 +531,6 @@ sponsors:
       trailingIcon: i-lucide-heart
       trailing: true
     - label: View all sponsors
-      to: /enterprise/sponsors
+      to: /sponsors
       color: neutral
       variant: outline
