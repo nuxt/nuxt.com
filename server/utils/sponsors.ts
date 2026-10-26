@@ -97,7 +97,7 @@ export async function fetchOpenCollectiveSponsors(): Promise<OpenCollectiveSpons
         description: string | null
         imageUrl: string
         website: string
-      }
+      } | null
     }
 
     interface OpenCollectiveResponse {
@@ -126,7 +126,7 @@ export async function fetchOpenCollectiveSponsors(): Promise<OpenCollectiveSpons
     hasMore = nodes.length === first
 
     for (const { createdAt, frequency, amount, fromAccount } of nodes) {
-      if (inactiveSponsors.includes(fromAccount.slug)) continue
+      if (!fromAccount || inactiveSponsors.includes(fromAccount.slug)) continue
 
       if (fromAccount.slug === 'logto') {
         fromAccount.website = 'https://logto.io'
