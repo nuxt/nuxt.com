@@ -84,7 +84,7 @@ function _useHeaderLinks() {
       icon: 'i-lucide-library',
       to: '/templates',
       search: false,
-      active: ['/templates', '/video-courses', '/enterprise'].some(path => route.path.startsWith(path)),
+      active: ['/templates', '/video-courses', '/enterprise', '/sponsors'].some(path => route.path.startsWith(path)),
       children: [{
         label: 'Templates',
         description: 'Start your next project with a Nuxt template.',
@@ -104,7 +104,7 @@ function _useHeaderLinks() {
         label: 'Sponsors',
         description: 'Help us sustain Nuxt development.',
         icon: 'i-lucide-hand-heart',
-        to: '/enterprise/sponsors'
+        to: '/sponsors'
       }, {
         label: 'Nuxt Certification',
         description: 'Obtain your Certification of Competence.',
@@ -157,7 +157,7 @@ const footerLinks = [{
     to: '/enterprise/agencies'
   }, {
     label: 'Sponsors',
-    to: '/enterprise/sponsors'
+    to: '/sponsors'
   }]
 }]
 

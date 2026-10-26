@@ -8,6 +8,19 @@ const inactiveSponsors = [
   'planfredapp'
 ]
 
+// Listed until `until` (exclusive, UTC), then dropped unless they pay through Open Collective again.
+const manualOpenCollectiveSponsors: Array<OpenCollectiveSponsor & { until: string }> = [
+  {
+    until: '2027-07-01',
+    sponsorId: 'icons8',
+    sponsorName: 'Icons8',
+    sponsorLogo: 'https://images.opencollective.com/icons8/7fa1641/logo/460.png',
+    sponsorUrl: 'https://icons8.com/',
+    monthlyPriceInDollars: 250,
+    tier: 'silver'
+  }
+]
+
 function openCollectiveHeaders(event: H3Event, headers: Record<string, string> = {}) {
   return {
     'Api-Key': `${useRuntimeConfig(event).openCollective.apiKey}`,
@@ -49,40 +62,24 @@ export async function fetchOpenCollectiveSponsors(event: H3Event): Promise<OpenC
   if (cached) {
     return cached
   }
-  const response: OpenCollectiveSponsor[] = []
+  // Members keep their tier after they stop paying and tierless contributions have no tier at all,
+  // so current sponsors come from active recurring orders instead.
+  const sponsorsById = new Map<string, OpenCollectiveSponsor>()
   const first = 100
   let offset: number | null = null
   do {
     const query: string = `query {
-      collective(slug: "nuxtjs", throwIfMissing: true) {
-        members(limit: ${first}${offset ? ` offset: ${offset}` : ''} role: [BACKER]) {
-          offset
-          limit
-          totalCount
+      account(slug: "nuxtjs", throwIfMissing: true) {
+        orders(filter: INCOMING, status: [ACTIVE], frequency: [MONTHLY, YEARLY], limit: ${first}${offset ? ` offset: ${offset}` : ''}) {
           nodes {
-            id
-            role
-            createdAt
-            since
-            totalDonations {
+            frequency
+            amount {
               value
-              currency
-              valueInCents
             }
-            tier {
-              name
-              type
-              amount {
-                value
-              }
-              endsAt
-            }
-            account {
+            fromAccount {
               name
               slug
-              type
               website
-              isIncognito
               imageUrl(height: 460, format: png)
             }
           }
@@ -91,23 +88,22 @@ export async function fetchOpenCollectiveSponsors(event: H3Event): Promise<OpenC
     }`
 
     interface OpenCollectiveNode {
-      account: {
+      frequency: 'MONTHLY' | 'YEARLY'
+      amount: {
+        value: number
+      }
+      fromAccount: {
         slug: string
         name: string
         imageUrl: string
         website: string
       }
-      tier: {
-        amount: {
-          value: string
-        }
-      }
     }
 
     interface OpenCollectiveResponse {
       data: {
-        collective: {
-          members: {
+        account: {
+          orders: {
             nodes: OpenCollectiveNode[]
           }
         }
@@ -126,35 +122,50 @@ export async function fetchOpenCollectiveSponsors(event: H3Event): Promise<OpenC
       return []
     }
 
-    if (data.collective.members.nodes.length !== 0) {
-      offset = (offset ?? 0) + data.collective.members.nodes.length
-    } else {
-      offset = null
+    const nodes = data?.account?.orders?.nodes || []
+    offset = nodes.length === first ? (offset ?? 0) + nodes.length : null
+
+    for (const { frequency, amount, fromAccount } of nodes) {
+      if (inactiveSponsors.includes(fromAccount.slug)) continue
+
+      if (fromAccount.slug === 'logto') {
+        fromAccount.website = 'https://logto.io'
+      }
+      if (fromAccount.slug === 'favbet') {
+        fromAccount.website = 'https://www.favbet.ua/uk/casino/'
+      }
+      if (fromAccount.slug === 'jonathan-3528cbb1') {
+        fromAccount.name = 'LOW.MS'
+        fromAccount.website = 'https://low.ms'
+        fromAccount.imageUrl = 'https://cdn.swiftping.net/static/img/icon.png'
+      }
+
+      const monthly = frequency === 'YEARLY' ? Number(amount.value) / 12 : Number(amount.value)
+      const existing = sponsorsById.get(fromAccount.slug)
+      if (existing) {
+        existing.monthlyPriceInDollars += monthly
+        existing.tier = getTierByAmount(existing.monthlyPriceInDollars)
+        continue
+      }
+      sponsorsById.set(fromAccount.slug, {
+        sponsorId: fromAccount.slug,
+        sponsorName: fromAccount.name,
+        sponsorLogo: fromAccount.imageUrl,
+        sponsorUrl: toURL(fromAccount.website) || `https://opencollective.com/${fromAccount.slug}`,
+        monthlyPriceInDollars: monthly,
+        tier: getTierByAmount(monthly)
+      })
     }
-    const sponsors = (data?.collective?.members?.nodes?.filter(sponsor => sponsor.tier).map((sponsor: OpenCollectiveNode): OpenCollectiveSponsor => {
-      if (sponsor.account.slug === 'logto') {
-        sponsor.account.website = 'https://logto.io'
-      }
-      if (sponsor.account.slug === 'favbet') {
-        sponsor.account.website = 'https://www.favbet.ua/uk/casino/'
-      }
-      if (sponsor.account.slug === 'jonathan-3528cbb1') {
-        sponsor.account.name = 'LOW.MS'
-        sponsor.account.website = 'https://low.ms'
-        sponsor.account.imageUrl = 'https://cdn.swiftping.net/static/img/icon.png'
-      }
-      return {
-        sponsorId: sponsor.account.slug,
-        sponsorName: sponsor.account.name,
-        sponsorLogo: sponsor.account.imageUrl,
-        sponsorUrl: toURL(sponsor.account.website) || `https://opencollective.com/${sponsor.account.slug}`,
-        monthlyPriceInDollars: Number(sponsor.tier.amount.value),
-        tier: getTierByAmount(Number(sponsor.tier.amount.value))
-      }
-    }) || [])
-    response.push(...sponsors.filter(sponsor => !inactiveSponsors.includes(sponsor.sponsorId)))
   } while (offset)
 
+  const now = Date.now()
+  for (const { until, ...sponsor } of manualOpenCollectiveSponsors) {
+    if (now < Date.parse(until) && !sponsorsById.has(sponsor.sponsorId)) {
+      sponsorsById.set(sponsor.sponsorId, sponsor)
+    }
+  }
+
+  const response = [...sponsorsById.values()]
   await kv.set(key, response, { ttl: 60 * 60 * 24 }) // cache for 1 day
   return response
 }

@@ -4,7 +4,7 @@ definePageMeta({
 })
 
 const [{ data: page }, { data: sponsors }] = await Promise.all([
-  useAsyncData('sponsors-landing', () => useContent('site').get('/enterprise/sponsors.yml')),
+  useAsyncData('sponsors-landing', () => useContent('site').get('/sponsors')),
   useFetch<SponsorsByTier>('/api/sponsors', { key: 'sponsors' })
 ])
 
@@ -26,7 +26,7 @@ useSeoMeta({
 useCanonical()
 
 defineOgImage('Docs.takumi', {
-  headline: 'Enterprise',
+  headline: 'Sponsors',
   title,
   description
 })
