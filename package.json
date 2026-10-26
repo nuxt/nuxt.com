@@ -89,7 +89,7 @@
     "nuxt-charts": "^2.2.3",
     "nuxt-llms": "^0.3.0",
     "nuxt-og-image": "^6.10.4",
-    "nuxt-schema-org": "^6.4.3",
+    "nuxt-schema-org": "^7.0.1",
     "nuxt-workers": "^0.1.0",
     "ofetch": "^1.5.1",
     "rangi": "^2.2.0",
