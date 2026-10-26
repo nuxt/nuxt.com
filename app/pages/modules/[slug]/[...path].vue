@@ -230,13 +230,9 @@ if (import.meta.server) {
       :toc-links="tocLinks"
     />
 
-    <!-- The module header belongs to the module page; docs pages only keep the breadcrumb. -->
-    <div v-if="isDocsPage" class="pt-8">
-      <UBreadcrumb :items="breadcrumb.full" class="hidden lg:block" />
-      <UBreadcrumb :items="breadcrumb.compact" class="lg:hidden" />
-    </div>
+    <!-- The module header belongs to the module page; docs pages get a `/docs`-like header in their column. -->
     <UPageHeader
-      v-else
+      v-if="!isDocsPage"
       :description="module.description"
       :ui="{
         headline: 'mb-8',
@@ -352,7 +348,14 @@ if (import.meta.server) {
       </template>
 
       <!-- Docs pages: the title sits under the breadcrumb on mobile, as on `/docs`. -->
-      <UPageBody :class="{ 'mt-4 lg:mt-8': isDocsPage }">
+      <UPageHeader v-if="isDocsPage" :title="docsFm.title" :description="docsFm.description">
+        <template #headline>
+          <UBreadcrumb :items="breadcrumb.full" class="hidden xl:block" />
+          <UBreadcrumb :items="breadcrumb.compact" class="xl:hidden" />
+        </template>
+      </UPageHeader>
+
+      <UPageBody>
         <section v-if="!isDocsPage && module.providers?.length" class="mb-10">
           <h2 class="flex items-center gap-2 mb-4 text-lg font-semibold text-highlighted">
             Supported providers
@@ -387,7 +390,6 @@ if (import.meta.server) {
         <LazyModuleDocsPage
           v-if="docsPage"
           :page="docsPage"
-          :with-title="isDocsPage"
           :edit-link="docsEditLink"
           :surround="surround"
         />

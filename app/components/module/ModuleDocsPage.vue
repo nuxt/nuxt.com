@@ -3,9 +3,7 @@ import type { MarkdownDocument } from 'comark'
 import { DocsProseImg } from '#components'
 
 defineProps<{
-  page: MarkdownDocument & { data?: Record<string, any> }
-  /** The page's own title and description; the module page (`index.md`) has the module header instead. */
-  withTitle: boolean
+  page: MarkdownDocument
   editLink: string
   surround: any[]
 }>()
@@ -18,14 +16,6 @@ const markdownComponents = {
 </script>
 
 <template>
-  <div v-if="withTitle">
-    <h1 class="text-3xl font-bold text-highlighted">
-      {{ page.data?.title }}
-    </h1>
-    <p v-if="page.data?.description" class="mt-2 text-lg text-muted">
-      {{ page.data.description }}
-    </p>
-  </div>
   <MarkdownDocument v-if="page.nodes?.length" :value="page" :components="markdownComponents" />
   <div>
     <USeparator class="mt-6 mb-10">
