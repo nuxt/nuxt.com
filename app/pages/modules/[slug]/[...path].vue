@@ -50,6 +50,11 @@ if (!module.value) {
 
 watch([pagePath, docsStatus], () => {
   if (docsStatus.value === 'pending') return
+  // The docs source failed, or serves no `index.md` for the module page, which has no README to fall back to:
+  // fail the request rather than render (and cache) an empty page.
+  if (docsContent && (docsStatus.value === 'error' || (!isDocsPage.value && !docsPage.value))) {
+    throw createError({ statusCode: 503, statusMessage: 'Module docs unavailable', fatal: true })
+  }
   // `/modules/<name>` always renders (docs index or README); any other path must be a docs page.
   if (pagePath.value !== `/modules/${slug}` && !(isDocsPage.value && docsPage.value)) {
     throw createError({ statusCode: 404, statusMessage: 'Page not found', fatal: true })
