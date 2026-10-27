@@ -86,7 +86,8 @@ export async function cruxFetch<T>(method: 'queryRecord' | 'queryHistoryRecord',
   }
 
   try {
-    return await $fetch<T>(`https://chromeuxreport.googleapis.com/v1/records:${method}`, { method: 'POST', query: { key: apiKey }, body })
+    // Header, not `?key=`: fetch errors quote the request URL, which would leak the key to MCP clients and logs.
+    return await $fetch<T>(`https://chromeuxreport.googleapis.com/v1/records:${method}`, { method: 'POST', headers: { 'x-goog-api-key': apiKey }, body })
   } catch (error) {
     if ((error as { statusCode?: number }).statusCode === 404) return undefined
     throwGoogleError(error, 'Chrome UX Report')
