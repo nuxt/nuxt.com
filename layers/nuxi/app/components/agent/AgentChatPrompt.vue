@@ -23,11 +23,10 @@ const props = withDefaults(defineProps<{
   submitColor: 'neutral'
 })
 
-defineEmits<{
+const emit = defineEmits<{
   submit: []
   paste: [event: ClipboardEvent]
   removeAttachment: [index: number]
-  restoreAttachment: [index: number]
 }>()
 
 const chatPromptRef = useTemplateRef('chatPromptRef')
@@ -42,6 +41,20 @@ const isSubmitDisabled = computed(() => {
   if (props.submitDisabled !== undefined) return props.submitDisabled
   return promptStatus.value === 'ready' && !props.canSubmit
 })
+
+/** `UChatPrompt` ignores submits with an empty textarea, which would block sending pastes on their own. */
+const attachmentsOnly = computed(() =>
+  promptStatus.value === 'ready' && !input.value.trim() && props.pasteAttachments.length > 0
+)
+
+function submitAttachmentsOnly(event?: KeyboardEvent) {
+  if (!attachmentsOnly.value) return
+  if (event) {
+    if (event.shiftKey || event.ctrlKey || event.metaKey || event.altKey || event.isComposing) return
+    event.preventDefault()
+  }
+  emit('submit')
+}
 </script>
 
 <template>
@@ -57,17 +70,19 @@ const isSubmitDisabled = computed(() => {
     autofocus
     :class="props.class"
     :ui="ui"
-    @submit="$emit('submit')"
-    @paste="$emit('paste', $event)"
+    @submit="emit('submit')"
+    @paste="emit('paste', $event)"
+    @keydown.enter="submitAttachmentsOnly"
   >
     <template v-if="pasteAttachments.length" #header>
-      <AgentPasteAttachment
-        v-for="(attachment, index) in pasteAttachments"
-        :key="`${attachment.name}-${index}`"
-        :attachment="attachment"
-        @remove="$emit('removeAttachment', index)"
-        @restore="$emit('restoreAttachment', index)"
-      />
+      <div class="flex flex-wrap gap-2.5 pt-1.5 pr-1.5">
+        <AgentPasteAttachment
+          v-for="(attachment, index) in pasteAttachments"
+          :key="`${attachment.name}-${index}`"
+          :attachment="attachment"
+          @remove="emit('removeAttachment', index)"
+        />
+      </div>
     </template>
 
     <template #footer>
@@ -86,6 +101,7 @@ const isSubmitDisabled = computed(() => {
         size="sm"
         :status="promptStatus"
         :disabled="isSubmitDisabled"
+        v-on="attachmentsOnly ? { click: () => submitAttachmentsOnly() } : {}"
         @stop="chat?.stop()"
         @reload="chat?.regenerate()"
       />

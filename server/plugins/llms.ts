@@ -1,15 +1,36 @@
-// Trim /llms.txt to keep it under the ~100K agent context window threshold.
-// We drop the v3 (legacy) and v5 (nightly) documentation sections from the
-// index — they are still served at their canonical URLs and remain part of
-// /llms-full.txt. v4 (current stable) plus blog and deploy guides are the
-// most useful starting point for agents.
-const TRIMMED_SECTIONS = new Set([
-  'Nuxt v3 Documentation',
-  'Nuxt v5 Documentation'
-])
+import { getAgentDocument } from '#agent-discovery'
+import { AGENT_DOC_VERSIONS, CURRENT_DOCS_VERSION } from '#shared/utils/docs'
+import { cliInstanceKey, docsInstanceKey } from '#shared/utils/content'
+import type { ContentPage } from '../utils/content/pages'
+
+/**
+ * `/llms.txt` sections are declared in `nuxt.config.ts` (`llms.sections`) and
+ * resolved by nuxt-agent-discovery's comark adapter, which also renders every
+ * sectioned page into `/llms-full.txt`
+ */
+const UNLISTED_VERSIONS = AGENT_DOC_VERSIONS.filter(version => version !== CURRENT_DOCS_VERSION)
+
+const GUIDANCE_SECTION = 'When to use this'
 
 export default defineNitroPlugin((nitroApp) => {
   nitroApp.hooks.hook('llms:generate', (_event, options) => {
-    options.sections = options.sections.filter((section: { title: string }) => !TRIMMED_SECTIONS.has(section.title))
+    const guidance = options.sections.findIndex((section: { title: string }) => section.title === GUIDANCE_SECTION)
+    if (guidance > 0) {
+      options.sections.unshift(...options.sections.splice(guidance, 1))
+    }
+  })
+
+  nitroApp.hooks.hook('llms:generate:full', async (event, _options, contents) => {
+    for (const version of UNLISTED_VERSIONS) {
+      for (const key of [docsInstanceKey(version), cliInstanceKey(version)]) {
+        const pages = await listInstancePages(key).catch(() => [] as ContentPage[])
+        for (const page of pages) {
+          const document = await getAgentDocument(event, page.path, { includeExcluded: true })
+          if (document && !('redirect' in document)) {
+            contents.push(document.markdown)
+          }
+        }
+      }
+    }
   })
 })

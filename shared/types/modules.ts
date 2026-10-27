@@ -1,5 +1,15 @@
-import type { MDCParserResult } from '@nuxtjs/mdc'
+import type { MarkdownDocument } from 'comark'
 import type NuxtModules from '@nuxt/modules/modules.json'
+
+/** A third-party service the module integrates with, from the `providers` field of the modules registry. */
+export interface ModuleProvider {
+  name: string
+  label: string
+  /** Iconify name, `collection:icon` */
+  icon?: string
+  category?: string
+  docs?: string
+}
 
 export type BaseModule = {
   name: string
@@ -14,6 +24,7 @@ export type BaseModule = {
   categories?: string[]
   type: string
   sponsor?: boolean
+  providers?: ModuleProvider[]
   compatibility: {
     nuxt: string
     requires?: {
@@ -25,6 +36,8 @@ export type BaseModule = {
     github: string
     twitter?: string
     bluesky?: string
+    /** Has a Nuxter profile (/nuxters/<github>), set by the module page API. */
+    nuxter?: boolean
   }>
 }
 
@@ -36,6 +49,8 @@ export interface ModuleContributor {
   id: number
   username: string
   contributions?: number
+  /** Has a Nuxter profile (/nuxters/<username>), set by the module page API. */
+  nuxter?: boolean
 }
 
 export interface ModuleMaintainer {
@@ -43,6 +58,8 @@ export interface ModuleMaintainer {
   github: string
   twitter?: string
   bluesky?: string
+  /** Has a Nuxter profile (/nuxters/<github>), set by the module page API. */
+  nuxter?: boolean
 }
 
 export interface ModuleStats {
@@ -67,6 +84,6 @@ export interface Module extends BaseModule {
   health?: ModuleHealth | null
   contributors?: ModuleContributor[]
   maintainers?: ModuleMaintainer[]
-  readme?: MDCParserResult
+  readme?: MarkdownDocument
   generatedAt?: string
 }

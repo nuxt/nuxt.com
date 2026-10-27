@@ -86,6 +86,17 @@ Dispatch is restricted to channels listed under `discord.channels.admin`, `.publ
 
 `agent/lib/identity/context.ts` resolves `Context.person` (id, name, bot flag) for every surface, and `agent/lib/identity/caller-instructions.ts` renders it into the always-on prompt so "who am I?" has an answer. Discord's display name (`global_name`) comes for free from the inbound message payload; the `@`-mention handle (`username`) is still kept on the auth context for future use, it's just not what the model sees. Slack's `app_mention`/`message` events only carry a user id — `channels/slack.ts` resolves the real name via `users.info` (`agent/lib/slack/api.ts`, cached 1h per user), which needs the **`users:read`** bot scope on top of the ones above; without it, Slack callers fall back to their user id.
 
+## Data retention
+
+`agent/schedules/data-retention.ts` calls `POST /api/internal/data-retention` daily at 3:30 UTC. The route runs `purgeExpiredNuxiData` (`server/utils/data-retention.ts`), which deletes:
+
+- chats not updated for 12 months (their messages and votes cascade)
+- `agent_daily_usage` counters older than 7 days
+
+It then runs the main app's `purgeExpiredSiteData`, which deletes accounts not seen for 12 months and page feedback older than 12 months.
+
+Each run deletes at most 5,000 rows per table, so a backlog drains over several runs. Test locally with `curl -X POST "http://localhost:3000/eve/v1/dev/schedules/data-retention"`.
+
 ## Scheduled Slack workflows
 
 Shared helpers live in `agent/lib/workflow/shared.ts` (`sendToSlack`, auth, config). Each workflow keeps its own prompt, cron, and runner in `agent/schedules/<id>.ts`, with the procedure in `agent/skills/<id>/SKILL.md`.
@@ -134,7 +145,9 @@ Single Monday digest: traffic (trend, top sections, referrers/audience), docs fe
 - Schedule: `agent/schedules/weekly-digest.ts` — Monday 5:00 UTC
 - Skill: `agent/skills/weekly-digest/SKILL.md`
 - Preview trigger: `POST /eve/v1/ops/weekly-digest/trigger`
-- Traffic via `vercel-mcp__get_web_analytics`; spend via `ai_gateway__report` (scoped to `app:nuxi` tags and/or `AI_GATEWAY_REPORT_API_KEY_NAME` — never account-wide); runs via `vercel-mcp__list_agent_runs`.
+- Browser traffic via `vercel-mcp__count_pageviews` + `vercel-mcp__aggregate_pageviews`.
+- MCP and agent-facing traffic via the read-only `vercel-mcp__create_observability_query` tool using `vercel.request.count`: Nuxt and Nuxt UI each report `/mcp`, explicit `.md` URLs, `Accept: text/markdown`, and discovery endpoints such as `/llms.txt`. The reusable ad-hoc recipe is in `agent/skills/ecosystem-usage/SKILL.md`.
+- Spend via `ai_gateway__report` (scoped to `app:nuxi` tags and/or `AI_GATEWAY_REPORT_API_KEY_NAME` — never account-wide); runs via `vercel-mcp__list_agent_runs`.
 
 ### Firehose summary
 
@@ -147,6 +160,17 @@ Summarizes `#firehose-nuxt` (Octolens social mentions) and posts highlights to t
 
 The Nuxi Slack bot must be invited to `#firehose-nuxt`. Required Connect scopes: `channels:read`, `channels:history` (plus `groups:read`, `groups:history` for private channels).
 
+### Showcase check
+
+Fetches the homepage of every site on `/showcase` and flags the ones that no longer serve Nuxt, so they can be removed or updated in `content/showcase.yml`.
+
+- Schedule: `agent/schedules/showcase-check.ts` — Monday 6:00 UTC
+- Skill: `agent/skills/showcase-check/SKILL.md`
+- Tool: `check_showcase_sites` (`agent/tools/check_showcase_sites.ts`, admin only) — also answers ad-hoc questions such as "is Upwork still on Nuxt?"
+- Preview trigger: `POST /eve/v1/ops/showcase-check/trigger`
+
+The site list comes from `POST /api/internal/content` (`kind: "showcase"`), so the check always matches what is live. Detection lives in `agent/lib/showcase/check.ts`: any Nuxt marker (`__NUXT_DATA__`, `window.__NUXT__`, `#__nuxt`, `/_nuxt/`, `data-n-head`) confirms a site. A site is only reported as switched when it served a real page without one. Sites behind bot protection (Cloudflare, Akamai, Vercel challenge) often reject requests from Vercel's datacenter IPs, and which ones do changes from run to run; they are listed as "couldn't check", never as switched.
+
 ### Discord mirror
 
 Set `discord.digestChannel` (raw Discord channel id) in Global Config to also post the weekly digest and firehose summary to a Discord channel — distinct from `discord.channels`, which only gates live @mentions. This reuses the Slack-generated text (no second agent run): `agent/lib/discord/digest-mirror.ts` reads the finished Slack session's final message, `agent/lib/discord/format.ts` converts Slack-only syntax (`<url|label>` links, `:nuxter:`-style emoji, bare `@names`) to Discord Markdown, then posts via the unwrapped Discord adapter (so conversion runs once). Conversion is best-effort — an emoji shortcode outside the known set passes through unchanged. Unset disables the mirror; a mirroring failure is logged and never affects the Slack post. The bot needs **View Channel** + **Send Messages** in the target channel.
@@ -158,6 +182,7 @@ With the dev server running (`pnpm dev` from repo root — Eve is bundled via th
 ```sh
 curl -X POST "http://localhost:3000/eve/v1/dev/schedules/weekly-digest"
 curl -X POST "http://localhost:3000/eve/v1/dev/schedules/firehose-summary"
+curl -X POST "http://localhost:3000/eve/v1/dev/schedules/showcase-check"
 # -> { "scheduleId": "...", "sessionIds": ["..."] }
 ```
 
@@ -169,9 +194,12 @@ curl -X POST "https://<preview-url>/eve/v1/ops/weekly-digest/trigger?sinceDays=7
 
 curl -X POST "https://<preview-url>/eve/v1/ops/firehose-summary/trigger?sinceHours=24" \
   -H "Authorization: Bearer $INTERNAL_API_SECRET"
+
+curl -X POST "https://<preview-url>/eve/v1/ops/showcase-check/trigger" \
+  -H "Authorization: Bearer $INTERNAL_API_SECRET"
 ```
 
-Requires on the **eve** runtime: `INTERNAL_API_SECRET`, `NUXT_MCP_ADMIN_TOKEN`. Local dev and Vercel preview use Connect client `slack/nuxi-preview` automatically; prod uses `slack/nuxi` (override with `SLACK_CONNECTOR`). `weekly-digest` additionally needs `NUXI_VERCEL_TEAM_ID`/`NUXI_VERCEL_PROJECT_ID` (see `agent/lib/vercel-connect.ts`) and, for spend/token numbers, `AI_GATEWAY_API_KEY` (optionally `AI_GATEWAY_REPORT_API_KEY_NAME` / `AI_GATEWAY_REPORT_TAGS`) — both connections are admin-gated so only the scheduled/Slack/admin path can reach them.
+Requires on the **eve** runtime: `INTERNAL_API_SECRET`, `NUXT_MCP_ADMIN_TOKEN`. Local dev and Vercel preview use Connect client `slack/nuxi-preview` automatically; prod uses `slack/nuxi` (override with `SLACK_CONNECTOR`). `weekly-digest` additionally needs `NUXI_VERCEL_TEAM_ID`, `NUXI_VERCEL_PROJECT_ID` (nuxt.com), and `NUXI_VERCEL_NUXT_UI_PROJECT_ID` (Nuxt UI) plus, for spend/token numbers, `AI_GATEWAY_API_KEY` (optionally `AI_GATEWAY_REPORT_API_KEY_NAME` / `AI_GATEWAY_REPORT_TAGS`) — both connections are admin-gated so only the scheduled/Slack/admin path can reach them.
 
 ### Global Config
 

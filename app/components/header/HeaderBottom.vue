@@ -1,7 +1,7 @@
 <script setup lang="ts">
-const { version } = useDocsVersion()
+const { meta: docsMeta } = useDocsVersion()
 const { headerLinks } = useHeaderLinks()
-const links = computed(() => headerLinks.value.find(link => link.to === version.value.path)?.children ?? [])
+const links = computed(() => headerLinks.value.find(link => link.to === docsMeta.value.path)?.children ?? [])
 </script>
 
 <template>

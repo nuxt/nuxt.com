@@ -12,3 +12,16 @@ export interface GitHubTeamMember {
     url: string
   }>
 }
+
+/** The subset of GitHub's push payload the revalidation webhook reads. */
+export interface GitHubPushCommit {
+  added?: string[]
+  modified?: string[]
+  removed?: string[]
+}
+
+export interface GitHubPushPayload {
+  ref?: string
+  repository?: { full_name?: string }
+  commits?: GitHubPushCommit[]
+}

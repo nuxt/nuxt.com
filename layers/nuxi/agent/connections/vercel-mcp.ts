@@ -5,6 +5,7 @@ import { isAdminMode } from '../lib/identity/admin-mode.js'
 
 const VERCEL_TEAM_ID = process.env.NUXI_VERCEL_TEAM_ID
 const VERCEL_PROJECT_ID = process.env.NUXI_VERCEL_PROJECT_ID
+const VERCEL_NUXT_UI_PROJECT_ID = process.env.NUXI_VERCEL_NUXT_UI_PROJECT_ID
 
 function adminOnlyVercelAuth(label: string, connectOptions: EveAuthorizationOptions) {
   return async (ctx: SessionContext) => {
@@ -24,23 +25,30 @@ function adminOnlyVercelAuth(label: string, connectOptions: EveAuthorizationOpti
 
 const ALLOWED_TOOLS = [
   'search_vercel_documentation',
-  'list_deployments',
-  'get_deployment',
-  'get_deployment_build_logs',
+  'count_pageviews',
+  'aggregate_pageviews',
+  'count_events',
+  'aggregate_events',
+  'create_observability_query',
   'get_runtime_logs',
   'get_runtime_errors',
-  'get_project',
   'list_agent_run_projects',
   'list_agent_runs',
-  'get_web_analytics'
+  'get_agent_run'
 ] as const
 
 export const VERCEL_MCP_INSTRUCTIONS = VERCEL_TEAM_ID && VERCEL_PROJECT_ID
   ? `**Vercel MCP connection (\`vercel-mcp__*\`, admin/Slack/schedule only) — read-only, use judiciously:**
 - Discover exact schemas via \`connection_search\`, then call \`vercel-mcp__<tool>\`.
-- The connection is pre-scoped to the \`nuxt-js\` team and the \`nuxt\` (nuxt.com website) project — \`teamId=${VERCEL_TEAM_ID}\`, \`projectId=${VERCEL_PROJECT_ID}\`. Pass both explicitly to \`list_deployments\`, \`get_deployment\`, \`get_deployment_build_logs\`, \`get_runtime_logs\`, \`get_runtime_errors\`, \`get_project\`, \`get_web_analytics\`.
-- Nuxi's own Agent Runs (\`list_agent_runs\`) use the same \`teamId\` but a DIFFERENT \`projectId\` — the \`eve\` service's own project, not the website. Call \`list_agent_run_projects\` first to discover it. Still NOT tokens/cost — use \`ai_gateway__*\` for that. No per-run trace access — this connection only exposes run-level metadata, never raw conversation content.
-- \`get_web_analytics\` (visitors/pageviews/custom events, production only): \`mode: 'count'\` (default) returns one total, e.g. "how many visitors this week"; \`mode: 'aggregate'\` groups by up to two \`by\` dimensions (hour/day/week/month/year, country, route, requestPath, referrerHostname, deviceType, browserName, eventName, flags/<name>, ...) and requires \`since\`+\`until\`. \`dataset: 'visits'\` (default) for pageviews, \`'events'\` for custom \`track()\` events. \`filter\` is OData, e.g. \`requestPath eq '/docs'\`. Requires Web Analytics enabled on the project.
+- Complete every required query. Tool-call concurrency limits are not a total-query budget; send subsequent read-only calls until every metric is collected.
+- Scoped to the \`nuxt-js\` team (\`teamId=${VERCEL_TEAM_ID}\`). Use the configured Nuxt website project \`projectId=${VERCEL_PROJECT_ID}\`.
+- Traffic (production Web Analytics): call \`count_pageviews\` for totals and \`aggregate_pageviews\` for grouped rows (\`by\` + \`since\` + \`until\` required). Pass \`projectId='${VERCEL_PROJECT_ID}'\` and \`teamId='${VERCEL_TEAM_ID}'\`; do not pass \`slug\`. Custom events use \`count_events\` and \`aggregate_events\`. \`filter\` is OData, e.g. \`requestPath eq '/docs'\`.
+- Agent-facing HTTP usage (includes CDN/static requests that Web Analytics misses): call \`create_observability_query\` with \`requestBody={ metric: 'vercel.request.count', aggregation: 'sum', startTime, endTime, scope: { type: 'project', ownerId: '${VERCEL_TEAM_ID}', projectIds: ['<project id>'] } }\` and \`teamId='${VERCEL_TEAM_ID}'\`. Use Nuxt project \`${VERCEL_PROJECT_ID}\`${VERCEL_NUXT_UI_PROJECT_ID ? ` or Nuxt UI project \`${VERCEL_NUXT_UI_PROJECT_ID}\`` : '; Nuxt UI metrics are unavailable until `NUXI_VERCEL_NUXT_UI_PROJECT_ID` is configured'}.
+- MCP transport: filter \`request_path eq '/mcp' and environment eq 'production'\`. Raw content: \`endswith(request_path, '.md')\`. Negotiated Markdown: \`contains(http_accept, 'text/markdown')\`. Agent discovery/intake paths: \`/llms.txt\`, \`/llms-full.txt\`, \`/sitemap.md\`, \`/openapi.json\`, and \`/.well-known/mcp/server-card.json\`. Useful groupings: \`client_user_agent\`, \`bot_category\`, \`bot_name\`, \`request_path\`, \`request_method\`, \`http_status\`, \`content_type\`.
+- If a response says \`truncated: true\` or reports \`truncation.omittedArrayItems\`, only the returned timeseries was shortened. Do not call that a traffic/data gap; use the ungrouped \`summary\` for the complete total.
+- Be precise: \`vercel.request.count\` counts HTTP requests, not logical MCP tool calls or unique agents. One MCP session performs initialization, discovery, tool calls, retries, and notifications. A \`.md\` path or \`curl/*\` user agent alone does not prove AI usage: humans can use “View as Markdown” / “Copy page”, and scripts use curl. Treat explicit \`Accept: text/markdown\`, known AI bot categories/names, and POST \`/mcp\` as stronger signals. Web Analytics is browser-oriented and must not be used to estimate curl, MCP, or raw Markdown traffic.
+- Runtime: \`get_runtime_errors\` first, then \`get_runtime_logs\`; follow those tools' schemas for explicit ids.
+- Nuxi's Agent Runs live in the same project as the website (the \`eve\` service deploys alongside it): pass \`projectId='${VERCEL_PROJECT_ID}'\` to \`list_agent_runs\` / \`get_agent_run\`. A web chat's \`agentRunId\` (from \`admin-mcp__get-agent-chat\` / \`admin-mcp__list-agent-chats\`) is the \`runId\` for \`get_agent_run\`. Still NOT tokens/cost — use \`ai_gateway__*\`. Never fetch traces (\`get_agent_run_trace\` is not allowed).
 - \`search_vercel_documentation\` needs no ids — general Vercel platform docs search.`
   : ''
 

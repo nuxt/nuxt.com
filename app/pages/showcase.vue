@@ -1,138 +1,97 @@
 <script setup lang="ts">
+import { joinURL } from 'ufo'
+
 definePageMeta({
   heroBackground: 'opacity-80 -z-10'
 })
 
-const [{ data: page }, { data: home }] = await Promise.all([
-  useAsyncData('showcase', () => queryCollection('showcase').first()),
-  useAsyncData('home', () => queryCollection('index').first())
-])
+const { data: page } = await useAsyncData('showcase', () => useContent('site').get('/showcase'))
 if (!page.value) {
   throw createError({ statusCode: 404, statusMessage: 'Page not found', fatal: true })
 }
 
-const stats = useStats()
-const title = page.value.head?.title || page.value.title
-const description = page.value.head?.description || page.value.description
+const pageData = computed(() => page.value!.data)
+
+const route = useRoute()
+const router = useRouter()
+const toSlug = (industry: string) => industry.toLowerCase().replace(/[^a-z]+/g, '-')
+const industry = computed({
+  get: () => (pageData.value.wall.filters as string[]).find(filter => toSlug(filter) === route.query.industry),
+  set: value => router.replace({ query: { ...route.query, industry: value ? toSlug(value) : undefined } })
+})
+const websites = computed(() => industry.value
+  ? pageData.value.websites.filter((website: { industry?: string }) => website.industry === industry.value)
+  : pageData.value.websites
+)
+
+const title = pageData.value.head?.title || pageData.value.title
+const description = pageData.value.head?.description || pageData.value.description
+
+const site = useSiteConfig()
+
+// Rendered by `scripts/showcase-og.mjs`; platforms that don't animate GIFs show the first frame.
+const socialImage = joinURL(site.url, '/showcase-social.gif')
 
 useSeoMeta({
   titleTemplate: '%s',
   title,
   description,
   ogDescription: description,
-  ogTitle: title
+  ogTitle: title,
+  ogImage: socialImage,
+  ogImageType: 'image/gif',
+  ogImageWidth: 1200,
+  ogImageHeight: 630,
+  twitterImage: socialImage
 })
 useCanonical()
-defineOgImage('Docs.takumi', {
-  headline: 'Resources',
-  title,
-  description
-})
-
-const isMobile = ref(false)
-onMounted(() => {
-  isMobile.value = window.innerWidth < 768
-})
 </script>
 
 <template>
-  <div v-if="page">
-    <UPageHero :title="page.title" :description="page.description" :ui="{ container: '!pb-12' }" />
+  <UPage v-if="pageData">
+    <UPageHero
+      :description="pageData.description"
+      :ui="{
+        container: '!pb-12',
+        title: 'text-left',
+        description: 'text-left'
+      }"
+    >
+      <template #title>
+        {{ pageData.hero.title }}<br><span class="text-primary">{{ pageData.hero.highlight }}</span>
+      </template>
+    </UPageHero>
 
-    <UPage id="smooth" class="pt-20 -mt-20">
-      <UPageBody>
-        <UPageCTA
-          variant="subtle"
-          class="rounded-none"
-          :ui="{
-            container: 'sm:py-12 lg:py-12 sm:gap-8'
-          }"
-        >
-          <template #description>
-            <div class="flex flex-col md:flex-row justify-center items-center gap-8 md:gap-16">
-              <div class="flex flex-col items-center">
-                <h3 class="text-4xl font-bold text-primary">
-                  #1
-                </h3>
-                <p class="text-sm text-muted">
-                  Vue Framework
-                </p>
-              </div>
-              <div class="flex flex-col items-center">
-                <h3 class="text-4xl font-bold">
-                  {{ formatNumber(stats.stars) }}
-                </h3>
-                <p class="text-sm text-muted">
-                  GitHub Stars
-                </p>
-              </div>
-              <div class="flex flex-col items-center">
-                <h3 class="text-4xl font-bold">
-                  {{ formatNumber(stats.monthlyDownloads) }}
-                </h3>
-                <p class="text-sm text-muted">
-                  Monthly Downloads
-                </p>
-              </div>
-            </div>
-          </template>
-        </UPageCTA>
-        <UContainer>
-          <UPageSection :ui="{ container: '!pt-0' }">
-            <UPageLogos :marquee="isMobile" :title="home?.logos.title" :ui="{ title: 'text-muted font-medium text-lg', logos: 'mt-4' }">
-              <Motion
-                v-for="(company, index) in home?.logos.companies"
-                :key="company.alt"
-                as-child
-                :initial="{ opacity: 0, transform: 'translateY(20px)' }"
-                :while-in-view="{ opacity: 1, transform: 'translateY(0)' }"
-                :transition="{ delay: 0.4 + 0.2 * index }"
-                :in-view-options="{ once: true }"
-              >
-                <div class="opacity-0">
-                  <UColorModeImage
-                    :key="company.alt"
-                    :light="company.light"
-                    :dark="company.dark"
-                    :alt="`${company.alt} logo`"
-                    loading="lazy"
-                    :height="company.height"
-                    :width="company.width"
-                    class="h-6 shrink-0 max-w-[140px]"
-                  />
-                </div>
-              </Motion>
-            </UPageLogos>
-          </UPageSection>
-          <UPageGrid class="bg-elevated/50 p-4 rounded-2xl gap-2">
-            <UPageCard
-              v-for="(website, index) in page.websites"
-              :key="index"
-              :to="website.url"
-              target="_blank"
-              variant="naked"
-              class="overflow-hidden group rounded-lg"
-            >
-              <NuxtImg
-                :src="getWebsiteScreenShotUrl(website)"
-                :alt="website.name"
-                :loading="index === 0 ? 'eager' : 'lazy'"
-                class="object-cover object-top size-full opacity-100 group-hover:opacity-50 transition-opacity duration-300"
-                width="576"
-                height="324"
-                sizes="575px sm:468px lg:443px"
-                format="webp"
-              />
+    <UPageBody>
+      <UContainer>
+        <ShowcaseStats />
+      </UContainer>
 
-              <p class="hidden absolute text-nowrap top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 group-hover:flex bg-inverted text-inverted px-2.5 py-1 rounded-full text-sm font-medium font-mono items-center gap-1 shadow">
-                {{ website.name }}
-
-                <UIcon name="i-lucide-arrow-up-right" class="size-4" />
-              </p>
-            </UPageCard>
-          </UPageGrid>
-        </UContainer>
-      </UPageBody>
-    </UPage>
-  </div>
+      <UContainer>
+        <h2 class="mb-4 text-lg font-medium text-highlighted">
+          {{ pageData.wall.title }}
+        </h2>
+        <div class="mb-4 flex items-center justify-between gap-4">
+          <div class="-mx-4 px-4 sm:mx-0 sm:px-0 flex gap-1 overflow-x-auto [scrollbar-width:none]">
+            <UButton
+              v-for="filter in [undefined, ...pageData.wall.filters]"
+              :key="filter ?? 'all'"
+              :label="filter ?? 'All'"
+              :aria-pressed="industry === filter"
+              :variant="industry === filter ? 'soft' : 'ghost'"
+              color="neutral"
+              :class="industry === filter ? 'text-highlighted' : 'text-muted'"
+              class="shrink-0 rounded-full"
+              size="sm"
+              @click="industry = filter"
+            />
+          </div>
+          <p class="hidden lg:block pointer-coarse:hidden shrink-0 text-xs text-dimmed">
+            {{ pageData.wall.hint }}
+          </p>
+        </div>
+        <ShowcaseWall :websites="websites" />
+      </UContainer>
+    </UPageBody>
+  </UPage>
 </template>

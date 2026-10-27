@@ -1,43 +1,51 @@
 <script setup lang="ts">
 import { kebabCase } from 'scule'
-import { joinURL } from 'ufo'
-import type { ContentNavigationItem } from '@nuxt/content'
-import { findPageBreadcrumb } from '@nuxt/content/utils'
-import { mapContentNavigation } from '@nuxt/ui/utils/content'
-import { DocsProseImg } from '#components'
-import { SUPPORTED_DOCS_PATH_REGEX } from '#shared/utils/docs'
+import type { NavigationItem } from 'comark-content'
+import { DocsProseImg, Browser, CodeExplorer, Important, LinkExample, ReadMore, VideoAccordion } from '#components'
+import { CLI_DOCS_REFS, CLI_DOCS_REPO, cliDocsPathPrefix, hasCliDocs } from '#shared/utils/cli'
+import { cliInstanceKey } from '#shared/utils/content'
+import { DOCS_REFS, DOCS_REPO, getVersionByPath, isArchivedDocVersion, isCanonicalDocsPath } from '#shared/utils/docs'
 
 definePageMeta({
-  heroBackground: 'opacity-30',
+  heroBackground: false,
   key: 'docs'
 })
 
-const navigation = inject<Ref<ContentNavigationItem[]>>('navigation', ref([]))
+const markdownComponents = {
+  ...proseComponents,
+  ProseImg: DocsProseImg,
+  Browser,
+  CodeExplorer,
+  Important,
+  LinkExample,
+  ReadMore,
+  VideoAccordion
+}
+
+const navigation = inject<Ref<NavigationItem[]>>('navigation', ref([]))
 const menuDrawerOpen = ref(false)
 const onThisPageDrawerOpen = ref(false)
 
 const route = useRoute()
 const nuxtApp = useNuxtApp()
-const { version } = useDocsVersion()
+const { meta: docsMeta, version: docsVersion, instanceKey: docsInstanceKey } = useDocsVersion()
 const { headerLinks } = useHeaderLinks()
 const { isAgentDocked } = useNuxtAgent()
 const path = computed(() => route.path.replace(/\/$/, ''))
 
 const ignoredPaths = ['.nuxt', '.output', '.env', 'node_modules']
-const navClass = (item: ContentNavigationItem) => {
+const navClass = (item: NavigationItem) => {
   if (ignoredPaths.includes(item.title) && !route.path.includes(item.path)) {
     return 'opacity-70 hover:opacity-100'
   }
   return ''
 }
 
-// Get the aside navigation
 const asideNavigation = computed(() => {
-  const path = [version.value.path, route.params.slug?.[version.value.path.split('/').length - 2]].filter(Boolean).join('/')
+  const sections = navPageFromPath(docsMeta.value.path, navigation.value)?.children ?? []
+  const section = sections.find(item => path.value === item.path || path.value.startsWith(`${item.path}/`))
 
-  const nav = navPageFromPath(path, navigation.value)?.children || []
-
-  return nav.map(item => ({
+  return (section?.children ?? []).map(item => ({
     ...item,
     class: navClass(item)
   }))
@@ -53,22 +61,33 @@ function paintResponse() {
 }
 
 const pageKey = computed(() => kebabCase(path.value))
-const surroundKey = computed(() => `${kebabCase(path.value)}-surround`)
 
-const [{ data: page, status }, { data: surround }] = await Promise.all([
-  useAsyncData(pageKey, () => {
-    const pagePath = path.value
-    const collection = version.value.collection
-    return paintResponse().then(() => queryCollection(collection).path(pagePath).first())
-  }),
-  useAsyncData(surroundKey, () => {
-    const pagePath = path.value
-    const collection = version.value.collection
-    return paintResponse().then(() => queryCollectionItemSurroundings(collection, pagePath, {
-      fields: ['description']
-    }))
-  })
-])
+const versioned = computed(() => !!getVersionByPath(path.value))
+
+/** The version's command reference, when this page belongs to it. */
+const cliVersion = computed(() => {
+  const version = docsVersion.value
+  if (!hasCliDocs(version)) return undefined
+
+  const prefix = cliDocsPathPrefix(version)
+  return path.value === prefix || path.value.startsWith(`${prefix}/`) ? version : undefined
+})
+
+const instanceKey = computed(() => {
+  if (!versioned.value) return 'examples' as const
+  return cliVersion.value ? cliInstanceKey(cliVersion.value) : docsInstanceKey.value
+})
+
+const { data: page, status } = await useAsyncData(pageKey, () => {
+  const pagePath = path.value
+  const client = useContent(instanceKey.value)
+  return paintResponse().then(() => client.get(pagePath))
+})
+
+const surround = computed(() => findSurroundLinks(navigation.value, path.value))
+
+const fm = computed<Record<string, any>>(() => page.value?.data ?? {})
+const tocLinks = computed<any[]>(() => (page.value?.meta as any)?.toc?.links ?? [])
 
 watch(status, (status) => {
   if (status === 'pending') {
@@ -92,31 +111,59 @@ watch(page, (page) => {
 // Get the -2 item of the breadcrumb
 const currentSectionTitle = computed(() =>
   headerLinks.value[0]?.children?.find(link => path.value.includes(link.to))?.label
-  || findPageBreadcrumb(navigation.value, path.value).slice(-1)[0]?.title
+  || findBreadcrumb(navigation.value, path.value).slice(-1)[0]?.title
   || '')
 
 const breadcrumb = computed(() => {
-  const links = mapContentNavigation(findPageBreadcrumb(navigation.value, path.value)).map(link => ({
-    label: link.label,
-    to: link.to
+  const trail = findBreadcrumb(navigation.value, path.value)
+  // `path` is kept for structured data even when the item is not linked.
+  const links: Array<{ label: string, to?: string, path?: string }> = trail.map(item => ({
+    label: item.title,
+    to: item.page ? item.path : undefined,
+    path: item.path
   })).slice(1)
 
-  if (path.value.startsWith(`${version.value.path}/bridge`) || path.value.startsWith(`${version.value.path}/migration`)) {
+  if (path.value.startsWith(`${docsMeta.value.path}/bridge`) || path.value.startsWith(`${docsMeta.value.path}/migration`)) {
     links.unshift({
       label: 'Upgrade Guide',
-      to: `${version.value.path}/getting-started/upgrade`
+      to: `${docsMeta.value.path}/getting-started/upgrade`
     })
   }
+  // Error pages are not in the navigation, so nest them under the error codes index.
+  if (!trail.length && path.value.startsWith(`${docsMeta.value.path}/errors/`)) {
+    links.push({
+      label: 'Error Codes',
+      to: `${docsMeta.value.path}/errors`
+    }, {
+      label: fm.value.title,
+      to: path.value
+    })
+  }
+  // Google rejects breadcrumb entries without a name.
   if (!links.length) {
     links.push({
-      label: currentSectionTitle.value,
+      label: currentSectionTitle.value || fm.value.title,
       to: path.value
     })
   }
 
   return links
 })
-const editLink = computed(() => `https://github.com/nuxt/nuxt/edit/${version.value.branch}/${page?.value?.stem?.replace(/docs\/\d\.x/, 'docs')}.${page?.value?.extension}`)
+const editLink = computed(() => {
+  const meta = page.value?.meta
+  if (!meta) return ''
+  if (instanceKey.value === 'examples') {
+    return `https://github.com/nuxt/examples/edit/main/.docs/${meta.stem}${meta.extension}`
+  }
+
+  if (cliVersion.value) {
+    const ref = CLI_DOCS_REFS[cliVersion.value].branch
+    return `https://github.com/${CLI_DOCS_REPO}/edit/${ref}/docs/${meta.stem}${meta.extension}`
+  }
+
+  const ref = DOCS_REFS[docsVersion.value].branch
+  return `https://github.com/${DOCS_REPO}/edit/${ref}/docs/${meta.stem}${meta.extension}`
+})
 
 const communityLinks = [{
   icon: 'i-lucide-heart',
@@ -135,40 +182,41 @@ const communityLinks = [{
   target: '_blank'
 }]
 
-const title = computed(() => page.value?.seo?.title || page.value?.title)
-const titleTemplate = computed(() => `${findTitleTemplate(page, navigation, version.value.path)} ${version.value.shortTag}`)
+const title = computed(() => fm.value.seo?.title || fm.value.title)
+
+const titleTemplate = computed(() => {
+  const template = findTitleTemplate(page, navigation, docsMeta.value.path)
+  return versioned.value ? `${template} v${docsMeta.value.major}` : template
+})
 
 useSeoMeta({
   titleTemplate,
   title
 })
-// Only emit canonical/markdown alternate on versioned paths (e.g.
-// `/docs/4.x/*`). Unversioned `/docs/*` URLs are meta-refresh stubs that
-// the docs-version middleware redirects to the active version, so agents
-// should not treat the stub URL as authoritative. The supported version
-// list lives in `shared/utils/docs.ts` (kept in sync with `md-rewrite.ts`).
-if (SUPPORTED_DOCS_PATH_REGEX.test(path.value)) {
-  useCanonical(() => `${path.value}.md`)
+// Only emit canonical where the URL is authoritative.
+// Archived versions get no markdown alternate (not exposed to agents)
+if (isCanonicalDocsPath(path.value)) {
+  useCanonical(() => isArchivedDocVersion(docsVersion.value) ? undefined : `/raw${path.value}.md`)
 }
 
 if (import.meta.server) {
-  prerenderRoutes([joinURL('/raw', `${path.value}.md`)])
-
   useSchemaOrg([
     defineArticle({
       '@type': 'TechArticle',
-      'headline': page.value?.title,
-      'description': page.value?.seo?.description || page.value?.description
+      'headline': fm.value.title,
+      'description': fm.value.seo?.description || fm.value.description
     }),
+    // Google requires `item` on every entry but the last, so directories
+    // without a page use their path, which redirects to their first page.
     defineBreadcrumb({
       itemListElement: breadcrumb.value.map(item => ({
         name: item.label,
-        item: item.to
+        item: item.to || item.path
       }))
     })
   ])
 
-  const description = page.value?.seo?.description || page.value?.description
+  const description = fm.value.seo?.description || fm.value.description
   useSeoMeta({
     description,
     ogDescription: description,
@@ -193,179 +241,183 @@ const noRightAside = computed(() => route.path.includes('/examples/'))
 <template>
   <UContainer v-if="page">
     <DocsVersionAlert />
-    <UPage>
+    <!-- mobile -->
+    <div class="lg:hidden sticky top-(--ui-header-height) z-10 bg-default/75 backdrop-blur -mx-4 sm:-mx-6 p-6 border-b border-dashed border-default flex justify-between">
+      <UDrawer
+        v-model:open="menuDrawerOpen"
+        direction="left"
+        :title="currentSectionTitle"
+        inset
+        :handle="false"
+        side="left"
+        :ui="{
+          content: 'w-full max-w-2/3'
+        }"
+      >
+        <UButton
+          label="Menu"
+          icon="i-lucide-text-align-start"
+          color="neutral"
+          variant="link"
+          size="xs"
+          aria-label="Open navigation"
+          class="-m-4"
+        />
+        <template #body>
+          <UContentNavigation
+            :navigation="asideNavigation"
+            default-open
+            trailing-icon="i-lucide-chevron-right"
+            :ui="{
+              link: 'data-[state=open]:text-muted data-[state=open]:hover:text-highlighted',
+              trigger: 'font-normal',
+              linkTrailingIcon: 'group-data-[state=open]:rotate-90'
+            }"
+            highlight
+          />
+        </template>
+      </UDrawer>
+      <UDrawer
+        v-if="!noRightAside"
+        v-model:open="onThisPageDrawerOpen"
+        direction="right"
+        :handle="false"
+        side="right"
+        inset
+        no-body-styles
+        :ui="{
+          content: 'w-full max-w-2/3'
+        }"
+        @update:open="refreshHeading"
+      >
+        <UButton
+          label="On this page"
+          trailing-icon="i-lucide-chevron-right"
+          color="neutral"
+          variant="link"
+          size="xs"
+          aria-label="Open on this page"
+          class="-m-4"
+        />
+        <template #body>
+          <ContentToc
+            :links="tocLinks"
+            :community-links="communityLinks"
+            :open="true"
+            default-open
+            drawer
+            :ui="{
+              root: '!mx-0 !px-1 top-0 overflow-visible',
+              container: '!pt-0 border-b-0',
+              trailingIcon: 'hidden',
+              bottom: 'flex flex-col'
+            }"
+          />
+        </template>
+      </UDrawer>
+    </div>
+    <UPage
+      :ui="isAgentDocked || noRightAside ? {
+        center: 'lg:col-span-8',
+        right: 'hidden'
+      } : { right: 'hidden lg:flex' }"
+    >
       <template #left>
         <UPageAside>
           <UContentNavigation
             :navigation="asideNavigation"
             :collapsible="false"
+            :ui="{ link: 'data-[state=open]:text-muted data-[state=open]:hover:text-highlighted', trigger: 'font-normal' }"
             highlight
           />
         </UPageAside>
       </template>
-      <UPage
-        :ui="isAgentDocked || noRightAside? {
-          center: 'lg:col-span-10',
-          right: 'lg:hidden'
-        } : { root: 'lg:grid-cols-12', center: 'lg:col-span-9', right: 'lg:col-span-3' }"
+      <UPageHeader
+        :title="fm.title"
+        :description="fm.description"
+        :ui="{
+          wrapper: 'flex-row items-center flex-wrap justify-between'
+        }"
       >
-        <UPageHeader
-          :ui="{
-            wrapper: 'flex-row items-center flex-wrap justify-between'
-          }"
-          v-bind="page"
-        >
-          <template #headline>
-            <UBreadcrumb :items="breadcrumb" />
-          </template>
-
-          <template #title>
-            {{ page.title }}
-
-            <UBadge
-              v-if="page.minimalVersion?.trim()"
-              :label="`v${page.minimalVersion?.trim()}`"
-              color="info"
-              variant="subtle"
-              size="lg"
-              class="align-middle"
-              :aria-label="`Minimum Nuxt version: v${page.minimalVersion?.trim()}`"
-            />
-          </template>
-
-          <template #links>
-            <UButton
-              v-for="link in page.links?.map(link => ({ ...link, size: 'md' }))"
-              :key="link.label"
-              color="neutral"
-              variant="soft"
-              :target="link.to.startsWith('http') ? '_blank' : undefined"
-              v-bind="{ ...link, size: 'sm' }"
-            >
-              <template v-if="link.avatar" #leading>
-                <UAvatar v-bind="link.avatar" size="2xs" :alt="`${link.label} avatar`" />
-              </template>
-            </UButton>
-            <PageHeaderLinks :key="page.path" />
-          </template>
-        </UPageHeader>
-
-        <UPageBody>
-          <ContentRenderer v-if="page.body" :value="page" :components="{ img: DocsProseImg }" />
-          <div>
-            <Feedback :page="page" />
-            <USeparator class="mt-6 mb-10">
-              <div class="flex items-center gap-2 text-sm text-muted">
-                <UButton
-                  size="sm"
-                  variant="link"
-                  color="neutral"
-                  to="https://github.com/nuxt/nuxt/issues/new/choose"
-                  target="_blank"
-                  label="Report an issue"
-                />
-                or
-                <UButton
-                  size="sm"
-                  variant="link"
-                  color="neutral"
-                  :to="editLink"
-                  target="_blank"
-                  label="Edit this page on GitHub"
-                />
-              </div>
-            </USeparator>
-            <UContentSurround :surround="surround" />
-          </div>
-        </UPageBody>
-
-        <template #right>
-          <ContentToc
-            v-if="!noRightAside"
-            :links="page.body?.toc?.links"
-            :community-links="communityLinks"
-            highlight
-            highlight-variant="circuit"
-            class="hidden lg:flex lg:backdrop-blur-none lg:overflow-y-auto"
-            :ui="{
-              container: 'lg:max-h-[inherit]',
-              content: 'lg:min-h-[min(var(--list-height,8rem),8rem)]'
-            }"
-          />
-          <!-- mobile -->
-          <div class="order-first lg:order-last sticky top-(--ui-header-height) z-10 bg-default/75 lg:bg-[initial] backdrop-blur -mx-4 p-6 border-b border-dashed border-default flex justify-between">
-            <UDrawer
-              v-model:open="menuDrawerOpen"
-              direction="left"
-              :title="currentSectionTitle"
-              inset
-              :handle="false"
-              side="left"
-              class="lg:hidden"
-              :ui="{
-                content: 'w-full max-w-2/3'
-              }"
-            >
-              <UButton
-                label="Menu"
-                icon="i-lucide-text-align-start"
-                color="neutral"
-                variant="link"
-                size="xs"
-                aria-label="Open navigation"
-                class="-m-4"
-              />
-              <template #body>
-                <UContentNavigation
-                  :navigation="asideNavigation"
-                  default-open
-                  trailing-icon="i-lucide-chevron-right"
-                  :ui="{ linkTrailingIcon: 'group-data-[state=open]:rotate-90' }"
-                  highlight
-                />
-              </template>
-            </UDrawer>
-            <UDrawer
-              v-if="!noRightAside"
-              v-model:open="onThisPageDrawerOpen"
-              direction="right"
-              :handle="false"
-              side="right"
-              inset
-              class="lg:hidden"
-              no-body-styles
-              :ui="{
-                content: 'w-full max-w-2/3'
-              }"
-              @update:open="refreshHeading"
-            >
-              <UButton
-                label="On this page"
-                trailing-icon="i-lucide-chevron-right"
-                color="neutral"
-                variant="link"
-                size="xs"
-                aria-label="Open on this page"
-                class="-m-4"
-              />
-              <template #body>
-                <ContentToc
-                  :links="page.body?.toc?.links"
-                  :community-links="communityLinks"
-                  :open="true"
-                  default-open
-                  :ui="{
-                    root: '!mx-0 !px-1 top-0 overflow-visible',
-                    container: '!pt-0 border-b-0',
-                    trailingIcon: 'hidden',
-                    bottom: 'flex flex-col'
-                  }"
-                />
-              </template>
-            </UDrawer>
-          </div>
+        <template #headline>
+          <UBreadcrumb :items="breadcrumb" />
         </template>
-      </UPage>
+
+        <template #title>
+          {{ fm.title }}
+
+          <UBadge
+            v-if="fm.minimalVersion?.trim()"
+            :label="`v${fm.minimalVersion?.trim()}`"
+            color="info"
+            variant="subtle"
+            size="lg"
+            class="align-middle"
+            :aria-label="`Minimum Nuxt version: v${fm.minimalVersion?.trim()}`"
+          />
+        </template>
+
+        <template #links>
+          <UButton
+            v-for="link in fm.links?.map((link: any) => ({ ...link, size: 'md' }))"
+            :key="link.label"
+            color="neutral"
+            variant="soft"
+            :target="link.to.startsWith('http') ? '_blank' : undefined"
+            v-bind="{ ...pickLink(link), size: 'sm' }"
+          >
+            <template v-if="link.avatar" #leading>
+              <UAvatar v-bind="pickAvatar(link.avatar)" size="2xs" :alt="`${link.label} avatar`" />
+            </template>
+          </UButton>
+
+          <PageHeaderLinks v-if="!isArchivedDocVersion(docsVersion)" :key="page.path" />
+        </template>
+      </UPageHeader>
+
+      <UPageBody>
+        <MarkdownDocument v-if="page.nodes?.length" :value="page" :components="markdownComponents" />
+        <div>
+          <Feedback :page="{ title: fm.title, stem: page.meta.stem }" />
+          <USeparator class="mt-6 mb-10">
+            <div class="flex items-center gap-2 text-sm text-muted">
+              <UButton
+                size="sm"
+                variant="link"
+                color="neutral"
+                to="https://github.com/nuxt/nuxt/issues/new/choose"
+                target="_blank"
+                label="Report an issue"
+              />
+              or
+              <UButton
+                size="sm"
+                variant="link"
+                color="neutral"
+                :to="editLink"
+                target="_blank"
+                label="Edit this page on GitHub"
+              />
+            </div>
+          </USeparator>
+          <UContentSurround :surround="surround" />
+        </div>
+      </UPageBody>
+
+      <template #right>
+        <ContentToc
+          v-if="!noRightAside"
+          :links="tocLinks"
+          :community-links="communityLinks"
+          highlight
+          highlight-variant="circuit"
+          class="lg:backdrop-blur-none lg:overflow-y-auto"
+          :ui="{
+            container: 'lg:max-h-[inherit]',
+            content: 'lg:min-h-[min(var(--list-height,8rem),16rem)]'
+          }"
+        />
+      </template>
     </UPage>
   </UContainer>
 </template>

@@ -4,13 +4,15 @@ definePageMeta({
 })
 const { fetchList, filteredJobs } = useEnterpriseJobs()
 
-const { data: page } = await useAsyncData('jobs-landing', () => queryCollection('landing').path('/enterprise/jobs').first())
+const { data: page } = await useAsyncData('jobs-landing', () => useContent('site').get('/enterprise/jobs'))
 if (!page.value) {
   throw createError({ statusCode: 404, statusMessage: 'Page not found', fatal: true })
 }
 
-const title = page.value.head?.title || page.value.title
-const description = page.value.head?.description || page.value.description
+const pageData = computed(() => page.value!.data)
+
+const title = pageData.value.head?.title || pageData.value.title
+const description = pageData.value.head?.description || pageData.value.description
 useSeoMeta({
   titleTemplate: '%s',
   title,
@@ -30,11 +32,11 @@ await fetchList()
 </script>
 
 <template>
-  <UContainer v-if="page">
+  <UPage v-if="pageData">
     <UPageHero
-      :title="page.title"
-      :description="page.description"
-      :links="page.links"
+      :title="pageData.title"
+      :description="pageData.description"
+      :links="pickLinks(pageData.links)"
       :ui="{
         title: 'text-left',
         description: 'text-left',
@@ -42,9 +44,9 @@ await fetchList()
       }"
     />
 
-    <UPage id="smooth" class="pt-20 -mt-20">
-      <UPageBody>
-        <UContainer class="space-y-8">
+    <UPageBody>
+      <UContainer>
+        <div class="space-y-8">
           <UPageCard
             v-for="(job, index) in filteredJobs"
             :key="index"
@@ -69,8 +71,8 @@ await fetchList()
               </div>
             </template>
           </UPageCard>
-        </UContainer>
-      </UPageBody>
-    </UPage>
-  </UContainer>
+        </div>
+      </UContainer>
+    </UPageBody>
+  </UPage>
 </template>

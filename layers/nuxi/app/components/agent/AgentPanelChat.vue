@@ -33,8 +33,7 @@ const {
   askQuestion,
   onSubmit,
   handlePaste,
-  removeAttachment,
-  restoreToInput
+  removeAttachment
 } = useNuxiChat({
   chatId: props.chatId,
   initialMessages: props.initialMessages,
@@ -75,7 +74,6 @@ watch(isOpen, (value) => {
         show-faq-empty
         :faq-questions="faqQuestions"
         :get-vote="getVote"
-        class="flex flex-col gap-4"
         @ask-question="askQuestion"
         @vote="vote"
       />
@@ -142,7 +140,6 @@ watch(isOpen, (value) => {
           @submit="onSubmit"
           @paste="handlePaste"
           @remove-attachment="removeAttachment"
-          @restore-attachment="restoreToInput"
         >
           <template #footer-left>
             <div class="flex items-center gap-2 text-xs text-dimmed">

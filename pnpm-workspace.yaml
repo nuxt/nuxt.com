@@ -2,16 +2,19 @@ shamefullyHoist: true
 strictPeerDependencies: false
 
 overrides:
-  nostics: ^1.2.0
-  # chat@4.34.0 pins the 4.1.0-beta.2 prerelease, flagged as a downgrade by check-provenance
-  "@workflow/serde": 4.1.2
-  # `@nuxt/content` 3.15.2 caps `@nuxtjs/mdc` at ^0.22.2, so bumping the direct
-  # dependency to 0.23.1 installs a second copy and the app renders with different
-  # components than the ones content registers. Drop once content widens to ^0.23.0.
-  "@nuxt/content>@nuxtjs/mdc": ^0.23.1
+  # TODO: drop once comark-content accepts comark 0.8 (0.4.1 requires `^0.7.0`).
+  # One copy: comark-content's parser runs the plugins we build from comark.
+  comark: 0.8.1
+  nostics: ^1.3.0
+  # chat@4.34.0 pins the 4.1.0-beta.2 prerelease, flagged as a downgrade by check-provenance.
+  # Scoped to `chat`: `workflow` needs its own `@workflow/serde` major.
+  "chat>@workflow/serde": 4.1.2
+  "@ai-sdk/provider-utils>@workflow/serde": 4.1.2
 
 allowBuilds:
-  better-sqlite3: false
+  # `workflow` deps: the native bindings ship as optional packages, the build scripts are not needed.
+  "@swc/core": false
+  cbor-extract: false
   esbuild: true
   rolldown: true
   sharp: true
@@ -30,10 +33,18 @@ minimumReleaseAgeExclude:
   - nuxt-nightly
   - vue
   - '@vue/*'
-  - '@nuxtjs/mdc@0.23.1'
+  - nuxt-agent-discovery@0.8.1
+
+permissions:
+  '@nuxtjs/sitemap':
+    skills: false
+  nuxt-og-image:
+    skills: false
+  nuxt-schema-org:
+    skills: false
+  nuxtseo-layer-devtools:
+    skills: false
 
 patchedDependencies:
-  # Keys the git checkout directory on the resolved ref, so the `nuxt/cli` sources on
-  # `3.x` and `main` stop overwriting each other's working tree.
-  # https://github.com/nuxt/content/pull/3839
-  '@nuxt/content': patches/@nuxt__content.patch
+  # Redraw once the map texture loads, and free it on destroy: https://github.com/shuding/cobe/pull/125
+  cobe@2.0.1: patches/cobe@2.0.1.patch

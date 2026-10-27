@@ -17,6 +17,7 @@ interface PageLink {
 interface Props {
   links?: TocLink[]
   communityLinks: PageLink[]
+  drawer?: boolean
 }
 
 defineProps<Props>()
@@ -28,6 +29,7 @@ defineProps<Props>()
       <ContentTocBottom
         :has-links="!!links?.length"
         :community-links="communityLinks"
+        :drawer="drawer"
       />
     </template>
     <template v-for="(_, name) in $slots" #[name]="slotData" :key="name">

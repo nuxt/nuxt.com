@@ -1,18 +1,20 @@
-import { parseMarkdown } from '@nuxtjs/mdc/runtime'
-
 import type { H3Event } from 'h3'
 import type { BaseModule, Module, ModuleContributor, ModuleHealth, ModuleStats } from '#shared/types'
 import type { NpmDownloadStats } from '../types/npm'
+import { resolveModuleCategory } from '#shared/utils/modules'
 
-export function isBot(username: string) {
+export function isBotUsername(username: string) {
   return username.includes('[bot]') || username.includes('-bot')
 }
 
 export const fetchModules = cachedFunction(async (_event: H3Event): Promise<Module[]> => {
   console.info(`Fetching modules from CDN..`)
-  return await $fetch<BaseModule[]>('https://unpkg.com/@nuxt/modules@latest/modules.json')
+  const modules = await $fetch<BaseModule[]>('https://unpkg.com/@nuxt/modules@latest/modules.json')
+  // Keeps the site consistent while the published modules.json still uses former category names.
+  return modules.map(module => ({ ...module, category: resolveModuleCategory(module.category) }))
 }, {
-  name: 'modules',
+  // Bumped when the registry payload changes: `modules` entries predate `providers`.
+  name: 'modules:v2',
   getKey: _event => '_all',
   maxAge: 10 * 60 // 10 minutes
 })
@@ -88,7 +90,7 @@ export async function fetchModuleContributors(_event: H3Event, module: BaseModul
   console.info(`Fetching module ${module.name} contributors ...`)
   try {
     const res = await $fetch<UnghResponse>(`https://ungh.cc/repos/${owner}/${name}/contributors`)
-    const contributors = res.contributors.filter(contributor => !isBot(contributor.username))
+    const contributors = res.contributors.filter(contributor => !isBotUsername(contributor.username))
     await kv.set(key, contributors, { ttl: 60 * 60 * 24 }) // cache for 1 day
     return contributors
   } catch (err) {
@@ -171,5 +173,5 @@ export async function fetchModuleReadme(_event: H3Event, module: BaseModule) {
     return 'Readme not found'
   }) as string
 
-  return await parseMarkdown(readme)
+  return await parseStandaloneMarkdown(readme)
 }

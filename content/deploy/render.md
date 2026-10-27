@@ -16,9 +16,12 @@ Nuxt supports deploying on [Render](https://render.com/) with minimal configurat
 3. Depending on your package manager, set the build command to `yarn && yarn build`, `npm install && npm run build`, or `pnpm i --shamefully-hoist && pnpm build`.
 4. Update the start command to `node .output/server/index.mjs`
 5. Click 'Advanced' and add the following environment variables
+
+    <!-- Supported Node versions: https://render.com/docs/node-version -->
+
     ```bash
     SERVER_PRESET=render_com
-    NODE_VERSION=20
+    NODE_VERSION=24
     ```
 6. Click on `Create Web Service`.
 

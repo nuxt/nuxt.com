@@ -14,7 +14,7 @@ defineProps<{
     </UCard>
 
     <div class="flex items-center justify-between pt-2">
-      <h5 class="font-semibold text-gray-900 dark:text-white text-base">
+      <h5 class="text-highlighted text-base">
         {{ name }}
       </h5>
 

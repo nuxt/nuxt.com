@@ -2,16 +2,18 @@ import { useAnimate } from 'motion-v'
 
 type LookDir = 'center' | 'left' | 'right' | 'up'
 
-type MouthShape = 'default' | 'O'
+type MouthShape = 'default' | 'O' | 'wavy' | 'flat' | 'wobble'
 
 interface MoodVisual {
   showSmile: boolean
+  showSquint?: boolean
   mouthShape: MouthShape
   eyeLeftScaleY: number
   eyeLeftScaleX: number
   eyeRightScaleY: number
   eyeRightScaleX: number
   eyeTranslateY: number
+  eyeRightRotate?: number
   mouthScale: number
   mouthTY: number
   mouthOpacity: number
@@ -37,9 +39,25 @@ const EYE_RIGHT_PATH = 'M204.632 156.542C185.601 155.627 174.698 134.454 185.006
 const SMILE_LEFT_PATH = 'M77 125 Q 99 109 121 125'
 const SMILE_RIGHT_PATH = 'M184 133 Q 206 117 228 133'
 
+// Squeezed-shut `>_<` eyes, drawn the same way as the smile arcs.
+const SQUINT_LEFT_PATH = 'M82 112 Q 102 122 115 129 Q 102 136 82 146'
+const SQUINT_RIGHT_PATH = 'M223 116 Q 203 126 190 133 Q 203 140 223 150'
+
 const MOUTH_PATHS: Record<MouthShape, string> = {
   default: 'M129.032 174.492C137.341 190.478 160.159 191.682 170.105 176.66L172.148 173.574C173.856 170.994 172.113 167.535 169.023 167.372L131.086 165.369C127.996 165.206 125.899 168.463 127.326 171.209L129.032 174.492Z',
-  O: 'M132 178 a 17 13 0 1 0 34 0 a 17 13 0 1 0 -34 0 Z'
+  O: 'M132 178 a 17 13 0 1 0 34 0 a 17 13 0 1 0 -34 0 Z',
+  wavy: 'M128 181 Q 139 169 150 179 T 172 176',
+  flat: 'M134 178 Q 150 176 166 178',
+  wobble: 'M139 179 Q 144.5 172 150 178 Q 155.5 184 161 177'
+}
+
+// Stroked mouths are drawn as a line instead of a filled shape.
+const MOUTH_STROKED: Record<MouthShape, boolean> = {
+  default: false,
+  O: false,
+  wavy: true,
+  flat: true,
+  wobble: true
 }
 
 /* eslint-disable @stylistic/key-spacing, @stylistic/no-multi-spaces -- table layout for legibility */
@@ -49,7 +67,9 @@ const MOOD_VISUALS: Record<NuxiMood, MoodVisual> = {
   excited:   { showSmile: false, eyeLeftScaleY: 1.05, eyeLeftScaleX: 1.02, eyeRightScaleY: 1.05, eyeRightScaleX: 1.02, eyeTranslateY: 0,  mouthShape: 'default', mouthScale: 1.55, mouthTY: 6, mouthOpacity: 1, blinkEnabled: false },
   thinking:  { showSmile: false, eyeLeftScaleY: 0.55, eyeLeftScaleX: 0.9,  eyeRightScaleY: 0.55, eyeRightScaleX: 0.9,  eyeTranslateY: 0,  mouthShape: 'default', mouthScale: 0.7, mouthTY: 6, mouthOpacity: 1, blinkEnabled: false },
   sleeping:  { showSmile: false, eyeLeftScaleY: 0.15, eyeLeftScaleX: 1,    eyeRightScaleY: 0.15, eyeRightScaleX: 1,    eyeTranslateY: 0,  mouthShape: 'default', mouthScale: 0,    mouthTY: 0, mouthOpacity: 1, blinkEnabled: false },
-  surprised: { showSmile: false, eyeLeftScaleY: 1.08, eyeLeftScaleX: 1.03, eyeRightScaleY: 1.08, eyeRightScaleX: 1.03, eyeTranslateY: 0,  mouthShape: 'O',       mouthScale: 1,    mouthTY: 0, mouthOpacity: 1, blinkEnabled: false }
+  surprised: { showSmile: false, eyeLeftScaleY: 1.08, eyeLeftScaleX: 1.03, eyeRightScaleY: 1.08, eyeRightScaleX: 1.03, eyeTranslateY: 0,  mouthShape: 'O',       mouthScale: 1,    mouthTY: 0, mouthOpacity: 1, blinkEnabled: false },
+  sad:       { showSmile: false, showSquint: true, eyeLeftScaleY: 0.02, eyeLeftScaleX: 0.5, eyeRightScaleY: 0.02, eyeRightScaleX: 0.5, eyeTranslateY: 0, mouthShape: 'wobble', mouthScale: 1.1, mouthTY: 0, mouthOpacity: 1, blinkEnabled: false },
+  confused:  { showSmile: false, eyeLeftScaleY: 1.05, eyeLeftScaleX: 1,    eyeRightScaleY: 0.45, eyeRightScaleX: 0.95, eyeTranslateY: 2,  eyeRightRotate: -10, mouthShape: 'wavy', mouthScale: 0.9, mouthTY: 2, mouthOpacity: 1, blinkEnabled: false }
 }
 /* eslint-enable @stylistic/key-spacing, @stylistic/no-multi-spaces */
 
@@ -73,7 +93,7 @@ export function useNuxiIcon(props: NuxiIconProps, emit?: EmitFn) {
   const isEasterEggPlaying = ref(false)
 
   const effectiveMood = computed<NuxiMood>(() => {
-    if (isHovered.value) return 'excited'
+    if (isHovered.value && props.interactive !== false) return 'excited'
     if (props.mood) return props.mood
     return internalMood.value
   })
@@ -100,6 +120,8 @@ export function useNuxiIcon(props: NuxiIconProps, emit?: EmitFn) {
     if (mood === 'thinking') return { x: -6, y: -4 }
     if (mood === 'surprised') return { x: 0, y: -8 }
     if (mood === 'excited') return { x: 0, y: -11 }
+    if (mood === 'sad') return { x: 0, y: 1 }
+    if (mood === 'confused') return { x: 5, y: -3 }
     const baseY = mood === 'happy' ? -4 : 0
     if (isInProximity.value) return { x: rawOffset.x, y: baseY + rawOffset.y }
     const look = LOOK_OFFSETS[lookDir.value]
@@ -119,8 +141,10 @@ export function useNuxiIcon(props: NuxiIconProps, emit?: EmitFn) {
   const visual = computed(() => MOOD_VISUALS[effectiveMood.value])
 
   const smileOpacity = computed(() => visual.value.showSmile ? 1 : 0)
+  const squintOpacity = computed(() => visual.value.showSquint ? 1 : 0)
 
   const mouthD = computed(() => MOUTH_PATHS[visual.value.mouthShape])
+  const mouthStroked = computed(() => MOUTH_STROKED[visual.value.mouthShape])
   const mouthOpacity = computed(() => visual.value.mouthOpacity)
 
   const eyeLeftScaleY = computed(() => isBlinking.value ? 0.05 : visual.value.eyeLeftScaleY)
@@ -133,7 +157,7 @@ export function useNuxiIcon(props: NuxiIconProps, emit?: EmitFn) {
   )
 
   const eyeRightTransform = computed(() =>
-    `translateY(${visual.value.eyeTranslateY}px) scale(${visual.value.eyeRightScaleX}, ${eyeRightScaleY.value})`
+    `translateY(${visual.value.eyeTranslateY}px) rotate(${visual.value.eyeRightRotate ?? 0}deg) scale(${visual.value.eyeRightScaleX}, ${eyeRightScaleY.value})`
   )
 
   const eyeLeftTransition = computed(() =>
@@ -399,6 +423,7 @@ export function useNuxiIcon(props: NuxiIconProps, emit?: EmitFn) {
   }
 
   function handleMouseEnter() {
+    if (props.interactive === false) return
     isHovered.value = true
     hoverCount++
     clearTimeout(hoverResetTimer)
@@ -451,7 +476,11 @@ export function useNuxiIcon(props: NuxiIconProps, emit?: EmitFn) {
     smileLeftPath: SMILE_LEFT_PATH,
     smileRightPath: SMILE_RIGHT_PATH,
     smileOpacity,
+    squintLeftPath: SQUINT_LEFT_PATH,
+    squintRightPath: SQUINT_RIGHT_PATH,
+    squintOpacity,
     mouthD,
+    mouthStroked,
     mouthOpacity,
     eyeLeftTransform,
     eyeRightTransform,

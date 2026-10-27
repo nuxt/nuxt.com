@@ -1,11 +1,16 @@
 <script setup lang="ts">
+import type { NavigationItem } from 'comark-content'
+import type { ContentShas } from '#shared/types'
+import { navigationPath, searchInstanceKeys } from '#shared/utils/content'
+import { pullNavigationPath } from '#shared/utils/pull'
+
 const colorMode = useColorMode()
 const route = useRoute()
 const { isAgentEnabled } = useNuxtAgent()
 const isChatRoute = computed(() => route.path.startsWith('/dashboard/chat') || route.path.startsWith('/admin/analytics'))
 const showAgent = computed(() => isAgentEnabled.value && !isChatRoute.value)
 
-const { version } = useDocsVersion()
+const { version: docsVersion } = useDocsVersion()
 const { track } = useAnalytics()
 
 const color = computed(() => colorMode.value === 'dark' ? '#020420' : 'white')
@@ -24,7 +29,25 @@ watch(() => colorMode.preference, (newMode, oldMode) => {
   }
 })
 
-const { data: navigation } = await useFetch('/api/navigation.json')
+const pull = usePullPreview()
+
+const { data: navigation } = await useFetch<NavigationItem[]>(() =>
+  pull.value ? pullNavigationPath(docsVersion.value, pull.value) : navigationPath(docsVersion.value), { key: () => `navigation:${docsVersion.value}` })
+
+const searchKeys = computed(() => searchInstanceKeys(docsVersion.value))
+// Client-only: an SSR value gets baked into the page's ISR entry and would pin search to a stale commit.
+const { data: searchShas } = useAsyncData(
+  // A `computed()` key, not a getter: `experimental.extractAsyncDataHandlers` takes the first arrow
+  // function as the handler, so a getter key is extracted instead (NUXT_E3008 in production).
+  computed(() => `content-heads:${searchKeys.value.join(',')}`),
+  () => $fetch<ContentShas>('/api/content/heads', {
+    query: { keys: searchKeys.value.join(',') }
+  }).catch((error) => {
+    console.error('[search] could not resolve the content heads', error)
+    return null
+  }),
+  { server: false, watch: [searchKeys] }
+)
 
 useHead({
   titleTemplate: title => title ? `${title} · Nuxt` : 'Nuxt: The Intuitive Web Framework',
@@ -63,14 +86,15 @@ if (import.meta.server) {
   ])
 }
 
-const versionNavigation = computed(() => navigation.value?.filter(item => item.path === version.value.path || item.path === '/blog') ?? [])
+const navigationByVersion = computed(() => navigation.value ?? [])
 
-provide('navigation', versionNavigation)
+provide('navigation', navigationByVersion)
+provide('searchShas', searchShas)
 </script>
 
 <template>
   <UApp :tooltip="{ delayDuration: 300 }">
-    <NuxtLoadingIndicator color="var(--ui-primary)" />
+    <!-- <NuxtLoadingIndicator color="var(--ui-primary)  /> -->
 
     <div class="flex">
       <div class="flex-1 min-w-0">
@@ -86,7 +110,7 @@ provide('navigation', versionNavigation)
     </div>
 
     <ClientOnly>
-      <Search :navigation="versionNavigation" />
+      <Search :navigation="navigationByVersion" />
     </ClientOnly>
   </UApp>
 </template>

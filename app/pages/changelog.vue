@@ -23,11 +23,7 @@ defineOgImage('Docs.takumi', {
   description
 })
 
-if (import.meta.server) {
-  prerenderRoutes(['/raw/changelog.md'])
-}
-
-const { data: releases } = await useFetch('/api/releases')
+const { data: releases } = await useFetch<Release[]>('/api/releases')
 const openStates = reactive<Record<string, boolean>>({})
 
 const { modules } = useModules()
@@ -43,14 +39,6 @@ const repoLinks = computed(() => {
   }
   return links
 })
-
-function formatDate(date: string) {
-  return new Date(date).toLocaleDateString('en', {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric'
-  })
-}
 
 function copyRelease(release: Release) {
   const md = `# ${release.title}\n\n${release.markdown}`
@@ -85,9 +73,9 @@ function copyRelease(release: Release) {
             color="neutral"
           />
           <UButton
-            to="/blog"
+            to="/updates"
             icon="i-lucide-newspaper"
-            label="Blog"
+            label="Updates"
             variant="ghost"
             color="neutral"
           />
@@ -118,7 +106,7 @@ function copyRelease(release: Release) {
           :to="release.url"
           target="_blank"
           :title="release.title"
-          :date="formatDate(release.date)"
+          :date="formatShortDate(release.date)"
           :ui="{
             root: 'flex items-start',
             container: 'max-w-xl 2xl:mx-12 w-full relative',
@@ -159,16 +147,18 @@ function copyRelease(release: Release) {
               class="relative"
               :class="{
                 'h-auto min-h-[200px]': openStates[release.tag],
-                'h-[200px] overflow-y-hidden': !openStates[release.tag] && release.body.children.length > 4
+                'h-[200px] overflow-y-hidden': !openStates[release.tag] && release.nodes.length > 4
               }"
             >
-              <MDCRenderer
-                v-if="release.body"
-                :body="release.body"
+              <MarkdownDocument
+                v-if="release.nodes?.length"
+                :value="{ nodes: release.nodes }"
                 style="zoom: 0.85"
+                :components="proseComponents"
+                class="mt-8"
               />
               <div
-                v-if="!openStates[release.tag] && release.body.children.length > 4"
+                v-if="!openStates[release.tag] && release.nodes.length > 4"
                 class="h-16 absolute inset-x-0 bottom-0 flex items-end justify-center bg-linear-to-t from-default to-default/50"
               >
                 <UButton

@@ -1,5 +1,6 @@
-import { queryCollection } from '@nuxt/content/server'
 import { z } from 'zod'
+import type { BlogAuthorFrontmatter } from '#shared/types'
+import { blogAuthors } from '#shared/utils/blog'
 
 const blogBodySchema = z.object({
   kind: z.literal('blog'),
@@ -16,20 +17,33 @@ const templatesBodySchema = z.object({
   names: z.array(z.string().trim().min(1)).min(1)
 })
 
+const showcaseBodySchema = z.object({
+  kind: z.literal('showcase')
+})
+
 export default defineEventHandler(async (event) => {
   requireInternalRequest(event)
 
   const body = await readValidatedBody(event, z.discriminatedUnion('kind', [
     blogBodySchema,
     deployBodySchema,
-    templatesBodySchema
+    templatesBodySchema,
+    showcaseBodySchema
   ]).parse)
 
+  if (body.kind === 'showcase') {
+    const page = await (await getInstanceAtHead('site')).get('/showcase')
+    const websites = (page?.data?.websites ?? []) as Array<{ name: string, url: string, industry?: string }>
+
+    return {
+      websites: websites.map(({ name, url, industry }) => ({ name, url, industry }))
+    }
+  }
+
   if (body.kind === 'blog') {
-    const posts = await queryCollection(event, 'blog')
-      .where('extension', '=', 'md')
-      .order('date', 'DESC')
-      .all()
+    const posts = (await listByDir('/blog'))
+      .filter(p => p.extension === '.md')
+      .sort((a, b) => String(b.date).localeCompare(String(a.date)))
 
     const post = posts.find(p =>
       p.path !== '/blog'
@@ -50,16 +64,16 @@ export default defineEventHandler(async (event) => {
       date: post.date,
       image: post.image,
       category: post.category,
-      authors: post.authors?.map(a => ({
-        name: a.name,
-        avatar: a.avatar?.src
+      authors: blogAuthors(post.authors as BlogAuthorFrontmatter[] | undefined).map(author => ({
+        name: author.name,
+        avatar: author.avatar?.src
       }))
     }
   }
 
   if (body.kind === 'deploy') {
     const needle = body.name.trim().toLowerCase()
-    const providers = await queryCollection(event, 'deploy').all()
+    const providers = await listByDir('/deploy')
     const provider = providers.find(p =>
       p.path !== '/deploy'
       && (
@@ -85,7 +99,7 @@ export default defineEventHandler(async (event) => {
     }
   }
 
-  const allTemplates = await queryCollection(event, 'templates').all()
+  const allTemplates = await listByDir('/templates')
 
   const results = body.names.map((rawName) => {
     const name = rawName.trim().toLowerCase()

@@ -3,7 +3,7 @@ import { createMemoryState } from '@chat-adapter/state-memory'
 import { createRedisState } from '@chat-adapter/state-redis'
 import type { UserContent } from 'ai'
 import type { Message, MessageContext, Thread } from 'chat'
-import { defineChannel } from 'eve/channels'
+import { defineChannel, POST } from 'eve/channels'
 import {
   chatSdkChannel,
   isNotImplemented,
@@ -13,10 +13,12 @@ import {
 } from 'eve/channels/chat-sdk'
 import {
   discordUserAuth,
+  isAdminDiscordChannel,
   isAllowedDiscordChannel,
   isAutoRespondDiscordChannel,
   isDiscordConfigured
 } from '../lib/discord/access.js'
+import { consumeDailyQuota, DAILY_LIMIT_MESSAGE } from '../lib/rate-limit.js'
 import { slackTextToDiscord, splitDiscordMessages } from '../lib/discord/format.js'
 import { withDiscordRetry } from '../lib/discord/retry.js'
 
@@ -108,6 +110,17 @@ async function shouldDispatch(thread: Thread, message: Message): Promise<boolean
     console.warn('[nuxi:discord] dropped message: channel not in discord.channels', { channelId: thread.channelId })
   }
   return allowed
+}
+
+/**
+ * Public channels count each dispatched message against the sender's daily quota (admin
+ * channels don't), checked before the turn starts so the user gets a reply instead of silence.
+ */
+async function withinDailyQuota(thread: Thread, message: Message): Promise<boolean> {
+  if (await isAdminDiscordChannel(thread.channelId)) return true
+  if (await consumeDailyQuota(`discord:${message.author.userId}`) !== 'limited') return true
+  await thread.post(DAILY_LIMIT_MESSAGE)
+  return false
 }
 
 /** Gates `onNewMessage` below: only `discord.channels.autoRespond` answers without an `@mention`. */
@@ -256,6 +269,7 @@ function createDiscordBridge() {
     { renameThread }: { renameThread: boolean }
   ): Promise<void> {
     await thread.subscribe()
+    if (!(await withinDailyQuota(thread, message))) return
 
     const turn = burstMessages(message, context)
     if (renameThread) {
@@ -291,6 +305,7 @@ function createDiscordBridge() {
 
   bot.onSubscribedMessage(async (thread: Thread, message: Message, context?: MessageContext) => {
     if (!(await shouldDispatch(thread, message))) return
+    if (!(await withinDailyQuota(thread, message))) return
     await send(
       toUserContent(burstMessages(message, context)),
       { thread, auth: discordUserAuth(message.author.userId, message.author.userName, message.author.fullName, thread.channelId) }
@@ -319,7 +334,14 @@ const discordBridge: DiscordBridge | null = isDiscordConfigured()
 
 export const bot = discordBridge?.bot ?? null
 export const send = discordBridge?.send ?? null
-export const channel = discordBridge?.channel ?? defineChannel({ routes: [] })
+export const channel = discordBridge?.channel ?? defineChannel({
+  routes: [
+    POST('/eve/v1/discord', () => Response.json(
+      { error: 'Discord is not configured' },
+      { status: 503 }
+    ))
+  ]
+})
 
 /**
  * Post already-converted Discord markdown to a channel (no thread), skipping

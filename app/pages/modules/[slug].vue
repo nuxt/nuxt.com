@@ -1,10 +1,19 @@
 <script setup lang="ts">
 import type { Module } from '#shared/types'
+import { supportsNuxt3OrLater } from '#shared/utils/modules'
 import { ModuleProseA, ModuleProseKbd, ModuleProseImg } from '#components'
 
 definePageMeta({
   heroBackground: 'opacity-30 -z-10'
 })
+
+const markdownComponents = {
+  ...proseComponents,
+  ProseA: ModuleProseA,
+  ProseImg: ModuleProseImg,
+  ProseKbd: ModuleProseKbd
+}
+
 const route = useRoute()
 const { isAgentDocked } = useNuxtAgent()
 
@@ -53,9 +62,10 @@ const links = computed(() => module.value
   : [])
 
 const contributors = computed(() => {
+  // A Nuxter profile when the contributor has one, GitHub otherwise (module repositories outside the Nuxt orgs).
   const allContributors = module.value.contributors.map(contributor => ({
     label: contributor.username,
-    to: `https://github.com/${contributor.username}`,
+    to: contributor.nuxter ? `/nuxters/${contributor.username}` : `https://github.com/${contributor.username}`,
     avatar: {
       provider: 'ipx',
       src: `https://ipx.nuxt.com/f_auto,s_20x20/gh_avatar/${contributor.username}`,
@@ -75,6 +85,11 @@ const contributors = computed(() => {
 
   return allContributors
 })
+
+// Collapsed to a couple of rows so the README stays above the fold. The rest
+// is hidden with `v-show`, so every provider stays in the server-rendered HTML.
+const PROVIDERS_PREVIEW = 12
+const showAllProviders = ref(false)
 
 const title = module.value.npm
 const description = module.value.description || 'A Nuxt module'
@@ -105,15 +120,15 @@ if (import.meta.server) {
 
 <template>
   <UContainer v-if="module">
-    <div v-if="!module.compatibility?.nuxt?.includes('^3') && !module.compatibility?.nuxt?.includes('>=3')" class="pt-8">
+    <div v-if="!supportsNuxt3OrLater(module.compatibility?.nuxt)" class="pt-8">
       <UAlert
         icon="i-lucide-triangle-alert"
         variant="subtle"
         title="This module is not yet compatible with Nuxt 3"
       >
         <template #description>
-          Head over to <NuxtLink to="https://v2.nuxt.com" target="_blank" class="underline">
-            v2.nuxt.com
+          Head over to the <NuxtLink to="/docs/2.x/getting-started/installation" class="underline">
+            Nuxt 2 docs
           </NuxtLink>
         </template>
       </UAlert>
@@ -199,7 +214,11 @@ if (import.meta.server) {
         <div class="mx-3 h-6 border-l border-gray-200 dark:border-gray-800 w-px hidden lg:block" />
 
         <div v-for="(maintainer, index) in module.maintainers" :key="maintainer.github" class="flex items-center gap-3">
-          <NuxtLink :to="`https://github.com/${maintainer.github}`" target="_blank" class="flex items-center gap-1.5 hover:text-primary">
+          <NuxtLink
+            :to="maintainer.nuxter ? `/nuxters/${maintainer.github}` : `https://github.com/${maintainer.github}`"
+            :target="maintainer.nuxter ? undefined : '_blank'"
+            class="flex items-center gap-1.5 hover:text-primary"
+          >
             <UAvatar provider="ipx" :src="`https://ipx.nuxt.com/f_auto,s_20x20/gh_avatar/${maintainer.github}`" :srcset="`https://ipx.nuxt.com/f_auto,s_40x40/gh_avatar/${maintainer.github} 2x`" :alt="maintainer.github" size="xs" />
             <span class="text-sm font-medium">{{ maintainer.github }}</span>
           </NuxtLink>
@@ -218,11 +237,47 @@ if (import.meta.server) {
       } : { root: 'lg:grid-cols-12', center: 'lg:col-span-9', right: 'lg:col-span-3' }"
     >
       <UPageBody>
-        <ContentRenderer v-if="module.readme?.body" :value="module.readme" :components="{ a: ModuleProseA, img: ModuleProseImg, kbd: ModuleProseKbd }" class="first:[&_picture]:block first:[&_picture]:mb-4" />
+        <section v-if="module.providers?.length" class="mb-10">
+          <h2 class="flex items-center gap-2 mb-4 text-lg font-semibold text-highlighted">
+            Supported providers
+            <UBadge :label="String(module.providers.length)" color="neutral" variant="subtle" size="sm" class="rounded-full" />
+          </h2>
+
+          <div class="flex flex-wrap gap-2">
+            <UButton
+              v-for="(provider, index) in module.providers"
+              v-show="showAllProviders || index < PROVIDERS_PREVIEW"
+              :key="provider.name"
+              :to="provider.docs"
+              :target="provider.docs ? '_blank' : undefined"
+              :icon="provider.icon || 'i-lucide-plug'"
+              :label="provider.label"
+              color="neutral"
+              variant="outline"
+              size="sm"
+            />
+            <UButton
+              v-if="module.providers.length > PROVIDERS_PREVIEW"
+              :label="showAllProviders ? 'Show less' : `Show all ${module.providers.length}`"
+              :trailing-icon="showAllProviders ? 'i-lucide-chevron-up' : 'i-lucide-chevron-down'"
+              color="neutral"
+              variant="ghost"
+              size="sm"
+              @click="showAllProviders = !showAllProviders"
+            />
+          </div>
+        </section>
+
+        <MarkdownDocument
+          v-if="module.readme?.nodes?.length"
+          :value="module.readme"
+          :components="markdownComponents"
+          class="first:[&_picture]:block first:[&_picture]:mb-4"
+        />
       </UPageBody>
 
       <template #right>
-        <UContentToc :links="module.readme?.toc?.links">
+        <UContentToc :links="module.readme?.meta?.toc?.links">
           <template #bottom>
             <div class="hidden lg:block space-y-6">
               <UPageLinks title="Links" :links="links" />
@@ -256,7 +311,6 @@ if (import.meta.server) {
               </UPageLinks>
               <USeparator type="dashed" />
               <SocialLinks />
-              <Ads />
             </div>
           </template>
         </UContentToc>

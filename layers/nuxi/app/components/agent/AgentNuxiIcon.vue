@@ -20,7 +20,11 @@ const {
   smileLeftPath,
   smileRightPath,
   smileOpacity,
+  squintLeftPath,
+  squintRightPath,
+  squintOpacity,
   mouthD,
+  mouthStroked,
   mouthOpacity,
   eyeLeftTransform,
   eyeRightTransform,
@@ -33,7 +37,20 @@ const {
   handleSvgClick
 } = useNuxiIcon(props, emit)
 
+const { isBirthday, startHoverCelebrate, cancelHoverCelebrate } = useNuxtBirthday()
+
+function onMouseEnter() {
+  handleMouseEnter()
+  if (props.interactive) startHoverCelebrate(svgEl.value)
+}
+
+function onMouseLeave() {
+  handleMouseLeave()
+  cancelHoverCelebrate()
+}
+
 const isSleeping = computed(() => effectiveMood.value === 'sleeping')
+const isConfused = computed(() => effectiveMood.value === 'confused')
 </script>
 
 <template>
@@ -43,13 +60,22 @@ const isSleeping = computed(() => effectiveMood.value === 'sleeping')
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
     style="overflow: visible;"
-    @mouseenter="handleMouseEnter"
-    @mouseleave="handleMouseLeave"
+    @mouseenter="onMouseEnter"
+    @mouseleave="onMouseLeave"
     @click="handleSvgClick"
   >
     <defs>
       <mask :id="`nuxi-face-mask-${maskId}`">
         <rect width="300" height="200" fill="white" />
+        <path
+          v-if="isBirthday"
+          d="M113 -40L149 48Q113 60 77 48Z"
+          transform="rotate(-6 113 50)"
+          fill="black"
+          stroke="black"
+          stroke-width="30"
+          stroke-linejoin="round"
+        />
         <g :style="{ transform: faceTransform }">
           <path
             class="nuxi-eye"
@@ -83,22 +109,77 @@ const isSleeping = computed(() => effectiveMood.value === 'sleeping')
             stroke-linecap="round"
           />
           <path
+            v-for="path in [squintLeftPath, squintRightPath]"
+            :key="path"
+            class="nuxi-eye"
+            :style="{ opacity: squintOpacity, transition: 'opacity 0.3s ease' }"
+            :d="path"
+            fill="none"
+            stroke="black"
+            stroke-width="13"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+          <path
             class="nuxi-mouth"
             :style="{ transform: mouthTransform, opacity: mouthOpacity, transition: 'transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), d 0.3s ease, opacity 0.3s ease' }"
             :d="mouthD"
-            fill="black"
+            :fill="mouthStroked ? 'none' : 'black'"
+            :stroke="mouthStroked ? 'black' : 'none'"
+            stroke-width="11"
+            stroke-linecap="round"
+            stroke-linejoin="round"
           />
         </g>
       </mask>
     </defs>
 
-    <path
-      class="nuxi-body"
-      :class="bodyClass"
-      d="M20 200H279C282.542 200 285.932 198.756 289 197C292.068 195.244 295.23 193.041 297 190C298.77 186.959 300.002 183.51 300 179.999C299.998 176.488 298.773 173.04 297 170.001L222 41C220.23 37.96 218.067 35.7552 215 34C211.933 32.2448 207.542 31 204 31C200.458 31 197.067 32.2448 194 34C190.933 35.7552 188.77 37.96 187 41L168 74L130 9.99764C128.228 6.95784 126.068 3.75491 123 2C119.932 0.245087 116.542 0 113 0C109.458 0 106.068 0.245087 103 2C99.9323 3.75491 96.7717 6.95784 95 9.99764L2.00001 170.001C0.226985 173.04 0.00154882 176.488 7.60801e-06 179.999C-0.0015336 183.51 0.229654 186.959 2.00001 190C3.77036 193.04 6.93246 195.244 10 197C13.0676 198.756 16.4578 200 20 200Z"
-      fill="currentColor"
-      :mask="`url(#nuxi-face-mask-${maskId})`"
-    />
+    <g class="nuxi-body" :class="bodyClass">
+      <path
+        d="M20 200H279C282.542 200 285.932 198.756 289 197C292.068 195.244 295.23 193.041 297 190C298.77 186.959 300.002 183.51 300 179.999C299.998 176.488 298.773 173.04 297 170.001L222 41C220.23 37.96 218.067 35.7552 215 34C211.933 32.2448 207.542 31 204 31C200.458 31 197.067 32.2448 194 34C190.933 35.7552 188.77 37.96 187 41L168 74L130 9.99764C128.228 6.95784 126.068 3.75491 123 2C119.932 0.245087 116.542 0 113 0C109.458 0 106.068 0.245087 103 2C99.9323 3.75491 96.7717 6.95784 95 9.99764L2.00001 170.001C0.226985 173.04 0.00154882 176.488 7.60801e-06 179.999C-0.0015336 183.51 0.229654 186.959 2.00001 190C3.77036 193.04 6.93246 195.244 10 197C13.0676 198.756 16.4578 200 20 200Z"
+        fill="currentColor"
+        :mask="`url(#nuxi-face-mask-${maskId})`"
+      />
+
+      <g v-if="isBirthday" data-confetti-origin>
+        <g class="nuxi-hat-pop">
+          <g transform="rotate(-6 113 50)">
+            <mask :id="`nuxi-hat-cone-${maskId}`">
+              <path
+                d="M113 -40L149 48Q113 60 77 48Z"
+                fill="white"
+                stroke="white"
+                stroke-width="14"
+                stroke-linejoin="round"
+              />
+            </mask>
+            <clipPath :id="`nuxi-hat-pompom-${maskId}`">
+              <circle cx="113" cy="-50" r="15" />
+            </clipPath>
+
+            <g :mask="`url(#nuxi-hat-cone-${maskId})`">
+              <rect x="60" y="-60" width="110" height="130" fill="#00DC82" />
+              <g stroke="white" stroke-opacity="0.6" stroke-width="9" fill="none">
+                <path d="M96 -6Q113 0 130 -6" />
+                <path d="M84 22Q113 32 142 22" />
+              </g>
+              <path d="M78 53Q113 66 148 53" stroke="#00A562" stroke-width="10" fill="none" />
+              <path d="M113 -60L127 70H180V-60Z" fill="black" fill-opacity="0.16" />
+            </g>
+
+            <circle cx="113" cy="-50" r="15" fill="currentColor" />
+            <circle
+              cx="121"
+              cy="-43"
+              r="15"
+              fill="black"
+              fill-opacity="0.18"
+              :clip-path="`url(#nuxi-hat-pompom-${maskId})`"
+            />
+          </g>
+        </g>
+      </g>
+    </g>
 
     <g
       v-if="isSleeping"
@@ -113,6 +194,17 @@ const isSleeping = computed(() => effectiveMood.value === 'sleeping')
       <text class="nuxi-z nuxi-z-3" x="228" y="82" font-size="70">z</text>
     </g>
 
+    <text
+      v-if="isConfused"
+      class="nuxi-question"
+      x="226"
+      y="56"
+      font-size="88"
+      font-family="sans-serif"
+      font-weight="800"
+      fill="currentColor"
+    >?</text>
+
   </svg>
 </template>
 
@@ -125,6 +217,16 @@ const isSleeping = computed(() => effectiveMood.value === 'sleeping')
 .nuxi-eye {
   transform-box: fill-box;
   transform-origin: center;
+}
+
+.nuxi-hat-pop {
+  transform-box: fill-box;
+  transform-origin: center bottom;
+  animation: nuxi-hat-pop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes nuxi-hat-pop {
+  from { transform: translateY(-20px) scale(0.5); opacity: 0; }
 }
 
 .nuxi-mouth {
@@ -141,6 +243,17 @@ const isSleeping = computed(() => effectiveMood.value === 'sleeping')
   transform-origin: center 92%;
 }
 .nuxi-body--surprised { animation: nuxi-surprised 0.6s cubic-bezier(0.25, 1, 0.5, 1) forwards; }
+.nuxi-body--sad {
+  animation: nuxi-sad 4s ease-in-out infinite;
+  transform-origin: center 100%;
+}
+.nuxi-body--confused { animation: nuxi-confused 2.4s ease-in-out infinite; }
+
+.nuxi-question {
+  transform-box: fill-box;
+  transform-origin: center bottom;
+  animation: nuxi-question-bob 2.4s ease-in-out infinite;
+}
 
 .nuxi-z {
   animation: nuxi-z-float 3.2s ease-in-out infinite;
@@ -191,6 +304,33 @@ const isSleeping = computed(() => effectiveMood.value === 'sleeping')
   65%  { transform: scale(1.05, 0.96) translateY(-5px); }
   85%  { transform: scale(0.97, 1.02) translateY(-8px); }
   100% { transform: scale(1, 1) translateY(0); }
+}
+
+@keyframes nuxi-sad {
+  0%, 55%, 100% { transform: translateY(0) scale(1, 1); }
+  65% { transform: translateY(3px) scale(1.05, 0.92); }
+  75% { transform: translateY(1px) scale(0.98, 1.03); }
+  85% { transform: translateY(2px) scale(1.02, 0.96); }
+}
+
+@keyframes nuxi-confused {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(-7deg) translateY(-2px); }
+  60% { transform: rotate(5deg) translateY(-1px); }
+}
+
+@keyframes nuxi-question-bob {
+  0%, 100% { transform: translateY(0) rotate(8deg); opacity: 1; }
+  50% { transform: translateY(-8px) rotate(-6deg); opacity: 0.8; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nuxi-body,
+  .nuxi-z,
+  .nuxi-hat-pop,
+  .nuxi-question {
+    animation: none !important;
+  }
 }
 
 @keyframes nuxi-z-float {

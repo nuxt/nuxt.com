@@ -52,13 +52,16 @@ interface ModelRow {
   evals: EvalResultItem[]
 }
 
-const { data: page } = await useAsyncData('evals', () => queryCollection('evals').first())
+const { data: page } = await useAsyncData('evals', () => useContent('site').get('/evals'))
 if (!page.value) {
   throw createError({ statusCode: 404, statusMessage: 'Page not found', fatal: true })
 }
 
-const title = page.value.head?.title || page.value.title
-const description = page.value.head?.description || page.value.description
+// Data files: the document's fields live under `data`.
+const pageData = computed(() => page.value!.data)
+
+const title = pageData.value.head?.title || pageData.value.title
+const description = pageData.value.head?.description || pageData.value.description
 
 useSeoMeta({
   titleTemplate: '%s',
@@ -180,7 +183,10 @@ const modelIconMap: Record<string, string> = {
   gemini: 'i-simple-icons-googlegemini',
   devstral: 'i-simple-icons-mistralai',
   minimax: 'i-simple-icons-minimax',
-  kimi: 'i-simple-icons-kimi'
+  kimi: 'i-simple-icons-kimi',
+  deepseek: 'i-simple-icons-deepseek',
+  glm: 'i-simple-icons-zdotai',
+  grok: 'i-custom-grok'
 }
 
 function getModelIcon(model: string): string {
@@ -360,10 +366,10 @@ const evalColumns: TableColumn<EvalResultItem>[] = [
 </script>
 
 <template>
-  <div v-if="page && rawData">
+  <UPage v-if="pageData && rawData">
     <UPageHero
-      :title="page.title"
-      :description="page.description"
+      :title="pageData.title"
+      :description="pageData.description"
       :ui="{
         title: 'text-4xl sm:text-5xl lg:text-6xl font-bold',
         description: 'max-w-2xl mx-auto text-pretty',
@@ -372,7 +378,7 @@ const evalColumns: TableColumn<EvalResultItem>[] = [
     >
       <template #links>
         <UButton
-          :to="page.githubUrl"
+          :to="pageData.githubUrl"
           icon="i-simple-icons-github"
           label="View on GitHub"
           target="_blank"
@@ -463,5 +469,5 @@ const evalColumns: TableColumn<EvalResultItem>[] = [
         </div>
       </UContainer>
     </UPageBody>
-  </div>
+  </UPage>
 </template>

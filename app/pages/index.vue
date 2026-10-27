@@ -1,22 +1,42 @@
 <script setup lang="ts">
 import { joinURL } from 'ufo'
 import type { Module } from '#shared/types'
+import { ProseCodeTree, ProsePre } from '#components'
 
 definePageMeta({
   heroBackground: '-z-10'
 })
 
-const [{ data: page }, { data: officialModules }, { data: showcase }, { getFilteredSponsors }] = await Promise.all([
-  useAsyncData('index', () => queryCollection('index').first()),
+const [{ data: page }, { data: officialModules }, { data: showcase }, { data: sponsorGroups }] = await Promise.all([
+  useAsyncData('index', () => useContent('site').get('/')),
   useFetch('/api/v1/modules', {
     key: 'official-modules',
     transform: (res: { modules: Module[], stats: Stats }) => res.modules
       .filter(module => module.type === 'official')
       .sort((a, b) => b.stats.stars - a.stats.stars)
   }),
-  useAsyncData('showcase', () => queryCollection('showcase').first()),
-  useSponsors()
+  useAsyncData('showcase', () => useContent('site').get('/showcase')),
+  useFetch('/api/sponsors', {
+    key: 'sponsors-home',
+    transform(sponsors: SponsorsByTier) {
+      return Object.entries(sponsors)
+        .filter(([tier, sponsors]) => ['diamond', 'platinum', 'gold'].includes(tier) && sponsors.length > 0)
+        .map(([tier, sponsors]) => ({
+          tier,
+          sponsors: sponsors.map(s => ({
+            sponsorName: s.sponsorName,
+            sponsorLogo: s.sponsorLogo,
+            sponsorUrl: s.sponsorUrl,
+            sponsorDescription: s.sponsorDescription,
+            since: s.since
+          }))
+        }))
+    }
+  })
 ])
+
+const pageData = computed(() => page.value?.data)
+const showcaseData = computed(() => showcase.value?.data)
 
 // Merge via computed, not mutation: useFetch `data` is a shallowRef (Nuxt 4
 // default), so writing module.health in place would not trigger a re-render.
@@ -24,8 +44,6 @@ const { health } = useModuleHealth()
 const officialModulesWithHealth = computed(() =>
   (officialModules.value || []).map(m => ({ ...m, health: health.value[m.name] ?? m.health ?? null }))
 )
-
-const sponsorGroups = getFilteredSponsors(['diamond', 'platinum', 'gold'])
 
 const stats = useStats()
 const { track } = useAnalytics()
@@ -49,8 +67,6 @@ useSeoMeta({
 useCanonical('/raw/index.md')
 
 if (import.meta.server) {
-  prerenderRoutes(['/raw/index.md'])
-
   useSeoMeta({
     ogTitle: title,
     ogDescription: description,
@@ -69,7 +85,7 @@ if (import.meta.server) {
   ])
 }
 
-const tabs = computed(() => page.value?.hero.tabs.map(tab => ({
+const tabs = computed(() => pageData.value?.hero.tabs.map(tab => ({
   label: tab.title,
   icon: tab.icon,
   content: tab.content
@@ -91,13 +107,13 @@ const groupedFoundationItems = computed(() => {
     classes: 'rounded-none'
   }
 
-  page.value.foundation.items.forEach((item, index) => {
+  pageData.value.foundation.items.forEach((item, index) => {
     if (item.id === 'bundler') {
       bundlers.items.push(item)
     } else {
       const borderClasses = index === 0
         ? 'max-sm:rounded-t-lg max-sm:rounded-b-none sm:rounded-s-lg sm:rounded-e-none'
-        : index === page.value.foundation.items.length - 1
+        : index === pageData.value.foundation.items.length - 1
           ? 'max-sm:rounded-t-none max-sm:rounded-b-lg sm:rounded-s-none sm:rounded-e-lg'
           : 'rounded-none'
 
@@ -116,14 +132,14 @@ const groupedFoundationItems = computed(() => {
   return result
 })
 
-const isMobile = ref(false)
-onMounted(() => {
-  isMobile.value = window.innerWidth < 768
-})
+// Embla writes inline transforms on init, which @nuxt/hints flags as a hydration mismatch.
+const isMounted = useMounted()
+
+useNuxtBirthday()
 </script>
 
 <template>
-  <div v-if="page">
+  <div v-if="pageData">
     <UPageHero
       class="relative"
       orientation="horizontal"
@@ -134,12 +150,13 @@ onMounted(() => {
       }"
     >
       <template #headline>
-        <NuxtLink :to="page.hero.cta.to">
+        <HomeBirthdayBadge class="[html:not([data-nuxt-birthday])_&]:hidden" />
+        <NuxtLink :to="pageData.hero.cta.to" class="[html[data-nuxt-birthday]_&]:hidden">
           <UBadge variant="subtle" size="lg" class="px-3 relative rounded-full font-semibold dark:hover:bg-primary-400/15 dark:hover:ring-primary-700">
-            {{ page?.hero.cta.label }}
+            {{ pageData?.hero.cta.label }}
             <UIcon
-              v-if="page?.hero.cta.icon"
-              :name="page?.hero.cta.icon"
+              v-if="pageData?.hero.cta.icon"
+              :name="pageData?.hero.cta.icon"
               class="size-4 pointer-events-none"
             />
           </UBadge>
@@ -151,7 +168,7 @@ onMounted(() => {
       </template>
 
       <template #description>
-        <LazyMDC :value="page?.hero.description" unwrap="p" cache-key="index-hero-description" hydrate-never />
+        {{ pageData?.hero.description }}
       </template>
 
       <template #links>
@@ -185,7 +202,7 @@ onMounted(() => {
       </template>
 
       <UPageCard
-        class="overflow-auto lg:absolute [@media(min-width:2400px)]:relative lg:-mt-16 [@media(min-width:2400px)]:mt-8 right-0 [@media(min-width:2400px)]:right-auto w-screen lg:w-[calc(50%-2rem)] [@media(min-width:2400px)]:w-full max-w-[800px] [@media(min-width:2400px)]:mx-auto rounded-none lg:rounded-l-[calc(var(--ui-radius)*4)] [@media(min-width:2400px)]:rounded-2xl -mx-4 sm:-mx-6 lg:mx-0"
+        class="overflow-auto lg:absolute [@media(min-width:2400px)]:relative lg:-mt-16 [@media(min-width:2400px)]:mt-8 right-0 [@media(min-width:2400px)]:right-auto w-screen lg:w-[calc(50%-2rem)] [@media(min-width:2400px)]:w-full lg:max-w-[800px] [@media(min-width:2400px)]:mx-auto rounded-none lg:rounded-l-[calc(var(--ui-radius)*4)] [@media(min-width:2400px)]:rounded-2xl -mx-4 sm:-mx-6 lg:mx-0"
         variant="subtle"
         :ui="{ container: 'sm:pt-4.5 lg:pr-0 [@media(min-width:2400px)]:px-6 w-full' }"
       >
@@ -202,40 +219,25 @@ onMounted(() => {
           }"
         >
           <template #content="{ item, index }">
-            <LazyMDC :value="item.content" :cache-key="`index-hero-tab-${index}`" hydrate-on-idle />
+            <MarkdownDocument :key="index" :value="(item as any).content" :components="{ ProseCodeTree, ProsePre }" />
           </template>
         </UTabs>
       </UPageCard>
     </UPageHero>
     <UPageSection :ui="{ container: '!pt-0' }">
-      <UPageLogos :marquee="isMobile" :title="page?.logos.title" :ui="{ title: 'text-left text-muted font-medium text-lg', logos: 'mt-4' }">
-        <Motion
-          v-for="(company, index) in page?.logos.companies"
-          :key="company.alt"
-          as-child
-          :initial="{ opacity: 0, transform: 'translateY(20px)' }"
-          :while-in-view="{ opacity: 1, transform: 'translateY(0)' }"
-          :transition="{ delay: 0.4 + 0.2 * index }"
-          :in-view-options="{ once: true }"
-        >
-          <div class="opacity-0">
-            <UColorModeImage
-              :key="company.alt"
-              :light="company.light"
-              :dark="company.dark"
-              :alt="`${company.alt} logo`"
-              loading="lazy"
-              :height="company.height"
-              :width="company.width"
-              class="h-6 shrink-0 max-w-[140px]"
-            />
-          </div>
-        </Motion>
-      </UPageLogos>
+      <div>
+        <h2 class="mb-4">
+          <NuxtLink to="/showcase" class="group inline-flex items-center gap-1.5 text-lg font-medium text-muted transition-colors hover:text-highlighted">
+            {{ pageData?.logos.title }}
+            <UIcon name="i-lucide-arrow-right" class="size-4 opacity-0 -translate-x-1 transition-[opacity,translate] duration-200 group-hover:opacity-100 group-hover:translate-x-0 group-focus-visible:opacity-100 group-focus-visible:translate-x-0 pointer-coarse:opacity-100 pointer-coarse:translate-x-0" />
+          </NuxtLink>
+        </h2>
+        <HomeLogoCarousel :companies="pageData.logos.companies" />
+      </div>
     </UPageSection>
     <UPageSection
-      :title="page?.features.title"
-      :description="page?.features.description"
+      :title="pageData?.features.title"
+      :description="pageData?.features.description"
       :ui="{
         title: 'text-left',
         description: 'text-left',
@@ -245,7 +247,7 @@ onMounted(() => {
     >
       <template #features>
         <Motion
-          v-for="(feature, index) in page.features.features"
+          v-for="(feature, index) in (pageData.features.features as any[])"
           :key="feature.title"
           as="li"
           :initial="{ opacity: 0, transform: 'translateY(10px)' }"
@@ -254,7 +256,7 @@ onMounted(() => {
           :in-view-options="{ once: true }"
         >
           <UPageFeature
-            v-bind="feature"
+            v-bind="pickFeature(feature)"
             orientation="vertical"
           />
         </Motion>
@@ -262,22 +264,22 @@ onMounted(() => {
           as="li"
           :initial="{ opacity: 0, transform: 'translateY(10px)' }"
           :while-in-view="{ opacity: 1, transform: 'translateY(0)' }"
-          :transition="{ delay: 0.1 * page.features.features.length }"
+          :transition="{ delay: 0.1 * pageData.features.features.length }"
           :in-view-options="{ once: true }"
           class="flex flex-col justify-center gap-4 p-4 bg-muted/50 h-full"
         >
           <span class="text-lg font-semibold">
-            {{ page.features.cta.title }}
+            {{ pageData.features.cta.title }}
           </span>
           <div>
-            <UButton :to="page.features.cta.to" :label="page.features.cta.label" trailing :icon="page.features.cta.icon" />
+            <UButton :to="pageData.features.cta.to" :label="pageData.features.cta.label" trailing :icon="pageData.features.cta.icon" />
           </div>
         </Motion>
       </template>
     </UPageSection>
 
     <UPageCTA
-      :description="page.testimonial.quote"
+      :description="pageData.testimonial.quote"
       variant="subtle"
       class="rounded-none"
       :ui="{
@@ -286,7 +288,7 @@ onMounted(() => {
       }"
     >
       <UUser
-        v-bind="page.testimonial.author"
+        v-bind="pickUser(pageData.testimonial.author)"
         size="xl"
         class="justify-center"
       />
@@ -298,10 +300,10 @@ onMounted(() => {
       }"
     >
       <template #title>
-        <LazyMDC :value="page.foundation.title" unwrap="p" cache-key="index-foundation-title" hydrate-never />
+        <LazyMarkdown :value="pageData.foundation.title" unwrap="p" hydrate-never />
       </template>
       <template #description>
-        <LazyMDC :value="page.foundation.description" unwrap="p" cache-key="index-foundation-description" hydrate-never />
+        <LazyMarkdown :value="pageData.foundation.description" unwrap="p" hydrate-never />
       </template>
 
       <div class="grid grid-cols-1 sm:grid-cols-3">
@@ -364,8 +366,8 @@ onMounted(() => {
     </UPageSection>
 
     <UPageSection
-      :title="page.stats.title"
-      :description="page.stats.description"
+      :title="pageData.stats.title"
+      :description="pageData.stats.description"
       class="relative"
       :ui="{
         root: 'bg-linear-to-b border-t border-default from-muted dark:from-muted/40 to-default'
@@ -410,12 +412,12 @@ onMounted(() => {
           <UPageCard class="h-full" variant="subtle" to="https://go.nuxt.com/github">
             <div class="flex flex-col items-center justify-around h-full">
               <span class="text-xl font-semibold">
-                {{ page.stats.community.title }}
+                {{ pageData.stats.community.title }}
               </span>
               <p class="text-muted text-center">
-                {{ page.stats.community.description }}
+                {{ pageData.stats.community.description }}
               </p>
-              <UButton class="mt-4 w-fit" v-bind="page.stats.cta" />
+              <UButton class="mt-4 w-fit" v-bind="pickLink(pageData.stats.cta)" />
             </div>
           </UPageCard>
         </div>
@@ -428,7 +430,7 @@ onMounted(() => {
               </div>
               <div class="flex flex-col">
                 <span class="font-medium">
-                  {{ page.stats.x }}
+                  {{ pageData.stats.x }}
                 </span>
                 <p>Followers</p>
               </div>
@@ -442,7 +444,7 @@ onMounted(() => {
               </div>
               <div class="flex flex-col">
                 <span class="font-medium">
-                  {{ page.stats.discord }}
+                  {{ pageData.stats.discord }}
                 </span>
                 <p>Members</p>
               </div>
@@ -453,8 +455,8 @@ onMounted(() => {
     </UPageSection>
 
     <UPageSection
-      :description="page.modules.description"
-      :links="page.modules.links"
+      :description="pageData.modules.description"
+      :links="pickLinks(pageData.modules.links)"
       :ui="{
         root: 'bg-linear-to-b border-t border-default from-muted dark:from-muted/40 to-default',
         title: 'text-left',
@@ -463,7 +465,7 @@ onMounted(() => {
       }"
     >
       <template #title>
-        <LazyMDC :value="page.modules.title" unwrap="p" cache-key="index-modules-title" hydrate-never />
+        <LazyMarkdown :value="pageData.modules.title" unwrap="p" hydrate-never />
       </template>
       <UCarousel
         v-slot="{ item }"
@@ -471,6 +473,7 @@ onMounted(() => {
         wheel-gestures
         arrows
         :items="officialModulesWithHealth"
+        :active="isMounted"
         class="min-w-0"
         :ui="{
           container: 'ms-0 items-stretch',
@@ -483,9 +486,9 @@ onMounted(() => {
     </UPageSection>
 
     <UPageSection
-      :title="page.deploy.title"
-      :description="page.deploy.description"
-      :links="page.deploy.links"
+      :title="pageData.deploy.title"
+      :description="pageData.deploy.description"
+      :links="pickLinks(pageData.deploy.links)"
       orientation="horizontal"
       :ui="{
         root: 'bg-linear-to-b border-t border-default from-muted dark:from-muted/40 to-default'
@@ -495,16 +498,16 @@ onMounted(() => {
         src="/assets/landing/deploy.svg"
         width="512"
         height="439"
-        :alt="page.deploy.title"
+        :alt="pageData.deploy.title"
         class="mx-auto max-w-lg sm:w-full w-full"
         loading="lazy"
       />
     </UPageSection>
 
     <UPageSection
-      :title="page.contributors.title"
-      :description="page.contributors.description"
-      :links="page.contributors.links"
+      :title="pageData.contributors.title"
+      :description="pageData.contributors.description"
+      :links="pickLinks(pageData.contributors.links)"
       orientation="horizontal"
       reverse
       :ui="{
@@ -515,7 +518,7 @@ onMounted(() => {
     </UPageSection>
 
     <UPageSection
-      id="showcase"
+      id="showcaseData"
       headline="Showcase"
       title="Real-world Web Applications built with Nuxt"
       :links="[{
@@ -538,7 +541,8 @@ onMounted(() => {
         wheel-gestures
         arrows
         :autoplay="{ delay: 3000 }"
-        :items="showcase.websites.slice(0, 10)"
+        :items="(showcaseData.websites as any[]).slice(0, 10)"
+        :active="isMounted"
         class="min-w-0"
         :ui="{
           item: 'basis-full sm:basis-1/2',
@@ -577,70 +581,22 @@ onMounted(() => {
     </UPageSection>
 
     <UPageSection
-      :title="page.sponsors.title"
-      :description="page.sponsors.description"
-      :links="page.sponsors.links"
+      :title="pageData.sponsors.title"
+      :description="pageData.sponsors.description"
+      :links="pickLinks(pageData.sponsors.links)"
       class="relative"
       :ui="{
         root: 'bg-linear-to-b border-t border-default from-muted dark:from-muted/40 to-default',
         container: 'py-12 sm:py-16 lg:py-20'
       }"
     >
-      <div class="flex flex-col items-center">
-        <template v-for="({ tier, sponsors }) of sponsorGroups" :key="tier">
-          <div class="w-full mb-24">
-            <UBadge color="neutral" variant="subtle" class="capitalize mb-2">
-              {{ tier }} sponsors
-            </UBadge>
-
-            <div class="w-full border border-default rounded-lg">
-              <table class="w-full">
-                <tbody>
-                  <template v-for="(_, rowIndex) in Math.ceil(sponsors.length / 3)" :key="rowIndex">
-                    <tr>
-                      <template v-for="colIndex in 3" :key="colIndex">
-                        <td
-                          v-if="(rowIndex * 3) + colIndex - 1 < sponsors.length"
-                          class="border-b border-r border-default p-0 w-1/3 h-[120px]"
-                          :class="{
-                            'border-r-0': colIndex === 3,
-                            'border-b-0': rowIndex === Math.ceil(sponsors.length / 3) - 1
-                          }"
-                        >
-                          <NuxtLink
-                            :to="sponsors[(rowIndex * 3) + colIndex - 1].sponsorUrl"
-                            target="_blank"
-                            class="flex items-center gap-2 justify-center h-full hover:bg-muted/50 transition-colors"
-                          >
-                            <NuxtImg
-                              :src="sponsors[(rowIndex * 3) + colIndex - 1].sponsorLogo"
-                              :alt="`${sponsors[(rowIndex * 3) + colIndex - 1].sponsorName} logo`"
-                              loading="lazy"
-                              class="h-10 max-w-[140px] object-contain rounded-lg"
-                              height="40"
-                              width="40"
-                            />
-                            <span class="text-base hidden sm:block font-semibold">{{ sponsors[(rowIndex * 3) + colIndex - 1].sponsorName }}</span>
-                          </NuxtLink>
-                        </td>
-                        <td
-                          v-else
-                          class="border-b border-r border-default p-0 w-1/3 h-[120px]"
-                          :class="{
-                            'border-r-0': colIndex === 3,
-                            'border-b-0': rowIndex === Math.ceil(sponsors.length / 3) - 1
-                          }"
-                        >
-                          <div class="h-full" />
-                        </td>
-                      </template>
-                    </tr>
-                  </template>
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </template>
+      <div class="border border-default rounded-lg divide-y divide-default overflow-hidden">
+        <div v-for="({ tier, sponsors }) of sponsorGroups" :key="tier" class="relative">
+          <UBadge color="neutral" variant="subtle" class="absolute top-3 left-3 z-10 capitalize pointer-events-none">
+            {{ tier }}
+          </UBadge>
+          <SponsorsGrid :sponsors="sponsors" :featured="tier === 'diamond'" :columns="tier === 'diamond' ? 2 : 3" />
+        </div>
       </div>
     </UPageSection>
   </div>

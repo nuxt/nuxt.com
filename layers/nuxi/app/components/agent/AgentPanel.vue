@@ -50,6 +50,12 @@ function openFullScreen() {
   navigateTo(isPersisted ? `/dashboard/chat/${id}` : '/dashboard/chat')
 }
 
+// The chat (Eve client, prompt, messages, shaders) is a multi-MB chunk: load it on first open, not on every page.
+const hasOpened = ref(false)
+watch(isOpen, (value) => {
+  if (value) hasOpened.value = true
+}, { immediate: true })
+
 provide<{
   chatId: Ref<string>
   startNewChat: () => void
@@ -60,7 +66,14 @@ watch(pendingPrompt, (prompt) => {
   if (prompt) startNewChat()
 })
 
-defineShortcuts({
+const chatRef = useTemplateRef('chatRef')
+const activeElement = useActiveElement()
+const isPromptFocused = computed(() =>
+  activeElement.value?.tagName === 'TEXTAREA' && !!unrefElement(chatRef)?.contains(activeElement.value)
+)
+
+// Matching shortcuts always preventDefault, so `tab` must only be registered while it applies.
+defineShortcuts(computed(() => ({
   meta_i: {
     handler: () => {
       if (!isAgentEnabled.value) return
@@ -75,14 +88,15 @@ defineShortcuts({
     },
     usingInput: true
   },
-  tab: {
-    handler: () => {
-      if (!isOpen.value || !currentPage.value) return
-      pageContextDismissed.value = !pageContextDismissed.value
-    },
-    usingInput: true
-  }
-})
+  tab: isOpen.value && currentPage.value && isPromptFocused.value
+    ? {
+        handler: () => {
+          pageContextDismissed.value = !pageContextDismissed.value
+        },
+        usingInput: true
+      }
+    : undefined
+})))
 </script>
 
 <template>
@@ -120,7 +134,9 @@ defineShortcuts({
       </UTooltip>
     </template>
 
-    <AgentPanelChat
+    <LazyAgentPanelChat
+      v-if="hasOpened"
+      ref="chatRef"
       :key="chatId"
       :chat-id="chatId"
       :initial-messages="initialMessages"

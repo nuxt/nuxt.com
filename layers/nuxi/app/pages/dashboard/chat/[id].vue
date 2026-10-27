@@ -56,8 +56,7 @@ const {
   vote,
   onSubmit,
   handlePaste,
-  removeAttachment,
-  restoreToInput
+  removeAttachment
 } = useNuxiChat({
   chatId,
   initialMessages,
@@ -151,7 +150,6 @@ useNuxiChatSeo({
           @submit="onSubmit"
           @paste="handlePaste"
           @remove-attachment="removeAttachment"
-          @restore-attachment="restoreToInput"
           @vote="vote"
         />
 
@@ -161,7 +159,6 @@ useNuxiChatSeo({
           :chat-id="chatId"
           :show-actions="false"
           :get-vote="getVote"
-          class="flex-1 pt-4 pb-4 sm:pb-6"
         />
       </UContainer>
     </template>

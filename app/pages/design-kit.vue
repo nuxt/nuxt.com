@@ -1,15 +1,21 @@
 <script setup lang="ts">
+import { DesignKitColorCard, DesignKitFontCard, DesignKitImageCard } from '#components'
+
 definePageMeta({
   heroBackground: 'opacity-70 -z-10'
 })
 
-const { data: page } = await useAsyncData('design-kit', () => queryCollection('designKit').first())
+const markdownComponents = { ...proseComponents, DesignKitColorCard, DesignKitFontCard, DesignKitImageCard }
+
+const { data: page } = await useAsyncData('design-kit', () => useContent('site').get('/design-kit'))
 if (!page.value) {
   throw createError({ statusCode: 404, statusMessage: 'Page not found', fatal: true })
 }
 
-const title = page.value.head?.title || page.value.title
-const description = page.value.head?.description || page.value.description
+const pageData = computed(() => page.value!.data)
+
+const title = pageData.value.head?.title || pageData.value.title
+const description = pageData.value.head?.description || pageData.value.description
 
 useSeoMeta({
   titleTemplate: '%s',
@@ -26,11 +32,11 @@ defineOgImage('Docs.takumi', {
 </script>
 
 <template>
-  <UContainer v-if="page">
+  <UPage v-if="pageData">
     <UPageHero
-      :title="page.title"
-      :links="page.links"
-      :description="page.description"
+      :title="pageData.title"
+      :links="pickLinks(pageData.links)"
+      :description="pageData.description"
       :ui="{
         title: 'text-left',
         description: 'text-left',
@@ -38,12 +44,10 @@ defineOgImage('Docs.takumi', {
       }"
     />
 
-    <UPage>
-      <UPageBody>
-        <UContainer>
-          <ContentRenderer v-if="page && page.body" :value="page" />
-        </UContainer>
-      </UPageBody>
-    </UPage>
-  </UContainer>
+    <UPageBody>
+      <UContainer>
+        <MarkdownDocument v-if="page" :value="page" :components="markdownComponents" />
+      </UContainer>
+    </UPageBody>
+  </UPage>
 </template>

@@ -32,6 +32,8 @@ Link your GitHub repository to your Deno Deploy project and choose the "GitHub A
 
 Create a GitHub action file in your repository:
 
+<!-- Supported Node versions: https://github.com/actions/setup-node#supported-version-syntax -->
+
 ```yaml [.github/workflows/deno_deploy.yml]
 name: deno-deploy
 on:
@@ -44,11 +46,13 @@ on:
 jobs:
   deploy:
     steps:
-      - uses: actions/checkout@v3
-      - run: corepack enable
-      - uses: actions/setup-node@v3
+      - uses: actions/checkout@v7
         with:
-          node-version: 18
+          persist-credentials: false
+      - run: corepack enable
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
           cache: pnpm
       - run: pnpm install
       - run: pnpm build

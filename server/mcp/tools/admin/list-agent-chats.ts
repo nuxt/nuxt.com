@@ -2,7 +2,7 @@ import { z } from 'zod'
 import { and, desc, eq, gte, lte, sql, type SQL } from 'drizzle-orm'
 
 export default defineMcpTool({
-  description: `Lists persisted **web** chat sessions (signed-in users on nuxt.com) with message counts and vote tallies. Does not include Slack threads or Vercel o11y runs — use Observability → Agent Runs for those.
+  description: `Lists persisted **web** chat sessions (signed-in users on nuxt.com) with message counts and vote tallies. Only includes chats shared with admins or made public. Does not include Slack threads or Vercel o11y runs — use Observability → Agent Runs for those.
 
 WHEN TO USE: Find web chats with downvotes or read metadata before opening a full transcript via \`get-agent-chat\`.`,
   inputSchema: {
@@ -23,7 +23,7 @@ WHEN TO USE: Find web chats with downvotes or read metadata before opening a ful
   ],
   enabled: event => isMcpAdmin(event),
   async handler({ sinceDays, until, hasDownvotes, sortBy, limit, offset }) {
-    const filters: SQL[] = []
+    const filters: SQL[] = [adminReadableChat()]
     if (sinceDays) {
       const since = new Date(Date.now() - sinceDays * 24 * 60 * 60 * 1000)
       filters.push(gte(schema.chats.createdAt, since))
@@ -39,7 +39,7 @@ WHEN TO USE: Find web chats with downvotes or read metadata before opening a ful
     const downvotesExpr = sql<number>`coalesce(sum(case when ${schema.votes.isUpvoted} = 0 then 1 else 0 end), 0)`
     const messageCountExpr = sql<number>`(select count(*) from ${schema.messages} where ${schema.messages.chatId} = ${schema.chats.id})`
 
-    type ChatRow = Pick<Chat, 'id' | 'userId' | 'title' | 'visibility' | 'createdAt' | 'updatedAt'> & {
+    type ChatRow = Pick<Chat, 'id' | 'userId' | 'title' | 'visibility' | 'state' | 'createdAt' | 'updatedAt'> & {
       messageCount: number
       upvotes: number
       downvotes: number
@@ -51,6 +51,7 @@ WHEN TO USE: Find web chats with downvotes or read metadata before opening a ful
         userId: schema.chats.userId,
         title: schema.chats.title,
         visibility: schema.chats.visibility,
+        state: schema.chats.state,
         messageCount: messageCountExpr,
         upvotes: upvotesExpr,
         downvotes: downvotesExpr,
@@ -59,7 +60,7 @@ WHEN TO USE: Find web chats with downvotes or read metadata before opening a ful
       })
       .from(schema.chats)
       .leftJoin(schema.votes, eq(schema.votes.chatId, schema.chats.id))
-      .where(filters.length ? and(...filters) : undefined)
+      .where(and(...filters))
       .groupBy(schema.chats.id)
       .having(hasDownvotes ? sql`${downvotesExpr} > 0` : undefined)
       .orderBy(desc(sortColumn))
@@ -75,6 +76,7 @@ WHEN TO USE: Find web chats with downvotes or read metadata before opening a ful
         userId: r.userId,
         title: r.title,
         visibility: r.visibility,
+        agentRunId: r.state?.sessionId ?? null,
         messageCount: Number(r.messageCount),
         upvotes: Number(r.upvotes),
         downvotes: Number(r.downvotes),

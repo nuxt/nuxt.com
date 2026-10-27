@@ -5,13 +5,15 @@ definePageMeta({
 
 const { fetchList, providers } = useHostingProviders()
 
-const { data: page } = await useAsyncData('deploy-landing', () => queryCollection('landing').path('/deploy').first())
+const { data: page } = await useAsyncData('deploy-landing', () => useContent('site').get('/deploy'))
 if (!page.value) {
   throw createError({ statusCode: 404, statusMessage: 'Page not found', fatal: true })
 }
 
-const title = page.value.head?.title || page.value.title
-const description = page.value.head?.description || page.value.description
+const pageData = computed(() => page.value!.data)
+
+const title = pageData.value.head?.title || pageData.value.title
+const description = pageData.value.head?.description || pageData.value.description
 
 useSeoMeta({
   titleTemplate: '%s',
@@ -31,7 +33,7 @@ await fetchList()
 </script>
 
 <template>
-  <UContainer v-if="page">
+  <UContainer v-if="pageData">
     <UPage>
       <template #left>
         <UPageAside>
