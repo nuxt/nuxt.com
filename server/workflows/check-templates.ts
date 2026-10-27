@@ -4,6 +4,7 @@ import { start } from 'workflow/api'
 import { z } from 'zod'
 import type { TemplateCheckPhase, TemplateCheckStep, TemplateToCheck } from '../../shared/types/templates'
 import type { CheckReport } from '../utils/templates/check-report'
+import { DEV_LOG, DEV_PORT, DEV_WARMUP_SCRIPT, DISABLE_DEVTOOLS } from '../utils/templates/dev-server'
 import { PREVIEW_BRIDGE_PLUGIN } from '../utils/templates/preview-bridge'
 import { SERVE_SCRIPT_PATH, STATIC_SERVER, STATIC_SERVER_PATH } from '../utils/templates/static-server'
 import { TEMPLATE_SNAPSHOT_TTL_MS } from '../../shared/utils/templates'
@@ -126,6 +127,8 @@ async function checkTemplate(report: Reporter, batchId: string, template: Templa
       const started = await startTemplate(sandbox, serve, browser)
       if (!started.ok) return await fail('start', started.output)
       if ((await report.phase('snapshot')).stopped) return stopped
+      // Failing only leaves the bundling to the first `nuxt dev` started from the snapshot.
+      await runDetached(sandbox, 'warm-dev', WARM_DEV_SCRIPT)
       snapshotId = await snapshotSandbox(sandbox)
       snapshotted = true
     }
@@ -197,6 +200,16 @@ function serveScript(preview: string, hasNodeServer: boolean) {
   if (hasNodeServer) return 'exec node .output/server/index.mjs'
   return undefined
 }
+
+// Bundling the dependencies of `nuxt dev` takes up to a minute on a preview's 2 vCPUs (Docus). Running it once here leaves them in
+// `node_modules/.cache/vite`, with those Vite only finds at runtime, for every sandbox started from the snapshot. It runs with the
+// config previews start `nuxt dev` with: Vite bundles again whenever its config differs. Its own process group stops with it.
+const WARM_DEV_SCRIPT = `${DISABLE_DEVTOOLS}
+NUXT_TELEMETRY_DISABLED=1 setsid ./node_modules/.bin/nuxt dev --port ${DEV_PORT} > ${DEV_LOG} 2>&1 &
+DEV=$!
+timeout 300 node ${STATE_DIR}/warmup.mjs
+kill -TERM -- -$DEV 2>/dev/null; wait $DEV
+rm -f ${DEV_LOG}`
 
 // Opens a page in Chromium and prints the first message of the preview bridge: an app can serve valid HTML and still crash once it hydrates.
 const VISIT_SCRIPT = `import { chromium } from 'playwright-core'
@@ -282,7 +295,8 @@ async function createCheckSandbox(template: TemplateToCheck) {
   await sandbox.runCommand({ cmd: 'bash', args: ['-c', `mkdir -p ${WORKDIR} && cp -a ${clone}/. ${WORKDIR}/`] })
   await sandbox.writeFiles([
     { path: `${STATE_DIR}/nuxt-com-preview.client.js`, content: PREVIEW_BRIDGE_PLUGIN },
-    { path: STATIC_SERVER_PATH, content: STATIC_SERVER }
+    { path: STATIC_SERVER_PATH, content: STATIC_SERVER },
+    { path: `${STATE_DIR}/warmup.mjs`, content: DEV_WARMUP_SCRIPT }
   ])
   return sandbox.name
 }
