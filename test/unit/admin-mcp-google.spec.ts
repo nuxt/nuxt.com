@@ -69,9 +69,11 @@ const bins = (good: number | string, poor: number | string, start: number | stri
 
 describe('admin Chrome UX Report tool', () => {
   it('rates each p75 against the thresholds CrUX returns', async () => {
-    fetchMock.mockImplementation(async (url: string, options: { query: Record<string, string>, body: any }) => {
+    fetchMock.mockImplementation(async (url: string, options: { query?: Record<string, string>, headers: Record<string, string>, body: any }) => {
       expect(url).toBe('https://chromeuxreport.googleapis.com/v1/records:queryRecord')
-      expect(options.query).toEqual({ key: 'crux-key' })
+      // In a header: fetch errors quote the URL, so a `?key=` would leak into error messages
+      expect(options.headers).toEqual({ 'x-goog-api-key': 'crux-key' })
+      expect(options.query).toBeUndefined()
       expect(options.body).toMatchObject({ url: 'https://nuxt.com/docs/4.x/api', formFactor: 'PHONE' })
       return {
         record: {

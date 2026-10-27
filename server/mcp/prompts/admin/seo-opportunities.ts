@@ -9,8 +9,9 @@ export default defineMcpPrompt({
   },
   enabled: event => isMcpAdmin(event),
   handler({ days, top, pathContains }) {
-    const pageFilter = pathContains ? `, \`filters=[{ "dimension": "page", "operator": "contains", "expression": "${pathContains}" }]\`` : ''
-    return `Find the top ${top} SEO opportunities on nuxt.com${pathContains ? ` for pages containing "${pathContains}"` : ''}.
+    // Serialized so quotes or backslashes in `pathContains` can't break the filter JSON or the sentence around it.
+    const pageFilter = pathContains ? `, \`filters=${JSON.stringify([{ dimension: 'page', operator: 'contains', expression: pathContains }])}\`` : ''
+    return `Find the top ${top} SEO opportunities on nuxt.com${pathContains ? ` for pages containing ${JSON.stringify(pathContains)}` : ''}.
 
 Steps to follow:
 1. Call \`search-console-analytics\` with \`dimensions=["page"]\`, \`rowLimit=500\`${pageFilter} for the last ${days} days (default window), then again with the ${days} days just before it (set \`startDate\` / \`endDate\`). Compare clicks per page.
