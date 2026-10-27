@@ -20,11 +20,14 @@ export async function recordTemplateCheck(report: CheckReport) {
     .where(and(eq(schema.templateChecks.slug, report.slug), owner))
     .returning({ slug: schema.templateChecks.slug })
   if (!updated.length) return { stopped: true }
-  if (report.kind === 'finish' && report.status) await clearHealthCache()
+  if (report.kind === 'finish' && report.status) {
+    // The result is saved: a failure here must not fail the report, or its retry is refused and the workflow deletes the snapshot the row now points to.
+    await clearHealthCache().catch(error => console.error('[templates] health cache clear failed', error))
+  }
   return { stopped: false, previousSnapshotId }
 }
 
-/** `/api/templates/health` caches for 10 minutes: a new result shows right away instead. */
+/** `/api/templates/health` caches for 10 minutes: a new result shows right away instead. Otherwise it shows once the cache expires. */
 async function clearHealthCache() {
   const storage = useStorage('cache')
   const keys = await storage.getKeys('nitro:handlers:template-health')
