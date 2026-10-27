@@ -6,14 +6,12 @@
   },
   "dependencies": {
     "ai": "^7.0.137",
-    "eve": "^0.83.2",
+    "eve": "^0.84.1",
     "zod": "^4.0.0"
   },
   "devDependencies": {
     "@nuxt/examples-ui": "latest",
-    "just-bash": "^3.6.0",
     "nuxt": "^4.5.1",
-    "typescript": "6.0.3",
     "vue": "3.5.13"
   }
 }

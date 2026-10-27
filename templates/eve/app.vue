@@ -1,8 +1,8 @@
 <script setup lang="ts">
-const { data, status, error, send, reset } = useEveAgent()
+const { messages, status, error, send, cancel, newSession } = useEveAgent()
 
 const message = ref('')
-const isInputDisabled = computed(() => ['submitted', 'streaming', 'resuming'].includes(status.value))
+const isInputDisabled = computed(() => status.value !== 'idle')
 
 async function handleSubmit() {
   const text = message.value.trim()
@@ -11,6 +11,14 @@ async function handleSubmit() {
   }
   message.value = ''
   await send(text)
+}
+
+async function newChat() {
+  // newSession() only closes the local stream, so stop the running turn on the server first
+  if (status.value === 'busy') {
+    await cancel().catch(() => {})
+  }
+  newSession()
 }
 </script>
 
@@ -21,7 +29,7 @@ async function handleSubmit() {
     </template>
     <div class="flex flex-col gap-4 max-w-xl mx-auto">
       <div
-        v-for="item in data.messages"
+        v-for="item in messages"
         :key="item.id"
         :class="item.role === 'user' ? 'text-right' : 'text-left'"
       >
@@ -33,10 +41,10 @@ async function handleSubmit() {
             {{ part.text }}
           </p>
           <p
-            v-else-if="part.type === 'dynamic-tool'"
+            v-else-if="part.type === 'tool'"
             class="text-sm italic opacity-60"
           >
-            {{ part.toolMetadata?.eve?.label ?? part.toolName }}
+            {{ part.label }}
           </p>
         </template>
       </div>
@@ -67,7 +75,7 @@ async function handleSubmit() {
         <UButton
           color="neutral"
           variant="outline"
-          @click="reset"
+          @click="newChat"
         >
           New chat
         </UButton>
