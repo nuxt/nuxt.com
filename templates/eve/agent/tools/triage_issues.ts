@@ -1,42 +1,44 @@
 import { defineWorkflowTool } from 'eve/tools'
 import { z } from 'zod'
-import { CONFIDENCE_THRESHOLD, Review, decideIssues, loadIssues, type Finding } from '../lib/triage'
+import { decideIssues } from '../lib/decide'
+import { loadIssues } from '../lib/issues'
+import { CONFIDENCE_THRESHOLD, Review, type Row, type TriageOutput } from '../lib/triage'
 
 export default defineWorkflowTool({
-  description: 'Triage the open issues: give each one a category and a priority, and return the findings.',
+  description: 'Triage the open issues: give every issue a category and a priority, and return the results.',
   inputSchema: z.object({}),
-  label: {
-    start: () => 'Triaging issues',
-  },
-  async execute(_input, ctx) {
+  async* execute(_input, ctx): AsyncGenerator<TriageOutput, TriageOutput> {
     'use workflow'
-    const batch = await loadIssues()
+    const issues = await loadIssues()
 
-    // A fast decision model answers every issue first.
-    const decisions = await decideIssues(batch, ctx.abortSignal)
+    // A decision model answers for every issue in one fast step.
+    const decisions = await decideIssues(issues, ctx.abortSignal)
+    let rows: Row[] = issues.map((issue, index) => ({
+      number: issue.number,
+      title: issue.title,
+      ...decisions[index]!,
+      status: decisions[index]!.confidence >= CONFIDENCE_THRESHOLD ? 'decided' : 'reviewing',
+    }))
+    yield { issues: rows }
 
-    // Only the issues it is unsure about go to a reviewer subagent, each in a fresh session.
-    const findings = await Promise.all(batch.map(async (issue, index): Promise<Finding> => {
-      const decision = decisions[index]!
-      if (decision.confidence >= CONFIDENCE_THRESHOLD) {
-        return { number: issue.number, title: issue.title, ...decision, decidedBy: 'decision' }
-      }
-
-      const response = await ctx.agent('reviewer').send(JSON.stringify(issue), {
+    // Only the unsure issues go to the reviewer, one fresh session each.
+    const unsure = issues.filter((_issue, index) => rows[index]!.status === 'reviewing')
+    const reviews = await Promise.all(unsure.map(async (issue) => {
+      const turn = await ctx.agent('reviewer').send(JSON.stringify(issue), {
         outputSchema: Review,
         signal: ctx.abortSignal,
       })
-      const review = Review.safeParse((await response.result()).data)
-      if (!review.success) {
-        // Fall back to the decision rather than dropping the issue.
-        return { number: issue.number, title: issue.title, ...decision, decidedBy: 'decision' }
-      }
-      return { number: issue.number, title: issue.title, ...review.data, confidence: decision.confidence, decidedBy: 'reviewer' }
+      const parsed = Review.safeParse((await turn.result()).data)
+      return { number: issue.number, review: parsed.success ? parsed.data : undefined }
     }))
 
-    return {
-      findings,
-      reviewed: findings.filter(finding => finding.decidedBy === 'reviewer').length,
-    }
+    rows = rows.map((row): Row => {
+      const reviewed = reviews.find(({ number }) => number === row.number)
+      if (!reviewed) return row
+      return reviewed.review
+        ? { ...row, ...reviewed.review, status: 'reviewed' }
+        : { ...row, status: 'failed' }
+    })
+    return { issues: rows }
   },
 })

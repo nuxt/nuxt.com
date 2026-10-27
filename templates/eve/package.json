@@ -2,7 +2,8 @@
   "name": "eve",
   "private": true,
   "scripts": {
-    "dev": "nuxi dev"
+    "dev": "nuxi dev",
+    "postinstall": "nuxi prepare"
   },
   "dependencies": {
     "ai": "^7.0.137",
@@ -10,8 +11,10 @@
     "zod": "^4.0.0"
   },
   "devDependencies": {
-    "@nuxt/examples-ui": "latest",
+    "@nuxt/fonts": "^0.14.0",
+    "just-bash": "^3.6.0",
     "nuxt": "^4.5.1",
+    "typescript": "6.0.3",
     "vue": "3.5.13"
   }
 }

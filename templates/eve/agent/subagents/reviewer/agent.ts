@@ -2,8 +2,8 @@ import { defineAgent } from 'eve'
 
 export default defineAgent({
   description: 'Classify one issue and summarize it.',
-  model: 'anthropic/claude-sonnet-5',
-  // Only the triage workflow calls the reviewer, and it only reads the issue it is sent.
+  model: 'openai/gpt-6-luna-fast',
   tool: false,
+  // No shell, files, or web access: it only reads the issue the workflow sends.
   defaultTools: false,
 })
