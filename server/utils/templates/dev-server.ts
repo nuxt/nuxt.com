@@ -7,6 +7,8 @@
 /** Where `nuxt dev` runs in a template sandbox, next to the production build. Sandboxes only expose the ports they're created with. */
 export const DEV_PORT = 3001
 export const DEV_LOG = '/tmp/nuxt-dev.log'
+/** The modules the app's first page imports before it starts, listed by the warmup and kept in the snapshot. */
+export const DEV_MODULES = '/vercel/nuxt-com-dev-modules.json'
 
 /**
  * DevTools' client pulls `@vue/devtools-core` in the browser only, after the warmup: Vite then re-bundles under the first page,
@@ -30,10 +32,13 @@ async function page() {
   }
   return html
 }
-// Returns how many modules Vite answered 504 for: imports of a dependency bundle it replaced while the crawl ran.
+// Counts the modules Vite answered 504 for: imports of a dependency bundle it replaced while the crawl ran.
 async function crawl(html) {
   const seen = new Set()
-  const queue = [...html.matchAll(/(?:src|href)="(\\/_nuxt\\/[^"]+)"/g)].map(match => match[1])
+  const entries = [...html.matchAll(/(?:src|href)="(\\/_nuxt\\/[^"]+)"/g)].map(match => match[1])
+  const queue = [...entries]
+  // Static imports: the page needs them all before it starts, while dynamic ones load with the routes and components that use them.
+  const imports = new Map()
   let outdated = 0
   while (queue.length && seen.size < 8000) {
     const batch = queue.splice(0, 32).filter(url => !seen.has(url))
@@ -43,20 +48,34 @@ async function crawl(html) {
       if (response?.status === 504) outdated++
       if (!response?.ok || !/javascript/.test(response.headers.get('content-type') || '')) return
       const code = await response.text()
-      for (const match of code.matchAll(/(?:from|import)\\s*\\(?\\s*["'](\\/_nuxt\\/[^"'?]+(?:\\?[^"']*)?)["']/g)) {
-        if (!seen.has(match[1])) queue.push(match[1])
+      const all = [...code.matchAll(/(?:from|import)\\s*(\\(?)\\s*["'](\\/_nuxt\\/[^"'?]+(?:\\?[^"']*)?)["']/g)]
+      // Nuxt's entry loads the app with a dynamic import, which the page needs too.
+      imports.set(url, all.filter(match => !match[1] || entries.includes(url)).map(match => match[2]))
+      for (const match of all) {
+        if (!seen.has(match[2])) queue.push(match[2])
       }
     }))
   }
-  return outdated
+  return { outdated, entries, imports }
 }
 // Large apps (Docus loads 2000+ modules in dev) only reveal some dependencies deep in the graph: a page loaded before Vite has
 // bundled them all imports a bundle it then replaces, and fails to start. Crawling again until no import is outdated prevents it.
+let graph
 for (let pass = 0; pass < 4; pass++) {
-  if (await crawl(await page()) === 0) break
+  graph = await crawl(await page())
+  if (graph.outdated === 0) break
   await wait(1000)
 }
-const { statSync } = await import('node:fs')
+const modules = new Set()
+const pending = graph.entries.flatMap(url => graph.imports.get(url) || [])
+while (pending.length) {
+  const url = pending.shift()
+  if (modules.has(url) || graph.entries.includes(url)) continue
+  modules.add(url)
+  pending.push(...(graph.imports.get(url) || []))
+}
+const { statSync, writeFileSync } = await import('node:fs')
+writeFileSync('${DEV_MODULES}', JSON.stringify([...modules]))
 let size = -1
 for (let i = 0; i < 40; i++) {
   await wait(500)
