@@ -2,7 +2,9 @@ import type { NavigationItem } from 'comark-content'
 
 export interface BreadcrumbItem {
   title: string
-  path?: string
+  path: string
+  /** `false` for directories without a page of their own. */
+  page: boolean
 }
 
 /** Trail of navigation items leading to `path`, including the page itself. */
@@ -16,7 +18,7 @@ export function findBreadcrumb(
 
   const visit = (items: NavigationItem[]): boolean => {
     for (const item of items) {
-      trail.push({ title: item.title, path: item.page === false ? undefined : item.path })
+      trail.push({ title: item.title, path: item.path, page: item.page !== false })
       if (item.path === path && item.page !== false) return true
       if (item.children?.length && visit(item.children)) return true
       trail.pop()

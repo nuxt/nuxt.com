@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import type { NuxtersPage, NuxtersPeriod } from '#shared/types'
-import { NUXTERS_DEFAULT_PERIOD, isNuxtersPeriod, nuxtersPeriodPhrase } from '#shared/utils/nuxters'
+import type { NuxtersMap, NuxtersPage, NuxtersPeriod } from '#shared/types'
+import { NUXTERS_DEFAULT_PERIOD, isNuxtersPeriod, nuxterCountryCode, nuxtersPeriodPhrase } from '#shared/utils/nuxters'
 
 definePageMeta({
   heroBackground: 'opacity-70 -z-10'
@@ -29,23 +29,84 @@ const ways = [{
 
 const route = useRoute()
 const requestedPeriod = computed(() => isNuxtersPeriod(route.query.period) ? route.query.period : undefined)
+// `?country=FR`: the leaderboard of one country, picked in the filter or on the globe.
+const country = computed({
+  get: () => nuxterCountryCode(route.query.country),
+  // Same page, no new history entry: the scroll position stays.
+  set: value => navigateTo({ query: { ...route.query, country: value ?? undefined }, hash: route.hash }, { replace: true })
+})
+// The globe, its card and the filter follow a pick right away; the route (and the leaderboard) once its first page loaded.
+const picked = ref(country.value)
+watch(country, (value) => {
+  picked.value = value
+})
+function pick(value: string | null) {
+  picked.value = value
+  country.value = value
+}
 
-// First page server-rendered (ISR, one entry per `?period=`); the leaderboard loads the next ones.
+// Nuxt scrolls to the hash on every navigation that keeps one: after a `#leaderboard` arrival,
+// another country or period would jump back to the leaderboard. Only the query changed: stay.
+if (import.meta.client) {
+  const router = useRouter()
+  const scrollBehavior = router.options.scrollBehavior
+  router.options.scrollBehavior = (to, from, savedPosition) => to.path === from.path && to.hash === from.hash && to.fullPath !== from.fullPath
+    ? false
+    : scrollBehavior?.(to, from, savedPosition)
+  onScopeDispose(() => {
+    router.options.scrollBehavior = scrollBehavior
+  })
+}
+
+// The leaderboard sits above the globe and changes height with the country (a small one has fewer
+// rows): a pick from the globe keeps the globe where it is once that leaderboard renders.
+let keepWorld = false
+let worldTop = 0
+const worldSection = () => document.getElementById('world')
+function pickInWorld(value: string | null) {
+  keepWorld = true
+  pick(value)
+}
+
+function showLeaderboard() {
+  keepWorld = false
+  document.getElementById('leaderboard')?.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth' })
+}
+
+// First page server-rendered (ISR, one entry per `?period=` and `?country=`); the leaderboard loads the next ones.
 const { data: leaderboard } = await useAsyncData(
   // A `computed()` key, not a getter: `experimental.extractAsyncDataHandlers` takes the first arrow
   // function as the handler, so a getter key is extracted instead (NUXT_E3008 in production).
-  computed(() => `nuxters-leaderboard-${requestedPeriod.value ?? 'default'}`),
+  computed(() => `nuxters-leaderboard-${requestedPeriod.value ?? 'default'}-${country.value ?? 'all'}`),
   async () => {
-    const page = await $fetch<NuxtersPage>('/api/nuxters', { query: { period: requestedPeriod.value ?? NUXTERS_DEFAULT_PERIOD, limit: 100 } })
+    const query = { country: country.value ?? undefined, limit: 100 }
+    const page = await $fetch<NuxtersPage>('/api/nuxters', { query: { ...query, period: requestedPeriod.value ?? NUXTERS_DEFAULT_PERIOD } })
     // The default period has no data yet (first import): fall back to all time.
     if (!requestedPeriod.value && !page.periods.includes(page.period) && page.periods.includes('all')) {
-      return $fetch<NuxtersPage>('/api/nuxters', { query: { period: 'all', limit: 100 } })
+      return $fetch<NuxtersPage>('/api/nuxters', { query: { ...query, period: 'all' } })
     }
     return page
   }
 )
 
+// Measured right before and right after the leaderboard renders: nothing else can scroll in between.
+watch(leaderboard, () => {
+  if (keepWorld) worldTop = worldSection()?.getBoundingClientRect().top ?? 0
+}, { flush: 'pre' })
+watch(leaderboard, () => {
+  if (!keepWorld) return
+  const top = worldSection()?.getBoundingClientRect().top
+  if (top !== undefined && top !== worldTop) scrollBy({ top: top - worldTop, behavior: 'instant' })
+  if (leaderboard.value?.country === picked.value) keepWorld = false
+}, { flush: 'post' })
+
 const period = computed(() => leaderboard.value?.period ?? NUXTERS_DEFAULT_PERIOD)
+// Countries of the same period: the filter and the globe. Not blocking: the leaderboard comes first.
+const { data: map } = useFetch<NuxtersMap>('/api/map/nuxters', {
+  key: computed(() => `nuxters-map-${period.value}`),
+  query: { period },
+  lazy: true
+})
 const available = computed(() => leaderboard.value?.periods ?? [])
 // Same page, no hash: the router keeps the scroll position. A `#leaderboard` arrival keeps its hash,
 // dropping it would scroll back to the top.
@@ -132,7 +193,10 @@ const breakdown = computed(() => {
         </h2>
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           <NuxtersPeriodTabs :period="period" :periods="available" :to="periodLink" aria-label="Leaderboard period" />
-          <NuxtersSearch :period="period" />
+          <div class="flex flex-col sm:flex-row gap-3">
+            <NuxtersCountrySelect :model-value="picked" :countries="map?.countries ?? []" @update:model-value="pick" />
+            <NuxtersSearch :period="period" />
+          </div>
         </div>
 
         <ul v-if="breakdown.length" class="flex flex-wrap items-center gap-x-5 gap-y-1.5 mt-4 mb-6 text-sm text-muted" aria-label="Contributions in this period">
@@ -147,6 +211,23 @@ const breakdown = computed(() => {
           No contributions on record for this period yet.
         </p>
       </div>
+    </UPageSection>
+
+    <UPageSection
+      v-if="map?.countries.length"
+      id="world"
+      title="Nuxters around the world"
+      :description="`Nuxters from ${format(map.countries.length)} countries ${nuxtersPeriodPhrase(period)}. Pick a country to see its best ranked contributors.`"
+      :ui="{ container: 'py-12 sm:py-16 lg:py-16' }"
+      class="scroll-mt-24"
+    >
+      <NuxtersWorld
+        :model-value="picked"
+        :map="map"
+        :people="leaderboard?.country === picked ? leaderboard?.items ?? [] : []"
+        @update:model-value="pickInWorld"
+        @leaderboard="showLeaderboard"
+      />
     </UPageSection>
 
     <UPageSection

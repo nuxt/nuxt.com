@@ -232,6 +232,21 @@ export function createOpenApiDocument(options: { url: string, discovery: OpenApi
             stats: { type: 'object', additionalProperties: true },
             maintainers: { type: 'array', items: { type: 'object', additionalProperties: true } },
             contributors: { type: 'array', items: { type: 'object', additionalProperties: true } },
+            providers: {
+              type: 'array',
+              description: 'Third-party services the module integrates with (image CDNs, font providers, analytics scripts...).',
+              items: {
+                type: 'object',
+                required: ['name', 'label'],
+                properties: {
+                  name: { type: 'string', description: 'Unique within the module, usually the key used in the module options.' },
+                  label: { type: 'string' },
+                  icon: { type: 'string', description: 'Iconify icon name, `collection:icon`.' },
+                  category: { type: 'string' },
+                  docs: { type: 'string', format: 'uri' }
+                }
+              }
+            },
             readme: { type: 'string', description: 'Rendered readme, only on `getModule`.' }
           }
         },

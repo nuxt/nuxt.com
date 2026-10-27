@@ -18,17 +18,17 @@ const total = computed(() => props.initial.total)
 // The profile opens on the same period (all time is its default).
 const profileQuery = computed(() => props.initial.period === 'all' ? {} : { period: props.initial.period })
 
-// Another period: start again from its first page.
+// Another period or country: start again from its first page.
 watch(() => props.initial, () => {
   more.value = []
 })
 
 async function showMore() {
-  // The period can change while the page loads: its items must not join the new list.
+  // The period or the country can change while the page loads: its items must not join the new list.
   const initial = props.initial
   loading.value = true
   try {
-    const page = await $fetch<NuxtersPage>('/api/nuxters', { query: { period: initial.period, offset: items.value.length, limit: PAGE_SIZE } })
+    const page = await $fetch<NuxtersPage>('/api/nuxters', { query: { period: initial.period, country: initial.country ?? undefined, offset: items.value.length, limit: PAGE_SIZE } })
     if (initial === props.initial) more.value.push(...page.items)
   } finally {
     loading.value = false
