@@ -1,0 +1,5 @@
+name: 'NuxtHub Better Auth'
+slug: 'nuxthub-better-auth'
+description: 'Email, GitHub and anonymous sign-in with Better Auth and NuxtHub.'
+repo: 'atinux/nuxthub-better-auth'
+demo: 'https://atinux-nuxthub-better-auth.maximogarciamtnez.workers.dev'
