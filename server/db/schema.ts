@@ -146,11 +146,15 @@ export const templateCheckRuns = sqliteTable('template_check_runs', {
   finishedAt: integer('finished_at', { mode: 'timestamp' })
 }, table => [index('template_check_runs_started_at_idx').on(table.startedAt)])
 
-/** The live preview each visitor holds. Reserved before its sandbox is created, so parallel starts can't run past the cap on previews. */
+/** One row per preview sandbox, reserved before it's created, so parallel starts can't run past the cap on previews. A visitor's latest row is the preview it holds. */
 export const templatePreviews = sqliteTable('template_previews', {
-  owner: text('owner').primaryKey(),
   // Name of the sandbox, chosen before it's created
-  id: text('id').notNull(),
+  id: text('id').primaryKey(),
+  owner: text('owner').notNull(),
+  reservedAt: integer('reserved_at', { mode: 'timestamp_ms' }).notNull(),
   // When the sandbox stops on its own, at the latest
   expiresAt: integer('expires_at', { mode: 'timestamp' }).notNull()
-}, table => [index('template_previews_expires_at_idx').on(table.expiresAt)])
+}, table => [
+  index('template_previews_owner_idx').on(table.owner),
+  index('template_previews_expires_at_idx').on(table.expiresAt)
+])
