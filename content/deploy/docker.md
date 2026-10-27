@@ -19,53 +19,53 @@ Use a multi-stage build: install dependencies and build in the first stage, then
 ::code-group{sync="pm"}
 
 ```dockerfile [pnpm]
-FROM node:22-alpine AS build
+FROM node:24-alpine AS build
 WORKDIR /app
 RUN corepack enable
-COPY package.json pnpm-lock.yaml ./
+COPY --link package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 RUN pnpm install --frozen-lockfile
-COPY . .
+COPY --link . .
 RUN pnpm build
 
-FROM node:22-alpine AS runtime
+FROM node:24-alpine AS runtime
 WORKDIR /app
 ENV NODE_ENV=production
-COPY --from=build /app/.output ./.output
+COPY --link --from=build /app/.output ./.output
 USER node
 EXPOSE 3000
 CMD ["node", ".output/server/index.mjs"]
 ```
 
 ```dockerfile [yarn]
-FROM node:22-alpine AS build
+FROM node:24-alpine AS build
 WORKDIR /app
 RUN corepack enable
-COPY package.json yarn.lock ./
+COPY --link package.json yarn.lock ./
 RUN yarn install --immutable
-COPY . .
+COPY --link . .
 RUN yarn build
 
-FROM node:22-alpine AS runtime
+FROM node:24-alpine AS runtime
 WORKDIR /app
 ENV NODE_ENV=production
-COPY --from=build /app/.output ./.output
+COPY --link --from=build /app/.output ./.output
 USER node
 EXPOSE 3000
 CMD ["node", ".output/server/index.mjs"]
 ```
 
 ```dockerfile [npm]
-FROM node:22-alpine AS build
+FROM node:24-alpine AS build
 WORKDIR /app
-COPY package.json package-lock.json ./
+COPY --link package.json package-lock.json ./
 RUN npm ci
-COPY . .
+COPY --link . .
 RUN npm run build
 
-FROM node:22-alpine AS runtime
+FROM node:24-alpine AS runtime
 WORKDIR /app
 ENV NODE_ENV=production
-COPY --from=build /app/.output ./.output
+COPY --link --from=build /app/.output ./.output
 USER node
 EXPOSE 3000
 CMD ["node", ".output/server/index.mjs"]
@@ -74,15 +74,15 @@ CMD ["node", ".output/server/index.mjs"]
 ```dockerfile [bun]
 FROM oven/bun:1-alpine AS build
 WORKDIR /app
-COPY package.json bun.lock ./
+COPY --link package.json bun.lock ./
 RUN bun install --frozen-lockfile
-COPY . .
+COPY --link . .
 RUN bun run build
 
-FROM node:22-alpine AS runtime
+FROM node:24-alpine AS runtime
 WORKDIR /app
 ENV NODE_ENV=production
-COPY --from=build /app/.output ./.output
+COPY --link --from=build /app/.output ./.output
 USER node
 EXPOSE 3000
 CMD ["node", ".output/server/index.mjs"]
@@ -95,7 +95,7 @@ Pick a base image that satisfies the `engines.node` range of the Nuxt version yo
 ::
 
 ::note
-The `yarn` example targets Yarn 2 or later; on Yarn Classic use `--frozen-lockfile` instead. The `bun` example expects the text `bun.lock` introduced in Bun 1.2 — copy `bun.lockb` if your project still uses the binary lockfile.
+The `pnpm` example copies `pnpm-workspace.yaml` because pnpm reads its `allowBuilds` setting from that file. Without it, recent pnpm versions stop the install when a dependency such as `esbuild` has a build script. The `yarn` example targets Yarn 2 or later; on Yarn Classic use `--frozen-lockfile` instead. The `bun` example expects the text `bun.lock` introduced in Bun 1.2 — copy `bun.lockb` if your project still uses the binary lockfile.
 ::
 
 ## Ignore files
@@ -183,24 +183,36 @@ docker compose up --build
 
 ## Static site
 
-If your application is fully pre-rendered, build it with `nuxt generate` and serve `.output/public` from any static web server.
+If your application is fully pre-rendered, build it with `nuxt generate` and serve `.output/public` from any static web server. This example uses nginx and configures it to serve the generated `404.html` page for unknown URLs:
 
 ```dockerfile [Dockerfile]
-FROM node:22-alpine AS build
+FROM node:24-alpine AS build
 WORKDIR /app
 RUN corepack enable
-COPY package.json pnpm-lock.yaml ./
+COPY --link package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 RUN pnpm install --frozen-lockfile
-COPY . .
+COPY --link . .
 RUN pnpm generate
 
 FROM nginx:alpine AS runtime
-COPY --from=build /app/.output/public /usr/share/nginx/html
+COPY --link --from=build /app/.output/public /usr/share/nginx/html
+COPY <<'EOF' /etc/nginx/conf.d/default.conf
+server {
+  listen 80;
+  root /usr/share/nginx/html;
+
+  location / {
+    try_files $uri $uri/index.html =404;
+  }
+
+  error_page 404 /404.html;
+}
+EOF
 EXPOSE 80
 ```
 
-::caution
-A static build relies on the `200.html` and `404.html` fallback pages to resolve routes that were not pre-rendered. Serve them explicitly — with nginx, `try_files $uri $uri/ /200.html;` hands unmatched routes to the client-side router and `error_page 404 /404.html;` covers the rest — otherwise those URLs return the web server's own error page.
+::tip
+To let the client-side router handle URLs that were not pre-rendered, replace `=404` with `/200.html`. Those URLs then return a `200` status instead of `404`.
 ::
 
 ::read-more{to="/docs/getting-started/deployment#static-hosting"}
