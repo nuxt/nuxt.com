@@ -8,13 +8,18 @@ const inactiveSponsors = [
   'planfredapp'
 ]
 
-function openCollectiveHeaders(event: H3Event, headers: Record<string, string> = {}) {
-  return {
-    'Api-Key': `${useRuntimeConfig(event).openCollective.apiKey}`,
-    'Content-Type': 'application/json',
-    ...headers
+// Listed until `until` (exclusive, UTC), then dropped unless they pay through Open Collective again.
+const manualOpenCollectiveSponsors: Array<OpenCollectiveSponsor & { until: string }> = [
+  {
+    until: '2027-07-01',
+    sponsorId: 'icons8',
+    sponsorName: 'Icons8',
+    sponsorLogo: 'https://images.opencollective.com/icons8/7fa1641/logo/460.png',
+    sponsorUrl: 'https://icons8.com/',
+    monthlyPriceInDollars: 250,
+    tier: 'silver'
   }
-}
+]
 
 function toURL(url: string) {
   return !url || hasProtocol(url) ? url : `https://${url}`
@@ -29,60 +34,50 @@ export function getTierByAmount(amount: number): SponsorType {
   return 'backers'
 }
 
-export interface OpenCollectiveSponsor {
-  sponsorId: string
-  sponsorName: string
-  sponsorLogo: string
-  sponsorUrl: string
-  monthlyPriceInDollars: number
-  tier: SponsorType
+export type OpenCollectiveSponsor = Sponsor
+
+function toDescription(value: string | null | undefined) {
+  return value?.trim() || undefined
 }
 
-export async function fetchOpenCollectiveSponsors(event: H3Event): Promise<OpenCollectiveSponsor[]> {
-  if (!useRuntimeConfig(event).openCollective.apiKey) {
-    console.warn('[sponsors] Skipping Open Collective: NUXT_OPEN_COLLECTIVE_API_KEY is not set')
-    return []
+function withManualSponsors(sponsorsById: Map<string, OpenCollectiveSponsor>): OpenCollectiveSponsor[] {
+  const now = Date.now()
+  for (const { until, ...sponsor } of manualOpenCollectiveSponsors) {
+    if (now < Date.parse(until) && !sponsorsById.has(sponsor.sponsorId)) {
+      sponsorsById.set(sponsor.sponsorId, sponsor)
+    }
   }
+  return [...sponsorsById.values()]
+}
 
-  const key = `sponsors:opencollective`
+export async function fetchOpenCollectiveSponsors(): Promise<OpenCollectiveSponsor[]> {
+  const key = `sponsors:opencollective-orders`
   const cached = await kv.get<OpenCollectiveSponsor[]>(key)
   if (cached) {
     return cached
   }
-  const response: OpenCollectiveSponsor[] = []
+  // Members keep their tier after they stop paying and tierless contributions have no tier at all,
+  // so current sponsors come from active recurring orders instead.
+  // Orders are public, and an API key without the `orders` scope makes this query fail, so no key is sent.
+  const sponsorsById = new Map<string, OpenCollectiveSponsor>()
   const first = 100
-  let offset: number | null = null
-  do {
+  let offset = 0
+  let hasMore = true
+  while (hasMore) {
     const query: string = `query {
-      collective(slug: "nuxtjs", throwIfMissing: true) {
-        members(limit: ${first}${offset ? ` offset: ${offset}` : ''} role: [BACKER]) {
-          offset
-          limit
-          totalCount
+      account(slug: "nuxtjs", throwIfMissing: true) {
+        orders(filter: INCOMING, status: [ACTIVE], frequency: [MONTHLY, YEARLY], limit: ${first}, offset: ${offset}) {
           nodes {
-            id
-            role
             createdAt
-            since
-            totalDonations {
+            frequency
+            amount {
               value
-              currency
-              valueInCents
             }
-            tier {
-              name
-              type
-              amount {
-                value
-              }
-              endsAt
-            }
-            account {
+            fromAccount {
               name
               slug
-              type
+              description
               website
-              isIncognito
               imageUrl(height: 460, format: png)
             }
           }
@@ -91,23 +86,24 @@ export async function fetchOpenCollectiveSponsors(event: H3Event): Promise<OpenC
     }`
 
     interface OpenCollectiveNode {
-      account: {
+      createdAt: string
+      frequency: 'MONTHLY' | 'YEARLY'
+      amount: {
+        value: number
+      }
+      fromAccount: {
         slug: string
         name: string
+        description: string | null
         imageUrl: string
         website: string
-      }
-      tier: {
-        amount: {
-          value: string
-        }
-      }
+      } | null
     }
 
     interface OpenCollectiveResponse {
       data: {
-        collective: {
-          members: {
+        account: {
+          orders: {
             nodes: OpenCollectiveNode[]
           }
         }
@@ -117,44 +113,119 @@ export async function fetchOpenCollectiveSponsors(event: H3Event): Promise<OpenC
 
     const { data, errors }: OpenCollectiveResponse = await $fetch<OpenCollectiveResponse>('https://api.opencollective.com/graphql/v2/', {
       method: 'POST',
-      headers: openCollectiveHeaders(event),
       body: { query }
     })
 
     if (errors) {
       console.error('Could not fetch OpenCollective sponsors:', errors)
-      return []
+      return withManualSponsors(new Map())
     }
 
-    if (data.collective.members.nodes.length !== 0) {
-      offset = (offset ?? 0) + data.collective.members.nodes.length
-    } else {
-      offset = null
-    }
-    const sponsors = (data?.collective?.members?.nodes?.filter(sponsor => sponsor.tier).map((sponsor: OpenCollectiveNode): OpenCollectiveSponsor => {
-      if (sponsor.account.slug === 'logto') {
-        sponsor.account.website = 'https://logto.io'
-      }
-      if (sponsor.account.slug === 'favbet') {
-        sponsor.account.website = 'https://www.favbet.ua/uk/casino/'
-      }
-      if (sponsor.account.slug === 'jonathan-3528cbb1') {
-        sponsor.account.name = 'LOW.MS'
-        sponsor.account.website = 'https://low.ms'
-        sponsor.account.imageUrl = 'https://cdn.swiftping.net/static/img/icon.png'
-      }
-      return {
-        sponsorId: sponsor.account.slug,
-        sponsorName: sponsor.account.name,
-        sponsorLogo: sponsor.account.imageUrl,
-        sponsorUrl: toURL(sponsor.account.website) || `https://opencollective.com/${sponsor.account.slug}`,
-        monthlyPriceInDollars: Number(sponsor.tier.amount.value),
-        tier: getTierByAmount(Number(sponsor.tier.amount.value))
-      }
-    }) || [])
-    response.push(...sponsors.filter(sponsor => !inactiveSponsors.includes(sponsor.sponsorId)))
-  } while (offset)
+    const nodes = data?.account?.orders?.nodes || []
+    offset += nodes.length
+    hasMore = nodes.length === first
 
+    for (const { createdAt, frequency, amount, fromAccount } of nodes) {
+      if (!fromAccount || inactiveSponsors.includes(fromAccount.slug)) continue
+
+      if (fromAccount.slug === 'logto') {
+        fromAccount.website = 'https://logto.io'
+      }
+      if (fromAccount.slug === 'favbet') {
+        fromAccount.website = 'https://www.favbet.ua/uk/casino/'
+      }
+      if (fromAccount.slug === 'jonathan-3528cbb1') {
+        fromAccount.name = 'LOW.MS'
+        fromAccount.website = 'https://low.ms'
+        fromAccount.imageUrl = 'https://cdn.swiftping.net/static/img/icon.png'
+      }
+
+      const monthly = frequency === 'YEARLY' ? Number(amount.value) / 12 : Number(amount.value)
+      const existing = sponsorsById.get(fromAccount.slug)
+      if (existing) {
+        existing.monthlyPriceInDollars += monthly
+        existing.tier = getTierByAmount(existing.monthlyPriceInDollars)
+        if (!existing.since || createdAt < existing.since) existing.since = createdAt
+        continue
+      }
+      sponsorsById.set(fromAccount.slug, {
+        sponsorId: fromAccount.slug,
+        sponsorName: fromAccount.name,
+        sponsorLogo: fromAccount.imageUrl,
+        sponsorUrl: toURL(fromAccount.website) || `https://opencollective.com/${fromAccount.slug}`,
+        monthlyPriceInDollars: monthly,
+        tier: getTierByAmount(monthly),
+        sponsorDescription: toDescription(fromAccount.description),
+        since: createdAt
+      })
+    }
+  }
+
+  const response = withManualSponsors(sponsorsById)
+  await kv.set(key, response, { ttl: 60 * 60 * 24 }) // cache for 1 day
+  return response
+}
+
+// Hand-picked, ordered by lifetime contribution: picking by amount pulls in SEO and gambling accounts.
+const pastOpenCollectiveSponsors = [
+  '2021-frameworks-fund',
+  'storyblok',
+  'neondatabase',
+  'edgio',
+  'tipe',
+  'legalnature',
+  'sanity_io',
+  'vueschool_io',
+  'localazy',
+  'jetbrains',
+  'strapijs',
+  'zephyr-cloud',
+  'finpo',
+  'shipshapecode1',
+  'planfredapp',
+  'wimadev',
+  'sendcloud',
+  'vuetifyjs',
+  'dataforest'
+]
+
+export async function fetchPastSponsors(): Promise<PastSponsor[]> {
+  const key = `sponsors:past`
+  const cached = await kv.get<PastSponsor[]>(key)
+  if (cached) {
+    return cached
+  }
+
+  interface OpenCollectiveAccount {
+    slug: string
+    name: string
+    website: string | null
+    imageUrl: string
+  }
+
+  const query = `query {
+    ${pastOpenCollectiveSponsors.map((slug, index) => `s${index}: account(slug: ${JSON.stringify(slug)}) { slug name website imageUrl(height: 460, format: png) }`).join('\n    ')}
+  }`
+  const { data, errors } = await $fetch<{ data?: Record<string, OpenCollectiveAccount | null>, errors?: GraphQLError[] }>('https://api.opencollective.com/graphql/v2/', {
+    method: 'POST',
+    body: { query }
+  })
+  if (errors) {
+    console.error('Could not fetch past Open Collective sponsors:', errors)
+  }
+  if (!data) {
+    return []
+  }
+
+  const response = pastOpenCollectiveSponsors
+    .map((_, index) => data[`s${index}`])
+    .filter((account): account is OpenCollectiveAccount => !!account)
+    .map(account => ({
+      sponsorId: account.slug,
+      sponsorName: account.name,
+      sponsorLogo: account.imageUrl,
+      sponsorUrl: toURL(account.website || '') || `https://opencollective.com/${account.slug}`
+    }))
   await kv.set(key, response, { ttl: 60 * 60 * 24 }) // cache for 1 day
   return response
 }
@@ -170,7 +241,7 @@ export const fetchGithubSponsors = async (event: H3Event): Promise<Sponsor[]> =>
   let cursor: string | null = null
   let hasNext: boolean
 
-  const key = `sponsors:github`
+  const key = `sponsors:github-v2`
   const cached = await kv.get<Sponsor[]>(key)
   if (cached) {
     return cached
@@ -199,12 +270,14 @@ export const fetchGithubSponsors = async (event: H3Event): Promise<Sponsor[]> =>
               ...on Organization {
                 login
                 name
+                description
                 avatarUrl
                 websiteUrl
               }
               ...on User {
                 login
                 name
+                bio
                 avatarUrl
                 websiteUrl
               }
@@ -215,9 +288,12 @@ export const fetchGithubSponsors = async (event: H3Event): Promise<Sponsor[]> =>
     }`
 
     interface GitHubSponsorNode {
+      createdAt: string
       sponsorEntity: {
         login: string
         name: string
+        description?: string | null
+        bio?: string | null
         avatarUrl: string
         websiteUrl: string
       }
@@ -260,7 +336,7 @@ export const fetchGithubSponsors = async (event: H3Event): Promise<Sponsor[]> =>
       hasNext = false
     }
 
-    const sponsors = (_sponsors?.nodes.map(({ sponsorEntity, tier }) => {
+    const sponsors = (_sponsors?.nodes.map(({ createdAt, sponsorEntity, tier }) => {
       const amount = Number(tier?.monthlyPriceInDollars) || 0
       const sponsor: Sponsor = {
         sponsorId: sponsorEntity.login,
@@ -268,7 +344,9 @@ export const fetchGithubSponsors = async (event: H3Event): Promise<Sponsor[]> =>
         sponsorLogo: sponsorEntity.avatarUrl,
         sponsorUrl: toURL(sponsorEntity.websiteUrl) || `https://github.com/${sponsorEntity.login}`,
         monthlyPriceInDollars: amount,
-        tier: getTierByAmount(amount)
+        tier: getTierByAmount(amount),
+        sponsorDescription: toDescription(sponsorEntity.description ?? sponsorEntity.bio),
+        since: createdAt
       }
 
       // Hack for nickolasmartin
@@ -304,7 +382,8 @@ export const fetchGithubSponsors = async (event: H3Event): Promise<Sponsor[]> =>
     sponsorLogo: 'https://avatars.githubusercontent.com/u/14985020',
     sponsorUrl: 'https://vercel.com',
     monthlyPriceInDollars: 10000,
-    tier: 'diamond'
+    tier: 'diamond',
+    sponsorDescription: 'Agentic infrastructure for every app and agent.'
   })
   await kv.set(key, response, { ttl: 60 * 60 * 24 }) // cache for 1 day
   return response

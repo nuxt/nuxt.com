@@ -3,6 +3,7 @@ import {
   canUnlockNuxterRole,
   isNuxtersPeriod,
   nuxterForPeriod,
+  nuxterGithubSearchUrl,
   nuxterHackathons,
   nuxterScoreBreakdown,
   nuxtersPeriodFile,
@@ -295,6 +296,30 @@ describe('nuxterForPeriod', () => {
   })
 })
 
+describe('nuxterGithubSearchUrl', () => {
+  const ORGS = 'org:nuxt org:nuxt-community org:nuxt-content org:nuxt-hub org:nuxt-modules org:nuxt-ui-templates'
+  const today = new Date('2026-03-01T10:00:00Z')
+  const search = (...args: Parameters<typeof nuxterGithubSearchUrl>) => {
+    const url = new URL(nuxterGithubSearchUrl(...args))
+    return { type: url.searchParams.get('type'), q: url.searchParams.get('q') }
+  }
+
+  it('searches merged PRs by merge day, over a rolling window ending today', () => {
+    // 2026 is not a leap year: 30 days before March 1st is January 30th.
+    expect(search('atinux', 'mergedPullRequests', '30d', today)).toEqual({ type: 'pullrequests', q: `is:pr is:merged author:atinux merged:>=2026-01-30 ${ORGS}` })
+    expect(search('atinux', 'mergedPullRequests', '12m', today).q).toContain('merged:>=2025-03-01 ')
+  })
+
+  it('searches issues by creation day, over a whole UTC year or all time', () => {
+    expect(search('atinux', 'issues', '2024', today)).toEqual({ type: 'issues', q: `is:issue author:atinux created:2024-01-01..2024-12-31 ${ORGS}` })
+    expect(search('atinux', 'issues', 'all', today).q).toBe(`is:issue author:atinux ${ORGS}`)
+  })
+
+  it('lists the threads commented on that existed and were active in a year', () => {
+    expect(search('atinux', 'comments', '2024', today)).toEqual({ type: 'issues', q: `commenter:atinux updated:>=2024-01-01 created:<=2024-12-31 ${ORGS}` })
+  })
+})
+
 describe('parseNuxterProfilesFile', () => {
   const profile = (overrides: Record<string, unknown> = {}) => ({
     username: 'onmax',
@@ -305,6 +330,7 @@ describe('parseNuxterProfilesFile', () => {
       { provider: 'bluesky', url: 'https://bsky.app/profile/onmax.bsky.social', display_name: '@onmax.bsky.social' },
       { provider: 'twitter', url: 'https://twitter.com/_onmax', display_name: '@_onmax' }
     ],
+    country: 'ES',
     ...overrides
   })
 
@@ -317,8 +343,18 @@ describe('parseNuxterProfilesFile', () => {
       socialAccounts: [
         { provider: 'bluesky', url: 'https://bsky.app/profile/onmax.bsky.social', displayName: '@onmax.bsky.social' },
         { provider: 'twitter', url: 'https://twitter.com/_onmax', displayName: '@_onmax' }
-      ]
+      ],
+      country: 'ES'
     }])
+  })
+
+  it('keeps a profile with a country only, and drops invalid country codes', () => {
+    const rows = parseNuxterProfilesFile([
+      profile({ name: null, website: null, social_accounts: [], country: 'fr' }),
+      profile({ githubId: '2', username: 'nowhere', country: 'France' }),
+      profile({ githubId: '3', username: 'unknown', country: 'ZZ' })
+    ])
+    expect(rows.map(row => [row.username, row.country])).toEqual([['onmax', 'FR'], ['nowhere', null], ['unknown', null]])
   })
 
   it('drops unsafe links and keeps the rest of the profile', () => {
@@ -339,7 +375,7 @@ describe('parseNuxterProfilesFile', () => {
       profile(),
       profile({ username: 'renamed' }),
       profile({ githubId: 'nope' }),
-      profile({ githubId: '1', name: '  ', website: null, social_accounts: [] }),
+      profile({ githubId: '1', name: '  ', website: null, social_accounts: [], country: null }),
       null
     ])
     expect(rows.map(row => row.username)).toEqual(['onmax'])

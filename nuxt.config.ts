@@ -145,9 +145,6 @@ export default defineNuxtConfig({
       secret: ''
     },
     webhookSecret: '',
-    openCollective: {
-      apiKey: ''
-    },
     resend: {
       apiKey: '',
       audienceId: ''
@@ -183,7 +180,9 @@ export default defineNuxtConfig({
     '/design.md': { isr: CONTENT_ISR, robots: 'noindex' },
     '/openapi.json': { isr: CONTENT_ISR },
     '/nuxt-brand-assets.zip': { prerender: true },
-    '/modules': { isr: 60 * 60, prerender: false },
+    // The listing is filtered from the query: without `allowQuery`, Vercel serves the unfiltered
+    // cached page for every `?category=` and hydration mismatches. Other query params (utm_*) are ignored.
+    '/modules': { isr: { expiration: 60 * 60, allowQuery: ['category', 'q', 'sortBy', 'orderBy'], passQuery: true }, prerender: false },
     '/modules/**': { isr: 60 * 60 },
     '/changelog': { isr: 60 * 60 },
     // Lists blog posts and GitHub releases: purged on content push, refreshed hourly for releases.
@@ -202,8 +201,8 @@ export default defineNuxtConfig({
     '/video-courses': { isr: CONTENT_ISR },
     '/newsletter': { isr: CONTENT_ISR },
     // Stats change once a day (nuxt/nuxters CI); the import purges /nuxters itself.
-    // One cache entry per `?period=` (and only that query: no entry per utm_* link).
-    '/nuxters': { isr: { expiration: 60 * 60, allowQuery: ['period'], passQuery: true } },
+    // One cache entry per `?period=` and `?country=` (and only those: no entry per utm_* link).
+    '/nuxters': { isr: { expiration: 60 * 60, allowQuery: ['period', 'country'], passQuery: true } },
     // Profiles too: `?period=` selects the stats on screen.
     '/nuxters/**': { isr: { expiration: 60 * 60, allowQuery: ['period'], passQuery: true } },
     // API
@@ -433,7 +432,8 @@ export default defineNuxtConfig({
     // '/docs/guide/directory-structure/nuxt.config': { redirect: '/docs/guide/directory-structure/nuxt-config', prerender: false },
     '/enterprise': { redirect: '/enterprise/agencies', prerender: false },
     '/enterprise/support': { redirect: '/enterprise/agencies', prerender: false },
-    '/support/us': { redirect: '/enterprise/sponsors', prerender: false },
+    '/support/us': { redirect: '/sponsors', prerender: false },
+    '/enterprise/sponsors': { redirect: { to: '/sponsors', statusCode: 301 }, prerender: false },
     '/docs/4.x/guide/ai': { redirect: '/docs/4.x/guide/ai/mcp', prerender: false },
     '/docs/5.x/guide/ai': { redirect: '/docs/5.x/guide/ai/mcp', prerender: false },
     '/docs/3.x/guide/ai': { redirect: '/docs/4.x/guide/ai/mcp', prerender: false },

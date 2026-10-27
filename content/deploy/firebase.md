@@ -135,11 +135,13 @@ export default defineNuxtConfig({
 
 You can set a custom Node.js version in configuration:
 
+<!-- Supported Node runtimes: https://docs.cloud.google.com/functions/docs/runtime-support -->
+
 ```ts [nuxt.config.ts]
 export default defineNuxtConfig({
   nitro: {
     firebase: {
-      nodeVersion: '18' // Can be '16' or '18' or '20'
+      nodeVersion: '24'
     },
   },
 });
@@ -153,7 +155,7 @@ You might also need to add a runtime key to your `firebase.json` file:
 {
   "functions": {
     "source": ".output/server",
-    "runtime": "nodejs20"
+    "runtime": "nodejs24"
   }
 }
 ```

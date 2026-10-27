@@ -1,6 +1,6 @@
 import { z } from 'zod'
 import { satisfies } from 'verkit'
-import { supportsNuxt3OrLater } from '#shared/utils/modules'
+import { resolveModuleCategory, supportsNuxt3OrLater } from '#shared/utils/modules'
 
 export default defineCachedEventHandler(async (event) => {
   const { version, category } = await getValidatedQuery(event, z.object({
@@ -31,7 +31,7 @@ export default defineCachedEventHandler(async (event) => {
 
   // Filter by category if provided
   if (category) {
-    const lowerCaseCategory = category.toLowerCase()
+    const lowerCaseCategory = resolveModuleCategory(category).toLowerCase()
     modules = modules.filter((module) => {
       if (module.category && module.category.toLowerCase() === lowerCaseCategory) {
         return true
@@ -105,7 +105,8 @@ export default defineCachedEventHandler(async (event) => {
     modules
   }
 }, {
-  name: 'modules',
+  // Bumped when the payload changes: `modules` entries predate `providers`.
+  name: 'modules-list:v2',
   swr: true,
   getKey(event) {
     const query = getQuery(event)

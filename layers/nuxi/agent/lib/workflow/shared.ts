@@ -140,9 +140,10 @@ export function workflowSkillId(message: string): string | undefined {
   return LOAD_SKILL_RE.exec(message)?.[1]
 }
 
-/** Prompt prefix shared by scheduled Slack workflows. */
-export function skillWorkflowMessage(skillId: string, sinceDays: number): string {
-  return `${loadSkillDirective(skillId)} for the last ${sinceDays} days.
+/** Prompt prefix shared by scheduled Slack workflows; omit `sinceDays` for snapshot checks with no time window. */
+export function skillWorkflowMessage(skillId: string, sinceDays?: number): string {
+  const window = sinceDays === undefined ? '' : ` for the last ${sinceDays} days`
+  return `${loadSkillDirective(skillId)}${window}.
 
 ${SLACK_WORKFLOW_DELIVERY}`
 }
