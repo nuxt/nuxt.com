@@ -13,7 +13,8 @@ export const fetchModules = cachedFunction(async (_event: H3Event): Promise<Modu
   // Keeps the site consistent while the published modules.json still uses former category names.
   return modules.map(module => ({ ...module, category: resolveModuleCategory(module.category) }))
 }, {
-  name: 'modules',
+  // Bumped when the registry payload changes: `modules` entries predate `providers`.
+  name: 'modules:v2',
   getKey: _event => '_all',
   maxAge: 10 * 60 // 10 minutes
 })

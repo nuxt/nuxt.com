@@ -39,6 +39,8 @@ Follow the steps to [create a GitHub Pages site](https://docs.github.com/en/page
 
 Here is an example GitHub Actions workflow to deploy your site to GitHub Pages using the `github_pages` preset:
 
+<!-- Supported Node versions: https://github.com/actions/setup-node#supported-version-syntax -->
+
 ```yaml [.github/workflows/deploy.yml]
 # https://github.com/actions/deploy-pages#usage
 name: Deploy Nuxt App to GitHub Pages
@@ -52,6 +54,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
       - run: corepack enable
       - uses: actions/setup-node@v7
         with:

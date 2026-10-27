@@ -77,7 +77,7 @@ export const nuxters = sqliteTable('nuxters', {
 ])
 
 /**
- * Name, website and social accounts of the contributors who set any on GitHub, from `profiles.json`
+ * Name, website, social accounts and country of the contributors who set any on GitHub, from `profiles.json`
  * of github.com/nuxt/nuxters. One row per user: links do not depend on the period.
  */
 export const nuxterProfiles = sqliteTable('nuxter_profiles', {
@@ -86,8 +86,10 @@ export const nuxterProfiles = sqliteTable('nuxter_profiles', {
   name: text('name'),
   website: text('website'),
   socialAccounts: text('social_accounts', { mode: 'json' }).$type<NuxterSocialAccount[]>().notNull(),
+  // ISO 3166-1 alpha-2 code, inferred by the collector from the free-form GitHub location
+  country: text('country'),
   syncedAt: integer('synced_at', { mode: 'timestamp' }).notNull()
-})
+}, table => [index('nuxter_profiles_country_idx').on(table.country)])
 
 /**
  * One row per imported file: the blob sha, to re-import only the files a commit changed.

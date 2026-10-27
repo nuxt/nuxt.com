@@ -12,7 +12,7 @@ WHEN TO USE: Use this tool when you need to DISCOVER or SEARCH for modules. Comm
 - "Find a module for X feature" - general exploration
 
 PARAMETERS:
-- search: Filter by name, description, or npm package name
+- search: Filter by name, description, npm package name, or supported provider (e.g. "cloudinary", "plausible")
 - category: Filter by category name, case-insensitive (e.g., "Authentication", "UI Frameworks", "Backend & Database", "CMS & Content", "SEO") — use search for keyword discovery, not category
 - sort: Order by downloads, stars, publishedAt, or createdAt
 - order: asc or desc
@@ -20,9 +20,9 @@ PARAMETERS:
 
 WHEN NOT TO USE: If you already know the exact module slug (e.g., "@nuxt/ui"), use get_module directly.
 
-OUTPUT: Returns list of modules with name, description, category, and either downloads/stars or full stats. Use get_module for complete details including README and compatibility.`,
+OUTPUT: Returns list of modules with name, description, category, and either downloads/stars or full stats. When the search matched a module's providers, matchedProviders lists them. Use get_module for complete details including README and compatibility.`,
   inputSchema: {
-    search: z.string().optional().describe('Search term to filter modules by name, description, or npm package name'),
+    search: z.string().optional().describe('Search term to filter modules by name, description, npm package name, or supported provider (e.g. "cloudinary" finds @nuxt/image)'),
     category: z.string().optional().describe('Filter by category name, case-insensitive (e.g., "Authentication", "UI Frameworks", "UI Components", "Backend & Database", "CMS & Content", "SEO"). Prefer search for keyword discovery.'),
     sort: z.enum(['downloads', 'stars', 'publishedAt', 'createdAt']).optional().default('downloads').describe('Sort modules by downloads, stars, published date, or created date'),
     order: z.enum(['asc', 'desc']).optional().default('desc').describe('Sort order (ascending or descending)'),
@@ -35,7 +35,8 @@ OUTPUT: Returns list of modules with name, description, category, and either dow
   inputExamples: [
     { search: 'auth' },
     { category: 'UI Frameworks', sort: 'downloads' },
-    { search: 'image', sort: 'stars', order: 'desc' }
+    { search: 'image', sort: 'stars', order: 'desc' },
+    { search: 'plausible' }
   ],
   cache: {
     maxAge: '1h',
@@ -53,12 +54,19 @@ OUTPUT: Returns list of modules with name, description, category, and either dow
       modules = modules.filter(module => module.category?.toLowerCase() === lowerCaseCategory)
     }
 
-    if (search) {
-      const searchLower = search.toLowerCase()
+    const searchLower = search?.toLowerCase()
+    const matchedProviders = (module: Module) => {
+      if (!searchLower) return
+      const labels = module.providers?.filter(provider => provider.label.toLowerCase().includes(searchLower)).map(provider => provider.label)
+      return labels?.length ? labels : undefined
+    }
+
+    if (searchLower) {
       modules = modules.filter(module =>
         module.name.toLowerCase().includes(searchLower)
         || module.description?.toLowerCase().includes(searchLower)
         || module.npm.toLowerCase().includes(searchLower)
+        || !!matchedProviders(module)
       )
     }
 
@@ -116,6 +124,8 @@ OUTPUT: Returns list of modules with name, description, category, and either dow
           website: module.website,
           learn_more: module.learn_more,
           category: module.category,
+          // Providers that matched the search, e.g. "Cloudinary" for @nuxt/image
+          matchedProviders: matchedProviders(module),
           url: `https://nuxt.com/modules/${module.name}`
         }
 

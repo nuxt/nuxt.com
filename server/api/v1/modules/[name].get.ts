@@ -42,8 +42,8 @@ export default defineCachedEventHandler(async (event) => {
     readme: resolveReadmeUrls(readme, module.repo, stats.defaultBranch)
   } satisfies Module
 }, {
-  // Bumped when the payload changes: `modules:v3` READMEs still carry relative URLs.
-  name: 'modules:v4',
+  // Bumped when the payload changes: `modules:v4` entries have no `providers`.
+  name: 'modules:v5',
   getKey: event => event.context.params!.name!,
   swr: true,
   maxAge: 60 * 60 // 1 hour

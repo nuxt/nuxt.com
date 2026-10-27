@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { Module, Nuxter, NuxterPeriodStats, NuxterProfilePage, NuxtersPeriod } from '#shared/types'
-import { isNuxtersPeriod, nuxterForPeriod, nuxterHackathons, nuxtersPeriodPhrase } from '#shared/utils/nuxters'
+import { isNuxtersPeriod, nuxterForPeriod, nuxterGithubSearchUrl, nuxterHackathons, nuxtersPeriodPhrase } from '#shared/utils/nuxters'
+import { countryName } from '#shared/utils/nuxters-countries'
 
 definePageMeta({
   heroBackground: 'opacity-30 -z-10'
@@ -65,7 +66,7 @@ const links = computed(() => {
 
 const since = computed(() => {
   const date = nuxter.value?.firstContributionAt
-  return date ? new Intl.DateTimeFormat('en-US', { month: 'long', year: 'numeric', timeZone: 'UTC' }).format(new Date(date)) : null
+  return date ? new Intl.DateTimeFormat('en-US', { month: 'short', year: 'numeric', timeZone: 'UTC' }).format(new Date(date)) : null
 })
 
 // `?period=`: all time by default, or any period the user contributed in.
@@ -105,9 +106,10 @@ const best = computed(() => yearly.value.reduce<typeof yearly.value[number] | un
 // One look per contribution type, for the stat cards and the year rows.
 // Same colors as the README card (OgImage/Nuxter.takumi.vue). Darker text in light mode, for contrast.
 const METRICS = {
-  mergedPullRequests: { one: 'merged PR', many: 'merged PRs', icon: 'i-lucide-git-merge', tint: 'ring-primary bg-primary/5', text: 'text-primary' },
-  issues: { one: 'issue', many: 'issues', icon: 'i-lucide-circle-dot', tint: 'ring-sky-400 bg-sky-400/5', text: 'text-sky-600 dark:text-sky-400' },
-  comments: { one: 'comment', many: 'comments', icon: 'i-lucide-message-circle', tint: 'ring-violet-400 bg-violet-400/5', text: 'text-violet-600 dark:text-violet-400' },
+  // `hover` keeps the tint of the cards linked to GitHub, instead of the neutral hover of `UPageCard`.
+  mergedPullRequests: { one: 'merged PR', many: 'merged PRs', icon: 'i-lucide-git-merge', tint: 'ring-primary bg-primary/5', hover: 'hover:ring-primary hover:bg-primary/10', text: 'text-primary' },
+  issues: { one: 'issue', many: 'issues', icon: 'i-lucide-circle-dot', tint: 'ring-sky-400 bg-sky-400/5', hover: 'hover:ring-sky-400 hover:bg-sky-400/10', text: 'text-sky-600 dark:text-sky-400' },
+  comments: { one: 'comment', many: 'comments', icon: 'i-lucide-message-circle', tint: 'ring-violet-400 bg-violet-400/5', hover: 'hover:ring-violet-400 hover:bg-violet-400/10', text: 'text-violet-600 dark:text-violet-400' },
   reactions: { one: 'reaction', many: 'reactions', icon: 'i-lucide-smile-plus', tint: 'ring-yellow-400 bg-yellow-400/5', text: 'text-amber-600 dark:text-yellow-400' }
 } as const
 type Metric = keyof typeof METRICS
@@ -116,6 +118,8 @@ const capitalize = (text: string) => text.charAt(0).toUpperCase() + text.slice(1
 const metricLabel = (metric: Metric, value: number) => value === 1 ? METRICS[metric].one : METRICS[metric].many
 const metricValue = (stats: Nuxter | NuxterPeriodStats, metric: Metric) => metric === 'mergedPullRequests' ? stats.mergedPullRequests.all : stats[metric]
 
+// The day of the server render, in the payload: the page is cached for an hour and must hydrate with the same links.
+const today = useState('nuxters-today', () => new Date().toISOString().slice(0, 10))
 const stats = computed(() => {
   const n = current.value
   const details: Record<Metric, string> = {
@@ -128,7 +132,18 @@ const stats = computed(() => {
     ...METRICS[metric],
     label: capitalize(metricLabel(metric, metricValue(n, metric))),
     value: metricValue(n, metric),
-    detail: details[metric]
+    detail: details[metric],
+    // Reactions are received: GitHub cannot search them.
+    github: metric === 'reactions'
+      ? undefined
+      : {
+          url: nuxterGithubSearchUrl(username, metric, period.value, new Date(today.value)),
+          hover: METRICS[metric].hover,
+          // The link covers the card: its name also says the count.
+          label: metric === 'comments'
+            ? `${format(n.comments)} ${metricLabel(metric, n.comments)} ${periodPhrase(period.value)}: issues and pull requests ${username} commented on, on GitHub`
+            : `${format(metricValue(n, metric))} ${metricLabel(metric, metricValue(n, metric))} of ${username} ${periodPhrase(period.value)}, on GitHub`
+        }
   }))
 })
 
@@ -240,11 +255,21 @@ defineOgImage('Nuxter.takumi', { username, period: () => period.value === 'all' 
                 <NuxtersScoreBreakdown :nuxter="current" />
               </span>
             </div>
-            <p v-if="since" class="text-sm lg:text-base text-muted">
-              Contributing since {{ since }}
-            </p>
-            <p v-if="best" class="text-sm lg:text-base text-muted">
-              Best year: {{ best.period }}, #{{ format(best.rank) }} with {{ format(best.score) }} pts
+            <p v-if="nuxter.country || since || best" class="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm lg:text-base text-muted">
+              <!-- The leaderboard of the same country and period -->
+              <NuxtLink v-if="nuxter.country" :to="{ path: '/nuxters', query: { period, country: nuxter.country }, hash: '#leaderboard' }" class="inline-flex items-center gap-1.5 hover:text-highlighted transition-colors">
+                <UIcon name="i-lucide-map-pin" class="size-4" />
+                {{ countryName(nuxter.country) }}
+              </NuxtLink>
+              <span v-if="since" class="inline-flex items-center gap-1.5">
+                <UIcon name="i-lucide-calendar" class="size-4" />
+                Contributing since {{ since }}
+              </span>
+              <!-- Opens that year -->
+              <NuxtLink v-if="best" :to="{ query: periodQuery(best.period) }" class="inline-flex items-center gap-1.5 hover:text-highlighted transition-colors tabular-nums">
+                <UIcon name="i-lucide-award" class="size-4" />
+                Best year {{ best.period }}, #{{ format(best.rank) }} with {{ format(best.score) }} pts
+              </NuxtLink>
             </p>
           </div>
 
@@ -294,9 +319,17 @@ defineOgImage('Nuxter.takumi', { username, period: () => period.value === 'all' 
               <UPageCard
                 :icon="stat.icon"
                 variant="subtle"
-                :class="['h-full', stat.tint]"
+                :to="stat.github?.url"
+                :target="stat.github && '_blank'"
+                :aria-label="stat.github?.label"
+                :class="['h-full group', stat.tint, stat.github?.hover]"
                 :ui="{ leadingIcon: stat.text }"
               >
+                <UIcon
+                  v-if="stat.github"
+                  name="i-lucide-arrow-up-right"
+                  class="absolute top-4 right-4 sm:top-6 sm:right-6 size-5 text-muted group-hover:text-highlighted transition-colors"
+                />
                 <div class="flex flex-col gap-1">
                   <span class="text-3xl sm:text-4xl font-semibold text-highlighted tabular-nums">{{ format(stat.value) }}</span>
                   <span :class="stat.text">{{ stat.label }}</span>

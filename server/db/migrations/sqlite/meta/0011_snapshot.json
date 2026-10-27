@@ -1,8 +1,8 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "0d0f1e20-0393-44a8-b351-3b33c7296a07",
-  "prevId": "0b5522f2-d3e4-4c4a-828a-e49f56d486c5",
+  "id": "0b5522f2-d3e4-4c4a-828a-e49f56d486c5",
+  "prevId": "c4796c9d-96af-46a9-984f-4a03416036bd",
   "tables": {
     "agent_daily_usage": {
       "name": "agent_daily_usage",
@@ -376,6 +376,13 @@
           "notNull": true,
           "autoincrement": false
         },
+        "country": {
+          "name": "country",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
         "synced_at": {
           "name": "synced_at",
           "type": "integer",
@@ -384,7 +391,15 @@
           "autoincrement": false
         }
       },
-      "indexes": {},
+      "indexes": {
+        "nuxter_profiles_country_idx": {
+          "name": "nuxter_profiles_country_idx",
+          "columns": [
+            "country"
+          ],
+          "isUnique": false
+        }
+      },
       "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},
@@ -867,45 +882,6 @@
         }
       },
       "indexes": {},
-      "foreignKeys": {},
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
-      "checkConstraints": {}
-    },
-    "template_previews": {
-      "name": "template_previews",
-      "columns": {
-        "owner": {
-          "name": "owner",
-          "type": "text",
-          "primaryKey": true,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "id": {
-          "name": "id",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "expires_at": {
-          "name": "expires_at",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        }
-      },
-      "indexes": {
-        "template_previews_expires_at_idx": {
-          "name": "template_previews_expires_at_idx",
-          "columns": [
-            "expires_at"
-          ],
-          "isUnique": false
-        }
-      },
       "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},

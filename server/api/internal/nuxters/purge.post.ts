@@ -3,7 +3,7 @@ import { isNuxtersPeriod } from '#shared/utils/nuxters'
 
 /**
  * Called by `syncNuxtersWorkflow` after an import: regenerate the ISR entries of the leaderboards it changed.
- * Profile pages (one per contributor) expire with their own ISR window instead.
+ * Profile pages (one per contributor) and country leaderboards (`?country=`) expire with their own ISR window instead.
  */
 export default defineEventHandler(async (event) => {
   requireInternalRequest(event)
