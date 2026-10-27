@@ -1,3 +1,5 @@
+-- The shared preview database has this table from an earlier version of this migration, keyed by owner.
+DROP TABLE IF EXISTS `template_previews`;--> statement-breakpoint
 CREATE TABLE `template_previews` (
 	`id` text PRIMARY KEY NOT NULL,
 	`owner` text NOT NULL,
