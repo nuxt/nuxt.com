@@ -3,7 +3,7 @@ export type TemplateCategory = 'saas' | 'dashboard' | 'ai' | 'docs' | 'content' 
 export type PackageManager = 'npm' | 'pnpm' | 'yarn' | 'bun'
 
 /** Gallery filters on the daily check: templates that build today, or that also run live. */
-export type TemplateStatusFilter = 'working' | 'live'
+export type TemplateStatusFilter = 'working'
 
 export type TemplateSort = 'recommended' | 'stars' | 'updated' | 'name'
 
