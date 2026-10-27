@@ -95,7 +95,7 @@ Pick a base image that satisfies the `engines.node` range of the Nuxt version yo
 ::
 
 ::note
-The `pnpm` example copies `pnpm-workspace.yaml` because pnpm reads its `allowBuilds` setting from that file. Without it, recent pnpm versions stop the install when a dependency such as `esbuild` has a build script. The `yarn` example targets Yarn 2 or later; on Yarn Classic use `--frozen-lockfile` instead. The `bun` example expects the text `bun.lock` introduced in Bun 1.2 — copy `bun.lockb` if your project still uses the binary lockfile.
+The `pnpm` example copies `pnpm-workspace.yaml` because pnpm reads its `allowBuilds` setting from that file. Without it, recent pnpm versions stop the install when a dependency such as `esbuild` has a build script. If your project has no `pnpm-workspace.yaml`, remove it from the `COPY` line. The `yarn` example targets Yarn 2 or later; on Yarn Classic use `--frozen-lockfile` instead. The `bun` example expects the text `bun.lock` introduced in Bun 1.2 — copy `bun.lockb` if your project still uses the binary lockfile.
 ::
 
 ## Ignore files
