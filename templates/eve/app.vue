@@ -1,11 +1,12 @@
 <script setup lang="ts">
+import type { Finding } from './agent/lib/triage'
+
 const { messages, status, error, send, cancel, newSession } = useEveAgent()
 
 const message = ref('')
 const isInputDisabled = computed(() => status.value !== 'idle')
 
-async function handleSubmit() {
-  const text = message.value.trim()
+async function handleSubmit(text = message.value.trim()) {
   if (!text || isInputDisabled.value) {
     return
   }
@@ -20,6 +21,10 @@ async function newChat() {
   }
   newSession()
 }
+
+function findingsOf(output: unknown) {
+  return (output as { findings?: Finding[] } | undefined)?.findings
+}
 </script>
 
 <template>
@@ -27,7 +32,7 @@ async function newChat() {
     <template #logo>
       <EveLogo />
     </template>
-    <div class="flex flex-col gap-4 max-w-xl mx-auto">
+    <div class="flex flex-col gap-4 max-w-2xl mx-auto">
       <div
         v-for="item in messages"
         :key="item.id"
@@ -40,14 +45,27 @@ async function newChat() {
           <p v-if="part.type === 'text'">
             {{ part.text }}
           </p>
-          <p
-            v-else-if="part.type === 'tool'"
-            class="text-sm italic opacity-60"
-          >
-            {{ part.label }}
-          </p>
+          <template v-else-if="part.type === 'tool'">
+            <p class="text-sm italic opacity-60">
+              {{ part.label }}
+            </p>
+            <TriageFindings
+              v-if="part.name === 'triage_issues' && findingsOf(part.output)"
+              :findings="findingsOf(part.output)!"
+            />
+          </template>
         </template>
       </div>
+
+      <UButton
+        v-if="!messages.length"
+        class="self-center"
+        icon="i-lucide-list-checks"
+        :disabled="isInputDisabled"
+        @click="handleSubmit('Triage the open issues.')"
+      >
+        Triage the open issues
+      </UButton>
 
       <UAlert
         v-if="error"
@@ -57,12 +75,12 @@ async function newChat() {
 
       <form
         class="flex gap-2"
-        @submit.prevent="handleSubmit"
+        @submit.prevent="handleSubmit()"
       >
         <UInput
           v-model="message"
           class="flex-1"
-          placeholder="Ask about the weather in Paris..."
+          placeholder="Ask about the issues..."
           :disabled="isInputDisabled"
         />
         <UButton
