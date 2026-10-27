@@ -165,11 +165,14 @@ websites:
       hideElements: ['#didomi-host']
       delay: 1
   - name: Directus
-    url: https://directus.io/
+    url: https://directus.com/docs/
     industry: Software & Tech
     logo:
       width: 124
       height: 26
+    screenshotOptions:
+      hideElements: ['form:has(input[placeholder^="Ask anything"])']
+      delay: 2
   - name: Shopware
     url: https://www.shopware.com/
     industry: Software & Tech
@@ -221,16 +224,6 @@ websites:
     logo:
       width: 80
       height: 24
-  - name: Virgin Galactic
-    url: https://www.virgingalactic.com/
-    industry: Travel & Leisure
-    logo:
-      width: 114
-      height: 28
-      scale: 1.1
-    screenshotOptions:
-      hideElements: ['[aria-label="Cookie Consent Banner"]']
-      delay: 5
   - name: Delvaux
     url: https://eu.delvaux.com/
     industry: Fashion & Beauty
