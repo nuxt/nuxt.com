@@ -1,6 +1,7 @@
 import { Sandbox } from '@vercel/sandbox'
 import { and, desc, eq, lt, sql } from 'drizzle-orm'
 import type { PreviewEvent, PreviewStep, Template } from '#shared/types'
+import { DEV_PORT } from './dev-server'
 import { SERVE_SCRIPT_PATH } from './static-server'
 
 declare module 'nitropack/types' {
@@ -86,7 +87,7 @@ export async function startPreview(template: Template, owner: string, onStep?: (
     sandbox = await Sandbox.create({
       name,
       source: { type: 'snapshot', snapshotId },
-      ports: [PREVIEW_PORT],
+      ports: [PREVIEW_PORT, DEV_PORT],
       timeout: PREVIEW_TIMEOUT_MS,
       persistent: false,
       tags: { ...PREVIEW_TAGS, template: template.slug, owner }
