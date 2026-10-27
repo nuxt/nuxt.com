@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "0d0f1e20-0393-44a8-b351-3b33c7296a07",
+  "id": "4c4d8017-b6dc-4fdf-83da-022a972b3a4a",
   "prevId": "0b5522f2-d3e4-4c4a-828a-e49f56d486c5",
   "tables": {
     "agent_daily_usage": {
@@ -890,16 +890,23 @@
     "template_previews": {
       "name": "template_previews",
       "columns": {
-        "owner": {
-          "name": "owner",
+        "id": {
+          "name": "id",
           "type": "text",
           "primaryKey": true,
           "notNull": true,
           "autoincrement": false
         },
-        "id": {
-          "name": "id",
+        "owner": {
+          "name": "owner",
           "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "reserved_at": {
+          "name": "reserved_at",
+          "type": "integer",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
@@ -913,6 +920,13 @@
         }
       },
       "indexes": {
+        "template_previews_owner_idx": {
+          "name": "template_previews_owner_idx",
+          "columns": [
+            "owner"
+          ],
+          "isUnique": false
+        },
         "template_previews_expires_at_idx": {
           "name": "template_previews_expires_at_idx",
           "columns": [

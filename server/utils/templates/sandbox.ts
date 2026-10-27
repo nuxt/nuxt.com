@@ -1,5 +1,5 @@
 import { Sandbox } from '@vercel/sandbox'
-import { and, eq, lt, sql } from 'drizzle-orm'
+import { and, desc, eq, lt, sql } from 'drizzle-orm'
 import type { Template } from '#shared/types'
 import { SERVE_SCRIPT_PATH } from './static-server'
 
@@ -21,33 +21,38 @@ async function waitUntilServing(url: string, timeoutMs: number) {
   return false
 }
 
-/** A visitor has one preview at a time: starting one stops the others. */
+/** A visitor has one preview at a time: starting one stops the others, and frees the slot of each one that stopped. */
 async function stopPreviews(owner: string) {
   const sandboxes = await (await Sandbox.list({ tags: { owner }, limit: 20 })).toArray()
   await Promise.all(sandboxes
     .filter(sandbox => sandbox.tags?.purpose === PREVIEW_TAGS.purpose && sandbox.status === 'running')
-    .map(sandbox => Sandbox.get({ name: sandbox.name }).then(running => running.stop()).catch(() => {})))
+    .map(sandbox => Sandbox.get({ name: sandbox.name }).then(running => stopPreview(owner, running)).catch(() => {})))
 }
 
 /**
- * Takes a preview slot for `owner`, replacing the one it held. A single statement, so parallel starts can't take more than `MAX_RUNNING_PREVIEWS`.
+ * Takes a preview slot for the sandbox `id`. A single statement, so parallel starts can't take more than `MAX_RUNNING_PREVIEWS`:
+ * each start holds its own slot, including several from one visitor, until its sandbox stops.
  * The slot lasts as long as the sandbox can run, plus the time to create it.
  */
 async function reservePreview(owner: string, id: string) {
-  const now = Math.floor(Date.now() / 1000)
+  const reservedAt = Date.now()
+  const now = Math.floor(reservedAt / 1000)
   const expiresAt = now + PREVIEW_TIMEOUT_MS / 1000 + 60
   await db.delete(schema.templatePreviews).where(lt(schema.templatePreviews.expiresAt, new Date()))
   const reserved = await db.all(sql`
-    INSERT INTO template_previews (owner, id, expires_at)
-    SELECT ${owner}, ${id}, ${expiresAt}
-    WHERE (SELECT count(*) FROM template_previews WHERE expires_at > ${now} AND owner != ${owner}) < ${MAX_RUNNING_PREVIEWS}
-    ON CONFLICT (owner) DO UPDATE SET id = excluded.id, expires_at = excluded.expires_at
+    INSERT INTO template_previews (id, owner, reserved_at, expires_at)
+    SELECT ${id}, ${owner}, ${reservedAt}, ${expiresAt}
+    WHERE (SELECT count(*) FROM template_previews WHERE expires_at > ${now}) < ${MAX_RUNNING_PREVIEWS}
     RETURNING id`)
   return reserved.length > 0
 }
 
+/** Whether `id` is the visitor's latest start, the one preview it keeps. */
 async function holdsPreview(owner: string, id: string) {
-  const [row] = await db.select({ id: schema.templatePreviews.id }).from(schema.templatePreviews).where(eq(schema.templatePreviews.owner, owner))
+  const [row] = await db.select({ id: schema.templatePreviews.id }).from(schema.templatePreviews)
+    .where(eq(schema.templatePreviews.owner, owner))
+    .orderBy(desc(schema.templatePreviews.reservedAt), desc(schema.templatePreviews.id))
+    .limit(1)
   return row?.id === id
 }
 
@@ -85,7 +90,7 @@ export async function startPreview(template: Template, owner: string) {
     throw error
   }
   try {
-    // Another start from the same visitor took the slot while this sandbox was created, and its `stopPreviews` may have run too early to see it.
+    // Another start from the same visitor came after this one while this sandbox was created, and its `stopPreviews` may have run too early to see it.
     if (!await holdsPreview(owner, name)) {
       throw createError({ statusCode: 409, message: 'Another preview started in this browser.' })
     }
