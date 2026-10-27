@@ -32,26 +32,3 @@ export function faceOnGlobe([latitude, longitude]: readonly [number, number]): {
     theta: Math.min(1.45, Math.max(-1.45, latitude * Math.PI / 180))
   }
 }
-
-/**
- * The outline of a count marker: a capsule `width` wide and `height` tall, with a tail `tail` long under its middle.
- * One path, so one stroke draws the whole shape. The tail leaves the flat bottom, or the round end on narrow ones.
- */
-export function pinPath(width: number, height: number, tail: number, base = 5): string {
-  const r = height / 2
-  const middle = width / 2
-  // Where the tail leaves the capsule, on the right: on the flat bottom, or on the right end.
-  const right = middle + base
-  const onEnd = right > width - r
-  const dx = right - (width - r)
-  const rightY = onEnd ? r + Math.sqrt(r * r - dx * dx) : height
-  const leftX = width - right
-  const tip = height + tail
-  const n = (value: number) => +value.toFixed(2)
-  return [
-    `M${n(r)} 0H${n(width - r)}`,
-    onEnd ? `A${r} ${r} 0 0 1 ${n(right)} ${n(rightY)}` : `A${r} ${r} 0 0 1 ${n(width - r)} ${height}H${n(right)}`,
-    `L${n(middle + 1.5)} ${n(tip - 1.5)}Q${n(middle)} ${tip} ${n(middle - 1.5)} ${n(tip - 1.5)}L${n(leftX)} ${n(rightY)}`,
-    onEnd ? `A${r} ${r} 0 0 1 ${n(r)} 0Z` : `H${n(r)}A${r} ${r} 0 0 1 ${n(r)} 0Z`
-  ].join('')
-}

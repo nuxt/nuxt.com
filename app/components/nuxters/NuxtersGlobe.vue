@@ -3,7 +3,7 @@ import type { NuxtersCountry } from '#shared/types'
 import type { Globe } from 'cobe'
 import createGlobe from 'cobe'
 import { COUNTRIES } from '#shared/utils/nuxters-countries'
-import { faceOnGlobe, pinPath, projectOnGlobe } from '~/utils/nuxters-globe'
+import { faceOnGlobe, projectOnGlobe } from '~/utils/nuxters-globe'
 
 const props = defineProps<{
   countries: NuxtersCountry[]
@@ -28,15 +28,10 @@ const MAX_ZOOM = 3
 // Zoomed in, the globe outgrows the canvas: it fades out from 82% of the radius (the mask in the styles) instead of
 // ending on a hard edge. Markers stay inside the part that still shows.
 const FRAME = 0.88
-// A marker stands above its place, the tip of its tail on it: centered, it hid small islands like Mauritius and
-// seemed to float on the ocean. The length of the tail in the styles.
-const TAIL = 6
 const markers = computed(() => props.countries
   .flatMap((country) => {
     const location = COUNTRIES[country.code]?.location
-    // A count marker is as wide as its digits: its outline is drawn for that width.
-    const width = Math.max(28, 20 + format(country.count).length * 7)
-    return location ? [{ ...country, name: COUNTRIES[country.code]!.name, location, width }] : []
+    return location ? [{ ...country, name: COUNTRIES[country.code]!.name, location }] : []
   })
   // The selected country first: it keeps its marker when others overlap it.
   .sort((a, b) => Number(b.code === props.selected) - Number(a.code === props.selected) || b.count - a.count))
@@ -61,8 +56,8 @@ const clamp = (value: number, low: number, high: number) => Math.min(high, Math.
 const angleDelta = (from: number, to: number) => ((to - from + Math.PI) % (Math.PI * 2) + Math.PI * 2) % (Math.PI * 2) - Math.PI
 
 const palette = () => colorMode.value === 'dark'
-  ? { dark: 1, diffuse: 1.2, mapBrightness: 4, mapBaseBrightness: 0.03, baseColor: [0.32, 0.36, 0.4] as [number, number, number], glowColor: [0, 0.4, 0.24] as [number, number, number] }
-  : { dark: 0, diffuse: 1.4, mapBrightness: 8, mapBaseBrightness: 0, baseColor: [0.94, 0.95, 0.96] as [number, number, number], glowColor: [0.7, 0.94, 0.83] as [number, number, number] }
+  ? { dark: 1, diffuse: 1.2, mapBrightness: 4, mapBaseBrightness: 0.03, baseColor: [0.32, 0.36, 0.4] as [number, number, number], glowColor: [0.06, 0.08, 0.1] as [number, number, number] }
+  : { dark: 0, diffuse: 1.4, mapBrightness: 8, mapBaseBrightness: 0, baseColor: [0.94, 0.95, 0.96] as [number, number, number], glowColor: [0.92, 0.93, 0.95] as [number, number, number] }
 
 const size = useElementSize(container)
 // Frames run only while the globe is on screen, in a visible tab, and moving.
@@ -97,10 +92,10 @@ function render(elapsed: number) {
     if (!element) continue
     projectOnGlobe(projection, country.location, phi, theta, scale)
     const x = width / 2 + projection.x * height / 2
-    const y = height / 2 + projection.y * height / 2 - TAIL - markerHeight / 2
+    const y = height / 2 + projection.y * height / 2
     const markerWidth = avatars.value
       ? (country.code === props.selected ? 32 + (country.top.length - 1) * 24 : 32)
-      : country.width
+      : 20 + format(country.count).length * 7
     const wasVisible = element.dataset.visible === 'true'
     const front = projection.depth > (wasVisible ? 0.1 : 0.14)
     const fits = Math.hypot(x - width / 2, y - height / 2) < frame - Math.max(markerWidth, markerHeight) / 2
@@ -279,19 +274,8 @@ onBeforeUnmount(() => {
         :class="{ 'is-selected': selected === country.code, 'is-avatars': avatars }"
         :aria-label="`${country.name}, ${format(country.count)} ${country.count === 1 ? 'Nuxter' : 'Nuxters'}`"
         :aria-pressed="selected === country.code"
-        :style="avatars ? undefined : { width: `${country.width}px` }"
         @click="emit('select', selected === country.code ? null : country.code)"
       >
-        <svg
-          v-if="!avatars"
-          class="nuxters-globe__pin"
-          :width="country.width"
-          :height="28 + TAIL"
-          :viewBox="`0 0 ${country.width} ${28 + TAIL}`"
-          aria-hidden="true"
-        >
-          <path :d="pinPath(country.width, 28, TAIL)" />
-        </svg>
         <Transition name="nuxters-globe-marker" mode="out-in" @after-enter="schedule">
           <span v-if="avatars" key="avatars" class="flex pl-2" aria-hidden="true">
             <NuxtImg
@@ -358,13 +342,6 @@ onBeforeUnmount(() => {
 </template>
 
 <style scoped>
-/* The atmosphere: a green halo around the globe, under the canvas. Its rim is the glow of cobe (`glowColor`) */
-.nuxters-globe {
-  background: radial-gradient(closest-side, color-mix(in oklab, var(--ui-primary) 14%, transparent) 70%, transparent);
-}
-:global(.dark) .nuxters-globe {
-  background: radial-gradient(closest-side, color-mix(in oklab, var(--ui-primary) 24%, transparent) 70%, transparent);
-}
 /* A fade, not a clip: zoomed in, a rounded canvas cut the globe along a false horizon */
 .nuxters-globe__canvas {
   mask-image: radial-gradient(closest-side, #000 82%, transparent);
@@ -384,9 +361,11 @@ onBeforeUnmount(() => {
   will-change: transform;
   display: flex;
   align-items: center;
-  justify-content: center;
   height: 28px;
+  padding: 0 9px;
+  border: 1px solid var(--ui-border-accented);
   border-radius: 999px;
+  background: var(--ui-bg);
   color: var(--ui-text-highlighted);
   font: 600 11px/1 var(--font-sans);
   font-variant-numeric: tabular-nums;
@@ -406,45 +385,15 @@ onBeforeUnmount(() => {
 .nuxters-globe__marker:focus-visible,
 .nuxters-globe__marker.is-selected {
   z-index: 2;
+  border-color: var(--ui-primary);
   outline: 2px solid color-mix(in oklab, var(--ui-primary) 35%, transparent);
   outline-offset: 2px;
 }
 .nuxters-globe__marker.is-avatars {
   height: 32px;
   padding: 0;
+  border: 0;
   background: transparent;
-}
-/* A count and its tail, `TAIL` long, are one path. Its own stacking context keeps it above the canvas */
-.nuxters-globe__marker {
-  isolation: isolate;
-}
-.nuxters-globe__pin {
-  position: absolute;
-  inset: 0 auto auto 0;
-  z-index: -1;
-  overflow: visible;
-  fill: var(--ui-bg);
-  stroke: var(--ui-border-accented);
-  stroke-linejoin: round;
-}
-.nuxters-globe__marker:is(:hover, :focus-visible, .is-selected) .nuxters-globe__pin {
-  stroke: var(--ui-primary);
-}
-/* Avatars: a tail behind them, no outline */
-.nuxters-globe__marker.is-avatars::after {
-  content: "";
-  position: absolute;
-  z-index: -1;
-  top: calc(100% - 5px);
-  left: calc(50% - 5px);
-  width: 10px;
-  height: 10px;
-  border-bottom-right-radius: 2px;
-  background: var(--ui-text-highlighted);
-  transform: rotate(45deg);
-}
-.nuxters-globe__marker.is-avatars:is(:hover, :focus-visible, .is-selected)::after {
-  background: var(--ui-primary);
 }
 .nuxters-globe-marker-enter-active,
 .nuxters-globe-marker-leave-active {
