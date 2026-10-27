@@ -83,7 +83,7 @@ const fetchLatestNuxt = cachedFunction(async () => {
 async function fetchTemplateChecks(): Promise<Record<string, TemplateCheck>> {
   const [rows, latest] = await Promise.all([listTemplateChecks(), fetchLatestNuxt().catch(() => undefined)])
   return Object.fromEntries(rows.flatMap((row) => {
-    if (!row.status || !row.checkedAt) return []
+    if (!row.status || !row.checkedAt || Date.now() - row.checkedAt.getTime() > TEMPLATE_CHECK_MAX_AGE_MS) return []
     const passed = row.status === 'passed'
     const nuxt = passed ? row.nuxt ?? undefined : undefined
     return [[row.slug, {
