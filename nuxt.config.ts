@@ -145,9 +145,6 @@ export default defineNuxtConfig({
       secret: ''
     },
     webhookSecret: '',
-    openCollective: {
-      apiKey: ''
-    },
     resend: {
       apiKey: '',
       audienceId: ''
@@ -435,7 +432,8 @@ export default defineNuxtConfig({
     // '/docs/guide/directory-structure/nuxt.config': { redirect: '/docs/guide/directory-structure/nuxt-config', prerender: false },
     '/enterprise': { redirect: '/enterprise/agencies', prerender: false },
     '/enterprise/support': { redirect: '/enterprise/agencies', prerender: false },
-    '/support/us': { redirect: '/enterprise/sponsors', prerender: false },
+    '/support/us': { redirect: '/sponsors', prerender: false },
+    '/enterprise/sponsors': { redirect: { to: '/sponsors', statusCode: 301 }, prerender: false },
     '/docs/4.x/guide/ai': { redirect: '/docs/4.x/guide/ai/mcp', prerender: false },
     '/docs/5.x/guide/ai': { redirect: '/docs/5.x/guide/ai/mcp', prerender: false },
     '/docs/3.x/guide/ai': { redirect: '/docs/4.x/guide/ai/mcp', prerender: false },
@@ -479,7 +477,6 @@ export default defineNuxtConfig({
     '/assets/websites/explore-france.png': { redirect: '/assets/websites/explore-france.webp' },
     '/assets/websites/louis-vuitton.png': { redirect: '/assets/websites/louis-vuitton.webp' },
     '/assets/websites/shaina-mote.png': { redirect: '/assets/websites/shaina-mote.webp' },
-    '/assets/websites/virgin-galactic.png': { redirect: '/assets/websites/virgin-galactic.webp' },
     // missing redirects
     '/docs/4.x/examples/essentials/hello-world': { redirect: '/docs/examples/hello-world', prerender: false },
     '/docs/5.x/examples/essentials/hello-world': { redirect: '/docs/examples/hello-world', prerender: false },

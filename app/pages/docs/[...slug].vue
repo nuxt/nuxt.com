@@ -115,9 +115,12 @@ const currentSectionTitle = computed(() =>
   || '')
 
 const breadcrumb = computed(() => {
-  const links = findBreadcrumb(navigation.value, path.value).map(item => ({
+  const trail = findBreadcrumb(navigation.value, path.value)
+  // `path` is kept for structured data even when the item is not linked.
+  const links: Array<{ label: string, to?: string, path?: string }> = trail.map(item => ({
     label: item.title,
-    to: item.path
+    to: item.page ? item.path : undefined,
+    path: item.path
   })).slice(1)
 
   if (path.value.startsWith(`${docsMeta.value.path}/bridge`) || path.value.startsWith(`${docsMeta.value.path}/migration`)) {
@@ -126,9 +129,20 @@ const breadcrumb = computed(() => {
       to: `${docsMeta.value.path}/getting-started/upgrade`
     })
   }
+  // Error pages are not in the navigation, so nest them under the error codes index.
+  if (!trail.length && path.value.startsWith(`${docsMeta.value.path}/errors/`)) {
+    links.push({
+      label: 'Error Codes',
+      to: `${docsMeta.value.path}/errors`
+    }, {
+      label: fm.value.title,
+      to: path.value
+    })
+  }
+  // Google rejects breadcrumb entries without a name.
   if (!links.length) {
     links.push({
-      label: currentSectionTitle.value,
+      label: currentSectionTitle.value || fm.value.title,
       to: path.value
     })
   }
@@ -192,10 +206,12 @@ if (import.meta.server) {
       'headline': fm.value.title,
       'description': fm.value.seo?.description || fm.value.description
     }),
+    // Google requires `item` on every entry but the last, so directories
+    // without a page use their path, which redirects to their first page.
     defineBreadcrumb({
       itemListElement: breadcrumb.value.map(item => ({
         name: item.label,
-        item: item.to
+        item: item.to || item.path
       }))
     })
   ])
