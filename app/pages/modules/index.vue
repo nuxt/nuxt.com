@@ -4,6 +4,8 @@ import type { DropdownMenuItem } from '@nuxt/ui'
 import type { Module } from '#shared/types'
 import { joinURL, withQuery } from 'ufo'
 import { resolveModuleCategory } from '#shared/utils/modules'
+import { isNavigationFailure, NavigationFailureType } from 'vue-router'
+import type { LocationQuery } from 'vue-router'
 
 definePageMeta({
   heroBackground: 'opacity-50',
@@ -21,20 +23,62 @@ const input = useTemplateRef('input')
 const modulesToAdd = ref<Module[]>([])
 const el = useTemplateRef<HTMLElement>('el')
 
-const { replaceRoute } = useFilters('modules')
-const { fetchList, filteredModules, q, categories, modules, stats, selectedSort, selectedOrder, selectedCategory, sorts } = useModules()
+const route = useRoute()
+const router = useRouter()
+const { fetchList, filteredModules, q, categories, modules, stats, selectedSort, selectedOrder, selectedCategory, sorts, category, sortBy, orderBy } = useModules()
+
+const filters = { q, category, sortBy, orderBy }
+
+function applyQuery(query: LocationQuery) {
+  for (const [key, filter] of Object.entries(filters)) {
+    const value = query[key]
+    filter.value = typeof value === 'string' ? value : ''
+  }
+}
+
+// A navigation to `/modules?…` (shared link, back/forward, a link elsewhere) sets the filters.
+watch(() => route.query, applyQuery, { immediate: true })
+
+// The router does not see filter changes, so a link to the route it is still on (such as the
+// header "Modules" link after a search) is a duplicated navigation that leaves `route.query` unchanged.
+const removeAfterEach = router.afterEach((to, _from, failure) => {
+  if (isNavigationFailure(failure, NavigationFailureType.duplicated)) applyQuery(to.query)
+})
+onBeforeUnmount(removeAfterEach)
+
+// Filtering happens in memory, so only mirror the filters in the URL: a router navigation
+// would fetch `_payload.json` for this ISR route on every keystroke.
+watch(Object.values(filters), () => {
+  // Keep unrelated params (e.g. `utm_*`) from the last navigation.
+  const query = { ...route.query, ...Object.fromEntries(Object.entries(filters).map(([key, filter]) => [key, filter.value || undefined])) }
+  const { fullPath, href } = router.resolve({ path: route.path, query, hash: route.hash })
+  // vue-router writes `state.current` back to the URL on the next push, so keep it in sync.
+  history.replaceState({ ...history.state, current: fullPath }, '', href)
+})
+
+function resetFilters() {
+  for (const filter of Object.values(filters)) filter.value = ''
+}
+
+function filterKey(param: string | { key: string | number }) {
+  return typeof param === 'string' ? param : String(param?.key ?? '')
+}
+
 const { health } = useModuleHealth()
 const { track } = useAnalytics()
 const { openInCursor, openInClaudeCode, openInVSCode } = useIdeDeeplink()
 
-// Merge via computed, not mutation: useFetch `data` is a shallowRef (Nuxt 4
-// default), so writing module.health in place would not trigger a re-render.
-const filteredModulesWithHealth = computed(() =>
-  filteredModules.value.map(m => ({
-    ...m,
-    health: health.value[m.name] ?? m.health ?? null
-  }))
-)
+// Health and the matched provider are merged only for visible rows so typing in search does not remap the full list.
+const searchRegExp = computed(() => q.value ? searchTextRegExp(q.value) : undefined)
+function withModuleHealth(module: Module) {
+  const query = searchRegExp.value
+  return {
+    ...module,
+    health: health.value[module.name] ?? module.health ?? null,
+    // Shows why a module matched when only one of its providers did (e.g. "cloudinary" → @nuxt/image).
+    matchedProvider: query && !moduleMatchesSearch(module, query) ? findModuleProvider(module, query) : undefined
+  }
+}
 
 const cacheControl = useResponseHeader('Cache-Control')
 const cdnCacheControl = useResponseHeader('CDN-Cache-Control')
@@ -144,7 +188,7 @@ const isLoading = ref(false)
 let loadMoreTimer: ReturnType<typeof setTimeout> | null = null
 
 const displayedModules = computed(() =>
-  filteredModulesWithHealth.value.slice(0, visibleCount.value)
+  filteredModules.value.slice(0, visibleCount.value).map(withModuleHealth)
 )
 
 const { y: scrollY } = useWindowScroll()
@@ -284,7 +328,7 @@ const clearAllModules = () => {
           <div class="flex flex-col sm:flex-row w-full gap-2 relative">
             <UInput
               ref="input"
-              :model-value="q"
+              v-model="q"
               name="q"
               icon="i-lucide-search"
               placeholder="Search a module..."
@@ -293,7 +337,6 @@ const clearAllModules = () => {
               autofocus
               autocomplete="off"
               variant="subtle"
-              @update:model-value="replaceRoute('q', $event as string)"
             >
               <template #trailing>
                 <UButton
@@ -302,7 +345,7 @@ const clearAllModules = () => {
                   variant="link"
                   size="lg"
                   icon="i-lucide-x"
-                  @click="replaceRoute('q', '')"
+                  @click="q = ''"
                 />
                 <UKbd v-else value="/" class="hidden sm:flex" />
               </template>
@@ -316,7 +359,7 @@ const clearAllModules = () => {
                 color="neutral"
                 class="w-auto"
                 variant="outline"
-                @update:model-value="replaceRoute('sortBy', $event)"
+                @update:model-value="sortBy = filterKey($event)"
               />
 
               <UButton
@@ -324,7 +367,7 @@ const clearAllModules = () => {
                 size="lg"
                 color="neutral"
                 variant="outline"
-                @click="replaceRoute('orderBy', selectedOrder.key === 'desc' ? 'asc' : 'desc')"
+                @click="orderBy = selectedOrder.key === 'desc' ? 'asc' : 'desc'"
               >
                 <span class="sr-only">Sort by {{ selectedOrder.label }}</span>
               </UButton>
@@ -341,7 +384,7 @@ const clearAllModules = () => {
               class="flex-1"
               :ui="{ content: 'min-w-fit' }"
               placeholder="Select category"
-              @update:model-value="replaceRoute('category', $event)"
+              @update:model-value="category = filterKey($event)"
             />
             <UButton
               v-if="selectedCategory"
@@ -350,7 +393,7 @@ const clearAllModules = () => {
               color="neutral"
               variant="outline"
               aria-label="Clear category filter"
-              @click="replaceRoute('category', '')"
+              @click="category = ''"
             />
             <USelectMenu
               :model-value="selectedSort"
@@ -359,23 +402,23 @@ const clearAllModules = () => {
               color="neutral"
               class="w-1/3"
               variant="outline"
-              @update:model-value="replaceRoute('sortBy', $event)"
+              @update:model-value="sortBy = filterKey($event)"
             />
             <UButton
               :icon="selectedOrder.icon"
               size="lg"
               color="neutral"
               variant="outline"
-              @click="replaceRoute('orderBy', selectedOrder.key === 'desc' ? 'asc' : 'desc')"
+              @click="orderBy = selectedOrder.key === 'desc' ? 'asc' : 'desc'"
             />
           </div>
         </div>
 
         <div class="hidden sm:flex mt-6 flex-wrap gap-1.5 justify-center">
           <UButton
-            v-for="category in categories"
-            :key="category.key"
-            v-bind="category"
+            v-for="categoryFilter in categories"
+            :key="categoryFilter.key"
+            v-bind="categoryFilter"
             color="neutral"
             variant="outline"
             active-color="primary"
@@ -406,6 +449,7 @@ const clearAllModules = () => {
               v-for="module in displayedModules"
               :key="module.name"
               :module="module"
+              :provider="module.matchedProvider"
               :is-added="addedModuleNames.has(module.name)"
               :sort-key="String(selectedSort.key)"
               selectable
@@ -436,7 +480,7 @@ const clearAllModules = () => {
               to="https://github.com/nuxt/modules"
               target="_blank"
               size="md"
-              @click="$router.replace({ query: {} })"
+              @click="resetFilters"
             />
             <UButton to="/docs/guide/going-further/modules" color="neutral" size="md" label="How to create a module?" />
           </EmptyCard>

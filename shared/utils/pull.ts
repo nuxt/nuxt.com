@@ -110,11 +110,11 @@ export const PULL_CONTENT_PAGES = [
   '/docs/**',
   '/enterprise/agencies/**',
   '/enterprise/jobs',
-  '/enterprise/sponsors',
   '/evals',
   '/modules',
   '/newsletter',
   '/showcase',
+  '/sponsors',
   '/team',
   '/templates',
   '/video-courses'

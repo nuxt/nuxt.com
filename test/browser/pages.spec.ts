@@ -41,7 +41,7 @@ test.describe('Content Pages', () => {
 
 test.describe('Enterprise Pages', () => {
   test('all enterprise pages are accessible', async ({ page, goto }) => {
-    const enterprisePages = ['/enterprise', '/enterprise/agencies', '/enterprise/sponsors']
+    const enterprisePages = ['/enterprise', '/enterprise/agencies', '/sponsors']
 
     for (const path of enterprisePages) {
       const response = await goto(path)
