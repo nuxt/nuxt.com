@@ -1,6 +1,7 @@
 import { Sandbox } from '@vercel/sandbox'
 import { and, desc, eq, lt, sql } from 'drizzle-orm'
 import type { Template } from '#shared/types'
+import { DEV_PORT } from './dev-server'
 import { SERVE_SCRIPT_PATH } from './static-server'
 
 export const PREVIEW_PORT = 3000
@@ -80,7 +81,7 @@ export async function startPreview(template: Template, owner: string) {
     sandbox = await Sandbox.create({
       name,
       source: { type: 'snapshot', snapshotId },
-      ports: [PREVIEW_PORT],
+      ports: [PREVIEW_PORT, DEV_PORT],
       timeout: PREVIEW_TIMEOUT_MS,
       persistent: false,
       tags: { ...PREVIEW_TAGS, template: template.slug, owner }
