@@ -47,11 +47,11 @@ describe('admin Search Console tools', () => {
       return { rows: [{ keys: ['https://nuxt.com/docs/4.x/api/composables/use-fetch', 'nuxt usefetch'], clicks: 120, impressions: 4000, ctr: 0.03, position: 4.26 }] }
     })
 
-    const result = await analytics.handler(input)
+    const [result] = await Promise.all([analytics.handler(input), analytics.handler(input)])
     await analytics.handler(input)
 
     expect(result.rows).toEqual([{ page: 'https://nuxt.com/docs/4.x/api/composables/use-fetch', query: 'nuxt usefetch', clicks: 120, impressions: 4000, ctr: 3, position: 4.3 }])
-    // The access token is reused across calls
+    // Concurrent calls share one token exchange, and later calls reuse the cached token
     expect(fetchMock.mock.calls.filter(([url]) => url.includes('oauth2')).length).toBe(1)
   })
 

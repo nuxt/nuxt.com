@@ -15,10 +15,22 @@ function throwGoogleError(error: unknown, api: string): never {
   throw createError({ statusCode: statusCode || 502, message: `${api}: ${googleError}` })
 }
 
-/** Exchanges a service-account JWT for an OAuth access token, cached until a minute before expiry. */
-async function getAccessToken(clientEmail: string, privateKey: string): Promise<string> {
-  if (cachedToken && cachedToken.expiresAt > Date.now() + 60_000) return cachedToken.value
+let pendingToken: Promise<string> | undefined
 
+/**
+ * Returns an OAuth access token for the service account, cached until a minute before expiry.
+ * Concurrent tool calls share one in-flight exchange; a failed one is not kept, so the next call retries.
+ */
+function getAccessToken(clientEmail: string, privateKey: string): Promise<string> {
+  if (cachedToken && cachedToken.expiresAt > Date.now() + 60_000) return Promise.resolve(cachedToken.value)
+  pendingToken ??= requestAccessToken(clientEmail, privateKey).finally(() => {
+    pendingToken = undefined
+  })
+  return pendingToken
+}
+
+/** Exchanges a signed service-account JWT for an OAuth access token. */
+async function requestAccessToken(clientEmail: string, privateKey: string): Promise<string> {
   // Env vars usually hold the PEM with escaped newlines.
   const pem = privateKey.replace(/\\n/g, '\n').replace(/-----(BEGIN|END) PRIVATE KEY-----|\s/g, '')
   const key = await crypto.subtle.importKey('pkcs8', Buffer.from(pem, 'base64'), { name: 'RSASSA-PKCS1-v1_5', hash: 'SHA-256' }, false, ['sign'])
