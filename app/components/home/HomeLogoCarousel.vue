@@ -68,7 +68,7 @@ const rows = computed(() => [
 </script>
 
 <template>
-  <div ref="root" class="grid">
+  <div ref="root" class="grid grid-cols-1">
     <ul
       v-for="row in rows"
       :key="row.key"
@@ -81,7 +81,7 @@ const rows = computed(() => [
         :key="company.alt"
         :data-state="row.state"
         :style="{ '--delay': `${index * STAGGER}s` }"
-        class="logo shrink-0 justify-self-center max-lg:nth-[3n+1]:justify-self-start max-lg:nth-[3n]:justify-self-end max-lg:nth-[n+7]:hidden"
+        class="logo min-w-0 justify-self-center max-lg:nth-[3n+1]:justify-self-start max-lg:nth-[3n]:justify-self-end max-lg:nth-[n+7]:hidden"
       >
         <NuxtLink :to="company.url" target="_blank" class="group block">
           <BrandLogo
@@ -90,7 +90,7 @@ const rows = computed(() => [
             :width="company.width"
             :height="company.height"
             :style="logoStyle(company)"
-            class="max-lg:max-w-[26vw] text-muted transition-colors group-hover:text-highlighted"
+            class="max-w-full max-lg:max-w-[26vw] text-muted transition-colors group-hover:text-highlighted"
           />
         </NuxtLink>
       </li>
