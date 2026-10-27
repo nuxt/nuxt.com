@@ -139,6 +139,10 @@ export default defineNuxtConfig({
       privateKey: '',
       siteUrl: 'sc-domain:nuxt.com'
     },
+    // Google Cloud API key with the Chrome UX Report API enabled (admin MCP `crux-web-vitals` tool)
+    googleCrux: {
+      apiKey: ''
+    },
     github: {
       token: ''
     },

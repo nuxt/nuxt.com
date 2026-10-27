@@ -7,6 +7,14 @@ function base64url(input: string | ArrayBuffer): string {
   return Buffer.from(typeof input === 'string' ? input : new Uint8Array(input)).toString('base64url')
 }
 
+/** Rethrows a Google API error as an H3 error carrying Google's message, so MCP clients see why it failed. */
+function throwGoogleError(error: unknown, api: string): never {
+  const { statusCode, data } = error as { statusCode?: number, data?: { error?: string | { message?: string }, error_description?: string } }
+  const googleError = data?.error_description || (typeof data?.error === 'string' ? data.error : data?.error?.message)
+  if (!googleError) throw error
+  throw createError({ statusCode: statusCode || 502, message: `${api}: ${googleError}` })
+}
+
 /** Exchanges a service-account JWT for an OAuth access token, cached until a minute before expiry. */
 async function getAccessToken(clientEmail: string, privateKey: string): Promise<string> {
   if (cachedToken && cachedToken.expiresAt > Date.now() + 60_000) return cachedToken.value
@@ -50,9 +58,25 @@ export async function searchConsoleFetch<T>(path: string, options: { method?: 'G
       headers: { authorization: `Bearer ${token}` }
     })
   } catch (error) {
-    const { statusCode, data } = error as { statusCode?: number, data?: { error?: string | { message?: string }, error_description?: string } }
-    const googleError = data?.error_description || (typeof data?.error === 'string' ? data.error : data?.error?.message)
-    if (!googleError) throw error
-    throw createError({ statusCode: statusCode || 502, message: `Google Search Console: ${googleError}` })
+    throwGoogleError(error, 'Google Search Console')
+  }
+}
+
+/**
+ * Queries the Chrome UX Report API (`records:queryRecord` or `records:queryHistoryRecord`) with
+ * `NUXT_GOOGLE_CRUX_API_KEY`. Returns `undefined` when CrUX has no data for the URL or origin
+ * (not enough Chrome traffic), which Google reports as a 404.
+ */
+export async function cruxFetch<T>(method: 'queryRecord' | 'queryHistoryRecord', body: Record<string, unknown>): Promise<T | undefined> {
+  const { apiKey } = useRuntimeConfig().googleCrux
+  if (!apiKey) {
+    throw createError({ statusCode: 503, message: 'Chrome UX Report is not configured (NUXT_GOOGLE_CRUX_API_KEY).' })
+  }
+
+  try {
+    return await $fetch<T>(`https://chromeuxreport.googleapis.com/v1/records:${method}`, { method: 'POST', query: { key: apiKey }, body })
+  } catch (error) {
+    if ((error as { statusCode?: number }).statusCode === 404) return undefined
+    throwGoogleError(error, 'Chrome UX Report')
   }
 }
