@@ -133,6 +133,16 @@ export default defineNuxtConfig({
       }
     },
     mcpAdminToken: '',
+    // Service account added as a user of the Search Console property (admin MCP `search-console-*` tools)
+    googleSearchConsole: {
+      clientEmail: '',
+      privateKey: '',
+      siteUrl: 'sc-domain:nuxt.com'
+    },
+    // Google Cloud API key with the Chrome UX Report API enabled (admin MCP `crux-web-vitals` tool)
+    googleCrux: {
+      apiKey: ''
+    },
     github: {
       token: ''
     },

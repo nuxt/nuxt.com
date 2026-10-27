@@ -338,12 +338,6 @@ const _useNavigation = () => {
     }
   })
 
-  watchDebounced(searchTerm, (term) => {
-    if (term) {
-      track('Search Performed', { term })
-    }
-  }, { debounce: 500 })
-
   return {
     searchTerm,
     headerLinks,
