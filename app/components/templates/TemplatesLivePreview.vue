@@ -27,12 +27,20 @@ const startedAt = ref(0)
 const now = ref(0)
 const doneAt = ref<Partial<Record<PreviewStep | 'mounted', number>>>({})
 const shared = useLivePreview()
-/** Another server of the sandbox, loading in a hidden frame until it mounts and takes over. */
-const pendingUrl = ref<string | null>(null)
+interface Frame { id: number, url: string, src: string }
+let frameIds = 0
+const shown = shallowRef<Frame | null>(null)
+/** Another server of the sandbox, or a reload of the same one, loading out of sight until it mounts and takes over. */
+const pending = shallowRef<Frame | null>(null)
 /** The previous frame stays under the new one while it fades in. Frame order never changes, since moving an iframe reloads it. */
-const retiringUrl = ref<string | null>(null)
-const frames = computed(() => [retiringUrl.value, preview.value?.url, pendingUrl.value].filter((url): url is string => !!url))
-const frameEls = new Map<string, HTMLIFrameElement>()
+const retiring = shallowRef<Frame | null>(null)
+const frames = computed(() => [retiring.value, shown.value, pending.value].filter((frame): frame is Frame => !!frame))
+const frameEls = new Map<number, HTMLIFrameElement>()
+
+function load(url: string, path = '') {
+  clearTimeout(promoteFallback)
+  pending.value = { id: ++frameIds, url, src: `${url}${path}` }
+}
 
 const current = computed(() => STEPS.findIndex(step => !doneAt.value[step.key]))
 const stepLabel = computed(() => current.value === -1 ? STEPS.at(-1)!.done : `${STEPS[current.value]!.pending}…`)
@@ -58,10 +66,11 @@ function handle(data: PreviewEvent) {
   if (data.type === 'step') return mark(data.step)
   if (data.type === 'error') throw new Error(data.message)
   if (data.type === 'url') {
-    if (!touched) pendingUrl.value = data.url
+    if (!touched) load(data.url)
     return
   }
   preview.value = { id: data.id, url: data.url }
+  shown.value = { id: ++frameIds, url: data.url, src: data.url }
   status.value = 'mounting'
   emit('url', data.url)
 }
@@ -82,29 +91,53 @@ async function start() {
       body: JSON.stringify({ slug: props.template.slug }),
       signal: controller.signal
     })
-    if (!response.ok || !response.body) {
-      const body = await response.json().catch(() => null)
-      throw new Error(body?.message || 'The preview could not start.')
-    }
-
-    const reader = response.body.pipeThrough(new TextDecoderStream()).getReader()
-    let buffer = ''
-    while (true) {
-      const { value, done } = await reader.read()
-      if (done) break
-      buffer += value
-      const lines = buffer.split('\n')
-      buffer = lines.pop() || ''
-      for (const line of lines) if (line.trim()) handle(JSON.parse(line))
-    }
+    await readEvents(response, handle, 'The preview could not start.')
     if (!preview.value) throw new Error('The preview could not start.')
   } catch (err: any) {
     if (err?.name === 'AbortError') return
     status.value = 'failed'
-    // A response that isn't the expected stream would otherwise show the parser's message.
-    error.value = err instanceof SyntaxError ? 'The preview could not start.' : err?.message || 'The preview could not start.'
+    error.value = visitorMessage(err, 'The preview could not start.')
     clearInterval(ticker)
   }
+}
+
+/** Reads an NDJSON stream of events, or throws the error a failed request answered with. */
+async function readEvents<T>(response: Response, onEvent: (event: T) => void, fallbackMessage: string) {
+  if (!response.ok || !response.body) {
+    const body = await response.json().catch(() => null)
+    throw new Error(body?.message || fallbackMessage)
+  }
+  const reader = response.body.pipeThrough(new TextDecoderStream()).getReader()
+  let buffer = ''
+  while (true) {
+    const { value, done } = await reader.read()
+    if (done) break
+    buffer += value
+    const lines = buffer.split('\n')
+    buffer = lines.pop() || ''
+    for (const line of lines) if (line.trim()) onEvent(JSON.parse(line))
+  }
+}
+
+// A response that isn't the expected stream would otherwise show the parser's message.
+function visitorMessage(err: any, fallback: string) {
+  return err instanceof SyntaxError ? fallback : err?.message || fallback
+}
+
+/** Briefly outlines the frame once a new page takes over. */
+const handedOver = ref(false)
+function flash() {
+  handedOver.value = true
+  setTimeout(() => handedOver.value = false, 900)
+}
+
+// The new page loads under the current one and takes over once it mounts, so the visitor never watches it load unstyled.
+let reloading = false
+watch(() => shared.reloadRequest.value, reload)
+function reload() {
+  if (!preview.value || status.value !== 'live') return
+  reloading = true
+  load(preview.value.url, shared.preview.value?.path ?? '')
 }
 
 function mounted() {
@@ -119,43 +152,51 @@ function mounted() {
 
 function promote() {
   clearTimeout(promoteFallback)
-  if (!preview.value || !pendingUrl.value) return
-  retiringUrl.value = preview.value.url
-  preview.value = { ...preview.value, url: pendingUrl.value }
-  pendingUrl.value = null
+  if (!preview.value || !pending.value) return
+  const previous = shown.value
+  retiring.value = previous
+  shown.value = pending.value
+  pending.value = null
+  preview.value = { ...preview.value, url: shown.value.url }
   if (shared.preview.value) shared.preview.value = { ...shared.preview.value, url: preview.value.url }
   emit('url', preview.value.url)
   syncColorMode()
   if (pendingPath) navigate(pendingPath)
   pendingPath = null
-  setTimeout(() => retiringUrl.value = null, 400)
+  setTimeout(() => {
+    if (retiring.value === previous) retiring.value = null
+  }, 500)
+  if (reloading) {
+    reloading = false
+    flash()
+  }
 }
 
 function navigate(path: string) {
-  if (!preview.value) return
-  frameEls.get(preview.value.url)?.contentWindow?.postMessage({ source: 'nuxt.com', type: 'navigate', value: path }, new URL(preview.value.url).origin)
+  if (!shown.value) return
+  frameEls.get(shown.value.id)?.contentWindow?.postMessage({ source: 'nuxt.com', type: 'navigate', value: path }, new URL(shown.value.url).origin)
 }
 
 watch(() => shared.preview.value?.url, (url) => {
-  if (url && preview.value && url !== preview.value.url) pendingUrl.value = url
+  if (url && preview.value && url !== preview.value.url) load(url)
 })
 
 watch(() => shared.navigation.value?.id, () => {
   const path = shared.navigation.value?.path
   if (!path) return
-  if (pendingUrl.value) pendingPath = path
+  if (pending.value) pendingPath = path
   else navigate(path)
 })
 
-function onIframeLoad(url: string) {
+function onIframeLoad(frame: Frame) {
   // Snapshots built before the bridge plugin never post `ready`.
-  if (url === pendingUrl.value) promoteFallback = setTimeout(promote, 3000)
-  else if (url === preview.value?.url) fallback = setTimeout(mounted, 1500)
+  if (frame === pending.value) promoteFallback = setTimeout(promote, 3000)
+  else if (frame === shown.value) fallback = setTimeout(mounted, 1500)
 }
 
-function setFrame(url: string, el: unknown) {
-  if (el) frameEls.set(url, el as HTMLIFrameElement)
-  else frameEls.delete(url)
+function setFrame(id: number, el: unknown) {
+  if (el) frameEls.set(id, el as HTMLIFrameElement)
+  else frameEls.delete(id)
 }
 
 function stop() {
@@ -163,12 +204,14 @@ function stop() {
   clearTimeout(fallback)
   clearTimeout(promoteFallback)
   controller?.abort()
+  reloading = false
   if (preview.value) {
     fetch(`/api/templates/preview/${preview.value.id}`, { method: 'DELETE', keepalive: true }).catch(() => {})
   }
   preview.value = null
-  pendingUrl.value = null
-  retiringUrl.value = null
+  shown.value = null
+  pending.value = null
+  retiring.value = null
   pendingPath = null
   touched = false
   shared.preview.value = null
@@ -176,8 +219,8 @@ function stop() {
 }
 
 function syncColorMode() {
-  for (const url of frames.value) {
-    frameEls.get(url)?.contentWindow?.postMessage({ source: 'nuxt.com', type: 'color-mode', value: colorMode.value }, new URL(url).origin)
+  for (const frame of frames.value) {
+    frameEls.get(frame.id)?.contentWindow?.postMessage({ source: 'nuxt.com', type: 'color-mode', value: colorMode.value }, new URL(frame.url).origin)
   }
 }
 
@@ -185,11 +228,19 @@ watch(() => colorMode.value, syncColorMode)
 
 useEventListener(import.meta.client ? window : undefined, 'message', (event: MessageEvent) => {
   if (event.data?.source !== 'nuxt-com-preview') return
-  if (pendingUrl.value && event.origin === new URL(pendingUrl.value).origin) {
+  // A reload shares its origin with the frame it replaces: only the sending window tells them apart.
+  const from = frames.value.find(frame => frameEls.get(frame.id)?.contentWindow === event.source)
+  if (!from || event.origin !== new URL(from.url).origin) return
+  if (from === pending.value) {
     if (event.data.type === 'ready') promote()
+    // A page that crashed is still the page the server serves now: show it, and expose the error.
+    if (event.data.type === 'error') {
+      promote()
+      if (shared.preview.value) shared.preview.value = { ...shared.preview.value, error: event.data.message }
+    }
     return
   }
-  if (!preview.value || event.origin !== new URL(preview.value.url).origin) return
+  if (from !== shown.value) return
   if (event.data.type === 'ready') mounted()
   // A path, never a host: it's appended to the sandbox URL in the address bar and the "Open in new tab" link.
   if (event.data.type === 'route' && typeof event.data.message === 'string' && event.data.message.startsWith('/') && shared.preview.value) {
@@ -224,15 +275,15 @@ onBeforeUnmount(stop)
 <template>
   <div class="absolute inset-0">
     <iframe
-      v-for="url in (preview && status !== 'failed' ? frames : [])"
-      :key="url"
-      :ref="el => setFrame(url, el)"
-      :src="url"
+      v-for="frame in (preview && status !== 'failed' ? frames : [])"
+      :key="frame.id"
+      :ref="el => setFrame(frame.id, el)"
+      :src="frame.src"
       :title="`${template.name} live preview`"
       class="absolute inset-0 size-full bg-default transition-[opacity,filter] duration-500 ease-snappy"
-      :class="url === pendingUrl ? 'opacity-0 pointer-events-none' : status === 'live' ? 'opacity-100 blur-none' : 'opacity-0 blur-sm pointer-events-none'"
-      :aria-hidden="url !== preview?.url"
-      @load="onIframeLoad(url)"
+      :class="frame === pending ? 'opacity-0 pointer-events-none' : status === 'live' ? 'opacity-100 blur-none' : 'opacity-0 blur-sm pointer-events-none'"
+      :aria-hidden="frame !== shown"
+      @load="onIframeLoad(frame)"
     />
 
     <Transition
@@ -284,6 +335,12 @@ onBeforeUnmount(stop)
         </div>
       </div>
     </Transition>
+
+    <div
+      class="pointer-events-none absolute inset-0 ring-2 ring-inset ring-primary/70 transition-opacity ease-snappy"
+      :class="handedOver ? 'opacity-100 duration-150' : 'opacity-0 duration-700'"
+      aria-hidden="true"
+    />
   </div>
 </template>
 

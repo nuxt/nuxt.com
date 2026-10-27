@@ -13,7 +13,7 @@ const status = ref<LivePreviewStatus>()
 const readyIn = ref<number>()
 const device = ref<'desktop' | 'mobile'>('desktop')
 
-const { preview: livePreview } = useLivePreview()
+const { preview: livePreview, reloadRequest } = useLivePreview()
 const { track } = useAnalytics()
 
 const image = computed(() => templateImage(props.template))
@@ -84,6 +84,16 @@ function stop() {
 
       <div class="flex items-center justify-end gap-0.5">
         <template v-if="live">
+          <UTooltip v-if="status === 'live'" text="Reload">
+            <UButton
+              icon="i-lucide-rotate-cw"
+              aria-label="Reload the preview"
+              color="neutral"
+              variant="ghost"
+              size="xs"
+              @click="reloadRequest++"
+            />
+          </UTooltip>
           <UTooltip v-for="item in ([{ value: 'desktop', icon: 'i-lucide-monitor', label: 'Desktop' }, { value: 'mobile', icon: 'i-lucide-smartphone', label: 'Mobile' }] as const)" :key="item.value" :text="item.label">
             <UButton
               :icon="item.icon"

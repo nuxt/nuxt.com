@@ -12,6 +12,8 @@ export interface LivePreview {
 export function useLivePreview() {
   const preview = useState<LivePreview | null>('live-preview', () => null)
   const navigation = useState<{ path: string, id: number } | null>('live-preview-navigation', () => null)
+  /** Bumped to load the page again, out of sight until it mounts. */
+  const reloadRequest = useState('live-preview-reload-request', () => 0)
 
   /** Loads another server of the same sandbox out of sight and swaps over once it mounts. */
   function serveFrom(url: string) {
@@ -22,5 +24,5 @@ export function useLivePreview() {
     if (path.startsWith('/') && path !== preview.value?.path) navigation.value = { path, id: (navigation.value?.id ?? 0) + 1 }
   }
 
-  return { preview, navigation, serveFrom, navigate }
+  return { preview, navigation, reloadRequest, serveFrom, navigate }
 }
