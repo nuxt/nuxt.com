@@ -2,7 +2,7 @@ import { z } from 'zod'
 import type { Module } from '#shared/types'
 
 export default defineMcpTool({
-  description: `Retrieves complete details about a specific Nuxt module including README, compatibility, maintainers, and stats.
+  description: `Retrieves complete details about a specific Nuxt module including README, compatibility, supported providers, and stats.
 
 WHEN TO USE: Use this tool when you know the EXACT module identifier. Common scenarios:
 - User asks for a specific module: "Get details about @nuxt/ui"
@@ -63,6 +63,7 @@ EXAMPLES:
       category: module.category,
       type: module.type,
       compatibility: module.compatibility,
+      providers: module.providers?.map(({ name, label, category, docs }) => ({ name, label, category, docs })),
       stats: module.stats ? { downloads: module.stats.downloads, stars: module.stats.stars } : undefined,
       readme,
       url: `https://nuxt.com/modules/${module.name}`

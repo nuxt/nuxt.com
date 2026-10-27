@@ -62,6 +62,8 @@ export interface NuxterProfile extends Nuxter {
   periods: NuxterPeriodStats[]
   /** `null` when the GitHub profile has no name, website or social account. */
   links: NuxterLinks | null
+  /** ISO 3166-1 alpha-2 code, from the GitHub location. `null` when it is not set or not recognized. */
+  country: string | null
 }
 
 /** A module card on a profile: what `ModuleItem` shows, without the contributors and the readme. */
@@ -105,6 +107,8 @@ export interface NuxterSummary {
 
 export interface NuxtersPage {
   period: NuxtersPeriod
+  /** The ISO country code the leaderboard is filtered on, `null` for everyone. */
+  country: string | null
   /** The periods with data, in display order: rolling windows, all time, then years (newest first). */
   periods: NuxtersPeriod[]
   /** Contributors in the period. */
@@ -113,6 +117,25 @@ export interface NuxtersPage {
   totals: NuxtersTotals
   items: NuxterSummary[]
   syncedAt: string | null
+}
+
+/** The Nuxters of a country in a period: how many, and the best ranked ones. */
+export interface NuxtersCountry {
+  /** ISO 3166-1 alpha-2 code */
+  code: string
+  count: number
+  /** The 3 best ranked usernames */
+  top: string[]
+}
+
+/** /api/map/nuxters: the Nuxters of a period by country, from the most to the fewest. */
+export interface NuxtersMap {
+  period: NuxtersPeriod
+  /** Contributors in the period. */
+  total: number
+  /** The ones with a recognized country on their GitHub profile. */
+  located: number
+  countries: NuxtersCountry[]
 }
 
 export interface NuxtersTotals {

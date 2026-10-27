@@ -524,3 +524,9 @@ websites:
     logo:
       width: 600
       height: 116.96
+  - name: Red Hat Documentation
+    url: https://docs.redhat.com/
+    industry: Software & Tech
+    logo:
+      width: 613
+      height: 145
