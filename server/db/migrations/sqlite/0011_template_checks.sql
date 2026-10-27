@@ -1,7 +1,5 @@
 -- The shared preview database has these tables from earlier versions of this migration, applied under another name.
-DROP TABLE IF EXISTS `template_check_runs`;--> statement-breakpoint
-DROP TABLE IF EXISTS `template_checks`;--> statement-breakpoint
-CREATE TABLE `template_check_runs` (
+CREATE TABLE IF NOT EXISTS `template_check_runs` (
 	`id` text PRIMARY KEY NOT NULL,
 	`run_id` text,
 	`state` text NOT NULL,
@@ -13,8 +11,8 @@ CREATE TABLE `template_check_runs` (
 	`finished_at` integer
 );
 --> statement-breakpoint
-CREATE INDEX `template_check_runs_started_at_idx` ON `template_check_runs` (`started_at`);--> statement-breakpoint
-CREATE TABLE `template_checks` (
+CREATE INDEX IF NOT EXISTS `template_check_runs_started_at_idx` ON `template_check_runs` (`started_at`);--> statement-breakpoint
+CREATE TABLE IF NOT EXISTS `template_checks` (
 	`slug` text PRIMARY KEY NOT NULL,
 	`state` text NOT NULL,
 	`phase` text,
