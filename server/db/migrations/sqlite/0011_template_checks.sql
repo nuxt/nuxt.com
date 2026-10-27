@@ -1,3 +1,6 @@
+-- The shared preview database has these tables from earlier versions of this migration, applied under another name.
+DROP TABLE IF EXISTS `template_check_runs`;--> statement-breakpoint
+DROP TABLE IF EXISTS `template_checks`;--> statement-breakpoint
 CREATE TABLE `template_check_runs` (
 	`id` text PRIMARY KEY NOT NULL,
 	`run_id` text,
