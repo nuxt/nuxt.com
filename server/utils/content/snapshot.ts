@@ -1,5 +1,6 @@
 import { CURRENT_DOCS_VERSION } from '../../../shared/utils/docs'
-import { cliInstanceKey, docsInstanceKey, type ContentInstanceKey } from '../../../shared/utils/content'
+import { cliInstanceKey, docsInstanceKey, moduleInstanceKey, type ContentInstanceKey } from '../../../shared/utils/content'
+import { MODULE_DOCS_NAMES } from '../../../shared/utils/module-docs'
 
 /**
  * Where the build snapshots live, shared by the writer and the reader.
@@ -19,12 +20,14 @@ export const SNAPSHOT_ASSET_BASE = 'comark-content'
  * - `examples` (search index)
  * - `docs:<version>` (search index)
  * - `cli:<version>` (search index)
+ * - `module:<name>` (search index)
  */
 export const SNAPSHOT_INSTANCE_KEYS: ContentInstanceKey[] = [
   'site',
   'examples',
   docsInstanceKey(CURRENT_DOCS_VERSION),
-  cliInstanceKey(CURRENT_DOCS_VERSION)
+  cliInstanceKey(CURRENT_DOCS_VERSION),
+  ...MODULE_DOCS_NAMES.map(moduleInstanceKey)
 ]
 
 /** Whether `key` ships a build-time snapshot. */

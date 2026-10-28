@@ -30,16 +30,17 @@ async function fetchModuleReadme(slug: string): Promise<string | null> {
 }
 
 async function fetchPageMarkdown(pagePath: string): Promise<string | null> {
-  const moduleSlug = pagePath.match(/^\/modules\/([^/]+)$/)?.[1]
-  if (moduleSlug) return await fetchModuleReadme(moduleSlug)
   const response = await fetch(`${appOrigin()}/raw${pagePath}.md`, { signal: AbortSignal.timeout(10_000) })
+  // A module page is only served as Markdown when nuxt.com hosts the module's docs: else its README.
+  const moduleSlug = pagePath.match(/^\/modules\/([^/]+)$/)?.[1]
+  if (moduleSlug && response.status === 404) return await fetchModuleReadme(moduleSlug)
   if (response.status === 404) return null
   if (!response.ok) throw new Error(`Page ${pagePath} failed (${response.status})`)
   return await response.text()
 }
 
 export default defineTool({
-  description: 'Read a nuxt.com page as Markdown: a docs page (`/docs/4.x/…`, also `/docs/3.x/…`; not `/docs/5.x/…`), a deployment guide (`/deploy/…`), a blog post (`/blog/…`), an example, or a module\'s README (`/modules/<slug>`). Pass `sections` with h2/h3 titles to get only those parts of a long page; omit it for a summary of the whole page.',
+  description: 'Read a nuxt.com page as Markdown: a docs page (`/docs/4.x/…`, also `/docs/3.x/…`; not `/docs/5.x/…`), a deployment guide (`/deploy/…`), a blog post (`/blog/…`), an example, a module\'s README (`/modules/<slug>`), or a page of the module docs nuxt.com hosts (`/modules/<slug>/…`). Pass `sections` with h2/h3 titles to get only those parts of a long page; omit it for a summary of the whole page.',
   inputSchema: z.object({
     path: z.string().describe('Root-relative path or nuxt.com URL, e.g. "/docs/4.x/getting-started/state-management"'),
     sections: z.array(z.string()).optional().describe('Heading titles to keep (case-insensitive substring match)')

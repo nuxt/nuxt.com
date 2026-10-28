@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import type { NavigationItem } from 'comark-content'
 import type { ContentInstanceKey } from '../../shared/utils/content'
-import { cliInstanceKey, docsInstanceKey } from '../../shared/utils/content'
+import { cliInstanceKey, docsInstanceKey, moduleInstanceKey } from '../../shared/utils/content'
 import { docsPathPrefix, EXAMPLES_PATH_PREFIX } from '../../shared/utils/docs'
 
 const VERSION = '4.x'
@@ -21,11 +21,12 @@ vi.stubGlobal('getInstanceAtHead', async (key: ContentInstanceKey) => {
 })
 
 const navigationUtils = await import('../../server/utils/content/navigation')
-const { blogTree, cliTree, docTree, examplesTree, findByPath } = navigationUtils
+const { blogTree, cliTree, docTree, examplesTree, findByPath, moduleDocsTrees } = navigationUtils
 
 vi.stubGlobal('docTree', docTree)
 vi.stubGlobal('findByPath', findByPath)
 vi.stubGlobal('blogTree', blogTree)
+vi.stubGlobal('moduleDocsTrees', moduleDocsTrees)
 vi.stubGlobal('defineEventHandler', <T>(handler: T) => handler)
 vi.stubGlobal('getRouterParam', (event: Record<string, string>, name: string) => event[name])
 vi.stubGlobal('createError', (input: { statusCode: number, statusMessage: string }) =>
@@ -46,6 +47,16 @@ const docsNav = [{
 
 const examplesNav = [{ title: 'Examples', path: EXAMPLES_PATH_PREFIX }] as unknown as NavigationItem[]
 const siteNav = [{ title: 'Blog', path: '/blog' }] as unknown as NavigationItem[]
+/** A module instance wraps its docs in its `/modules` prefix, and lists its `index.md` under its own root too. */
+const iconNav = [{
+  title: 'Modules',
+  path: '/modules',
+  children: [{
+    title: 'Nuxt Icon',
+    path: '/modules/icon',
+    children: [{ title: 'Quick Start', path: '/modules/icon' }, { title: 'Usage', path: '/modules/icon/usage' }]
+  }]
+}] as unknown as NavigationItem[]
 
 /** The paths grafted under the version root, in order. */
 const childPaths = (tree: NavigationItem[]) =>
@@ -56,6 +67,7 @@ beforeEach(() => {
   navigations.set(docsInstanceKey(VERSION), docsNav)
   navigations.set('examples', examplesNav)
   navigations.set('site', siteNav)
+  navigations.set(moduleInstanceKey('icon'), iconNav)
   vi.spyOn(console, 'error').mockImplementation(() => {})
 })
 
@@ -116,15 +128,22 @@ describe('GET /api/navigation/:version', () => {
       `${docsPathPrefix(VERSION)}/api`,
       EXAMPLES_PATH_PREFIX
     ])
-    expect(tree.map(item => item.path)).toEqual([docsPathPrefix(VERSION), '/blog'])
+    expect(tree.map(item => item.path)).toEqual([docsPathPrefix(VERSION), '/blog', '/modules/icon'])
     expect(tree[0]).not.toHaveProperty('stem')
+  })
+
+  it('grafts each hosted module\'s docs at its module page, so search can place their results', async () => {
+    const tree = await handler({ version: VERSION })
+
+    // The root is the module page itself: its duplicate `index.md` child goes.
+    expect(findByPath(tree, '/modules/icon')?.children?.map(child => child.path)).toEqual(['/modules/icon/usage'])
   })
 
   it('404s an unknown version', async () => {
     await expect(handler({ version: 'nope' })).rejects.toMatchObject({ statusCode: 404 })
   })
 
-  it('serves an archived version without the Nuxt 3+ examples', async () => {
+  it('serves an archived version without the Nuxt 3+ examples or module docs', async () => {
     const archived = docsPathPrefix('2.x')
     navigations.set(docsInstanceKey('2.x'), [{
       title: 'Docs',
@@ -151,6 +170,7 @@ describe('GET /api/navigation/:version', () => {
   it('still serves the docs tree when the optional grafts fail', async () => {
     navigations.set('examples', new Error('github is down'))
     navigations.set('site', new Error('github is down'))
+    navigations.set(moduleInstanceKey('icon'), new Error('github is down'))
 
     const tree = await handler({ version: VERSION })
 

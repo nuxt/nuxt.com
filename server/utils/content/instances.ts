@@ -6,7 +6,7 @@ import type { FSSourceOptions } from 'comark-content/sources/fs'
 import { CLI_DOCS_REFS, CLI_DOCS_REPO, CLI_DOCS_PREFIX, cliDocsPathPrefix, hasCliDocs, type CliDocVersion } from '../../../shared/utils/cli'
 import { DOCS_REFS, DOCS_REPO, docsPathPrefix, isDocVersion, type DocVersion } from '../../../shared/utils/docs'
 import { MODULE_DOCS, hasModuleDocs, moduleDocsPathPrefix, type ModuleDocsName } from '../../../shared/utils/module-docs'
-import { CONTENT_INSTANCE_KEYS, isContentInstanceKey, cliInstanceKey, docsInstanceKey, moduleInstanceKey, type ContentInstanceKey } from '../../../shared/utils/content'
+import { CONTENT_INSTANCE_KEYS, isContentInstanceKey, cliInstanceKey, docsInstanceKey, instanceName, moduleInstanceKey, type ContentInstanceKey } from '../../../shared/utils/content'
 
 /** What comark-content's sources own; a required `prefix` is what the page resolver depends on. */
 type ComarkSourceOptions = Pick<GithubSource & FSSourceOptions, 'exclude' | 'schema'> & {
@@ -148,7 +148,7 @@ export function instanceSource(key: ContentInstanceKey): { name: string, source:
     }
     const { repo, branch, contentDir, envOverride } = MODULE_DOCS[name]
     return {
-      name: 'module',
+      name: instanceName(key),
       source: {
         repo,
         branch,
