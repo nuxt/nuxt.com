@@ -2,8 +2,8 @@ hero:
   title: 'The Full-Stack Vue Framework'
   description: Build fast, production-ready web apps with Vue. File-based routing, auto-imports, and server-side rendering, all configured out of the box.
   cta:
-    label: Nuxt 4.6 is out
-    to: /blog/v4-6
+    label: Nuxt DevTools v4 is out
+    to: /blog/devtools-v4
     icon: i-lucide-arrow-right
   tabs:
     - title: Minimal
