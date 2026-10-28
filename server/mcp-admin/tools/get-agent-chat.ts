@@ -8,23 +8,26 @@ function extractText(parts: MessagePart[]): string {
     .join(' ')
 }
 
+const inputSchema = z.object({
+  chatId: z.string().min(1).describe('The chat session id (UUID-style string returned by list_agent_chats).'),
+  includeRawParts: z.boolean().default(false).describe('If true, include the raw `parts` array on every message. Off by default to keep responses small.')
+})
+
 export default defineMcpTool({
+  name: 'get-agent-chat',
+  title: 'Get Agent Chat',
+  group: 'admin',
   description: `Retrieves a saved **web** chat session: messages (with extracted text), and per-message votes. Only chats shared with admins or made public are available.
 
 WHEN TO USE: After \`list-agent-chats\`, read the transcript. Token/cost data for any channel is in Vercel Observability → Agent Runs; \`agentRunId\` is the run id to look up there (null for chats that never reached the agent).`,
-  inputSchema: {
-    chatId: z.string().min(1).describe('The chat session id (UUID-style string returned by list_agent_chats).'),
-    includeRawParts: z.boolean().default(false).describe('If true, include the raw `parts` array on every message. Off by default to keep responses small.')
-  },
+  inputSchema: inputSchema.meta({ examples: [
+    { chatId: 'chat-abc123' },
+    { chatId: 'chat-abc123', includeRawParts: true }
+  ] satisfies z.input<typeof inputSchema>[] }),
   annotations: {
     readOnlyHint: true,
     openWorldHint: false
   },
-  inputExamples: [
-    { chatId: 'chat-abc123' },
-    { chatId: 'chat-abc123', includeRawParts: true }
-  ],
-  enabled: event => isMcpAdmin(event),
   async handler({ chatId, includeRawParts }) {
     const [chat] = await db
       .select()

@@ -8,26 +8,29 @@ function extractText(parts: MessagePart[]): string {
     .join(' ')
 }
 
+const inputSchema = z.object({
+  onlyDownvotes: z.boolean().default(false).describe('If true, return only downvotes.'),
+  onlyUpvotes: z.boolean().default(false).describe('If true, return only upvotes.'),
+  sinceDays: z.number().int().min(1).max(365).optional().describe('Only include votes from the last N days.'),
+  limit: z.number().int().min(1).max(200).default(50).describe('Maximum number of votes to return.'),
+  offset: z.number().int().min(0).default(0).describe('Pagination offset.')
+})
+
 export default defineMcpTool({
+  name: 'list-agent-votes',
+  title: 'List Agent Votes',
+  group: 'admin',
   description: `Lists per-message votes (upvotes/downvotes) on AI agent answers, joined with chat metadata and the actual voted message text. Only includes chats shared with admins or made public.
 
 WHEN TO USE: Use this tool to read what users actually disliked. Default sort is most recent vote first; pass \`onlyDownvotes\` to focus on negative signal.`,
-  inputSchema: {
-    onlyDownvotes: z.boolean().default(false).describe('If true, return only downvotes.'),
-    onlyUpvotes: z.boolean().default(false).describe('If true, return only upvotes.'),
-    sinceDays: z.number().int().min(1).max(365).optional().describe('Only include votes from the last N days.'),
-    limit: z.number().int().min(1).max(200).default(50).describe('Maximum number of votes to return.'),
-    offset: z.number().int().min(0).default(0).describe('Pagination offset.')
-  },
+  inputSchema: inputSchema.meta({ examples: [
+    { onlyDownvotes: true, sinceDays: 7 },
+    { sinceDays: 30, limit: 100 }
+  ] satisfies z.input<typeof inputSchema>[] }),
   annotations: {
     readOnlyHint: true,
     openWorldHint: false
   },
-  inputExamples: [
-    { onlyDownvotes: true, sinceDays: 7 },
-    { sinceDays: 30, limit: 100 }
-  ],
-  enabled: event => isMcpAdmin(event),
   async handler({ onlyDownvotes, onlyUpvotes, sinceDays, limit, offset }) {
     if (onlyDownvotes && onlyUpvotes) {
       throw createError({ statusCode: 400, message: 'Pass at most one of `onlyDownvotes` / `onlyUpvotes`.' })

@@ -1,15 +1,16 @@
+import { createMcpHandler, defineMcpTool } from 'nitro-mcp-toolkit'
+import { createMcpTestClient, textOf } from 'nitro-mcp-toolkit/testing'
 import { createVerify, generateKeyPairSync } from 'node:crypto'
 import { createError } from 'h3'
-import { describe, expect, it, vi } from 'vitest'
+import { afterAll, describe, expect, it, vi } from 'vitest'
 
 const { privateKey, publicKey } = generateKeyPairSync('rsa', { modulusLength: 2048 })
 const clientEmail = 'gsc@nuxt.iam.gserviceaccount.com'
 
 const fetchMock = vi.fn()
 vi.stubGlobal('$fetch', fetchMock)
-vi.stubGlobal('defineMcpTool', <T>(definition: T) => definition)
+vi.stubGlobal('defineMcpTool', defineMcpTool)
 vi.stubGlobal('createError', createError)
-vi.stubGlobal('isMcpAdmin', () => true)
 vi.stubGlobal('useRuntimeConfig', () => ({
   googleSearchConsole: {
     clientEmail,
@@ -23,9 +24,16 @@ const google = await import('../../server/utils/google')
 vi.stubGlobal('searchConsoleFetch', google.searchConsoleFetch)
 vi.stubGlobal('cruxFetch', google.cruxFetch)
 
-type Tool = { handler: (input: Record<string, unknown>) => Promise<any> }
-const analytics = (await import('../../server/mcp/tools/admin/search-console-analytics')).default as unknown as Tool
-const webVitals = (await import('../../server/mcp/tools/admin/crux-web-vitals')).default as unknown as Tool
+const analytics = (await import('../../server/mcp-admin/tools/search-console-analytics')).default
+const webVitals = (await import('../../server/mcp-admin/tools/crux-web-vitals')).default
+const client = await createMcpTestClient(createMcpHandler({ tools: [analytics, webVitals] }))
+afterAll(() => client.close())
+
+async function callTool(name: string, args: Record<string, unknown>): Promise<unknown> {
+  const result = await client.callTool({ name, arguments: args })
+  expect(result.isError).not.toBe(true)
+  return JSON.parse(textOf(result))
+}
 
 const input = { startDate: '2026-10-01', endDate: '2026-10-07', dimensions: ['page', 'query'], filters: [], type: 'web', rowLimit: 10, startRow: 0 }
 
@@ -47,10 +55,10 @@ describe('admin Search Console tools', () => {
       return { rows: [{ keys: ['https://nuxt.com/docs/4.x/api/composables/use-fetch', 'nuxt usefetch'], clicks: 120, impressions: 4000, ctr: 0.03, position: 4.26 }] }
     })
 
-    const [result] = await Promise.all([analytics.handler(input), analytics.handler(input)])
-    await analytics.handler(input)
+    const [result] = await Promise.all([callTool('search-console-analytics', input), callTool('search-console-analytics', input)])
+    await callTool('search-console-analytics', input)
 
-    expect(result.rows).toEqual([{ page: 'https://nuxt.com/docs/4.x/api/composables/use-fetch', query: 'nuxt usefetch', clicks: 120, impressions: 4000, ctr: 3, position: 4.3 }])
+    expect(result).toMatchObject({ rows: [{ page: 'https://nuxt.com/docs/4.x/api/composables/use-fetch', query: 'nuxt usefetch', clicks: 120, impressions: 4000, ctr: 3, position: 4.3 }] })
     // Concurrent calls share one token exchange, and later calls reuse the cached token
     expect(fetchMock.mock.calls.filter(([url]) => url.includes('oauth2')).length).toBe(1)
   })
@@ -58,10 +66,9 @@ describe('admin Search Console tools', () => {
   it('surfaces Google API errors to the MCP client', async () => {
     fetchMock.mockRejectedValue(Object.assign(new Error('403'), { statusCode: 403, data: { error: { message: 'User does not have sufficient permission for site \'sc-domain:nuxt.com\'.' } } }))
 
-    await expect(analytics.handler(input)).rejects.toMatchObject({
-      statusCode: 403,
-      message: 'Google Search Console: User does not have sufficient permission for site \'sc-domain:nuxt.com\'.'
-    })
+    const result = await client.callTool({ name: 'search-console-analytics', arguments: input })
+    expect(result.isError).toBe(true)
+    expect(textOf(result)).toContain('Google Search Console: User does not have sufficient permission')
   })
 })
 
@@ -89,13 +96,17 @@ describe('admin Chrome UX Report tool', () => {
       }
     })
 
-    const result = await webVitals.handler({ url: '/docs/4.x/api', formFactor: 'PHONE' })
+    const result = await callTool('crux-web-vitals', { url: '/docs/4.x/api', formFactor: 'PHONE' })
 
-    expect(result.collectionPeriod).toEqual({ firstDate: '2026-09-27', lastDate: '2026-10-24' })
-    expect(result.metrics.lcp).toEqual({ p75: 2600, rating: 'needs-improvement', goodPercent: 71.2, needsImprovementPercent: 20, poorPercent: 8.8 })
-    expect(result.metrics.inp.rating).toBe('good')
-    expect(result.metrics.cls).toMatchObject({ p75: 0.05, rating: 'good' })
-    expect(result.assessment).toBe('failed')
+    expect(result).toMatchObject({
+      collectionPeriod: { firstDate: '2026-09-27', lastDate: '2026-10-24' },
+      metrics: {
+        lcp: { p75: 2600, rating: 'needs-improvement', goodPercent: 71.2, needsImprovementPercent: 20, poorPercent: 8.8 },
+        inp: { rating: 'good' },
+        cls: { p75: 0.05, rating: 'good' }
+      },
+      assessment: 'failed'
+    })
   })
 
   it('maps the weekly history, keeping periods without data', async () => {
@@ -118,17 +129,17 @@ describe('admin Chrome UX Report tool', () => {
       }
     })
 
-    const { periods } = await webVitals.handler({ weeks: 2 })
+    const result = await callTool('crux-web-vitals', { weeks: 2 })
 
-    expect(periods).toEqual([
+    expect(result).toMatchObject({ periods: [
       { firstDate: '2026-09-20', lastDate: '2026-10-17', assessment: 'failed', lcp: { p75: 2400, rating: 'good' }, inp: { p75: 180, rating: 'good' }, cls: { p75: 0.3, rating: 'poor' } },
       { firstDate: '2026-09-27', lastDate: '2026-10-24', assessment: 'unknown', lcp: { p75: null, rating: null }, inp: { p75: 190, rating: 'good' }, cls: { p75: 0.05, rating: 'good' } }
-    ])
+    ] })
   })
 
   it('reports pages without enough Chrome traffic instead of failing', async () => {
     fetchMock.mockRejectedValue(Object.assign(new Error('404'), { statusCode: 404, data: { error: { message: 'chrome ux report data not found' } } }))
 
-    await expect(webVitals.handler({ url: '/docs/4.x/rare-page' })).resolves.toMatchObject({ url: 'https://nuxt.com/docs/4.x/rare-page', found: false })
+    await expect(callTool('crux-web-vitals', { url: '/docs/4.x/rare-page' })).resolves.toMatchObject({ url: 'https://nuxt.com/docs/4.x/rare-page', found: false })
   })
 })

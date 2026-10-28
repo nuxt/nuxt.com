@@ -1,13 +1,17 @@
 import { z } from 'zod'
 
+const inputSchema = z.object({
+  sinceDays: z.coerce.number().int().min(7).max(365).default(30).describe('Window in days (default 30).'),
+  top: z.coerce.number().int().min(1).max(20).default(5).describe('How many problematic pages to triage in depth (default 5).'),
+  minResponses: z.coerce.number().int().min(1).max(50).default(3).describe('Minimum responses for a page to be considered (filters noise from pages with 1-2 votes).')
+})
+
 export default defineMcpPrompt({
+  name: 'triage-problematic-pages',
+  title: 'Triage Problematic Pages',
+  group: 'admin',
   description: 'Identify the docs pages with the most negative feedback over a window and suggest concrete improvements based on what users are saying.',
-  inputSchema: {
-    sinceDays: z.number().int().min(7).max(365).default(30).describe('Window in days (default 30).'),
-    top: z.number().int().min(1).max(20).default(5).describe('How many problematic pages to triage in depth (default 5).'),
-    minResponses: z.number().int().min(1).max(50).default(3).describe('Minimum responses for a page to be considered (filters noise from pages with 1-2 votes).')
-  },
-  enabled: event => isMcpAdmin(event),
+  inputSchema,
   handler({ sinceDays, top, minResponses }) {
     return `Triage the most problematic Nuxt docs pages from the last ${sinceDays} days.
 

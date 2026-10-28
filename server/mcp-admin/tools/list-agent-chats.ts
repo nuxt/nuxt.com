@@ -1,27 +1,30 @@
 import { z } from 'zod'
 import { and, desc, eq, gte, lte, sql, type SQL } from 'drizzle-orm'
 
+const inputSchema = z.object({
+  sinceDays: z.number().int().min(1).max(365).optional().describe('Only include chats from the last N days.'),
+  until: z.string().datetime({ offset: true }).optional().describe('Upper bound on createdAt as an ISO 8601 datetime.'),
+  hasDownvotes: z.boolean().optional().describe('If true, only return chats that have at least one downvoted message.'),
+  sortBy: z.enum(['createdAt', 'updatedAt']).default('updatedAt').describe('Sort field (default updatedAt, descending).'),
+  limit: z.number().int().min(1).max(100).default(25).describe('Maximum number of chats to return.'),
+  offset: z.number().int().min(0).default(0).describe('Pagination offset.')
+})
+
 export default defineMcpTool({
+  name: 'list-agent-chats',
+  title: 'List Agent Chats',
+  group: 'admin',
   description: `Lists persisted **web** chat sessions (signed-in users on nuxt.com) with message counts and vote tallies. Only includes chats shared with admins or made public. Does not include Slack threads or Vercel o11y runs — use Observability → Agent Runs for those.
 
 WHEN TO USE: Find web chats with downvotes or read metadata before opening a full transcript via \`get-agent-chat\`.`,
-  inputSchema: {
-    sinceDays: z.number().int().min(1).max(365).optional().describe('Only include chats from the last N days.'),
-    until: z.string().datetime({ offset: true }).optional().describe('Upper bound on createdAt as an ISO 8601 datetime.'),
-    hasDownvotes: z.boolean().optional().describe('If true, only return chats that have at least one downvoted message.'),
-    sortBy: z.enum(['createdAt', 'updatedAt']).default('updatedAt').describe('Sort field (default updatedAt, descending).'),
-    limit: z.number().int().min(1).max(100).default(25).describe('Maximum number of chats to return.'),
-    offset: z.number().int().min(0).default(0).describe('Pagination offset.')
-  },
+  inputSchema: inputSchema.meta({ examples: [
+    { sinceDays: 7, hasDownvotes: true },
+    { sinceDays: 30, sortBy: 'createdAt', limit: 10 }
+  ] satisfies z.input<typeof inputSchema>[] }),
   annotations: {
     readOnlyHint: true,
     openWorldHint: false
   },
-  inputExamples: [
-    { sinceDays: 7, hasDownvotes: true },
-    { sinceDays: 30, sortBy: 'createdAt', limit: 10 }
-  ],
-  enabled: event => isMcpAdmin(event),
   async handler({ sinceDays, until, hasDownvotes, sortBy, limit, offset }) {
     const filters: SQL[] = [adminReadableChat()]
     if (sinceDays) {

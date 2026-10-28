@@ -64,8 +64,29 @@ To regenerate the image, delete the generated one in `public/assets/templates`.
 Build the application for production:
 
 ```bash
-pnpm generate
+pnpm build
 ```
+
+### Testing the MCP Toolkit preview
+
+The toolkit dependency is pinned to [the 1.0 preview from `a582ad1`](https://github.com/nuxt-modules/mcp-toolkit/pull/406). Its matching Nitro runtime preview is pinned by the package itself. This branch tests that preview before switching to a published beta.
+
+```bash
+pnpm install --frozen-lockfile
+pnpm dev
+```
+
+In another terminal, run `pnpm test:mcp`. It connects real modern and legacy MCP clients to `http://localhost:3000/mcp`, checks the 12 tools, 3 resources and 3 prompts, reads public content, and verifies that `/mcp/admin` rejects missing or invalid credentials. Set `MCP_TEST_URL` if the site uses a different local port. If documentation loading hits GitHub’s anonymous rate limit, set `NUXT_GITHUB_TOKEN` for the site or use the local documentation paths described above.
+
+To include authenticated admin catalog and prompt checks, start the site with `NUXT_MCP_ADMIN_TOKEN=local-mcp-preview-test pnpm dev`, then run:
+
+```bash
+MCP_TEST_ADMIN_TOKEN=local-mcp-preview-test pnpm test:mcp
+```
+
+These checks use a local test token and do not query private chats, feedback, or Google APIs. The public server card at `/.well-known/mcp/server-card.json` must contain only the public catalog. Admin tools and prompts live separately in `server/mcp-admin` and are composed by `server/routes/mcp/admin.ts`.
+
+Public tools and resources use native Nitro cached functions with their existing 10-minute, 30-minute or 1-hour lifetimes. Cache keys include the request origin and parsed arguments; repeated content reads are covered by the smoke check. No MCP client credentials are needed for the public endpoint.
 
 ### Running Evals for the MCP Server
 

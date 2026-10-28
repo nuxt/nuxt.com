@@ -8,26 +8,29 @@ const RATING_SCORES: Record<string, number> = {
   'confusing': 1
 }
 
+const inputSchema = z.object({
+  sinceDays: z.number().int().min(1).max(365).default(30).describe('Window in days from now (default 30).'),
+  topPages: z.number().int().min(1).max(50).default(10).describe('How many of the worst-scoring pages to return.'),
+  minResponses: z.number().int().min(1).default(3).describe('Minimum number of responses for a page to appear in the worst-pages list (default 3).')
+})
+
 export default defineMcpTool({
+  name: 'feedback-stats',
+  title: 'Feedback Stats',
+  group: 'admin',
   description: `Aggregated feedback metrics: global counts per rating, top problematic pages (most negative feedback), and an average satisfaction score.
 
 WHEN TO USE: Start here to get a high-level read on docs satisfaction over a window, then drill down with \`admin_list_feedback\` on the worst-scoring pages.
 
 OUTPUT: Returns global stats, breakdown by rating, and a list of pages sorted by lowest average score (worst first).`,
-  inputSchema: {
-    sinceDays: z.number().int().min(1).max(365).default(30).describe('Window in days from now (default 30).'),
-    topPages: z.number().int().min(1).max(50).default(10).describe('How many of the worst-scoring pages to return.'),
-    minResponses: z.number().int().min(1).default(3).describe('Minimum number of responses for a page to appear in the worst-pages list (default 3).')
-  },
+  inputSchema: inputSchema.meta({ examples: [
+    { sinceDays: 7 },
+    { sinceDays: 30, topPages: 20, minResponses: 5 }
+  ] satisfies z.input<typeof inputSchema>[] }),
   annotations: {
     readOnlyHint: true,
     openWorldHint: false
   },
-  inputExamples: [
-    { sinceDays: 7 },
-    { sinceDays: 30, topPages: 20, minResponses: 5 }
-  ],
-  enabled: event => isMcpAdmin(event),
   async handler({ sinceDays, topPages, minResponses }) {
     const since = new Date(Date.now() - sinceDays * 24 * 60 * 60 * 1000)
 
