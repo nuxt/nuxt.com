@@ -2,6 +2,7 @@ import { createResolver } from 'nuxt/kit'
 import type { LLMsSection } from 'nuxt-llms'
 import { agentHowToCall, agentWhenToUse } from './shared/utils/agents'
 import { ARCHIVED_DOC_VERSIONS, CURRENT_DOCS_VERSION, NEXT_DOC_VERSIONS } from './shared/utils/docs'
+import { MODULE_DOCS, MODULE_DOCS_NAMES, moduleDocsPathPrefix } from './shared/utils/module-docs'
 
 const { resolve } = createResolver(import.meta.url)
 
@@ -619,6 +620,8 @@ export default defineNuxtConfig({
       '/blog/**',
       '/deploy/**',
       { path: '/modules', raw: '/raw/modules.md' },
+      // Hosted module docs: the module page is the docs `index.md`, so it negotiates too.
+      ...MODULE_DOCS_NAMES.flatMap(name => [moduleDocsPathPrefix(name), `${moduleDocsPathPrefix(name)}/**`]),
       { path: '/changelog', raw: '/raw/changelog.md' },
       { path: '/updates', raw: '/raw/updates.md' }
     ],
@@ -782,6 +785,11 @@ export default defineNuxtConfig({
         description: 'Release announcements and deep dives',
         navigation: '/blog'
       },
+      ...MODULE_DOCS_NAMES.map(name => ({
+        title: `${MODULE_DOCS[name].title} Documentation`,
+        description: 'Documentation of an official Nuxt module',
+        navigation: moduleDocsPathPrefix(name)
+      })),
       {
         title: 'Optional',
         links: [

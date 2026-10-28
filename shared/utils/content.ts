@@ -1,5 +1,6 @@
 import { CLI_DOC_VERSIONS, hasCliDocs, type CliDocVersion } from './cli'
 import { DOC_VERSIONS, hasExamples, isDocVersion, type DocVersion } from './docs'
+import { MODULE_DOCS_NAMES, hasModuleDocs, type ModuleDocsName } from './module-docs'
 
 /**
  * Identifies one of the content instances nuxt.com reads from.
@@ -9,8 +10,9 @@ import { DOC_VERSIONS, hasExamples, isDocVersion, type DocVersion } from './docs
  * - `cli:<version>` the command reference backing that version, from `nuxt/cli` — mounted
  *   under the docs URL tree (`/docs/<version>/api/commands`) but its own repo, so its own instance
  * - `examples` the `nuxt/examples` showcase
+ * - `module:<name>` a module's docs, from its own repo — mounted under its module page (`/modules/<name>`)
  */
-export type ContentInstanceKey = 'site' | 'examples' | `docs:${DocVersion}` | `cli:${CliDocVersion}`
+export type ContentInstanceKey = 'site' | 'examples' | `docs:${DocVersion}` | `cli:${CliDocVersion}` | `module:${ModuleDocsName}`
 
 /** The docs instance serving `version`, e.g. `docsInstanceKey('4.x') === 'docs:4.x'`. */
 export function docsInstanceKey(version: DocVersion): ContentInstanceKey {
@@ -22,12 +24,18 @@ export function cliInstanceKey(version: CliDocVersion): ContentInstanceKey {
   return `cli:${version}`
 }
 
+/** The instance serving a module's docs, e.g. `moduleInstanceKey('icon') === 'module:icon'`. */
+export function moduleInstanceKey(name: ModuleDocsName): ContentInstanceKey {
+  return `module:${name}`
+}
+
 /** Every instance nuxt.com serves, derived so a new docs version cannot be missed. */
 export const CONTENT_INSTANCE_KEYS: ContentInstanceKey[] = [
   'site',
   'examples',
   ...DOC_VERSIONS.map(docsInstanceKey),
-  ...CLI_DOC_VERSIONS.map(cliInstanceKey)
+  ...CLI_DOC_VERSIONS.map(cliInstanceKey),
+  ...MODULE_DOCS_NAMES.map(moduleInstanceKey)
 ]
 
 /**
@@ -53,6 +61,7 @@ export const SEARCH_INDEXED_KEYS: Set<ContentInstanceKey> = new Set(DOC_VERSIONS
 export function isContentInstanceKey(value: string): value is ContentInstanceKey {
   if (value === 'site' || value === 'examples') return true
   if (value.startsWith('docs:')) return isDocVersion(value.slice('docs:'.length))
+  if (value.startsWith('module:')) return hasModuleDocs(value.slice('module:'.length))
 
   return value.startsWith('cli:') && hasCliDocs(value.slice('cli:'.length))
 }
@@ -96,6 +105,8 @@ export function navigationPath(version: DocVersion): string {
  */
 export function navPathsForInstance(key: ContentInstanceKey): string[] {
   if (key === 'site' || key === 'examples') return DOC_VERSIONS.map(navigationPath)
+  // A module page reads its own instance's navigation, not a docs version's tree.
+  if (key.startsWith('module:')) return []
 
   return [navigationPath(key.split(':')[1] as DocVersion)]
 }
