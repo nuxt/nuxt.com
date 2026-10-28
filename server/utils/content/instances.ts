@@ -5,7 +5,8 @@ import type { GithubSource } from 'comark-content/sources/github'
 import type { FSSourceOptions } from 'comark-content/sources/fs'
 import { CLI_DOCS_REFS, CLI_DOCS_REPO, CLI_DOCS_PREFIX, cliDocsPathPrefix, hasCliDocs, type CliDocVersion } from '../../../shared/utils/cli'
 import { DOCS_REFS, DOCS_REPO, docsPathPrefix, isDocVersion, type DocVersion } from '../../../shared/utils/docs'
-import { CONTENT_INSTANCE_KEYS, isContentInstanceKey, cliInstanceKey, docsInstanceKey, type ContentInstanceKey } from '../../../shared/utils/content'
+import { MODULE_DOCS, hasModuleDocs, moduleDocsPathPrefix, type ModuleDocsName } from '../../../shared/utils/module-docs'
+import { CONTENT_INSTANCE_KEYS, isContentInstanceKey, cliInstanceKey, docsInstanceKey, moduleInstanceKey, type ContentInstanceKey } from '../../../shared/utils/content'
 
 /** What comark-content's sources own; a required `prefix` is what the page resolver depends on. */
 type ComarkSourceOptions = Pick<GithubSource & FSSourceOptions, 'exclude' | 'schema'> & {
@@ -45,7 +46,7 @@ const DOCS_EXCLUDE = ['README.md', '**/*.json']
 /**
  * Per-source branch overrides (testing the push webhook off a non-production branch).
  */
-const BRANCH_ENV: Record<ContentInstanceKey, string> = {
+const BRANCH_ENV: Record<Exclude<ContentInstanceKey, `module:${string}`>, string> = {
   'site': 'NUXT_COM_BRANCH',
   'examples': 'NUXT_EXAMPLES_BRANCH',
   'docs:2.x': 'NUXT_V2_BRANCH',
@@ -58,7 +59,7 @@ const BRANCH_ENV: Record<ContentInstanceKey, string> = {
 }
 
 /** Resolve a branch, honouring env var overrides; log a warning if one is active in production. */
-function branchFor(key: ContentInstanceKey, fallback: string): string {
+function branchFor(key: keyof typeof BRANCH_ENV, fallback: string): string {
   const envVar = BRANCH_ENV[key]
   const override = process.env[envVar]?.trim()
   if (override && process.env.VERCEL_ENV === 'production') {
@@ -130,12 +131,32 @@ export function instanceSource(key: ContentInstanceKey): { name: string, source:
       name: 'cli',
       source: {
         repo: CLI_DOCS_REPO,
-        branch: branchFor(key as ContentInstanceKey, CLI_DOCS_REFS[version].branch),
+        branch: branchFor(key as `cli:${CliDocVersion}`, CLI_DOCS_REFS[version].branch),
         contentDir: 'docs',
         prefix: cliDocsPathPrefix(version),
         listingFields: DOCS_LISTING_FIELDS,
         exclude: DOCS_EXCLUDE,
         envOverride: CLI_DOCS_REFS[version].envOverride
+      }
+    }
+  }
+
+  if (key.startsWith('module:')) {
+    const name = key.slice('module:'.length)
+    if (!hasModuleDocs(name)) {
+      throw createError({ statusCode: 404, statusMessage: `Unknown content instance: ${key}` })
+    }
+    const { repo, branch, contentDir, envOverride } = MODULE_DOCS[name]
+    return {
+      name: 'module',
+      source: {
+        repo,
+        branch,
+        contentDir,
+        prefix: moduleDocsPathPrefix(name),
+        listingFields: DOCS_LISTING_FIELDS,
+        exclude: DOCS_EXCLUDE,
+        envOverride
       }
     }
   }
@@ -148,7 +169,7 @@ export function instanceSource(key: ContentInstanceKey): { name: string, source:
     name: 'docs',
     source: {
       repo: DOCS_REPO,
-      branch: branchFor(key as ContentInstanceKey, DOCS_REFS[version].branch),
+      branch: branchFor(key as `docs:${DocVersion}`, DOCS_REFS[version].branch),
       contentDir: 'docs',
       prefix: docsPathPrefix(version),
       listingFields: DOCS_LISTING_FIELDS,
@@ -188,6 +209,7 @@ export function instanceFromPagePath(path: string): ContentInstanceKey {
  * - `examples/…` (the examples instance, code examples)
  * - `docs/<version>/…` (one instance per docs version)
  * - `cli/<version>/…` (one instance per docs version's command reference)
+ * - `module/<name>/…` (one instance per module with hosted docs)
  *
  * Shared by the live, `head/` and `blob/<sha>/` routes, which must agree on where an instance's
  * prefix begins — they are the same path with different qualifiers in front. Unlike
@@ -200,6 +222,7 @@ export function instanceKeyFromSegments(segments: string[]): ContentInstanceKey 
   let key: string
   if (first === 'docs') key = docsInstanceKey(version)
   else if (first === 'cli') key = cliInstanceKey(version as CliDocVersion)
+  else if (first === 'module') key = moduleInstanceKey(second as ModuleDocsName)
   else key = first ?? ''
 
   if (isContentInstanceKey(key)) return key

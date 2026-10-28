@@ -25,6 +25,9 @@ const avatars = computed(() => zoom.value >= 1.6)
 
 const DEFAULT_CAMERA = { phi: 0, theta: 0.2, zoom: 1 }
 const MAX_ZOOM = 3
+// Zoomed in, the globe outgrows the canvas: it fades out from 82% of the radius (the mask in the styles) instead of
+// ending on a hard edge. Markers stay inside the part that still shows.
+const FRAME = 0.88
 const markers = computed(() => props.countries
   .flatMap((country) => {
     const location = COUNTRIES[country.code]?.location
@@ -82,6 +85,8 @@ function render(elapsed: number) {
 
   // Markers are HTML on top of the canvas: hide the ones behind the globe, out of the frame, or over another.
   const occupied: Array<{ x: number, y: number, width: number }> = []
+  const frame = Math.min(width, height) / 2 * FRAME
+  const markerHeight = avatars.value ? 32 : 28
   for (const country of markers.value) {
     const element = markerElements.get(country.code)
     if (!element) continue
@@ -93,7 +98,7 @@ function render(elapsed: number) {
       : 20 + format(country.count).length * 7
     const wasVisible = element.dataset.visible === 'true'
     const front = projection.depth > (wasVisible ? 0.1 : 0.14)
-    const fits = x > markerWidth / 2 && x < width - markerWidth / 2 && y > 20 && y < height - 20
+    const fits = Math.hypot(x - width / 2, y - height / 2) < frame - Math.max(markerWidth, markerHeight) / 2
     const gap = wasVisible ? 4 : 8
     const hasRoom = occupied.every(other => Math.abs(other.x - x) > (other.width + markerWidth) / 2 + gap || Math.abs(other.y - y) > 28 + gap)
     const show = front && fits && hasRoom
@@ -102,7 +107,8 @@ function render(elapsed: number) {
       element.inert = !show
     }
     if (show || wasVisible) {
-      const transform = `translate3d(${Math.round(x)}px, ${Math.round(y)}px, 0) translate(-50%, -50%)`
+      // Sub-pixel, like the globe under it: whole pixels made the markers step while it turned smoothly.
+      const transform = `translate3d(${x.toFixed(1)}px, ${y.toFixed(1)}px, 0) translate(-50%, -50%)`
       if (element.style.transform !== transform) element.style.transform = transform
     }
     if (show) occupied.push({ x, y, width: markerWidth })
@@ -246,7 +252,7 @@ onBeforeUnmount(() => {
       tabindex="0"
       role="img"
       aria-label="Nuxters around the world. Arrow keys rotate the globe, plus and minus zoom, zero resets. Every country is also in the list."
-      class="block size-full cursor-grab active:cursor-grabbing touch-none rounded-full focus-visible:outline-2 focus-visible:outline-primary focus-visible:-outline-offset-4"
+      class="nuxters-globe__canvas block size-full cursor-grab active:cursor-grabbing touch-none outline-none"
       @pointerdown="pointerDown"
       @pointermove="pointerMove"
       @pointerup="pointerEnd"
@@ -283,7 +289,7 @@ onBeforeUnmount(() => {
               format="auto"
               loading="lazy"
               alt=""
-              class="size-8 max-w-none -ml-2 rounded-full ring-2 ring-default object-cover"
+              class="size-8 max-w-none -ml-2 rounded-full ring-2 ring-default bg-muted object-cover"
             />
           </span>
           <span v-else key="count">{{ format(country.count) }}</span>
@@ -336,9 +342,23 @@ onBeforeUnmount(() => {
 </template>
 
 <style scoped>
+/* A fade, not a clip: zoomed in, a rounded canvas cut the globe along a false horizon */
+.nuxters-globe__canvas {
+  mask-image: radial-gradient(closest-side, #000 82%, transparent);
+}
+/* The mask would hide an outline on the canvas */
+.nuxters-globe:has(.nuxters-globe__canvas:focus-visible)::after {
+  content: "";
+  position: absolute;
+  inset: 4px;
+  border-radius: 999px;
+  outline: 2px solid var(--ui-primary);
+  pointer-events: none;
+}
 .nuxters-globe__marker {
   position: absolute;
   inset: 0 auto auto 0;
+  will-change: transform;
   display: flex;
   align-items: center;
   height: 28px;

@@ -2,6 +2,7 @@ import { createResolver } from 'nuxt/kit'
 import type { LLMsSection } from 'nuxt-llms'
 import { agentHowToCall, agentWhenToUse } from './shared/utils/agents'
 import { ARCHIVED_DOC_VERSIONS, CURRENT_DOCS_VERSION, NEXT_DOC_VERSIONS } from './shared/utils/docs'
+import { MODULE_DOCS, MODULE_DOCS_NAMES, moduleDocsPathPrefix } from './shared/utils/module-docs'
 
 const { resolve } = createResolver(import.meta.url)
 
@@ -133,6 +134,16 @@ export default defineNuxtConfig({
       }
     },
     mcpAdminToken: '',
+    // Service account added as a user of the Search Console property (admin MCP `search-console-*` tools)
+    googleSearchConsole: {
+      clientEmail: '',
+      privateKey: '',
+      siteUrl: 'sc-domain:nuxt.com'
+    },
+    // Google Cloud API key with the Chrome UX Report API enabled (admin MCP `crux-web-vitals` tool)
+    googleCrux: {
+      apiKey: ''
+    },
     github: {
       token: ''
     },
@@ -477,7 +488,6 @@ export default defineNuxtConfig({
     '/assets/websites/explore-france.png': { redirect: '/assets/websites/explore-france.webp' },
     '/assets/websites/louis-vuitton.png': { redirect: '/assets/websites/louis-vuitton.webp' },
     '/assets/websites/shaina-mote.png': { redirect: '/assets/websites/shaina-mote.webp' },
-    '/assets/websites/virgin-galactic.png': { redirect: '/assets/websites/virgin-galactic.webp' },
     // missing redirects
     '/docs/4.x/examples/essentials/hello-world': { redirect: '/docs/examples/hello-world', prerender: false },
     '/docs/5.x/examples/essentials/hello-world': { redirect: '/docs/examples/hello-world', prerender: false },
@@ -610,6 +620,8 @@ export default defineNuxtConfig({
       '/blog/**',
       '/deploy/**',
       { path: '/modules', raw: '/raw/modules.md' },
+      // Hosted module docs: the module page is the docs `index.md`, so it negotiates too.
+      ...MODULE_DOCS_NAMES.flatMap(name => [moduleDocsPathPrefix(name), `${moduleDocsPathPrefix(name)}/**`]),
       { path: '/changelog', raw: '/raw/changelog.md' },
       { path: '/updates', raw: '/raw/updates.md' }
     ],
@@ -773,6 +785,11 @@ export default defineNuxtConfig({
         description: 'Release announcements and deep dives',
         navigation: '/blog'
       },
+      ...MODULE_DOCS_NAMES.map(name => ({
+        title: `${MODULE_DOCS[name].title} Documentation`,
+        description: 'Documentation of an official Nuxt module',
+        navigation: moduleDocsPathPrefix(name)
+      })),
       {
         title: 'Optional',
         links: [
