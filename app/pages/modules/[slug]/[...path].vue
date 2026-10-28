@@ -113,7 +113,8 @@ const ownerName = computed(() => {
 })
 
 const links = computed(() => module.value
-  ? [{
+  // Hosted docs are this page: an external Documentation link would only lead away from them.
+  ? [!docsName && {
       icon: 'i-lucide-book',
       label: 'Documentation',
       to: `${module.value.website}?utm_source=nuxt.com&utm_medium=aside-module&utm_campaign=nuxt.com`,

@@ -1,0 +1,29 @@
+import { describe, expect, it } from 'vitest'
+import { docsMedia } from '../../server/utils/content/plugins/docs-media'
+
+/** Runs `docsMedia()`'s `file:parsed` hook over one image on the page at `stem`, returning its `src`. */
+function rewrite(stem: string, src: string): unknown {
+  let onParsed: ((ctx: { file: unknown }) => void) | undefined
+  docsMedia('/modules/devtools').setup!({ hooks: { hook: (_: string, fn: typeof onParsed) => (onParsed = fn) } } as never)
+
+  const img: [string, Record<string, unknown>] = ['img', { src, alt: '' }]
+  onParsed!({ file: { path: `/${stem}`, data: {}, meta: { key: `module/${stem}.md`, stem }, nodes: [['p', {}, img]] } })
+
+  return img[1].src
+}
+
+describe('docsMedia', () => {
+  it('points a relative image at the media item, resolved against the page directory', () => {
+    expect(rewrite('1.features', './images/overview.webp')).toBe('/modules/devtools/images/overview.webp')
+    expect(rewrite('1.features', 'images/Overview.webp')).toBe('/modules/devtools/images/Overview.webp')
+    expect(rewrite('2.guide/1.setup', '../images/overview.webp')).toBe('/modules/devtools/images/overview.webp')
+    expect(rewrite('2.guide/1.setup', './shot.png?v=2')).toBe('/modules/devtools/2.guide/shot.png')
+  })
+
+  it('leaves absolute, root-relative and out-of-source images alone', () => {
+    expect(rewrite('index', 'https://example.com/a.png')).toBe('https://example.com/a.png')
+    expect(rewrite('index', '//example.com/a.png')).toBe('//example.com/a.png')
+    expect(rewrite('index', '/assets/a.png')).toBe('/assets/a.png')
+    expect(rewrite('index', '../playground/a.png')).toBe('../playground/a.png')
+  })
+})

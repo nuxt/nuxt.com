@@ -6,7 +6,8 @@
  * The source's `index.md` replaces the README on the module page, so it must have one.
  */
 export const MODULE_DOCS = {
-  icon: { title: 'Nuxt Icon', repo: 'nuxt/icon', branch: 'main', contentDir: 'docs', envOverride: 'NUXT_ICON_PATH' }
+  icon: { title: 'Nuxt Icon', repo: 'nuxt/icon', branch: 'main', contentDir: 'docs', envOverride: 'NUXT_ICON_PATH' },
+  devtools: { title: 'Nuxt DevTools', repo: 'nuxt/devtools', branch: 'main', contentDir: 'docs', envOverride: 'NUXT_DEVTOOLS_PATH' }
 } as const satisfies Record<string, {
   /** Names the docs where the registry data is not at hand: `/llms.txt` sections. */
   title: string
