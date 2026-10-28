@@ -75,8 +75,7 @@ describe('pull paths', () => {
 describe('instanceRepo', () => {
   it('agrees with `instanceSource(key).source.repo` for every instance', () => {
     for (const key of CONTENT_INSTANCE_KEYS) {
-      const repo = instanceRepo(key)
-      if (repo) expect(pullRepoName(repo), key).toBe(instanceSource(key).source.repo)
+      expect(pullRepoName(instanceRepo(key)), key).toBe(instanceSource(key).source.repo)
     }
   })
 })
@@ -88,6 +87,10 @@ describe('isPullContentPage', () => {
     expect(isPullContentPage('/blog/v4')).toBe(true)
     expect(isPullContentPage('/modules')).toBe(true)
     expect(isPullContentPage('/modules/ui')).toBe(false)
+    // Hosted module docs, the module page included
+    expect(isPullContentPage('/modules/icon')).toBe(true)
+    expect(isPullContentPage('/modules/icon/configuration')).toBe(true)
+    expect(isPullContentPage('/modules/icons')).toBe(false)
     expect(isPullContentPage('/blogs')).toBe(false)
   })
 
@@ -100,7 +103,7 @@ describe('isPullContentPage', () => {
 /** Docs tree pages rendering docs data without `useContent()`. */
 const DOCS_PAGES_WITHOUT_CONTENT = new Set(['app/pages/docs/[version]/errors/index.vue'])
 
-/** Pages calling `useContent()` only for module docs, which have no previews. */
+/** Pages calling `useContent()` only for some of their URLs: module pages, for modules with hosted docs. */
 const PAGES_WITHOUT_PREVIEWABLE_CONTENT = new Set(['app/pages/modules/[slug]/[...path].vue'])
 
 /** A URL a page file serves: `blog/[slug].vue` → `/blog/x`, `docs/[...slug].vue` → `/docs/x/y`. */
