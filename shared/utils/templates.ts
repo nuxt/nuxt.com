@@ -26,45 +26,6 @@ export const CURRENT_NUXT_MAJOR = 4
 
 export const SITE_URL = 'https://nuxt.com'
 
-/** Each passing daily check replaces its template's snapshot. The expiry removes the ones nothing replaces: removed or failing templates, lost reports, and runs from local dev or preview deployments. */
-export const TEMPLATE_SNAPSHOT_TTL_MS = 3 * 24 * 60 * 60 * 1000
-
-/** Results older than this are hidden rather than shown as current: the daily check has missed the template more than once. */
-export const TEMPLATE_CHECK_MAX_AGE_MS = 2 * 24 * 60 * 60 * 1000
-
-const MODULE_LABELS: Record<string, string> = {
-  '@nuxt/ui': 'Nuxt UI',
-  '@nuxt/content': 'Content',
-  '@nuxt/image': 'Image',
-  '@nuxt/fonts': 'Fonts',
-  '@nuxt/scripts': 'Scripts',
-  '@nuxt/eslint': 'ESLint',
-  '@nuxthub/core': 'NuxtHub',
-  '@nuxtjs/i18n': 'i18n',
-  '@nuxtjs/supabase': 'Supabase',
-  '@nuxtjs/tailwindcss': 'Tailwind CSS',
-  '@nuxtjs/color-mode': 'Color Mode',
-  '@pinia/nuxt': 'Pinia',
-  '@vueuse/nuxt': 'VueUse',
-  '@comark/nuxt': 'Comark',
-  '@unocss/nuxt': 'UnoCSS',
-  '@nuxtjs/seo': 'SEO',
-  '@vueuse/motion/nuxt': 'Motion',
-  'motion-v': 'Motion',
-  'nuxt-auth-utils': 'Auth Utils',
-  'nuxt-og-image': 'OG Image',
-  'nuxt-csurf': 'CSRF',
-  'shadcn-nuxt': 'shadcn-vue'
-}
-
-/** A short, readable name for a module package (`@nuxt/content` → `Content`, `@scope/nuxt` → `Scope`). */
-export function moduleLabel(name: string): string {
-  if (MODULE_LABELS[name]) return MODULE_LABELS[name]
-  const [, scope, rest = name] = name.match(/^@([^/]+)\/(.+)$/) || []
-  const base = rest.replace(/\/nuxt$/, '').replace(/^nuxt-|-nuxt$|^nuxt$/g, '') || scope || name
-  return base.replace(/-/g, ' ').replace(/\b\w/g, char => char.toUpperCase())
-}
-
 export function isStarter(template: Pick<Template, 'kind'>): boolean {
   return template.kind === 'starter'
 }

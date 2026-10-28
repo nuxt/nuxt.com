@@ -46,7 +46,7 @@ function copyEnv() {
             </span>
             <span class="min-w-0 flex-1 flex flex-col gap-0.5">
               <span class="flex items-center gap-1.5 text-sm font-medium text-highlighted">
-                <span class="truncate">{{ moduleLabel(module.npm) }}</span>
+                <span class="truncate">{{ module.npm }}</span>
                 <UIcon name="i-lucide-arrow-up-right" class="size-3.5 shrink-0 text-dimmed opacity-0 -translate-x-0.5 transition duration-150 group-hover:opacity-100 group-hover:translate-x-0" />
               </span>
               <span v-if="module.description" class="text-xs text-muted line-clamp-2 text-pretty">{{ module.description }}</span>
