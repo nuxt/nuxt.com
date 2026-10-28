@@ -226,7 +226,13 @@ async function createCheckSandbox(template: TemplateToCheck) {
     resources: { vcpus: 4 },
     tags: { app: 'nuxt-com', purpose: 'templates-check', template: template.slug }
   })
-  await sandbox.runCommand({ cmd: 'bash', args: ['-c', `mkdir -p ${TEMPLATE_WORKDIR} && cp -a ${clone}/. ${TEMPLATE_WORKDIR}/`] })
+  const copy = await sandbox.runCommand({ cmd: 'bash', args: ['-c', `mkdir -p ${TEMPLATE_WORKDIR} && cp -a ${clone}/. ${TEMPLATE_WORKDIR}/`] })
+  // `checkTemplate` only stops the sandbox once this step returns its name.
+  if (copy.exitCode !== 0) {
+    const output = (await copy.stderr()).slice(-800)
+    await sandbox.stop().catch(() => {})
+    throw new FatalError(`Copying ${clone} to ${TEMPLATE_WORKDIR} failed: ${output}`)
+  }
   await sandbox.writeFiles([
     { path: `${CHECK_STATE_DIR}/nuxt-com-preview.client.js`, content: PREVIEW_BRIDGE_PLUGIN },
     { path: STATIC_SERVER_PATH, content: STATIC_SERVER },
