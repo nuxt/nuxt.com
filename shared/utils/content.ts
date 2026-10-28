@@ -1,5 +1,5 @@
 import { CLI_DOC_VERSIONS, hasCliDocs, type CliDocVersion } from './cli'
-import { DOC_VERSIONS, hasExamples, isDocVersion, type DocVersion } from './docs'
+import { DOC_VERSIONS, hasExamples, isArchivedDocVersion, isDocVersion, type DocVersion } from './docs'
 import { MODULE_DOCS_NAMES, hasModuleDocs, type ModuleDocsName } from './module-docs'
 
 /**
@@ -45,8 +45,14 @@ export function searchInstanceKeys(version: DocVersion): ContentInstanceKey[] {
   return [
     docsInstanceKey(version),
     ...(hasCliDocs(version) ? [cliInstanceKey(version)] : []),
-    ...(hasExamples(version) ? ['examples' as const] : [])
+    ...(hasExamples(version) ? ['examples' as const] : []),
+    ...(hasModuleDocsSearch(version) ? MODULE_DOCS_NAMES.map(moduleInstanceKey) : [])
   ]
+}
+
+/** Hosted module docs target current Nuxt: an archived version searches and lists only its own docs. */
+export function hasModuleDocsSearch(version: DocVersion): boolean {
+  return !isArchivedDocVersion(version)
 }
 
 /** Every instance whose sha-pinned search artifacts must stay fresh, across every docs version. */
@@ -81,11 +87,13 @@ export function instanceBlobPath(key: ContentInstanceKey, sha: string): string {
 }
 
 /**
- * The comark instance name behind `key` — `docs:4.x` → `docs`, `cli:4.x` → `cli`.
+ * The comark instance name behind `key` — `docs:4.x` → `docs`, `cli:4.x` → `cli`, `module:color-mode` → `module_color_mode`.
  *
+ * Versions share a name (search composes one version at a time), but every module's docs are searched
+ * together, and `contentHub()` rejects duplicate names. Comark names are identifiers: `-` becomes `_`.
  */
 export function instanceName(key: ContentInstanceKey): string {
-  return key.split(':')[0]!
+  return key.startsWith('module:') ? key.replace(/[:-]/g, '_') : key.split(':')[0]!
 }
 
 /** Directory configuration (`.navigation.yml`), which contributes to the tree rather than a page. */
@@ -105,8 +113,8 @@ export function navigationPath(version: DocVersion): string {
  */
 export function navPathsForInstance(key: ContentInstanceKey): string[] {
   if (key === 'site' || key === 'examples') return DOC_VERSIONS.map(navigationPath)
-  // A module page reads its own instance's navigation, not a docs version's tree.
-  if (key.startsWith('module:')) return []
+  // Grafted into every searching version's tree, for the palette to place its results.
+  if (key.startsWith('module:')) return DOC_VERSIONS.filter(hasModuleDocsSearch).map(navigationPath)
 
   return [navigationPath(key.split(':')[1] as DocVersion)]
 }

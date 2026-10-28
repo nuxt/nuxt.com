@@ -1,7 +1,8 @@
-import type { NavigationItem } from 'comark-content'
+import type { ComarkContent, NavigationItem } from 'comark-content'
 import { docsPathPrefix, EXAMPLES_PATH_PREFIX, hasExamples, type DocVersion } from '#shared/utils/docs'
-import { cliInstanceKey, docsInstanceKey } from '#shared/utils/content'
+import { cliInstanceKey, docsInstanceKey, moduleInstanceKey, type ContentInstanceKey } from '#shared/utils/content'
 import { cliDocsPathPrefix, hasCliDocs } from '#shared/utils/cli'
+import { MODULE_DOCS_NAMES, moduleDocsPathPrefix } from '#shared/utils/module-docs'
 
 /**
  * The command reference subtree for `version`.
@@ -31,6 +32,27 @@ export async function examplesTree(): Promise<NavigationItem[]> {
   const examples = findByPath(nav, EXAMPLES_PATH_PREFIX)
 
   return examples ? [examples] : []
+}
+
+/**
+ * Each hosted module's docs, rooted at its module page. Not version-scoped, like the examples.
+ * A module whose docs cannot be read is left out rather than failing the tree.
+ * `getInstance` lets a pull request preview read them through its own instances.
+ */
+export async function moduleDocsTrees(getInstance: (key: ContentInstanceKey) => Promise<ComarkContent> = getInstanceAtHead): Promise<NavigationItem[]> {
+  const trees = await Promise.all(MODULE_DOCS_NAMES.map(name => getInstance(moduleInstanceKey(name))
+    .then(async (content) => {
+      const root = findByPath(await content.navigation(), moduleDocsPathPrefix(name))
+      // The root already is the module page (`index.md`): drop its duplicate child.
+      // Its icon, the header's Modules one, is what the search palette shows on the module's results.
+      return root && { ...root, icon: root.icon || 'i-lucide-puzzle', children: root.children?.filter(item => item.path !== root.path) }
+    })
+    .catch((error) => {
+      console.error(`[content] could not read the ${name} module docs navigation — serving the tree without it`, error)
+      return undefined
+    })))
+
+  return trees.filter(item => !!item)
 }
 
 /**

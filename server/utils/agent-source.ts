@@ -1,8 +1,6 @@
 import type { ComarkContent, NavigationItem } from 'comark-content'
 import { createComarkSource } from '#agent-discovery/comark'
 import { AGENT_DOC_VERSIONS } from '#shared/utils/docs'
-import { moduleInstanceKey } from '#shared/utils/content'
-import { MODULE_DOCS_NAMES, moduleDocsPathPrefix } from '#shared/utils/module-docs'
 
 /**
  * Content source for nuxt-agent-discovery, bridging the comark instances.
@@ -30,14 +28,7 @@ const facade = {
       getInstanceAtHead('examples').catch(() => null),
       // Examples are left out of the version trees
       Promise.all(AGENT_DOC_VERSIONS.map(version => docTree(version, { withExamples: false }).catch(() => [] as NavigationItem[]))),
-      // Each module's docs, rooted at its module page
-      Promise.all(MODULE_DOCS_NAMES.map(name => getInstanceAtHead(moduleInstanceKey(name))
-        .then(async (content) => {
-          const root = findByPath(await content.navigation(), moduleDocsPathPrefix(name))
-          // The root already is the module page (`index.md`): drop its duplicate `Overview` child.
-          return root && { ...root, children: root.children?.filter(item => item.path !== root.path) }
-        })
-        .catch(() => undefined)))
+      moduleDocsTrees()
     ])
 
     const examples = examplesContent ? findByPath(await examplesContent.navigation(), '/docs/examples') : undefined
@@ -46,7 +37,7 @@ const facade = {
       ...prune(site),
       ...versions.flat(),
       ...(examples ? [examples] : []),
-      ...moduleDocs.filter(item => !!item)
+      ...moduleDocs
     ]
   },
   async get(path: string) {

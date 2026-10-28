@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
-import { isContentInstanceKey, searchInstanceKeys, SEARCH_INDEXED_KEYS } from '../../shared/utils/content'
-import { DOC_VERSIONS } from '../../shared/utils/docs'
+import { isContentInstanceKey, moduleInstanceKey, searchInstanceKeys, SEARCH_INDEXED_KEYS } from '../../shared/utils/content'
+import { CURRENT_DOCS_VERSION, DOC_VERSIONS } from '../../shared/utils/docs'
+import { MODULE_DOCS_NAMES } from '../../shared/utils/module-docs'
 import { instanceSource } from '../../server/utils/content/instances'
 
 describe('searchInstanceKeys', () => {
@@ -14,8 +15,12 @@ describe('searchInstanceKeys', () => {
     }
   })
 
-  it('searches only its own docs on an archived version, without the Nuxt 3+ examples', () => {
+  it('searches only its own docs on an archived version, without the Nuxt 3+ examples or module docs', () => {
     expect(searchInstanceKeys('2.x')).toEqual(['docs:2.x'])
+  })
+
+  it('searches every hosted module\'s docs alongside the current docs', () => {
+    expect(searchInstanceKeys(CURRENT_DOCS_VERSION)).toEqual(expect.arrayContaining(MODULE_DOCS_NAMES.map(moduleInstanceKey)))
   })
 
   it('gives every composed instance a unique name — contentHub() throws on a duplicate', () => {

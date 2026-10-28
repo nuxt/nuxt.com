@@ -23,8 +23,8 @@ function usePullHead(pull: PullTarget) {
 }
 
 /**
- * Client-side full-text search over the active docs version, the CLI corresponding reference and the
- * examples (sqlite-wasm FTS5), hydrated from each instance's per-commit snapshot artifacts.
+ * Client-side full-text search over the active docs version, the CLI corresponding reference, the
+ * examples and the hosted module docs (sqlite-wasm FTS5), hydrated from each instance's per-commit snapshot artifacts.
  */
 export function useSearch() {
   // Fetched once in `app.vue`/`error.vue`
