@@ -1,6 +1,6 @@
 import { sqliteTable, text, integer, uniqueIndex, index, primaryKey } from 'drizzle-orm/sqlite-core'
 import type { NuxterSocialAccount } from '../../shared/types/nuxters'
-import { TEMPLATE_CHECK_PHASES, type TemplateCheckPhaseTiming } from '../../shared/types/templates'
+import { TEMPLATE_CHECK_PHASES, type TemplateCheckPhaseTiming } from '../utils/templates/check-report'
 
 const timestamps = {
   createdAt: integer('created_at', { mode: 'timestamp' }).notNull().$defaultFn(() => new Date())

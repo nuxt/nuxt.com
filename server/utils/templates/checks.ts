@@ -1,9 +1,9 @@
 import { desc, inArray } from 'drizzle-orm'
 import type { BatchItem } from 'drizzle-orm/batch'
 import { start } from 'workflow/api'
-import type { Template, TemplateToCheck } from '#shared/types'
+import type { Template } from '#shared/types'
 import { checkTemplatesWorkflow } from '../../workflows/check-templates'
-import { applyCheckReport, type CheckReport } from './check-report'
+import { applyCheckReport, TEMPLATE_SNAPSHOT_TTL_MS, type CheckReport, type TemplateToCheck } from './check-report'
 
 /** A run still `running` after this was cancelled outside nuxt.com or crashed: it no longer blocks a new one. */
 const STALE_AFTER_MS = 3 * 60 * 60 * 1000
