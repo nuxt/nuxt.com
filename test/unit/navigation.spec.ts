@@ -137,6 +137,8 @@ describe('GET /api/navigation/:version', () => {
 
     // The root is the module page itself: its duplicate `index.md` child goes.
     expect(findByPath(tree, '/modules/icon')?.children?.map(child => child.path)).toEqual(['/modules/icon/usage'])
+    // The palette shows the nearest icon on every result below it.
+    expect(findByPath(tree, '/modules/icon')?.icon).toBe('i-lucide-puzzle')
   })
 
   it('404s an unknown version', async () => {

@@ -44,7 +44,8 @@ export async function moduleDocsTrees(getInstance: (key: ContentInstanceKey) => 
     .then(async (content) => {
       const root = findByPath(await content.navigation(), moduleDocsPathPrefix(name))
       // The root already is the module page (`index.md`): drop its duplicate child.
-      return root && { ...root, children: root.children?.filter(item => item.path !== root.path) }
+      // Its icon, the header's Modules one, is what the search palette shows on the module's results.
+      return root && { ...root, icon: root.icon || 'i-lucide-puzzle', children: root.children?.filter(item => item.path !== root.path) }
     })
     .catch((error) => {
       console.error(`[content] could not read the ${name} module docs navigation — serving the tree without it`, error)
