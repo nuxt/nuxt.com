@@ -57,13 +57,19 @@ const items = computed<DropdownMenuItem[][]>(() => {
         label: 'Light',
         icon: 'i-lucide-sun',
         onSelect: () => { colorMode.preference = 'light' },
-        checked: colorMode.value === 'light'
+        checked: colorMode.preference === 'light'
       },
       {
         label: 'Dark',
         icon: 'i-lucide-moon',
         onSelect: () => { colorMode.preference = 'dark' },
-        checked: colorMode.value === 'dark'
+        checked: colorMode.preference === 'dark'
+      },
+      {
+        label: 'System',
+        icon: 'i-lucide-monitor',
+        onSelect: () => { colorMode.preference = 'system' },
+        checked: colorMode.preference === 'system'
       }
     ]]
   }])
