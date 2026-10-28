@@ -91,6 +91,9 @@ describe('isPullContentPage', () => {
     expect(isPullContentPage('/modules/icon')).toBe(true)
     expect(isPullContentPage('/modules/icon/configuration')).toBe(true)
     expect(isPullContentPage('/modules/icons')).toBe(false)
+    expect(isPullContentPage('/modules/devtools')).toBe(true)
+    expect(isPullContentPage('/modules/devtools/module-authors')).toBe(true)
+    expect(isPullContentPage('/modules/devtools-kit')).toBe(false)
     expect(isPullContentPage('/blogs')).toBe(false)
   })
 
