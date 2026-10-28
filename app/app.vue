@@ -18,19 +18,9 @@ const color = computed(() => colorMode.value === 'dark' ? '#020420' : 'white')
 defineShortcuts({
   d: {
     handler: () => {
-      switch (colorMode.preference) {
-        case 'light':
-          colorMode.preference = 'dark'
-          break
-        case 'dark':
-          colorMode.preference = 'system'
-          break
-        case 'system':
-          colorMode.preference = 'light'
-          break
-        default:
-          colorMode.preference = 'dark'
-      }
+      // Menus use typed letters for typeahead, so `d` must not also toggle the theme there
+      if (document.activeElement?.closest('[role="menu"]')) return
+      colorMode.preference = colorMode.value === 'dark' ? 'light' : 'dark'
     }
   }
 })
