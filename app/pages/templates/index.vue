@@ -47,7 +47,7 @@ const filtered = computed(() => {
     if (status.value === 'working' && !isWorking(templateHealth)) return false
     if (status.value === 'live' && !(isWorking(templateHealth) && templateHealth?.check?.live)) return false
     if (!query) return true
-    const modules = templateModules(template, templateHealth).map(module => moduleLabel(module.npm))
+    const modules = templateModules(template, templateHealth).map(module => module.npm)
     return [template.name, template.description, ...modules].some(value => value?.toLowerCase().includes(query))
   })
   if (sort.value === 'stars') return list.sort((a, b) => (health.value[b.slug]?.stars ?? -1) - (health.value[a.slug]?.stars ?? -1))

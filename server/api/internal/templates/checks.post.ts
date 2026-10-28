@@ -1,5 +1,4 @@
 import { z } from 'zod'
-import { TEMPLATE_CHECK_PHASES } from '#shared/types'
 
 const slug = z.string().regex(/^[a-z0-9-]+$/)
 const runId = z.string().min(1).max(200)

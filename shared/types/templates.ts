@@ -109,26 +109,3 @@ export interface TemplateCheck {
   /** The check started the app and snapshotted it, so it can run live. Off while the template fails, even if an older snapshot exists. */
   live: boolean
 }
-
-/** What `checkTemplatesWorkflow` needs to check a template. */
-export interface TemplateToCheck {
-  slug: string
-  repo: string
-  branch?: string
-  /** `gh:owner/repo/subdir` when the template lives in a subdirectory. */
-  source?: string
-  /** It runs without secrets, so the check starts it and snapshots it for live previews. */
-  live: boolean
-}
-
-/** What a running check is doing, in order. */
-export const TEMPLATE_CHECK_PHASES = ['setup', 'install', 'build', 'start', 'snapshot'] as const
-export type TemplateCheckPhase = typeof TEMPLATE_CHECK_PHASES[number]
-
-export interface TemplateCheckPhaseTiming {
-  phase: TemplateCheckPhase
-  /** Epoch milliseconds. */
-  startedAt: number
-  /** Set once the phase ended. */
-  seconds?: number
-}

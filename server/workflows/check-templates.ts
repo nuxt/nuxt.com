@@ -2,12 +2,13 @@ import { Sandbox, Snapshot } from '@vercel/sandbox'
 import { FatalError, defineHook, getWorkflowMetadata, sleep } from 'workflow'
 import { start } from 'workflow/api'
 import { z } from 'zod'
-import type { TemplateCheckPhase, TemplateCheckStep, TemplateToCheck } from '../../shared/types/templates'
-import type { CheckReport } from '../utils/templates/check-report'
-import { DEV_LOG, DEV_PORT, DEV_WARMUP_SCRIPT, DISABLE_DEVTOOLS } from '../utils/templates/dev-server'
+import type { TemplateCheckStep } from '../../shared/types/templates'
+import { TEMPLATE_SNAPSHOT_TTL_MS, type CheckReport, type TemplateCheckPhase, type TemplateToCheck } from '../utils/templates/check-report'
+import { BROWSER_SETUP_SCRIPT, CHECK_BROWSER_DIR, CHECK_STATE_DIR, INSTALL_SCRIPT, TEMPLATE_WORKDIR, VISIT_SCRIPT, WARM_DEV_SCRIPT, buildScript, serveScript } from '../utils/templates/check-scripts'
+import { DEV_WARMUP_SCRIPT } from '../utils/templates/dev-server'
 import { PREVIEW_BRIDGE_PLUGIN } from '../utils/templates/preview-bridge'
+import { StartError, browserTest, smokeTest } from '../utils/templates/start-check'
 import { SERVE_SCRIPT_PATH, STATIC_SERVER, STATIC_SERVER_PATH } from '../utils/templates/static-server'
-import { TEMPLATE_SNAPSHOT_TTL_MS } from '../../shared/utils/templates'
 
 /**
  * Installs, builds and starts templates in a clean Vercel Sandbox, the way `create nuxt` gets them, then opens them in Chromium.
@@ -22,15 +23,15 @@ import { TEMPLATE_SNAPSHOT_TTL_MS } from '../../shared/utils/templates'
  */
 
 const PORT = 3000
-const WORKDIR = '/vercel/app'
-const STATE_DIR = '/tmp/nuxt-com-check'
-const BROWSER_DIR = '/tmp/browser'
 const LANES = 8
 /** Install and build can take 15 minutes, far longer than a step may run: they run detached and the workflow checks on them. */
 const POLL_INTERVAL = '15s'
 const MAX_POLLS = 4 * 30
 
 type CheckResult = { slug: string, status: 'passed' | 'failed' | 'stopped', step?: TemplateCheckStep, nuxt?: string, live: boolean }
+
+/** Another run queued the template since this check started and now owns its row: the check ends without a result. */
+class CheckStopped extends Error {}
 
 /** The token a template's child run resumes once it finishes. */
 function completionToken(batchId: string, slug: string) {
@@ -83,20 +84,23 @@ export async function checkTemplateWorkflow(input: { baseURL: string, batchId: s
 
 type Reporter = ReturnType<typeof createReporter>
 
+/** Reports the check of one template to its row. Starting a phase throws `CheckStopped` once the row belongs to another run. */
 function createReporter(baseURL: string, slug: string, runId: string) {
   return {
     baseURL,
     slug,
     runId,
     start: (batchId: string) => recordCheck(baseURL, { kind: 'start', slug, runId, batchId }),
-    phase: (phase: TemplateCheckPhase, sandbox?: string) => recordCheck(baseURL, { kind: 'progress', slug, runId, phase, sandbox }),
+    phase: async (phase: TemplateCheckPhase, sandbox?: string) => {
+      if ((await recordCheck(baseURL, { kind: 'progress', slug, runId, phase, sandbox })).stopped) throw new CheckStopped()
+    },
     finish: (result: { status: 'passed' | 'failed', step?: TemplateCheckStep, nuxt?: string, snapshotId?: string, log?: string }) => recordCheck(baseURL, { kind: 'finish', slug, runId, ...result })
   }
 }
 
+/** Install, build, then, for templates that run live, start in Chromium and snapshot. The first step that fails is the result. */
 async function checkTemplate(report: Reporter, batchId: string, template: TemplateToCheck, browser?: string): Promise<CheckResult> {
   const stopped: CheckResult = { slug: template.slug, status: 'stopped', live: false }
-  // Refused when another run queued this template since.
   if ((await report.start(batchId)).stopped) return stopped
 
   const fail = async (step: TemplateCheckStep, log: string): Promise<CheckResult> => {
@@ -107,26 +111,22 @@ async function checkTemplate(report: Reporter, batchId: string, template: Templa
   const sandbox = await createCheckSandbox(template)
   let snapshotted = false
   try {
-    if ((await report.phase('install', sandbox)).stopped) return stopped
+    await report.phase('install', sandbox)
     const install = await runDetached(sandbox, 'install', INSTALL_SCRIPT, { report, phase: 'install', log: '/tmp/install.log' })
-    if (install.stopped) return stopped
     if (!install.ok) return await fail('install', install.output)
     const nuxt = install.output.trim().split('\n').pop()!
 
-    if ((await report.phase('build')).stopped) return stopped
+    await report.phase('build')
     const build = await runDetached(sandbox, 'build', buildScript(template.live), { report, phase: 'build', log: '/tmp/build.log' })
-    if (build.stopped) return stopped
     if (!build.ok) return await fail('build', build.output)
-    const lines = build.output.trim().split('\n')
-    const nodeServer = lines.pop() === 'node-server'
-    const serve = serveScript(lines.pop()?.trim() ?? '', nodeServer)
+    const serve = serveScript(build.output)
 
     let snapshotId: string | undefined
     if (template.live && serve && browser) {
-      if ((await report.phase('start')).stopped) return stopped
+      await report.phase('start')
       const started = await startTemplate(sandbox, serve, browser)
       if (!started.ok) return await fail('start', started.output)
-      if ((await report.phase('snapshot')).stopped) return stopped
+      await report.phase('snapshot')
       // Failing only leaves the bundling to the first `nuxt dev` started from the snapshot.
       await runDetached(sandbox, 'warm-dev', WARM_DEV_SCRIPT)
       snapshotId = await snapshotSandbox(sandbox)
@@ -139,6 +139,9 @@ async function checkTemplate(report: Reporter, batchId: string, template: Templa
     if (refused) return stopped
     if (previousSnapshotId) await deleteSnapshot(previousSnapshotId)
     return { slug: template.slug, status: 'passed', nuxt, live: !!snapshotId }
+  } catch (error) {
+    if (error instanceof CheckStopped) return stopped
+    throw error
   } finally {
     if (!snapshotted) await stopSandbox(sandbox)
   }
@@ -148,86 +151,17 @@ async function checkTemplate(report: Reporter, batchId: string, template: Templa
  * Runs a script in the background and checks on it every `POLL_INTERVAL`, so the workflow sleeps instead of holding a function open.
  * With `progress`, each check also sends the end of `progress.log` to the template's row, so its log can be followed live.
  */
-async function runDetached(sandbox: string, id: string, script: string, progress?: { report: Reporter, phase: TemplateCheckPhase, log: string }, cwd = WORKDIR) {
+async function runDetached(sandbox: string, id: string, script: string, progress?: { report: Reporter, phase: TemplateCheckPhase, log: string }, cwd = TEMPLATE_WORKDIR) {
   await startScript(sandbox, id, script, cwd)
   const target = progress && { baseURL: progress.report.baseURL, slug: progress.report.slug, runId: progress.report.runId, phase: progress.phase, log: progress.log }
   for (let poll = 0; poll < MAX_POLLS; poll++) {
     await sleep(POLL_INTERVAL)
     const result = await readScript(sandbox, id, target)
+    if (result?.stopped) throw new CheckStopped()
     if (result) return result
   }
-  return { ok: false, stopped: false, output: `The ${id} step was still running after 30 minutes.` }
+  return { ok: false, output: `The ${id} step was still running after 30 minutes.` }
 }
-
-// pnpm 11+ fails installs whose dependency build scripts it skipped; a developer approves them once, so the check allows them.
-// Native modules without a prebuilt binary need a compiler, which most development machines have and the sandbox image doesn't.
-const PM = '$(if [ -f pnpm-lock.yaml ]; then echo pnpm; elif [ -f yarn.lock ]; then echo yarn; elif [ -f bun.lock ] || [ -f bun.lockb ]; then echo bun; else echo npm; fi)'
-// The error is often far above the end of the log (prerender output follows it): failures print every error line, then the end.
-const FAIL_WITH = `fail_with() {
-  echo "$1"
-  errors=$(sed -E 's/\\x1b\\[[0-9;]*[A-Za-z]//g' "$2" | grep -iE '(^|[^a-z])(error|err!|fatal|failed|cannot find|not found|exception|enoent|eaddrinuse)' | grep -viE '^[[:space:]]*(warn|⚠)' | awk '!seen[$0]++' | tail -25)
-  [ -n "$errors" ] && printf '\\n==> Errors\\n%s\\n' "$errors"
-  printf '\\n==> Last lines of %s\\n' "$(basename "$2")"
-  sed -E 's/\\x1b\\[[0-9;]*[A-Za-z]//g' "$2" | tail -120
-  exit 1
-}`
-const INSTALL_SCRIPT = `${FAIL_WITH}
-corepack enable >/dev/null 2>&1 || sudo corepack enable >/dev/null 2>&1 || true; PM=${PM}
-export pnpm_config_strict_dep_builds=false pnpm_config_dangerously_allow_all_builds=true
-timeout 600 $PM install > /tmp/install.log 2>&1 || {
-  grep -q "gyp ERR" /tmp/install.log && { { sudo apt-get update -qq && sudo DEBIAN_FRONTEND=noninteractive apt-get install -y -qq build-essential python3; } || sudo dnf install -y -q python3 make gcc-c++; } > /dev/null 2>&1 && timeout 600 $PM install > /tmp/install.log 2>&1
-} || fail_with "The install failed." /tmp/install.log
-if node -e "process.exit(+require('./node_modules/@nuxt/content/package.json').version.split('.')[0] >= 3 ? 0 : 1)" 2>/dev/null && ! grep -q better-sqlite3 package.json && ! grep -q sqliteConnector nuxt.config.*; then $PM add better-sqlite3 >> /tmp/install.log 2>&1 || true; fi
-node -p "require('nuxt/package.json').version"`
-
-// `nuxt build` can exit 0 when a prerender promise never settles, before writing assets or the server: only Nitro's last line proves it finished.
-// Prints the preview command Nitro suggests, then whether a Node server was built.
-function buildScript(live: boolean) {
-  return `${FAIL_WITH}
-${live ? `PLUGINS=$([ -d app ] && echo app/plugins || echo plugins); mkdir -p $PLUGINS && cp ${STATE_DIR}/nuxt-com-preview.client.js $PLUGINS/;` : ''} PM=${PM}
-NUXT_TELEMETRY_DISABLED=1 timeout 900 $PM run build > /tmp/build.log 2>&1 || fail_with "The build failed." /tmp/build.log
-test -f .output/server/index.mjs || grep -qE "(preview|deploy) this build" /tmp/build.log || fail_with "The build exited before Nitro finished." /tmp/build.log
-sed -E 's/\\x1b\\[[0-9;]*m//g' /tmp/build.log | grep -oE "preview this build using .*" | tail -1 | sed -E 's/^preview this build using //; s/\`//g'
-test -f .output/server/index.mjs && echo node-server || echo no-node-server`
-}
-
-/** How to start the build, from the preview command Nitro printed. `undefined` for presets that only run on their platform (Cloudflare, Deno…). */
-function serveScript(preview: string, hasNodeServer: boolean) {
-  const server = preview.match(/^node (\S+\/server\/index\.mjs)$/)?.[1]
-  if (server) return `exec node ${server}`
-  const dir = preview.match(/^npx serve (\S+)$/)?.[1]
-  if (dir) return `exec node ${STATIC_SERVER_PATH} ${dir}`
-  if (hasNodeServer) return 'exec node .output/server/index.mjs'
-  return undefined
-}
-
-// Bundling the dependencies of `nuxt dev` takes up to a minute on a preview's 2 vCPUs (Docus). Running it once here leaves them in
-// `node_modules/.cache/vite`, with those Vite only finds at runtime, for every sandbox started from the snapshot. It runs with the
-// config previews start `nuxt dev` with: Vite bundles again whenever its config differs. Its own process group stops with it.
-const WARM_DEV_SCRIPT = `${DISABLE_DEVTOOLS}
-NUXT_TELEMETRY_DISABLED=1 setsid ./node_modules/.bin/nuxt dev --port ${DEV_PORT} > ${DEV_LOG} 2>&1 &
-DEV=$!
-timeout 300 node ${STATE_DIR}/warmup.mjs
-kill -TERM -- -$DEV 2>/dev/null; wait $DEV
-rm -f ${DEV_LOG}`
-
-// Opens a page in Chromium and prints the first message of the preview bridge: an app can serve valid HTML and still crash once it hydrates.
-const VISIT_SCRIPT = `import { chromium } from 'playwright-core'
-const browser = await chromium.launch()
-const errors = []
-try {
-  const page = await browser.newPage({ viewport: { width: 1280, height: 800 } })
-  page.on('pageerror', error => errors.push(error.message))
-  await page.addInitScript(() => window.addEventListener('message', (event) => {
-    if (event.data?.source === 'nuxt-com-preview') window.__preview ||= event.data
-  }))
-  await page.goto(process.argv[2], { waitUntil: 'load', timeout: 30_000 })
-  const result = await page.waitForFunction(() => window.__preview, null, { timeout: 30_000 }).then(handle => handle.jsonValue()).catch(() => null)
-  console.log(JSON.stringify({ result, errors }))
-} finally {
-  await browser.close()
-}
-`
 
 // ---- Steps ----
 
@@ -260,7 +194,7 @@ async function getSandbox(name: string) {
 /** One Chromium sandbox shared by the run, so template snapshots stay free of it. */
 async function createBrowser() {
   const name = await createBrowserSandbox()
-  const setup = await runDetached(name, 'browser', `npm init -y > /dev/null && npm i playwright-core@1 > /dev/null 2>&1 && npx playwright-core install --with-deps chromium-headless-shell > /dev/null 2>&1`, undefined, BROWSER_DIR)
+  const setup = await runDetached(name, 'browser', BROWSER_SETUP_SCRIPT, undefined, CHECK_BROWSER_DIR)
   if (!setup.ok) throw new Error(`Chromium setup failed:\n${setup.output}`)
   return name
 }
@@ -274,7 +208,7 @@ async function createBrowserSandbox() {
     resources: { vcpus: 4 },
     tags: { app: 'nuxt-com', purpose: 'templates-check-browser' }
   })
-  await sandbox.writeFiles([{ path: `${BROWSER_DIR}/visit.mjs`, content: VISIT_SCRIPT }])
+  await sandbox.writeFiles([{ path: `${CHECK_BROWSER_DIR}/visit.mjs`, content: VISIT_SCRIPT }])
   return sandbox.name
 }
 
@@ -292,11 +226,11 @@ async function createCheckSandbox(template: TemplateToCheck) {
     resources: { vcpus: 4 },
     tags: { app: 'nuxt-com', purpose: 'templates-check', template: template.slug }
   })
-  await sandbox.runCommand({ cmd: 'bash', args: ['-c', `mkdir -p ${WORKDIR} && cp -a ${clone}/. ${WORKDIR}/`] })
+  await sandbox.runCommand({ cmd: 'bash', args: ['-c', `mkdir -p ${TEMPLATE_WORKDIR} && cp -a ${clone}/. ${TEMPLATE_WORKDIR}/`] })
   await sandbox.writeFiles([
-    { path: `${STATE_DIR}/nuxt-com-preview.client.js`, content: PREVIEW_BRIDGE_PLUGIN },
+    { path: `${CHECK_STATE_DIR}/nuxt-com-preview.client.js`, content: PREVIEW_BRIDGE_PLUGIN },
     { path: STATIC_SERVER_PATH, content: STATIC_SERVER },
-    { path: `${STATE_DIR}/warmup.mjs`, content: DEV_WARMUP_SCRIPT }
+    { path: `${CHECK_STATE_DIR}/warmup.mjs`, content: DEV_WARMUP_SCRIPT }
   ])
   return sandbox.name
 }
@@ -304,10 +238,10 @@ async function createCheckSandbox(template: TemplateToCheck) {
 async function startScript(name: string, id: string, script: string, cwd: string) {
   'use step'
   const sandbox = await getSandbox(name)
-  await sandbox.writeFiles([{ path: `${STATE_DIR}/${id}.sh`, content: script }])
+  await sandbox.writeFiles([{ path: `${CHECK_STATE_DIR}/${id}.sh`, content: script }])
   await sandbox.runCommand({
     cmd: 'bash',
-    args: ['-c', `mkdir -p ${cwd} && cd ${cwd} && bash ${STATE_DIR}/${id}.sh > ${STATE_DIR}/${id}.out 2>&1; echo $? > ${STATE_DIR}/${id}.exit`],
+    args: ['-c', `mkdir -p ${cwd} && cd ${cwd} && bash ${CHECK_STATE_DIR}/${id}.sh > ${CHECK_STATE_DIR}/${id}.out 2>&1; echo $? > ${CHECK_STATE_DIR}/${id}.exit`],
     detached: true
   })
 }
@@ -320,7 +254,7 @@ async function readScript(name: string, id: string, progress?: { baseURL: string
   'use step'
   const sandbox = await Sandbox.get({ name })
   if (sandbox.status !== 'running') return { ok: false, stopped: false, output: 'The sandbox ran out of time.' }
-  const result = await sandbox.runCommand({ cmd: 'bash', args: ['-c', `test -f ${STATE_DIR}/${id}.exit && cat ${STATE_DIR}/${id}.exit && tail -c 16000 ${STATE_DIR}/${id}.out`] })
+  const result = await sandbox.runCommand({ cmd: 'bash', args: ['-c', `test -f ${CHECK_STATE_DIR}/${id}.exit && cat ${CHECK_STATE_DIR}/${id}.exit && tail -c 16000 ${CHECK_STATE_DIR}/${id}.out`] })
   if (result.exitCode === 0) {
     const [exit, ...output] = (await result.stdout()).split('\n')
     return { ok: exit!.trim() === '0', stopped: false, output: output.join('\n') }
@@ -338,8 +272,8 @@ async function readScript(name: string, id: string, progress?: { baseURL: string
 async function startTemplate(name: string, serve: string, browserName: string) {
   'use step'
   const sandbox = await getSandbox(name)
-  await sandbox.writeFiles([{ path: SERVE_SCRIPT_PATH, content: `cd ${WORKDIR}\n${serve}\n` }])
-  await sandbox.runCommand({ cmd: 'bash', args: ['-c', `export PORT=${PORT} HOST=0.0.0.0; exec bash ${SERVE_SCRIPT_PATH}`], cwd: WORKDIR, detached: true })
+  await sandbox.writeFiles([{ path: SERVE_SCRIPT_PATH, content: `cd ${TEMPLATE_WORKDIR}\n${serve}\n` }])
+  await sandbox.runCommand({ cmd: 'bash', args: ['-c', `export PORT=${PORT} HOST=0.0.0.0; exec bash ${SERVE_SCRIPT_PATH}`], cwd: TEMPLATE_WORKDIR, detached: true })
   const url = sandbox.domain(PORT)
   try {
     await smokeTest(url)
@@ -351,58 +285,6 @@ async function startTemplate(name: string, serve: string, browserName: string) {
     if (!(error instanceof StartError)) throw error
     return { ok: false, output: error.message }
   }
-}
-
-class StartError extends Error {}
-
-/**
- * Requests the template's own server and follows its redirects within it, never elsewhere.
- * This runs on the workflow worker, not in the sandbox, so a URL the template controls could otherwise reach the worker's network.
- */
-async function fetchFromSandbox(url: URL, timeoutMs: number) {
-  for (let hops = 0; hops <= 5; hops++) {
-    const response = await fetch(url, { redirect: 'manual', signal: AbortSignal.timeout(timeoutMs) })
-    const location = response.status >= 300 && response.status < 400 ? response.headers.get('location') : null
-    const next = location ? new URL(location, url) : null
-    if (!next || next.origin !== url.origin) return { response, url }
-    await response.body?.cancel()
-    url = next
-  }
-  throw new StartError(`${url.origin} redirected too many times`)
-}
-
-/** The page answers, and every stylesheet and script it references loads. A page that renders without them looks broken. */
-async function smokeTest(url: string) {
-  const deadline = Date.now() + 60_000
-  let page: { response: Response, url: URL } | null = null
-  while (Date.now() < deadline) {
-    page = await fetchFromSandbox(new URL(url), 5000).catch(() => null)
-    if (page && page.response.status < 500) break
-    await new Promise(resolve => setTimeout(resolve, 500))
-  }
-  if (!page || page.response.status >= 400) throw new StartError(`${url} answered ${page?.response.status ?? 'nothing'}`)
-
-  const { response, url: pageUrl } = page
-  const html = await response.text()
-  const assets = [...new Set([...html.matchAll(/(?:href|src)="(\/[^"]+\.(?:css|js|mjs))"/g)].map(match => match[1]!))]
-    // `//host/app.js` points to another server: only the template's own assets are checked.
-    .filter(asset => new URL(asset, pageUrl).origin === pageUrl.origin)
-  const failed: string[] = []
-  await Promise.all(assets.slice(0, 40).map(async (asset) => {
-    const status = await fetchFromSandbox(new URL(asset, pageUrl), 10_000).then(res => res.response.status).catch(() => 0)
-    if (status !== 200) failed.push(`${status} ${asset}`)
-  }))
-  if (failed.length) throw new StartError(`${failed.length}/${assets.length} assets failed to load:\n${failed.slice(0, 5).join('\n')}`)
-}
-
-/** The app mounts in a real browser without crashing. */
-async function browserTest(browser: Sandbox, url: string) {
-  const visit = await browser.runCommand({ cmd: 'node', args: ['visit.mjs', url], cwd: BROWSER_DIR })
-  if (visit.exitCode !== 0) throw new StartError(`The browser could not open ${url}:\n${(await visit.output()).slice(-800)}`)
-  const { result, errors } = JSON.parse((await visit.stdout()).trim().split('\n').pop()!) as { result: { type: string, message?: string } | null, errors: string[] }
-  if (result?.type === 'ready') return
-  const details = result?.type === 'error' ? `It crashed in the browser: ${result.message}` : 'It never finished mounting in the browser.'
-  throw new StartError([details, ...errors.slice(0, 3)].join('\n'))
 }
 
 /** The next passing check replaces it, well before it expires. Stops the sandbox. */

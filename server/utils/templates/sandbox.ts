@@ -1,6 +1,7 @@
 import { Sandbox } from '@vercel/sandbox'
 import { and, desc, eq, lt, sql } from 'drizzle-orm'
 import type { PreviewEvent, PreviewStep, Template } from '#shared/types'
+import { TEMPLATE_WORKDIR } from './check-scripts'
 import { DEV_PORT } from './dev-server'
 import { SERVE_SCRIPT_PATH } from './static-server'
 
@@ -12,8 +13,6 @@ declare module 'nitropack/types' {
 }
 
 export const PREVIEW_PORT = 3000
-/** Where `checkTemplatesWorkflow` copies each template before installing it. */
-const WORKDIR = '/vercel/app'
 const PREVIEW_TAGS = { app: 'nuxt-com', purpose: 'templates-preview' }
 /** Bounds what anonymous previews can cost at once. Not a per-visitor limit: a visitor already has one preview at a time. */
 const MAX_RUNNING_PREVIEWS = 50
@@ -105,7 +104,7 @@ export async function startPreview(template: Template, owner: string, onStep?: (
     await sandbox.runCommand({
       cmd: 'bash',
       args: ['-c', `export PORT=${PREVIEW_PORT} HOST=0.0.0.0; exec bash ${SERVE_SCRIPT_PATH}`],
-      cwd: WORKDIR,
+      cwd: TEMPLATE_WORKDIR,
       detached: true
     })
     const url = sandbox.domain(PREVIEW_PORT)
