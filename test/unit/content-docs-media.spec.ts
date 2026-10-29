@@ -34,5 +34,7 @@ describe('docsMedia', () => {
     expect(rewriteNode('2.guide/1.setup', 'video', { src: '../images/demo.mp4', poster: './poster.jpg', controls: true }))
       .toEqual({ src: '/modules/devtools/images/demo.mp4', poster: '/modules/devtools/2.guide/poster.jpg', controls: true })
     expect(rewriteNode('index', 'video', { src: 'https://example.com/demo.mp4' }).src).toBe('https://example.com/demo.mp4')
+    expect(rewriteNode('index', 'video', { src: './demo.mp4#t=10,20' }).src).toBe('/modules/devtools/demo.mp4#t=10,20')
+    expect(rewriteNode('index', 'video', { src: './demo.mp4?v=2#t=10' }).src).toBe('/modules/devtools/demo.mp4#t=10')
   })
 })

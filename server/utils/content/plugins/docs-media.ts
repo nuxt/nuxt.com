@@ -48,7 +48,9 @@ export function docsMedia(prefix: string): ContentPlugin {
             if (typeof src !== 'string' || !src || src.startsWith('/') || src.startsWith('#') || hasProtocol(src, { acceptRelative: true })) continue
 
             const key = resolveMediaKey(file.meta.stem, src)
-            if (key) attrs[attr] = joinURL(prefix, key)
+            // Keep the fragment: a video's `#t=10,20` selects the interval to play.
+            const hash = src.includes('#') ? src.slice(src.indexOf('#')) : ''
+            if (key) attrs[attr] = joinURL(prefix, key) + hash
           }
         })
       })
