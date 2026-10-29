@@ -8,6 +8,9 @@ type SearchStatus = 'idle' | 'loading' | 'ready' | 'error'
 
 const status = ref<SearchStatus>('idle')
 
+/** Set on the first open of the palette: the index only loads from then on. */
+const requested = ref(false)
+
 /** Hydration logging switch: `?debug=search` */
 function searchDebug(): boolean {
   if (!import.meta.client) return false
@@ -88,8 +91,17 @@ export function useSearch() {
   }
 
   if (import.meta.client) {
-    onNuxtReady(warmup)
-    watch([targetsKey, pullHead], warmup)
+    // The index is the SQLite wasm and every instance's snapshot, about 1.2 MB: it loads on the
+    // first open, not on every page view. Opened before `shas` lands, the watcher below picks it up.
+    // Reopening after a failed load retries it.
+    const { open } = useContentSearch()
+    watch(open, (value) => {
+      if (!value || (requested.value && status.value !== 'error')) return
+
+      requested.value = true
+      warmup()
+    }, { immediate: true })
+    watch([targetsKey, pullHead], () => requested.value && warmup())
   }
 
   async function search(query: string, opts?: SearchOptions): Promise<SearchResult[]> {
