@@ -107,6 +107,12 @@ const { data: map } = useFetch<NuxtersMap>('/api/map/nuxters', {
   query: { period },
   lazy: true
 })
+const countryPeople = useNuxtersCountryPeople({
+  leaderboard,
+  country: picked,
+  // The map follows the resolved period, including the default's all-time fallback.
+  period: computed(() => map.value?.period)
+})
 const available = computed(() => leaderboard.value?.periods ?? [])
 // Same page, no hash: the router keeps the scroll position. A `#leaderboard` arrival keeps its hash,
 // dropping it would scroll back to the top.
@@ -224,7 +230,7 @@ const breakdown = computed(() => {
       <NuxtersWorld
         :model-value="picked"
         :map="map"
-        :people="leaderboard?.country === picked ? leaderboard?.items ?? [] : []"
+        :people="countryPeople"
         @update:model-value="pickInWorld"
         @leaderboard="showLeaderboard"
       />
