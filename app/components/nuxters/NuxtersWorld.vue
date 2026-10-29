@@ -66,7 +66,7 @@ watch(isVisible, (visible) => {
         <ul class="grid grid-cols-6 gap-2 mt-4" :aria-busy="!people.length || undefined">
           <li v-for="(nuxter, index) in tiles" :key="nuxter?.username ?? `tile-${index}`" class="aspect-square">
             <UTooltip v-if="nuxter" :text="personLabel(nuxter)">
-              <NuxtLink :to="`/nuxters/${nuxter.username}`" :aria-label="nuxter.rank === null ? nuxter.username : `${nuxter.username}, #${format(nuxter.rank)}`" class="block size-full rounded-md overflow-hidden bg-muted ring ring-default hover:ring-primary transition">
+              <NuxtLink :to="`/nuxters/${nuxter.username}`" prefetch-on="interaction" :aria-label="nuxter.rank === null ? nuxter.username : `${nuxter.username}, #${format(nuxter.rank)}`" class="block size-full rounded-md overflow-hidden bg-muted ring ring-default hover:ring-primary transition">
                 <!-- Same URL as the leaderboard: a Nuxter it already shows reuses the image. -->
                 <NuxtImg
                   :src="`/gh_avatar/${nuxter.username}`"
