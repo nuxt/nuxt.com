@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { MarkdownDocument } from 'comark'
-import { DocsProseImg } from '#components'
+import { DocsProseImg, DocsProseVideo } from '#components'
 
 defineProps<{
   page: MarkdownDocument
@@ -8,10 +8,11 @@ defineProps<{
   surround: any[]
 }>()
 
-// Hosted docs are authored for nuxt.com, so their links and images need no README rewriting.
+// Hosted docs are authored for nuxt.com, so their links and media need no README rewriting.
 const markdownComponents = {
   ...proseComponents,
-  ProseImg: DocsProseImg
+  ProseImg: DocsProseImg,
+  ProseVideo: DocsProseVideo
 }
 </script>
 
