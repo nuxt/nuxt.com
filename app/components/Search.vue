@@ -23,7 +23,8 @@ async function searchWithIndexTitles(query: string, opts?: SearchOptions): Promi
     if (!root) return result
     const indexTitle = root.indexTitle as string
     const titles = result.titles.map((title, index) => index === 0 && title === root.title ? indexTitle : title)
-    return result.level === 1
+    // The page result only: an H1 of the page is a level-1 result too, with its own title.
+    return result.id === root.path
       ? { ...result, title: indexTitle, titles, snippets: result.snippets && { ...result.snippets, title: undefined } }
       : { ...result, titles }
   })
