@@ -167,6 +167,15 @@ const contributors = computed(() => {
 const PROVIDERS_PREVIEW = 12
 const showAllProviders = ref(false)
 
+// Provider docs hosted on nuxt.com open in place, through the router (also on previews and in dev).
+function providerLink(docs?: string) {
+  if (!docs) return {}
+  const url = new URL(docs, 'https://nuxt.com')
+  return url.host === 'nuxt.com'
+    ? { to: `${url.pathname}${url.search}${url.hash}` }
+    : { to: docs, target: '_blank' }
+}
+
 const title = computed(() => isDocsPage.value ? `${docsFm.value.title} · ${module.value!.npm}` : module.value!.npm)
 const description = computed(() => (isDocsPage.value && docsFm.value.description) || module.value!.description || 'A Nuxt module')
 const publishedAgo = useTimeAgo(module.value.stats.publishedAt)
@@ -373,8 +382,7 @@ if (import.meta.server) {
               v-for="(provider, index) in module.providers"
               v-show="showAllProviders || index < PROVIDERS_PREVIEW"
               :key="provider.name"
-              :to="provider.docs"
-              :target="provider.docs ? '_blank' : undefined"
+              v-bind="providerLink(provider.docs)"
               :icon="provider.icon || 'i-lucide-plug'"
               :label="provider.label"
               color="neutral"
