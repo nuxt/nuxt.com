@@ -94,6 +94,9 @@ describe('isPullContentPage', () => {
     expect(isPullContentPage('/modules/devtools')).toBe(true)
     expect(isPullContentPage('/modules/devtools/module-authors')).toBe(true)
     expect(isPullContentPage('/modules/devtools-kit')).toBe(false)
+    expect(isPullContentPage('/modules/fonts')).toBe(true)
+    expect(isPullContentPage('/modules/fonts/providers')).toBe(true)
+    expect(isPullContentPage('/modules/fontsource')).toBe(false)
     expect(isPullContentPage('/blogs')).toBe(false)
   })
 
