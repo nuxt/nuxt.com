@@ -19,6 +19,10 @@ const LLMS = `# Nuxt Docs
 ## Blog
 
 - [Nuxt 4](https://nuxt.com/raw/blog/v4.md): Announcing Nuxt 4.
+
+## Nuxt Icon Documentation
+
+- [Configuration](https://nuxt.com/raw/modules/icon/configuration.md): Every option of the icon key in your Nuxt config.
 `
 
 const STATE = `---
@@ -57,11 +61,12 @@ Deploy with the \`cloudflare_pages\` preset.
 `
 
 describe('docs index', () => {
-  it('reads the v4 docs and deploy guides from llms.txt, and nothing else', () => {
+  it('reads the v4 docs, deploy guides and hosted module docs from llms.txt, and nothing else', () => {
     expect(parseLlmsIndex(LLMS).map(page => page.path)).toEqual([
       '/docs/4.x/getting-started/state-management',
       '/docs/4.x/api/composables/use-nuxt-app',
-      '/deploy/cloudflare'
+      '/deploy/cloudflare',
+      '/modules/icon/configuration'
     ])
   })
 

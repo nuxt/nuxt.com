@@ -115,8 +115,9 @@ const currentSectionTitle = computed(() =>
   || '')
 
 const breadcrumb = computed(() => {
+  const trail = findBreadcrumb(navigation.value, path.value)
   // `path` is kept for structured data even when the item is not linked.
-  const links: Array<{ label: string, to?: string, path?: string }> = findBreadcrumb(navigation.value, path.value).map(item => ({
+  const links: Array<{ label: string, to?: string, path?: string }> = trail.map(item => ({
     label: item.title,
     to: item.page ? item.path : undefined,
     path: item.path
@@ -128,9 +129,20 @@ const breadcrumb = computed(() => {
       to: `${docsMeta.value.path}/getting-started/upgrade`
     })
   }
+  // Error pages are not in the navigation, so nest them under the error codes index.
+  if (!trail.length && path.value.startsWith(`${docsMeta.value.path}/errors/`)) {
+    links.push({
+      label: 'Error Codes',
+      to: `${docsMeta.value.path}/errors`
+    }, {
+      label: fm.value.title,
+      to: path.value
+    })
+  }
+  // Google rejects breadcrumb entries without a name.
   if (!links.length) {
     links.push({
-      label: currentSectionTitle.value,
+      label: currentSectionTitle.value || fm.value.title,
       to: path.value
     })
   }

@@ -1,7 +1,12 @@
 import { appOrigin } from './internal-api.js'
 
-/** `llms.txt` sections whose pages are indexed: the current docs and the deploy guides. */
-const INDEXED_SETS = ['Nuxt v4 Documentation', 'Deployment Guides']
+/**
+ * Whether an `llms.txt` section's pages are indexed: the deploy guides and every `… Documentation` section,
+ * which `nuxt.config.ts` gives the current Nuxt docs and each module whose docs nuxt.com hosts (`/modules/<slug>/…`).
+ */
+function isIndexedSet(title: string): boolean {
+  return title === 'Deployment Guides' || title.endsWith(' Documentation')
+}
 const INDEX_TTL_MS = 60 * 60 * 1000
 const FETCH_CONCURRENCY = 32
 const FETCH_TIMEOUT_MS = 10_000
@@ -93,7 +98,7 @@ export function parseLlmsIndex(text: string): DocPage[] {
   let indexed = false
   for (const line of text.split('\n')) {
     if (line.startsWith('## ')) {
-      indexed = INDEXED_SETS.includes(line.slice(3).trim())
+      indexed = isIndexedSet(line.slice(3).trim())
       continue
     }
     if (!indexed) continue
