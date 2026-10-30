@@ -1,20 +1,17 @@
-title: Nuxt Templates
+title: 'Start your next Nuxt project.'
+hero:
+  title: Start your next
+  highlight: Nuxt project.
+head:
+  title: 'Nuxt Templates: Start a New Nuxt Project'
 navigation:
   title: Templates
   icon: i-lucide-app-window
-description: 'Explore community templates to get up and running in a few seconds.'
-align: center
-links:
-  - label: 'Nuxt Starters'
-    to: 'https://nuxt.new'
-    icon: 'i-simple-icons-nuxt'
-    target: '_blank'
-    variant: solid
-    color: neutral
-    size: md
-  - label: 'Full-stack Templates'
-    to: 'https://hub.nuxt.com/templates'
-    target: '_blank'
-    variant: subtle
-    color: neutral
-    size: md
+description: 'Start from a blank project or a complete app. Every open-source template is installed and built daily on a clean machine, so you know it works before you copy it.'
+gallery:
+  title: Templates
+  searchPlaceholder: 'Search templates…'
+  empty: 'No template matches these filters.'
+submit:
+  title: Share Your Template
+  description: 'Templates are YAML files in this repository. Open a pull request with yours: it joins the daily check, and shows here as long as it builds.'

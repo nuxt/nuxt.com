@@ -69,6 +69,12 @@ function _useHeaderLinks() {
       to: '/modules',
       description: 'Supercharge your Nuxt project with modules.'
     }, {
+      label: 'Templates',
+      icon: 'i-lucide-app-window',
+      to: '/templates',
+      description: 'Start your next project with a Nuxt template.',
+      active: route.path.startsWith('/templates')
+    }, {
       label: 'Showcase',
       icon: 'i-lucide-presentation',
       description: 'Discover and explore projects built with Nuxt.',
@@ -80,17 +86,18 @@ function _useHeaderLinks() {
       to: '/nuxters',
       active: route.path.startsWith('/nuxters')
     }, {
-      label: 'Resources',
+      label: 'Updates',
+      icon: 'i-lucide-newspaper',
+      to: '/updates',
+      description: 'Releases and blog posts from the Nuxt team.',
+      active: route.path.startsWith('/updates') || route.path.startsWith('/blog') || route.path.startsWith('/changelog')
+    }, {
+      label: 'More',
       icon: 'i-lucide-library',
-      to: '/templates',
+      to: '/video-courses',
       search: false,
-      active: ['/templates', '/video-courses', '/enterprise', '/sponsors'].some(path => route.path.startsWith(path)),
+      active: ['/video-courses', '/enterprise', '/sponsors'].some(path => route.path.startsWith(path)),
       children: [{
-        label: 'Templates',
-        description: 'Start your next project with a Nuxt template.',
-        icon: 'i-lucide-app-window',
-        to: '/templates'
-      }, {
         label: 'Video Courses',
         description: 'Learn Nuxt by watching video courses.',
         icon: 'i-lucide-graduation-cap',
@@ -112,12 +119,6 @@ function _useHeaderLinks() {
         to: 'https://certification.nuxt.com',
         target: '_blank'
       }]
-    }, {
-      label: 'Updates',
-      icon: 'i-lucide-newspaper',
-      to: '/updates',
-      description: 'Releases and blog posts from the Nuxt team.',
-      active: route.path.startsWith('/updates') || route.path.startsWith('/blog') || route.path.startsWith('/changelog')
     }]
   })
 

@@ -4,6 +4,9 @@ import type { templateChecks } from '../../db/schema'
 /** Each passing daily check replaces its template's snapshot. The expiry removes the ones nothing replaces: removed or failing templates, lost reports, and runs from local dev or preview deployments. */
 export const TEMPLATE_SNAPSHOT_TTL_MS = 3 * 24 * 60 * 60 * 1000
 
+/** Results older than this are hidden rather than shown as current: the daily check has missed the template more than once. */
+export const TEMPLATE_CHECK_MAX_AGE_MS = 2 * 24 * 60 * 60 * 1000
+
 /** What a running check is doing, in order. */
 export const TEMPLATE_CHECK_PHASES = ['setup', 'install', 'build', 'start', 'snapshot'] as const
 export type TemplateCheckPhase = typeof TEMPLATE_CHECK_PHASES[number]

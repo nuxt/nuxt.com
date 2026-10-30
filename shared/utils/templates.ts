@@ -1,4 +1,4 @@
-import type { PackageManager, Template, TemplateCategory, TemplateHealth, TemplateModule } from '../types/templates'
+import type { TemplateDeployProvider, PackageManager, Template, TemplateCategory, TemplateHealth, TemplateModule, TemplateSort, TemplateStatusFilter } from '../types/templates'
 
 export const TEMPLATE_CATEGORIES: Array<{ value: TemplateCategory, label: string, icon: string }> = [
   { value: 'saas', label: 'SaaS', icon: 'i-lucide-rocket' },
@@ -12,7 +12,14 @@ export const TEMPLATE_CATEGORIES: Array<{ value: TemplateCategory, label: string
   { value: 'app', label: 'Apps', icon: 'i-lucide-layers' }
 ]
 
-export const PACKAGE_MANAGERS: PackageManager[] = ['npm', 'pnpm', 'yarn', 'bun']
+export const PACKAGE_MANAGERS: PackageManager[] = ['pnpm', 'npm', 'yarn', 'bun']
+
+export const PACKAGE_MANAGER_ICONS: Record<PackageManager, string> = {
+  pnpm: 'i-logos-pnpm',
+  npm: 'i-logos-npm-icon',
+  yarn: 'i-logos-yarn',
+  bun: 'i-logos-bun'
+}
 
 /** Templates on an older major are flagged, so the gallery never silently recommends them. */
 export const CURRENT_NUXT_MAJOR = 4
@@ -37,6 +44,22 @@ export function canLivePreview(template: Pick<Template, 'repo' | 'purchase' | 'd
 export function isOutdated(health?: TemplateHealth): boolean {
   return !!health && (!!health.archived || (health.nuxtMajor !== undefined && health.nuxtMajor < CURRENT_NUXT_MAJOR))
 }
+
+/** Passed its last daily check on the current Nuxt major. */
+export function isWorking(health?: TemplateHealth): boolean {
+  return health?.check?.status === 'passed' && !isOutdated(health)
+}
+
+export const TEMPLATE_STATUS_FILTERS: Array<{ value: TemplateStatusFilter, label: string, icon: string }> = [
+  { value: 'working', label: 'Builds today', icon: 'i-lucide-circle-check' }
+]
+
+export const TEMPLATE_SORTS: Array<{ value: TemplateSort, label: string }> = [
+  { value: 'recommended', label: 'Recommended' },
+  { value: 'stars', label: 'Most stars' },
+  { value: 'updated', label: 'Recently updated' },
+  { value: 'name', label: 'Name' }
+]
 
 /** The modules a template ships: read from its `package.json` when nuxt.com could, from its YAML otherwise. */
 export function templateModules(template: Pick<Template, 'modules'>, health?: TemplateHealth): TemplateModule[] {
@@ -89,10 +112,39 @@ export function buildCreateCommand(template: Template, packageManager: PackageMa
 }
 
 /** A Vercel Deploy Button URL: clones the template into the visitor's GitHub and deploys it, asking for its environment variables. */
-export function buildDeployUrl(template: Template): string | undefined {
+export const DEPLOY_PROVIDERS: Array<{ value: TemplateDeployProvider, label: string, icon: string }> = [
+  { value: 'vercel', label: 'Vercel', icon: 'i-simple-icons-vercel' },
+  { value: 'netlify', label: 'Netlify', icon: 'i-simple-icons-netlify' }
+]
+
+export function deployProviders(template: Pick<Template, 'deploy'>): TemplateDeployProvider[] {
+  if (template.deploy?.providers) return template.deploy.providers
+  return template.deploy?.stores?.length ? ['vercel'] : DEPLOY_PROVIDERS.map(provider => provider.value)
+}
+
+function parseGitHubUrl(url: string): { repository: string, branch?: string, path?: string } | undefined {
+  const match = url.replace(/\/$/, '').match(/^https:\/\/github\.com\/([^/]+\/[^/]+)(?:\/tree\/([^/]+)(?:\/(.+))?)?$/)
+  return match ? { repository: `https://github.com/${match[1]}`, branch: match[2], path: match[3] } : undefined
+}
+
+export function buildDeployUrl(template: Template, provider: TemplateDeployProvider): string | undefined {
+  if (!deployProviders(template).includes(provider)) return undefined
   const url = template.deploy?.repositoryUrl || templateRepoUrl(template)
   if (!url) return undefined
+  return provider === 'netlify' ? buildNetlifyDeployUrl(template, url) : buildVercelDeployUrl(template, url)
+}
 
+function buildNetlifyDeployUrl(template: Template, url: string): string | undefined {
+  const source = parseGitHubUrl(url)
+  if (!source) return undefined
+  const params = new URLSearchParams({ repository: source.repository })
+  if (source.branch) params.set('branch', source.branch)
+  if (source.path) params.set('create_from_path', source.path)
+  const env = template.deploy?.env?.map(key => `${key}=`).join('&')
+  return `https://app.netlify.com/start/deploy?${params.toString()}${env ? `#${env}` : ''}`
+}
+
+function buildVercelDeployUrl(template: Template, url: string): string {
   const name = defaultProjectName(template)
   const params = new URLSearchParams({ 'repository-url': url, 'project-name': name, 'repository-name': name })
   if (template.deploy?.env?.length) params.set('env', template.deploy.env.join(','))
