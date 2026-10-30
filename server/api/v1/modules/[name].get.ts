@@ -1,5 +1,6 @@
 import { z } from 'zod'
 import type { Module } from '#shared/types'
+import { hasModuleDocs } from '#shared/utils/module-docs'
 import { resolveReadmeUrls } from '../../../utils/content/readme'
 
 export default defineCachedEventHandler(async (event) => {
@@ -19,10 +20,12 @@ export default defineCachedEventHandler(async (event) => {
 
   // Health served separately (/api/v1/modules/health), merged client-side —
   // keeps nuxt.care off this page's SSR path.
+  // A module with hosted docs renders them instead of its README: skip it, it would ship in every docs page payload.
+  const withReadme = !hasModuleDocs(module.name)
   const [stats, contributors, readme] = await Promise.all([
     fetchModuleStats(event, module),
     fetchModuleContributors(event, module),
-    fetchModuleReadme(event, module)
+    withReadme ? fetchModuleReadme(event, module) : undefined
   ])
   // Who has a Nuxter profile, to link there instead of GitHub. Not blocking: GitHub links on an error.
   const known = await nuxters.known({
@@ -39,11 +42,11 @@ export default defineCachedEventHandler(async (event) => {
     generatedAt: new Date().toISOString(),
     contributors: contributors.map(contributor => ({ ...contributor, nuxter: known.githubIds.has(contributor.id) })),
     stats,
-    readme: resolveReadmeUrls(readme, module.repo, stats.defaultBranch)
+    readme: readme && resolveReadmeUrls(readme, module.repo, stats.defaultBranch)
   } satisfies Module
 }, {
-  // Bumped when the payload changes: `modules:v4` entries have no `providers`.
-  name: 'modules:v5',
+  // Bumped when the payload changes: `modules:v5` entries carry the README of modules with docs.
+  name: 'modules:v6',
   getKey: event => event.context.params!.name!,
   swr: true,
   maxAge: 60 * 60 // 1 hour

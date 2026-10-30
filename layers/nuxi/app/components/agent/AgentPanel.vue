@@ -50,6 +50,12 @@ function openFullScreen() {
   navigateTo(isPersisted ? `/dashboard/chat/${id}` : '/dashboard/chat')
 }
 
+// The chat (Eve client, prompt, messages, shaders) is a multi-MB chunk: load it on first open, not on every page.
+const hasOpened = ref(false)
+watch(isOpen, (value) => {
+  if (value) hasOpened.value = true
+}, { immediate: true })
+
 provide<{
   chatId: Ref<string>
   startNewChat: () => void
@@ -128,7 +134,8 @@ defineShortcuts(computed(() => ({
       </UTooltip>
     </template>
 
-    <AgentPanelChat
+    <LazyAgentPanelChat
+      v-if="hasOpened"
       ref="chatRef"
       :key="chatId"
       :chat-id="chatId"
