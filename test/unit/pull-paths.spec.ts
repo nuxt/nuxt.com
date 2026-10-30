@@ -100,6 +100,9 @@ describe('isPullContentPage', () => {
     expect(isPullContentPage('/modules/hints')).toBe(true)
     expect(isPullContentPage('/modules/hints/web-vitals')).toBe(true)
     expect(isPullContentPage('/modules/hintsx')).toBe(false)
+    expect(isPullContentPage('/modules/eslint')).toBe(true)
+    expect(isPullContentPage('/modules/eslint/config')).toBe(true)
+    expect(isPullContentPage('/modules/eslint-module')).toBe(false)
     expect(isPullContentPage('/blogs')).toBe(false)
   })
 
