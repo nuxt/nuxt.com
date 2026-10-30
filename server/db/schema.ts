@@ -1,5 +1,6 @@
 import { sqliteTable, text, integer, uniqueIndex, index, primaryKey } from 'drizzle-orm/sqlite-core'
 import type { NuxterSocialAccount } from '../../shared/types/nuxters'
+import { TEMPLATE_CHECK_PHASES, type TemplateCheckPhaseTiming } from '../utils/templates/check-report'
 
 const timestamps = {
   createdAt: integer('created_at', { mode: 'timestamp' }).notNull().$defaultFn(() => new Date())
@@ -102,3 +103,58 @@ export const nuxtersSyncs = sqliteTable('nuxters_syncs', {
   count: integer('count').notNull(),
   syncedAt: integer('synced_at', { mode: 'timestamp' }).notNull()
 })
+
+/**
+ * The last check of each template by `checkTemplatesWorkflow`: install, build and, for templates that need no secrets, start in a browser.
+ * `snapshotId` is the snapshot of the last passing check, the one live previews restore. A failing check keeps it, but the preview stays off until it passes again.
+ */
+export const templateChecks = sqliteTable('template_checks', {
+  slug: text('slug').primaryKey(),
+  // `queued` or `running` while a check is in progress, `idle` otherwise
+  state: text('state', { enum: ['idle', 'queued', 'running'] }).notNull(),
+  // What the running check is doing, and when each phase of the current or last check started
+  phase: text('phase', { enum: TEMPLATE_CHECK_PHASES }),
+  phases: text('phases', { mode: 'json' }).$type<TemplateCheckPhaseTiming[]>(),
+  // Result of the last finished check, `null` before the first one
+  status: text('status', { enum: ['passed', 'failed'] }),
+  step: text('step', { enum: ['install', 'build', 'start'] }),
+  nuxt: text('nuxt'),
+  snapshotId: text('snapshot_id'),
+  // Workflow run of the current or last check, the `template_check_runs` row it belongs to, and its sandbox
+  runId: text('run_id'),
+  batchId: text('batch_id'),
+  sandbox: text('sandbox'),
+  // End of the output: live while running, then of the failing step
+  log: text('log'),
+  seconds: integer('seconds'),
+  startedAt: integer('started_at', { mode: 'timestamp' }),
+  checkedAt: integer('checked_at', { mode: 'timestamp' }),
+  passedAt: integer('passed_at', { mode: 'timestamp' })
+})
+
+/** One `checkTemplatesWorkflow` run: who started it and its shared Chromium sandbox. */
+export const templateCheckRuns = sqliteTable('template_check_runs', {
+  id: text('id').primaryKey().$defaultFn(() => crypto.randomUUID()),
+  // Workflow run, set once it started
+  runId: text('run_id'),
+  state: text('state', { enum: ['running', 'finished'] }).notNull(),
+  trigger: text('trigger', { enum: ['cron', 'task'] }).notNull(),
+  startedBy: text('started_by'),
+  total: integer('total').notNull(),
+  browser: text('browser'),
+  startedAt: integer('started_at', { mode: 'timestamp' }).notNull(),
+  finishedAt: integer('finished_at', { mode: 'timestamp' })
+}, table => [index('template_check_runs_started_at_idx').on(table.startedAt)])
+
+/** One row per preview sandbox, reserved before it's created, so parallel starts can't run past the cap on previews. A visitor's latest row is the preview it holds. */
+export const templatePreviews = sqliteTable('template_previews', {
+  // Name of the sandbox, chosen before it's created
+  id: text('id').primaryKey(),
+  owner: text('owner').notNull(),
+  reservedAt: integer('reserved_at', { mode: 'timestamp_ms' }).notNull(),
+  // When the sandbox stops on its own, at the latest
+  expiresAt: integer('expires_at', { mode: 'timestamp' }).notNull()
+}, table => [
+  index('template_previews_owner_idx').on(table.owner),
+  index('template_previews_expires_at_idx').on(table.expiresAt)
+])

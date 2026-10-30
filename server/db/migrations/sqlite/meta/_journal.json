@@ -78,6 +78,20 @@
       "when": 1792565712004,
       "tag": "0010_nuxter_profiles_country",
       "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "6",
+      "when": 1792508990381,
+      "tag": "0011_template_checks",
+      "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "6",
+      "when": 1793092754477,
+      "tag": "0012_template_previews",
+      "breakpoints": true
     }
   ]
 }

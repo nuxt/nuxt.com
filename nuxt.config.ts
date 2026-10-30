@@ -566,7 +566,9 @@ export default defineNuxtConfig({
     vercel: {
       config: {
         // Required for `x-prerender-revalidate` to purge an ISR route.
-        bypassToken: process.env.VERCEL_BYPASS_TOKEN
+        bypassToken: process.env.VERCEL_BYPASS_TOKEN,
+        // Checks every template daily (server/workflows/check-templates.ts). Vercel sends `CRON_SECRET` as a bearer token.
+        crons: [{ path: '/api/cron/templates-check', schedule: '0 4 * * *' }]
       }
     }
   },
