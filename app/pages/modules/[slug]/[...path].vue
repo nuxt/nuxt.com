@@ -79,7 +79,7 @@ const breadcrumb = computed(() => {
   const trail = isDocsPage.value
     ? findBreadcrumb(docsNavigation.value, pagePath.value).map((item, index, all) => ({
         label: item.title,
-        to: index < all.length - 1 ? item.path : undefined
+        to: item.page && index < all.length - 1 ? item.path : undefined
       }))
     : []
 
@@ -363,7 +363,13 @@ if (import.meta.server) {
       </template>
 
       <!-- Docs pages: the title sits under the breadcrumb on mobile, as on `/docs`. -->
-      <UPageHeader v-if="isDocsPage" :title="docsFm.title" :description="docsFm.description">
+      <UPageHeader
+        v-if="isDocsPage"
+        :title="docsFm.title"
+        :description="docsFm.description"
+        :links="docsFm.links"
+        :ui="{ wrapper: 'flex-row items-center flex-wrap justify-between' }"
+      >
         <template #headline>
           <UBreadcrumb :items="breadcrumb.full" class="hidden xl:block" />
           <UBreadcrumb :items="breadcrumb.compact" class="xl:hidden" />

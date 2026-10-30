@@ -97,6 +97,9 @@ describe('isPullContentPage', () => {
     expect(isPullContentPage('/modules/fonts')).toBe(true)
     expect(isPullContentPage('/modules/fonts/providers')).toBe(true)
     expect(isPullContentPage('/modules/fontsource')).toBe(false)
+    expect(isPullContentPage('/modules/image')).toBe(true)
+    expect(isPullContentPage('/modules/image/providers/cloudinary')).toBe(true)
+    expect(isPullContentPage('/modules/imagekit')).toBe(false)
     expect(isPullContentPage('/blogs')).toBe(false)
   })
 
