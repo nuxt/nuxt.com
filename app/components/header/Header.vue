@@ -1,5 +1,45 @@
 <script setup lang="ts">
+import type { DropdownMenuItem } from '@nuxt/ui'
+
 const route = useRoute()
+
+const colorMode = useColorMode()
+const mounted = ref(false)
+onMounted(() => {
+  mounted.value = true
+})
+
+const colorModeIcon = computed(() => {
+  if (!mounted.value || colorMode.preference === 'dark') return 'i-lucide-moon'
+  if (colorMode.preference === 'light') return 'i-lucide-sun'
+  return 'i-lucide-monitor'
+})
+
+const currentColorMode = computed(() => mounted.value ? colorMode.preference : 'dark')
+const colorModeLabel = computed(() => `Color mode: ${currentColorMode.value}`)
+const colorModeItems = computed<DropdownMenuItem[][]>(() => [[
+  {
+    type: 'checkbox',
+    label: 'Light',
+    icon: 'i-lucide-sun',
+    checked: currentColorMode.value === 'light',
+    onSelect: () => { colorMode.preference = 'light' }
+  },
+  {
+    type: 'checkbox',
+    label: 'Dark',
+    icon: 'i-lucide-moon',
+    checked: currentColorMode.value === 'dark',
+    onSelect: () => { colorMode.preference = 'dark' }
+  },
+  {
+    type: 'checkbox',
+    label: 'System',
+    icon: 'i-lucide-monitor',
+    checked: currentColorMode.value === 'system',
+    onSelect: () => { colorMode.preference = 'system' }
+  }
+]])
 
 const stats = useStats()
 const { loggedIn } = useUserSession()
@@ -86,9 +126,17 @@ function onWidthTransitionEnd(event: TransitionEvent) {
           @enter="onEnter"
         >
           <div v-if="!loggedIn" key="guest" class="flex items-center gap-1.5 origin-right">
-            <UTooltip text="Toggle theme" :kbds="['d']">
-              <UColorModeButton />
-            </UTooltip>
+            <UDropdownMenu :items="colorModeItems" :content="{ align: 'end' }">
+              <UTooltip text="Color mode" :kbds="['d']" :ui="{ kbds: 'inline-flex' }">
+                <UButton
+                  :icon="colorModeIcon"
+                  :aria-label="colorModeLabel"
+                  color="neutral"
+                  variant="ghost"
+                  square
+                />
+              </UTooltip>
+            </UDropdownMenu>
 
             <UTooltip text="GitHub Stars">
               <UButton
