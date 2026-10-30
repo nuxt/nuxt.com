@@ -97,6 +97,9 @@ describe('isPullContentPage', () => {
     expect(isPullContentPage('/modules/fonts')).toBe(true)
     expect(isPullContentPage('/modules/fonts/providers')).toBe(true)
     expect(isPullContentPage('/modules/fontsource')).toBe(false)
+    expect(isPullContentPage('/modules/eslint')).toBe(true)
+    expect(isPullContentPage('/modules/eslint/config')).toBe(true)
+    expect(isPullContentPage('/modules/eslint-module')).toBe(false)
     expect(isPullContentPage('/blogs')).toBe(false)
   })
 
