@@ -2,7 +2,7 @@ import { getMcpPrompts, getMcpTools } from '@nuxtjs/mcp-toolkit/server'
 
 export default defineMcpHandler({
   name: 'admin',
-  description: 'Authenticated MCP handler for the Nuxt team to query feedback, agent chats, and votes from the production database, Google Search Console data and field Core Web Vitals for nuxt.com.',
+  description: 'Authenticated MCP handler for the Nuxt team to query feedback, agent chats, votes and template checks from the production database, Google Search Console data and field Core Web Vitals for nuxt.com.',
   icons: [
     { src: 'https://nuxt.com/icon.png', mimeType: 'image/png', sizes: ['64x64'] }
   ],
@@ -13,6 +13,7 @@ Tools:
 - Agent quality: \`agent-usage-stats\` (web chats + votes only), \`list-agent-chats\`, \`get-agent-chat\`, \`list-agent-votes\`
 - Google Search: \`search-console-analytics\` (clicks, impressions, CTR, position), \`search-console-inspect-url\` (indexing of one URL), \`search-console-sitemaps\`
 - Performance: \`crux-web-vitals\` (field LCP, INP, CLS from real Chrome users, per page or site, with weekly trend)
+- Templates: \`template-check-status\` (which templates pass the daily check, and why they fail), \`start-template-checks\` (re-check some of them on Vercel Sandbox: pass \`slugs\` or \`failing\`, each one runs a sandbox for up to 15 minutes)
 
 **Usage, tokens, cost, duration, and Slack runs** are in Vercel Observability → Agent Runs (nuxt project). Never report token/cost numbers from local DB — they are stale or absent post-Eve.
 
