@@ -3,3 +3,4 @@ slug: "atidraw"
 description: "Web application that lets you to create, enhance, and share your drawings with the world."
 repo: "atinux/atidraw"
 demo: "https://draw.nuxt.dev/"
+category: 'app'

@@ -6,3 +6,4 @@ screenshotUrl: 'https://prismic-demo-glideai.nuxt.dev'
 screenshotOptions:
   delay: 5
 repo: prismicio-community/nuxt-starter-prismic-glideai
+category: 'landing'

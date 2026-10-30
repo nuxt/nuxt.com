@@ -4,3 +4,5 @@ description: 'HackerNews clone built with Nuxt.'
 repo: 'nuxt/hackernews'
 demo: 'https://hn.nuxt.space/news/1'
 featured: true
+category: 'app'
+official: true
