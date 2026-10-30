@@ -1,12 +1,16 @@
 import { z } from 'zod'
 
+const inputSchema = z.object({
+  sinceDays: z.coerce.number().int().min(1).max(365).default(7).describe('Window in days (default 7).'),
+  worst: z.coerce.number().int().min(1).max(20).default(5).describe('How many lowest-rated chats to read in full (default 5).')
+})
+
 export default defineMcpPrompt({
+  name: 'review-agent-chats',
+  title: 'Review Agent Chats',
+  group: 'admin',
   description: 'Review AI agent quality over a recent window: votes, worst web chats, and patterns — usage/spend via Vercel o11y.',
-  inputSchema: {
-    sinceDays: z.number().int().min(1).max(365).default(7).describe('Window in days (default 7).'),
-    worst: z.number().int().min(1).max(20).default(5).describe('How many lowest-rated chats to read in full (default 5).')
-  },
-  enabled: event => isMcpAdmin(event),
+  inputSchema,
   handler({ sinceDays, worst }) {
     return `Review the Nuxt AI agent activity from the last ${sinceDays} days.
 

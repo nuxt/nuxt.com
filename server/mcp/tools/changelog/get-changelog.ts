@@ -1,4 +1,36 @@
+import { defineCachedFunction } from 'nitropack/runtime'
+import { hash } from 'ohash'
+import type { H3Event } from 'h3'
 import { z } from 'zod'
+
+const inputSchema = z.object({
+  repo: z.string().optional().describe('Filter by repository (e.g., "nuxt/ui", "nuxt/nuxt"). If omitted, returns releases from all repos.'),
+  limit: z.number().min(1).max(20).default(5).describe('Number of releases to return (default: 5, max: 20)')
+})
+
+const getResult = defineCachedFunction(async (event: H3Event, { repo, limit }: z.output<typeof inputSchema>) => {
+  const releases = await fetchRawReleases() || []
+
+  const filtered = repo
+    ? releases.filter(r => r.repo === repo || r.repo.endsWith(`/${repo}`))
+    : releases
+
+  if (filtered.length === 0) {
+    throw createError({ statusCode: 404, message: repo ? `No releases found for repository "${repo}"` : 'No releases found' })
+  }
+
+  return filtered.slice(0, limit).map((r) => {
+    const md = r.markdown && r.markdown.length > 4_000
+      ? r.markdown.slice(0, 4_000) + '\n\n[Release notes truncated. Visit the full release page for details.]'
+      : r.markdown
+    return { title: r.title, repo: r.repo, tag: r.tag, date: r.date, url: r.url, markdown: md }
+  })
+}, {
+  name: 'mcp-get-changelog',
+  maxAge: 3600,
+  swr: false,
+  getKey: (event, args) => hash([getRequestURL(event).origin, args])
+})
 
 export default defineMcpTool({
   description: `Retrieves the latest releases from Nuxt core and official modules (changelog).
@@ -13,35 +45,13 @@ WHEN TO USE: Use this tool when users ask about:
 Covers repositories: nuxt/nuxt, nuxt/ui, nuxt/content, nuxt/image, nuxt/fonts, nuxt/devtools, nuxt/scripts, nuxt/eslint, nuxt/icon, nuxt/hints, nuxt/test-utils, nuxt-content/nuxt-studio.
 
 OUTPUT: Returns releases with title, repo, tag, date, and raw markdown body. Optionally filter by repository name.`,
-  inputSchema: {
-    repo: z.string().optional().describe('Filter by repository (e.g., "nuxt/ui", "nuxt/nuxt"). If omitted, returns releases from all repos.'),
-    limit: z.number().min(1).max(20).default(5).describe('Number of releases to return (default: 5, max: 20)')
-  },
+  inputSchema: inputSchema.meta({ examples: [
+    { limit: 5 },
+    { repo: 'nuxt/ui', limit: 3 }
+  ] satisfies z.input<typeof inputSchema>[] }),
   annotations: {
     readOnlyHint: true,
     openWorldHint: true
   },
-  inputExamples: [
-    { limit: 5 },
-    { repo: 'nuxt/ui', limit: 3 }
-  ],
-  cache: '1h',
-  async handler({ repo, limit }) {
-    const releases = await fetchRawReleases() || []
-
-    const filtered = repo
-      ? releases.filter(r => r.repo === repo || r.repo.endsWith(`/${repo}`))
-      : releases
-
-    if (filtered.length === 0) {
-      throw createError({ statusCode: 404, message: repo ? `No releases found for repository "${repo}"` : 'No releases found' })
-    }
-
-    return filtered.slice(0, limit).map((r) => {
-      const md = r.markdown && r.markdown.length > 4_000
-        ? r.markdown.slice(0, 4_000) + '\n\n[Release notes truncated. Visit the full release page for details.]'
-        : r.markdown
-      return { title: r.title, repo: r.repo, tag: r.tag, date: r.date, url: r.url, markdown: md }
-    })
-  }
+  handler: args => getResult(useEvent(), args)
 })

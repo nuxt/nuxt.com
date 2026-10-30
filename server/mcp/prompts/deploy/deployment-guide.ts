@@ -1,11 +1,13 @@
 import { z } from 'zod'
 import { getAgentDocument, getAgentSiteUrl } from '#agent-discovery'
 
+const inputSchema = z.object({
+  provider: z.string().describe('Hosting provider name (e.g. "Vercel", "Netlify", "AWS", "Cloudflare")')
+})
+
 export default defineMcpPrompt({
   description: 'Get deployment instructions for a specific hosting provider',
-  inputSchema: {
-    provider: z.string().describe('Hosting provider name (e.g. "Vercel", "Netlify", "AWS", "Cloudflare")')
-  },
+  inputSchema,
   async handler({ provider }) {
     const event = useEvent()
 

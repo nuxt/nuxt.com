@@ -1,29 +1,32 @@
 import { z } from 'zod'
 import { and, desc, gte, inArray, like, lte, type SQL } from 'drizzle-orm'
 
+const inputSchema = z.object({
+  ratings: z.array(z.enum(FEEDBACK_RATINGS)).optional().describe('Restrict to specific ratings. If omitted, returns all ratings.'),
+  pathContains: z.string().optional().describe('Substring match on the page path (e.g., "data-fetching", "/docs/4.x").'),
+  sinceDays: z.number().int().min(1).max(365).optional().describe('Only include feedback from the last N days.'),
+  until: z.string().datetime({ offset: true }).optional().describe('Upper bound on createdAt as an ISO 8601 datetime.'),
+  limit: z.number().int().min(1).max(200).default(50).describe('Maximum number of feedback rows to return (default 50, max 200).'),
+  offset: z.number().int().min(0).default(0).describe('Pagination offset.')
+})
+
 export default defineMcpTool({
+  name: 'list-feedback',
+  title: 'List Feedback',
+  group: 'admin',
   description: `Lists user feedback entries from the docs site, with filters for rating, page path, and date range.
 
 WHEN TO USE: Use this tool to surface what users are saying about specific docs pages, especially negative feedback ("not-helpful" / "confusing"). Combine with \`admin_feedback_stats\` for aggregated trends first, then drill down with this tool.
 
 OUTPUT: Returns feedback rows (id, rating, comment, path, title, country, dates) ordered by most recent first. Pass \`pathContains\` to filter by URL substring (e.g., "data-fetching") and \`ratings\` to focus on negatives.`,
-  inputSchema: {
-    ratings: z.array(z.enum(FEEDBACK_RATINGS)).optional().describe('Restrict to specific ratings. If omitted, returns all ratings.'),
-    pathContains: z.string().optional().describe('Substring match on the page path (e.g., "data-fetching", "/docs/4.x").'),
-    sinceDays: z.number().int().min(1).max(365).optional().describe('Only include feedback from the last N days.'),
-    until: z.string().datetime({ offset: true }).optional().describe('Upper bound on createdAt as an ISO 8601 datetime.'),
-    limit: z.number().int().min(1).max(200).default(50).describe('Maximum number of feedback rows to return (default 50, max 200).'),
-    offset: z.number().int().min(0).default(0).describe('Pagination offset.')
-  },
+  inputSchema: inputSchema.meta({ examples: [
+    { ratings: ['not-helpful', 'confusing'], sinceDays: 7 },
+    { pathContains: '/docs/4.x/getting-started', limit: 20 }
+  ] satisfies z.input<typeof inputSchema>[] }),
   annotations: {
     readOnlyHint: true,
     openWorldHint: false
   },
-  inputExamples: [
-    { ratings: ['not-helpful', 'confusing'], sinceDays: 7 },
-    { pathContains: '/docs/4.x/getting-started', limit: 20 }
-  ],
-  enabled: event => isMcpAdmin(event),
   async handler({ ratings, pathContains, sinceDays, until, limit, offset }) {
     const filters: SQL[] = []
     if (ratings?.length) filters.push(inArray(schema.feedback.rating, ratings))

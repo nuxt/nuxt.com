@@ -1,13 +1,17 @@
 import { z } from 'zod'
 
+const inputSchema = z.object({
+  days: z.coerce.number().int().min(7).max(90).default(28).describe('Window in days, compared with the window just before it (default 28).'),
+  top: z.coerce.number().int().min(1).max(20).default(10).describe('How many opportunities to report (default 10).'),
+  pathContains: z.string().optional().describe('Only consider pages whose URL contains this, e.g. "/docs/4.x" or "/blog".')
+})
+
 export default defineMcpPrompt({
+  name: 'seo-opportunities',
+  title: 'Seo Opportunities',
+  group: 'admin',
   description: 'Find the nuxt.com pages with the most to gain from SEO work, from Google Search Console data cross-checked with docs feedback, indexing and field Core Web Vitals, and suggest concrete fixes.',
-  inputSchema: {
-    days: z.number().int().min(7).max(90).default(28).describe('Window in days, compared with the window just before it (default 28).'),
-    top: z.number().int().min(1).max(20).default(10).describe('How many opportunities to report (default 10).'),
-    pathContains: z.string().optional().describe('Only consider pages whose URL contains this, e.g. "/docs/4.x" or "/blog".')
-  },
-  enabled: event => isMcpAdmin(event),
+  inputSchema,
   handler({ days, top, pathContains }) {
     // Serialized so quotes or backslashes in `pathContains` can't break the filter JSON or the sentence around it.
     const pageFilter = pathContains ? `, \`filters=${JSON.stringify([{ dimension: 'page', operator: 'contains', expression: pathContains }])}\`` : ''

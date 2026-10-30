@@ -1,12 +1,16 @@
 import { z } from 'zod'
 
+const inputSchema = z.object({
+  sinceDays: z.coerce.number().int().min(1).max(365).default(7).describe('How many days back to summarize (default 7).'),
+  pathContains: z.string().optional().describe('Optional substring to focus on a specific docs section (e.g. "/docs/4.x", "data-fetching").')
+})
+
 export default defineMcpPrompt({
+  name: 'summarize-feedback',
+  title: 'Summarize Feedback',
+  group: 'admin',
   description: 'Summarize user feedback on the docs over a recent window: rating distribution, worst pages, and recurring themes from negative comments.',
-  inputSchema: {
-    sinceDays: z.number().int().min(1).max(365).default(7).describe('How many days back to summarize (default 7).'),
-    pathContains: z.string().optional().describe('Optional substring to focus on a specific docs section (e.g. "/docs/4.x", "data-fetching").')
-  },
-  enabled: event => isMcpAdmin(event),
+  inputSchema,
   handler({ sinceDays, pathContains }) {
     const scope = pathContains ? ` for pages matching "${pathContains}"` : ''
 

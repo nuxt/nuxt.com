@@ -1,8 +1,11 @@
+import { createMcpHandler, defineMcpTool } from 'nitro-mcp-toolkit'
+import { createMcpTestClient, textOf } from 'nitro-mcp-toolkit/testing'
+import { z } from 'zod'
 import { createClient } from '@libsql/client'
 import { drizzle } from 'drizzle-orm/libsql'
 import { generateSQLiteDrizzleJson, generateSQLiteMigration } from 'drizzle-kit/api'
 import { createError } from 'h3'
-import { beforeAll, describe, expect, it, vi } from 'vitest'
+import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest'
 import * as appSchema from '../../server/db/schema'
 import { adminReadableChat } from '../../server/utils/admin-chats'
 
@@ -12,17 +15,24 @@ const nuxiSchema = await import('../../layers/nuxi/server/db/schema')
 const schema = { ...appSchema, ...nuxiSchema }
 const db = drizzle(createClient({ url: ':memory:' }), { schema })
 
-vi.stubGlobal('defineMcpTool', <T>(definition: T) => definition)
+vi.stubGlobal('defineMcpTool', defineMcpTool)
 vi.stubGlobal('createError', createError)
-vi.stubGlobal('isMcpAdmin', () => true)
 vi.stubGlobal('adminReadableChat', adminReadableChat)
 vi.stubGlobal('schema', schema)
 vi.stubGlobal('db', db)
 
-type Tool = { handler: (input: Record<string, unknown>) => Promise<any> }
-const listChats = (await import('../../server/mcp/tools/admin/list-agent-chats')).default as unknown as Tool
-const getChat = (await import('../../server/mcp/tools/admin/get-agent-chat')).default as unknown as Tool
-const listVotes = (await import('../../server/mcp/tools/admin/list-agent-votes')).default as unknown as Tool
+const listChats = (await import('../../server/mcp-admin/tools/list-agent-chats')).default
+const getChat = (await import('../../server/mcp-admin/tools/get-agent-chat')).default
+const listVotes = (await import('../../server/mcp-admin/tools/list-agent-votes')).default
+const client = await createMcpTestClient(createMcpHandler({ tools: [listChats, getChat, listVotes] }))
+afterAll(() => client.close())
+
+async function callTool(name: string, args: Record<string, unknown>) {
+  const result = await client.callTool({ name, arguments: args })
+  expect(result.isError).not.toBe(true)
+  const data: unknown = JSON.parse(textOf(result))
+  return data
+}
 
 const visibilities = ['private', 'admin', 'public'] as const
 
@@ -40,28 +50,30 @@ beforeAll(async () => {
 
 describe('admin agent chat tools', () => {
   it('lists only chats shared with admins or made public', async () => {
-    const { rows } = await listChats.handler({ sortBy: 'createdAt', limit: 25, offset: 0 })
+    const { rows } = z.object({ rows: z.array(z.object({ id: z.string() })) }).parse(await callTool('list-agent-chats', { sortBy: 'createdAt', limit: 25, offset: 0 }))
     expect(rows.map((r: { id: string }) => r.id).sort()).toEqual(['admin', 'public'])
   })
 
   it('applies the visibility filter alongside other filters', async () => {
-    const { rows } = await listChats.handler({ sinceDays: 7, hasDownvotes: true, sortBy: 'createdAt', limit: 25, offset: 0 })
+    const { rows } = z.object({ rows: z.array(z.object({ id: z.string() })) }).parse(await callTool('list-agent-chats', { sinceDays: 7, hasDownvotes: true, sortBy: 'createdAt', limit: 25, offset: 0 }))
     expect(rows.map((r: { id: string }) => r.id).sort()).toEqual(['admin', 'public'])
   })
 
   it('reads chats shared with admins or made public', async () => {
     for (const id of ['admin', 'public']) {
-      const chat = await getChat.handler({ chatId: id, includeRawParts: false })
-      expect(chat.messages[0].text).toBe(`${id} answer`)
+      const chat = await callTool('get-agent-chat', { chatId: id, includeRawParts: false })
+      expect(chat).toMatchObject({ messages: [{ text: `${id} answer` }] })
     }
   })
 
   it('does not read private chats', async () => {
-    await expect(getChat.handler({ chatId: 'private', includeRawParts: false })).rejects.toMatchObject({ statusCode: 404 })
+    const result = await client.callTool({ name: 'get-agent-chat', arguments: { chatId: 'private', includeRawParts: false } })
+    expect(result.isError).toBe(true)
+    expect(textOf(result)).not.toContain('private answer')
   })
 
   it('lists votes only from chats shared with admins or made public', async () => {
-    const { rows } = await listVotes.handler({ onlyDownvotes: false, onlyUpvotes: false, limit: 50, offset: 0 })
+    const { rows } = z.object({ rows: z.array(z.object({ chatId: z.string(), messageText: z.string() })) }).parse(await callTool('list-agent-votes', { onlyDownvotes: false, onlyUpvotes: false, limit: 50, offset: 0 }))
     expect(rows.map((r: { chatId: string, messageText: string }) => [r.chatId, r.messageText]).sort()).toEqual([
       ['admin', 'admin answer'],
       ['public', 'public answer']

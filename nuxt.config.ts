@@ -556,7 +556,8 @@ export default defineNuxtConfig({
   nitro: {
     experimental: {
       // `pnpm nuxters:sync` (server/tasks/nuxters/sync.ts)
-      tasks: true
+      tasks: true,
+      asyncContext: true
     },
     // Only scan this directory for `'use workflow'` files.
     // @ts-expect-error `@workflow/nitro` does not augment Nuxt's Nitro config type
@@ -636,16 +637,11 @@ export default defineNuxtConfig({
       ]
     },
     discovery: {
-      mcpServerCard: {
-        endpoint: '/mcp',
-        name: 'Nuxt',
-        title: 'Nuxt MCP Server',
-        description: 'MCP server providing tools, resources and prompts to help AI agents build with Nuxt — search documentation, retrieve guides, fetch module metadata, discover deployment providers, and look up Nuxt contributors (Nuxters).',
-        documentation: `/docs/${CURRENT_DOCS_VERSION}/guide/ai/mcp`,
-        repository: 'https://github.com/nuxt/nuxt.com',
-        license: 'MIT'
-      },
+      mcpServerCard: false,
       links: [
+        { rel: 'service-desc', href: '/.well-known/mcp/server-card.json', type: 'application/json', title: 'Nuxt MCP server card', anchor: '/mcp' },
+        { rel: 'service', href: '/mcp', title: 'Nuxt MCP endpoint', header: false },
+        { rel: 'service-doc', href: `/docs/${CURRENT_DOCS_VERSION}/guide/ai/mcp`, type: 'text/html', anchor: '/mcp', header: false },
         { rel: 'service-desc', href: '/openapi.json', type: 'application/vnd.oai.openapi+json', title: 'OpenAPI specification: machine-readable API surface', anchor: '/' },
         { rel: 'describedby', href: '/design.md', type: 'text/markdown', title: 'Design system' },
         { rel: 'service-doc', href: '/docs', type: 'text/html', anchor: '/docs', title: 'Documentation' }
@@ -804,11 +800,10 @@ export default defineNuxtConfig({
   mcp: {
     name: 'Nuxt',
     route: '/mcp',
-    browserRedirect: '/docs/guide/ai/mcp',
+    websiteUrl: `https://nuxt.com/docs/${CURRENT_DOCS_VERSION}/guide/ai/mcp`,
     icons: [
       { src: 'https://nuxt.com/icon.png', mimeType: 'image/png', sizes: ['64x64'] }
-    ],
-    logging: true
+    ]
   },
   ogImage: {
     cacheMaxAgeSeconds: 0,

@@ -41,27 +41,30 @@ function assess(ratings: Partial<Record<keyof typeof METRICS, string | null>>): 
   return core.every(rating => rating === 'good') ? 'passed' : 'unknown'
 }
 
+const inputSchema = z.object({
+  url: z.string().optional().describe('Page path (/docs/...) or full nuxt.com URL. Omit for the whole nuxt.com origin.'),
+  formFactor: z.enum(['PHONE', 'DESKTOP', 'TABLET']).optional().describe('Device class. Omit to aggregate all devices.'),
+  weeks: z.number().int().min(1).max(40).optional().describe('Return a weekly p75 trend over this many collection periods (each covering the previous 28 days) instead of the latest snapshot.')
+})
+
 export default defineMcpTool({
+  name: 'crux-web-vitals',
+  title: 'Crux Web Vitals',
+  group: 'admin',
   description: `Field Core Web Vitals for nuxt.com from real Chrome users (Chrome UX Report): p75 of LCP, INP, CLS, FCP and TTFB, their good / needs-improvement / poor rating and distribution, and whether the Core Web Vitals assessment passes. These are the numbers Google Search uses for its page experience signals.
 
 WHEN TO USE: Check whether a page (or the whole site) is slow for real users, compare phone vs desktop, or pass \`weeks\` to see a weekly trend and confirm a performance fix landed.
 
 NOTES: Each value aggregates the previous 28 days, with a ~2 day lag; weekly history updates on Mondays. Low-traffic pages have no page-level data (\`found: false\`): query the origin instead (omit \`url\`). LCP, INP, FCP, TTFB are in milliseconds; CLS is unitless.`,
-  inputSchema: {
-    url: z.string().optional().describe('Page path (/docs/...) or full nuxt.com URL. Omit for the whole nuxt.com origin.'),
-    formFactor: z.enum(['PHONE', 'DESKTOP', 'TABLET']).optional().describe('Device class. Omit to aggregate all devices.'),
-    weeks: z.number().int().min(1).max(40).optional().describe('Return a weekly p75 trend over this many collection periods (each covering the previous 28 days) instead of the latest snapshot.')
-  },
+  inputSchema: inputSchema.meta({ examples: [
+    { formFactor: 'PHONE' },
+    { url: '/docs/4.x/getting-started/introduction' },
+    { url: '/modules', formFactor: 'PHONE', weeks: 12 }
+  ] satisfies z.input<typeof inputSchema>[] }),
   annotations: {
     readOnlyHint: true,
     openWorldHint: true
   },
-  inputExamples: [
-    { formFactor: 'PHONE' },
-    { url: '/docs/4.x/getting-started/introduction' },
-    { url: '/modules', formFactor: 'PHONE', weeks: 12 }
-  ],
-  enabled: event => isMcpAdmin(event),
   async handler({ url, formFactor, weeks }) {
     const target = url ? { url: url.startsWith('/') ? `https://nuxt.com${url}` : url } : { origin: 'https://nuxt.com' }
     const response = await cruxFetch<CruxResponse>(weeks ? 'queryHistoryRecord' : 'queryRecord', {
