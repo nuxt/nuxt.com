@@ -1,0 +1,6 @@
+name: 'Nuxt Starter'
+slug: 'nuxt-starter'
+description: 'Lightweight landing page starter with SCSS, dark mode and accessible form components built on Reka UI.'
+repo: 'konkol00/nuxt-starter'
+demo: 'https://konkol00.github.io/nuxt-starter/'
+badge: 'Free'
