@@ -13,7 +13,7 @@ import { MODULE_DOCS, MODULE_DOCS_NAMES, moduleDocsPathPrefix, type ModuleDocsNa
  * Repos in the `nuxt` org a content instance reads from; the PR's base branch picks which instances.
  * Module docs repos are listed here too (`icon` → `nuxt/icon`), so they must live in the `nuxt` org.
  */
-export const PULL_REPOS = ['nuxt', 'cli', 'examples', 'nuxt.com', 'icon', 'devtools', 'fonts'] as const
+export const PULL_REPOS = ['nuxt', 'cli', 'examples', 'nuxt.com', 'icon', 'devtools', 'fonts', 'hints'] as const
 
 export type PullRepo = (typeof PULL_REPOS)[number]
 
