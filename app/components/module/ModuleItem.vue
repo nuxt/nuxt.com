@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { Module, ModuleProvider } from '#shared/types'
+import { hasModuleDocs } from '#shared/utils/module-docs'
 
 const emit = defineEmits<{
   add: [module: Module]
@@ -105,8 +106,10 @@ const items = computed(() => [
     {
       icon: 'i-lucide-book',
       label: 'Documentation',
-      to: `${props.module.website}?utm_source=nuxt.com&utm_medium=aside-module&utm_campaign=nuxt.com`,
-      target: '_blank'
+      // Hosted docs live on the module page, not on the registry `website`.
+      ...(hasModuleDocs(props.module.name)
+        ? { to: `/modules/${props.module.name}` }
+        : { to: `${props.module.website}?utm_source=nuxt.com&utm_medium=aside-module&utm_campaign=nuxt.com`, target: '_blank' })
     },
     {
       label: 'View on GitHub',
