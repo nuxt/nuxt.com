@@ -26,6 +26,9 @@ export const CURRENT_NUXT_MAJOR = 4
 
 export const SITE_URL = 'https://nuxt.com'
 
+/** How long a live preview sandbox runs before Vercel stops it. */
+export const PREVIEW_TIMEOUT_MS = 10 * 60 * 1000
+
 export function isStarter(template: Pick<Template, 'kind'>): boolean {
   return template.kind === 'starter'
 }
@@ -51,7 +54,8 @@ export function isWorking(health?: TemplateHealth): boolean {
 }
 
 export const TEMPLATE_STATUS_FILTERS: Array<{ value: TemplateStatusFilter, label: string, icon: string }> = [
-  { value: 'working', label: 'Builds today', icon: 'i-lucide-circle-check' }
+  { value: 'working', label: 'Builds today', icon: 'i-lucide-circle-check' },
+  { value: 'live', label: 'Runs live', icon: 'i-lucide-play' }
 ]
 
 export const TEMPLATE_SORTS: Array<{ value: TemplateSort, label: string }> = [
