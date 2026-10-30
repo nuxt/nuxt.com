@@ -3,7 +3,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import memoryDriver from 'unstorage/drivers/memory'
 import type { NavigationItem } from 'comark-content'
 import { instanceSource } from '../../server/utils/content/instances'
-import { findByPath } from '../../server/utils/content/navigation'
+import { findByPath, moduleDocsTrees } from '../../server/utils/content/navigation'
 import type { ContentInstanceKey } from '../../shared/utils/content'
 
 const SHA = 'a'.repeat(40)
@@ -35,6 +35,7 @@ vi.stubGlobal('contentCacheDriver', () => undefined)
 vi.stubGlobal('recordDuration', () => 0)
 vi.stubGlobal('getInstanceAtHead', async (key: ContentInstanceKey) => ({ stat: headStat, navigation: async () => headNavs.get(key) ?? [] }))
 vi.stubGlobal('findByPath', findByPath)
+vi.stubGlobal('moduleDocsTrees', moduleDocsTrees)
 
 type PullModule = typeof import('../../server/utils/content/pull')
 let { pullInstanceKey, pullLandingPath, pullNavigation, pullPages, resolvePullPreview } = {} as PullModule
@@ -325,6 +326,7 @@ describe('pullNavigation', () => {
     headNavs.set('cli:4.x', [nav('/docs/4.x/api/commands')])
     headNavs.set('examples', [nav('/docs/examples')])
     headNavs.set('site', [nav('/blog')])
+    headNavs.set('module:icon', [nav('/modules', [nav('/modules/icon', [nav('/modules/icon/usage')])])])
 
     const tree = await pullNavigation('4.x', {
       target: { repo: 'nuxt', number: 1 },
@@ -335,7 +337,7 @@ describe('pullNavigation', () => {
       files: []
     })
 
-    expect(tree.map(item => item.path)).toEqual(['/docs/4.x', '/blog'])
+    expect(tree.map(item => item.path)).toEqual(['/docs/4.x', '/blog', '/modules/icon'])
     expect(tree[0]!.children!.map(item => item.path)).toEqual([
       '/docs/4.x/getting-started',
       '/docs/4.x/api',

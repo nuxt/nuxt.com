@@ -1,6 +1,7 @@
 import { withLeadingSlash } from 'ufo'
 import type { ContentInstanceKey } from './content'
 import type { DocVersion } from './docs'
+import { MODULE_DOCS, MODULE_DOCS_NAMES, moduleDocsPathPrefix, type ModuleDocsName } from './module-docs'
 
 /**
  * Pull request previews: `/pull/:repo/:number` mirrors `github.com/nuxt/:repo/pull/:number`.
@@ -8,8 +9,11 @@ import type { DocVersion } from './docs'
  * The whole site is mounted under that prefix, with the instance the PR replaces pinned to its head commit.
  */
 
-/** Repos in the `nuxt` org a content instance reads from; the PR's base branch picks which instances. */
-export const PULL_REPOS = ['nuxt', 'cli', 'examples', 'nuxt.com'] as const
+/**
+ * Repos in the `nuxt` org a content instance reads from; the PR's base branch picks which instances.
+ * Module docs repos are listed here too (`icon` → `nuxt/icon`), so they must live in the `nuxt` org.
+ */
+export const PULL_REPOS = ['nuxt', 'cli', 'examples', 'nuxt.com', 'icon', 'devtools', 'fonts', 'hints'] as const
 
 export type PullRepo = (typeof PULL_REPOS)[number]
 
@@ -77,6 +81,9 @@ export function pullNavigationPath(version: DocVersion, pull: PullTarget): strin
 export function instanceRepo(key: ContentInstanceKey): PullRepo {
   if (key === 'site') return 'nuxt.com'
   if (key === 'examples') return 'examples'
+  if (key.startsWith('module:')) {
+    return MODULE_DOCS[key.slice('module:'.length) as ModuleDocsName].repo.slice('nuxt/'.length) as PullRepo
+  }
 
   return key.startsWith('cli:') ? 'cli' : 'nuxt'
 }
@@ -112,6 +119,8 @@ export const PULL_CONTENT_PAGES = [
   '/enterprise/jobs',
   '/evals',
   '/modules',
+  // Hosted module docs, the module page included
+  ...MODULE_DOCS_NAMES.map(name => `${moduleDocsPathPrefix(name)}/**`),
   '/newsletter',
   '/showcase',
   '/sponsors',
