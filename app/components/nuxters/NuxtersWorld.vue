@@ -15,7 +15,15 @@ const selected = computed(() => props.map.countries.find(item => item.code === c
 // The card of the selected country: floating on the globe, or at the bottom of the screen on phones.
 const [DefineCard, ReuseCard] = createReusableTemplate<{ country: NuxtersCountry }>()
 // One tile per Nuxter shown, known from the count: the card keeps its size while they load.
-const tiles = computed(() => Array.from({ length: Math.min(12, selected.value?.count ?? 0) }, (_, index) => props.people[index]))
+const tiles = computed(() => Array.from({ length: Math.min(12, selected.value?.count ?? 0) }, (_, index) => {
+  const person = props.people[index]
+  if (person) return { username: person.username, rank: person.rank }
+  const username = selected.value?.top[index]
+  return username ? { username, rank: null } : undefined
+}))
+const personLabel = (person: { username: string, rank: number | null }) => person.rank === null
+  ? person.username
+  : `${person.username} · #${format(person.rank)}`
 const rankOf = (code: string) => props.map.countries.findIndex(item => item.code === code) + 1
 const largest = computed(() => props.map.countries[0]?.count ?? 1)
 
@@ -56,15 +64,16 @@ watch(isVisible, (visible) => {
           />
         </div>
         <ul class="grid grid-cols-6 gap-2 mt-4" :aria-busy="!people.length || undefined">
-          <li v-for="(nuxter, index) in tiles" :key="nuxter?.githubId ?? `tile-${index}`" class="aspect-square">
-            <UTooltip v-if="nuxter" :text="`${nuxter.username} · #${format(nuxter.rank)}`">
-              <NuxtLink :to="`/nuxters/${nuxter.username}`" :aria-label="`${nuxter.username}, #${format(nuxter.rank)}`" class="block size-full rounded-md overflow-hidden bg-muted ring ring-default hover:ring-primary transition">
+          <li v-for="(nuxter, index) in tiles" :key="nuxter?.username ?? `tile-${index}`" class="aspect-square">
+            <UTooltip v-if="nuxter" :text="personLabel(nuxter)">
+              <NuxtLink :to="`/nuxters/${nuxter.username}`" prefetch-on="interaction" :aria-label="nuxter.rank === null ? nuxter.username : `${nuxter.username}, #${format(nuxter.rank)}`" class="block size-full rounded-md overflow-hidden bg-muted ring ring-default hover:ring-primary transition">
+                <!-- Same URL as the leaderboard: a Nuxter it already shows reuses the image. -->
                 <NuxtImg
                   :src="`/gh_avatar/${nuxter.username}`"
                   provider="ipx"
                   densities="x1 x2"
-                  width="56"
-                  height="56"
+                  width="124"
+                  height="124"
                   format="auto"
                   loading="lazy"
                   :alt="nuxter.username"

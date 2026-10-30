@@ -43,6 +43,7 @@ async function showMore() {
         <UTooltip :text="`${nuxter.username} · ${points(nuxter.score)}`">
           <NuxtLink
             :to="{ path: `/nuxters/${nuxter.username}`, query: profileQuery }"
+            prefetch-on="interaction"
             :aria-label="`${nuxter.username}, #${format(nuxter.rank)}, ${points(nuxter.score)}`"
             class="block aspect-square rounded-lg overflow-hidden bg-muted ring ring-default hover:ring-primary transition"
           >
