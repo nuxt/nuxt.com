@@ -108,9 +108,10 @@ async function checkTemplate(report: Reporter, batchId: string, template: Templa
     return { slug: template.slug, status: 'failed', step, live: false }
   }
 
-  const sandbox = await createCheckSandbox(template)
+  const { name: sandbox, missingSource } = await createCheckSandbox(template)
   let snapshotted = false
   try {
+    if (missingSource) return await fail('install', missingSource)
     await report.phase('install', sandbox)
     const install = await runDetached(sandbox, 'install', INSTALL_SCRIPT, { report, phase: 'install', log: '/tmp/install.log' })
     if (!install.ok) return await fail('install', install.output)
@@ -226,13 +227,17 @@ async function createCheckSandbox(template: TemplateToCheck) {
     resources: { vcpus: 4 },
     tags: { app: 'nuxt-com', purpose: 'templates-check', template: template.slug }
   })
-  await sandbox.runCommand({ cmd: 'bash', args: ['-c', `mkdir -p ${TEMPLATE_WORKDIR} && cp -a ${clone}/. ${TEMPLATE_WORKDIR}/`] })
+  const copy = await sandbox.runCommand({ cmd: 'bash', args: ['-c', `mkdir -p ${TEMPLATE_WORKDIR} && cp -a ${clone}/. ${TEMPLATE_WORKDIR}/`] })
+  // The template's directory is gone from its repository (moved or renamed): the template fails, rather than keeping its last result.
+  if (copy.exitCode !== 0) {
+    return { name: sandbox.name, missingSource: `The template's source (${template.source ?? template.repo}) has no files at this path:\n${(await copy.stderr()).slice(-800)}` }
+  }
   await sandbox.writeFiles([
     { path: `${CHECK_STATE_DIR}/nuxt-com-preview.client.js`, content: PREVIEW_BRIDGE_PLUGIN },
     { path: STATIC_SERVER_PATH, content: STATIC_SERVER },
     { path: `${CHECK_STATE_DIR}/warmup.mjs`, content: DEV_WARMUP_SCRIPT }
   ])
-  return sandbox.name
+  return { name: sandbox.name, missingSource: undefined }
 }
 
 async function startScript(name: string, id: string, script: string, cwd: string) {
