@@ -3,7 +3,7 @@ import { getQuery, setCookie, getCookie, deleteCookie, defineEventHandler, sendR
 
 const oauthHandler = defineOAuthGitHubEventHandler({
   async onSuccess(event, { user: ghUser }) {
-    const redirectTo = getCookie(event, 'oauth-redirect') || '/'
+    const redirectTo = safeRedirectPath(getCookie(event, 'oauth-redirect')) ?? '/'
     deleteCookie(event, 'oauth-redirect')
     const session = await getUserSession(event)
 
@@ -55,8 +55,8 @@ const oauthHandler = defineOAuthGitHubEventHandler({
 export default defineEventHandler(async (event) => {
   const query = getQuery(event)
   if (!query.code && query.redirect) {
-    const redirect = Array.isArray(query.redirect) ? query.redirect[0] : query.redirect as string
-    if (typeof redirect === 'string' && redirect.startsWith('/') && !redirect.startsWith('//')) {
+    const redirect = safeRedirectPath(Array.isArray(query.redirect) ? query.redirect[0] : query.redirect)
+    if (redirect) {
       setCookie(event, 'oauth-redirect', redirect, {
         httpOnly: true,
         secure: process.env.NODE_ENV !== 'development',
