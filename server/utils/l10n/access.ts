@@ -23,6 +23,7 @@ export function translatorsTeam(locale: L10nLocale): string {
 }
 
 let app: GitHubApp | undefined
+let appGit: TranslationsGit | undefined
 
 /** The GitHub App installed on the translations repository, `undefined` when it is not configured. */
 export function translationsApp(): GitHubApp | undefined {
@@ -37,7 +38,7 @@ export function translationsApp(): GitHubApp | undefined {
  */
 export function translationsGit(): { git: TranslationsGit, dryRun?: DryRunLog } {
   const configured = translationsApp()
-  if (configured) return { git: githubTranslationsGit(configured, TRANSLATIONS_REPO, TRANSLATIONS_BRANCH) }
+  if (configured) return { git: appGit ??= githubTranslationsGit(configured, TRANSLATIONS_REPO, TRANSLATIONS_BRANCH) }
 
   if (process.env.VERCEL_ENV === 'production') {
     throw createError({ statusCode: 503, statusMessage: 'Saving translations is not configured' })

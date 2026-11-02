@@ -73,3 +73,33 @@ html.dark .shiki span {
 [data-l10n="verified"] { --l10n-dot: var(--ui-success); }
 [data-l10n="untranslated"] { --l10n-ring: inset 0 0 0 1px var(--ui-text-dimmed); }
 [data-l10n="rejected"] { --l10n-dot: var(--ui-error); }
+
+[data-l10n-show] [data-l10n-hash] {
+  cursor: pointer;
+  border-radius: 0.25rem;
+  outline-offset: 2px;
+}
+
+[data-l10n-show] [data-l10n-hash]:hover {
+  outline: 1px solid var(--ui-border-accented);
+}
+
+[data-l10n-staged] {
+  outline: 1px dashed var(--ui-info);
+  outline-offset: 2px;
+  border-radius: 0.25rem;
+}
+
+[data-l10n-staged="reject"] { outline-color: var(--ui-error); }
+[data-l10n-staged="verify"] { outline-color: var(--ui-success); }
+
+[data-l10n-suggested]::after {
+  content: '';
+  display: inline-block;
+  inline-size: 6px;
+  block-size: 6px;
+  border-radius: 9999px;
+  margin-inline-start: 0.375rem;
+  vertical-align: middle;
+  background-color: var(--ui-info);
+}

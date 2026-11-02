@@ -1,6 +1,7 @@
 import { gunzipSync, gzipSync } from 'node:zlib'
+import type { Glossary } from '@diglot/core'
 import type { L10nCoverage, L10nLocale } from '../../../shared/utils/l10n'
-import { createBundle, type L10nBundle } from './bundle'
+import { createBundle, emptyBundle, type L10nBundle } from './bundle'
 import { sourceCoverage, TRANSLATION_SOURCES } from './coverage'
 import type { TranslationsTree } from './tree'
 
@@ -15,17 +16,24 @@ export interface L10nSnapshot {
   bundle: L10nBundle
   /** Coverage of each file of each translated source, by source name, then repository path. */
   coverage: Record<string, Record<string, L10nCoverage>>
+  glossary: Glossary
 }
 
 interface StoredMeta {
   shards: number
   coverage: L10nSnapshot['coverage']
+  glossary: Glossary
 }
 
 /** The subset of an unstorage `Storage` the snapshot reads and writes. */
 export interface SnapshotStorage {
   getItem: (key: string) => Promise<unknown>
   setItem: (key: string, value: unknown) => Promise<void>
+}
+
+/** A snapshot without records: every segment shows its English source. */
+export function emptySnapshot(locale: L10nLocale): L10nSnapshot {
+  return { bundle: emptyBundle(locale), coverage: {}, glossary: { terms: [] } }
 }
 
 const key = (sha: string, locale: L10nLocale, part: string | number) => `${L10N_SNAPSHOT_VERSION}:${sha}:${locale}:${part}`
@@ -38,7 +46,7 @@ export function buildL10nSnapshot(tree: TranslationsTree, locale: L10nLocale): L
     const manifest = tree.manifests.get(source.name)
     if (manifest) coverage[source.name] = sourceCoverage(manifest, bundle)
   }
-  return { bundle, coverage }
+  return { bundle, coverage, glossary: tree.glossary(locale) }
 }
 
 /**
@@ -51,17 +59,17 @@ export async function writeL10nSnapshot(storage: SnapshotStorage, snapshot: L10n
   const shards = Math.max(1, Math.ceil(encoded.length / shardLength))
   await Promise.all(Array.from({ length: shards }, (_, index) =>
     storage.setItem(key(sha, locale, index), encoded.slice(index * shardLength, (index + 1) * shardLength))))
-  await storage.setItem(key(sha, locale, 'meta'), { shards, coverage: snapshot.coverage } satisfies StoredMeta)
+  await storage.setItem(key(sha, locale, 'meta'), { shards, coverage: snapshot.coverage, glossary: snapshot.glossary } satisfies StoredMeta)
 }
 
 /** The stored snapshot of `locale` at `sha`, `undefined` when it is missing or incomplete. */
 export async function readL10nSnapshot(storage: SnapshotStorage, sha: string, locale: L10nLocale): Promise<L10nSnapshot | undefined> {
   const meta = await storage.getItem(key(sha, locale, 'meta')) as StoredMeta | null
-  if (!meta?.shards || !meta.coverage) return
+  if (!meta?.shards || !meta.coverage || !meta.glossary) return
 
   const shards = await Promise.all(Array.from({ length: meta.shards }, (_, index) => storage.getItem(key(sha, locale, index))))
   if (shards.some(shard => typeof shard !== 'string')) return
 
   const records = JSON.parse(gunzipSync(Buffer.from(shards.join(''), 'base64')).toString('utf8')) as Record<string, unknown>
-  return { bundle: createBundle(records, locale, sha), coverage: meta.coverage }
+  return { bundle: createBundle(records, locale, sha), coverage: meta.coverage, glossary: meta.glossary }
 }

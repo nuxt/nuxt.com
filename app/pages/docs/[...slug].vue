@@ -79,7 +79,7 @@ const instanceKey = computed(() => {
   return cliVersion.value ? cliInstanceKey(cliVersion.value) : docsInstanceKey.value
 })
 
-const { data: page, status } = await useAsyncData(pageKey, () => {
+const { data: page, status, refresh: refreshPage } = await useAsyncData(pageKey, () => {
   const pagePath = path.value
   const client = useContent(instanceKey.value)
   return paintResponse().then(() => client.get(pagePath))
@@ -407,6 +407,7 @@ const noRightAside = computed(() => route.path.includes('/examples/'))
           :meta="l10n"
           :path="path"
           :target="pageBody?.$el"
+          @published="refreshPage()"
         />
         <DocsL10nSuggestion v-else-if="!locale && isLocalisedPage(path) && suggestedLocales.length" :path="path" :locales="suggestedLocales" />
         <MarkdownDocument v-if="page.nodes?.length" :value="page" :components="markdownComponents" />

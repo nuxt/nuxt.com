@@ -26,6 +26,9 @@ export interface GitHubRequestOptions {
   headers?: Record<string, string>
 }
 
+/** Pages of a pull request's files read, a hundred each. */
+const MAX_FILE_PAGES = 5
+
 /** Renew installation tokens this long before they expire. */
 const TOKEN_MARGIN = 5 * 60_000
 
@@ -174,6 +177,21 @@ export function githubTranslationsGit(app: GitHubApp, repo: string, base = 'main
         method: 'POST',
         body: { title, body, head: branch, base }
       }))
+    },
+    async listPulls() {
+      const pulls = await app.request<Array<{ number: number, html_url: string, head: { ref: string, sha: string } }>>(`/repos/${repo}/pulls`, {
+        query: { base, state: 'open', per_page: 100 }
+      })
+      return pulls.map(pull => ({ ...toPull(pull), branch: pull.head.ref, head: pull.head.sha }))
+    },
+    async pullFiles(number) {
+      const paths: string[] = []
+      for (let page = 1; page <= MAX_FILE_PAGES; page++) {
+        const files = await app.request<Array<{ filename: string }>>(`/repos/${repo}/pulls/${number}/files`, { query: { per_page: 100, page } })
+        paths.push(...files.map(file => file.filename))
+        if (files.length < 100) break
+      }
+      return paths
     }
   }
 }

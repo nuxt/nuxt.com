@@ -8,6 +8,7 @@ import { afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest'
 import { dryRunGit, type TranslationsGit } from '../../server/utils/l10n/git'
 import { createGitHubApp, githubTranslationsGit, isGitHubTeamMember } from '../../server/utils/l10n/github-app'
 import { commitChanges, L10nChangeError, L10nConflictError, pageSegments, planChanges, readRecordsAt, suggestChanges, suggestionBranch } from '../../server/utils/l10n/write'
+import { openSuggestions, suggestionsFor } from '../../server/utils/l10n/suggestions'
 import { createBuildInstance } from '../../utils/factory'
 import { createFakeGitHub, FAKE_BOT } from '../utils/fake-github'
 
@@ -132,14 +133,14 @@ describe('planChanges', () => {
     expect(plan([{ hash: TIP, action: 'verify' }], { current: new Map([[TIP, broken]]) }).issues[0]?.code).toBe('invalid')
   })
 
-  it('should only let suggestions edit', () => {
+  it('should let suggestions edit and reject, but not verify', () => {
     const { issues, files } = plan([
       { hash: FIRST_PARAGRAPH, action: 'edit', text: FIRST_TEXT },
       { hash: TIP, action: 'verify' },
       { hash: HEADING, action: 'reject' }
     ], { suggestion: true })
-    expect(files).toHaveLength(1)
-    expect(issues.map(issue => [issue.hash, issue.code])).toEqual([[TIP, 'not-allowed'], [HEADING, 'not-allowed']])
+    expect(files.map(file => [file.path, file.content === null])).toEqual([[recordPath('fr', FIRST_PARAGRAPH), false], [recordPath('fr', HEADING), true]])
+    expect(issues.map(issue => [issue.hash, issue.code])).toEqual([[TIP, 'not-allowed']])
   })
 })
 
@@ -219,7 +220,22 @@ describe('suggestChanges (dry run)', () => {
     expect(await git.head('main')).toBe('base')
   })
 
-  it('should refuse to verify or reject as a suggestion', async () => {
+  it('should list the suggested translations of a page', async () => {
+    const git = dryRunGit(fixtureRepository())
+    const input = { locale: 'fr' as const, page: PAGE, segments }
+    await suggestChanges(git, { ...input, translator: { login: 'contributor', id: 1 }, changes: [{ hash: FIRST_PARAGRAPH, action: 'edit', text: FIRST_TEXT }] })
+    await suggestChanges(git, { ...input, translator: { login: 'other', id: 2 }, changes: [{ hash: FIRST_PARAGRAPH, action: 'edit', text: 'Nuxt est un framework {0}libre{/0} pour {1}Vue.js{/1}.' }, { hash: HEADING, action: 'reject' }] })
+
+    const suggestions = await suggestionsFor(git, 'fr', [FIRST_PARAGRAPH, TIP, HEADING])
+    expect(Object.keys(suggestions).sort()).toEqual([FIRST_PARAGRAPH, HEADING].sort())
+    expect(suggestions[FIRST_PARAGRAPH]).toEqual([
+      { login: 'contributor', number: 1, url: 'dry-run://pull/1', text: FIRST_TEXT },
+      { login: 'other', number: 2, url: 'dry-run://pull/2', text: 'Nuxt est un framework {0}libre{/0} pour {1}Vue.js{/1}.' }
+    ])
+    expect(suggestions[HEADING]).toEqual([{ login: 'other', number: 2, url: 'dry-run://pull/2' }])
+  })
+
+  it('should refuse to verify as a suggestion', async () => {
     const git = dryRunGit(fixtureRepository())
     await expect(suggestChanges(git, { locale: 'fr', page: PAGE, segments, translator, changes: [{ hash: TIP, action: 'verify' }] }))
       .rejects.toMatchObject({ issues: [{ code: 'not-allowed' }] })
@@ -302,9 +318,17 @@ describe('GitHub App', () => {
     expect(github.pulls).toMatchObject([{ number: 1, head: branch, base: 'main', state: 'open' }])
     expect(first.pull?.url).toBe('https://github.com/nuxt/translations/pull/1')
 
-    const second = await suggestChanges(git, { ...input, changes: [{ hash: TIP, action: 'edit', text: 'Essayez Nuxt {0}en ligne{/0}.' }] })
+    const second = await suggestChanges(git, { ...input, changes: [{ hash: TIP, action: 'edit', text: 'Essayez Nuxt {0}en ligne{/0}.' }, { hash: HEADING, action: 'reject' }] })
     expect(github.git(['rev-parse', `${second.sha}^`])).toBe(first.sha)
     expect(github.pulls).toHaveLength(1)
+
+    const index = await openSuggestions(git, 'fr')
+    expect([...index.keys()].sort()).toEqual([FIRST_PARAGRAPH, TIP, HEADING].sort())
+    const pull = { login: 'contributor', number: 1, url: 'https://github.com/nuxt/translations/pull/1' }
+    expect(await suggestionsFor(git, 'fr', [TIP, HEADING], index)).toEqual({
+      [TIP]: [{ ...pull, text: 'Essayez Nuxt {0}en ligne{/0}.' }],
+      [HEADING]: [pull]
+    })
 
     github.pulls[0]!.state = 'closed'
     const third = await suggestChanges(git, { ...input, changes: [{ hash: TIP, action: 'edit', text: 'Testez Nuxt {0}en ligne{/0}.' }] })

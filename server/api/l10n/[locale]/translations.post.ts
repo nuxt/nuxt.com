@@ -46,6 +46,7 @@ export default defineEventHandler(async (event): Promise<L10nSaveResult> => {
     const result = role === 'translator'
       ? await commitChanges(git, input, TRANSLATIONS_BRANCH)
       : await suggestChanges(git, input, TRANSLATIONS_BRANCH)
+    if (result.pull) forgetSuggestions(git, locale)
 
     console.log(`[l10n] ${user.username} saved ${changes.length} ${locale} change(s) on ${page} as ${result.pull ? `#${result.pull.number}` : 'a commit'}: ${result.sha}${dryRun ? ' (dry run)' : ''}`)
 

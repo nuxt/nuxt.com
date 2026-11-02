@@ -50,6 +50,21 @@ describe('parseTranslationsTarball', () => {
     expect(Object.keys(tree.records('fr'))).toHaveLength(Object.keys(records).length)
     expect(tree.records('fr')['1'.repeat(16)]).toBeUndefined()
   })
+
+  it('should merge the shared glossary with the locale glossary', async () => {
+    const tree = await parseTranslationsTarball(await tarball([
+      { name: 'glossary.yml', data: '- term: Nuxt\n  doNotTranslate: true\n- term: payload\n  doNotTranslate: true\n' },
+      { name: 'fr/glossary.yml', data: 'terms:\n  - term: payload\n    decision: keep-gloss\n    gloss: charge utile\n' }
+    ]), SHA)
+    expect(tree.glossary('fr').terms).toEqual([
+      { term: 'Nuxt', decision: 'keep' },
+      { term: 'payload', decision: 'keep-gloss', gloss: 'charge utile' }
+    ])
+  })
+
+  it('should read a repository without glossaries as having no terms', async () => {
+    expect((await parseTranslationsTarball(await tarball(), SHA)).glossary('fr')).toEqual({ terms: [] })
+  })
 })
 
 describe('readTranslationsCheckout', () => {
@@ -83,7 +98,7 @@ describe('l10n snapshot', () => {
   })
 
   it('should store a snapshot in shards and read it back', async () => {
-    const tree = await parseTranslationsTarball(await tarball(), SHA)
+    const tree = await parseTranslationsTarball(await tarball([{ name: 'glossary.yml', data: '- term: Nuxt\n  doNotTranslate: true\n' }]), SHA)
     const storage = createStorage()
     await writeL10nSnapshot(storage, buildL10nSnapshot(tree, 'fr'), tree.records('fr'), { shardLength: 4000 })
     expect((await storage.getKeys()).length).toBeGreaterThan(2)
@@ -93,6 +108,7 @@ describe('l10n snapshot', () => {
     expect(stored?.bundle.hashes().sort()).toEqual(Object.keys(records).sort())
     expect(stored?.bundle.record(second)).toEqual(records[second])
     expect(stored?.coverage).toEqual(buildL10nSnapshot(tree, 'fr').coverage)
+    expect(stored?.glossary).toEqual({ terms: [{ term: 'Nuxt', decision: 'keep' }] })
   })
 
   it('should read a missing or incomplete snapshot as missing', async () => {

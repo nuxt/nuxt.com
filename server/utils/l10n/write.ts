@@ -32,7 +32,7 @@ export interface PlanInput {
   current: Map<string, TranslationRecord | undefined>
   changes: L10nChange[]
   translator: L10nTranslator
-  /** Suggestions only edit: verifying and rejecting belong to the locale's team. */
+  /** Suggestions edit or reject: verifying belongs to the locale's team. */
   suggestion?: boolean
   now?: Date
 }
@@ -72,8 +72,8 @@ export function planChanges({ locale, segments, current, changes, translator, su
       issue(hash, 'duplicate', 'This segment is changed twice.')
       continue
     }
-    if (suggestion && action !== 'edit') {
-      issue(hash, 'not-allowed', `Only members of the ${locale} translators team can ${action} translations.`)
+    if (suggestion && action === 'verify') {
+      issue(hash, 'not-allowed', `Only members of the ${locale} translators team can verify translations.`)
       continue
     }
 
@@ -249,7 +249,7 @@ export async function suggestChanges(git: TranslationsGit, input: SaveInput, bas
     body: [
       `Translations suggested on nuxt.com by @${input.translator.login}, who is not on the \`translators-${input.locale}\` team yet.`,
       '',
-      'Each commit is one page save. Merging accepts them as human edits by the author.'
+      'Each commit is one page save. Merging accepts them: edits as human edits by the author, rejections as removed translations.'
     ].join('\n')
   })
 

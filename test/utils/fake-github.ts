@@ -138,7 +138,18 @@ export async function createFakeGitHub({ repo = 'nuxt/translations', files = {} 
     }
     if (req.method === 'GET' && route === '/pulls') {
       const head = url.searchParams.get('head')?.split(':')[1]
-      return send(200, pulls.filter(pull => pull.state === 'open' && pull.head === head).map(pull => ({ number: pull.number, html_url: `https://github.com/${repo}/pull/${pull.number}` })))
+      return send(200, pulls.filter(pull => pull.state === 'open' && (!head || pull.head === head)).map(pull => ({
+        number: pull.number,
+        html_url: `https://github.com/${repo}/pull/${pull.number}`,
+        head: { ref: pull.head, sha: git(['rev-parse', `refs/heads/${pull.head}`]) }
+      })))
+    }
+    const files = /^\/pulls\/(\d+)\/files$/.exec(route)
+    if (req.method === 'GET' && files) {
+      const pull = pulls.find(item => item.number === Number(files[1]))
+      if (!pull || url.searchParams.get('page') !== '1') return send(200, [])
+      const mergeBase = git(['merge-base', pull.base, pull.head])
+      return send(200, git(['diff', '--name-only', mergeBase, pull.head]).split('\n').filter(Boolean).map(filename => ({ filename })))
     }
     if (req.method === 'POST' && route === '/pulls') {
       const pull: FakePull = { number: pulls.length + 1, head: body.head, base: body.base, title: body.title, body: body.body, state: 'open' }

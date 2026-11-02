@@ -1,4 +1,4 @@
-import type { SegmentStatus } from '@diglot/core'
+import type { GlossaryEntry, Placeholder, Review, Origin, SegmentFormat, SegmentKind, SegmentStatus } from '@diglot/core'
 import { withLeadingSlash } from 'ufo'
 import { CURRENT_DOCS_VERSION, docsPathPrefix, docsStatus, isArchivedDocVersion, isDocVersion, type DocVersion } from './docs'
 
@@ -178,6 +178,56 @@ export interface L10nSegmentSource {
   updatedAt?: string
 }
 
+/** One segment of a page, as the translation editor shows it. */
+export interface L10nEditorSegment {
+  hash: string
+  kind: SegmentKind
+  format: SegmentFormat
+  /** The English source in placeholder form, what a translation is written against. */
+  skeleton: string
+  words: number
+  placeholders: Placeholder[]
+  status: SegmentStatus
+  record?: {
+    text: string
+    origin: Origin
+    review: Review
+    by?: string
+    verifiedBy?: string
+    model?: string
+    updatedAt: string
+  }
+  /** For a translation carried from an earlier source: that source, and the sentences of `skeleton` that are new. */
+  previous?: { source: string, changed: string[] }
+  /** Glossary entries whose term occurs in the source. */
+  glossary: GlossaryEntry[]
+}
+
+/** A change proposed in a suggestion pull request: a new translation, or removing the current one. */
+export interface L10nSuggestion {
+  login: string
+  number: number
+  url: string
+  /** The proposed translation; missing when the suggestion rejects the current one. */
+  text?: string
+}
+
+/** What the translation editor of one page loads. */
+export interface L10nEditorPage {
+  /** The translations commit the segments were read at. */
+  sha: string
+  /** What the signed-in user's saves become; `null` when signed out. */
+  role: L10nRole | null
+  segments: L10nEditorSegment[]
+  /** Open suggestions for the segments of the page, by hash; for the locale's team only. */
+  suggestions?: Record<string, L10nSuggestion[]>
+}
+
+/** The editor's view of a page: `/api/l10n/fr/editor/docs/4.x/guide`. */
+export function l10nEditorPath(locale: L10nLocale, path: string): string {
+  return `/api/l10n/${locale}/editor${path}`
+}
+
 /** What a translator does to one segment: write a new translation, confirm the current one, or remove it. */
 export type L10nChangeAction = 'edit' | 'verify' | 'reject'
 
@@ -268,8 +318,10 @@ export const L10N_STRINGS = {
     reviewedTranslation: 'Traduction relue',
     reviewed: (share: number) => `${Math.floor(share * 100)}\u202F% relue`,
     pending: 'Des passages attendent une relecture.',
+    toReview: 'à relire',
     viewInEnglish: 'Voir en anglais',
-    showStatus: 'État de la traduction',
+    review: 'Relire',
+    reviewHint: 'Afficher l\'état de chaque passage et le modifier',
     improve: 'Améliorer cette traduction',
     source: 'Texte anglais',
     loading: 'Chargement…',
@@ -282,7 +334,47 @@ export const L10N_STRINGS = {
       'rejected': 'Traduction rejetée : texte anglais'
     } satisfies Record<SegmentStatus, string>,
     suggestion: 'Cette page est disponible en français.',
-    suggestionLink: 'Lire en français'
+    suggestionLink: 'Lire en français',
+    editor: {
+      title: 'Traduction',
+      signIn: 'Se connecter avec GitHub pour modifier',
+      suggesterNote: 'Vous ne faites pas partie de l\'équipe de traduction : vos modifications seront proposées dans une pull request.',
+      english: 'Texte anglais',
+      previousSource: 'Ancien texte anglais',
+      changedSentences: 'Les phrases surlignées sont nouvelles dans le texte anglais.',
+      current: 'Traduction actuelle',
+      none: 'Pas encore traduit.',
+      yours: 'Votre traduction',
+      placeholders: 'Les marqueurs {0}, {1}… représentent le code et les liens du texte anglais : gardez-les tous, et le texte d\'un lien entre {0} et {/0}.',
+      glossary: 'Glossaire',
+      glossaryKeep: 'à garder en anglais',
+      glossaryTranslate: (target?: string) => target ? `à traduire par « ${target} »` : 'à traduire',
+      glossaryKeepGloss: (gloss: string) => `à garder en anglais, avec « ${gloss} »`,
+      by: (login: string) => `par @${login}`,
+      edit: 'Modifier',
+      verify: 'Valider',
+      reject: 'Rejeter',
+      undo: 'Annuler',
+      rejectHint: 'La page affichera le texte anglais pour ce passage.',
+      staged: { edit: 'Modification en attente', verify: 'Validation en attente', reject: 'Rejet en attente' },
+      publish: (count: number) => count ? `Publier ${count} changement${count > 1 ? 's' : ''}` : 'Publier',
+      propose: (count: number) => count ? `Proposer ${count} changement${count > 1 ? 's' : ''}` : 'Proposer',
+      published: 'Publié : la page sera à jour dans quelques secondes.',
+      proposed: 'Proposition envoyée.',
+      viewPull: 'Voir la pull request',
+      suggestions: 'Suggestions',
+      suggestedReject: 'Propose de rejeter la traduction actuelle.',
+      suggestionCount: (count: number) => `${count} passage${count > 1 ? 's' : ''} avec des suggestions`,
+      dryRun: 'Essai : rien n\'a été publié, l\'application GitHub n\'est pas configurée.',
+      failed: 'La publication a échoué.',
+      verifyAll: (count: number) => `Valider les ${count} traductions automatiques`,
+      verifyAllConfirm: (count: number) => `Valider ${count} traductions automatiques de cette page sans les modifier ? Elles seront publiées comme vérifiées par vous, en une seule fois avec vos autres changements.`,
+      confirm: 'Confirmer',
+      cancel: 'Annuler',
+      previous: 'Passage précédent',
+      next: 'Passage suivant',
+      position: (index: number, count: number) => `${index} sur ${count}`
+    }
   }
 } as const satisfies Record<L10nLocale, unknown>
 
@@ -296,9 +388,4 @@ export function localeLinks(path: string): Array<{ locale: L10nLocale, label: st
     description: L10N_STRINGS[locale].machine,
     to: localisePath(locale, path)
   }))
-}
-
-/** Where translators improve a segment. */
-export function l10nImproveUrl(locale: L10nLocale, hash: string): string {
-  return `https://github.com/nuxt/translations/blob/main/${locale}/segments/${hash.slice(0, 2)}/${hash}.json`
 }

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { L10N_STRINGS, l10nImproveUrl, l10nSourcePath, reviewedShare, type L10nPageMeta, type L10nSegmentSource } from '#shared/utils/l10n'
+import { L10N_STRINGS, l10nSourcePath, reviewedShare, type L10nPageMeta, type L10nSegmentSource } from '#shared/utils/l10n'
 
 const props = defineProps<{
   meta: L10nPageMeta
@@ -9,6 +9,12 @@ const props = defineProps<{
   target?: HTMLElement | null
 }>()
 
+const emit = defineEmits<{
+  /** Saved translations are now served. */
+  published: []
+}>()
+
+/** Review mode: every block shows its status, its English source on hover, and opens the editor on click. */
 const show = defineModel<boolean>('show', { default: false })
 
 const strings = computed(() => L10N_STRINGS[props.meta.locale])
@@ -22,7 +28,7 @@ const sources = new Map<string, Promise<L10nSegmentSource | null>>()
 const source = ref<L10nSegmentSource | null>()
 
 function inspect(event: Event) {
-  if (!show.value) return
+  if (!show.value || editorOpen.value) return
   const block = (event.target as HTMLElement | null)?.closest<HTMLElement>('[data-l10n-hash]')
   if (!block || block === reference.value) return
 
@@ -44,8 +50,28 @@ function inspect(event: Event) {
 useEventListener(() => props.target, 'mouseover', inspect)
 useEventListener(() => props.target, 'focusin', inspect)
 
+const editorOpen = ref(false)
+const editorHash = ref<string>()
+
+function edit(hash: string | undefined) {
+  open.value = false
+  show.value = true
+  editorHash.value = hash
+  editorOpen.value = true
+}
+
+useEventListener(() => props.target, 'click', (event: MouseEvent) => {
+  if (!show.value) return
+  const block = (event.target as HTMLElement | null)?.closest<HTMLElement>('[data-l10n-hash]')
+  if (!block) return
+  event.preventDefault()
+  edit(block.dataset.l10nHash)
+}, { capture: true })
+
 watch(show, (value) => {
-  if (!value) open.value = false
+  if (value) return
+  open.value = false
+  editorOpen.value = false
 })
 watch(open, (value) => {
   if (!value) reference.value = undefined
@@ -56,13 +82,35 @@ const status = computed(() => (source.value?.status ?? reference.value?.dataset.
 </script>
 
 <template>
-  <div class="not-prose flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-muted mb-6" data-l10n-summary>
-    <span class="basis-full sm:basis-auto">
-      {{ machine ? strings.machine : strings.reviewedTranslation }}, {{ strings.reviewed(reviewedShare(coverage)) }}
-    </span>
-    <span v-if="pending" class="text-warning">{{ strings.pending }}</span>
-    <a :href="path" hreflang="en" class="text-highlighted underline underline-offset-2">{{ strings.viewInEnglish }}</a>
-    <USwitch v-model="show" size="xs" :label="strings.showStatus" class="ms-auto" />
+  <div class="not-prose flex items-center gap-2 text-sm text-muted mb-6" data-l10n-summary>
+    <p class="flex-1 min-w-0 flex flex-wrap gap-x-1">
+      <span class="whitespace-nowrap">{{ machine ? strings.machine : strings.reviewedTranslation }} ·</span>
+      <span class="whitespace-nowrap">{{ strings.reviewed(reviewedShare(coverage)) }}<span v-if="pending" class="text-warning" :title="strings.pending"> · {{ strings.toReview }}</span></span>
+    </p>
+    <UButton
+      :to="path"
+      external
+      hreflang="en"
+      lang="en"
+      label="English"
+      :title="strings.viewInEnglish"
+      icon="i-lucide-languages"
+      size="xs"
+      color="neutral"
+      variant="ghost"
+    />
+    <UButton
+      :label="strings.review"
+      :title="strings.reviewHint"
+      :aria-label="strings.reviewHint"
+      :aria-pressed="show"
+      icon="i-lucide-pencil-line"
+      size="xs"
+      color="neutral"
+      :variant="show ? 'solid' : 'outline'"
+      :ui="{ label: 'hidden sm:inline' }"
+      @click="show = !show"
+    />
 
     <ClientOnly>
       <UPopover
@@ -86,13 +134,22 @@ const status = computed(() => (source.value?.status ?? reference.value?.dataset.
             </p>
             <div class="flex items-center justify-between gap-3">
               <code class="text-dimmed font-mono">{{ hash }}</code>
-              <a v-if="hash" :href="l10nImproveUrl(meta.locale, hash)" target="_blank" class="text-primary underline underline-offset-2">
+              <button v-if="hash" type="button" class="text-primary underline underline-offset-2" @click="edit(hash)">
                 {{ strings.improve }}
-              </a>
+              </button>
             </div>
           </div>
         </template>
       </UPopover>
+
+      <DocsL10nEditor
+        v-model:open="editorOpen"
+        v-model:hash="editorHash"
+        :locale="meta.locale"
+        :path="path"
+        :target="target"
+        @published="emit('published')"
+      />
     </ClientOnly>
   </div>
 </template>

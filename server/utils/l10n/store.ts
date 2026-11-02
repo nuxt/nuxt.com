@@ -217,7 +217,7 @@ export async function getL10nSnapshot(locale: L10nLocale): Promise<L10nSnapshot>
     console.error('[l10n] could not resolve the translations commit', error?.message ?? error)
     return undefined
   })
-  if (!sha) return snapshots.get(locale)?.snapshot ?? { bundle: emptyBundle(locale), coverage: {} }
+  if (!sha) return snapshots.get(locale)?.snapshot ?? emptySnapshot(locale)
 
   const current = snapshots.get(locale)
   if (current?.sha === sha && (!current.failedAt || Date.now() - current.failedAt < FAILED_BUNDLE_TTL)) {
@@ -228,7 +228,7 @@ export async function getL10nSnapshot(locale: L10nLocale): Promise<L10nSnapshot>
   entry.snapshot = entry.snapshot.catch((error) => {
     console.error(`[l10n] could not read the ${locale} bundle at ${sha}`, (error as Error)?.message ?? error)
     entry.failedAt = Date.now()
-    return { bundle: emptyBundle(locale), coverage: {} }
+    return emptySnapshot(locale)
   })
   snapshots.set(locale, entry)
 

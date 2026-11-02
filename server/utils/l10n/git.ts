@@ -24,6 +24,13 @@ export interface GitPullRequest {
   url: string
 }
 
+/** An open pull request into the default branch. */
+export interface GitOpenPull extends GitPullRequest {
+  branch: string
+  /** Head commit. */
+  head: string
+}
+
 /**
  * The operations the write path runs on the translations repository.
  * Commits are created detached and only land when `update` moves a branch to them.
@@ -43,6 +50,10 @@ export interface TranslationsGit {
   /** The open pull request from `branch` into the default branch. */
   findPull: (branch: string) => Promise<GitPullRequest | undefined>
   openPull: (input: { branch: string, title: string, body: string }) => Promise<GitPullRequest>
+  /** Every open pull request into the default branch. */
+  listPulls: () => Promise<GitOpenPull[]>
+  /** Paths a pull request changes. */
+  pullFiles: (number: number) => Promise<string[]>
 }
 
 /** What a dry run would have written. */
@@ -60,7 +71,7 @@ export function dryRunGit(base: Pick<TranslationsGit, 'head' | 'read'>): Transla
   const log: DryRunLog = { commits: [], updates: [], pulls: [] }
   const commits = new Map<string, { parent: string, files: Map<string, string | null> }>()
   const heads = new Map<string, string>()
-  const pulls = new Map<string, GitPullRequest>()
+  const pulls = new Map<string, GitPullRequest & { files: Set<string> }>()
 
   const read = async (commit: string, path: string): Promise<string | undefined> => {
     for (let sha: string | undefined = commit; sha;) {
@@ -97,17 +108,32 @@ export function dryRunGit(base: Pick<TranslationsGit, 'head' | 'read'>): Transla
       const current = await head(branch)
       if (current && !force && !(await isAncestor(current, sha))) return false
       heads.set(branch, sha)
+      const pull = pulls.get(branch)
+      for (let commit = commits.get(sha); pull && commit; commit = commits.get(commit.parent)) {
+        for (const path of commit.files.keys()) pull.files.add(path)
+      }
       log.updates.push({ branch, sha, force })
       return true
     },
     async findPull(branch) {
-      return pulls.get(branch)
+      const pull = pulls.get(branch)
+      return pull && { number: pull.number, url: pull.url }
     },
     async openPull(input) {
       const pull = { number: log.pulls.length + 1, url: `dry-run://pull/${log.pulls.length + 1}` }
-      pulls.set(input.branch, pull)
+      const files = new Set<string>()
+      for (let commit = commits.get(heads.get(input.branch) ?? ''); commit; commit = commits.get(commit.parent)) {
+        for (const path of commit.files.keys()) files.add(path)
+      }
+      pulls.set(input.branch, { ...pull, files })
       log.pulls.push({ ...input, ...pull })
       return pull
+    },
+    async listPulls() {
+      return Promise.all([...pulls].map(async ([branch, pull]) => ({ number: pull.number, url: pull.url, branch, head: (await head(branch))! })))
+    },
+    async pullFiles(number) {
+      return [...[...pulls.values()].find(pull => pull.number === number)?.files ?? []]
     }
   }
 }
