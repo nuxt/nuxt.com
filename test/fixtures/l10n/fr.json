@@ -1472,6 +1472,20 @@
       },
       "updatedAt": "2026-11-02T08:58:30.219Z"
     },
+    "1e704e7d95d266fa": {
+      "hash": "1e704e7d95d266fa",
+      "source": "{0} · Get Started with Nuxt",
+      "text": "{0} · Premiers pas avec Nuxt",
+      "origin": "mt",
+      "review": "none",
+      "derived": "fresh",
+      "mt": {
+        "model": "anthropic/claude-sonnet-5.5",
+        "promptVersion": "1",
+        "candidate": "{0} · Premiers pas avec Nuxt"
+      },
+      "updatedAt": "2026-11-02T08:58:30.219Z"
+    },
     "c778a5039e0ca98f": {
       "hash": "c778a5039e0ca98f",
       "source": "Get Started",

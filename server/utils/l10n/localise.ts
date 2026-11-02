@@ -1,4 +1,4 @@
-import type { ApplySegmentEvent, SegmentStatus, TranslationRecord } from '@diglot/core'
+import type { ApplySegmentEvent, InlineNode, SegmentStatus, TranslationRecord } from '@diglot/core'
 import { buildSegment, recordStatus, resolveTranslation, wordsByStatus } from '@diglot/core'
 import { apply, extract } from '@diglot/comark'
 import type { Node } from 'comark'
@@ -82,11 +82,17 @@ export async function segmentSource(file: Pick<ContentFile, 'data' | 'nodes'>, b
   }
 }
 
-/** A plain label (a navigation or page title) in `bundle`'s locale, or `label` itself without a valid translation. */
+/**
+ * A plain label (a navigation or page title, or a `titleTemplate`) in `bundle`'s locale, or `label`
+ * itself without a valid translation. `%s` is kept as a placeholder.
+ */
 export function localiseLabel(label: string, bundle: L10nBundle): string {
   const segment = buildSegment({
     kind: 'navigation',
-    content: label,
+    format: 'plain',
+    content: label.split(/(%s)/).filter(Boolean).map((part): InlineNode => part === '%s'
+      ? { type: 'atomic', kind: 'other', source: part }
+      : { type: 'text', value: part }),
     context: { headingTrail: [], containers: [] },
     position: { startLine: 1, endLine: 1, precision: 'file' }
   }, { file: '', index: 0 })
@@ -96,7 +102,7 @@ export function localiseLabel(label: string, bundle: L10nBundle): string {
   return resolution.status === 'ok' ? resolution.text : label
 }
 
-/** A navigation tree with the titles of localised pages and their directories translated. */
+/** A navigation tree with the titles and title templates of localised pages and their directories translated. */
 export function localiseNavigation(items: NavigationItem[], bundle: L10nBundle): NavigationItem[] {
   return items.map((item) => {
     const children = item.children ? localiseNavigation(item.children, bundle) : undefined
@@ -104,6 +110,7 @@ export function localiseNavigation(items: NavigationItem[], bundle: L10nBundle):
     return {
       ...item,
       ...(localised && item.title ? { title: localiseLabel(item.title, bundle) } : {}),
+      ...(localised && typeof item.titleTemplate === 'string' ? { titleTemplate: localiseLabel(item.titleTemplate, bundle) } : {}),
       ...(children ? { children } : {})
     }
   })

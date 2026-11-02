@@ -147,6 +147,17 @@ describe('localiseNavigation', () => {
     expect(tree[1]!.title).toBe('Get Started')
   })
 
+  it('should translate title templates, keeping their placeholder', () => {
+    const tree = localiseNavigation([
+      { title: 'Get Started', path: '/docs/4.x/getting-started', titleTemplate: '%s · Get Started with Nuxt' },
+      { title: 'Get Started', path: '/blog/get-started', titleTemplate: '%s · Get Started with Nuxt' }
+    ], bundle())
+
+    expect(tree[0]!.titleTemplate).toBe('%s · Premiers pas avec Nuxt')
+    expect(tree[1]!.titleTemplate).toBe('%s · Get Started with Nuxt')
+    expect(localiseLabel('%s', bundle())).toBe('%s')
+  })
+
   it('should keep a label without a valid translation', () => {
     expect(localiseLabel('Get Started', emptyBundle('fr'))).toBe('Get Started')
     expect(localiseLabel('No such label', bundle())).toBe('No such label')
