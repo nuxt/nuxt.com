@@ -9,13 +9,7 @@ definePageMeta({
 
 const route = useRoute()
 
-const redirect = computed(() => {
-  const value = route.query.redirect
-  if (typeof value !== 'string' || !value.startsWith('/') || value.startsWith('//')) {
-    return null
-  }
-  return value
-})
+const redirect = computed(() => safeRedirectPath(route.query.redirect))
 
 const githubHref = computed(() => {
   if (!redirect.value) return '/api/auth/github'
