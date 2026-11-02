@@ -5,7 +5,7 @@ import { internalFetch } from '../lib/internal-api.js'
 import { checkShowcaseWebsites, type ShowcaseCheck, type ShowcaseWebsite } from '../lib/showcase/check.js'
 
 export default defineDynamic(async (ctx) => {
-  if (!(await ctx.memo(ctx.session.id, () => isAdminMode(ctx.session.auth.current)))) return null
+  if (!(await ctx.memo(ctx.turn?.id ?? null, () => isAdminMode(ctx.session.auth.current)))) return null
 
   return {
     check_showcase_sites: defineTool({
