@@ -25,7 +25,8 @@ function trackReleaseNotes() {
   <!-- Outside the versioned docs, the badge is not a dropdown: make it a link to the version's release notes. -->
   <UButton
     v-if="!switchable"
-    :label="`Open v${tags[docsVersion]} release notes on GitHub`"
+    :label="`v${tags[docsVersion]}`"
+    :aria-label="`Open v${tags[docsVersion]} release notes on GitHub`"
     variant="subtle"
     size="xs"
     :color="docsMeta.tagColor"
