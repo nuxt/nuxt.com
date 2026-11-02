@@ -90,8 +90,15 @@ describe('coverage', () => {
   })
 
   it('should key the table by page path and leave out files without a page', () => {
-    const table = coverageTable(manifest, bundleWith(), file => file === INTRODUCTION ? '/docs/4.x/getting-started/introduction' : undefined)
+    const table = coverageTable(manifest, bundleWith(), file => file === INTRODUCTION ? ['/docs/4.x/getting-started/introduction'] : undefined)
     expect(Object.keys(table)).toEqual(['/docs/4.x/getting-started/introduction'])
+  })
+
+  it('should list every page serving the same file', () => {
+    const paths = ['/docs/4.x/getting-started/introduction', '/docs/5.x/getting-started/introduction']
+    const table = coverageTable(manifest, bundleWith(), file => file === INTRODUCTION ? paths : undefined)
+    expect(Object.keys(table)).toEqual(paths)
+    expect(table[paths[0]!]).toEqual(table[paths[1]!])
   })
 })
 

@@ -25,25 +25,28 @@ async function readTranslationsJson(file: string, sha: string): Promise<unknown>
 }
 
 /**
- * Page path for each file of a translation source, through the manifests of the instances reading it.
+ * Page paths of each file of a translation source, through the manifests of the instances reading it:
+ * one per instance, as several docs versions can read the same branch.
  * Translation files are keyed by repository path (`docs/<file>`), instance items by `<instance name>/<file>`.
  */
-async function sourcePaths(source: (typeof TRANSLATION_SOURCES)[number]): Promise<Map<string, string>> {
-  const paths = new Map<string, string>()
+async function sourcePaths(source: (typeof TRANSLATION_SOURCES)[number]): Promise<Map<string, string[]>> {
+  const paths = new Map<string, string[]>()
   await Promise.all(source.instances.map(async (key) => {
     const { name, source: instance } = instanceSource(key)
     if (normalizeContentDir(instance.contentDir) !== source.dir) return
     const content = await getInstanceAtHead(key)
     for (const item of Object.values((await content.manifest()).items)) {
       const file = item.meta.key.slice(name.length + 1)
-      if (item.meta.key.startsWith(`${name}/`) && isLocalisedPage(item.path)) paths.set(`${source.dir}/${file}`, item.path)
+      if (!item.meta.key.startsWith(`${name}/`) || !isLocalisedPage(item.path)) continue
+      const key = `${source.dir}/${file}`
+      paths.set(key, [...paths.get(key) ?? [], item.path])
     }
   }))
   return paths
 }
 
-/** Each translated source's manifest at `sha`, with the page path of each of its files. */
-function readSources(sha: string): Promise<Array<{ manifest: SourceManifest, paths: Map<string, string> }>> {
+/** Each translated source's manifest at `sha`, with the page paths of each of its files. */
+function readSources(sha: string): Promise<Array<{ manifest: SourceManifest, paths: Map<string, string[]> }>> {
   return Promise.all(TRANSLATION_SOURCES.map(async (source) => {
     const [manifest, paths] = await Promise.all([
       readTranslationsJson(`.diglot/manifest/${source.name}.json`, sha) as Promise<SourceManifest>,
@@ -78,11 +81,10 @@ export async function l10nPagesUsing(bundle: L10nBundle, hashes: Set<string> | '
       const used = hashes === 'all' ? segments : segments.filter(segment => hashes.has(segment.hash))
       if (!used.length) continue
       if (used.some(segment => segment.kind === 'navigation' || segment.kind === 'frontmatter')) navigation = true
-      const path = paths.get(file)
-      if (path) pages.add(path)
+      for (const path of paths.get(file) ?? []) pages.add(path)
     }
   }
-  if (navigation) for (const { paths } of sources) for (const path of paths.values()) pages.add(path)
+  if (navigation) for (const { paths } of sources) for (const path of [...paths.values()].flat()) pages.add(path)
   return { pages: [...pages].sort(), navigation }
 }
 
