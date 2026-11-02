@@ -92,12 +92,15 @@ const indexable = new Map<string, Promise<string[]>>()
 
 /**
  * The localised pages that may be indexed, by locale: listed in the sitemap and in the `hreflang`
- * of their English twin. Computed once per bundle commit; a locale that cannot be read lists none.
+ * of their English twin. Computed once per bundle commit and commit of the translated instances;
+ * a locale that cannot be read lists none.
  */
 export async function getL10nIndexable(): Promise<L10nIndexable> {
+  const content = (await Promise.all(TRANSLATION_SOURCES.flatMap(source => source.instances)
+    .map(key => resolveInstanceSha(key).catch(() => '')))).join(',')
   const entries = await Promise.all(L10N_LOCALE_CODES.map(async (locale) => {
     const bundle = await getL10nBundle(locale)
-    const key = `${locale}@${bundle.sha}`
+    const key = `${locale}@${bundle.sha}:${content}`
     let pages = indexable.get(key)
     if (!pages) {
       for (const stale of indexable.keys()) if (stale.startsWith(`${locale}@`)) indexable.delete(stale)
