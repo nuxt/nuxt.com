@@ -1,7 +1,7 @@
 import { readFileSync } from 'node:fs'
 import { describe, expect, it } from 'vitest'
-import { emptyBundle, parseBundle } from '../../server/utils/l10n/bundle'
-import { coverageTable, fileCoverage, TRANSLATION_SOURCES, type SourceManifest } from '../../server/utils/l10n/coverage'
+import { createBundle, emptyBundle } from '../../server/utils/l10n/bundle'
+import { coverageTable, fileCoverage, sourceCoverage, TRANSLATION_SOURCES, type SourceManifest } from '../../server/utils/l10n/coverage'
 import { visibleRecord } from '../../server/utils/l10n/localise'
 import { changedHashes, isTranslationsPush, rebuiltLocales } from '../../server/utils/l10n/webhook'
 import { instanceSource } from '../../server/utils/content/instances'
@@ -15,24 +15,17 @@ const INTRODUCTION = 'docs/1.getting-started/01.introduction.md'
 /** The fixture bundle with some records replaced. */
 function bundleWith(records: Record<string, Record<string, unknown> | undefined> = {}, sha = 'a'.repeat(40)) {
   const merged = Object.fromEntries(Object.entries({ ...raw.records, ...records }).filter(([, record]) => record))
-  return parseBundle({ ...raw, records: merged }, 'fr', sha)
+  return createBundle(merged, 'fr', sha)
 }
 
 const anyHash = Object.keys(raw.records)[0]!
 
-describe('parseBundle', () => {
+describe('createBundle', () => {
   it('should read the records of a bundle', () => {
     const bundle = bundleWith()
     expect(bundle.record(anyHash)?.text).toBe(raw.records[anyHash]!.text)
     expect(bundle.record('0'.repeat(16))).toBeUndefined()
     expect(bundle.reviewed).toBe(false)
-  })
-
-  it('should reject a bundle for another locale or version', () => {
-    expect(() => parseBundle({ ...raw, locale: 'de' }, 'fr', 'sha')).toThrow('unexpected shape')
-    expect(() => parseBundle({ ...raw, version: 2 }, 'fr', 'sha')).toThrow('unexpected shape')
-    expect(() => parseBundle({ version: 1, locale: 'fr' }, 'fr', 'sha')).toThrow('no records')
-    expect(() => parseBundle(null, 'fr', 'sha')).toThrow('unexpected shape')
   })
 
   it('should read a malformed record as missing', () => {
@@ -90,13 +83,13 @@ describe('coverage', () => {
   })
 
   it('should key the table by page path and leave out files without a page', () => {
-    const table = coverageTable(manifest, bundleWith(), file => file === INTRODUCTION ? ['/docs/4.x/getting-started/introduction'] : undefined)
+    const table = coverageTable(sourceCoverage(manifest, bundleWith()), file => file === INTRODUCTION ? ['/docs/4.x/getting-started/introduction'] : undefined)
     expect(Object.keys(table)).toEqual(['/docs/4.x/getting-started/introduction'])
   })
 
   it('should list every page serving the same file', () => {
     const paths = ['/docs/4.x/getting-started/introduction', '/docs/5.x/getting-started/introduction']
-    const table = coverageTable(manifest, bundleWith(), file => file === INTRODUCTION ? paths : undefined)
+    const table = coverageTable(sourceCoverage(manifest, bundleWith()), file => file === INTRODUCTION ? paths : undefined)
     expect(Object.keys(table)).toEqual(paths)
     expect(table[paths[0]!]).toEqual(table[paths[1]!])
   })
@@ -120,12 +113,17 @@ describe('translations webhook', () => {
     expect(isTranslationsPush('nuxt/nuxt', 'main')).toBe(false)
   })
 
-  it('should list the locales whose bundle a push rebuilt', () => {
+  it('should list the locales whose records a push changed', () => {
     expect(rebuiltLocales([
       { modified: ['fr/segments/00/00033b4b33874d8a.json', 'dist/fr.json'] },
-      { added: ['dist/xx.json', 'README.md'] }
+      { added: ['xx/segments/00/00033b4b33874d8a.json', 'README.md'] }
     ])).toEqual(['fr'])
-    expect(rebuiltLocales([{ modified: ['fr/segments/00/00033b4b33874d8a.json'] }])).toEqual([])
+    expect(rebuiltLocales([{ removed: ['fr/segments/00/00033b4b33874d8a.json'] }])).toEqual(['fr'])
+    expect(rebuiltLocales([{ modified: ['dist/fr.json', 'fr/glossary.yml'] }])).toEqual([])
+  })
+
+  it('should list every locale when a push changed a source manifest', () => {
+    expect(rebuiltLocales([{ modified: ['.diglot/manifest/nuxt-4.x.json'] }])).toEqual(['fr'])
   })
 
   it('should list the records two bundles disagree on', () => {

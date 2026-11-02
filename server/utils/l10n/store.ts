@@ -1,5 +1,4 @@
-import { readFile } from 'node:fs/promises'
-import { join } from 'node:path'
+import { createStorage } from 'unstorage'
 import { isIndexableCoverage, isIndexableDocsPath, isLocalisedPage, L10N_LOCALE_CODES, type L10nIndexable, type L10nLocale } from '#shared/utils/l10n'
 
 /** How long a bundle that could not be read is served empty before the next attempt. */
@@ -9,19 +8,46 @@ const FAILED_BUNDLE_TTL = 60_000
 const TRANSLATIONS_PATH_ENV = 'NUXT_TRANSLATIONS_PATH'
 
 /**
- * The translations commit the site serves: the last one that touched `dist/`.
+ * The translations commit the site serves: the head of the translations branch.
  * Resolved and cached like a content instance's ref, so the push webhook refreshes it the same way.
  */
 export function resolveTranslationsSha(opts: { refresh?: boolean } = {}): Promise<string> {
-  return resolveContentSha(TRANSLATIONS_REPO, TRANSLATIONS_BRANCH, TRANSLATIONS_DIR, opts)
+  return resolveContentSha(TRANSLATIONS_REPO, TRANSLATIONS_BRANCH, '', opts)
 }
 
-/** A file of the translations repository at `sha`, parsed as JSON. */
-async function readTranslationsJson(file: string, sha: string): Promise<unknown> {
+/** The records and manifests at `sha`: one tarball of the repository, or the local clone. */
+async function fetchTranslationsTree(sha: string): Promise<TranslationsTree> {
   const local = process.env[TRANSLATIONS_PATH_ENV]?.trim()
-  if (local) return JSON.parse(await readFile(join(local, file), 'utf8'))
+  if (local) return readTranslationsCheckout(local, sha, L10N_LOCALE_CODES)
 
-  return $fetch(`https://raw.githubusercontent.com/${TRANSLATIONS_REPO}/${sha}/${file}`, { responseType: 'json' })
+  const data = await $fetch<ArrayBuffer>(`https://codeload.github.com/${TRANSLATIONS_REPO}/tar.gz/${sha}`, { responseType: 'arrayBuffer' })
+  return parseTranslationsTarball(new Uint8Array(data), sha)
+}
+
+/** The tree of the last commit read, for the lifetime of this server instance. */
+let currentTree: { sha: string, tree: Promise<TranslationsTree> } | undefined
+
+/** The records and manifests at `sha`. Throws when they cannot be read; the next call retries. */
+export function getTranslationsTree(sha: string): Promise<TranslationsTree> {
+  if (currentTree?.sha === sha) return currentTree.tree
+
+  const entry = {
+    sha,
+    tree: (async () => {
+      const startedAt = performance.now()
+      try {
+        return await fetchTranslationsTree(sha)
+      } finally {
+        recordDuration('l10n.tree.read.ms', startedAt)
+      }
+    })().catch((error) => {
+      if (currentTree === entry) currentTree = undefined
+      throw error
+    })
+  }
+  currentTree = entry
+
+  return entry.tree
 }
 
 /**
@@ -46,22 +72,24 @@ async function sourcePaths(source: (typeof TRANSLATION_SOURCES)[number]): Promis
 }
 
 /** Each translated source's manifest at `sha`, with the page paths of each of its files. */
-function readSources(sha: string): Promise<Array<{ manifest: SourceManifest, paths: Map<string, string[]> }>> {
-  return Promise.all(TRANSLATION_SOURCES.map(async (source) => {
-    const [manifest, paths] = await Promise.all([
-      readTranslationsJson(`.diglot/manifest/${source.name}.json`, sha) as Promise<SourceManifest>,
-      sourcePaths(source)
-    ])
-    return { manifest, paths }
-  }))
+async function readSources(sha: string): Promise<Array<{ manifest: SourceManifest, paths: Map<string, string[]> }>> {
+  const { manifests } = await getTranslationsTree(sha)
+  return Promise.all(TRANSLATION_SOURCES.map(async source => ({
+    manifest: manifests.get(source.name) ?? { files: {} },
+    paths: await sourcePaths(source)
+  })))
 }
 
-/** The localised pages of `bundle` reviewed enough to be indexed. */
-async function indexablePages(bundle: L10nBundle): Promise<string[]> {
+/** The localised pages of a snapshot reviewed enough to be indexed. */
+async function indexablePages({ bundle, coverage }: L10nSnapshot): Promise<string[]> {
   if (!bundle.reviewed) return []
 
-  return (await readSources(bundle.sha))
-    .flatMap(({ manifest, paths }) => Object.entries(coverageTable(manifest, bundle, file => paths.get(file))))
+  const tables = await Promise.all(TRANSLATION_SOURCES.map(async (source) => {
+    const paths = await sourcePaths(source)
+    return coverageTable(coverage[source.name] ?? {}, file => paths.get(file))
+  }))
+  return tables
+    .flatMap(table => Object.entries(table))
     .filter(([path, coverage]) => isIndexableDocsPath(path) && isIndexableCoverage(coverage))
     .map(([path]) => path)
     .sort()
@@ -99,12 +127,13 @@ export async function getL10nIndexable(): Promise<L10nIndexable> {
   const content = (await Promise.all(TRANSLATION_SOURCES.flatMap(source => source.instances)
     .map(key => resolveInstanceSha(key).catch(() => '')))).join(',')
   const entries = await Promise.all(L10N_LOCALE_CODES.map(async (locale) => {
-    const bundle = await getL10nBundle(locale)
+    const snapshot = await getL10nSnapshot(locale)
+    const { bundle } = snapshot
     const key = `${locale}@${bundle.sha}:${content}`
     let pages = indexable.get(key)
     if (!pages) {
       for (const stale of indexable.keys()) if (stale.startsWith(`${locale}@`)) indexable.delete(stale)
-      pages = indexablePages(bundle).catch((error) => {
+      pages = indexablePages(snapshot).catch((error) => {
         console.error(`[l10n] could not compute the ${locale} coverage at ${bundle.sha}`, error?.message ?? error)
         indexable.delete(key)
         return []
@@ -127,7 +156,7 @@ export interface L10nRefresh {
   indexableChanged: string[]
 }
 
-/** Pin the translations commit `dist/` is at now, and list what changed for each of `locales` since the previous one. */
+/** Pin the translations commit the branch is at now, and list what changed for each of `locales` since the previous one. */
 export async function refreshL10nBundles(locales: L10nLocale[]): Promise<L10nRefresh[]> {
   const before = await Promise.all(locales.map(locale => getL10nBundle(locale)))
   const indexableBefore = await getL10nIndexable()
@@ -150,39 +179,63 @@ export async function refreshL10nBundles(locales: L10nLocale[]): Promise<L10nRef
   }))
 }
 
-/** Bundles by locale, for the lifetime of this server instance; only the current sha is kept. */
-const bundles = new Map<L10nLocale, { sha: string, bundle: Promise<L10nBundle>, failedAt?: number }>()
+/** Built snapshots, shared by every instance through the content cache, keyed by commit. */
+const snapshotStorage = createStorage({ driver: contentCacheDriver('l10n') })
 
 /**
- * The bundle `locale` is served from, at the pinned translations commit.
- * A bundle that cannot be resolved, fetched or parsed is served empty: the page renders in English.
+ * `locale`'s snapshot at `sha`: read from the content cache, or built from the repository and stored
+ * there for the next instance. Concurrent requests of one instance share one build.
  */
-export async function getL10nBundle(locale: L10nLocale): Promise<L10nBundle> {
+async function loadSnapshot(sha: string, locale: L10nLocale): Promise<L10nSnapshot> {
+  const readAt = performance.now()
+  const stored = await readL10nSnapshot(snapshotStorage, sha, locale).catch((error) => {
+    console.error(`[l10n] could not read the stored ${locale} snapshot at ${sha}`, error?.message ?? error)
+    return undefined
+  })
+  recordDuration('l10n.snapshot.read.ms', readAt, { locale, hit: String(!!stored) })
+  if (stored) return stored
+
+  const builtAt = performance.now()
+  const tree = await getTranslationsTree(sha)
+  const snapshot = buildL10nSnapshot(tree, locale)
+  await writeL10nSnapshot(snapshotStorage, snapshot, tree.records(locale)).catch((error) => {
+    console.error(`[l10n] could not store the ${locale} snapshot at ${sha}`, error?.message ?? error)
+  })
+  recordDuration('l10n.snapshot.build.ms', builtAt, { locale })
+  return snapshot
+}
+
+/** Snapshots by locale, for the lifetime of this server instance; only the current sha is kept. */
+const snapshots = new Map<L10nLocale, { sha: string, snapshot: Promise<L10nSnapshot>, failedAt?: number }>()
+
+/**
+ * What `locale` is served from at the pinned translations commit: its bundle and the coverage of every source file.
+ * A snapshot that cannot be resolved, fetched or parsed is served empty: the page renders in English.
+ */
+export async function getL10nSnapshot(locale: L10nLocale): Promise<L10nSnapshot> {
   const sha = await resolveTranslationsSha().catch((error) => {
     console.error('[l10n] could not resolve the translations commit', error?.message ?? error)
     return undefined
   })
-  if (!sha) return bundles.get(locale)?.bundle ?? emptyBundle(locale)
+  if (!sha) return snapshots.get(locale)?.snapshot ?? { bundle: emptyBundle(locale), coverage: {} }
 
-  const current = bundles.get(locale)
+  const current = snapshots.get(locale)
   if (current?.sha === sha && (!current.failedAt || Date.now() - current.failedAt < FAILED_BUNDLE_TTL)) {
-    return current.bundle
+    return current.snapshot
   }
 
-  const entry: { sha: string, bundle: Promise<L10nBundle>, failedAt?: number } = { sha, bundle: Promise.resolve(emptyBundle(locale)) }
-  entry.bundle = (async () => {
-    const startedAt = performance.now()
-    try {
-      return parseBundle(await readTranslationsJson(`${TRANSLATIONS_DIR}/${locale}.json`, sha), locale, sha)
-    } catch (error) {
-      console.error(`[l10n] could not read the ${locale} bundle at ${sha}`, (error as Error)?.message ?? error)
-      entry.failedAt = Date.now()
-      return emptyBundle(locale)
-    } finally {
-      recordDuration('l10n.bundle.read.ms', startedAt, { locale })
-    }
-  })()
-  bundles.set(locale, entry)
+  const entry: { sha: string, snapshot: Promise<L10nSnapshot>, failedAt?: number } = { sha, snapshot: loadSnapshot(sha, locale) }
+  entry.snapshot = entry.snapshot.catch((error) => {
+    console.error(`[l10n] could not read the ${locale} bundle at ${sha}`, (error as Error)?.message ?? error)
+    entry.failedAt = Date.now()
+    return { bundle: emptyBundle(locale), coverage: {} }
+  })
+  snapshots.set(locale, entry)
 
-  return entry.bundle
+  return entry.snapshot
+}
+
+/** The bundle `locale` is served from, at the pinned translations commit. */
+export async function getL10nBundle(locale: L10nLocale): Promise<L10nBundle> {
+  return (await getL10nSnapshot(locale)).bundle
 }

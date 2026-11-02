@@ -39,17 +39,19 @@ export function fileCoverage(segments: ManifestSegment[], bundle: L10nBundle): L
   return coverage
 }
 
+/** Coverage of every file a manifest lists, keyed by repository path. */
+export function sourceCoverage(manifest: SourceManifest, bundle: L10nBundle): Record<string, L10nCoverage> {
+  return Object.fromEntries(Object.entries(manifest.files ?? {}).map(([file, segments]) => [file, fileCoverage(segments, bundle)]))
+}
+
 /**
- * Coverage of every page a manifest lists, keyed by page path.
+ * Coverage of every page of a source, keyed by page path, from the coverage of its files.
  * `pathsOf` maps a repository path to the pages serving it; files without a page are left out.
  */
-export function coverageTable(manifest: SourceManifest, bundle: L10nBundle, pathsOf: (file: string) => readonly string[] | undefined): Record<string, L10nCoverage> {
+export function coverageTable(files: Record<string, L10nCoverage>, pathsOf: (file: string) => readonly string[] | undefined): Record<string, L10nCoverage> {
   const table: Record<string, L10nCoverage> = {}
-  for (const [file, segments] of Object.entries(manifest.files ?? {})) {
-    const paths = pathsOf(file)
-    if (!paths?.length) continue
-    const coverage = fileCoverage(segments, bundle)
-    for (const path of paths) table[path] = coverage
+  for (const [file, coverage] of Object.entries(files)) {
+    for (const path of pathsOf(file) ?? []) table[path] = coverage
   }
   return table
 }

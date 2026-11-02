@@ -5,13 +5,13 @@ import { textContent } from 'comark/utils'
 import fs from 'comark-content/sources/fs'
 import type { ContentFile } from 'comark-content'
 import { beforeAll, describe, expect, it } from 'vitest'
-import { emptyBundle, parseBundle } from '../../server/utils/l10n/bundle'
+import { createBundle, emptyBundle } from '../../server/utils/l10n/bundle'
 import { localise, localiseLabel, localiseNavigation, segmentSource } from '../../server/utils/l10n/localise'
 import { createBuildInstance } from '../../utils/factory'
 
 const FIXTURES = fileURLToPath(new URL('../fixtures/l10n/', import.meta.url))
 const raw = JSON.parse(readFileSync(`${FIXTURES}fr.json`, 'utf8')) as { version: number, locale: string, records: Record<string, Record<string, unknown>> }
-const bundle = (records: Record<string, Record<string, unknown>> = {}) => parseBundle({ ...raw, records: { ...raw.records, ...records } }, 'fr', 'a'.repeat(40))
+const bundle = (records: Record<string, Record<string, unknown>> = {}) => createBundle({ ...raw.records, ...records }, 'fr', 'a'.repeat(40))
 
 const INTRODUCTION = '/docs/4.x/getting-started/introduction'
 const USE_FETCH = '/docs/4.x/api/composables/use-fetch'

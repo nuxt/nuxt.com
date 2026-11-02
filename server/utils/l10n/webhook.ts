@@ -1,20 +1,25 @@
 import type { GitHubPushCommit } from '../../types/github'
-import { isL10nLocale, type L10nLocale } from '../../../shared/utils/l10n'
-import { TRANSLATIONS_BRANCH, TRANSLATIONS_DIR, TRANSLATIONS_REPO, type L10nBundle } from './bundle'
+import { isL10nLocale, L10N_LOCALE_CODES, type L10nLocale } from '../../../shared/utils/l10n'
+import { TRANSLATIONS_BRANCH, TRANSLATIONS_REPO, type L10nBundle } from './bundle'
 
-const BUNDLE_RE = new RegExp(`^${TRANSLATIONS_DIR}/([^/]+)\\.json$`)
+const RECORD_RE = /^([^/]+)\/segments\//
+const MANIFEST_RE = /^\.diglot\/manifest\//
 
 /** Whether a push is to the translations the site serves. */
 export function isTranslationsPush(repo: string, branch: string): boolean {
   return repo === TRANSLATIONS_REPO && branch === TRANSLATIONS_BRANCH
 }
 
-/** Locales whose served bundle (`dist/<locale>.json`) a translations push rebuilt. */
+/**
+ * Locales whose bundle a translations push changed: one of their records, or a source manifest,
+ * which every locale's coverage reads.
+ */
 export function rebuiltLocales(commits: GitHubPushCommit[]): L10nLocale[] {
   const locales = new Set<L10nLocale>()
   for (const commit of commits) {
     for (const file of [...commit.added ?? [], ...commit.modified ?? [], ...commit.removed ?? []]) {
-      const locale = BUNDLE_RE.exec(file)?.[1]
+      if (MANIFEST_RE.test(file)) return [...L10N_LOCALE_CODES]
+      const locale = RECORD_RE.exec(file)?.[1]
       if (isL10nLocale(locale)) locales.add(locale)
     }
   }

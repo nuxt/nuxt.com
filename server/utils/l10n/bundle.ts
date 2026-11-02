@@ -1,12 +1,11 @@
 import { parseRecord, type TranslationRecord } from '@diglot/core'
 import type { L10nLocale } from '../../../shared/utils/l10n'
 
-/** The translations repository: records, manifests and the per-locale bundles in `dist/`. */
+/** The translations repository: records and source manifests. */
 export const TRANSLATIONS_REPO = 'nuxt/translations'
 export const TRANSLATIONS_BRANCH = 'main'
-export const TRANSLATIONS_DIR = 'dist'
 
-/** One locale's translation records, read from `dist/<locale>.json` at one commit. */
+/** One locale's translation records at one commit of the translations repository. */
 export interface L10nBundle {
   locale: L10nLocale
   /** Commit of the translations repository; `''` for the empty bundle. */
@@ -22,22 +21,10 @@ export function emptyBundle(locale: L10nLocale): L10nBundle {
   return { locale, sha: '', reviewed: false, record: () => undefined, hashes: () => [] }
 }
 
-/**
- * Check the shape of a `dist/<locale>.json` and wrap its records.
- * Throws on a bundle for another locale or an unknown version; a malformed record reads as missing.
- */
-export function parseBundle(value: unknown, locale: L10nLocale, sha: string): L10nBundle {
-  const bundle = value as { version?: unknown, locale?: unknown, records?: unknown } | null
-  if (!bundle || typeof bundle !== 'object' || bundle.version !== 1 || bundle.locale !== locale) {
-    throw new Error(`[l10n] ${locale} bundle at ${sha} has an unexpected shape`)
-  }
-  const records = bundle.records
-  if (!records || typeof records !== 'object' || Array.isArray(records)) {
-    throw new Error(`[l10n] ${locale} bundle at ${sha} has no records`)
-  }
-
+/** Wrap a locale's unparsed records, keyed by hash. A malformed record reads as missing. */
+export function createBundle(records: Record<string, unknown>, locale: L10nLocale, sha: string): L10nBundle {
   const parsed = new Map<string, TranslationRecord | null>()
-  const reviewed = Object.values(records).some((record: { review?: unknown, origin?: unknown } | null) =>
+  const reviewed = Object.values(records as Record<string, { review?: unknown, origin?: unknown } | null>).some(record =>
     record?.review === 'edited' || record?.review === 'verified' || record?.origin === 'human')
 
   return {
@@ -49,7 +36,7 @@ export function parseBundle(value: unknown, locale: L10nLocale, sha: string): L1
       let record = parsed.get(hash)
       if (record === undefined) {
         try {
-          record = Object.hasOwn(records, hash) ? parseRecord((records as Record<string, unknown>)[hash]) : null
+          record = Object.hasOwn(records, hash) ? parseRecord(records[hash]) : null
         } catch {
           record = null
         }

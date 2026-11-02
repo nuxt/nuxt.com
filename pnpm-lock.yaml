@@ -196,6 +196,9 @@ importers:
       '@diglot/core':
         specifier: ^0.1.0
         version: 0.1.0
+      '@diglot/store':
+        specifier: ^0.1.0
+        version: 0.1.0(dotenv@17.4.2)(giget@3.3.1)(jiti@2.7.0)(magicast@0.5.5)
       '@iconify-json/circle-flags':
         specifier: ^1.2.14
         version: 1.2.14
@@ -337,6 +340,9 @@ importers:
       motion-v:
         specifier: ^2.10.0
         version: 2.10.0(@vueuse/core@14.4.0(vue@3.5.44(typescript@6.0.3)))(react@19.3.0)(vue@3.5.44(typescript@6.0.3))
+      nanotar:
+        specifier: ^0.3.0
+        version: 0.3.0
       nuxt:
         specifier: ^4.6.4
         version: 4.6.4(8adf95bd70a3adbb8f39cc39e851cf37)
@@ -807,6 +813,10 @@ packages:
 
   '@diglot/core@0.1.0':
     resolution: {integrity: sha512-C+30DZEOaldHJqn3S2+2yZNxuy94J/9O6rudcneENSvryjuJs8jU1GovTpPOcr/meivjeExYsJ7NhDm6N2XcTw==}
+    engines: {node: '>=22'}
+
+  '@diglot/store@0.1.0':
+    resolution: {integrity: sha512-ZPwtqHYmZDM7mlJxU6CnrWRi3gWLG/yRy31DiIWPyoZtCPeY1XUAsU2uh3t3vCQQS5Jg4uy4vKzx98LXTgnv3g==}
     engines: {node: '>=22'}
 
   '@discordjs/builders@1.14.1':
@@ -5696,6 +5706,23 @@ packages:
     peerDependencies:
       magicast: '*'
     peerDependenciesMeta:
+      magicast:
+        optional: true
+
+  c12@4.0.0-rc.4:
+    resolution: {integrity: sha512-SdcZfDXUc7ownRiqbEf5yjaVlbWN9GuWS6SSPlKJ1cFOQYMrb1ouU8YWxZoPfXZbF/tw+f4HjjJS0tlXQJfkEg==}
+    peerDependencies:
+      dotenv: '*'
+      giget: '>=3.3.1'
+      jiti: '*'
+      magicast: '*'
+    peerDependenciesMeta:
+      dotenv:
+        optional: true
+      giget:
+        optional: true
+      jiti:
+        optional: true
       magicast:
         optional: true
 
@@ -11784,6 +11811,18 @@ snapshots:
     dependencies:
       fastest-levenshtein: 1.0.16
 
+  '@diglot/store@0.1.0(dotenv@17.4.2)(giget@3.3.1)(jiti@2.7.0)(magicast@0.5.5)':
+    dependencies:
+      '@diglot/core': 0.1.0
+      c12: 4.0.0-rc.4(dotenv@17.4.2)(giget@3.3.1)(jiti@2.7.0)(magicast@0.5.5)
+      pathe: 2.0.3
+      yaml: 2.9.1
+    transitivePeerDependencies:
+      - dotenv
+      - giget
+      - jiti
+      - magicast
+
   '@discordjs/builders@1.14.1':
     dependencies:
       '@discordjs/formatters': 0.6.2
@@ -17151,6 +17190,20 @@ snapshots:
       pkg-types: 2.4.0
       rc9: 3.1.0
     optionalDependencies:
+      magicast: 0.5.5
+
+  c12@4.0.0-rc.4(dotenv@17.4.2)(giget@3.3.1)(jiti@2.7.0)(magicast@0.5.5):
+    dependencies:
+      confbox: 0.3.2
+      defu: 6.1.7
+      exsolve: 1.1.3
+      pathe: 2.0.3
+      pkg-types: 2.4.0
+      rc9: 3.1.0
+    optionalDependencies:
+      dotenv: 17.4.2
+      giget: 3.3.1
+      jiti: 2.7.0
       magicast: 0.5.5
 
   cac@6.7.14: {}
