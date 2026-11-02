@@ -1,5 +1,5 @@
 import { and, eq } from 'drizzle-orm'
-import { getQuery, setCookie, getCookie, deleteCookie, defineEventHandler } from 'h3'
+import { getQuery, setCookie, getCookie, deleteCookie, defineEventHandler, sendRedirect } from 'nuxt/server'
 
 const oauthHandler = defineOAuthGitHubEventHandler({
   async onSuccess(event, { user: ghUser }) {
@@ -14,7 +14,7 @@ const oauthHandler = defineOAuthGitHubEventHandler({
       )
     })
 
-    const role: 'user' | 'admin' = (await isAuthorizedAdmin(event, ghUser.login)) ? 'admin' : 'user'
+    const role: 'user' | 'admin' = (await isAuthorizedAdmin(toH3Event(event), ghUser.login)) ? 'admin' : 'user'
 
     if (!user) {
       // New user: reuse `session.id` as the primary key so any anonymous chats

@@ -1,3 +1,5 @@
+import { createError, defineEventHandler, sendRedirect } from 'nuxt/server'
+
 /**
  * Link a Discord account to the signed-in GitHub user, then unlock their Nuxters roles.
  * Returns 404 when Discord is not configured (see `runtimeConfig.nuxters.discord`).
@@ -12,12 +14,12 @@ const oauthHandler = (credentials: { clientId: string, clientSecret: string }) =
     const { user } = await requireUserSession(event)
 
     const nuxter = await nuxters.getByGithubId(user.providerId)
-    const badges = await nuxters.badges(event, user, nuxter)
+    const badges = await nuxters.badges(toH3Event(event), user, nuxter)
     // `onError` only covers the OAuth exchange: a Discord API error here (missing Manage Roles
     // permission, unknown role id) needs its own redirect.
     let roles: string[]
     try {
-      roles = await nuxtersDiscord.grant(event, {
+      roles = await nuxtersDiscord.grant(toH3Event(event), {
         discordId: discordUser.id,
         accessToken: tokens.access_token,
         badges
@@ -49,9 +51,9 @@ const oauthHandler = (credentials: { clientId: string, clientSecret: string }) =
 })
 
 export default defineEventHandler(async (event) => {
-  const { enabled, clientId, clientSecret } = nuxtersDiscord.config(event)
+  const { enabled, clientId, clientSecret } = nuxtersDiscord.config(toH3Event(event))
   if (!enabled) {
-    throw createError({ statusCode: 404, statusMessage: 'Discord is not configured' })
+    throw createError({ status: 404, message: 'Discord is not configured' })
   }
 
   const { user } = await getUserSession(event)
