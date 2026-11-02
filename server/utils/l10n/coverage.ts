@@ -19,6 +19,7 @@ export const TRANSLATION_SOURCES = [
 export interface ManifestSegment {
   hash: string
   words: number
+  kind?: string
 }
 
 /** A source manifest: the segments of each file, keyed by repository path (`docs/1.getting-started/01.introduction.md`). */

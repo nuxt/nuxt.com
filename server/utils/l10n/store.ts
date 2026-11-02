@@ -64,6 +64,28 @@ async function indexablePages(bundle: L10nBundle): Promise<string[]> {
     .sort()
 }
 
+/**
+ * The localised pages of the sources that use any of `hashes` at the bundle's commit, or every
+ * localised page with `'all'`. `navigation` tells whether a navigation label or page title changed,
+ * which every page of the tree renders.
+ */
+export async function l10nPagesUsing(bundle: L10nBundle, hashes: Set<string> | 'all'): Promise<{ pages: string[], navigation: boolean }> {
+  const sources = await readSources(bundle.sha)
+  let navigation = hashes === 'all'
+  const pages = new Set<string>()
+  for (const { manifest, paths } of sources) {
+    for (const [file, segments] of Object.entries(manifest.files ?? {})) {
+      const used = hashes === 'all' ? segments : segments.filter(segment => hashes.has(segment.hash))
+      if (!used.length) continue
+      if (used.some(segment => segment.kind === 'navigation' || segment.kind === 'frontmatter')) navigation = true
+      const path = paths.get(file)
+      if (path) pages.add(path)
+    }
+  }
+  if (navigation) for (const { paths } of sources) for (const path of paths.values()) pages.add(path)
+  return { pages: [...pages].sort(), navigation }
+}
+
 const indexable = new Map<string, Promise<string[]>>()
 
 /**
@@ -87,6 +109,40 @@ export async function getL10nIndexable(): Promise<L10nIndexable> {
     return [locale, await pages] as const
   }))
   return Object.fromEntries(entries)
+}
+
+/** What a translations push changed for one locale. */
+export interface L10nRefresh {
+  locale: L10nLocale
+  sha: string
+  /** Localised pages showing a changed record, unprefixed. */
+  pages: string[]
+  navigation: boolean
+  /** English pages whose localised twin became indexable, or stopped being. */
+  indexableChanged: string[]
+}
+
+/** Pin the translations commit `dist/` is at now, and list what changed for each of `locales` since the previous one. */
+export async function refreshL10nBundles(locales: L10nLocale[]): Promise<L10nRefresh[]> {
+  const before = await Promise.all(locales.map(locale => getL10nBundle(locale)))
+  const indexableBefore = await getL10nIndexable()
+
+  const sha = await resolveTranslationsSha({ refresh: true })
+  const after = await Promise.all(locales.map(locale => getL10nBundle(locale)))
+  const indexableAfter = await getL10nIndexable()
+
+  return Promise.all(locales.map(async (locale, index) => {
+    const previous = before[index]!
+    const current = after[index]!
+    const { pages, navigation } = previous.sha === current.sha
+      ? { pages: [], navigation: false }
+      : await l10nPagesUsing(current, previous.sha ? changedHashes(previous, current) : 'all')
+    const was = new Set(indexableBefore[locale] ?? [])
+    const is = new Set(indexableAfter[locale] ?? [])
+    const indexableChanged = [...new Set([...was, ...is])].filter(path => was.has(path) !== is.has(path)).sort()
+
+    return { locale, sha, pages, navigation, indexableChanged }
+  }))
 }
 
 /** Bundles by locale, for the lifetime of this server instance; only the current sha is kept. */

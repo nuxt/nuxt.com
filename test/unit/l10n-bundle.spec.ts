@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest'
 import { emptyBundle, parseBundle } from '../../server/utils/l10n/bundle'
 import { coverageTable, fileCoverage, TRANSLATION_SOURCES, type SourceManifest } from '../../server/utils/l10n/coverage'
 import { visibleRecord } from '../../server/utils/l10n/localise'
+import { changedHashes, isTranslationsPush, rebuiltLocales } from '../../server/utils/l10n/webhook'
 import { instanceSource } from '../../server/utils/content/instances'
 import { isIndexableCoverage, reviewedShare } from '../../shared/utils/l10n'
 
@@ -102,5 +103,29 @@ describe('TRANSLATION_SOURCES', () => {
         expect({ key, repo: instance.repo, branch: instance.branch, dir: instance.contentDir }).toEqual({ key, repo: source.repo, branch: source.ref, dir: source.dir })
       }
     }
+  })
+})
+
+describe('translations webhook', () => {
+  it('should only act on the branch the site reads', () => {
+    expect(isTranslationsPush('nuxt/translations', 'main')).toBe(true)
+    expect(isTranslationsPush('nuxt/translations', 'renovate/foo')).toBe(false)
+    expect(isTranslationsPush('nuxt/nuxt', 'main')).toBe(false)
+  })
+
+  it('should list the locales whose bundle a push rebuilt', () => {
+    expect(rebuiltLocales([
+      { modified: ['fr/segments/00/00033b4b33874d8a.json', 'dist/fr.json'] },
+      { added: ['dist/xx.json', 'README.md'] }
+    ])).toEqual(['fr'])
+    expect(rebuiltLocales([{ modified: ['fr/segments/00/00033b4b33874d8a.json'] }])).toEqual([])
+  })
+
+  it('should list the records two bundles disagree on', () => {
+    const [edited, removed, kept] = Object.keys(raw.records)
+    const after = bundleWith({ [edited!]: { ...raw.records[edited!], text: 'Autre', review: 'edited' }, [removed!]: undefined })
+    const changed = changedHashes(bundleWith(), after)
+    expect([...changed].sort()).toEqual([edited, removed].sort())
+    expect(changed.has(kept!)).toBe(false)
   })
 })

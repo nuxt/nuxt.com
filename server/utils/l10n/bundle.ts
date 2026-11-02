@@ -14,11 +14,12 @@ export interface L10nBundle {
   /** Whether any record was written or reviewed by a person: without one, no page can be indexed. */
   reviewed: boolean
   record: (hash: string) => TranslationRecord | undefined
+  hashes: () => string[]
 }
 
 /** A bundle without records: every segment shows its English source. */
 export function emptyBundle(locale: L10nLocale): L10nBundle {
-  return { locale, sha: '', reviewed: false, record: () => undefined }
+  return { locale, sha: '', reviewed: false, record: () => undefined, hashes: () => [] }
 }
 
 /**
@@ -43,6 +44,7 @@ export function parseBundle(value: unknown, locale: L10nLocale, sha: string): L1
     locale,
     sha,
     reviewed,
+    hashes: () => Object.keys(records),
     record(hash) {
       let record = parsed.get(hash)
       if (record === undefined) {

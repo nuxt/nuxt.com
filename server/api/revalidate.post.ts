@@ -2,6 +2,8 @@ import { verify } from '@octokit/webhooks-methods'
 import { waitUntil } from '@vercel/functions'
 import type { ComarkContent } from 'comark-content'
 import { instanceBlobPath, navPathsForInstance, SEARCH_INDEXED_KEYS } from '#shared/utils/content'
+import { DOC_VERSIONS, isDocVersion } from '#shared/utils/docs'
+import { isLocalisedDocVersion, isLocalisedPage, L10N_INDEXABLE_PATH, L10N_LOCALE_CODES, l10nNavigationPath, localisePath } from '#shared/utils/l10n'
 import type { GitHubPushPayload } from '../types/github'
 import type { ContentChanges } from '../utils/content/webhook'
 
@@ -68,8 +70,13 @@ export default defineEventHandler(async (event) => {
 
   // One push can feed several instances (docs or cli versions).
   const impacted = impactedInstances(repo, branch)
-  if (!impacted.length) {
+  const translations = isTranslationsPush(repo, branch)
+  if (!impacted.length && !translations) {
     return { ok: true, skipped: 'no-source-reads-this-ref', repo, branch }
+  }
+  const rebuilt = translations ? rebuiltLocales(payload.commits ?? []) : []
+  if (translations && !rebuilt.length) {
+    return { ok: true, skipped: 'no-bundle-changes', repo, branch }
   }
 
   const changesByInstance = new Map<ContentInstanceKey, ContentChanges>()
@@ -82,13 +89,13 @@ export default defineEventHandler(async (event) => {
     }
   }
 
-  if (!changesByInstance.size) {
+  if (!changesByInstance.size && !rebuilt.length) {
     return { ok: true, skipped: 'no-content-changes', repo, branch }
   }
 
   const pathsToPurge = new Set<string>()
   const pathsByScope = new Map<string, Map<PurgeReason, Set<string>>>()
-  const summary: Record<string, { pages: string[], navChanged: boolean }> = {}
+  const summary: Record<string, { pages: string[], navChanged: boolean, sha?: string, indexableChanged?: string[] }> = {}
   const buildId = useRuntimeConfig(event).app.buildId
 
   /** Add a path to the purge set, and track it by scope and reason. */
@@ -130,12 +137,15 @@ export default defineEventHandler(async (event) => {
       addPath(instanceKey, 'payload', payloadUrlForPage(path, buildId))
       const rawPath = rawUrlForPage(event, path)
       if (rawPath) addPath(instanceKey, 'raw', rawPath)
+      // Localised pages are rendered from the English one.
+      for (const localised of localisedTwins(path)) addPath(instanceKey, 'page', localised)
     }
 
     // Navigation renders on every page of the instance, so a change re-renders all of them.
     if (navChanged || changes.navTouched) {
       for (const navPath of navPathsForInstance(instanceKey)) {
         addPath(instanceKey, 'nav', navPath)
+        for (const localised of localisedNavigationPaths(navPath)) addPath(instanceKey, 'nav', localised)
       }
       for (const item of Object.values(newItems)) {
         if (item.meta.kind !== 'document' || !isContentRoute(item.path)) continue
@@ -143,6 +153,7 @@ export default defineEventHandler(async (event) => {
         addPath(instanceKey, 'nav', payloadUrlForPage(item.path, buildId))
         const rawPath = rawUrlForPage(event, item.path)
         if (rawPath) addPath(instanceKey, 'nav', rawPath)
+        for (const localised of localisedTwins(item.path)) addPath(instanceKey, 'nav', localised)
       }
     }
 
@@ -175,8 +186,27 @@ export default defineEventHandler(async (event) => {
     summary[instanceKey] = { pages: pagePaths, navChanged: navChanged || changes.navTouched }
   }
 
+  // A rebuilt bundle re-renders the localised pages showing a changed record, and the English twins
+  // whose `hreflang` lists their translation, or stops listing it.
+  if (rebuilt.length) {
+    const refreshed = await timings.time('l10n', () => refreshL10nBundles(rebuilt))
+    for (const { locale, sha, pages, navigation, indexableChanged } of refreshed) {
+      const scope = `l10n:${locale}`
+      for (const path of pages) addPath(scope, navigation ? 'nav' : 'page', localisePath(locale, path))
+      for (const version of DOC_VERSIONS.filter(isLocalisedDocVersion)) addPath(scope, 'nav', l10nNavigationPath(locale, version))
+      for (const path of indexableChanged) {
+        addPath(scope, 'linked', path)
+        addPath(scope, 'linked', payloadUrlForPage(path, buildId))
+      }
+      summary[scope] = { pages, navChanged: navigation, sha, indexableChanged }
+    }
+  }
+
   // Invalidate global indexes: each is rebuilt from every instance, so any change invalidates them.
-  for (const path of ['/llms.txt', '/llms-full.txt', '/sitemap.xml', '/sitemap.md', '/blog/rss.xml', '/design.md']) {
+  const globalPaths = changesByInstance.size
+    ? ['/llms.txt', '/llms-full.txt', '/sitemap.xml', '/sitemap.md', '/blog/rss.xml', '/design.md', L10N_INDEXABLE_PATH]
+    : ['/sitemap.xml', L10N_INDEXABLE_PATH]
+  for (const path of globalPaths) {
     addPath('global', 'global', path)
   }
 
@@ -255,6 +285,18 @@ export default defineEventHandler(async (event) => {
     routes: routesBreakdown(pathsByScope)
   }
 })
+
+/** The localised URLs of an English page, when it has any. */
+function localisedTwins(path: string): string[] {
+  return isLocalisedPage(path) ? L10N_LOCALE_CODES.map(locale => localisePath(locale, path)) : []
+}
+
+/** The localised trees of a navigation endpoint (`/api/navigation/4.x`). */
+function localisedNavigationPaths(navPath: string): string[] {
+  const version = navPath.split('/').pop()!
+  if (!isDocVersion(version) || !isLocalisedDocVersion(version)) return []
+  return L10N_LOCALE_CODES.map(locale => l10nNavigationPath(locale, version))
+}
 
 /** One log line per purged path, grouped by scope then reason */
 function logBreakdown(tag: string, pathsByScope: Map<string, Map<PurgeReason, Set<string>>>): void {
