@@ -1,5 +1,6 @@
+import { mtEnabled } from '@diglot/store'
 import { createStorage } from 'unstorage'
-import { isIndexableCoverage, isIndexableDocsPath, isLocalisedPage, L10N_LOCALE_CODES, type L10nIndexable, type L10nLocale } from '#shared/utils/l10n'
+import { isIndexableCoverage, isIndexableDocsPath, isLocalisedPage, L10N_LOCALE_CODES, type L10nIndexable, type L10nLocale, type L10nLocaleStatus } from '#shared/utils/l10n'
 
 /** How long a bundle that could not be read is served empty before the next attempt. */
 const FAILED_BUNDLE_TTL = 60_000
@@ -78,6 +79,42 @@ async function readSources(sha: string): Promise<Array<{ manifest: SourceManifes
     manifest: manifests.get(source.name) ?? { files: {} },
     paths: await sourcePaths(source)
   })))
+}
+
+/** The segments of each localised page at `sha`, by page path. */
+export async function l10nPageSegments(sha: string): Promise<Map<string, ManifestSegment[]>> {
+  const pages = new Map<string, ManifestSegment[]>()
+  for (const { manifest, paths } of await readSources(sha)) {
+    for (const [file, segments] of Object.entries(manifest.files ?? {})) {
+      for (const path of paths.get(file) ?? []) pages.set(path, segments)
+    }
+  }
+  return pages
+}
+
+const statuses = new Map<string, Promise<L10nLocaleStatus>>()
+
+/** The review state of `locale`, computed once per translations commit. */
+export async function getL10nStatus(locale: L10nLocale): Promise<L10nLocaleStatus> {
+  const bundle = await getL10nBundle(locale)
+  const key = `${locale}@${bundle.sha}`
+  let status = statuses.get(key)
+  if (!status) {
+    for (const stale of statuses.keys()) if (stale.startsWith(`${locale}@`)) statuses.delete(stale)
+    status = (async () => {
+      const [pages, indexable, tree] = await Promise.all([
+        bundle.sha ? l10nPageSegments(bundle.sha) : new Map<string, ManifestSegment[]>(),
+        getL10nIndexable(),
+        bundle.sha ? getTranslationsTree(bundle.sha) : undefined
+      ])
+      return localeStatus({ locale, bundle, pages, indexable: new Set(indexable[locale] ?? []), machine: !!tree && mtEnabled(tree.localeState(locale)) })
+    })().catch((error) => {
+      statuses.delete(key)
+      throw error
+    })
+    statuses.set(key, status)
+  }
+  return status
 }
 
 /** The localised pages of a snapshot reviewed enough to be indexed. */

@@ -203,6 +203,51 @@ export interface L10nEditorSegment {
   glossary: GlossaryEntry[]
 }
 
+/** The review state of one localised page. */
+export interface L10nPageStatus extends L10nCoverage {
+  path: string
+  /** Segments waiting for review since their English source changed. */
+  pending: number
+  /** Share of words edited or verified, 0 to 1. */
+  reviewed: number
+  indexable: boolean
+}
+
+/** The review state of one locale, for `/translations`. */
+export interface L10nLocaleStatus {
+  locale: L10nLocale
+  sha: string
+  /** Whether the translations repository machine translates the locale. */
+  machine: boolean
+  /** Words of every localised page, each segment counted once. */
+  coverage: L10nCoverage
+  reviewed: number
+  pages: L10nPageStatus[]
+  indexable: number
+  /** Pages reviewed enough to be indexed whose version is not crawlable. */
+  readyToIndex: number
+  pending: { segments: number, oldestDays?: number, medianDays?: number }
+  /** Who edited or verified something recently, with how many records. */
+  activeReviewers: Array<{ login: string, count: number }>
+  /** Share of reviewed machine translations kept unchanged, 0 to 1. */
+  approvalRate?: number
+  /** Median share of a machine translation changed by reviewers who edited it, 0 to 1. */
+  editRatio?: number
+  /** What the governance rule recommends for the machine translation switch. */
+  recommendation?: { machine: boolean, reason: string }
+}
+
+/** A locale's review state without its pages. */
+export type L10nLocaleSummary = Omit<L10nLocaleStatus, 'pages'> & { pageCount: number }
+
+/** The review state of every locale. */
+export const L10N_STATUS_PATH = '/api/l10n/status'
+
+/** The review state of each page of a locale: `/api/l10n/fr/pages`. */
+export function l10nPagesStatusPath(locale: L10nLocale): string {
+  return `/api/l10n/${locale}/pages`
+}
+
 /** A change proposed in a suggestion pull request: a new translation, or removing the current one. */
 export interface L10nSuggestion {
   login: string

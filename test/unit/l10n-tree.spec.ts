@@ -65,6 +65,12 @@ describe('parseTranslationsTarball', () => {
   it('should read a repository without glossaries as having no terms', async () => {
     expect((await parseTranslationsTarball(await tarball(), SHA)).glossary('fr')).toEqual({ terms: [] })
   })
+
+  it('should read the state of a locale', async () => {
+    const tree = await parseTranslationsTarball(await tarball([{ name: 'fr/locale.yml', data: 'mt:\n  enabled: true\n' }]), SHA)
+    expect(tree.localeState('fr')).toEqual({ mt: { enabled: true } })
+    expect((await parseTranslationsTarball(await tarball(), SHA)).localeState('fr')).toEqual({})
+  })
 })
 
 describe('readTranslationsCheckout', () => {

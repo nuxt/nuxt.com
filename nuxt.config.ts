@@ -219,6 +219,8 @@ export default defineNuxtConfig({
     '/new': { redirect: '/templates' },
     '/showcase': { isr: CONTENT_ISR },
     '/team': { isr: CONTENT_ISR },
+    // Purged by the translations push webhook.
+    '/translations': { isr: CONTENT_ISR },
     '/design-kit': { isr: CONTENT_ISR },
     '/video-courses': { isr: CONTENT_ISR },
     '/newsletter': { isr: CONTENT_ISR },

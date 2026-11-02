@@ -1,6 +1,6 @@
 import { readFile } from 'node:fs/promises'
 import { join } from 'node:path'
-import type { Glossary } from '@diglot/core'
+import type { Glossary, LocaleState } from '@diglot/core'
 import { loadLocale, parseGlossary, readManifests, recordPath, type Manifest } from '@diglot/store'
 import { parseTarGzip } from 'nanotar'
 import { parse as parseYaml } from 'yaml'
@@ -15,12 +15,27 @@ export interface TranslationsTree {
   records: (locale: L10nLocale) => Record<string, unknown>
   /** A locale's terminology: the shared `glossary.yml`, overridden term by term by `<locale>/glossary.yml`. */
   glossary: (locale: L10nLocale) => Glossary
+  /** A locale's `<locale>/locale.yml`: its machine translation switch and review metrics. */
+  localeState: (locale: L10nLocale) => LocaleState
 }
 
 const RECORD_RE = /^([^/]+)\/segments\/[0-9a-f]{2}\/([0-9a-f]{16})\.json$/
 const MANIFEST_RE = /^\.diglot\/manifest\/([^/]+)\.json$/
-const GLOSSARY_RE = /^(?:[^/]+\/)?glossary\.yml$/
+const CONFIG_RE = /^(?:[^/]+\/)?(?:glossary|locale)\.yml$/
 const SHARED_GLOSSARY = 'glossary.yml'
+
+/** A locale's state, read from `files`; empty when missing or unreadable. */
+function localeStates(files: Map<string, string>): TranslationsTree['localeState'] {
+  return (locale) => {
+    const text = files.get(`${locale}/locale.yml`)
+    try {
+      const state = text === undefined ? undefined : parseYaml(text) as LocaleState | null
+      return state && typeof state === 'object' ? state : {}
+    } catch {
+      return {}
+    }
+  }
+}
 
 /** Merge the shared glossary and a locale's own, read from `files`. A glossary that cannot be parsed is left out. */
 function glossaryFrom(files: Map<string, string>, locale: L10nLocale): Glossary {
@@ -63,11 +78,11 @@ export async function parseTranslationsTarball(data: Uint8Array, sha: string): P
   const files = new Map<string, string>()
 
   const entries = await parseTarGzip(data, {
-    filter: entry => entry.type === 'file' && (entry.name.endsWith('.json') || entry.name.endsWith('/glossary.yml'))
+    filter: entry => entry.type === 'file' && /\.json$|\/(?:glossary|locale)\.yml$/.test(entry.name)
   })
   for (const entry of entries) {
     const path = entry.name.slice(entry.name.indexOf('/') + 1)
-    if (GLOSSARY_RE.test(path)) {
+    if (CONFIG_RE.test(path)) {
       files.set(path, entry.text)
       continue
     }
@@ -95,7 +110,7 @@ export async function parseTranslationsTarball(data: Uint8Array, sha: string): P
     }
   }
 
-  return { sha, manifests, records: locale => records.get(locale) ?? {}, glossary: glossaries(files) }
+  return { sha, manifests, records: locale => records.get(locale) ?? {}, glossary: glossaries(files), localeState: localeStates(files) }
 }
 
 /** Read a local checkout of the translations repository through `@diglot/store`. */
@@ -107,7 +122,7 @@ export async function readTranslationsCheckout(root: string, sha: string, locale
   const byLocale = new Map(locales.map((locale, index) => [locale, Object.fromEntries(records[index]!) as Record<string, unknown>]))
 
   const files = new Map<string, string>()
-  await Promise.all([SHARED_GLOSSARY, ...locales.map(locale => `${locale}/glossary.yml`)].map(async (path) => {
+  await Promise.all([SHARED_GLOSSARY, ...locales.flatMap(locale => [`${locale}/glossary.yml`, `${locale}/locale.yml`])].map(async (path) => {
     const text = await readFile(join(root, path), 'utf8').catch(() => undefined)
     if (text !== undefined) files.set(path, text)
   }))
@@ -116,6 +131,7 @@ export async function readTranslationsCheckout(root: string, sha: string, locale
     sha,
     manifests: new Map(manifests.map(manifest => [manifest.source, manifest])),
     records: locale => byLocale.get(locale) ?? {},
-    glossary: glossaries(files)
+    glossary: glossaries(files),
+    localeState: localeStates(files)
   }
 }
