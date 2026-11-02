@@ -19,12 +19,12 @@ function anthropicOptions(auth: AuthContext | null | undefined) {
 }
 
 /**
- * Same model on every scope — only the gateway options and thinking effort
+ * Same model on every surface — only the gateway options and thinking effort
  * vary. The gateway options carry the `surface:*` / `feature:*` tags a digest
  * needs to break spend down per channel.
- * Resolving on both scopes is deliberate: `session.started` guarantees the tags
- * from the first call, `turn.started` refines them once the prompt is in history
- * (that is where a schedule's skill id becomes visible).
+ * Memoized per turn: eve runs the resolver before every model call, and the
+ * tags only need the turn's prompt in history (that is where a schedule's skill
+ * id becomes visible), so the selection stays fixed through the turn's tool calls.
  */
 function selectModel(auth: AuthContext | null | undefined, messages: readonly ModelMessage[]) {
   return {
@@ -42,12 +42,9 @@ export default defineAgent({
   // No fallback: since eve 0.38 a dynamic model has no compiled default and
   // sibling `modelOptions` are forbidden — a resolver failure fails the turn,
   // and every selection carries its own options through `selectModel`.
-  model: defineDynamic({
-    events: {
-      'session.started': (_event, ctx) => selectModel(ctx.session.auth.current, ctx.messages),
-      'turn.started': (_event, ctx) => selectModel(ctx.session.auth.current, ctx.messages)
-    }
-  }),
+  model: defineDynamic(ctx => ctx.memo(ctx.turn?.id ?? null, async () =>
+    selectModel(ctx.session.auth.current, await ctx.messages())
+  )),
   // Eve's default is 40M new input tokens per window, which caps nothing in
   // practice. Kept generous on purpose: schedules and other task-mode sessions
   // cannot ask a human to continue, they fail with SESSION_USAGE_LIMIT_REACHED.

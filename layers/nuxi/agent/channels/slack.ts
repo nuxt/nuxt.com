@@ -1,6 +1,7 @@
 import { connectSlackCredentials } from '@vercel/connect/eve'
 import {
   defaultSlackAuth,
+  defineSlackRenderer,
   slackChannel,
   type SlackContext,
   type SlackMessage
@@ -36,21 +37,26 @@ async function dispatchSlackMessage(ctx: SlackContext, message: SlackMessage) {
   return { auth }
 }
 
+const sessionFailure = defineSlackRenderer({
+  events: {
+    async 'session.ended'(event, ctx, next) {
+      if (event.data.outcome !== 'failed') return next()
+      // DM + @mention (or any double dispatch on the same thread) races on one
+      // continuation token — the winning run already handles the user message.
+      if (isHookConflictFailure(event.data.error ?? {})) return
+
+      await ctx.channel.thread.post(
+        'Something went wrong and I cannot continue in this thread. Start a new thread to try again.'
+      )
+    }
+  }
+})
+
 export default slackChannel({
   credentials: connectSlackCredentials(slackConnectorId()),
   botName: 'Nuxi',
   threadContext: { since: 'last-agent-reply' },
   onAppMention: dispatchSlackMessage,
   onDirectMessage: dispatchSlackMessage,
-  events: {
-    async 'session.failed'(event, _channel) {
-      // DM + @mention (or any double dispatch on the same thread) races on one
-      // continuation token — the winning run already handles the user message.
-      if (isHookConflictFailure(event)) return
-
-      await _channel.thread.post(
-        'Something went wrong and I cannot continue in this thread. Start a new thread to try again.'
-      )
-    }
-  }
+  renderers: [sessionFailure]
 })

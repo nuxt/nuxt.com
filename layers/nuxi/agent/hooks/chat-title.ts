@@ -3,13 +3,13 @@ import { appOrigin, chatIdFromContinuationToken, internalHeaders } from '../lib/
 
 export default defineHook({
   events: {
-    async 'message.received'(event, ctx) {
+    async 'delivery.consumed'(event, ctx) {
       const chatId = chatIdFromContinuationToken(ctx.channel.continuationToken)
       const auth = ctx.session.auth.current
       if (!chatId || !auth || auth.principalType !== 'user') return
 
-      const message = event.data.message
-      if (!message?.trim()) return
+      const message = event.data.parts.flatMap(part => part.kind === 'text' ? [part.text] : []).join('\n')
+      if (!message.trim()) return
 
       try {
         const response = await fetch(`${appOrigin()}/api/internal/chats/${encodeURIComponent(chatId)}/title`, {

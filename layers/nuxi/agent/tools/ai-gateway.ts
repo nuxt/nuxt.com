@@ -188,11 +188,7 @@ function aiGatewayTools() {
   }
 }
 
-export default defineDynamic({
-  events: {
-    'session.started': async (_event, ctx) => {
-      if (!(await isAdminMode(ctx.session.auth.current))) return null
-      return aiGatewayTools()
-    }
-  }
+export default defineDynamic(async (ctx) => {
+  if (!(await ctx.memo(ctx.session.id, () => isAdminMode(ctx.session.auth.current)))) return null
+  return aiGatewayTools()
 })

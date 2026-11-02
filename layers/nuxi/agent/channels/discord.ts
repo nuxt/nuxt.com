@@ -1,13 +1,12 @@
 import { createDiscordAdapter, type DiscordAdapter } from '@chat-adapter/discord'
 import { createMemoryState } from '@chat-adapter/state-memory'
 import { createRedisState } from '@chat-adapter/state-redis'
-import type { UserContent } from 'ai'
 import type { Message, MessageContext, Thread } from 'chat'
-import { defineChannel, POST } from 'eve/channels'
+import { defineChannel, POST, type MessageContent } from 'eve/channels'
 import {
   chatSdkChannel,
   isNotImplemented,
-  messageToUserContent,
+  messageContentOf,
   type ChatSdkChannelState,
   type ChatSdkEventContext
 } from 'eve/channels/chat-sdk'
@@ -88,8 +87,10 @@ function withSlackMrkdwnConversion(adapter: DiscordAdapter): DiscordAdapter {
 /** Mirror of eve's internal `clearStream` so the next step opens a fresh anchor. */
 function clearStream(state: ChatSdkChannelState): void {
   state.anchorMessageId = null
-  state.streamStepIndex = null
   state.lastEditAtMs = null
+  state.streamPartId = null
+  state.streamText = null
+  state.shownText = null
 }
 
 /** eve surfaces this as the typing status while tools run. */
@@ -140,14 +141,14 @@ function burstMessages(message: Message, context: MessageContext | undefined): M
 }
 
 /**
- * Folds a burst into one model input. `messageToUserContent` turns each
+ * Folds a burst into one model input. `messageContentOf` turns each
  * attachment into a file part, so an error screenshot posted on Discord reaches
  * the model instead of being reduced to its (often empty) message text.
  */
-function toUserContent(messages: readonly Message[]): string | UserContent {
+function toMessageContent(messages: readonly Message[]): MessageContent {
   const text = messages.map(message => message.text.trim()).filter(Boolean).join('\n\n')
   const files = messages.flatMap((message) => {
-    const content = messageToUserContent(message)
+    const content = messageContentOf(message)
     return Array.isArray(content) ? content.filter(part => part.type !== 'text') : []
   })
 
@@ -199,7 +200,7 @@ function createDiscordBridge() {
 
     const anchorId = channel.state.anchorMessageId
     let delivered = false
-    if (anchorId && channel.state.editSupported !== false) {
+    if (typeof anchorId === 'string' && anchorId && channel.state.editSupported !== false) {
       try {
         await editMessageRaw(thread.id, anchorId, { raw: firstPart })
         delivered = true
@@ -237,20 +238,23 @@ function createDiscordBridge() {
     resolveInputAuth: event => discordUserAuth(event.user?.userId, event.user?.userName, event.user?.fullName, event.thread?.channelId),
     events: {
       // Same shape as eve's default handler, only the delivery is chunked.
-      async 'message.completed'(event, channel) {
-        if (event.finishReason === 'tool-calls') {
-          channel.state.pendingToolCallMessage = event.message ? firstNonEmptyLine(event.message) : null
-          if (event.message) await finalizeDiscordMessage(channel, event.message, false)
+      async 'content.completed'({ data }, { channel }) {
+        if (data.kind !== 'text') return
+        const text = typeof data.value === 'string' ? data.value : ''
+
+        if (data.phase !== 'reply') {
+          channel.state.pendingToolCallMessage = text ? firstNonEmptyLine(text) : null
+          if (text) await finalizeDiscordMessage(channel, text, false)
           else clearStream(channel.state)
           return
         }
 
         channel.state.pendingToolCallMessage = null
-        if (!event.message) {
+        if (!text) {
           clearStream(channel.state)
           return
         }
-        await finalizeDiscordMessage(channel, event.message, true)
+        await finalizeDiscordMessage(channel, text, true)
       }
     }
   })
@@ -285,7 +289,7 @@ function createDiscordBridge() {
     // principal (`lib/surface-instructions.ts`) — passing it as `context` here
     // would prepend a fresh copy to history on every message.
     await send(
-      toUserContent(turn),
+      toMessageContent(turn),
       { thread, auth: discordUserAuth(message.author.userId, message.author.userName, message.author.fullName, thread.channelId) }
     )
   }
@@ -307,7 +311,7 @@ function createDiscordBridge() {
     if (!(await shouldDispatch(thread, message))) return
     if (!(await withinDailyQuota(thread, message))) return
     await send(
-      toUserContent(burstMessages(message, context)),
+      toMessageContent(burstMessages(message, context)),
       { thread, auth: discordUserAuth(message.author.userId, message.author.userName, message.author.fullName, thread.channelId) }
     )
   })
