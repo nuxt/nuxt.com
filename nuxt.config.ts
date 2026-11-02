@@ -145,7 +145,13 @@ export default defineNuxtConfig({
       apiKey: ''
     },
     github: {
-      token: ''
+      token: '',
+      // The `nuxt-translations` GitHub App, which commits translations to nuxt/translations
+      app: {
+        id: '',
+        privateKey: '',
+        installationId: ''
+      }
     },
     linear: {
       apiKey: '',

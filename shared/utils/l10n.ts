@@ -178,6 +178,51 @@ export interface L10nSegmentSource {
   updatedAt?: string
 }
 
+/** What a translator does to one segment: write a new translation, confirm the current one, or remove it. */
+export type L10nChangeAction = 'edit' | 'verify' | 'reject'
+
+/** One change in a page save. `text` is the translated skeleton, for `edit` only. */
+export interface L10nChange {
+  hash: string
+  action: L10nChangeAction
+  text?: string
+}
+
+/** The GitHub account changes are made by. */
+export interface L10nTranslator {
+  login: string
+  id: number | string
+}
+
+/** What a signed-in user's saves become: commits for the locale's team, pull requests for everyone else. */
+export type L10nRole = 'translator' | 'suggester'
+
+/** Why one change of a save was refused. */
+export interface L10nChangeIssue {
+  hash: string
+  code: 'unknown-segment' | 'duplicate' | 'not-allowed' | 'missing-text' | 'too-long' | 'invalid' | 'unchanged' | 'no-record'
+  message: string
+  /** The validation errors of an `invalid` edit. */
+  errors?: Array<{ code: string, message: string, at?: number }>
+}
+
+/** The response to a page save. */
+export interface L10nSaveResult {
+  mode: 'commit' | 'suggestion'
+  /** The commit made on the translations repository. */
+  sha: string
+  /** What each changed segment shows once the commit is served; a suggestion changes nothing until merged. */
+  segments: Record<string, { status: SegmentStatus, text?: string }>
+  pull?: { number: number, url: string }
+  /** The commits a dry run would have made, where the GitHub App is not configured. */
+  dryRun?: Array<{ message: string, author: { name: string, email: string }, files: Array<{ path: string, content: string | null }> }>
+}
+
+/** Where a locale's translations are saved: `/api/l10n/fr/translations`. */
+export function l10nTranslationsPath(locale: L10nLocale): string {
+  return `/api/l10n/${locale}/translations`
+}
+
 /** Localised pages that may be indexed, for `hreflang` and the sitemap. */
 export const L10N_INDEXABLE_PATH = '/api/l10n/indexable'
 
