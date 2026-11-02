@@ -11,5 +11,5 @@ export default defineEventHandler(async (event) => {
   }).parse)
 
   setResponseHeader(event, 'cache-control', 'public, max-age=0, s-maxage=600, stale-while-revalidate=3600')
-  return nuxters.map(period)
+  return nuxters.map(event, period)
 })

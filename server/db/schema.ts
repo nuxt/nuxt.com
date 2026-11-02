@@ -71,7 +71,9 @@ export const nuxters = sqliteTable('nuxters', {
 }, table => [
   primaryKey({ columns: [table.period, table.githubId] }),
   index('nuxters_period_rank_idx').on(table.period, table.rank),
-  index('nuxters_period_username_lower_idx').on(table.period, table.usernameLower),
+  // `rank` too: a profile lookup (`username_lower = ? order by rank limit 1`) reads one row. Without it,
+  // SQLite walks the leaderboard by rank until it meets the username (28k rows for the last one).
+  index('nuxters_period_username_lower_rank_idx').on(table.period, table.usernameLower, table.rank),
   index('nuxters_github_id_idx').on(table.githubId)
 ])
 
