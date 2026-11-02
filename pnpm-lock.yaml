@@ -329,8 +329,8 @@ importers:
         specifier: ^4.6.3
         version: 4.6.3(31e3dc62716448ad8e0ddfea81de4d4a)
       nuxt-auth-utils:
-        specifier: ^0.5.32
-        version: 0.5.34(confbox@0.3.2)(dotenv@17.4.2)(giget@3.3.1)(jiti@2.7.0)(magic-string@1.4.3)(mlly@1.8.2)(oxc-parser@0.153.0)(rolldown@1.2.14)(unplugin@3.4.0(esbuild@0.28.2)(rolldown@1.2.14)(rollup@4.65.1)(vite@8.3.5(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1)))
+        specifier: ^0.6.0
+        version: 0.6.0(confbox@0.3.2)(dotenv@17.4.2)(giget@3.3.1)(jiti@2.7.0)(magic-string@1.4.3)(mlly@1.8.2)(oxc-parser@0.153.0)(rolldown@1.2.14)(unplugin@3.4.0(esbuild@0.28.2)(rolldown@1.2.14)(rollup@4.65.1)(vite@8.3.5(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1)))
       nuxt-charts:
         specifier: ^2.2.3
         version: 2.2.3(supports-color@8.1.1)(vue@3.5.44(typescript@6.0.3))
@@ -9019,13 +9019,14 @@ packages:
       nuxt-llms:
         optional: true
 
-  nuxt-auth-utils@0.5.34:
-    resolution: {integrity: sha512-V+0JC3wAZ4ebagsPCtLjmqNk22P+nlTNqVZVFHbngxfr/UHYtwmJGRD4vz31UOSMtPKM+CQ1nxHpPB8eLubW3g==}
+  nuxt-auth-utils@0.6.0:
+    resolution: {integrity: sha512-st7055bprIVXXINwItxlVFQgLEEIgQ7D1/NdpdnmkXtn9edlGiy4YiXlU3ac9rcnaFWMpoAceHg4yl243nYjMw==}
+    engines: {node: ^22.22.3 || ^24.15.0 || >=26.0.0}
     peerDependencies:
       '@atproto/api': ^0.13.15
       '@atproto/oauth-client-node': ^0.2.0
-      '@simplewebauthn/browser': ^11.0.0 || ^13.0.0
-      '@simplewebauthn/server': ^11.0.0 || ^13.3.2
+      '@simplewebauthn/browser': ^13.0.0
+      '@simplewebauthn/server': ^13.3.2
     peerDependenciesMeta:
       '@atproto/api':
         optional: true
@@ -21283,19 +21284,18 @@ snapshots:
       - rolldown
       - unplugin
 
-  nuxt-auth-utils@0.5.34(confbox@0.3.2)(dotenv@17.4.2)(giget@3.3.1)(jiti@2.7.0)(magic-string@1.4.3)(mlly@1.8.2)(oxc-parser@0.153.0)(rolldown@1.2.14)(unplugin@3.4.0(esbuild@0.28.2)(rolldown@1.2.14)(rollup@4.65.1)(vite@8.3.5(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))):
+  nuxt-auth-utils@0.6.0(confbox@0.3.2)(dotenv@17.4.2)(giget@3.3.1)(jiti@2.7.0)(magic-string@1.4.3)(mlly@1.8.2)(oxc-parser@0.153.0)(rolldown@1.2.14)(unplugin@3.4.0(esbuild@0.28.2)(rolldown@1.2.14)(rollup@4.65.1)(vite@8.3.5(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))):
     dependencies:
       '@adonisjs/hash': 9.1.1
       '@nuxt/kit': 4.6.3(@nuxt/schema@4.6.3)(confbox@0.3.2)(dotenv@17.4.2)(giget@3.3.1)(jiti@2.7.0)(magic-string@1.4.3)(mlly@1.8.2)(oxc-parser@0.153.0)(rolldown@1.2.14)(unplugin@3.4.0(esbuild@0.28.2)(rolldown@1.2.14)(rollup@4.65.1)(vite@8.3.5(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1)))
       '@nuxt/schema': 4.6.3
       defu: 6.1.7
-      h3: 1.15.11
       hookable: 6.1.2
       jose: 6.2.12
       ofetch: 1.5.1
       openid-client: 6.8.8
-      pathe: 2.0.3
       scule: 1.3.0
+      ufo: 1.6.4
       uncrypto: 0.1.3
     transitivePeerDependencies:
       - argon2

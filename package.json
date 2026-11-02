@@ -85,7 +85,7 @@
     "little-date": "^1.2.1",
     "motion-v": "^2.10.0",
     "nuxt": "^4.6.3",
-    "nuxt-auth-utils": "^0.5.32",
+    "nuxt-auth-utils": "^0.6.0",
     "nuxt-charts": "^2.2.3",
     "nuxt-llms": "^0.3.1",
     "nuxt-og-image": "^7.0.7",

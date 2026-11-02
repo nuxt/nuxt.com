@@ -28,7 +28,7 @@ export default defineNitroPlugin(() => {
         await db.update(schema.users).set({ lastSeenAt: now }).where(eq(schema.users.id, userId))
       }
     } catch (error) {
-      useLogger(event).error(error as Error, { step: 'user-last-seen' })
+      useLogger(toH3Event(event)).error(error as Error, { step: 'user-last-seen' })
     }
   })
 })
