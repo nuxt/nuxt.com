@@ -1,0 +1,1882 @@
+{
+  "version": 1,
+  "locale": "fr",
+  "records": {
+    "004d0f59f0298fd3": {
+      "hash": "004d0f59f0298fd3",
+      "source": "Factory for default value of {0} before async resolves.",
+      "text": "Fabrique de la valeur par défaut de {0} avant la résolution de l'appel asynchrone.",
+      "origin": "mt",
+      "review": "none",
+      "derived": "fresh",
+      "mt": {
+        "model": "anthropic/claude-sonnet-5.5",
+        "promptVersion": "1",
+        "candidate": "Fabrique de la valeur par défaut de {0} avant la résolution de l'appel asynchrone."
+      },
+      "updatedAt": "2026-11-02T12:50:04.224Z"
+    },
+    "03cccf4d8ba810de": {
+      "hash": "03cccf4d8ba810de",
+      "source": "**Improved SEO:** search engines can better index SSR pages because the HTML content is available immediately, rather than requiring JavaScript to render the content on the client-side.",
+      "text": "**SEO amélioré :** les moteurs de recherche peuvent mieux indexer les pages en SSR, car le contenu HTML est disponible immédiatement, au lieu de nécessiter JavaScript pour rendre le contenu côté client.",
+      "origin": "mt",
+      "review": "none",
+      "derived": "fresh",
+      "mt": {
+        "model": "anthropic/claude-sonnet-5.5",
+        "promptVersion": "1",
+        "candidate": "**SEO amélioré :** les moteurs de recherche peuvent mieux indexer les pages en SSR, car le contenu HTML est disponible immédiatement, au lieu de nécessiter JavaScript pour rendre le contenu côté client."
+      },
+      "updatedAt": "2026-11-02T11:25:09.229Z"
+    },
+    "04694293866b112c": {
+      "hash": "04694293866b112c",
+      "source": "A number in milliseconds to wait before timing out the request (defaults to {0}, which means no timeout)",
+      "text": "Un nombre de millisecondes à attendre avant d'interrompre la requête pour dépassement de délai (par défaut {0}, ce qui signifie aucun délai)",
+      "origin": "mt",
+      "review": "none",
+      "derived": "fresh",
+      "mt": {
+        "model": "anthropic/claude-sonnet-5.5",
+        "promptVersion": "1",
+        "candidate": "Un nombre de millisecondes à attendre avant d'interrompre la requête pour dépassement de délai (par défaut {0}, ce qui signifie aucun délai)"
+      },
+      "updatedAt": "2026-11-02T12:50:04.224Z"
+    },
+    "04ade59c6b7ce28a": {
+      "hash": "04ade59c6b7ce28a",
+      "source": "{0}: Request is in progress",
+      "text": "{0} : la requête est en cours",
+      "origin": "mt",
+      "review": "none",
+      "derived": "fresh",
+      "mt": {
+        "model": "anthropic/claude-sonnet-5.5",
+        "promptVersion": "1",
+        "candidate": "{0} : la requête est en cours"
+      },
+      "updatedAt": "2026-11-02T12:50:04.224Z"
+    },
+    "067097a60873e956": {
+      "hash": "067097a60873e956",
+      "source": "Fetch data from an API endpoint with an SSR-friendly composable.",
+      "text": "Récupérez des données depuis un point de terminaison d'API avec un composable compatible SSR.",
+      "origin": "mt",
+      "review": "none",
+      "derived": "fresh",
+      "mt": {
+        "model": "anthropic/claude-sonnet-5.5",
+        "promptVersion": "1",
+        "candidate": "Récupérez des données depuis un point de terminaison d'API avec un composable compatible SSR."
+      },
+      "updatedAt": "2026-11-02T12:50:04.224Z"
+    },
+    "08133143795056d2": {
+      "hash": "08133143795056d2",
+      "source": "The result of the asynchronous fetch.",
+      "text": "Le résultat de la récupération asynchrone.",
+      "origin": "mt",
+      "review": "none",
+      "derived": "fresh",
+      "mt": {
+        "model": "anthropic/claude-sonnet-5.5",
+        "promptVersion": "1",
+        "candidate": "Le résultat de la récupération asynchrone."
+      },
+      "updatedAt": "2026-11-02T12:50:04.224Z"
+    },
+    "0d80e77c4a94e952": {
+      "hash": "0d80e77c4a94e952",
+      "source": "This composable returns a {0} that can be awaited, which makes it possible to use {1} directly within the {2} (i.e. a value will be present, instead of being undefined). You can also directly pull the values without awaiting the return value, in which case {3} can be undefined within {4} until the fetch completes.",
+      "text": "Ce composable renvoie une {0} que l'on peut attendre avec await, ce qui permet d'utiliser {1} directement dans {2} (c'est-à-dire qu'une valeur sera présente, au lieu d'être undefined). Vous pouvez aussi récupérer directement les valeurs sans attendre la valeur de retour, auquel cas {3} peut être undefined dans {4} jusqu'à la fin de la récupération.",
+      "origin": "mt",
+      "review": "none",
+      "derived": "fresh",
+      "mt": {
+        "model": "anthropic/claude-sonnet-5.5",
+        "promptVersion": "1",
+        "candidate": "Ce composable renvoie une {0} que l'on peut attendre avec await, ce qui permet d'utiliser {1} directement dans {2} (c'est-à-dire qu'une valeur sera présente, au lieu d'être undefined). Vous pouvez aussi récupérer directement les valeurs sans attendre la valeur de retour, auquel cas {3} peut être undefined dans {4} jusqu'à la fin de la récupération."
+      },
+      "updatedAt": "2026-11-02T12:50:04.224Z"
+    },
+    "0ea8be1b2eb798ce": {
+      "hash": "0ea8be1b2eb798ce",
+      "source": "Only pick specified keys from the result.",
+      "text": "Ne sélectionne que les clés spécifiées dans le résultat.",
+      "origin": "mt",
+      "review": "none",
+      "derived": "fresh",
+      "mt": {
+        "model": "anthropic/claude-sonnet-5.5",
+        "promptVersion": "1",
+        "candidate": "Ne sélectionne que les clés spécifiées dans le résultat."
+      },
+      "updatedAt": "2026-11-02T12:50:04.224Z"
+    },
+    "0f87282a419d6f91": {
+      "hash": "0f87282a419d6f91",
+      "source": "Resets {0} to {1} (or the value of {2} if provided), {3} to {4}, set {5} to {6}, and cancels any pending requests.",
+      "text": "Réinitialise {0} à {1} (ou à la valeur de {2} si elle est fournie), {3} à {4}, définit {5} à {6} et annule toutes les requêtes en attente.",
+      "origin": "mt",
+      "review": "none",
+      "derived": "fresh",
+      "mt": {
+        "model": "anthropic/claude-sonnet-5.5",
+        "promptVersion": "1",
+        "candidate": "Réinitialise {0} à {1} (ou à la valeur de {2} si elle est fournie), {3} à {4}, définit {5} à {6} et annule toutes les requêtes en attente."
+      },
+      "updatedAt": "2026-11-02T12:50:04.224Z"
+    },
+    "106de6d81ebe55b4": {
+      "hash": "106de6d81ebe55b4",
+      "source": "{0} while a request is in flight. With {1}, it is also {2} when {3} is {4} and no cached data is available.",
+      "text": "{0} tant qu'une requête est en cours. Avec {1}, la valeur est aussi {2} lorsque {3} vaut {4} et qu'aucune donnée en cache n'est disponible.",
+      "origin": "mt",
+      "review": "none",
+      "derived": "fresh",
+      "mt": {
+        "model": "anthropic/claude-sonnet-5.5",
+        "promptVersion": "1",
+        "candidate": "{0} tant qu'une requête est en cours. Avec {1}, la valeur est aussi {2} lorsque {3} vaut {4} et qu'aucune donnée en cache n'est disponible."
+      },
+      "updatedAt": "2026-11-02T12:50:04.224Z"
+    },
+    "1194102050e81747": {
+      "hash": "1194102050e81747",
+      "source": "Core engine: {0}nuxt{/0}",
+      "text": "Moteur principal : {0}nuxt{/0}",
+      "origin": "mt",
+      "review": "none",
+      "derived": "fresh",
+      "mt": {
+        "model": "anthropic/claude-sonnet-5.5",
+        "promptVersion": "1",
+        "candidate": "Moteur principal : {0}nuxt{/0}"
+      },
+      "updatedAt": "2026-11-02T11:25:09.229Z"
+    },
+    "151b2ab61c2c9b39": {
+      "hash": "151b2ab61c2c9b39",
+      "source": "{0} ({1}): The URL or request to fetch. Can be a string, a Request object, a Vue ref, or a function returning a string/Request. Supports reactivity for dynamic endpoints.",
+      "text": "{0} ({1}) : l'URL ou la requête à récupérer. Peut être une chaîne, un objet Request, une ref Vue ou une fonction renvoyant une chaîne ou un objet Request. Prend en charge la réactivité pour les points de terminaison dynamiques.",
+      "origin": "mt",
+      "review": "none",
+      "derived": "fresh",
+      "mt": {
+        "model": "anthropic/claude-sonnet-5.5",
+        "promptVersion": "1",
+        "candidate": "{0} ({1}) : l'URL ou la requête à récupérer. Peut être une chaîne, un objet Request, une ref Vue ou une fonction renvoyant une chaîne ou un objet Request. Prend en charge la réactivité pour les points de terminaison dynamiques."
+      },
+      "updatedAt": "2026-11-02T12:50:04.224Z"
+    },
+    "16d5f5ba666162b3": {
+      "hash": "16d5f5ba666162b3",
+      "source": "triggers a refetch: /api/search?q=new%20search",
+      "text": "déclenche une nouvelle récupération : /api/search?q=new%20search",
+      "origin": "mt",
+      "review": "none",
+      "derived": "fresh",
+      "mt": {
+        "model": "anthropic/claude-sonnet-5.5",
+        "promptVersion": "1",
+        "candidate": "déclenche une nouvelle récupération : /api/search?q=new%20search"
+      },
+      "updatedAt": "2026-11-02T12:50:04.224Z"
+    },
+    "199ff7fdfd257510": {
+      "hash": "199ff7fdfd257510",
+      "source": "This composable provides a convenient wrapper around {0} and {1}. It automatically generates a key for the request, provides type hints for request url based on server routes, and infers API response type.",
+      "text": "Ce composable fournit un wrapper pratique autour de {0} et {1}. Il génère automatiquement une clé pour la requête, fournit des indications de type pour l'URL de la requête à partir des routes serveur et déduit le type de la réponse de l'API.",
+      "origin": "mt",
+      "review": "none",
+      "derived": "fresh",
+      "mt": {
+        "model": "anthropic/claude-sonnet-5.5",
+        "promptVersion": "1",
+        "candidate": "Ce composable fournit un wrapper pratique autour de {0} et {1}. Il génère automatiquement une clé pour la requête, fournit des indications de type pour l'URL de la requête à partir des routes serveur et déduit le type de la réponse de l'API."
+      },
+      "updatedAt": "2026-11-02T12:50:04.224Z"
+    },
+    "1b37990fc080044c": {
+      "hash": "1b37990fc080044c",
+      "source": "**Easier caching:** pages can be cached on the server-side, which can further improve performance by reducing the amount of time it takes to generate and send the content to the client.",
+      "text": "**Mise en cache facilitée :** les pages peuvent être mises en cache côté serveur, ce qui peut améliorer encore les performances en réduisant le temps nécessaire pour générer et envoyer le contenu au client.",
+      "origin": "mt",
+      "review": "none",
+      "derived": "fresh",
+      "mt": {
+        "model": "anthropic/claude-sonnet-5.5",
+        "promptVersion": "1",
+        "candidate": "**Mise en cache facilitée :** les pages peuvent être mises en cache côté serveur, ce qui peut améliorer encore les performances en réduisant le temps nécessaire pour générer et envoyer le contenu au client."
+      },
+      "updatedAt": "2026-11-02T11:25:09.229Z"
+    },
+    "1c1b06c6160e7583": {
+      "hash": "1c1b06c6160e7583",
+      "source": "You can also use {0}interceptors{/0}:",
+      "text": "Vous pouvez également utiliser des {0}intercepteurs{/0} :",
+      "origin": "mt",
+      "review": "none",
+      "derived": "fresh",
+      "mt": {
+        "model": "anthropic/claude-sonnet-5.5",
+        "promptVersion": "1",
+        "candidate": "Vous pouvez également utiliser des {0}intercepteurs{/0} :"
+      },
+      "updatedAt": "2026-11-02T12:50:04.224Z"
+    },
+    "1e6d5a7d27c8d619": {
+      "hash": "1e6d5a7d27c8d619",
+      "source": "Nuxt takes care of these and provides both frontend and backend functionality so you can focus on what matters: **creating your web application**.",
+      "text": "Nuxt s'occupe de tout cela et fournit des fonctionnalités frontend et backend afin que vous puissiez vous concentrer sur l'essentiel : **créer votre application web**.",
+      "origin": "mt",
+      "review": "none",
+      "derived": "fresh",
+      "mt": {
+        "model": "anthropic/claude-sonnet-5.5",
+        "promptVersion": "1",
+        "candidate": "Nuxt s'occupe de tout cela et fournit des fonctionnalités frontend et backend afin que vous puissiez vous concentrer sur l'essentiel : **créer votre application web**."
+      },
+      "updatedAt": "2026-11-02T11:25:09.229Z"
+    },
+    "1e704e7d95d266fa": {
+      "hash": "1e704e7d95d266fa",
+      "source": "{0} · Get Started with Nuxt",
+      "text": "{0} · Premiers pas avec Nuxt",
+      "origin": "mt",
+      "review": "none",
+      "derived": "fresh",
+      "mt": {
+        "model": "anthropic/claude-sonnet-5.5",
+        "promptVersion": "1",
+        "candidate": "{0} · Premiers pas avec Nuxt"
+      },
+      "updatedAt": "2026-11-02T08:58:30.219Z"
+    },
+    "20026650a5530507": {
+      "hash": "20026650a5530507",
+      "source": "When the route changes and id updates, the data will be automatically refetched",
+      "text": "Lorsque la route change et que id est mis à jour, les données sont automatiquement récupérées à nouveau",
+      "origin": "mt",
+      "review": "none",
+      "derived": "fresh",
+      "mt": {
+        "model": "anthropic/claude-sonnet-5.5",
+        "promptVersion": "1",
+        "candidate": "Lorsque la route change et que id est mis à jour, les données sont automatiquement récupérées à nouveau"
+      },
+      "updatedAt": "2026-11-02T12:50:04.224Z"
+    },
+    "20f1018cb34624f5": {
+      "hash": "20f1018cb34624f5",
+      "source": "Overall, server-side rendering can provide a faster and more efficient user experience, as well as improve search engine optimization and accessibility.",
+      "text": "Dans l'ensemble, le rendu côté serveur peut offrir une expérience utilisateur plus rapide et plus efficace, tout en améliorant le référencement et l'accessibilité.",
+      "origin": "mt",
+      "review": "none",
+      "derived": "fresh",
+      "mt": {
+        "model": "anthropic/claude-sonnet-5.5",
+        "promptVersion": "1",
+        "candidate": "Dans l'ensemble, le rendu côté serveur peut offrir une expérience utilisateur plus rapide et plus efficace, tout en améliorant le référencement et l'accessibilité."
+      },
+      "updatedAt": "2026-11-02T11:25:09.229Z"
+    },
+    "21b111cbfe6e8fca": {
+      "hash": "21b111cbfe6e8fca",
+      "source": "Default",
+      "text": "Par défaut",
+      "origin": "mt",
+      "review": "none",
+      "derived": "fresh",
+      "mt": {
+        "model": "anthropic/claude-sonnet-5.5",
+        "promptVersion": "1",
+        "candidate": "Par défaut"
+      },
+      "updatedAt": "2026-11-02T12:50:04.224Z"
+    },
+    "2576171161cdedcf": {
+      "hash": "2576171161cdedcf",
+      "source": "Using the {0} option, you can add search parameters to your query. This option is extended from {1}unjs/ofetch{/1} and is using {2}unjs/ufo{/2} to create the URL. Objects are automatically stringified.",
+      "text": "Avec l'option {0}, vous pouvez ajouter des paramètres de recherche à votre requête. Cette option est héritée de {1}unjs/ofetch{/1} et utilise {2}unjs/ufo{/2} pour créer l'URL. Les objets sont automatiquement convertis en chaîne.",
+      "origin": "mt",
+      "review": "none",
+      "derived": "fresh",
+      "mt": {
+        "model": "anthropic/claude-sonnet-5.5",
+        "promptVersion": "1",
+        "candidate": "Avec l'option {0}, vous pouvez ajouter des paramètres de recherche à votre requête. Cette option est héritée de {1}unjs/ofetch{/1} et utilise {2}unjs/ufo{/2} pour créer l'URL. Les objets sont automatiquement convertis en chaîne."
+      },
+      "updatedAt": "2026-11-02T12:50:04.224Z"
+    },
+    "28eb23eb80e2a79d": {
+      "hash": "28eb23eb80e2a79d",
+      "source": "Even if you do not await the return value, during SSR Nuxt will wait for the request to finish and send the resolved data to the client.",
+      "text": "Même si vous n'attendez pas la valeur de retour avec await, pendant le SSR, Nuxt attend la fin de la requête et envoie les données résolues au client.",
+      "origin": "mt",
+      "review": "none",
+      "derived": "fresh",
+      "mt": {
+        "model": "anthropic/claude-sonnet-5.5",
+        "promptVersion": "1",
+        "candidate": "Même si vous n'attendez pas la valeur de retour avec await, pendant le SSR, Nuxt attend la fin de la requête et envoie les données résolues au client."
+      },
+      "updatedAt": "2026-11-02T12:50:04.224Z"
+    },
+    "2d9f844f1444a6f5": {
+      "hash": "2d9f844f1444a6f5",
+      "source": "In production, Nitro builds your app and server into one universal {0} directory. This output is light: minified and removed from any Node.js modules (except polyfills). You can deploy this output on any system supporting JavaScript, from Node.js, Serverless, Workers, Edge-side rendering or purely static.",
+      "text": "En production, Nitro compile votre application et votre serveur dans un seul répertoire {0} universel. Cette sortie est légère : minifiée et débarrassée de tout module Node.js (à l'exception des polyfills). Vous pouvez déployer cette sortie sur tout système prenant en charge JavaScript : Node.js, Serverless, Workers, rendu côté edge ou purement statique.",
+      "origin": "mt",
+      "review": "none",
+      "derived": "fresh",
+      "mt": {
+        "model": "anthropic/claude-sonnet-5.5",
+        "promptVersion": "1",
+        "candidate": "En production, Nitro compile votre application et votre serveur dans un seul répertoire {0} universel. Cette sortie est légère : minifiée et débarrassée de tout module Node.js (à l'exception des polyfills). Vous pouvez déployer cette sortie sur tout système prenant en charge JavaScript : Node.js, Serverless, Workers, rendu côté edge ou purement statique."
+      },
+      "updatedAt": "2026-11-02T11:25:09.229Z"
+    },
+    "2f32c3bce7175e77": {
+      "hash": "2f32c3bce7175e77",
+      "source": "Status of the data request. Use it to distinguish {0}, {1}, {2}, and {3}.",
+      "text": "État de la requête de données. Utilisez-le pour distinguer {0}, {1}, {2} et {3}.",
+      "origin": "mt",
+      "review": "none",
+      "derived": "fresh",
+      "mt": {
+        "model": "anthropic/claude-sonnet-5.5",
+        "promptVersion": "1",
+        "candidate": "État de la requête de données. Utilisez-le pour distinguer {0}, {1}, {2} et {3}."
+      },
+      "updatedAt": "2026-11-02T12:50:04.224Z"
+    },
+    "2f96fcc37b437fb2": {
+      "hash": "2f96fcc37b437fb2",
+      "source": "Functions from the {0} ({1}, {2}, and {3}) can safely be destructured, if you did not await the return value.",
+      "text": "Les fonctions de {0} ({1}, {2} et {3}) peuvent être déstructurées sans risque si vous n'avez pas utilisé await sur la valeur de retour.",
+      "origin": "mt",
+      "review": "none",
+      "derived": "fresh",
+      "mt": {
+        "model": "anthropic/claude-sonnet-5.5",
+        "promptVersion": "1",
+        "candidate": "Les fonctions de {0} ({1}, {2} et {3}) peuvent être déstructurées sans risque si vous n'avez pas utilisé await sur la valeur de retour."
+      },
+      "updatedAt": "2026-11-02T12:50:04.224Z"
+    },
+    "321ecc2a895edb10": {
+      "hash": "321ecc2a895edb10",
+      "source": "**Code splitting:** Nuxt automatically splits your code into smaller chunks, which can help reduce the initial load time of your application.",
+      "text": "**Découpage du code :** Nuxt divise automatiquement votre code en plus petits morceaux (chunks), ce qui peut aider à réduire le temps de chargement initial de votre application.",
+      "origin": "mt",
+      "review": "none",
+      "derived": "fresh",
+      "mt": {
+        "model": "anthropic/claude-sonnet-5.5",
+        "promptVersion": "1",
+        "candidate": "**Découpage du code :** Nuxt divise automatiquement votre code en plus petits morceaux (chunks), ce qui peut aider à réduire le temps de chargement initial de votre application."
+      },
+      "updatedAt": "2026-11-02T11:25:09.229Z"
+    },
+    "32cdb6b1a7cceee4": {
+      "hash": "32cdb6b1a7cceee4",
+      "source": "Nuxt uses conventions and an opinionated directory structure to automate repetitive tasks and allow developers to focus on pushing features. The configuration file can still customize and override its default behaviors.",
+      "text": "Nuxt utilise des conventions et une structure de répertoires opinionée pour automatiser les tâches répétitives et permettre aux développeurs de se concentrer sur le développement de fonctionnalités. Le fichier de configuration permet néanmoins de personnaliser et de surcharger ses comportements par défaut.",
+      "origin": "mt",
+      "review": "none",
+      "derived": "fresh",
+      "mt": {
+        "model": "anthropic/claude-sonnet-5.5",
+        "promptVersion": "1",
+        "candidate": "Nuxt utilise des conventions et une structure de répertoires opinionée pour automatiser les tâches répétitives et permettre aux développeurs de se concentrer sur le développement de fonctionnalités. Le fichier de configuration permet néanmoins de personnaliser et de surcharger ses comportements par défaut."
+      },
+      "updatedAt": "2026-11-02T11:25:09.229Z"
+    },
+    "33bae6629fd42c4a": {
+      "hash": "33bae6629fd42c4a",
+      "source": "Nuxt server engine",
+      "text": "Moteur serveur de Nuxt",
+      "origin": "mt",
+      "review": "none",
+      "derived": "fresh",
+      "mt": {
+        "model": "anthropic/claude-sonnet-5.5",
+        "promptVersion": "1",
+        "candidate": "Moteur serveur de Nuxt"
+      },
+      "updatedAt": "2026-11-02T11:25:09.229Z"
+    },
+    "351229c595dbb213": {
+      "hash": "351229c595dbb213",
+      "source": "**Configured build tools:** we use {0}Vite{/0} by default to support hot module replacement (HMR) in development and bundling your code for production with best-practices baked-in.",
+      "text": "**Outils de build configurés :** nous utilisons {0}Vite{/0} par défaut pour prendre en charge le remplacement à chaud des modules (HMR) en développement et pour empaqueter votre code pour la production, avec les bonnes pratiques intégrées.",
+      "origin": "mt",
+      "review": "none",
+      "derived": "fresh",
+      "mt": {
+        "model": "anthropic/claude-sonnet-5.5",
+        "promptVersion": "1",
+        "candidate": "**Outils de build configurés :** nous utilisons {0}Vite{/0} par défaut pour prendre en charge le remplacement à chaud des modules (HMR) en développement et pour empaqueter votre code pour la production, avec les bonnes pratiques intégrées."
+      },
+      "updatedAt": "2026-11-02T11:25:09.229Z"
+    },
+    "37b0e189f523c67c": {
+      "hash": "37b0e189f523c67c",
+      "source": "If you encounter the {0} variable destructured from a {1} returns a string and not a JSON parsed object then make sure your component doesn't include an import statement like {2}.",
+      "text": "Si la variable {0} destructurée à partir d'un {1} renvoie une chaîne et non un objet analysé depuis du JSON, assurez-vous que votre composant ne contient pas d'instruction d'import comme {2}.",
+      "origin": "mt",
+      "review": "none",
+      "derived": "fresh",
+      "mt": {
+        "model": "anthropic/claude-sonnet-5.5",
+        "promptVersion": "1",
+        "candidate": "Si la variable {0} destructurée à partir d'un {1} renvoie une chaîne et non un objet analysé depuis du JSON, assurez-vous que votre composant ne contient pas d'instruction d'import comme {2}."
+      },
+      "updatedAt": "2026-11-02T12:50:04.224Z"
+    },
+    "383c64439234ac51": {
+      "hash": "383c64439234ac51",
+      "source": "Avoid fetching same key more than once at a time.",
+      "text": "Évite de récupérer plusieurs fois la même clé en même temps.",
+      "origin": "mt",
+      "review": "none",
+      "derived": "fresh",
+      "mt": {
+        "model": "anthropic/claude-sonnet-5.5",
+        "promptVersion": "1",
+        "candidate": "Évite de récupérer plusieurs fois la même clé en même temps."
+      },
+      "updatedAt": "2026-11-02T12:50:04.224Z"
+    },
+    "38a76dcda3bb4d58": {
+      "hash": "38a76dcda3bb4d58",
+      "source": "**File-based routing:** define routes based on the structure of your {0}{1} directory{/0}. This can make it easier to organize your application and avoid the need for manual route configuration.",
+      "text": "**Routage basé sur les fichiers :** définissez des routes à partir de la structure de votre {0}répertoire {1}{/0}. Cela peut faciliter l'organisation de votre application et éviter d'avoir à configurer manuellement les routes.",
+      "origin": "mt",
+      "review": "none",
+      "derived": "fresh",
+      "mt": {
+        "model": "anthropic/claude-sonnet-5.5",
+        "promptVersion": "1",
+        "candidate": "**Routage basé sur les fichiers :** définissez des routes à partir de la structure de votre {0}répertoire {1}{/0}. Cela peut faciliter l'organisation de votre application et éviter d'avoir à configurer manuellement les routes."
+      },
+      "updatedAt": "2026-11-02T11:25:09.229Z"
+    },
+    "3a205130690e35a2": {
+      "hash": "3a205130690e35a2",
+      "source": "Whether to fetch on the server.",
+      "text": "Indique s'il faut effectuer la récupération côté serveur.",
+      "origin": "mt",
+      "review": "none",
+      "derived": "fresh",
+      "mt": {
+        "model": "anthropic/claude-sonnet-5.5",
+        "promptVersion": "1",
+        "candidate": "Indique s'il faut effectuer la récupération côté serveur."
+      },
+      "updatedAt": "2026-11-02T12:50:04.224Z"
+    },
+    "3ca197762871c6bd": {
+      "hash": "3ca197762871c6bd",
+      "source": "The reason for this data request",
+      "text": "La raison de cette requête de données",
+      "origin": "mt",
+      "review": "none",
+      "derived": "fresh",
+      "mt": {
+        "model": "anthropic/claude-sonnet-5.5",
+        "promptVersion": "1",
+        "candidate": "La raison de cette requête de données"
+      },
+      "updatedAt": "2026-11-02T12:50:04.224Z"
+    },
+    "3cc366b1276b7d79": {
+      "hash": "3cc366b1276b7d79",
+      "source": "{0}: Request failed",
+      "text": "{0} : la requête a échoué",
+      "origin": "mt",
+      "review": "none",
+      "derived": "fresh",
+      "mt": {
+        "model": "anthropic/claude-sonnet-5.5",
+        "promptVersion": "1",
+        "candidate": "{0} : la requête a échoué"
+      },
+      "updatedAt": "2026-11-02T12:50:04.224Z"
+    },
+    "4073da3b5b905083": {
+      "hash": "4073da3b5b905083",
+      "source": "In development, it uses Rollup and Node.js workers for your server code and context isolation. It also generates your server API by reading files from {0} and server middleware from {1}.",
+      "text": "En développement, il utilise Rollup et des workers Node.js pour le code de votre serveur et l'isolation du contexte. Il génère également l'API de votre serveur en lisant les fichiers de {0} et les middleware de serveur depuis {1}.",
+      "origin": "mt",
+      "review": "none",
+      "derived": "fresh",
+      "mt": {
+        "model": "anthropic/claude-sonnet-5.5",
+        "promptVersion": "1",
+        "candidate": "En développement, il utilise Rollup et des workers Node.js pour le code de votre serveur et l'isolation du contexte. Il génère également l'API de votre serveur en lisant les fichiers de {0} et les middleware de serveur depuis {1}."
+      },
+      "updatedAt": "2026-11-02T11:25:09.229Z"
+    },
+    "415299450b37d4e9": {
+      "hash": "415299450b37d4e9",
+      "source": "Development kit: {0}@nuxt/kit{/0}",
+      "text": "Kit de développement : {0}@nuxt/kit{/0}",
+      "origin": "mt",
+      "review": "none",
+      "derived": "fresh",
+      "mt": {
+        "model": "anthropic/claude-sonnet-5.5",
+        "promptVersion": "1",
+        "candidate": "Kit de développement : {0}@nuxt/kit{/0}"
+      },
+      "updatedAt": "2026-11-02T11:25:09.229Z"
+    },
+    "4166b4891b1974ed": {
+      "hash": "4166b4891b1974ed",
+      "source": "**Better accessibility:** the content is immediately available on the initial page load, improving accessibility for users who rely on screen readers or other assistive technologies.",
+      "text": "**Meilleure accessibilité :** le contenu est disponible immédiatement dès le chargement initial de la page, ce qui améliore l'accessibilité pour les utilisateurs qui utilisent des lecteurs d'écran ou d'autres technologies d'assistance.",
+      "origin": "mt",
+      "review": "none",
+      "derived": "fresh",
+      "mt": {
+        "model": "anthropic/claude-sonnet-5.5",
+        "promptVersion": "1",
+        "candidate": "**Meilleure accessibilité :** le contenu est disponible immédiatement dès le chargement initial de la page, ce qui améliore l'accessibilité pour les utilisateurs qui utilisent des lecteurs d'écran ou d'autres technologies d'assistance."
+      },
+      "updatedAt": "2026-11-02T11:25:09.229Z"
+    },
+    "45aaacba7ea1a668": {
+      "hash": "45aaacba7ea1a668",
+      "source": "Option",
+      "text": "Option",
+      "origin": "mt",
+      "review": "none",
+      "derived": "fresh",
+      "mt": {
+        "model": "anthropic/claude-sonnet-5.5",
+        "promptVersion": "1",
+        "candidate": "Option"
+      },
+      "updatedAt": "2026-11-02T12:50:04.224Z"
+    },
+    "45c0f28d67251ee2": {
+      "hash": "45c0f28d67251ee2",
+      "source": "Keyed state created using {0} can be retrieved across your Nuxt application using {1}.",
+      "text": "L'état associé à une clé et créé avec {0} peut être récupéré dans toute votre application Nuxt avec {1}.",
+      "origin": "mt",
+      "review": "none",
+      "derived": "fresh",
+      "mt": {
+        "model": "anthropic/claude-sonnet-5.5",
+        "promptVersion": "1",
+        "candidate": "L'état associé à une clé et créé avec {0} peut être récupéré dans toute votre application Nuxt avec {1}."
+      },
+      "updatedAt": "2026-11-02T12:50:04.224Z"
+    },
+    "4877973bc4c41023": {
+      "hash": "4877973bc4c41023",
+      "source": "As Nuxt is a versatile framework, it gives you the possibility to statically render your whole application to a static hosting with {0}, disable SSR globally with the {1} option or leverage hybrid rendering by setting up the {2} option.",
+      "text": "Nuxt étant un framework polyvalent, il vous permet de rendre statiquement toute votre application pour un hébergement statique avec {0}, de désactiver le SSR globalement avec l'option {1} ou de tirer parti du rendu hybride en configurant l'option {2}.",
+      "origin": "mt",
+      "review": "none",
+      "derived": "fresh",
+      "mt": {
+        "model": "anthropic/claude-sonnet-5.5",
+        "promptVersion": "1",
+        "candidate": "Nuxt étant un framework polyvalent, il vous permet de rendre statiquement toute votre application pour un hébergement statique avec {0}, de désactiver le SSR globalement avec l'option {1} ou de tirer parti du rendu hybride en configurant l'option {2}."
+      },
+      "updatedAt": "2026-11-02T11:25:09.229Z"
+    },
+    "49f035e526e93270": {
+      "hash": "49f035e526e93270",
+      "source": "Source",
+      "text": "Source",
+      "origin": "mt",
+      "review": "none",
+      "derived": "fresh",
+      "mt": {
+        "model": "anthropic/claude-sonnet-5.5",
+        "promptVersion": "1",
+        "candidate": "Source"
+      },
+      "updatedAt": "2026-11-02T12:50:04.224Z"
+    },
+    "4a932bc801fb4b2a": {
+      "hash": "4a932bc801fb4b2a",
+      "source": "Error object if the data fetching failed.",
+      "text": "Objet d'erreur si la récupération de données a échoué.",
+      "origin": "mt",
+      "review": "none",
+      "derived": "fresh",
+      "mt": {
+        "model": "anthropic/claude-sonnet-5.5",
+        "promptVersion": "1",
+        "candidate": "Objet d'erreur si la récupération de données a échoué."
+      },
+      "updatedAt": "2026-11-02T12:50:04.224Z"
+    },
+    "4d0eb44b3d61c7ec": {
+      "hash": "4d0eb44b3d61c7ec",
+      "source": "Function to return cached data. See below for default.",
+      "text": "Fonction renvoyant les données en cache. Voir ci-dessous pour la valeur par défaut.",
+      "origin": "mt",
+      "review": "none",
+      "derived": "fresh",
+      "mt": {
+        "model": "anthropic/claude-sonnet-5.5",
+        "promptVersion": "1",
+        "candidate": "Fonction renvoyant les données en cache. Voir ci-dessous pour la valeur par défaut."
+      },
+      "updatedAt": "2026-11-02T12:50:04.224Z"
+    },
+    "50678f008324fc4b": {
+      "hash": "50678f008324fc4b",
+      "source": "Modular",
+      "text": "Modulaire",
+      "origin": "mt",
+      "review": "none",
+      "derived": "fresh",
+      "mt": {
+        "model": "anthropic/claude-sonnet-5.5",
+        "promptVersion": "1",
+        "candidate": "Modulaire"
+      },
+      "updatedAt": "2026-11-02T11:25:09.229Z"
+    },
+    "50c967bd5760d127": {
+      "hash": "50c967bd5760d127",
+      "source": "Process the response data",
+      "text": "Traiter les données de la réponse",
+      "origin": "mt",
+      "review": "none",
+      "derived": "fresh",
+      "mt": {
+        "model": "anthropic/claude-sonnet-5.5",
+        "promptVersion": "1",
+        "candidate": "Traiter les données de la réponse"
+      },
+      "updatedAt": "2026-11-02T12:50:04.224Z"
+    },
+    "526e0087cc3f254d": {
+      "hash": "526e0087cc3f254d",
+      "source": "Description",
+      "text": "Description",
+      "origin": "mt",
+      "review": "none",
+      "derived": "fresh",
+      "mt": {
+        "model": "anthropic/claude-sonnet-5.5",
+        "promptVersion": "1",
+        "candidate": "Description"
+      },
+      "updatedAt": "2026-11-02T12:50:04.224Z"
+    },
+    "56e65f886aea9355": {
+      "hash": "56e65f886aea9355",
+      "source": "**Data-fetching utilities:** Nuxt provides composables to handle SSR-compatible data fetching as well as different strategies.",
+      "text": "**Utilitaires de récupération de données :** Nuxt fournit des composables pour gérer la récupération de données compatible avec le SSR, ainsi que différentes stratégies.",
+      "origin": "mt",
+      "review": "none",
+      "derived": "fresh",
+      "mt": {
+        "model": "anthropic/claude-sonnet-5.5",
+        "promptVersion": "1",
+        "candidate": "**Utilitaires de récupération de données :** Nuxt fournit des composables pour gérer la récupération de données compatible avec le SSR, ainsi que différentes stratégies."
+      },
+      "updatedAt": "2026-11-02T11:25:09.229Z"
+    },
+    "58291470b844c00a": {
+      "hash": "58291470b844c00a",
+      "source": "Request body. Objects are automatically stringified.",
+      "text": "Corps de la requête. Les objets sont automatiquement sérialisés en chaîne.",
+      "origin": "mt",
+      "review": "none",
+      "derived": "fresh",
+      "mt": {
+        "model": "anthropic/claude-sonnet-5.5",
+        "promptVersion": "1",
+        "candidate": "Corps de la requête. Les objets sont automatiquement sérialisés en chaîne."
+      },
+      "updatedAt": "2026-11-02T12:50:04.224Z"
+    },
+    "5c9573fb173239c5": {
+      "hash": "5c9573fb173239c5",
+      "source": "We made everything so you can start writing {0} files from the beginning while enjoying hot module replacement in development and a performant application in production with server-side rendering by default.",
+      "text": "Nous avons tout conçu pour que vous puissiez commencer à écrire des fichiers {0} dès le départ, tout en profitant du remplacement à chaud des modules en développement et d'une application performante en production grâce au rendu côté serveur par défaut.",
+      "origin": "mt",
+      "review": "none",
+      "derived": "fresh",
+      "mt": {
+        "model": "anthropic/claude-sonnet-5.5",
+        "promptVersion": "1",
+        "candidate": "Nous avons tout conçu pour que vous puissiez commencer à écrire des fichiers {0} dès le départ, tout en profitant du remplacement à chaud des modules en développement et d'une application performante en production grâce au rendu côté serveur par défaut."
+      },
+      "updatedAt": "2026-11-02T08:58:30.219Z"
+    },
+    "5e86207fe1e14bbb": {
+      "hash": "5e86207fe1e14bbb",
+      "source": "If true, resolves after route loads (does not block navigation).",
+      "text": "Si true, se résout après le chargement de la route (ne bloque pas la navigation).",
+      "origin": "mt",
+      "review": "none",
+      "derived": "fresh",
+      "mt": {
+        "model": "anthropic/claude-sonnet-5.5",
+        "promptVersion": "1",
+        "candidate": "Si true, se résout après le chargement de la route (ne bloque pas la navigation)."
+      },
+      "updatedAt": "2026-11-02T12:50:04.224Z"
+    },
+    "633f7365b32e3cfb": {
+      "hash": "633f7365b32e3cfb",
+      "source": "Introduction",
+      "text": "Introduction",
+      "origin": "mt",
+      "review": "none",
+      "derived": "fresh",
+      "mt": {
+        "model": "anthropic/claude-sonnet-5.5",
+        "promptVersion": "1",
+        "candidate": "Introduction"
+      },
+      "updatedAt": "2026-11-02T08:58:30.219Z"
+    },
+    "660617564bafe8c1": {
+      "hash": "660617564bafe8c1",
+      "source": "**Server-side rendering out of the box:** Nuxt comes with built-in SSR capabilities, so you don't have to set up a separate server yourself.",
+      "text": "**Rendu côté serveur prêt à l'emploi :** Nuxt intègre des capacités de SSR, vous n'avez donc pas besoin de configurer vous-même un serveur distinct.",
+      "origin": "mt",
+      "review": "none",
+      "derived": "fresh",
+      "mt": {
+        "model": "anthropic/claude-sonnet-5.5",
+        "promptVersion": "1",
+        "candidate": "**Rendu côté serveur prêt à l'emploi :** Nuxt intègre des capacités de SSR, vous n'avez donc pas besoin de configurer vous-même un serveur distinct."
+      },
+      "updatedAt": "2026-11-02T11:25:09.229Z"
+    },
+    "6b73ef40a05404ca": {
+      "hash": "6b73ef40a05404ca",
+      "source": "Status Values",
+      "text": "Valeurs de statut",
+      "origin": "mt",
+      "review": "none",
+      "derived": "fresh",
+      "mt": {
+        "model": "anthropic/claude-sonnet-5.5",
+        "promptVersion": "1",
+        "candidate": "Valeurs de statut"
+      },
+      "updatedAt": "2026-11-02T12:50:04.224Z"
+    },
+    "6eafb61d4fd28b8e": {
+      "hash": "6eafb61d4fd28b8e",
+      "source": "Whether to store resolved data in the Nuxt payload ({0}). When {1}, server-fetched data is kept out of the payload and the client will refetch after hydration if a component renders it. Pair with {2}lazy hydration{/2} to avoid hydration mismatches and unnecessary client fetches.",
+      "text": "Indique s'il faut stocker les données résolues dans le payload (charge utile) de Nuxt ({0}). Lorsque la valeur est {1}, les données récupérées côté serveur sont exclues du payload et le client les récupère à nouveau après l'hydratation si un composant les affiche. Associez-le à {2}l'hydratation différée{/2} pour éviter les incohérences d'hydratation et les récupérations inutiles côté client.",
+      "origin": "mt",
+      "review": "none",
+      "derived": "fresh",
+      "mt": {
+        "model": "anthropic/claude-sonnet-5.5",
+        "promptVersion": "1",
+        "candidate": "Indique s'il faut stocker les données résolues dans le payload (charge utile) de Nuxt ({0}). Lorsque la valeur est {1}, les données récupérées côté serveur sont exclues du payload et le client les récupère à nouveau après l'hydratation si un composant les affiche. Associez-le à {2}l'hydratation différée{/2} pour éviter les incohérences d'hydratation et les récupérations inutiles côté client."
+      },
+      "updatedAt": "2026-11-02T12:50:04.224Z"
+    },
+    "6fcbff9c4a9c23c3": {
+      "hash": "6fcbff9c4a9c23c3",
+      "source": "Deployment section",
+      "text": "Section déploiement",
+      "origin": "mt",
+      "review": "none",
+      "derived": "fresh",
+      "mt": {
+        "model": "anthropic/claude-sonnet-5.5",
+        "promptVersion": "1",
+        "candidate": "Section déploiement"
+      },
+      "updatedAt": "2026-11-02T11:25:09.229Z"
+    },
+    "7059e95691f869fd": {
+      "hash": "7059e95691f869fd",
+      "source": "Custom $fetch implementation. See {0}Custom useFetch in Nuxt{/0}",
+      "text": "Implémentation personnalisée de $fetch. Consultez {0}Custom useFetch in Nuxt{/0}",
+      "origin": "mt",
+      "review": "none",
+      "derived": "fresh",
+      "mt": {
+        "model": "anthropic/claude-sonnet-5.5",
+        "promptVersion": "1",
+        "candidate": "Implémentation personnalisée de $fetch. Consultez {0}Custom useFetch in Nuxt{/0}"
+      },
+      "updatedAt": "2026-11-02T12:50:04.224Z"
+    },
+    "73f363dfecb2cfb6": {
+      "hash": "73f363dfecb2cfb6",
+      "source": "If needed, you can opt out of this behavior using {0}:",
+      "text": "Si nécessaire, vous pouvez désactiver ce comportement avec {0} :",
+      "origin": "mt",
+      "review": "none",
+      "derived": "fresh",
+      "mt": {
+        "model": "anthropic/claude-sonnet-5.5",
+        "promptVersion": "1",
+        "candidate": "Si nécessaire, vous pouvez désactiver ce comportement avec {0} :"
+      },
+      "updatedAt": "2026-11-02T12:50:04.224Z"
+    },
+    "755ec21d28085412": {
+      "hash": "755ec21d28085412",
+      "source": "Handle the request errors",
+      "text": "Gérer les erreurs de la requête",
+      "origin": "mt",
+      "review": "none",
+      "derived": "fresh",
+      "mt": {
+        "model": "anthropic/claude-sonnet-5.5",
+        "promptVersion": "1",
+        "candidate": "Gérer les erreurs de la requête"
+      },
+      "updatedAt": "2026-11-02T12:50:04.224Z"
+    },
+    "7846375380df2791": {
+      "hash": "7846375380df2791",
+      "source": "Nuxt rendering modes",
+      "text": "Modes de rendu de Nuxt",
+      "origin": "mt",
+      "review": "none",
+      "derived": "fresh",
+      "mt": {
+        "model": "anthropic/claude-sonnet-5.5",
+        "promptVersion": "1",
+        "candidate": "Modes de rendu de Nuxt"
+      },
+      "updatedAt": "2026-11-02T11:25:09.229Z"
+    },
+    "7a341e6eb3ab65ff": {
+      "hash": "7a341e6eb3ab65ff",
+      "source": "Handle the response errors",
+      "text": "Gérer les erreurs de la réponse",
+      "origin": "mt",
+      "review": "none",
+      "derived": "fresh",
+      "mt": {
+        "model": "anthropic/claude-sonnet-5.5",
+        "promptVersion": "1",
+        "candidate": "Gérer les erreurs de la réponse"
+      },
+      "updatedAt": "2026-11-02T12:50:04.224Z"
+    },
+    "7bb9305bf108df44": {
+      "hash": "7bb9305bf108df44",
+      "source": "useFetch",
+      "text": "useFetch",
+      "origin": "mt",
+      "review": "none",
+      "derived": "fresh",
+      "mt": {
+        "model": "anthropic/claude-sonnet-5.5",
+        "promptVersion": "1",
+        "candidate": "useFetch"
+      },
+      "updatedAt": "2026-11-02T12:50:04.224Z"
+    },
+    "7d588b9ff76459a2": {
+      "hash": "7d588b9ff76459a2",
+      "source": "Barrier that gates whether the request may run. While {0}, every execution is blocked (initial fetch, {1}/{2}, and watch triggers), and switching {3} → {4} cancels any in-flight request without clearing {5}. Re-enabling does not refetch on its own.",
+      "text": "Barrière qui détermine si la requête peut s'exécuter. Tant que {0}, toute exécution est bloquée (récupération initiale, {1}/{2} et déclenchements de la surveillance), et passer de {3} à {4} annule toute requête en cours sans vider {5}. Réactiver la barrière ne relance pas la requête de lui-même.",
+      "origin": "mt",
+      "review": "none",
+      "derived": "fresh",
+      "mt": {
+        "model": "anthropic/claude-sonnet-5.5",
+        "promptVersion": "1",
+        "candidate": "Barrière qui détermine si la requête peut s'exécuter. Tant que {0}, toute exécution est bloquée (récupération initiale, {1}/{2} et déclenchements de la surveillance), et passer de {3} à {4} annule toute requête en cours sans vider {5}. Réactiver la barrière ne relance pas la requête de lui-même."
+      },
+      "updatedAt": "2026-11-02T12:50:04.224Z"
+    },
+    "7f9e78db1516a4b8": {
+      "hash": "7f9e78db1516a4b8",
+      "source": "This only caches data when {0} in {1} is enabled.",
+      "text": "Cela ne met les données en cache que lorsque {0} est activé dans {1}.",
+      "origin": "mt",
+      "review": "none",
+      "derived": "fresh",
+      "mt": {
+        "model": "anthropic/claude-sonnet-5.5",
+        "promptVersion": "1",
+        "candidate": "Cela ne met les données en cache que lorsque {0} est activé dans {1}."
+      },
+      "updatedAt": "2026-11-02T12:50:04.224Z"
+    },
+    "80546b1146ef6dce": {
+      "hash": "80546b1146ef6dce",
+      "source": "shares the data with ComponentB - only one request is made",
+      "text": "partage les données avec ComponentB - une seule requête est effectuée",
+      "origin": "mt",
+      "review": "none",
+      "derived": "fresh",
+      "mt": {
+        "model": "anthropic/claude-sonnet-5.5",
+        "promptVersion": "1",
+        "candidate": "partage les données avec ComponentB - une seule requête est effectuée"
+      },
+      "updatedAt": "2026-11-02T12:50:04.224Z"
+    },
+    "80a5009a6c6f5195": {
+      "hash": "80a5009a6c6f5195",
+      "source": "Request headers.",
+      "text": "En-têtes de la requête.",
+      "origin": "mt",
+      "review": "none",
+      "derived": "fresh",
+      "mt": {
+        "model": "anthropic/claude-sonnet-5.5",
+        "promptVersion": "1",
+        "candidate": "En-têtes de la requête."
+      },
+      "updatedAt": "2026-11-02T12:50:04.224Z"
+    },
+    "839f9a4898b82644": {
+      "hash": "839f9a4898b82644",
+      "source": "Nuxt is a free and {0}open-source framework{/0} with an intuitive and extendable way to create type-safe, performant and production-grade full-stack web applications and websites with {1}Vue.js{/1}.",
+      "text": "Nuxt est un framework gratuit et {0}open source{/0}, offrant une manière intuitive et extensible de créer des applications web et des sites web full-stack typés, performants et prêts pour la production avec {1}Vue.js{/1}.",
+      "origin": "mt",
+      "review": "none",
+      "derived": "fresh",
+      "mt": {
+        "model": "anthropic/claude-sonnet-5.5",
+        "promptVersion": "1",
+        "candidate": "Nuxt est un framework gratuit et {0}open source{/0}, offrant une manière intuitive et extensible de créer des applications web et des sites web full-stack typés, performants et prêts pour la production avec {1}Vue.js{/1}."
+      },
+      "updatedAt": "2026-11-02T08:58:30.219Z"
+    },
+    "8625881623433ef6": {
+      "hash": "8625881623433ef6",
+      "source": "Signature",
+      "text": "Signature",
+      "origin": "mt",
+      "review": "none",
+      "derived": "fresh",
+      "mt": {
+        "model": "anthropic/claude-sonnet-5.5",
+        "promptVersion": "1",
+        "candidate": "Signature"
+      },
+      "updatedAt": "2026-11-02T12:50:04.224Z"
+    },
+    "87b59dd4b9419325": {
+      "hash": "87b59dd4b9419325",
+      "source": "You can use a computed ref or a plain ref as the URL, allowing for dynamic data fetching that automatically updates when the URL changes:",
+      "text": "Vous pouvez utiliser une ref calculée ou une ref simple comme URL, ce qui permet une récupération de données dynamique qui se met à jour automatiquement lorsque l'URL change :",
+      "origin": "mt",
+      "review": "none",
+      "derived": "fresh",
+      "mt": {
+        "model": "anthropic/claude-sonnet-5.5",
+        "promptVersion": "1",
+        "candidate": "Vous pouvez utiliser une ref calculée ou une ref simple comme URL, ce qui permet une récupération de données dynamique qui se met à jour automatiquement lorsque l'URL change :"
+      },
+      "updatedAt": "2026-11-02T12:50:04.224Z"
+    },
+    "8d59829c1e15afe1": {
+      "hash": "8d59829c1e15afe1",
+      "source": "Usage",
+      "text": "Utilisation",
+      "origin": "mt",
+      "review": "none",
+      "derived": "fresh",
+      "mt": {
+        "model": "anthropic/claude-sonnet-5.5",
+        "promptVersion": "1",
+        "candidate": "Utilisation"
+      },
+      "updatedAt": "2026-11-02T12:50:04.224Z"
+    },
+    "8e435cc5bf61089e": {
+      "hash": "8e435cc5bf61089e",
+      "source": "Reactive Fetch Options",
+      "text": "Options de récupération réactives",
+      "origin": "mt",
+      "review": "none",
+      "derived": "fresh",
+      "mt": {
+        "model": "anthropic/claude-sonnet-5.5",
+        "promptVersion": "1",
+        "candidate": "Options de récupération réactives"
+      },
+      "updatedAt": "2026-11-02T12:50:04.224Z"
+    },
+    "8f700c74287158ba": {
+      "hash": "8f700c74287158ba",
+      "source": "Fetch options can be provided as reactive, supporting {0}, {1} and {2}computed getters{/2}. When a reactive fetch option is updated it will trigger a refetch using the updated resolved reactive value.",
+      "text": "Les options de récupération peuvent être fournies de manière réactive, avec prise en charge de {0}, {1} et des {2}getters calculés{/2}. Lorsqu'une option de récupération réactive est mise à jour, elle déclenche une nouvelle récupération avec la valeur réactive résolue mise à jour.",
+      "origin": "mt",
+      "review": "none",
+      "derived": "fresh",
+      "mt": {
+        "model": "anthropic/claude-sonnet-5.5",
+        "promptVersion": "1",
+        "candidate": "Les options de récupération peuvent être fournies de manière réactive, avec prise en charge de {0}, {1} et des {2}getters calculés{/2}. Lorsqu'une option de récupération réactive est mise à jour, elle déclenche une nouvelle récupération avec la valeur réactive résolue mise à jour."
+      },
+      "updatedAt": "2026-11-02T12:50:04.224Z"
+    },
+    "91d901ff19ddf210": {
+      "hash": "91d901ff19ddf210",
+      "source": "Server engine: {0}nitro{/0}",
+      "text": "Moteur serveur : {0}nitro{/0}",
+      "origin": "mt",
+      "review": "none",
+      "derived": "fresh",
+      "mt": {
+        "model": "anthropic/claude-sonnet-5.5",
+        "promptVersion": "1",
+        "candidate": "Moteur serveur : {0}nitro{/0}"
+      },
+      "updatedAt": "2026-11-02T11:25:09.229Z"
+    },
+    "9421e806535fee84": {
+      "hash": "9421e806535fee84",
+      "source": "The Nuxt server engine, {0}Nitro{/0}, unlocks new full-stack capabilities.",
+      "text": "Le moteur serveur de Nuxt, {0}Nitro{/0}, ouvre de nouvelles possibilités full-stack.",
+      "origin": "mt",
+      "review": "none",
+      "derived": "fresh",
+      "mt": {
+        "model": "anthropic/claude-sonnet-5.5",
+        "promptVersion": "1",
+        "candidate": "Le moteur serveur de Nuxt, {0}Nitro{/0}, ouvre de nouvelles possibilités full-stack."
+      },
+      "updatedAt": "2026-11-02T11:25:09.229Z"
+    },
+    "9511242ba0690733": {
+      "hash": "9511242ba0690733",
+      "source": "Command line interface: {0}@nuxt/cli{/0}",
+      "text": "Interface en ligne de commande : {0}@nuxt/cli{/0}",
+      "origin": "mt",
+      "review": "none",
+      "derived": "fresh",
+      "mt": {
+        "model": "anthropic/claude-sonnet-5.5",
+        "promptVersion": "1",
+        "candidate": "Interface en ligne de commande : {0}@nuxt/cli{/0}"
+      },
+      "updatedAt": "2026-11-02T11:25:09.229Z"
+    },
+    "979b7f8d599cced5": {
+      "hash": "979b7f8d599cced5",
+      "source": "Bundlers: {0}@nuxt/vite-builder{/0}, {1}@nuxt/rspack-builder{/1} and {2}@nuxt/webpack-builder{/2}",
+      "text": "Bundlers : {0}@nuxt/vite-builder{/0}, {1}@nuxt/rspack-builder{/1} et {2}@nuxt/webpack-builder{/2}",
+      "origin": "mt",
+      "review": "none",
+      "derived": "fresh",
+      "mt": {
+        "model": "anthropic/claude-sonnet-5.5",
+        "promptVersion": "1",
+        "candidate": "Bundlers : {0}@nuxt/vite-builder{/0}, {1}@nuxt/rspack-builder{/1} et {2}@nuxt/webpack-builder{/2}"
+      },
+      "updatedAt": "2026-11-02T11:25:09.229Z"
+    },
+    "996c1cc88738ccf4": {
+      "hash": "996c1cc88738ccf4",
+      "source": "**Zero-config TypeScript support:** write type-safe code without having to learn TypeScript with our auto-generated types and {0}.",
+      "text": "**Support de TypeScript sans configuration :** écrivez du code sûr au niveau des types sans avoir à apprendre TypeScript, grâce à nos types générés automatiquement et à {0}.",
+      "origin": "mt",
+      "review": "none",
+      "derived": "fresh",
+      "mt": {
+        "model": "anthropic/claude-sonnet-5.5",
+        "promptVersion": "1",
+        "candidate": "**Support de TypeScript sans configuration :** écrivez du code sûr au niveau des types sans avoir à apprendre TypeScript, grâce à nos types générés automatiquement et à {0}."
+      },
+      "updatedAt": "2026-11-02T11:25:09.229Z"
+    },
+    "99b5caf73cec48ac": {
+      "hash": "99b5caf73cec48ac",
+      "source": "Nuxt comes with built-in server-side rendering (SSR) capabilities by default, without having to configure a server yourself, which has many benefits for web applications:",
+      "text": "Nuxt intègre par défaut des capacités de rendu côté serveur (SSR), sans que vous ayez à configurer un serveur vous-même, ce qui présente de nombreux avantages pour les applications web :",
+      "origin": "mt",
+      "review": "none",
+      "derived": "fresh",
+      "mt": {
+        "model": "anthropic/claude-sonnet-5.5",
+        "promptVersion": "1",
+        "candidate": "Nuxt intègre par défaut des capacités de rendu côté serveur (SSR), sans que vous ayez à configurer un serveur vous-même, ce qui présente de nombreux avantages pour les applications web :"
+      },
+      "updatedAt": "2026-11-02T11:25:09.229Z"
+    },
+    "a0b40c4b85500e69": {
+      "hash": "a0b40c4b85500e69",
+      "source": "A Nuxt application can be deployed on a Node or Deno server, pre-rendered to be hosted in static environments, or deployed to serverless and edge providers.",
+      "text": "Une application Nuxt peut être déployée sur un serveur Node ou Deno, prérendue pour être hébergée dans des environnements statiques, ou déployée chez des fournisseurs serverless et edge.",
+      "origin": "mt",
+      "review": "none",
+      "derived": "fresh",
+      "mt": {
+        "model": "anthropic/claude-sonnet-5.5",
+        "promptVersion": "1",
+        "candidate": "Une application Nuxt peut être déployée sur un serveur Node ou Deno, prérendue pour être hébergée dans des environnements statiques, ou déployée chez des fournisseurs serverless et edge."
+      },
+      "updatedAt": "2026-11-02T11:25:09.229Z"
+    },
+    "a132fadbba912984": {
+      "hash": "a132fadbba912984",
+      "source": "**Auto-imports:** write Vue composables and components in their respective directories and use them without having to import them with the benefits of tree-shaking and optimized JS bundles.",
+      "text": "**Imports automatiques :** écrivez des composables et des composants Vue dans leurs répertoires respectifs et utilisez-les sans avoir à les importer, avec les avantages du tree-shaking et de bundles JS optimisés.",
+      "origin": "mt",
+      "review": "none",
+      "derived": "fresh",
+      "mt": {
+        "model": "anthropic/claude-sonnet-5.5",
+        "promptVersion": "1",
+        "candidate": "**Imports automatiques :** écrivez des composables et des composants Vue dans leurs répertoires respectifs et utilisez-les sans avoir à les importer, avec les avantages du tree-shaking et de bundles JS optimisés."
+      },
+      "updatedAt": "2026-11-02T11:25:09.229Z"
+    },
+    "a2f3d773112ff021": {
+      "hash": "a2f3d773112ff021",
+      "source": "Return data in a deep ref object. Defaults to {0} for improved performance (shallow ref object).",
+      "text": "Renvoie les données dans un objet ref profond. Vaut {0} par défaut pour de meilleures performances (objet ref superficiel).",
+      "origin": "mt",
+      "review": "none",
+      "derived": "fresh",
+      "mt": {
+        "model": "anthropic/claude-sonnet-5.5",
+        "promptVersion": "1",
+        "candidate": "Renvoie les données dans un objet ref profond. Vaut {0} par défaut pour de meilleures performances (objet ref superficiel)."
+      },
+      "updatedAt": "2026-11-02T12:50:04.224Z"
+    },
+    "a33984ac574c9ae0": {
+      "hash": "a33984ac574c9ae0",
+      "source": "{0}: Request completed successfully",
+      "text": "{0} : la requête s'est terminée avec succès",
+      "origin": "mt",
+      "review": "none",
+      "derived": "fresh",
+      "mt": {
+        "model": "anthropic/claude-sonnet-5.5",
+        "promptVersion": "1",
+        "candidate": "{0} : la requête s'est terminée avec succès"
+      },
+      "updatedAt": "2026-11-02T12:50:04.224Z"
+    },
+    "a98dc10b5a3468f3": {
+      "hash": "a98dc10b5a3468f3",
+      "source": "If false, prevents request from firing immediately.",
+      "text": "Si la valeur est false, empêche la requête d'être envoyée immédiatement.",
+      "origin": "mt",
+      "review": "none",
+      "derived": "fresh",
+      "mt": {
+        "model": "anthropic/claude-sonnet-5.5",
+        "promptVersion": "1",
+        "candidate": "Si la valeur est false, empêche la requête d'être envoyée immédiatement."
+      },
+      "updatedAt": "2026-11-02T12:50:04.224Z"
+    },
+    "ad7a1ea5c892a6e8": {
+      "hash": "ad7a1ea5c892a6e8",
+      "source": "Server-Side Rendering",
+      "text": "Rendu côté serveur",
+      "origin": "mt",
+      "review": "none",
+      "derived": "fresh",
+      "mt": {
+        "model": "anthropic/claude-sonnet-5.5",
+        "promptVersion": "1",
+        "candidate": "Rendu côté serveur"
+      },
+      "updatedAt": "2026-11-02T11:25:09.229Z"
+    },
+    "b02f92cc23624b38": {
+      "hash": "b02f92cc23624b38",
+      "source": "Function to transform the result after resolving.",
+      "text": "Fonction permettant de transformer le résultat après sa résolution.",
+      "origin": "mt",
+      "review": "none",
+      "derived": "fresh",
+      "mt": {
+        "model": "anthropic/claude-sonnet-5.5",
+        "promptVersion": "1",
+        "candidate": "Fonction permettant de transformer le résultat après sa résolution."
+      },
+      "updatedAt": "2026-11-02T12:50:04.224Z"
+    },
+    "b0cb6177322f0258": {
+      "hash": "b0cb6177322f0258",
+      "source": "{0}: Request has not started (e.g. {1} or {2} on server render)",
+      "text": "{0} : la requête n'a pas démarré (par exemple {1} ou {2} lors du rendu serveur)",
+      "origin": "mt",
+      "review": "none",
+      "derived": "fresh",
+      "mt": {
+        "model": "anthropic/claude-sonnet-5.5",
+        "promptVersion": "1",
+        "candidate": "{0} : la requête n'a pas démarré (par exemple {1} ou {2} lors du rendu serveur)"
+      },
+      "updatedAt": "2026-11-02T12:50:04.224Z"
+    },
+    "b1a0577456f93779": {
+      "hash": "b1a0577456f93779",
+      "source": "If you have not fetched data on the server (for example, with {0}), then the data *will not* be fetched until hydration completes. This means even if you await {1} on client-side, {2} will remain undefined within {3}.",
+      "text": "Si vous n'avez pas récupéré de données côté serveur (par exemple avec {0}), alors les données *ne seront pas* récupérées avant la fin de l'hydratation. Cela signifie que même si vous utilisez await sur {1} côté client, {2} restera undefined dans {3}.",
+      "origin": "mt",
+      "review": "none",
+      "derived": "fresh",
+      "mt": {
+        "model": "anthropic/claude-sonnet-5.5",
+        "promptVersion": "1",
+        "candidate": "Si vous n'avez pas récupéré de données côté serveur (par exemple avec {0}), alors les données *ne seront pas* récupérées avant la fin de l'hydratation. Cela signifie que même si vous utilisez await sur {1} côté client, {2} restera undefined dans {3}."
+      },
+      "updatedAt": "2026-11-02T12:47:43.377Z"
+    },
+    "b21507a5631fb4f7": {
+      "hash": "b21507a5631fb4f7",
+      "source": "Cache control. Boolean disables cache, or use Fetch API values: {0}, {1}, etc.",
+      "text": "Contrôle du cache. Un booléen désactive le cache, ou utilisez les valeurs de l'API Fetch : {0}, {1}, etc.",
+      "origin": "mt",
+      "review": "none",
+      "derived": "fresh",
+      "mt": {
+        "model": "anthropic/claude-sonnet-5.5",
+        "promptVersion": "1",
+        "candidate": "Contrôle du cache. Un booléen désactive le cache, ou utilisez les valeurs de l'API Fetch : {0}, {1}, etc."
+      },
+      "updatedAt": "2026-11-02T12:50:04.224Z"
+    },
+    "b2329f4a71330345": {
+      "hash": "b2329f4a71330345",
+      "source": "does not trigger a refetch",
+      "text": "ne déclenche pas de nouvelle récupération",
+      "origin": "mt",
+      "review": "none",
+      "derived": "fresh",
+      "mt": {
+        "model": "anthropic/claude-sonnet-5.5",
+        "promptVersion": "1",
+        "candidate": "ne déclenche pas de nouvelle récupération"
+      },
+      "updatedAt": "2026-11-02T12:50:04.224Z"
+    },
+    "b328c94e6f738633": {
+      "hash": "b328c94e6f738633",
+      "source": "We recommend reading each concept to have a full vision of Nuxt capabilities and the scope of each package.",
+      "text": "Nous vous recommandons de lire chaque concept pour avoir une vision complète des capacités de Nuxt et du périmètre de chaque package.",
+      "origin": "mt",
+      "review": "none",
+      "derived": "fresh",
+      "mt": {
+        "model": "anthropic/claude-sonnet-5.5",
+        "promptVersion": "1",
+        "candidate": "Nous vous recommandons de lire chaque concept pour avoir une vision complète des capacités de Nuxt et du périmètre de chaque package."
+      },
+      "updatedAt": "2026-11-02T11:25:09.229Z"
+    },
+    "b472c7e55313d66a": {
+      "hash": "b472c7e55313d66a",
+      "source": "Automation and Conventions",
+      "text": "Automatisation et conventions",
+      "origin": "mt",
+      "review": "none",
+      "derived": "fresh",
+      "mt": {
+        "model": "anthropic/claude-sonnet-5.5",
+        "promptVersion": "1",
+        "candidate": "Automatisation et conventions"
+      },
+      "updatedAt": "2026-11-02T08:58:30.219Z"
+    },
+    "b4d6a30f4193b274": {
+      "hash": "b4d6a30f4193b274",
+      "source": "{0}, {1}, and {2} are Vue refs, and they should be accessed with {3} when used within the {4}, while {5}/{6} and {7} are plain functions.",
+      "text": "{0}, {1} et {2} sont des refs Vue, et elles doivent être accessibles avec {3} lorsqu'elles sont utilisées dans le {4}, tandis que {5}/{6} et {7} sont de simples fonctions.",
+      "origin": "mt",
+      "review": "none",
+      "derived": "fresh",
+      "mt": {
+        "model": "anthropic/claude-sonnet-5.5",
+        "promptVersion": "1",
+        "candidate": "{0}, {1} et {2} sont des refs Vue, et elles doivent être accessibles avec {3} lorsqu'elles sont utilisées dans le {4}, tandis que {5}/{6} et {7} sont de simples fonctions."
+      },
+      "updatedAt": "2026-11-02T12:50:04.224Z"
+    },
+    "b60d37e4e9a1ac65": {
+      "hash": "b60d37e4e9a1ac65",
+      "source": "The auto-generated key is unique to each call site, so calling {0} with the same URL and options in different components will **not** share state and each call performs its own request. Multiple instances of the same component do share state, since they use the same call site. To share the same {1}, {2} and {3} refs across different components, provide the same explicit {4} to each call:",
+      "text": "La clé générée automatiquement est unique pour chaque site d'appel ; ainsi, appeler {0} avec la même URL et les mêmes options dans différents composants ne partagera **pas** l'état, et chaque appel effectue sa propre requête. Plusieurs instances du même composant partagent en revanche l'état, puisqu'elles utilisent le même site d'appel. Pour partager les mêmes refs {1}, {2} et {3} entre différents composants, fournissez la même {4} explicite à chaque appel :",
+      "origin": "mt",
+      "review": "none",
+      "derived": "fresh",
+      "mt": {
+        "model": "anthropic/claude-sonnet-5.5",
+        "promptVersion": "1",
+        "candidate": "La clé générée automatiquement est unique pour chaque site d'appel ; ainsi, appeler {0} avec la même URL et les mêmes options dans différents composants ne partagera **pas** l'état, et chaque appel effectue sa propre requête. Plusieurs instances du même composant partagent en revanche l'état, puisqu'elles utilisent le même site d'appel. Pour partager les mêmes refs {1}, {2} et {3} entre différents composants, fournissez la même {4} explicite à chaque appel :"
+      },
+      "updatedAt": "2026-11-02T12:50:04.224Z"
+    },
+    "b7d7a702d61de532": {
+      "hash": "b7d7a702d61de532",
+      "source": "Function to manually refresh the data. By default, Nuxt waits until a {0} is finished before it can be executed again.",
+      "text": "Fonction permettant de rafraîchir manuellement les données. Par défaut, Nuxt attend la fin d'un {0} avant de pouvoir l'exécuter à nouveau.",
+      "origin": "mt",
+      "review": "none",
+      "derived": "fresh",
+      "mt": {
+        "model": "anthropic/claude-sonnet-5.5",
+        "promptVersion": "1",
+        "candidate": "Fonction permettant de rafraîchir manuellement les données. Par défaut, Nuxt attend la fin d'un {0} avant de pouvoir l'exécuter à nouveau."
+      },
+      "updatedAt": "2026-11-02T12:50:04.224Z"
+    },
+    "b96266c22316fd47": {
+      "hash": "b96266c22316fd47",
+      "source": "{0} is a reserved function name transformed by the compiler, so you should not name your own function {1}. To create a custom variant with pre-defined options, use {2} instead.",
+      "text": "{0} est un nom de fonction réservé transformé par le compilateur, vous ne devez donc pas nommer votre propre fonction {1}. Pour créer une variante personnalisée avec des options prédéfinies, utilisez plutôt {2}.",
+      "origin": "mt",
+      "review": "none",
+      "derived": "fresh",
+      "mt": {
+        "model": "anthropic/claude-sonnet-5.5",
+        "promptVersion": "1",
+        "candidate": "{0} est un nom de fonction réservé transformé par le compilateur, vous ne devez donc pas nommer votre propre fonction {1}. Pour créer une variante personnalisée avec des options prédéfinies, utilisez plutôt {2}."
+      },
+      "updatedAt": "2026-11-02T12:50:04.224Z"
+    },
+    "baaddf70fb5d432b": {
+      "hash": "baaddf70fb5d432b",
+      "source": "Type",
+      "text": "Type",
+      "origin": "mt",
+      "review": "none",
+      "derived": "fresh",
+      "mt": {
+        "model": "anthropic/claude-sonnet-5.5",
+        "promptVersion": "1",
+        "candidate": "Type"
+      },
+      "updatedAt": "2026-11-02T12:50:04.224Z"
+    },
+    "baf35e0f2e2e1937": {
+      "hash": "baf35e0f2e2e1937",
+      "source": "If you want to play around with Nuxt in your browser, you can {0}try it out in one of our online sandboxes{/0}.",
+      "text": "Si vous souhaitez essayer Nuxt dans votre navigateur, vous pouvez {0}le tester dans l'un de nos bacs à sable en ligne{/0}.",
+      "origin": "mt",
+      "review": "none",
+      "derived": "fresh",
+      "mt": {
+        "model": "anthropic/claude-sonnet-5.5",
+        "promptVersion": "1",
+        "candidate": "Si vous souhaitez essayer Nuxt dans votre navigateur, vous pouvez {0}le tester dans l'un de nos bacs à sable en ligne{/0}."
+      },
+      "updatedAt": "2026-11-02T08:58:30.219Z"
+    },
+    "bcc36032192b4b13": {
+      "hash": "bcc36032192b4b13",
+      "source": "Alias for {0}.",
+      "text": "Alias de {0}.",
+      "origin": "mt",
+      "review": "none",
+      "derived": "fresh",
+      "mt": {
+        "model": "anthropic/claude-sonnet-5.5",
+        "promptVersion": "1",
+        "candidate": "Alias de {0}."
+      },
+      "updatedAt": "2026-11-02T12:50:04.224Z"
+    },
+    "be16ead4974b3669": {
+      "hash": "be16ead4974b3669",
+      "source": "{0} (object): Configuration for the fetch request. Extends {1}unjs/ofetch{/1} options and {2}. All options can be a static value, a {3}, or a computed value.",
+      "text": "{0} (object) : configuration de la requête de récupération. Étend les options de {1}unjs/ofetch{/1} et {2}. Toutes les options peuvent être une valeur statique, un {3} ou une valeur calculée.",
+      "origin": "mt",
+      "review": "none",
+      "derived": "fresh",
+      "mt": {
+        "model": "anthropic/claude-sonnet-5.5",
+        "promptVersion": "1",
+        "candidate": "{0} (object) : configuration de la requête de récupération. Étend les options de {1}unjs/ofetch{/1} et {2}. Toutes les options peuvent être une valeur statique, un {3} ou une valeur calculée."
+      },
+      "updatedAt": "2026-11-02T12:50:04.224Z"
+    },
+    "be6f96f6b665d737": {
+      "hash": "be6f96f6b665d737",
+      "source": "{0} is a composable meant to be called directly in a setup function, plugin, or route middleware. It returns reactive composables and handles adding responses to the Nuxt payload so they can be passed from server to client without re-fetching the data on client side when the page hydrates.",
+      "text": "{0} est un composable destiné à être appelé directement dans une fonction setup, un plugin ou un middleware de route. Il renvoie des composables réactifs et se charge d'ajouter les réponses au payload (charge utile) de Nuxt, afin qu'elles puissent être transmises du serveur au client sans récupérer à nouveau les données côté client lors de l'hydratation de la page.",
+      "origin": "mt",
+      "review": "none",
+      "derived": "fresh",
+      "mt": {
+        "model": "anthropic/claude-sonnet-5.5",
+        "promptVersion": "1",
+        "candidate": "{0} est un composable destiné à être appelé directement dans une fonction setup, un plugin ou un middleware de route. Il renvoie des composables réactifs et se charge d'ajouter les réponses au payload (charge utile) de Nuxt, afin qu'elles puissent être transmises du serveur au client sans récupérer à nouveau les données côté client lors de l'hydratation de la page."
+      },
+      "updatedAt": "2026-11-02T12:50:04.224Z"
+    },
+    "bf41bcc351bea9ce": {
+      "hash": "bf41bcc351bea9ce",
+      "source": "Query/search params to append to the URL. Alias: {0}.",
+      "text": "Paramètres de requête/recherche à ajouter à l'URL. Alias : {0}.",
+      "origin": "mt",
+      "review": "none",
+      "derived": "fresh",
+      "mt": {
+        "model": "anthropic/claude-sonnet-5.5",
+        "promptVersion": "1",
+        "candidate": "Paramètres de requête/recherche à ajouter à l'URL. Alias : {0}."
+      },
+      "updatedAt": "2026-11-02T12:50:04.224Z"
+    },
+    "c0d8626c6e4b572c": {
+      "hash": "c0d8626c6e4b572c",
+      "source": "All fetch options can be given a {0} or {1} value. These will be watched and new requests made automatically with any new values if they are updated (unless {2} is set to {3}).",
+      "text": "Toutes les options de récupération peuvent recevoir une valeur {0} ou {1}. Elles seront surveillées et de nouvelles requêtes seront effectuées automatiquement avec les nouvelles valeurs si elles sont mises à jour (sauf si {2} est défini à {3}).",
+      "origin": "mt",
+      "review": "none",
+      "derived": "fresh",
+      "mt": {
+        "model": "anthropic/claude-sonnet-5.5",
+        "promptVersion": "1",
+        "candidate": "Toutes les options de récupération peuvent recevoir une valeur {0} ou {1}. Elles seront surveillées et de nouvelles requêtes seront effectuées automatiquement avec les nouvelles valeurs si elles sont mises à jour (sauf si {2} est défini à {3})."
+      },
+      "updatedAt": "2026-11-02T12:50:04.224Z"
+    },
+    "c13155c197f788bd": {
+      "hash": "c13155c197f788bd",
+      "source": "auto-gen",
+      "text": "auto-généré",
+      "origin": "mt",
+      "review": "none",
+      "derived": "fresh",
+      "mt": {
+        "model": "anthropic/claude-sonnet-5.5",
+        "promptVersion": "1",
+        "candidate": "auto-généré"
+      },
+      "updatedAt": "2026-11-02T12:50:04.224Z"
+    },
+    "c18a9dd444a7535e": {
+      "hash": "c18a9dd444a7535e",
+      "source": "Nuxt's goal is to make web development intuitive and performant with a great Developer Experience in mind.",
+      "text": "L'objectif de Nuxt est de rendre le développement web intuitif et performant, avec une excellente expérience développeur en tête.",
+      "origin": "mt",
+      "review": "none",
+      "derived": "fresh",
+      "mt": {
+        "model": "anthropic/claude-sonnet-5.5",
+        "promptVersion": "1",
+        "candidate": "L'objectif de Nuxt est de rendre le développement web intuitif et performant, avec une excellente expérience développeur en tête."
+      },
+      "updatedAt": "2026-11-02T08:58:30.219Z"
+    },
+    "c778a5039e0ca98f": {
+      "hash": "c778a5039e0ca98f",
+      "source": "Get Started",
+      "text": "Premiers pas",
+      "origin": "mt",
+      "review": "none",
+      "derived": "fresh",
+      "mt": {
+        "model": "anthropic/claude-sonnet-5.5",
+        "promptVersion": "1",
+        "candidate": "Premiers pas"
+      },
+      "updatedAt": "2026-11-02T08:58:30.219Z"
+    },
+    "c913e520dd19d687": {
+      "hash": "c913e520dd19d687",
+      "source": "Nuxt has no vendor lock-in, allowing you to deploy your application {0}**everywhere, even on the edge**{/0}.",
+      "text": "Nuxt n'impose aucune dépendance à un fournisseur (pas de vendor lock-in), ce qui vous permet de déployer votre application {0}**partout, même en edge**{/0}.",
+      "origin": "mt",
+      "review": "none",
+      "derived": "fresh",
+      "mt": {
+        "model": "anthropic/claude-sonnet-5.5",
+        "promptVersion": "1",
+        "candidate": "Nuxt n'impose aucune dépendance à un fournisseur (pas de vendor lock-in), ce qui vous permet de déployer votre application {0}**partout, même en edge**{/0}."
+      },
+      "updatedAt": "2026-11-02T08:58:30.219Z"
+    },
+    "c9edc9e1cccf8003": {
+      "hash": "c9edc9e1cccf8003",
+      "source": "Return Values",
+      "text": "Valeurs de retour",
+      "origin": "mt",
+      "review": "none",
+      "derived": "fresh",
+      "mt": {
+        "model": "anthropic/claude-sonnet-5.5",
+        "promptVersion": "1",
+        "candidate": "Valeurs de retour"
+      },
+      "updatedAt": "2026-11-02T12:47:43.377Z"
+    },
+    "cd6597fd0167ded2": {
+      "hash": "cd6597fd0167ded2",
+      "source": "Nuxt Modules Concept",
+      "text": "Concept des modules Nuxt",
+      "origin": "mt",
+      "review": "none",
+      "derived": "fresh",
+      "mt": {
+        "model": "anthropic/claude-sonnet-5.5",
+        "promptVersion": "1",
+        "candidate": "Concept des modules Nuxt"
+      },
+      "updatedAt": "2026-11-02T11:25:09.229Z"
+    },
+    "cd74053c54816e47": {
+      "hash": "cd74053c54816e47",
+      "source": "Architecture",
+      "text": "Architecture",
+      "origin": "mt",
+      "review": "none",
+      "derived": "fresh",
+      "mt": {
+        "model": "anthropic/claude-sonnet-5.5",
+        "promptVersion": "1",
+        "candidate": "Architecture"
+      },
+      "updatedAt": "2026-11-02T11:25:09.229Z"
+    },
+    "cfcd830bf5896106": {
+      "hash": "cfcd830bf5896106",
+      "source": "**Faster initial page load time:** Nuxt sends a fully rendered HTML page to the browser, which can be displayed immediately. This can provide a faster perceived page load time and a better user experience (UX), especially on slower networks or devices.",
+      "text": "**Temps de chargement initial de la page plus rapide :** Nuxt envoie au navigateur une page HTML entièrement rendue, qui peut être affichée immédiatement. Cela peut offrir un temps de chargement perçu plus rapide et une meilleure expérience utilisateur (UX), en particulier sur des réseaux ou des appareils plus lents.",
+      "origin": "mt",
+      "review": "none",
+      "derived": "fresh",
+      "mt": {
+        "model": "anthropic/claude-sonnet-5.5",
+        "promptVersion": "1",
+        "candidate": "**Temps de chargement initial de la page plus rapide :** Nuxt envoie au navigateur une page HTML entièrement rendue, qui peut être affichée immédiatement. Cela peut offrir un temps de chargement perçu plus rapide et une meilleure expérience utilisateur (UX), en particulier sur des réseaux ou des appareils plus lents."
+      },
+      "updatedAt": "2026-11-02T11:25:09.229Z"
+    },
+    "d029f87e3d80f8fd": {
+      "hash": "d029f87e3d80f8fd",
+      "source": "Example",
+      "text": "Exemple",
+      "origin": "mt",
+      "review": "none",
+      "derived": "fresh",
+      "mt": {
+        "model": "anthropic/claude-sonnet-5.5",
+        "promptVersion": "1",
+        "candidate": "Exemple"
+      },
+      "updatedAt": "2026-11-02T11:25:09.229Z"
+    },
+    "d1e4ca6ad9c92955": {
+      "hash": "d1e4ca6ad9c92955",
+      "source": "A module system allows you to extend Nuxt with custom features and integrations with third-party services.",
+      "text": "Un système de modules vous permet d'étendre Nuxt avec des fonctionnalités personnalisées et des intégrations avec des services tiers.",
+      "origin": "mt",
+      "review": "none",
+      "derived": "fresh",
+      "mt": {
+        "model": "anthropic/claude-sonnet-5.5",
+        "promptVersion": "1",
+        "candidate": "Un système de modules vous permet d'étendre Nuxt avec des fonctionnalités personnalisées et des intégrations avec des services tiers."
+      },
+      "updatedAt": "2026-11-02T11:25:09.229Z"
+    },
+    "d2177f9649b5a87b": {
+      "hash": "d2177f9649b5a87b",
+      "source": "You do not need to {0} {1}. On the server, Nuxt waits for the promise to resolve before rendering in either case, so the returned HTML always contains the data. The {2} affects what happens after the call: with it, execution pauses until {3} is populated, and client-side navigation is blocked until the data is ready; without it, execution continues immediately, {4} starts as its default value until the request resolves, and on client-side navigation you handle the loading and error states yourself using the returned {5} and {6} refs. This has a similar effect to the {7} option, though {8} is the explicit way to opt into non-blocking navigation.",
+      "text": "Vous n'avez pas besoin de {0} {1}. Côté serveur, Nuxt attend dans tous les cas que la promesse soit résolue avant d'effectuer le rendu, donc le HTML renvoyé contient toujours les données. Le {2} influe sur ce qui se passe après l'appel : avec lui, l'exécution est suspendue jusqu'à ce que {3} soit renseigné, et la navigation côté client est bloquée jusqu'à ce que les données soient prêtes ; sans lui, l'exécution se poursuit immédiatement, {4} conserve sa valeur par défaut jusqu'à la résolution de la requête, et lors d'une navigation côté client, vous gérez vous-même les états de chargement et d'erreur à l'aide des refs {5} et {6} renvoyées. L'effet est similaire à celui de l'option {7}, bien que {8} soit le moyen explicite d'opter pour une navigation non bloquante.",
+      "origin": "mt",
+      "review": "none",
+      "derived": "fresh",
+      "mt": {
+        "model": "anthropic/claude-sonnet-5.5",
+        "promptVersion": "1",
+        "candidate": "Vous n'avez pas besoin de {0} {1}. Côté serveur, Nuxt attend dans tous les cas que la promesse soit résolue avant d'effectuer le rendu, donc le HTML renvoyé contient toujours les données. Le {2} influe sur ce qui se passe après l'appel : avec lui, l'exécution est suspendue jusqu'à ce que {3} soit renseigné, et la navigation côté client est bloquée jusqu'à ce que les données soient prêtes ; sans lui, l'exécution se poursuit immédiatement, {4} conserve sa valeur par défaut jusqu'à la résolution de la requête, et lors d'une navigation côté client, vous gérez vous-même les états de chargement et d'erreur à l'aide des refs {5} et {6} renvoyées. L'effet est similaire à celui de l'option {7}, bien que {8} soit le moyen explicite d'opter pour une navigation non bloquante."
+      },
+      "updatedAt": "2026-11-02T12:50:04.224Z"
+    },
+    "d2f4f126c719a2c5": {
+      "hash": "d2f4f126c719a2c5",
+      "source": "Default getCachedData Implementation",
+      "text": "Implémentation par défaut de getCachedData",
+      "origin": "mt",
+      "review": "none",
+      "derived": "fresh",
+      "mt": {
+        "model": "anthropic/claude-sonnet-5.5",
+        "promptVersion": "1",
+        "candidate": "Implémentation par défaut de getCachedData"
+      },
+      "updatedAt": "2026-11-02T12:50:04.224Z"
+    },
+    "d3fd96caadcba8ef": {
+      "hash": "d3fd96caadcba8ef",
+      "source": "Need a custom {0} with pre-defined defaults (like {1} or auth headers)? Use {2} to create a fully typed custom composable.",
+      "text": "Vous avez besoin d'un {0} personnalisé avec des valeurs par défaut prédéfinies (comme {1} ou des en-têtes d'authentification) ? Utilisez {2} pour créer un composable personnalisé entièrement typé.",
+      "origin": "mt",
+      "review": "none",
+      "derived": "fresh",
+      "mt": {
+        "model": "anthropic/claude-sonnet-5.5",
+        "promptVersion": "1",
+        "candidate": "Vous avez besoin d'un {0} personnalisé avec des valeurs par défaut prédéfinies (comme {1} ou des en-têtes d'authentification) ? Utilisez {2} pour créer un composable personnalisé entièrement typé."
+      },
+      "updatedAt": "2026-11-02T12:50:04.224Z"
+    },
+    "da0e2deddf95c51a": {
+      "hash": "da0e2deddf95c51a",
+      "source": "note that this relies on ofetch >= 1.4.0 - you may need to refresh your lockfile",
+      "text": "notez que cela dépend de ofetch >= 1.4.0 - vous devrez peut-être actualiser votre lockfile",
+      "origin": "mt",
+      "review": "none",
+      "derived": "fresh",
+      "mt": {
+        "model": "anthropic/claude-sonnet-5.5",
+        "promptVersion": "1",
+        "candidate": "notez que cela dépend de ofetch >= 1.4.0 - vous devrez peut-être actualiser votre lockfile"
+      },
+      "updatedAt": "2026-11-02T12:50:04.224Z"
+    },
+    "db0d621a0d954ad1": {
+      "hash": "db0d621a0d954ad1",
+      "source": "Array of reactive sources to watch and auto-refresh. {0} disables watching.",
+      "text": "Tableau de sources réactives à surveiller et à actualiser automatiquement. {0} désactive la surveillance.",
+      "origin": "mt",
+      "review": "none",
+      "derived": "fresh",
+      "mt": {
+        "model": "anthropic/claude-sonnet-5.5",
+        "promptVersion": "1",
+        "candidate": "Tableau de sources réactives à surveiller et à actualiser automatiquement. {0} désactive la surveillance."
+      },
+      "updatedAt": "2026-11-02T12:50:04.224Z"
+    },
+    "dc18e636721942b6": {
+      "hash": "dc18e636721942b6",
+      "source": "Nuxt is composed of different {0}core packages{/0}:",
+      "text": "Nuxt est composé de différents {0}packages principaux{/0} :",
+      "origin": "mt",
+      "review": "none",
+      "derived": "fresh",
+      "mt": {
+        "model": "anthropic/claude-sonnet-5.5",
+        "promptVersion": "1",
+        "candidate": "Nuxt est composé de différents {0}packages principaux{/0} :"
+      },
+      "updatedAt": "2026-11-02T11:25:09.229Z"
+    },
+    "dc490d3d4fa8b73d": {
+      "hash": "dc490d3d4fa8b73d",
+      "source": "Unique key for de-duplication. If not provided, generated from the URL, options and call site location in the source code.",
+      "text": "Clé unique pour la déduplication. Si elle n'est pas fournie, elle est générée à partir de l'URL, des options et de l'emplacement du site d'appel dans le code source.",
+      "origin": "mt",
+      "review": "none",
+      "derived": "fresh",
+      "mt": {
+        "model": "anthropic/claude-sonnet-5.5",
+        "promptVersion": "1",
+        "candidate": "Clé unique pour la déduplication. Si elle n'est pas fournie, elle est générée à partir de l'URL, des options et de l'emplacement du site d'appel dans le code source."
+      },
+      "updatedAt": "2026-11-02T12:50:04.224Z"
+    },
+    "dcd1d5223f73b3a9": {
+      "hash": "dcd1d5223f73b3a9",
+      "source": "Name",
+      "text": "Nom",
+      "origin": "mt",
+      "review": "none",
+      "derived": "fresh",
+      "mt": {
+        "model": "anthropic/claude-sonnet-5.5",
+        "promptVersion": "1",
+        "candidate": "Nom"
+      },
+      "updatedAt": "2026-11-02T11:25:09.229Z"
+    },
+    "dd5aac462a76a2c1": {
+      "hash": "dd5aac462a76a2c1",
+      "source": "**Better performance on low-powered devices:** it reduces the amount of JavaScript that needs to be downloaded and executed on the client-side, which can be beneficial for low-powered devices that may struggle with processing heavy JavaScript applications.",
+      "text": "**Meilleures performances sur les appareils peu puissants :** cela réduit la quantité de JavaScript à télécharger et à exécuter côté client, ce qui peut être bénéfique pour les appareils peu puissants qui peuvent avoir du mal à exécuter des applications JavaScript lourdes.",
+      "origin": "mt",
+      "review": "none",
+      "derived": "fresh",
+      "mt": {
+        "model": "anthropic/claude-sonnet-5.5",
+        "promptVersion": "1",
+        "candidate": "**Meilleures performances sur les appareils peu puissants :** cela réduit la quantité de JavaScript à télécharger et à exécuter côté client, ce qui peut être bénéfique pour les appareils peu puissants qui peuvent avoir du mal à exécuter des applications JavaScript lourdes."
+      },
+      "updatedAt": "2026-11-02T11:25:09.229Z"
+    },
+    "de45a1ce1040c29d": {
+      "hash": "de45a1ce1040c29d",
+      "source": "Production-ready",
+      "text": "Prêt pour la production",
+      "origin": "mt",
+      "review": "none",
+      "derived": "fresh",
+      "mt": {
+        "model": "anthropic/claude-sonnet-5.5",
+        "promptVersion": "1",
+        "candidate": "Prêt pour la production"
+      },
+      "updatedAt": "2026-11-02T11:25:09.229Z"
+    },
+    "e68b36b17cbd9908": {
+      "hash": "e68b36b17cbd9908",
+      "source": "Parameters",
+      "text": "Paramètres",
+      "origin": "mt",
+      "review": "none",
+      "derived": "fresh",
+      "mt": {
+        "model": "anthropic/claude-sonnet-5.5",
+        "promptVersion": "1",
+        "candidate": "Paramètres"
+      },
+      "updatedAt": "2026-11-02T12:50:04.224Z"
+    },
+    "eb90e4abfaab2bf4": {
+      "hash": "eb90e4abfaab2bf4",
+      "source": "**getCachedData default:**",
+      "text": "**Valeur par défaut de getCachedData :**",
+      "origin": "mt",
+      "review": "none",
+      "derived": "fresh",
+      "mt": {
+        "model": "anthropic/claude-sonnet-5.5",
+        "promptVersion": "1",
+        "candidate": "**Valeur par défaut de getCachedData :**"
+      },
+      "updatedAt": "2026-11-02T12:50:04.224Z"
+    },
+    "ebdefea407df2581": {
+      "hash": "ebdefea407df2581",
+      "source": "shares the data with ComponentA - only one request is made",
+      "text": "partage les données avec ComponentA - une seule requête est effectuée",
+      "origin": "mt",
+      "review": "none",
+      "derived": "fresh",
+      "mt": {
+        "model": "anthropic/claude-sonnet-5.5",
+        "promptVersion": "1",
+        "candidate": "partage les données avec ComponentA - une seule requête est effectuée"
+      },
+      "updatedAt": "2026-11-02T12:50:04.224Z"
+    },
+    "edcdc6a921d8f3b5": {
+      "hash": "edcdc6a921d8f3b5",
+      "source": "Functions wrapping the execution of the request. Each receives {0}, which runs the rest of the chain and resolves to the data, and the handler context ({1}). The first entry is the outermost wrapper. Call {2} to continue or throw to abort.",
+      "text": "Fonctions qui encapsulent l'exécution de la requête. Chacune reçoit {0}, qui exécute le reste de la chaîne et se résout avec les données, ainsi que le contexte du gestionnaire ({1}). La première entrée est l'enveloppe la plus externe. Appelez {2} pour continuer ou levez une erreur pour interrompre.",
+      "origin": "mt",
+      "review": "none",
+      "derived": "fresh",
+      "mt": {
+        "model": "anthropic/claude-sonnet-5.5",
+        "promptVersion": "1",
+        "candidate": "Fonctions qui encapsulent l'exécution de la requête. Chacune reçoit {0}, qui exécute le reste de la chaîne et se résout avec les données, ainsi que le contexte du gestionnaire ({1}). La première entrée est l'enveloppe la plus externe. Appelez {2} pour continuer ou levez une erreur pour interrompre."
+      },
+      "updatedAt": "2026-11-02T12:50:04.224Z"
+    },
+    "ee1db8fcfb25af38": {
+      "hash": "ee1db8fcfb25af38",
+      "source": "Set the request headers",
+      "text": "Définir les en-têtes de la requête",
+      "origin": "mt",
+      "review": "none",
+      "derived": "fresh",
+      "mt": {
+        "model": "anthropic/claude-sonnet-5.5",
+        "promptVersion": "1",
+        "candidate": "Définir les en-têtes de la requête"
+      },
+      "updatedAt": "2026-11-02T12:50:04.224Z"
+    },
+    "eeb5bf5bd20ced26": {
+      "hash": "eeb5bf5bd20ced26",
+      "source": "Watch the video from Alexander Lichter to avoid using useFetch the wrong way",
+      "text": "Regardez la vidéo d'Alexander Lichter pour éviter d'utiliser useFetch de la mauvaise manière",
+      "origin": "mt",
+      "review": "none",
+      "derived": "fresh",
+      "mt": {
+        "model": "anthropic/claude-sonnet-5.5",
+        "promptVersion": "1",
+        "candidate": "Regardez la vidéo d'Alexander Lichter pour éviter d'utiliser useFetch de la mauvaise manière"
+      },
+      "updatedAt": "2026-11-02T12:50:04.224Z"
+    },
+    "f2a0357adad537cc": {
+      "hash": "f2a0357adad537cc",
+      "source": "The above example results in {0}.",
+      "text": "L'exemple ci-dessus produit {0}.",
+      "origin": "mt",
+      "review": "none",
+      "derived": "fresh",
+      "mt": {
+        "model": "anthropic/claude-sonnet-5.5",
+        "promptVersion": "1",
+        "candidate": "L'exemple ci-dessus produit {0}."
+      },
+      "updatedAt": "2026-11-02T12:50:04.224Z"
+    },
+    "f54fbcada4608444": {
+      "hash": "f54fbcada4608444",
+      "source": "HTTP request method.",
+      "text": "Méthode de la requête HTTP.",
+      "origin": "mt",
+      "review": "none",
+      "derived": "fresh",
+      "mt": {
+        "model": "anthropic/claude-sonnet-5.5",
+        "promptVersion": "1",
+        "candidate": "Méthode de la requête HTTP."
+      },
+      "updatedAt": "2026-11-02T12:50:04.224Z"
+    },
+    "f75e08315c4cbf8d": {
+      "hash": "f75e08315c4cbf8d",
+      "source": "Base URL for the request.",
+      "text": "URL de base de la requête.",
+      "origin": "mt",
+      "review": "none",
+      "derived": "fresh",
+      "mt": {
+        "model": "anthropic/claude-sonnet-5.5",
+        "promptVersion": "1",
+        "candidate": "URL de base de la requête."
+      },
+      "updatedAt": "2026-11-02T12:50:04.224Z"
+    },
+    "fcf855dfb18d2dcb": {
+      "hash": "fcf855dfb18d2dcb",
+      "source": "Server engine",
+      "text": "Moteur serveur",
+      "origin": "mt",
+      "review": "none",
+      "derived": "fresh",
+      "mt": {
+        "model": "anthropic/claude-sonnet-5.5",
+        "promptVersion": "1",
+        "candidate": "Moteur serveur"
+      },
+      "updatedAt": "2026-11-02T11:25:09.229Z"
+    },
+    "fd64c164515cf5fd": {
+      "hash": "fd64c164515cf5fd",
+      "source": "Reactive Keys and Shared State",
+      "text": "Clés réactives et état partagé",
+      "origin": "mt",
+      "review": "none",
+      "derived": "fresh",
+      "mt": {
+        "model": "anthropic/claude-sonnet-5.5",
+        "promptVersion": "1",
+        "candidate": "Clés réactives et état partagé"
+      },
+      "updatedAt": "2026-11-02T12:50:04.224Z"
+    }
+  }
+}

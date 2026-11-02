@@ -3,6 +3,7 @@ import type { LLMsSection } from 'nuxt-llms'
 import { agentHowToCall, agentWhenToUse } from './shared/utils/agents'
 import { ARCHIVED_DOC_VERSIONS, CURRENT_DOCS_VERSION, NEXT_DOC_VERSIONS } from './shared/utils/docs'
 import { MODULE_DOCS, MODULE_DOCS_NAMES, moduleDocsPathPrefix } from './shared/utils/module-docs'
+import { L10N_LOCALE_CODES } from './shared/utils/l10n'
 
 const { resolve } = createResolver(import.meta.url)
 
@@ -198,6 +199,8 @@ export default defineNuxtConfig({
     // Lists blog posts and GitHub releases: purged on content push, refreshed hourly for releases.
     '/updates': { isr: 60 * 60 },
     '/docs/**': { isr: CONTENT_ISR },
+    // Localised docs: cached like the English pages, which they are rendered from.
+    ...Object.fromEntries(L10N_LOCALE_CODES.map(locale => [`/${locale}/docs/**`, { isr: CONTENT_ISR }])),
     '/blog': { redirect: { to: '/updates', statusCode: 301 } },
     '/blog/**': { isr: CONTENT_ISR },
     '/deploy': { isr: CONTENT_ISR },
@@ -234,6 +237,9 @@ export default defineNuxtConfig({
     '/mcp/badge.svg': { headers: { 'content-security-policy': 'default-src \'none\'; style-src \'unsafe-inline\'; sandbox' } },
     // Main navigation
     '/api/navigation/**': { isr: CONTENT_ISR },
+    '/api/l10n/*/navigation/**': { isr: CONTENT_ISR },
+    '/api/l10n/*/source/**': { isr: CONTENT_ISR },
+    '/api/l10n/indexable': { isr: CONTENT_ISR },
     '/api/content/blob/**': { isr: true },
     '/api/content/pull/*/*/blob/**': { isr: true },
     '/pull/**': { isr: CONTENT_ISR, robots: 'noindex, nofollow' },

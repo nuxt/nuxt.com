@@ -53,3 +53,23 @@ html.dark .shiki span {
   font-weight: var(--shiki-dark-font-weight) !important;
   text-decoration: var(--shiki-dark-text-decoration) !important;
 }
+
+[data-l10n-show] [data-l10n]::before,
+[data-l10n="pending-review"]::before {
+  content: '';
+  display: inline-block;
+  inline-size: 6px;
+  block-size: 6px;
+  border-radius: 9999px;
+  margin-inline-end: 0.375rem;
+  vertical-align: middle;
+  background-color: var(--l10n-dot, transparent);
+  box-shadow: var(--l10n-ring, none);
+}
+
+[data-l10n="machine"] { --l10n-dot: var(--ui-warning); }
+[data-l10n="pending-review"] { --l10n-dot: var(--ui-warning); --l10n-ring: 0 0 0 2px color-mix(in oklab, var(--ui-warning) 35%, transparent); }
+[data-l10n="edited"] { --l10n-dot: var(--ui-info); }
+[data-l10n="verified"] { --l10n-dot: var(--ui-success); }
+[data-l10n="untranslated"] { --l10n-ring: inset 0 0 0 1px var(--ui-text-dimmed); }
+[data-l10n="rejected"] { --l10n-dot: var(--ui-error); }
