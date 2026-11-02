@@ -103,6 +103,9 @@ describe('isPullContentPage', () => {
     expect(isPullContentPage('/modules/eslint')).toBe(true)
     expect(isPullContentPage('/modules/eslint/config')).toBe(true)
     expect(isPullContentPage('/modules/eslint-module')).toBe(false)
+    expect(isPullContentPage('/modules/image')).toBe(true)
+    expect(isPullContentPage('/modules/image/providers/cloudinary')).toBe(true)
+    expect(isPullContentPage('/modules/imagekit')).toBe(false)
     expect(isPullContentPage('/blogs')).toBe(false)
   })
 
