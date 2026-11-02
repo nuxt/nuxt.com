@@ -820,7 +820,9 @@ export default defineNuxtConfig({
     // The nightly docs version, carried over from the static public/robots.txt
     // this replaces. The agent Allow groups and Content-Signal come from
     // nuxt-agent-discovery through the robots:config hook.
-    disallow: [...NEXT_DOC_VERSIONS.map(version => `/docs/${version}/`), '/pull/']
+    // Country leaderboards: about 2.3k `?period=` × `?country=` pages, each rendered from the database
+    // once an hour per crawl. Their canonical is `/nuxters`.
+    disallow: [...NEXT_DOC_VERSIONS.map(version => `/docs/${version}/`), '/pull/', '/nuxters?*country=']
   },
   schemaOrg: {
     identity: {

@@ -57,6 +57,78 @@ function inPeriod(period: NuxtersPeriod, country?: string | null) {
   )
 }
 
+/**
+ * What a period (and, with `profiles`, its countries) was imported from. Totals and maps scan a whole
+ * period (28k rows for all time) on every page render: they are cached under this version instead,
+ * so an import changes the key and nothing needs purging.
+ */
+function syncVersion(syncs: Array<{ period: string, sha: string }>, period: NuxtersPeriod, profiles: boolean) {
+  const sha = (key: string) => syncs.find(sync => sync.period === key)?.sha ?? 'none'
+  return profiles ? `${sha(period)}-${sha(PROFILES_SYNC_KEY)}` : sha(period)
+}
+
+/** Kept a week: the key changes with every import anyway. */
+const SYNC_CACHE_MAX_AGE = 7 * 24 * 60 * 60
+
+// The event comes first: Nitro only keeps the cache write alive after the response (`waitUntil`) for an event argument.
+const cachedTotals = defineCachedFunction(async (_event: H3Event, period: NuxtersPeriod, country: string | null, _version: string) => {
+  // One indexed scan of the period: contributors and what they made.
+  const [totals] = await db.select({
+    contributors: count(),
+    mergedPullRequests: sum(schema.nuxters.prAll),
+    issues: sum(schema.nuxters.issues),
+    comments: sum(schema.nuxters.comments)
+  }).from(schema.nuxters).where(inPeriod(period, country))
+  // SQLite `SUM` is `NULL` on an empty period, and drizzle returns it as a string.
+  return {
+    contributors: totals?.contributors ?? 0,
+    mergedPullRequests: Number(totals?.mergedPullRequests ?? 0),
+    issues: Number(totals?.issues ?? 0),
+    comments: Number(totals?.comments ?? 0)
+  }
+}, {
+  name: 'nuxters-totals',
+  maxAge: SYNC_CACHE_MAX_AGE,
+  getKey: (_event, period, country, version) => `${period}-${country ?? 'all'}-${version}`
+})
+
+const cachedMap = defineCachedFunction(async (_event: H3Event, period: NuxtersPeriod, _version: string): Promise<NuxtersMap> => {
+  const located = and(eq(schema.nuxters.period, period), isNotNull(schema.nuxterProfiles.country))
+  const ranked = db.select({
+    country: schema.nuxterProfiles.country,
+    username: schema.nuxters.username,
+    position: sql<number>`row_number() over (partition by ${schema.nuxterProfiles.country} order by ${schema.nuxters.rank})`.as('position')
+  }).from(schema.nuxters)
+    .innerJoin(schema.nuxterProfiles, eq(schema.nuxterProfiles.githubId, schema.nuxters.githubId))
+    .where(located)
+    .as('ranked')
+  const [counts, top, [all]] = await Promise.all([
+    db.select({ code: schema.nuxterProfiles.country, count: count() })
+      .from(schema.nuxters)
+      .innerJoin(schema.nuxterProfiles, eq(schema.nuxterProfiles.githubId, schema.nuxters.githubId))
+      .where(located)
+      .groupBy(schema.nuxterProfiles.country)
+      .orderBy(desc(count()), asc(schema.nuxterProfiles.country)),
+    db.select({ country: ranked.country, username: ranked.username }).from(ranked)
+      .where(lte(ranked.position, 3))
+      .orderBy(asc(ranked.position)),
+    db.select({ total: count() }).from(schema.nuxters).where(eq(schema.nuxters.period, period))
+  ])
+  const countries = counts.flatMap(({ code, count }) => code
+    ? [{ code, count, top: top.filter(row => row.country === code).map(row => row.username) }]
+    : [])
+  return {
+    period,
+    total: all?.total ?? 0,
+    located: countries.reduce((sum, country) => sum + country.count, 0),
+    countries
+  }
+}, {
+  name: 'nuxters-map',
+  maxAge: SYNC_CACHE_MAX_AGE,
+  getKey: (_event, period, version) => `${period}-${version}`
+})
+
 export const nuxters = {
   /** All-time profile with every period, by username (case-insensitive). On a clash (renamed account), the best ranked wins. */
   async get(username: string): Promise<NuxterProfile | null> {
@@ -83,8 +155,10 @@ export const nuxters = {
   },
 
   /** `country`: the Nuxters of this ISO code only, still with their rank among everyone. */
-  async list({ period = 'all', country = null, offset = 0, limit = 100 }: { period?: NuxtersPeriod, country?: string | null, offset?: number, limit?: number } = {}): Promise<NuxtersPage> {
-    const [items, [totals], syncs] = await Promise.all([
+  async list(event: H3Event, { period = 'all', country = null, offset = 0, limit = 100 }: { period?: NuxtersPeriod, country?: string | null, offset?: number, limit?: number } = {}): Promise<NuxtersPage> {
+    const allSyncs = await db.select().from(schema.nuxtersSyncs)
+    const syncs = allSyncs.filter(sync => isNuxtersPeriod(sync.period))
+    const [items, { contributors, mergedPullRequests, issues, comments }] = await Promise.all([
       db.select({
         githubId: schema.nuxters.githubId,
         username: schema.nuxters.username,
@@ -95,24 +169,13 @@ export const nuxters = {
         .orderBy(asc(schema.nuxters.rank))
         .limit(limit)
         .offset(offset),
-      // One indexed scan of the period: contributors and what they made.
-      db.select({
-        contributors: count(),
-        mergedPullRequests: sum(schema.nuxters.prAll),
-        issues: sum(schema.nuxters.issues),
-        comments: sum(schema.nuxters.comments)
-      }).from(schema.nuxters).where(inPeriod(period, country)),
-      nuxters.syncs()
+      cachedTotals(event, period, country, syncVersion(allSyncs, period, Boolean(country)))
     ])
-    // SQLite `SUM` is `NULL` on an empty period, and drizzle returns it as a string.
-    const mergedPullRequests = Number(totals?.mergedPullRequests ?? 0)
-    const issues = Number(totals?.issues ?? 0)
-    const comments = Number(totals?.comments ?? 0)
     return {
       period,
       country,
       periods: sortNuxtersPeriods(syncs.filter(sync => sync.count > 0).map(sync => sync.period)),
-      total: totals?.contributors ?? 0,
+      total: contributors,
       totals: {
         contributions: mergedPullRequests + issues + comments,
         mergedPullRequests,
@@ -128,37 +191,9 @@ export const nuxters = {
    * The Nuxters of a period by country, with the 3 best ranked of each.
    * Only profiles with a location GitHub resolved to a country are counted.
    */
-  async map(period: NuxtersPeriod = 'all'): Promise<NuxtersMap> {
-    const located = and(eq(schema.nuxters.period, period), isNotNull(schema.nuxterProfiles.country))
-    const ranked = db.select({
-      country: schema.nuxterProfiles.country,
-      username: schema.nuxters.username,
-      position: sql<number>`row_number() over (partition by ${schema.nuxterProfiles.country} order by ${schema.nuxters.rank})`.as('position')
-    }).from(schema.nuxters)
-      .innerJoin(schema.nuxterProfiles, eq(schema.nuxterProfiles.githubId, schema.nuxters.githubId))
-      .where(located)
-      .as('ranked')
-    const [counts, top, [all]] = await Promise.all([
-      db.select({ code: schema.nuxterProfiles.country, count: count() })
-        .from(schema.nuxters)
-        .innerJoin(schema.nuxterProfiles, eq(schema.nuxterProfiles.githubId, schema.nuxters.githubId))
-        .where(located)
-        .groupBy(schema.nuxterProfiles.country)
-        .orderBy(desc(count()), asc(schema.nuxterProfiles.country)),
-      db.select({ country: ranked.country, username: ranked.username }).from(ranked)
-        .where(lte(ranked.position, 3))
-        .orderBy(asc(ranked.position)),
-      db.select({ total: count() }).from(schema.nuxters).where(eq(schema.nuxters.period, period))
-    ])
-    const countries = counts.flatMap(({ code, count }) => code
-      ? [{ code, count, top: top.filter(row => row.country === code).map(row => row.username) }]
-      : [])
-    return {
-      period,
-      total: all?.total ?? 0,
-      located: countries.reduce((sum, country) => sum + country.count, 0),
-      countries
-    }
+  async map(event: H3Event, period: NuxtersPeriod = 'all'): Promise<NuxtersMap> {
+    const syncs = await db.select({ period: schema.nuxtersSyncs.period, sha: schema.nuxtersSyncs.sha }).from(schema.nuxtersSyncs)
+    return cachedMap(event, period, syncVersion(syncs, period, true))
   },
 
   /**

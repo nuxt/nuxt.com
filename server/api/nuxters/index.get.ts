@@ -12,5 +12,5 @@ export default defineEventHandler(async (event) => {
 
   // Data changes once a day: let the CDN absorb the "Show more" traffic.
   setResponseHeader(event, 'cache-control', 'public, max-age=0, s-maxage=600, stale-while-revalidate=3600')
-  return nuxters.list({ period, country, offset, limit })
+  return nuxters.list(event, { period, country, offset, limit })
 })
