@@ -11,8 +11,7 @@ export const MODULE_DOCS = {
   fonts: { title: 'Nuxt Fonts', repo: 'nuxt/fonts', branch: 'main', contentDir: 'docs', envOverride: 'NUXT_FONTS_PATH' },
   hints: { title: 'Nuxt Hints', repo: 'nuxt/hints', branch: 'main', contentDir: 'docs', envOverride: 'NUXT_HINTS_PATH' },
   eslint: { title: 'Nuxt ESLint', repo: 'nuxt/eslint', branch: 'main', contentDir: 'docs', envOverride: 'NUXT_ESLINT_PATH' },
-  // TODO: back to `main` once nuxt/image's `docs/nuxt-com` branch is merged.
-  image: { title: 'Nuxt Image', repo: 'nuxt/image', branch: 'docs/nuxt-com', contentDir: 'docs', envOverride: 'NUXT_IMAGE_PATH' }
+  image: { title: 'Nuxt Image', repo: 'nuxt/image', branch: 'main', contentDir: 'docs', envOverride: 'NUXT_IMAGE_PATH' }
 } as const satisfies Record<string, {
   /** Names the docs where the registry data is not at hand: `/llms.txt` sections. */
   title: string
