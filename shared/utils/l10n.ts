@@ -224,9 +224,7 @@ export const L10N_STRINGS = {
     reviewed: (share: number) => `${Math.floor(share * 100)}\u202F% relue`,
     pending: 'Des passages attendent une relecture.',
     viewInEnglish: 'Voir en anglais',
-    alwaysEnglish: 'Toujours en anglais',
-    showStatus: 'Afficher l\'état de la traduction',
-    hideStatus: 'Masquer l\'état de la traduction',
+    showStatus: 'État de la traduction',
     improve: 'Améliorer cette traduction',
     source: 'Texte anglais',
     loading: 'Chargement…',
@@ -254,9 +252,6 @@ export function localeLinks(path: string): Array<{ locale: L10nLocale, label: st
     to: localisePath(locale, path)
   }))
 }
-
-/** Cookie holding a reader's choice of English, set by "Always English". */
-export const L10N_PREFERENCE_COOKIE = 'docs-language'
 
 /** Where translators improve a segment. */
 export function l10nImproveUrl(locale: L10nLocale, hash: string): string {

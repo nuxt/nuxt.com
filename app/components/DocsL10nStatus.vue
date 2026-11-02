@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { L10N_PREFERENCE_COOKIE, L10N_STRINGS, l10nImproveUrl, l10nSourcePath, reviewedShare, type L10nPageMeta, type L10nSegmentSource } from '#shared/utils/l10n'
+import { L10N_STRINGS, l10nImproveUrl, l10nSourcePath, reviewedShare, type L10nPageMeta, type L10nSegmentSource } from '#shared/utils/l10n'
 
 const props = defineProps<{
   meta: L10nPageMeta
@@ -15,13 +15,6 @@ const strings = computed(() => L10N_STRINGS[props.meta.locale])
 const coverage = computed(() => props.meta.coverage)
 const machine = computed(() => (coverage.value.byStatus.machine ?? 0) + (coverage.value.byStatus['pending-review'] ?? 0) > 0)
 const pending = computed(() => (coverage.value.byStatus['pending-review'] ?? 0) > 0)
-
-const preference = useCookie(L10N_PREFERENCE_COOKIE, { maxAge: 60 * 60 * 24 * 365, sameSite: 'lax' })
-
-function alwaysEnglish() {
-  preference.value = 'en'
-  window.location.assign(props.path)
-}
 
 const reference = ref<HTMLElement>()
 const open = ref(false)
@@ -64,15 +57,12 @@ const status = computed(() => (source.value?.status ?? reference.value?.dataset.
 
 <template>
   <div class="not-prose flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-muted mb-6" data-l10n-summary>
-    <span>
+    <span class="basis-full sm:basis-auto">
       {{ machine ? strings.machine : strings.reviewedTranslation }}, {{ strings.reviewed(reviewedShare(coverage)) }}
     </span>
     <span v-if="pending" class="text-warning">{{ strings.pending }}</span>
-    <a :href="path" lang="en" class="text-highlighted underline underline-offset-2">{{ strings.viewInEnglish }}</a>
-    <button type="button" lang="en" class="underline underline-offset-2 hover:text-highlighted" @click="alwaysEnglish">
-      {{ strings.alwaysEnglish }}
-    </button>
-    <USwitch v-model="show" size="xs" :label="show ? strings.hideStatus : strings.showStatus" class="ms-auto" />
+    <a :href="path" hreflang="en" class="text-highlighted underline underline-offset-2">{{ strings.viewInEnglish }}</a>
+    <USwitch v-model="show" size="xs" :label="strings.showStatus" class="ms-auto" />
 
     <ClientOnly>
       <UPopover
