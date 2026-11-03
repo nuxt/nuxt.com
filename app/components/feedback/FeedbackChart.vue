@@ -205,18 +205,21 @@ const comparisonChartData = computed(() => {
   }
 
   // `UChart` positions bars by label, so truncated titles must stay unique
-  const seen = new Map<string, number>()
+  const labels = new Set<string>()
 
   return props.pageAnalytics
     .filter(p => p && selectedPagePaths.value.includes(p.path))
     .map((page) => {
       const title = page.lastFeedback?.title || page.path
       const shortTitle = title.length > 15 ? title.substring(0, 15) + '...' : title
-      const count = (seen.get(shortTitle) || 0) + 1
-      seen.set(shortTitle, count)
+      let label = shortTitle
+      for (let count = 2; labels.has(label); count++) {
+        label = `${shortTitle} (${count})`
+      }
+      labels.add(label)
 
       return {
-        page: count > 1 ? `${shortTitle} (${count})` : shortTitle,
+        page: label,
         positive: page.positive,
         negative: page.negative
       }
