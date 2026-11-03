@@ -173,4 +173,10 @@ describe('localiseNavigation', () => {
     expect(localiseLabel('Get Started', emptyBundle('fr'))).toBe('Get Started')
     expect(localiseLabel('No such label', bundle())).toBe('No such label')
   })
+
+  it('should keep a label whose translation was rejected', () => {
+    const hash = 'c778a5039e0ca98f'
+    const rejected = bundle({ [hash]: { ...raw.records[hash], review: 'rejected', rejectedBy: { by: 'danielroe', at: '2026-11-02T00:00:00.000Z' } } })
+    expect(localiseLabel('Get Started', rejected)).toBe('Get Started')
+  })
 })
