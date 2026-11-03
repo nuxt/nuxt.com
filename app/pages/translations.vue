@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { SegmentStatus } from '@diglot/core'
-import { L10N_STATUS_PATH, L10N_STRINGS, type L10nLocale, type L10nLocaleSummary } from '#shared/utils/l10n'
+import { L10N_STATUS_PATH, L10N_STRINGS, type L10nLocaleSummary } from '#shared/utils/l10n'
 
 const { data } = await useFetch<{ locales: L10nLocaleSummary[] }>(L10N_STATUS_PATH, { key: 'l10n-status', default: () => ({ locales: [] }) })
 
@@ -19,22 +19,6 @@ const STATUSES: Array<{ status: SegmentStatus, label: string, color: string }> =
 
 const percent = (value?: number) => value === undefined ? 'n/a' : `${Math.round(value * 100)}%`
 const share = (locale: L10nLocaleSummary, status: SegmentStatus) => locale.coverage.words ? (locale.coverage.byStatus[status] ?? 0) / locale.coverage.words : 0
-
-const { user } = useUserSession()
-const toast = useToast()
-const proposing = ref<L10nLocale>()
-
-async function propose(locale: L10nLocale) {
-  proposing.value = locale
-  try {
-    const { pull } = await $fetch<{ pull: { url: string, number: number } }>(`/api/l10n/${locale}/governance`, { method: 'POST' })
-    toast.add({ title: `Opened #${pull.number}`, description: pull.url, color: 'success' })
-  } catch (error) {
-    toast.add({ title: 'Could not open the pull request', description: (error as { statusMessage?: string }).statusMessage, color: 'error' })
-  } finally {
-    proposing.value = undefined
-  }
-}
 </script>
 
 <template>
@@ -57,7 +41,6 @@ async function propose(locale: L10nLocale) {
             variant="subtle"
             icon="i-lucide-scale"
             :description="locale.recommendation.reason"
-            :actions="user?.role === 'admin' ? [{ label: 'Open the pull request', loading: proposing === locale.locale, onClick: () => propose(locale.locale) }] : undefined"
           />
 
           <div class="grid grid-cols-2 md:grid-cols-4 gap-4">

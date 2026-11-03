@@ -2,8 +2,7 @@ import { readFileSync } from 'node:fs'
 import { describe, expect, it } from 'vitest'
 import { createBundle } from '../../server/utils/l10n/bundle'
 import type { SourceManifest } from '../../server/utils/l10n/coverage'
-import { dryRunGit } from '../../server/utils/l10n/git'
-import { localeStatus, proposeMachineSwitch } from '../../server/utils/l10n/status'
+import { localeStatus } from '../../server/utils/l10n/status'
 
 const fixture = (file: string) => JSON.parse(readFileSync(new URL(`../fixtures/l10n/${file}`, import.meta.url), 'utf8'))
 const records = (fixture('fr.json') as { records: Record<string, Record<string, unknown>> }).records
@@ -110,31 +109,5 @@ describe('localeStatus', () => {
   it('should not recommend switching machine translation on while the approval rate is too low', () => {
     expect(status(reviewedRecords(50, 19), false).recommendation).toBeUndefined()
     expect(status(reviewedRecords(50, 20), false).recommendation?.machine).toBe(true)
-  })
-})
-
-describe('proposeMachineSwitch', () => {
-  it('should open one pull request changing the locale switch and keeping the rest of the file', async () => {
-    const files: Record<string, string> = { 'fr/locale.yml': '# French\nmt:\n  enabled: true\ngovernance:\n  activeReviewers: []\n' }
-    const git = dryRunGit({ head: async branch => branch === 'main' ? 'base' : undefined, read: async (_, path) => files[path] })
-    const input = { locale: 'fr' as const, machine: false, reason: 'No reviewer in 8 weeks.', admin: { login: 'danielroe', id: 28706372 } }
-
-    const pull = await proposeMachineSwitch(git, input)
-    expect(git.log.commits[0]).toMatchObject({
-      parent: 'base',
-      message: 'chore(fr): switch machine translation off\n\nNo reviewer in 8 weeks.',
-      files: [{ path: 'fr/locale.yml', content: '# French\nmt:\n  enabled: false\ngovernance:\n  activeReviewers: []\n' }],
-      author: { name: 'danielroe' }
-    })
-    expect(git.log.pulls).toMatchObject([{ branch: 'governance/fr/mt-off', title: 'chore(fr): switch machine translation off' }])
-
-    expect(await proposeMachineSwitch(git, input)).toEqual(pull)
-    expect(git.log.pulls).toHaveLength(1)
-  })
-
-  it('should create the locale file when there is none', async () => {
-    const git = dryRunGit({ head: async () => 'base', read: async () => undefined })
-    await proposeMachineSwitch(git, { locale: 'fr', machine: true, reason: 'Reviewers are active.', admin: { login: 'danielroe', id: 1 } })
-    expect(git.log.commits[0]!.files).toEqual([{ path: 'fr/locale.yml', content: 'mt:\n  enabled: true\n' }])
   })
 })
