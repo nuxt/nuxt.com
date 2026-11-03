@@ -191,14 +191,14 @@ importers:
         specifier: ^0.8.1
         version: 0.8.1(@nuxt/schema@4.6.4)(confbox@0.3.2)(dotenv@17.4.2)(giget@3.3.1)(jiti@2.7.0)(magic-string@1.4.5)(mlly@1.8.2)(nuxt@4.6.4(8adf95bd70a3adbb8f39cc39e851cf37))(oxc-parser@0.153.0)(rangi@2.2.0)(rolldown@1.2.14)(shiki@4.5.0)(unplugin@3.7.0(esbuild@0.28.2)(rolldown@1.2.14)(rollup@4.67.4)(vite@8.3.5(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1)))(vue@3.5.44(typescript@6.0.3))
       '@diglot/comark':
-        specifier: ^0.1.3
-        version: 0.1.3(rangi@2.2.0)(shiki@4.5.0)
+        specifier: ^0.1.4
+        version: 0.1.4(rangi@2.2.0)(shiki@4.5.0)
       '@diglot/core':
-        specifier: ^0.1.3
-        version: 0.1.3
+        specifier: ^0.1.4
+        version: 0.1.4
       '@diglot/store':
-        specifier: ^0.1.3
-        version: 0.1.3
+        specifier: ^0.1.4
+        version: 0.1.4
       '@iconify-json/circle-flags':
         specifier: ^1.2.14
         version: 1.2.14
@@ -806,20 +806,20 @@ packages:
     peerDependencies:
       devframe: 1.1.0
 
-  '@diglot/code@0.1.3':
-    resolution: {integrity: sha512-PF1krxEWgyj5rdgzufahuMrKhEQqA87T4KfboV3FEjm0tLceOa8v3hbgUjLN+wwV4mMq1HYbVLYk1kdyF5zdQQ==}
+  '@diglot/code@0.1.4':
+    resolution: {integrity: sha512-kCMN7uAUMNw0pNx7k2th+YWN632d71A/dUW24fLsycL/5vKU3R/MxC1JbOjrVqlFL2Y78gFiSssyPqFZhNZGSQ==}
     engines: {node: '>=22'}
 
-  '@diglot/comark@0.1.3':
-    resolution: {integrity: sha512-P29zHsm8ew8BMPLw68R+8LvXIe1jKbLD+45TcJZrnO8V8qxq6/b46BurEM99/cm9pV0Gf81q6CG6Q2U6PvShlA==}
+  '@diglot/comark@0.1.4':
+    resolution: {integrity: sha512-/9yg7WQwoRZy0dLcwgSoG8uGiWcqgDLPe3Y1xHXAgWSOtumm0uN5Z+gZGff8xtjcS/Zur2oo76euVb6jkAEuBQ==}
     engines: {node: '>=22'}
 
-  '@diglot/core@0.1.3':
-    resolution: {integrity: sha512-ONZh844AM5dQo2TS+tO8if6AuOGA8W3ioOPrCSZPoUn9K+CDtrckUnJ1d2jgS4kvCan67l/2nYmCLQaO+viARQ==}
+  '@diglot/core@0.1.4':
+    resolution: {integrity: sha512-REeebRuleuUycfyBFff6myhTAucTiRZlNz8N0VQ+wESNdRFKzh6T1Vyse7Z0robWKKTDiM2aVZT0IDylJvr4NA==}
     engines: {node: '>=22'}
 
-  '@diglot/store@0.1.3':
-    resolution: {integrity: sha512-rQ7m6XV7vtEuRDC8Tr+1cyhMBG6EWWsD6b3sLWK3AaRZGQOZeUqKtfN6N8YHeSR4W3KxeFLmiCkYzf//caHJYw==}
+  '@diglot/store@0.1.4':
+    resolution: {integrity: sha512-bIriVjIkp+xHfYBS0ECj3oL+EWDCCwn92AZwmed0wuqmAG2B3KoFspGXA5Vs0cnnPz40roR8LaeO8zGBvlrPbA==}
     engines: {node: '>=22.18.0'}
 
   '@discordjs/builders@1.14.1':
@@ -11777,14 +11777,14 @@ snapshots:
       - crossws
       - ocache
 
-  '@diglot/code@0.1.3':
+  '@diglot/code@0.1.4':
     dependencies:
-      '@diglot/core': 0.1.3
+      '@diglot/core': 0.1.4
 
-  '@diglot/comark@0.1.3(rangi@2.2.0)(shiki@4.5.0)':
+  '@diglot/comark@0.1.4(rangi@2.2.0)(shiki@4.5.0)':
     dependencies:
-      '@diglot/code': 0.1.3
-      '@diglot/core': 0.1.3
+      '@diglot/code': 0.1.4
+      '@diglot/core': 0.1.4
       comark: 0.8.1(rangi@2.2.0)(shiki@4.5.0)
       yaml: 2.9.1
     transitivePeerDependencies:
@@ -11793,13 +11793,13 @@ snapshots:
       - rangi
       - shiki
 
-  '@diglot/core@0.1.3':
+  '@diglot/core@0.1.4':
     dependencies:
       fastest-levenshtein: 1.0.16
 
-  '@diglot/store@0.1.3':
+  '@diglot/store@0.1.4':
     dependencies:
-      '@diglot/core': 0.1.3
+      '@diglot/core': 0.1.4
       pathe: 2.0.3
       yaml: 2.9.1
 
