@@ -29,7 +29,7 @@ export default defineEventHandler(async (event): Promise<L10nSaveResult> => {
     throw createError({ statusCode: 404, statusMessage: 'Page not found' })
   }
 
-  await consumeL10nSave(kv, user.id, changes.length)
+  await consumeL10nSave(db, user.id, changes.length)
 
   const [role, file] = await Promise.all([
     l10nRole(user, locale),

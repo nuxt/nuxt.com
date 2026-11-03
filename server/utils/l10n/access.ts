@@ -12,12 +12,6 @@ const TRANSLATORS_ORG = 'nuxt'
 /** How long a role shown in the editor is reused; saves always ask GitHub. */
 const ROLE_TTL = 5 * 60_000
 
-/** Saves per user per hour. */
-const SAVES_PER_HOUR = 60
-
-/** Changed segments per user per hour, across saves. */
-const CHANGES_PER_HOUR = 1000
-
 const RECORD_PATH_RE = /^([^/]+)\/segments\/[0-9a-f]{2}\/([0-9a-f]{16})\.json$/
 
 /** The team whose members commit `locale`'s translations: `translators-fr`. */
@@ -77,22 +71,4 @@ export async function l10nRole(user: { username: string, role: string }, locale:
   const role: L10nRole = member ? 'translator' : 'suggester'
   roles.set(key, { role, expiresAt: Date.now() + ROLE_TTL })
   return role
-}
-
-/** The store counting saves: NuxtHub KV in the app, a map in tests. */
-export interface CounterStore {
-  get: (key: string) => Promise<unknown>
-  set: (key: string, value: number, options: { ttl: number }) => Promise<unknown>
-}
-
-/** Count one save of `changes` segments by `userId`. Throws a 429 past either hourly allowance. */
-export async function consumeL10nSave(store: CounterStore, userId: string, changes: number, now = Date.now()): Promise<void> {
-  const hour = Math.floor(now / 3_600_000)
-  const savesKey = `l10n:saves:${userId}:${hour}`
-  const changesKey = `l10n:changes:${userId}:${hour}`
-  const [saves, changed] = await Promise.all([savesKey, changesKey].map(async key => Number(await store.get(key) ?? 0)))
-  if (saves! >= SAVES_PER_HOUR || changed! + changes > CHANGES_PER_HOUR) {
-    throw createError({ statusCode: 429, statusMessage: 'Too many saves: try again within the hour' })
-  }
-  await Promise.all([store.set(savesKey, saves! + 1, { ttl: 3600 }), store.set(changesKey, changed! + changes, { ttl: 3600 })])
 }
