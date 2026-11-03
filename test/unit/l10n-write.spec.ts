@@ -10,6 +10,7 @@ import { createGitHubApp, githubTranslationsGit, isGitHubTeamMember } from '../.
 import { commitChanges, L10nChangeError, L10nConflictError, pageSegments, planChanges, readRecordsAt, suggestChanges, suggestionBranch } from '../../server/utils/l10n/write'
 import { openSuggestions, suggestionsFor } from '../../server/utils/l10n/suggestions'
 import { createBuildInstance } from '../../utils/factory'
+import type { L10nChange } from '../../shared/utils/l10n'
 import { createFakeGitHub, FAKE_BOT, FAKE_INSTALLATION_TOKEN } from '../utils/fake-github'
 
 const FIXTURES = fileURLToPath(new URL('../fixtures/l10n/', import.meta.url))
@@ -35,8 +36,13 @@ beforeAll(async () => {
 })
 
 const current = (...hashes: string[]) => new Map(hashes.map(hash => [hash, records[hash]]))
-const plan = (changes: Parameters<typeof planChanges>[0]['changes'], options: Partial<Parameters<typeof planChanges>[0]> = {}) =>
-  planChanges({ locale: 'fr', segments, current: current(FIRST_PARAGRAPH, TIP, HEADING), changes, translator, now: NOW, ...options })
+/** `changes` made against `published`, the fixture records by default. */
+const withBase = (changes: Array<Omit<L10nChange, 'base'>>, published: Map<string, TranslationRecord | undefined> = current(FIRST_PARAGRAPH, TIP, HEADING)): L10nChange[] =>
+  changes.map(change => ({ ...change, base: published.get(change.hash)?.text ?? null }))
+const plan = (changes: Array<Omit<L10nChange, 'base'>>, options: Partial<Parameters<typeof planChanges>[0]> = {}) => {
+  const input = { locale: 'fr' as const, segments, current: current(FIRST_PARAGRAPH, TIP, HEADING), translator, now: NOW, ...options }
+  return planChanges({ ...input, changes: withBase(changes, input.published ?? input.current) })
+}
 
 /** Files of the fixture repository: the records of the introduction. */
 const repositoryFiles = () => Object.fromEntries([FIRST_PARAGRAPH, TIP, HEADING].map(hash => [recordPath('fr', hash), serialiseRecord(records[hash]!)]))
@@ -157,6 +163,24 @@ describe('planChanges', () => {
     expect(plan([{ hash: TIP, action: 'verify' }], { current: new Map([[TIP, broken]]) }).issues[0]?.code).toBe('invalid')
   })
 
+  it('should refuse changes made against a translation that has since changed', () => {
+    const edited = { ...records[TIP]!, text: 'Testez Nuxt {0}en ligne{/0}.', origin: 'human' as const, review: 'edited' as const, by: 'someone' }
+    const { files, issues } = planChanges({
+      locale: 'fr',
+      segments,
+      current: new Map([[TIP, edited], [HEADING, records[HEADING]]]),
+      changes: [
+        { hash: TIP, action: 'verify', base: records[TIP]!.text },
+        { hash: HEADING, action: 'reject', base: records[HEADING]!.text },
+        { hash: FIRST_PARAGRAPH, action: 'edit', text: FIRST_TEXT, base: records[FIRST_PARAGRAPH]!.text }
+      ],
+      translator,
+      now: NOW
+    })
+    expect(files).toHaveLength(1)
+    expect(issues.map(issue => [issue.hash, issue.code])).toEqual([[TIP, 'stale'], [FIRST_PARAGRAPH, 'stale']])
+  })
+
   it('should let suggestions edit and reject, but not verify', () => {
     const { issues, files } = plan([
       { hash: FIRST_PARAGRAPH, action: 'edit', text: FIRST_TEXT },
@@ -185,11 +209,11 @@ describe('commitChanges (dry run)', () => {
       page: PAGE,
       segments,
       translator,
-      changes: [
+      changes: withBase([
         { hash: FIRST_PARAGRAPH, action: 'edit', text: FIRST_TEXT },
         { hash: TIP, action: 'verify' },
         { hash: HEADING, action: 'reject' }
-      ]
+      ])
     })
 
     expect(git.log.commits).toHaveLength(1)
@@ -217,7 +241,7 @@ describe('commitChanges (dry run)', () => {
       page: PAGE,
       segments,
       translator,
-      changes: [{ hash: TIP, action: 'verify' }, { hash: FIRST_PARAGRAPH, action: 'edit', text: 'Nuxt.' }]
+      changes: withBase([{ hash: TIP, action: 'verify' }, { hash: FIRST_PARAGRAPH, action: 'edit', text: 'Nuxt.' }])
     })
     await expect(save).rejects.toBeInstanceOf(L10nChangeError)
     await expect(save).rejects.toMatchObject({ issues: [{ hash: FIRST_PARAGRAPH, code: 'invalid' }] })
@@ -230,14 +254,14 @@ describe('suggestChanges (dry run)', () => {
     const git = dryRunGit(fixtureRepository())
     const input = { locale: 'fr' as const, page: PAGE, segments, translator: { login: 'contributor', id: 1 } }
 
-    const first = await suggestChanges(git, { ...input, changes: [{ hash: FIRST_PARAGRAPH, action: 'edit', text: FIRST_TEXT }] })
+    const first = await suggestChanges(git, { ...input, changes: withBase([{ hash: FIRST_PARAGRAPH, action: 'edit', text: FIRST_TEXT }]) })
     expect(first.branch).toBe('suggest/contributor/fr')
     expect(first.pull).toEqual({ number: 1, url: 'dry-run://pull/1' })
     expect(git.log.commits[0]!.parent).toBe('base')
     expect(git.log.commits[0]!.message).toBe(`chore(fr): edit 1 on ${PAGE}\n\nSuggested on nuxt.com by @contributor.`)
     expect(git.log.pulls).toMatchObject([{ branch: 'suggest/contributor/fr', title: 'chore(fr): suggestions from @contributor' }])
 
-    const second = await suggestChanges(git, { ...input, changes: [{ hash: TIP, action: 'edit', text: 'Essayez Nuxt {0}en ligne{/0}.' }] })
+    const second = await suggestChanges(git, { ...input, changes: withBase([{ hash: TIP, action: 'edit', text: 'Essayez Nuxt {0}en ligne{/0}.' }]) })
     expect(second.pull).toEqual(first.pull)
     expect(git.log.commits[1]!.parent).toBe(first.sha)
     expect(git.log.pulls).toHaveLength(1)
@@ -247,8 +271,8 @@ describe('suggestChanges (dry run)', () => {
   it('should list the suggested translations of a page', async () => {
     const git = dryRunGit(fixtureRepository())
     const input = { locale: 'fr' as const, page: PAGE, segments }
-    await suggestChanges(git, { ...input, translator: { login: 'contributor', id: 1 }, changes: [{ hash: FIRST_PARAGRAPH, action: 'edit', text: FIRST_TEXT }] })
-    await suggestChanges(git, { ...input, translator: { login: 'other', id: 2 }, changes: [{ hash: FIRST_PARAGRAPH, action: 'edit', text: 'Nuxt est un framework {0}libre{/0} pour {1}Vue.js{/1}.' }, { hash: HEADING, action: 'reject' }] })
+    await suggestChanges(git, { ...input, translator: { login: 'contributor', id: 1 }, changes: withBase([{ hash: FIRST_PARAGRAPH, action: 'edit', text: FIRST_TEXT }]) })
+    await suggestChanges(git, { ...input, translator: { login: 'other', id: 2 }, changes: withBase([{ hash: FIRST_PARAGRAPH, action: 'edit', text: 'Nuxt est un framework {0}libre{/0} pour {1}Vue.js{/1}.' }, { hash: HEADING, action: 'reject' }]) })
 
     const suggestions = await suggestionsFor(git, 'fr', [FIRST_PARAGRAPH, TIP, HEADING])
     expect(Object.keys(suggestions).sort()).toEqual([FIRST_PARAGRAPH, HEADING].sort())
@@ -261,7 +285,7 @@ describe('suggestChanges (dry run)', () => {
 
   it('should refuse to verify as a suggestion', async () => {
     const git = dryRunGit(fixtureRepository())
-    await expect(suggestChanges(git, { locale: 'fr', page: PAGE, segments, translator, changes: [{ hash: TIP, action: 'verify' }] }))
+    await expect(suggestChanges(git, { locale: 'fr', page: PAGE, segments, translator, changes: withBase([{ hash: TIP, action: 'verify' }]) }))
       .rejects.toMatchObject({ issues: [{ code: 'not-allowed' }] })
   })
 })
@@ -283,7 +307,7 @@ describe('GitHub App', () => {
     page: PAGE,
     segments,
     translator,
-    changes: [{ hash: FIRST_PARAGRAPH, action: 'edit', text: FIRST_TEXT }, { hash: HEADING, action: 'reject' }]
+    changes: withBase([{ hash: FIRST_PARAGRAPH, action: 'edit', text: FIRST_TEXT }, { hash: HEADING, action: 'reject' }])
   })
 
   it('should commit on main as the translator, with the App as committer', async () => {
@@ -358,12 +382,12 @@ describe('GitHub App', () => {
     const input = { locale: 'fr' as const, page: PAGE, segments, translator: { login: 'contributor', id: 1 } }
     const branch = suggestionBranch('contributor', 'fr')
 
-    const first = await suggestChanges(git, { ...input, changes: [{ hash: FIRST_PARAGRAPH, action: 'edit', text: FIRST_TEXT }] })
+    const first = await suggestChanges(git, { ...input, changes: withBase([{ hash: FIRST_PARAGRAPH, action: 'edit', text: FIRST_TEXT }]) })
     expect(github.git(['rev-parse', branch])).toBe(first.sha)
     expect(github.pulls).toMatchObject([{ number: 1, head: branch, base: 'main', state: 'open' }])
     expect(first.pull?.url).toBe('https://github.com/nuxt/translations/pull/1')
 
-    const second = await suggestChanges(git, { ...input, changes: [{ hash: TIP, action: 'edit', text: 'Essayez Nuxt {0}en ligne{/0}.' }, { hash: HEADING, action: 'reject' }] })
+    const second = await suggestChanges(git, { ...input, changes: withBase([{ hash: TIP, action: 'edit', text: 'Essayez Nuxt {0}en ligne{/0}.' }, { hash: HEADING, action: 'reject' }]) })
     expect(github.git(['rev-parse', `${second.sha}^`])).toBe(first.sha)
     expect(github.pulls).toHaveLength(1)
 
@@ -375,8 +399,11 @@ describe('GitHub App', () => {
       [HEADING]: [pull]
     })
 
+    await expect(suggestChanges(git, { ...input, changes: [{ hash: TIP, action: 'reject', base: 'Essayez Nuxt {0}en ligne{/0}.' }] }))
+      .rejects.toMatchObject({ issues: [{ hash: TIP, code: 'stale' }] })
+
     github.pulls[0]!.state = 'closed'
-    const third = await suggestChanges(git, { ...input, changes: [{ hash: TIP, action: 'edit', text: 'Testez Nuxt {0}en ligne{/0}.' }] })
+    const third = await suggestChanges(git, { ...input, changes: withBase([{ hash: TIP, action: 'edit', text: 'Testez Nuxt {0}en ligne{/0}.' }]) })
     expect(github.git(['rev-parse', `${third.sha}^`])).toBe(github.git(['rev-parse', 'main']))
     expect(github.pulls.map(pull => pull.number)).toEqual([1, 2])
   })
@@ -384,7 +411,7 @@ describe('GitHub App', () => {
   it('should only list suggestions from branches of the translations repository', async () => {
     const record = { ...records[TIP]!, text: 'Faux {0}texte{/0}.', origin: 'human', review: 'edited', by: 'danielroe' }
     github.openForkPull('someone/translations', suggestionBranch('danielroe', 'fr'), recordPath('fr', TIP), serialiseRecord(parseRecord(record)))
-    await suggestChanges(git, { locale: 'fr', page: PAGE, segments, translator: { login: 'contributor', id: 1 }, changes: [{ hash: HEADING, action: 'reject' }] })
+    await suggestChanges(git, { locale: 'fr', page: PAGE, segments, translator: { login: 'contributor', id: 1 }, changes: withBase([{ hash: HEADING, action: 'reject' }]) })
 
     expect((await git.listPulls()).map(pull => pull.branch)).toEqual([suggestionBranch('contributor', 'fr')])
     expect(Object.keys(await suggestionsFor(git, 'fr', [TIP, HEADING]))).toEqual([HEADING])

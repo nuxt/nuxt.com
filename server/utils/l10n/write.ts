@@ -27,6 +27,8 @@ export interface PlanInput {
   segments: Map<string, Segment>
   /** The current record of each changed segment, `undefined` for an untranslated one. */
   current: Map<string, TranslationRecord | undefined>
+  /** The published record of each changed segment, when the changes go on another branch. Defaults to `current`. */
+  published?: Map<string, TranslationRecord | undefined>
   changes: L10nChange[]
   translator: L10nTranslator
   /** Suggestions edit or reject: verifying belongs to the locale's team. */
@@ -52,7 +54,7 @@ export function translatorAuthor(translator: L10nTranslator): GitAuthor {
  * - `reject` keeps the text and marks it rejected, so the page shows the English source and
  *   machine translation leaves the segment alone; an edit clears it
  */
-export function planChanges({ locale, segments, current, changes, translator, suggestion = false, now = new Date() }: PlanInput): L10nPlan {
+export function planChanges({ locale, segments, current, published = current, changes, translator, suggestion = false, now = new Date() }: PlanInput): L10nPlan {
   const plan: L10nPlan = { files: [], records: new Map(), counts: {}, issues: [] }
   const at = now.toISOString()
   const issue = (hash: string, code: L10nChangeIssue['code'], message: string, errors?: ValidationIssue[]) => {
@@ -72,6 +74,10 @@ export function planChanges({ locale, segments, current, changes, translator, su
     }
     if (suggestion && action === 'verify') {
       issue(hash, 'not-allowed', `Only members of the ${locale} translators team can verify translations.`)
+      continue
+    }
+    if ((published.get(hash)?.text ?? null) !== change.base) {
+      issue(hash, 'stale', 'The translation changed since this change was made: review it again.')
       continue
     }
 
@@ -198,12 +204,16 @@ function commitMessage(locale: L10nLocale, page: string, counts: L10nPlan['count
  * Read the current records, plan, commit on top of `parent()` and move `branch` there.
  * Retried once when the branch moved in between.
  */
-async function commitPlan(git: TranslationsGit, input: SaveInput, branch: string, parent: () => Promise<{ sha: string, force: boolean }>, suggestion: boolean): Promise<SaveResult> {
+async function commitPlan(git: TranslationsGit, input: SaveInput, branch: string, parent: () => Promise<{ sha: string, force: boolean, published?: string }>, suggestion: boolean): Promise<SaveResult> {
   const hashes = [...new Set(input.changes.map(change => change.hash))]
 
   for (let attempt = 0; ; attempt++) {
     const base = await parent()
-    const plan = planChanges({ ...input, current: await readRecordsAt(git, base.sha, input.locale, hashes), suggestion })
+    const [current, published] = await Promise.all([
+      readRecordsAt(git, base.sha, input.locale, hashes),
+      base.published && base.published !== base.sha ? readRecordsAt(git, base.published, input.locale, hashes) : undefined
+    ])
+    const plan = planChanges({ ...input, current, published, suggestion })
     if (plan.issues.length) throw new L10nChangeError(plan.issues)
 
     const sha = await git.commit({
@@ -245,7 +255,7 @@ export async function suggestChanges(git: TranslationsGit, input: SaveInput, bas
   const result = await commitPlan(git, input, branch, async () => {
     const [head, main] = await Promise.all([git.head(branch), git.head(base)])
     if (!main) throw new Error(`[l10n] ${base} does not exist`)
-    return head && pull ? { sha: head, force: false } : { sha: main, force: !!head }
+    return head && pull ? { sha: head, force: false, published: main } : { sha: main, force: !!head }
   }, true)
 
   pull ??= await git.openPull({

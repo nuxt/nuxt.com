@@ -8,7 +8,8 @@ const bodySchema = z.object({
   changes: z.array(z.object({
     hash: z.string().regex(/^[0-9a-f]{16}$/),
     action: z.enum(['edit', 'verify', 'reject']),
-    text: z.string().max(10_000).optional()
+    text: z.string().max(10_000).optional(),
+    base: z.string().max(10_000).nullable()
   })).min(1).max(500)
 })
 
@@ -40,7 +41,7 @@ export default defineEventHandler(async (event): Promise<L10nSaveResult> => {
   }
 
   const { git, dryRun } = translationsGit()
-  const input = { locale, page, changes, segments: await pageSegments(file), translator: { login: user.username, id: user.providerId } }
+  const input = { locale, page, changes: changes.map(change => ({ ...change, base: change.base ?? null })), segments: await pageSegments(file), translator: { login: user.username, id: user.providerId } }
 
   try {
     const result = role === 'translator'

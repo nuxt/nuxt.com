@@ -54,9 +54,19 @@ const drafts = useLocalStorage(`${storageKey}:drafts`, new Map<string, string>()
 watch([segments, hash], ([list, current]) => {
   if (!list.length) return
   if (!list.some(item => item.hash === current)) hash.value = list[0]!.hash
-  const hashes = new Set(list.map(item => item.hash))
-  for (const key of [...changes.value.keys()]) if (!hashes.has(key)) changes.value.delete(key)
-  for (const key of [...drafts.value.keys()]) if (!hashes.has(key)) drafts.value.delete(key)
+  const published = new Map(list.map(item => [item.hash, item.record?.text ?? null]))
+  const stale: L10nChangeIssue[] = []
+  for (const [key, change] of [...changes.value]) {
+    if (!published.has(key)) {
+      changes.value.delete(key)
+    } else if (change.base !== published.get(key)) {
+      changes.value.delete(key)
+      if (change.action === 'edit' && change.text && !drafts.value.has(key)) drafts.value.set(key, change.text)
+      stale.push({ hash: key, code: 'stale', message: 'The translation changed since this change was made: review it again.' })
+    }
+  }
+  for (const key of [...drafts.value.keys()]) if (!published.has(key)) drafts.value.delete(key)
+  if (stale.length) issues.value = [...issues.value.filter(item => !stale.some(other => other.hash === item.hash)), ...stale]
 })
 
 const draft = computed({
@@ -77,7 +87,8 @@ const announcement = ref('')
 function stage(action: L10nChange['action']) {
   const current = segment.value
   if (!current) return
-  changes.value.set(current.hash, action === 'edit' ? { hash: current.hash, action, text: draft.value.trim() } : { hash: current.hash, action })
+  const base = current.record?.text ?? null
+  changes.value.set(current.hash, action === 'edit' ? { hash: current.hash, action, text: draft.value.trim(), base } : { hash: current.hash, action, base })
   drafts.value.delete(current.hash)
   issues.value = issues.value.filter(issue => issue.hash !== current.hash)
   announcement.value = t.value.staged[action]
@@ -94,7 +105,7 @@ const machine = computed(() => segments.value.filter(item => item.status === 'ma
 const confirmVerifyAll = ref(false)
 
 function verifyAll() {
-  for (const item of machine.value) changes.value.set(item.hash, { hash: item.hash, action: 'verify' })
+  for (const item of machine.value) changes.value.set(item.hash, { hash: item.hash, action: 'verify', base: item.record?.text ?? null })
   confirmVerifyAll.value = false
 }
 

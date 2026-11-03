@@ -290,6 +290,8 @@ export interface L10nChange {
   hash: string
   action: L10nChangeAction
   text?: string
+  /** The published translation the change was made against, `null` for an untranslated segment. */
+  base: string | null
 }
 
 /** The GitHub account changes are made by. */
@@ -304,7 +306,7 @@ export type L10nRole = 'translator' | 'suggester'
 /** Why one change of a save was refused. */
 export interface L10nChangeIssue {
   hash: string
-  code: 'unknown-segment' | 'duplicate' | 'not-allowed' | 'missing-text' | 'too-long' | 'invalid' | 'unchanged' | 'no-record'
+  code: 'unknown-segment' | 'duplicate' | 'not-allowed' | 'missing-text' | 'too-long' | 'invalid' | 'unchanged' | 'no-record' | 'stale'
   message: string
   /** The validation errors of an `invalid` edit. */
   errors?: Array<{ code: string, message: string, at?: number }>
