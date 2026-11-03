@@ -36,6 +36,7 @@ interface ShowcaseCandidate {
   evidenceUrl: string
 }
 
+/** Accept only credential-free HTTP(S) URLs on public-looking DNS hosts, without fetching them. */
 function publicUrl(value: string): URL | undefined {
   try {
     const url = new URL(value)

@@ -26,10 +26,11 @@ export type ParseWindowResult
   = | { ok: true, value: number | undefined }
     | { ok: false, error: string }
 
+/** Validate the entire optional day count before applying the supported window cap. */
 export function parseSinceDays(value: string | null | undefined): ParseWindowResult {
   if (!value?.trim()) return { ok: true, value: undefined }
-  const parsed = Number.parseInt(value, 10)
-  if (!Number.isFinite(parsed) || parsed < 1) {
+  const parsed = Number(value.trim())
+  if (!/^\d+$/.test(value.trim()) || !Number.isSafeInteger(parsed) || parsed < 1) {
     return { ok: false, error: 'sinceDays must be a positive integer' }
   }
   return { ok: true, value: Math.min(parsed, 365) }
@@ -113,10 +114,11 @@ export function verifyWorkflowTriggerAuth(req: Request): boolean {
   return false
 }
 
+/** Validate the entire optional hour count; reject fractional or partially numeric inputs. */
 export function parseSinceHours(value: string | null | undefined): ParseWindowResult {
   if (!value?.trim()) return { ok: true, value: undefined }
-  const parsed = Number.parseInt(value, 10)
-  if (!Number.isFinite(parsed) || parsed < 1) {
+  const parsed = Number(value.trim())
+  if (!/^\d+$/.test(value.trim()) || !Number.isSafeInteger(parsed) || parsed < 1) {
     return { ok: false, error: 'sinceHours must be a positive integer' }
   }
   return { ok: true, value: Math.min(parsed, 168) }
