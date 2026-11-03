@@ -8,6 +8,9 @@ const FAILED_BUNDLE_TTL = 60_000
 /** Env var pointing at a local clone of the translations repository: read instead of GitHub. */
 const TRANSLATIONS_PATH_ENV = 'NUXT_TRANSLATIONS_PATH'
 
+/** How long reading a tarball of the translations repository may take, body included. */
+const TARBALL_TIMEOUT = 60_000
+
 /**
  * The translations commit the site serves: the head of the translations branch.
  * Resolved and cached like a content instance's ref, so the push webhook refreshes it the same way.
@@ -21,7 +24,7 @@ async function fetchTranslationsTree(sha: string): Promise<TranslationsTree> {
   const local = process.env[TRANSLATIONS_PATH_ENV]?.trim()
   if (local) return readTranslationsCheckout(local, sha, L10N_LOCALE_CODES)
 
-  const data = await $fetch<ReadableStream<Uint8Array>>(`https://codeload.github.com/${TRANSLATIONS_REPO}/tar.gz/${sha}`, { responseType: 'stream' })
+  const data = await $fetch<ReadableStream<Uint8Array>>(`https://codeload.github.com/${TRANSLATIONS_REPO}/tar.gz/${sha}`, { responseType: 'stream', signal: AbortSignal.timeout(TARBALL_TIMEOUT) })
   return parseTranslationsTarball(data, sha)
 }
 
