@@ -42,7 +42,7 @@ jobs:
         run: ln -s .bundle-base/.nuxt .nuxt
       # Outside the app, so neither revision needs it in its lockfile.
       - name: Install nuxt-bundle-analyzer
-        run: npm install --prefix "$RUNNER_TEMP/nuxt-bundle-analyzer" --no-save --ignore-scripts --no-audit --no-fund nuxt-bundle-analyzer@0.1.2
+        run: npm install --prefix "$RUNNER_TEMP/nuxt-bundle-analyzer" --no-save --ignore-scripts --no-audit --no-fund nuxt-bundle-analyzer@0.1.3
       - name: Analyze the base bundle
         working-directory: .bundle-base
         run: >-
@@ -96,7 +96,7 @@ jobs:
       - name: Prepare the PR revision
         run: pnpm nuxt prepare
       - name: Install nuxt-bundle-analyzer
-        run: npm install --prefix "$RUNNER_TEMP/nuxt-bundle-analyzer" --no-save --ignore-scripts --no-audit --no-fund nuxt-bundle-analyzer@0.1.2
+        run: npm install --prefix "$RUNNER_TEMP/nuxt-bundle-analyzer" --no-save --ignore-scripts --no-audit --no-fund nuxt-bundle-analyzer@0.1.3
       - name: Analyze the PR bundle
         run: >-
           pnpm --package=@nuxt/cli-nightly@3.38.0-20260726-220626-c3c9e90

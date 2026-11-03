@@ -82,7 +82,8 @@ test('builds and compares production bundle snapshots', async () => {
   assert.match(report, /Largest module increases/)
   assert.match(report, /report-only/)
   assert.match(report, /\| <code>\/updates<\/code> \| .+ \| \+10 B \(.+\) \| — \| \+1 \|/)
-  assert.ok(report.indexOf('### Initial page load') < report.indexOf('### All client assets'))
+  assert.ok(report.indexOf('| Initial page load |') < report.indexOf('<summary>All client assets</summary>'))
+  assert.doesNotMatch(report, /Explore the comparison/)
 })
 
 test('extracts upfront assets from prerendered HTML', () => {
@@ -131,8 +132,8 @@ test('validates snapshots and safely renders module identifiers', () => {
   assert.doesNotMatch(report, /@nuxt|<img|\[click me\]/)
   assert.match(report, /&#96;&lt;\/code&gt;&#124;&#64;nuxt&lt;img src=x&gt;&#96;/)
   assert.match(report, /&#91;click me&#93;\(https:\/\/evil\.example\/\)/)
-  assert.match(report, /\| <code>\/blog<\/code> \| n\/a \| 1 B \| n\/a \| n\/a \| n\/a \|/)
-  assert.match(report, /\| <code>\/updates<\/code> \| n\/a \| 1 B \| n\/a \| n\/a \| n\/a \|/)
+  assert.match(report, /\| <code>\/blog<\/code> \| 1 B \| n\/a \| n\/a \| n\/a \|/)
+  assert.match(report, /\| <code>\/updates<\/code> \| 1 B \| n\/a \| n\/a \| n\/a \|/)
 
   for (const route of ['/<img src=x>', '/a|b', '/[x](y)', 'blog', `/${'a'.repeat(256)}`, '/updates\n', '/updates\r\n', '/updates\u2028']) {
     assert.throws(
@@ -183,4 +184,32 @@ test('reports PR-only module identifiers inherited by ordinary objects', () => {
   const report = compareSnapshots(base, head)
   assert.match(report, /<code>constructor<\/code> \| 0 B \| 1 B \| \+1 B/)
   assert.doesNotMatch(report, /Initial page load/)
+})
+
+test('links to the hosted comparison first, and only on bundle.nuxt.dev', () => {
+  const totals = {
+    javascript: { raw: 10, gzip: 8, brotli: 6 },
+    css: { raw: 0, gzip: 0, brotli: 0 },
+    other: { raw: 0, gzip: 0, brotli: 0 },
+    all: { raw: 10, gzip: 8, brotli: 6 }
+  }
+  const base = { schemaVersion: 3, label: 'base', sha: 'a'.repeat(40), totals, routes: {}, modules: {} }
+  const head = { ...base, label: 'pr', sha: 'b'.repeat(40) }
+  const url = 'https://bundle.nuxt.dev/nuxt/nuxt.com/pull/1?view=compare&base=base&run=pr'
+
+  assert.deepEqual(compareSnapshots(base, head, { comparisonUrl: url }).split('\n').slice(0, 5), [
+    '## Production bundle',
+    '',
+    `**[Explore the comparison online →](${url})**`,
+    '',
+    'Client JS 6 B (no change) · CSS 0 B (no change) · Brotli'
+  ])
+
+  // Less code is green and more is red, for each total on its own.
+  const changed = { ...head, totals: { ...totals, javascript: { raw: 8, gzip: 6, brotli: 4 }, css: { raw: 2, gzip: 2, brotli: 2 } } }
+  assert.match(compareSnapshots(base, changed), /JS 4 B \$\\color\{green\}\\textsf\{\(-2 B, -33\.3\}\\\\%\\textsf\{\)\}\$ · CSS 2 B \$\\color\{red\}\\textsf\{\(\+2 B\)\}\$/)
+
+  for (const comparisonUrl of ['https://evil.example/', 'https://bundle.nuxt.dev.evil.example/', 'https://bundle.nuxt.dev/a) [x](https://evil.example/']) {
+    assert.doesNotMatch(compareSnapshots(base, head, { comparisonUrl }), /Explore the comparison|evil/)
+  }
 })

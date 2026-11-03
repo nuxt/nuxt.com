@@ -368,6 +368,33 @@ function metricRow(label, base, head) {
   return `| ${label} | ${formatBytes(base.brotli)} | ${formatBytes(head.brotli)} | ${formatDelta(base.brotli, head.brotli)} | ${formatDelta(base.gzip, head.gzip)} |`
 }
 
+/**
+ * A total for the summary line, such as `JS 1.68 MiB (-544.4 KiB, -24.1%)`, with the change in green
+ * when it shrinks and red when it grows. Comments can't carry styles, so the colour comes from
+ * GitHub's math rendering, which only ever gets formatted numbers here. Its `\\%` loses a backslash
+ * to Markdown before TeX sees it.
+ */
+function summaryTotal(label, base, head) {
+  const delta = head.brotli - base.brotli
+  if (delta === 0) {
+    return `${label} ${formatBytes(head.brotli)} (no change)`
+  }
+  // `%` stays out of the text, where TeX would read it as a comment, and is set in math as `\%`.
+  const change = formatDelta(base.brotli, head.brotli).replace(' (', ', ').replace(/\)$/, '').replaceAll('%', '}\\\\%\\textsf{')
+  return `${label} ${formatBytes(head.brotli)} $\\color{${delta < 0 ? 'green' : 'red'}}\\textsf{(${change})}$`
+}
+
+/** Only links to the hosted viewer, as the URL comes from its upload response. */
+function comparisonLink(url) {
+  return typeof url === 'string' && url.startsWith('https://bundle.nuxt.dev/') && !/[\s()<>[\]]/.test(url)
+    ? [`**[Explore the comparison online →](${url})**`, '']
+    : []
+}
+
+function details(summary, lines) {
+  return ['', '<details>', `<summary>${summary}</summary>`, '', ...lines, '', '</details>']
+}
+
 function formatCountDelta(base, head) {
   const delta = head - base
   if (delta === 0) {
@@ -383,12 +410,11 @@ function routeRows(base, head) {
   return [...ROUTES, ...extraRoutes].filter(route => Object.hasOwn(base.routes, route) || Object.hasOwn(head.routes, route)).map((route) => {
     const baseRoute = Object.hasOwn(base.routes, route) ? base.routes[route] : undefined
     const headRoute = Object.hasOwn(head.routes, route) ? head.routes[route] : undefined
-    const baseJs = baseRoute ? formatBytes(baseRoute.javascript.brotli) : 'n/a'
     const headJs = headRoute ? formatBytes(headRoute.javascript.brotli) : 'n/a'
     if (!baseRoute || !headRoute) {
-      return `| ${inlineCode(route)} | ${baseJs} | ${headJs} | n/a | n/a | n/a |`
+      return `| ${inlineCode(route)} | ${headJs} | n/a | n/a | n/a |`
     }
-    return `| ${inlineCode(route)} | ${baseJs} | ${headJs} | ${formatDelta(baseRoute.javascript.brotli, headRoute.javascript.brotli)} | ${formatDelta(baseRoute.css.brotli, headRoute.css.brotli)} | ${formatCountDelta(baseRoute.files, headRoute.files)} |`
+    return `| ${inlineCode(route)} | ${headJs} | ${formatDelta(baseRoute.javascript.brotli, headRoute.javascript.brotli)} | ${formatDelta(baseRoute.css.brotli, headRoute.css.brotli)} | ${formatCountDelta(baseRoute.files, headRoute.files)} |`
   })
 }
 
@@ -415,48 +441,43 @@ export function compareSnapshots(base, head, expected = {}) {
   const lines = [
     '## Production bundle',
     '',
-    `Comparing \`${base.sha.slice(0, 8)}\` with \`${head.sha.slice(0, 8)}\`. Compressed sizes are calculated from the emitted production assets.`
+    ...comparisonLink(expected.comparisonUrl),
+    `Client ${summaryTotal('JS', base.totals.javascript, head.totals.javascript)} · ${summaryTotal('CSS', base.totals.css, head.totals.css)} · Brotli`
   ]
 
   const routes = routeRows(base, head)
   if (routes.length > 0) {
     lines.push(
       '',
-      '### Initial page load',
-      '',
-      '| Page | Base JS (Brotli) | PR JS (Brotli) | Δ JS | Δ CSS | Δ files |',
-      '| --- | ---: | ---: | ---: | ---: | ---: |',
-      ...routes,
-      '',
-      '> Entry script, `modulepreload` chunks and stylesheets referenced by the prerendered HTML. Lazy and prefetched chunks are excluded.'
+      '| Initial page load | PR JS | Δ JS | Δ CSS | Δ files |',
+      '| --- | ---: | ---: | ---: | ---: |',
+      ...routes
     )
   }
 
-  lines.push(
-    '',
-    '### All client assets',
-    '',
+  lines.push(...details('All client assets', [
     '| Metric | Base (Brotli) | PR (Brotli) | Δ Brotli | Δ gzip |',
     '| --- | ---: | ---: | ---: | ---: |',
     metricRow('Client JavaScript', base.totals.javascript, head.totals.javascript),
     metricRow('Client CSS', base.totals.css, head.totals.css),
     metricRow('Other client assets', base.totals.other, head.totals.other),
     metricRow('Total client assets', base.totals.all, head.totals.all)
-  )
+  ]))
 
   const regressions = moduleRegressions(base, head)
   if (regressions.length > 0) {
-    lines.push(
-      '',
-      '### Largest module increases',
-      '',
+    lines.push(...details('Largest module increases', [
       '| Module | Base (Brotli) | PR (Brotli) | Δ Brotli |',
       '| --- | ---: | ---: | ---: |',
       ...regressions.map(module => `| ${inlineCode(module.id)} | ${formatBytes(module.base.brotli)} | ${formatBytes(module.head.brotli)} | ${formatDelta(module.base.brotli, module.head.brotli)} |`)
-    )
+    ]))
   }
 
-  lines.push('', '> Module values come from Nuxt’s analyzer and are attribution estimates. This workflow is currently report-only.')
+  const notes = [
+    ...routes.length > 0 ? ['Initial page load counts the entry script, <code>modulepreload</code> chunks and stylesheets referenced by the prerendered HTML.'] : [],
+    'Module values are attribution estimates from Nuxt’s analyzer. This workflow is report-only.'
+  ]
+  lines.push('', `<sub>${notes.join(' ')}</sub>`)
 
   return `${lines.join('\n')}\n`
 }
@@ -515,7 +536,7 @@ async function main() {
     const head = await readSnapshot(required(options, 'head'), { label: 'pr', sha: headSha })
     const output = required(options, 'output')
     await mkdir(dirname(resolve(output)), { recursive: true })
-    await writeFile(output, compareSnapshots(base, head, { baseSha, headSha }))
+    await writeFile(output, compareSnapshots(base, head, { baseSha, headSha, comparisonUrl: options['comparison-url'] }))
     return
   }
 
