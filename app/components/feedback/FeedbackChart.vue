@@ -67,6 +67,11 @@ watch(() => props.pageAnalytics, (analytics) => {
   }
 }, { immediate: true })
 
+// `UChart` positions points by label, so ranges longer than a year need the year to keep days unique
+function formatDay(date: Date, daysDiff: number) {
+  return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: daysDiff > 365 ? 'numeric' : undefined })
+}
+
 const overallChartData = computed(() => {
   const data: any[] = []
   const endDate = dateRange.value.end
@@ -105,7 +110,7 @@ const overallChartData = computed(() => {
 
     const entry: any = {
       date: dateStr,
-      day: date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+      day: formatDay(date, daysDiff)
     }
 
     if (hasValidData.value && dailyScores[dateStr] && dailyScores[dateStr].length > 0) {
@@ -134,7 +139,7 @@ const timeBasedChartData = computed(() => {
       date.setDate(date.getDate() - i)
       data.push({
         date: date.toISOString().split('T')[0],
-        day: date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+        day: formatDay(date, daysDiff),
         placeholder: 0
       })
     }
@@ -177,7 +182,7 @@ const timeBasedChartData = computed(() => {
 
     const entry: any = {
       date: dateStr,
-      day: date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+      day: formatDay(date, daysDiff)
     }
 
     for (const page of selectedPages) {
