@@ -21,7 +21,7 @@ export async function createFakeGitHub({ repo = 'nuxt/translations', files = {} 
   const { privateKey, publicKey } = generateKeyPairSync('rsa', { modulusLength: 2048 })
   const pem = privateKey.export({ type: 'pkcs1', format: 'pem' }).toString()
   const pulls: FakePull[] = []
-  const requests: Array<{ method: string, path: string, authorization?: string }> = []
+  const requests: Array<{ method: string, path: string, authorization?: string, body?: unknown }> = []
   let queryErrors: Array<{ message: string }> | undefined
 
   const git = (args: string[], options: { input?: string, env?: Record<string, string> } = {}) =>
@@ -62,10 +62,10 @@ export async function createFakeGitHub({ repo = 'nuxt/translations', files = {} 
   async function handle(req: IncomingMessage, res: ServerResponse) {
     const url = new URL(req.url!, 'http://127.0.0.1')
     const path = decodeURIComponent(url.pathname)
-    requests.push({ method: req.method!, path, authorization: req.headers.authorization })
     const chunks: Buffer[] = []
     for await (const chunk of req) chunks.push(chunk as Buffer)
     const body = chunks.length ? JSON.parse(Buffer.concat(chunks).toString('utf8')) : undefined
+    requests.push({ method: req.method!, path, authorization: req.headers.authorization, body })
     const send = (status: number, value?: unknown, type = 'application/json') => {
       res.writeHead(status, { 'content-type': type })
       res.end(type === 'application/json' ? JSON.stringify(value ?? {}) : value as string)
@@ -78,8 +78,8 @@ export async function createFakeGitHub({ repo = 'nuxt/translations', files = {} 
       if (path.endsWith('/installation')) return send(200, { id: 1 })
       return send(201, { token: FAKE_INSTALLATION_TOKEN, expires_at: new Date(Date.now() + 3_600_000).toISOString() })
     }
-    if (path === `/users/${FAKE_BOT.slug}[bot]`) return send(200, { id: FAKE_BOT.id })
     if (req.headers.authorization !== `Bearer ${FAKE_INSTALLATION_TOKEN}`) return fail(401, 'Bad credentials')
+    if (path === `/users/${FAKE_BOT.slug}[bot]`) return send(200, { id: FAKE_BOT.id })
 
     if (req.method === 'POST' && path === '/graphql') {
       const { owner, name, ...expressions } = body.variables as Record<string, string>

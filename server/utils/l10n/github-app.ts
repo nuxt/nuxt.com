@@ -35,6 +35,9 @@ const MAX_FILE_PAGES = 30
 /** Pages of open pull requests read, a hundred each. */
 const MAX_PULL_PAGES = 10
 
+/** What installation tokens may do: write records and suggestion pull requests, and read team memberships. */
+const TOKEN_PERMISSIONS = { contents: 'write', pull_requests: 'write', members: 'read' }
+
 /** Renew installation tokens this long before they expire. */
 const TOKEN_MARGIN = 5 * 60_000
 
@@ -63,7 +66,8 @@ export function createGitHubApp(credentials: GitHubAppCredentials, { repo, baseU
     const { token, expires_at } = await $fetch<{ token: string, expires_at: string }>(`/app/installations/${installationId}/access_tokens`, {
       baseURL,
       method: 'POST',
-      headers: jwt
+      headers: jwt,
+      body: { repositories: [repo.split('/')[1]], permissions: TOKEN_PERMISSIONS }
     })
     cached = { value: token, expiresAt: Date.parse(expires_at) }
     return token
@@ -86,7 +90,7 @@ export function createGitHubApp(credentials: GitHubAppCredentials, { repo, baseU
   async function botIdentity(): Promise<GitAuthor> {
     const { slug } = await $fetch<{ slug: string }>('/app', { baseURL, headers: jwtHeaders() })
     const name = `${slug}[bot]`
-    const { id } = await $fetch<{ id: number }>(`/users/${encodeURIComponent(name)}`, { baseURL, headers })
+    const { id } = await $fetch<{ id: number }>(`/users/${encodeURIComponent(name)}`, await authorised())
     return { name, email: `${id}+${name}@users.noreply.github.com` }
   }
 

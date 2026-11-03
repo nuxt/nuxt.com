@@ -10,7 +10,7 @@ import { createGitHubApp, githubTranslationsGit, isGitHubTeamMember } from '../.
 import { commitChanges, L10nChangeError, L10nConflictError, pageSegments, planChanges, readRecordsAt, suggestChanges, suggestionBranch } from '../../server/utils/l10n/write'
 import { openSuggestions, suggestionsFor } from '../../server/utils/l10n/suggestions'
 import { createBuildInstance } from '../../utils/factory'
-import { createFakeGitHub, FAKE_BOT } from '../utils/fake-github'
+import { createFakeGitHub, FAKE_BOT, FAKE_INSTALLATION_TOKEN } from '../utils/fake-github'
 
 const FIXTURES = fileURLToPath(new URL('../fixtures/l10n/', import.meta.url))
 const records = (JSON.parse(readFileSync(`${FIXTURES}fr.json`, 'utf8')) as { records: Record<string, TranslationRecord> }).records
@@ -303,10 +303,12 @@ describe('GitHub App', () => {
     expect(JSON.parse(github.git(['show', `${sha}:${recordPath('fr', FIRST_PARAGRAPH)}`])).text).toBe(FIRST_TEXT)
   })
 
-  it('should mint one installation token for every request', async () => {
+  it('should mint one installation token for every request, scoped to the translations repository', async () => {
     await save()
     const minted = github.requests.filter(request => request.path.endsWith('/access_tokens'))
     expect(minted).toHaveLength(1)
+    expect(minted[0]!.body).toEqual({ repositories: ['translations'], permissions: { contents: 'write', pull_requests: 'write', members: 'read' } })
+    expect(github.requests.filter(request => request.path.startsWith('/users/')).map(request => request.authorization)).toEqual([`Bearer ${FAKE_INSTALLATION_TOKEN}`])
   })
 
   it('should read the changed records in one query per hundred', async () => {
