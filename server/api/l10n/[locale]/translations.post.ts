@@ -39,6 +39,7 @@ export default defineEventHandler(async (event): Promise<L10nSaveResult> => {
   if (!file) {
     throw createError({ statusCode: 404, statusMessage: 'Page not found' })
   }
+  if (role === 'suggester') await consumeL10nSuggestion(db, user.id, changes.length)
 
   const { git, dryRun } = translationsGit()
   const input = { locale, page, changes: changes.map(change => ({ ...change, base: change.base ?? null })), segments: await pageSegments(file), translator: { login: user.username, id: user.providerId } }

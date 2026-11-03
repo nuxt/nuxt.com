@@ -4,7 +4,7 @@ import { generateSQLiteDrizzleJson, generateSQLiteMigration } from 'drizzle-kit/
 import { beforeEach, describe, expect, it } from 'vitest'
 import * as schema from '../../server/db/schema'
 import { translatorsTeam } from '../../server/utils/l10n/access'
-import { consumeL10nSave } from '../../server/utils/l10n/allowance'
+import { consumeL10nSave, consumeL10nSuggestion } from '../../server/utils/l10n/allowance'
 
 const NOW = Date.parse('2026-11-03T10:15:00Z')
 
@@ -40,6 +40,23 @@ describe('consumeL10nSave', () => {
     const results = await Promise.allSettled(Array.from({ length: 100 }, () => consumeL10nSave(db, 'a', 1, NOW)))
     expect(results.filter(result => result.status === 'fulfilled')).toHaveLength(60)
     expect(await counted()).toEqual([{ saves: 60, changes: 60 }])
+  })
+})
+
+describe('consumeL10nSuggestion', () => {
+  it('should refuse suggestions past the hourly allowance, per user', async () => {
+    for (let index = 0; index < 20; index++) await consumeL10nSuggestion(db, 'a', 1, NOW)
+    await expect(consumeL10nSuggestion(db, 'a', 1, NOW)).rejects.toMatchObject({ statusCode: 429 })
+    await expect(consumeL10nSuggestion(db, 'a', 1, NOW + 3_600_000)).resolves.toBeUndefined()
+    await expect(consumeL10nSuggestion(db, 'b', 201, NOW)).rejects.toMatchObject({ statusCode: 429 })
+  })
+
+  it('should refuse suggestions past the hourly allowance of the site, from any user', async () => {
+    for (let index = 0; index < 10; index++) {
+      for (let save = 0; save < 20; save++) await consumeL10nSuggestion(db, `user-${index}`, 1, NOW)
+    }
+    await expect(consumeL10nSuggestion(db, 'other', 1, NOW)).rejects.toMatchObject({ statusCode: 429 })
+    await expect(consumeL10nSave(db, 'other', 1, NOW)).resolves.toBeUndefined()
   })
 })
 
