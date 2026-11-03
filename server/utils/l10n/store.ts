@@ -117,11 +117,16 @@ export async function getL10nStatus(locale: L10nLocale): Promise<L10nLocaleStatu
   return status
 }
 
-/** `indexablePages` of `snapshot`, kept in KV under `key` and the build so instances share one computation. */
-async function sharedIndexablePages(key: string, snapshot: L10nSnapshot): Promise<string[]> {
+/**
+ * `indexablePages` of `locale` at translations commit `sha`, kept in KV under `key` and the build so
+ * instances share one computation. The snapshot is only loaded when KV has none.
+ */
+async function sharedIndexablePages(locale: L10nLocale, sha: string, key: string): Promise<string[]> {
   const storageKey = `l10n:indexable:${useRuntimeConfig().app.buildId}:${key}`
   const stored = await kv.get<string[]>(storageKey).catch(() => null)
   if (stored) return stored
+  const snapshot = await getL10nSnapshot(locale)
+  if (snapshot.bundle.sha !== sha) throw new Error(`the snapshot is at ${snapshot.bundle.sha || 'no commit'}`)
   const pages = await indexablePages(snapshot)
   await kv.set(storageKey, pages, { ttl: 60 * 60 * 24 * 7 }).catch(() => {})
   return pages
@@ -157,20 +162,20 @@ async function translatedInstancesKey(): Promise<string> {
 
 /**
  * The localised pages that may be indexed, by locale: listed in the sitemap and in the `hreflang`
- * of their English twin. Computed once per bundle commit and commit of the translated instances;
+ * of their English twin. Computed once per translations commit and commit of the translated instances;
  * a locale that cannot be read lists none.
  */
 export async function getL10nIndexable(): Promise<L10nIndexable> {
-  const content = await translatedInstancesKey()
+  const [resolved, content] = await Promise.all([resolveTranslationsSha().catch(() => undefined), translatedInstancesKey()])
   const entries = await Promise.all(L10N_LOCALE_CODES.map(async (locale) => {
-    const snapshot = await getL10nSnapshot(locale)
-    const { bundle } = snapshot
-    const key = `${locale}@${bundle.sha}:${content}`
+    const sha = resolved ?? (await getL10nSnapshot(locale)).bundle.sha
+    if (!sha) return [locale, []] as const
+    const key = `${locale}@${sha}:${content}`
     let pages = indexable.get(key)
     if (!pages) {
       for (const stale of indexable.keys()) if (stale.startsWith(`${locale}@`)) indexable.delete(stale)
-      pages = sharedIndexablePages(key, snapshot).catch((error) => {
-        console.error(`[l10n] could not compute the ${locale} coverage at ${bundle.sha}`, error?.message ?? error)
+      pages = sharedIndexablePages(locale, sha, key).catch((error) => {
+        console.error(`[l10n] could not compute the ${locale} coverage at ${sha}`, error?.message ?? error)
         indexable.delete(key)
         return []
       })
