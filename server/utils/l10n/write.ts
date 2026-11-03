@@ -204,11 +204,11 @@ function commitMessage(locale: L10nLocale, page: string, counts: L10nPlan['count
  * Read the current records, plan, commit on top of `parent()` and move `branch` there.
  * Retried once when the branch moved in between.
  */
-async function commitPlan(git: TranslationsGit, input: SaveInput, branch: string, parent: () => Promise<{ sha: string, force: boolean, published?: string }>, suggestion: boolean): Promise<SaveResult> {
+async function commitPlan(git: TranslationsGit, input: SaveInput, branch: string, parent: (attempt: number) => Promise<{ sha: string, force: boolean, published?: string }>, suggestion: boolean): Promise<SaveResult> {
   const hashes = [...new Set(input.changes.map(change => change.hash))]
 
   for (let attempt = 0; ; attempt++) {
-    const base = await parent()
+    const base = await parent(attempt)
     const [current, published] = await Promise.all([
       readRecordsAt(git, base.sha, input.locale, hashes),
       base.published && base.published !== base.sha ? readRecordsAt(git, base.published, input.locale, hashes) : undefined
@@ -246,16 +246,17 @@ export function suggestionBranch(login: string, locale: L10nLocale): string {
 /**
  * Commit a suggestion to the user's suggestion branch, and open its pull request when it has none.
  * A branch with an open pull request grows by one commit per save; one without is reset onto `main`,
- * since whatever it held was merged or closed.
+ * since whatever it held was merged or closed. A branch that moved during the save, under a concurrent
+ * save of the same user, is built on rather than reset.
  */
 export async function suggestChanges(git: TranslationsGit, input: SaveInput, base = 'main'): Promise<SaveResult> {
   const branch = suggestionBranch(input.translator.login, input.locale)
   let pull = await git.findPull(branch)
 
-  const result = await commitPlan(git, input, branch, async () => {
+  const result = await commitPlan(git, input, branch, async (attempt) => {
     const [head, main] = await Promise.all([git.head(branch), git.head(base)])
     if (!main) throw new Error(`[l10n] ${base} does not exist`)
-    return head && pull ? { sha: head, force: false, published: main } : { sha: main, force: !!head }
+    return head && (pull || attempt) ? { sha: head, force: false, published: main } : { sha: main, force: !!head }
   }, true)
 
   pull ??= await git.openPull({
@@ -266,6 +267,10 @@ export async function suggestChanges(git: TranslationsGit, input: SaveInput, bas
       '',
       'Each commit is one page save. Merging accepts them: edits as human edits by the author, rejections as rejected translations.'
     ].join('\n')
+  }).catch(async (error) => {
+    const opened = await git.findPull(branch)
+    if (!opened) throw error
+    return opened
   })
 
   return { ...result, pull }

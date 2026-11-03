@@ -408,6 +408,24 @@ describe('GitHub App', () => {
     expect(github.pulls.map(pull => pull.number)).toEqual([1, 2])
   })
 
+  it('should keep both of two concurrent first suggestions of a user', async () => {
+    const input = { locale: 'fr' as const, page: PAGE, segments, translator: { login: 'contributor', id: 1 } }
+    let other: Awaited<ReturnType<typeof suggestChanges>> | undefined
+    const racing: TranslationsGit = {
+      ...git,
+      async commit(commit) {
+        other ??= await suggestChanges(git, { ...input, changes: withBase([{ hash: HEADING, action: 'reject' }]) })
+        return git.commit(commit)
+      }
+    }
+
+    const result = await suggestChanges(racing, { ...input, changes: withBase([{ hash: FIRST_PARAGRAPH, action: 'edit', text: FIRST_TEXT }]) })
+    expect(github.git(['rev-parse', suggestionBranch('contributor', 'fr')])).toBe(result.sha)
+    expect(github.git(['rev-parse', `${result.sha}^`])).toBe(other!.sha)
+    expect(result.pull).toEqual(other!.pull)
+    expect(github.pulls).toHaveLength(1)
+  })
+
   it('should only list suggestions from branches of the translations repository', async () => {
     const record = { ...records[TIP]!, text: 'Faux {0}texte{/0}.', origin: 'human', review: 'edited', by: 'danielroe' }
     github.openForkPull('someone/translations', suggestionBranch('danielroe', 'fr'), recordPath('fr', TIP), serialiseRecord(parseRecord(record)))

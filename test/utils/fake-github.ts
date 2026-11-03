@@ -178,6 +178,7 @@ export async function createFakeGitHub({ repo = 'nuxt/translations', files = {} 
       return send(200, git(['diff', '--name-only', mergeBase, ref]).split('\n').filter(Boolean).map(filename => ({ filename })))
     }
     if (req.method === 'POST' && route === '/pulls') {
+      if (pulls.some(pull => pull.state === 'open' && !pull.from && pull.head === body.head)) return fail(422, `A pull request already exists for ${repo.split('/')[0]}:${body.head}.`)
       const pull: FakePull = { number: pulls.length + 1, head: body.head, base: body.base, title: body.title, body: body.body, state: 'open' }
       pulls.push(pull)
       return send(201, { number: pull.number, html_url: `https://github.com/${repo}/pull/${pull.number}` })
