@@ -209,9 +209,13 @@ export async function refreshL10nBundles(locales: L10nLocale[]): Promise<L10nRef
   return Promise.all(locales.map(async (locale, index) => {
     const previous = before[index]!
     const current = after[index]!
-    const changed = previous.sha === current.sha
-      ? { pages: [], content: [], navigation: false }
-      : await l10nPagesUsing(current, previous.sha ? changedHashes(previous, current) : 'all')
+    const unchanged: L10nPagesUsing = { pages: [], content: [], navigation: false }
+    const changed = previous.sha === current.sha || !current.sha
+      ? unchanged
+      : await l10nPagesUsing(current, previous.sha ? changedHashes(previous, current) : 'all').catch((error) => {
+          console.error(`[l10n] could not list the ${locale} pages changed at ${sha}`, error?.message ?? error)
+          return unchanged
+        })
     const was = new Set(indexableBefore[locale] ?? [])
     const is = new Set(indexableAfter[locale] ?? [])
     const indexableChanged = [...new Set([...was, ...is])].filter(path => was.has(path) !== is.has(path)).sort()
