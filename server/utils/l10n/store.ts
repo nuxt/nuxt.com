@@ -94,10 +94,10 @@ export async function l10nPageSegments(sha: string): Promise<Map<string, Manifes
 
 const statuses = new Map<string, Promise<L10nLocaleStatus>>()
 
-/** The review state of `locale`, computed once per translations commit. */
+/** The review state of `locale`, computed once per translations commit and commit of the translated instances. */
 export async function getL10nStatus(locale: L10nLocale): Promise<L10nLocaleStatus> {
   const bundle = await getL10nBundle(locale)
-  const key = `${locale}@${bundle.sha}`
+  const key = `${locale}@${bundle.sha}:${await translatedInstancesKey()}`
   let status = statuses.get(key)
   if (!status) {
     for (const stale of statuses.keys()) if (stale.startsWith(`${locale}@`)) statuses.delete(stale)
@@ -155,14 +155,19 @@ export async function l10nPagesUsing(bundle: L10nBundle, hashes: Set<string> | '
 
 const indexable = new Map<string, Promise<string[]>>()
 
+/** The commits of every instance reading a translated source: what page paths are derived from. */
+async function translatedInstancesKey(): Promise<string> {
+  return (await Promise.all(TRANSLATION_SOURCES.flatMap(source => source.instances)
+    .map(key => resolveInstanceSha(key).catch(() => '')))).join(',')
+}
+
 /**
  * The localised pages that may be indexed, by locale: listed in the sitemap and in the `hreflang`
  * of their English twin. Computed once per bundle commit and commit of the translated instances;
  * a locale that cannot be read lists none.
  */
 export async function getL10nIndexable(): Promise<L10nIndexable> {
-  const content = (await Promise.all(TRANSLATION_SOURCES.flatMap(source => source.instances)
-    .map(key => resolveInstanceSha(key).catch(() => '')))).join(',')
+  const content = await translatedInstancesKey()
   const entries = await Promise.all(L10N_LOCALE_CODES.map(async (locale) => {
     const snapshot = await getL10nSnapshot(locale)
     const { bundle } = snapshot

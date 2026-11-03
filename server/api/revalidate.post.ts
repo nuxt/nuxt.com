@@ -206,7 +206,10 @@ export default defineEventHandler(async (event) => {
   const globalPaths = changesByInstance.size
     ? ['/llms.txt', '/llms-full.txt', '/sitemap.xml', '/sitemap.md', '/blog/rss.xml', '/design.md', L10N_INDEXABLE_PATH]
     : ['/sitemap.xml', L10N_INDEXABLE_PATH]
-  if (rebuilt.length) globalPaths.push('/translations', payloadUrlForPage('/translations', buildId))
+  const translatedInstances = new Set<ContentInstanceKey>(TRANSLATION_SOURCES.flatMap(source => source.instances))
+  if (rebuilt.length || [...changesByInstance.keys()].some(key => translatedInstances.has(key))) {
+    globalPaths.push('/translations', payloadUrlForPage('/translations', buildId))
+  }
   for (const path of globalPaths) {
     addPath('global', 'global', path)
   }
