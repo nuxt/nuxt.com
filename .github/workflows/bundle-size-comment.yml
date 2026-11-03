@@ -10,6 +10,8 @@ on:
 permissions:
   actions: read
   contents: read
+  # Proves to bundle.nuxt.dev that the upload comes from this workflow on the default branch.
+  id-token: write
   issues: write
   pull-requests: read
 
@@ -165,6 +167,62 @@ jobs:
             --base-sha "$BASE_SHA" \
             --head-sha "$HEAD_SHA" \
             --output "$REPORT_PATH"
+      - name: Resolve bundle analysis artifacts
+        if: steps.pull.outputs.should-comment == 'true'
+        id: analysis
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
+        with:
+          script: |
+            const run = context.payload.workflow_run
+            const artifacts = await github.paginate(github.rest.actions.listWorkflowRunArtifacts, {
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              run_id: run.id,
+              per_page: 100
+            })
+
+            for (const name of ['base', 'pr']) {
+              const matches = artifacts.filter(artifact => artifact.name === `bundle-analyzer-${name}` && !artifact.expired)
+              if (matches.length !== 1 || !Number.isSafeInteger(matches[0].id) || matches[0].id <= 0 || matches[0].size_in_bytes > 64 * 1024 * 1024) {
+                core.warning(`Skipping the hosted comparison: no single bundle-analyzer-${name} artifact.`)
+                return
+              }
+              core.setOutput(name, String(matches[0].id))
+            }
+      - name: Download untrusted base bundle analysis
+        if: steps.analysis.outputs.pr
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          artifact-ids: ${{ steps.analysis.outputs.base }}
+          path: ${{ runner.temp }}/bundle-analyzer/base
+          merge-multiple: true
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          run-id: ${{ github.event.workflow_run.id }}
+      - name: Download untrusted PR bundle analysis
+        if: steps.analysis.outputs.pr
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          artifact-ids: ${{ steps.analysis.outputs.pr }}
+          path: ${{ runner.temp }}/bundle-analyzer/pr
+          merge-multiple: true
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          run-id: ${{ github.event.workflow_run.id }}
+      # bundle.nuxt.dev checks this workflow's OIDC token and every file before storing the two runs,
+      # and answers with the link to their comparison. The comment is still posted if this fails.
+      - name: Upload bundle analysis
+        if: steps.analysis.outputs.pr
+        id: analyzer
+        continue-on-error: true
+        working-directory: ${{ runner.temp }}
+        env:
+          HEAD_SHA: ${{ steps.pull.outputs.head-sha }}
+          PR_NUMBER: ${{ steps.pull.outputs.number }}
+        run: >-
+          npx --yes nuxt-bundle-analyzer@0.1.2 upload
+          --runs "$RUNNER_TEMP/bundle-analyzer"
+          --pr "$PR_NUMBER"
+          --sha "$HEAD_SHA"
+          --url https://bundle.nuxt.dev
       - name: Mint bundle report app token
         if: steps.pull.outputs.should-comment == 'true'
         id: app-token
@@ -177,6 +235,7 @@ jobs:
         uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
         env:
           BUNDLE_REPORT_PATH: ${{ runner.temp }}/bundle-size-comment.md
+          COMPARISON_URL: ${{ steps.analyzer.outputs.url }}
           PR_NUMBER: ${{ steps.pull.outputs.number }}
         with:
           github-token: ${{ steps.app-token.outputs.token }}
@@ -197,7 +256,10 @@ jobs:
               return
             }
 
-            const body = `${marker}\n${report}\n[Workflow run](${run.html_url})`
+            const comparison = process.env.COMPARISON_URL?.startsWith('https://bundle.nuxt.dev/')
+              ? `[Explore the comparison](${process.env.COMPARISON_URL}) · `
+              : ''
+            const body = `${marker}\n${report}\n${comparison}[Workflow run](${run.html_url})`
 
             try {
               const comments = await github.paginate(github.rest.issues.listComments, {
