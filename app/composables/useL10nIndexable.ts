@@ -12,8 +12,8 @@ function fetchIndexable(): Promise<L10nIndexable> {
 }
 
 /**
- * The indexable translations of the docs page `path`, for its `hreflang` alternates and the
- * suggestion to read it in another language. Does not block client-side navigation.
+ * The indexable translations of the docs page `path`, for its `hreflang` alternates and robots.
+ * Does not block client-side navigation.
  */
 export function useL10nIndexable(path: Ref<string>) {
   return useAsyncData(computed(() => `l10n-indexable:${path.value}`), () => isLocalisedPage(path.value) ? fetchIndexable() : Promise.resolve({}), {

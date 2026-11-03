@@ -389,8 +389,6 @@ export const L10N_STRINGS = {
       'verified': 'Traduction vérifiée',
       'rejected': 'Traduction rejetée : texte anglais'
     } satisfies Record<SegmentStatus, string>,
-    suggestion: 'Cette page est disponible en français.',
-    suggestionLink: 'Lire en français',
     editor: {
       title: 'Traduction',
       close: 'Fermer',

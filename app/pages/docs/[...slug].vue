@@ -5,7 +5,7 @@ import { DocsProseImg, Browser, CodeExplorer, Important, LinkExample, ReadMore, 
 import { CLI_DOCS_REFS, CLI_DOCS_REPO, cliDocsPathPrefix, hasCliDocs } from '#shared/utils/cli'
 import { cliInstanceKey } from '#shared/utils/content'
 import { DOCS_REFS, DOCS_REPO, getVersionByPath, isArchivedDocVersion, isCanonicalDocsPath } from '#shared/utils/docs'
-import { isLocalisedPage, l10nHead, L10N_LOCALE_CODES, type L10nPageMeta } from '#shared/utils/l10n'
+import { isLocalisedPage, l10nHead, type L10nPageMeta } from '#shared/utils/l10n'
 
 definePageMeta({
   heroBackground: false,
@@ -80,7 +80,6 @@ const instanceKey = computed(() => {
 })
 
 const { data: indexable } = useL10nIndexable(path)
-const indexedLocales = computed(() => L10N_LOCALE_CODES.filter(code => indexable.value[code]))
 
 const { data: page, status, refresh: refreshPage } = await useAsyncData(pageKey, () => {
   const pagePath = path.value
@@ -408,7 +407,6 @@ const noRightAside = computed(() => route.path.includes('/examples/'))
           :target="pageBody?.$el"
           @published="refreshPage()"
         />
-        <LazyDocsL10nSuggestion v-else-if="!locale && indexedLocales.length" :path="path" :locales="indexedLocales" />
         <MarkdownDocument v-if="page.nodes?.length" :value="page" :components="markdownComponents" />
         <div>
           <Feedback :page="{ title: fm.title, stem: page.meta.stem }" :lang="locale ? 'en' : undefined" />
