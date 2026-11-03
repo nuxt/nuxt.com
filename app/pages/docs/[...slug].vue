@@ -5,7 +5,7 @@ import { DocsProseImg, Browser, CodeExplorer, Important, LinkExample, ReadMore, 
 import { CLI_DOCS_REFS, CLI_DOCS_REPO, cliDocsPathPrefix, hasCliDocs } from '#shared/utils/cli'
 import { cliInstanceKey } from '#shared/utils/content'
 import { DOCS_REFS, DOCS_REPO, getVersionByPath, isArchivedDocVersion, isCanonicalDocsPath } from '#shared/utils/docs'
-import { isLocalisedPage, l10nHead, L10N_INDEXABLE_PATH, L10N_LOCALE_CODES, pageIndexable, type L10nIndexable, type L10nPageMeta } from '#shared/utils/l10n'
+import { isLocalisedPage, l10nHead, L10N_LOCALE_CODES, type L10nPageMeta } from '#shared/utils/l10n'
 
 definePageMeta({
   heroBackground: false,
@@ -78,6 +78,9 @@ const instanceKey = computed(() => {
   if (!versioned.value) return 'examples' as const
   return cliVersion.value ? cliInstanceKey(cliVersion.value) : docsInstanceKey.value
 })
+
+const { data: indexable } = useL10nIndexable(path)
+const indexedLocales = computed(() => L10N_LOCALE_CODES.filter(code => indexable.value[code]))
 
 const { data: page, status, refresh: refreshPage } = await useAsyncData(pageKey, () => {
   const pagePath = path.value
@@ -204,13 +207,6 @@ useSeoMeta({
 if (isCanonicalDocsPath(path.value) && !locale.value) {
   useCanonical(() => isArchivedDocVersion(docsVersion.value) ? undefined : `/raw${path.value}.md`)
 }
-
-const { data: indexable } = await useAsyncData(computed(() => `l10n-indexable:${path.value}`), () =>
-  $fetch<L10nIndexable>(L10N_INDEXABLE_PATH).catch(() => ({})), {
-  transform: all => pageIndexable(all, path.value),
-  default: (): L10nIndexable => ({})
-})
-const indexedLocales = computed(() => L10N_LOCALE_CODES.filter(code => indexable.value[code]))
 
 const siteUrl = useSiteConfig().url
 const l10nHeadTags = computed(() => isLocalisedPage(path.value)
