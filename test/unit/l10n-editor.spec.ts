@@ -51,6 +51,17 @@ describe('editorSegments', () => {
     expect(first.previous).toEqual({ source: 'Nuxt is a framework. It is free.', changed: [source] })
   })
 
+  it('should not flag new sentences once a carried translation is reviewed', async () => {
+    const bundle = createBundle({
+      ...records,
+      [FIRST_PARAGRAPH]: { ...records[FIRST_PARAGRAPH], derived: 'update', prev: PREVIOUS, review: 'verified', verifiedBy: { by: 'danielroe', at: '2026-11-03T00:00:00Z' } },
+      [PREVIOUS]: { ...records[FIRST_PARAGRAPH], hash: PREVIOUS, source: 'Nuxt is a framework. It is free.' }
+    }, 'fr', 'sha')
+    const first = (await editorSegments(page, bundle, { terms: [] })).find(segment => segment.hash === FIRST_PARAGRAPH)!
+    expect(first.status).toBe('verified')
+    expect(first.previous).toBeUndefined()
+  })
+
   it('should show who rejected a translation', async () => {
     const bundle = createBundle({ ...records, [FIRST_PARAGRAPH]: { ...records[FIRST_PARAGRAPH], review: 'rejected', rejectedBy: { by: 'danielroe', at: '2026-11-03T00:00:00Z' } } }, 'fr', 'sha')
     const first = (await editorSegments(page, bundle, { terms: [] })).find(segment => segment.hash === FIRST_PARAGRAPH)!

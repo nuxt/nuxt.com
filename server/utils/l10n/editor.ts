@@ -19,7 +19,8 @@ export async function editorSegments(file: Pick<ContentFile, 'data' | 'nodes'>, 
     if (!segment.words) continue
 
     const record = bundle.record(segment.hash)
-    const previous = record?.prev && record.derived !== 'fresh' ? bundle.record(record.prev)?.source : undefined
+    const status = recordStatus(record, segment)
+    const previous = status === 'pending-review' && record?.prev ? bundle.record(record.prev)?.source : undefined
     segments.push({
       hash: segment.hash,
       kind: segment.kind,
@@ -27,7 +28,7 @@ export async function editorSegments(file: Pick<ContentFile, 'data' | 'nodes'>, 
       skeleton: segment.skeleton,
       words: segment.words,
       placeholders: segment.placeholders,
-      status: recordStatus(record, segment),
+      status,
       ...(record
         ? {
             record: {
