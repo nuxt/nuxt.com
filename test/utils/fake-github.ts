@@ -22,6 +22,7 @@ export async function createFakeGitHub({ repo = 'nuxt/translations', files = {} 
   const pem = privateKey.export({ type: 'pkcs1', format: 'pem' }).toString()
   const pulls: FakePull[] = []
   const requests: Array<{ method: string, path: string, authorization?: string }> = []
+  let queryErrors: Array<{ message: string }> | undefined
 
   const git = (args: string[], options: { input?: string, env?: Record<string, string> } = {}) =>
     execFileSync('git', ['--git-dir', bare, ...args], { input: options.input, env: { ...process.env, ...options.env }, encoding: 'utf8' }).trim()
@@ -84,14 +85,20 @@ export async function createFakeGitHub({ repo = 'nuxt/translations', files = {} 
       const { owner, name, ...expressions } = body.variables as Record<string, string>
       if (`${owner}/${name}` !== repo) return send(200, { errors: [{ message: 'Could not resolve to a Repository' }] })
       const repository: Record<string, { text: string } | null> = {}
+      const errors = queryErrors
+      queryErrors = undefined
       for (const [alias, expression] of Object.entries(expressions)) {
+        if (errors) {
+          repository[alias] = null
+          continue
+        }
         try {
           repository[alias] = { text: `${git(['show', expression])}\n` }
         } catch {
           repository[alias] = null
         }
       }
-      return send(200, { data: { repository } })
+      return send(200, { data: { repository }, ...(errors && { errors }) })
     }
 
     const membership = /^\/orgs\/[^/]+\/teams\/([^/]+)\/memberships\/([^/]+)$/.exec(path)
@@ -188,6 +195,10 @@ export async function createFakeGitHub({ repo = 'nuxt/translations', files = {} 
     pulls,
     requests,
     git,
+    /** Reply to the next GraphQL query with null fields and `message` as an error, as a partial failure does. */
+    failNextQuery(message: string) {
+      queryErrors = [{ message }]
+    },
     /** Commit straight to a branch, as another writer would. */
     push(branch: string, path: string, content: string) {
       const parent = git(['rev-parse', `refs/heads/${branch}`])

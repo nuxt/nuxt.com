@@ -321,6 +321,12 @@ describe('GitHub App', () => {
     expect(github.requests.some(request => request.path.includes('/contents/'))).toBe(false)
   })
 
+  it('should fail a read when GitHub reports errors beside the data', async () => {
+    const head = (await git.head('main'))!
+    github.failNextQuery('Something went wrong while executing your query')
+    await expect(git.readFiles(head, [recordPath('fr', TIP)])).rejects.toThrow('Something went wrong')
+  })
+
   it('should retry once on top of a commit that landed in between', async () => {
     let pushed: string | undefined
     const racing: TranslationsGit = {

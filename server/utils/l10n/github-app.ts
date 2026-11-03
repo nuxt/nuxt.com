@@ -149,7 +149,7 @@ export function githubTranslationsGit(app: GitHubApp, repo: string, base = 'main
           method: 'POST',
           body: { query, variables }
         })
-        if (!data?.repository) throw new Error(`[l10n] could not read ${repo}@${commit}: ${JSON.stringify(errors)}`)
+        if (!data?.repository || (Array.isArray(errors) && errors.length)) throw new Error(`[l10n] could not read ${repo}@${commit}: ${JSON.stringify(errors)}`)
         batch.forEach((path, i) => {
           const text = data.repository![`f${i}`]?.text
           if (typeof text === 'string') files.set(path, text)
