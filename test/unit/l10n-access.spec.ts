@@ -14,10 +14,19 @@ describe('consumeL10nSave', () => {
   it('should refuse saves past the hourly allowance, per user', async () => {
     const store = memoryStore()
     const now = Date.parse('2026-11-03T10:15:00Z')
-    for (let index = 0; index < 60; index++) await consumeL10nSave(store, 'a', now)
-    await expect(consumeL10nSave(store, 'a', now)).rejects.toMatchObject({ statusCode: 429 })
-    await expect(consumeL10nSave(store, 'b', now)).resolves.toBeUndefined()
-    await expect(consumeL10nSave(store, 'a', now + 3_600_000)).resolves.toBeUndefined()
+    for (let index = 0; index < 60; index++) await consumeL10nSave(store, 'a', 1, now)
+    await expect(consumeL10nSave(store, 'a', 1, now)).rejects.toMatchObject({ statusCode: 429 })
+    await expect(consumeL10nSave(store, 'b', 1, now)).resolves.toBeUndefined()
+    await expect(consumeL10nSave(store, 'a', 1, now + 3_600_000)).resolves.toBeUndefined()
+  })
+
+  it('should refuse saves past the hourly allowance of changed segments', async () => {
+    const store = memoryStore()
+    const now = Date.parse('2026-11-03T10:15:00Z')
+    await consumeL10nSave(store, 'a', 500, now)
+    await consumeL10nSave(store, 'a', 499, now)
+    await expect(consumeL10nSave(store, 'a', 2, now)).rejects.toMatchObject({ statusCode: 429 })
+    await expect(consumeL10nSave(store, 'a', 1, now)).resolves.toBeUndefined()
   })
 })
 
