@@ -1,9 +1,9 @@
-import { editRatio, recordStatus, type SegmentStatus } from '@diglot/core'
+import { editRatio, type SegmentStatus } from '@diglot/core'
 import { Document, parseDocument } from 'yaml'
 import type { L10nLocale, L10nLocaleStatus, L10nPageStatus } from '../../../shared/utils/l10n'
 import { isIndexableCoverage, reviewedShare } from '../../../shared/utils/l10n'
 import type { L10nBundle } from './bundle'
-import type { ManifestSegment } from './coverage'
+import { manifestStatus, type ManifestSegment } from './coverage'
 import type { GitPullRequest, TranslationsGit } from './git'
 import { translatorAuthor } from './write'
 
@@ -50,10 +50,11 @@ export function localeStatus({ locale, bundle, pages, indexable, machine, now = 
 
   for (const [path, segments] of pages) {
     const page: L10nPageStatus = { path, words: 0, byStatus: {}, pending: 0, reviewed: 0, indexable: indexable.has(path) }
-    for (const { hash, words: count } of segments) {
+    for (const segment of segments) {
+      const { hash, words: count } = segment
       if (!count) continue
       const record = bundle.record(hash)
-      const status = recordStatus(record)
+      const status = manifestStatus(record, segment)
       page.words += count
       page.byStatus[status] = (page.byStatus[status] ?? 0) + count
       if (status === 'pending-review') page.pending++

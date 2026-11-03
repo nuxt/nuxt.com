@@ -82,6 +82,14 @@ describe('coverage', () => {
     expect(coverage.byStatus).toEqual({ 'pending-review': words })
   })
 
+  it('should count a translation that no longer fits its source as rejected', () => {
+    const hash = 'baf35e0f2e2e1937'
+    const segment = { hash, words: 22, kind: 'component-slot' as const, format: 'markdown' as const, skeleton: raw.records[hash]!.source as string, placeholders: ['link' as const] }
+    expect(fileCoverage([segment], bundleWith()).byStatus).toEqual({ machine: 22 })
+    const broken = bundleWith({ [hash]: { ...raw.records[hash], text: 'Essayez Nuxt en ligne.', review: 'verified', verifiedBy: { by: 'danielroe', at: '2026-11-02T00:00:00Z' } } })
+    expect(fileCoverage([segment], broken).byStatus).toEqual({ rejected: 22 })
+  })
+
   it('should key the table by page path and leave out files without a page', () => {
     const table = coverageTable(sourceCoverage(manifest, bundleWith()), file => file === INTRODUCTION ? ['/docs/4.x/getting-started/introduction'] : undefined)
     expect(Object.keys(table)).toEqual(['/docs/4.x/getting-started/introduction'])
