@@ -1,5 +1,5 @@
 import { mountSuspended, registerEndpoint } from '@nuxt/test-utils/runtime'
-import { afterEach, describe, expect, it, vi } from 'vitest'
+import { afterEach, beforeAll, describe, expect, it, vi } from 'vitest'
 import { h } from 'vue'
 import { UApp } from '#components'
 import DocsL10nStatus from '~/components/DocsL10nStatus.vue'
@@ -21,6 +21,10 @@ function renderDocument() {
 function mountStatus(target: HTMLElement) {
   return mountSuspended({ render: () => h(UApp, () => h(DocsL10nStatus, { meta: META, path: PATH, target, show: true })) }, { attachTo: document.body })
 }
+
+beforeAll(async () => {
+  await import('~/components/DocsL10nEditor.vue')
+})
 
 afterEach(() => {
   document.body.innerHTML = ''

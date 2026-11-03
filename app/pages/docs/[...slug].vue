@@ -400,7 +400,7 @@ const noRightAside = computed(() => route.path.includes('/examples/'))
       </UPageHeader>
 
       <UPageBody ref="pageBody" :data-l10n-show="l10n && showL10nStatus ? '' : undefined">
-        <DocsL10nStatus
+        <LazyDocsL10nStatus
           v-if="l10n"
           v-model:show="showL10nStatus"
           :meta="l10n"
@@ -408,7 +408,7 @@ const noRightAside = computed(() => route.path.includes('/examples/'))
           :target="pageBody?.$el"
           @published="refreshPage()"
         />
-        <DocsL10nSuggestion v-else-if="!locale && indexedLocales.length" :path="path" :locales="indexedLocales" />
+        <LazyDocsL10nSuggestion v-else-if="!locale && indexedLocales.length" :path="path" :locales="indexedLocales" />
         <MarkdownDocument v-if="page.nodes?.length" :value="page" :components="markdownComponents" />
         <div>
           <Feedback :page="{ title: fm.title, stem: page.meta.stem }" :lang="locale ? 'en' : undefined" />

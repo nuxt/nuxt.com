@@ -17,6 +17,11 @@ const emit = defineEmits<{
 
 /** Review mode: every block shows its status, its English source on hover, and opens the editor on click. */
 const show = defineModel<boolean>('show', { default: false })
+/** Whether review mode was ever on: the popover and editor load then, and stay mounted. */
+const reviewing = ref(show.value)
+watch(show, (value) => {
+  if (value) reviewing.value = true
+})
 
 const strings = computed(() => L10N_STRINGS[props.meta.locale])
 const coverage = computed(() => props.meta.coverage)
@@ -156,7 +161,7 @@ const status = computed(() => (source.value?.status ?? reference.value?.dataset.
 
     <span v-for="item in STATUSES" :id="descriptionId(item)" :key="item" hidden>{{ strings.status[item] }}. {{ strings.reviewBlockHint }}</span>
 
-    <ClientOnly>
+    <ClientOnly v-if="reviewing">
       <UPopover
         v-model:open="open"
         :reference="reference"
@@ -192,7 +197,7 @@ const status = computed(() => (source.value?.status ?? reference.value?.dataset.
         </template>
       </UPopover>
 
-      <DocsL10nEditor
+      <LazyDocsL10nEditor
         :key="`${meta.locale}:${path}`"
         v-model:open="editorOpen"
         v-model:hash="editorHash"
