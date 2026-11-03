@@ -1,9 +1,8 @@
 import { readFile } from 'node:fs/promises'
 import { join } from 'node:path'
 import type { Glossary, LocaleState } from '@diglot/core'
-import { loadLocale, parseGlossary, readManifests, type Manifest } from '@diglot/store'
-import { readArchive, type ArchiveInput } from '@diglot/store/runtime'
-import { parse as parseYaml } from 'yaml'
+import { loadLocale, readManifests, type Manifest } from '@diglot/store'
+import { archiveGlossary, archiveLocaleState, readArchive, type ArchiveInput } from '@diglot/store/runtime'
 import { L10N_LOCALE_CODES, type L10nLocale } from '../../../shared/utils/l10n'
 
 /** The files of the translations repository the site reads, at one commit. */
@@ -25,34 +24,22 @@ const NO_RECORDS: ReadonlyMap<string, unknown> = new Map()
 /** A locale's state, read from `files`; empty when missing or unreadable. */
 function localeStates(files: Map<string, string>): TranslationsTree['localeState'] {
   return (locale) => {
-    const text = files.get(`${locale}/locale.yml`)
     try {
-      const state = text === undefined ? undefined : parseYaml(text) as LocaleState | null
-      return state && typeof state === 'object' ? state : {}
-    } catch {
+      return archiveLocaleState({ files }, locale)
+    } catch (error) {
+      console.error(`[l10n] skipping ${locale}/locale.yml: ${(error as Error).message}`)
       return {}
     }
   }
 }
 
-/** Merge the shared glossary and a locale's own, read from `files`. A glossary that cannot be parsed is left out. */
+/** The shared glossary and a locale's own, read from `files`; empty when missing or unreadable. */
 function glossaryFrom(files: Map<string, string>, locale: L10nLocale): Glossary {
-  const read = (path: string): Glossary => {
-    const text = files.get(path)
-    if (text === undefined) return { terms: [] }
-    try {
-      return parseGlossary(parseYaml(text), locale, path)
-    } catch (error) {
-      console.error(`[l10n] skipping ${path}: ${(error as Error).message}`)
-      return { terms: [] }
-    }
-  }
-  const shared = read(SHARED_GLOSSARY)
-  const own = read(`${locale}/glossary.yml`)
-  const overridden = new Set(own.terms.map(term => term.term.toLowerCase()))
-  return {
-    terms: [...shared.terms.filter(term => !overridden.has(term.term.toLowerCase())), ...own.terms],
-    ...(own.style ? { style: own.style } : {})
+  try {
+    return archiveGlossary({ files }, locale, { shared: SHARED_GLOSSARY }) ?? { terms: [] }
+  } catch (error) {
+    console.error(`[l10n] skipping the ${locale} glossary: ${(error as Error).message}`)
+    return { terms: [] }
   }
 }
 

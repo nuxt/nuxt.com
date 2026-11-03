@@ -13,12 +13,12 @@ export interface L10nBundle {
   /** Whether any record was written or reviewed by a person: without one, no page can be indexed. */
   reviewed: boolean
   record: (hash: string) => TranslationRecord | undefined
-  hashes: () => string[]
+  hashes: () => MapIterator<string>
 }
 
 /** A bundle without records: every segment shows its English source. */
 export function emptyBundle(locale: L10nLocale): L10nBundle {
-  return { locale, sha: '', reviewed: false, record: () => undefined, hashes: () => [] }
+  return { locale, sha: '', reviewed: false, record: () => undefined, hashes: () => new Map<string, never>().keys() }
 }
 
 function hasReviewedRecord(records: ReadonlyMap<string, unknown>): boolean {
@@ -39,7 +39,7 @@ export function createBundle(records: ReadonlyMap<string, unknown>, locale: L10n
     locale,
     sha,
     reviewed,
-    hashes: () => [...records.keys()],
+    hashes: () => records.keys(),
     record(hash) {
       let record = parsed.get(hash)
       if (record === undefined) {

@@ -4,11 +4,12 @@ import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { recordPath, writeManifest, writeRecord, type Manifest } from '@diglot/store'
 import type { TranslationRecord } from '@diglot/core'
-import { createTarGzip } from 'nanotar'
+import { gzipSync } from 'node:zlib'
+import { createTar } from 'nanotar'
 import { createStorage } from 'unstorage'
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 import { createBundle } from '../../server/utils/l10n/bundle'
-import { fileCoverage } from '../../server/utils/l10n/coverage'
+import { sourceCoverage } from '../../server/utils/l10n/coverage'
 import { buildL10nSnapshot, readL10nSnapshot, writeL10nSnapshot } from '../../server/utils/l10n/snapshot'
 import { parseTranslationsTarball, readTranslationsCheckout } from '../../server/utils/l10n/tree'
 
@@ -21,13 +22,15 @@ const [first, second] = Object.keys(records) as [string, string]
 /** A GitHub tarball of a translations repository holding the fixture records and manifest. */
 function tarball(extra: Array<{ name: string, data: string }> = []) {
   const root = `translations-${SHA.slice(0, 7)}`
-  return createTarGzip([
+  const tar = createTar([
     { name: `${root}/` },
     { name: `${root}/README.md`, data: '# translations' },
     { name: `${root}/.diglot/manifest/nuxt-4.x.json`, data: JSON.stringify(manifest) },
     ...Object.values(records).map(record => ({ name: `${root}/${recordPath('fr', record.hash)}`, data: JSON.stringify(record) })),
     ...extra.map(({ name, data }) => ({ name: `${root}/${name}`, data }))
   ])
+  // nanotar leaves out the end-of-archive blocks when the entries fill its last record
+  return gzipSync(Buffer.concat([tar, new Uint8Array(1024)]))
 }
 
 describe('parseTranslationsTarball', () => {
@@ -111,7 +114,8 @@ describe('l10n snapshot', () => {
     const tree = await parseTranslationsTarball(await tarball(), SHA)
     const snapshot = buildL10nSnapshot(tree, 'fr')
     expect(Object.keys(snapshot.coverage)).toEqual(['nuxt-4.x'])
-    expect(snapshot.coverage['nuxt-4.x']![INTRODUCTION]).toEqual(fileCoverage(manifest.files[INTRODUCTION]!, snapshot.bundle))
+    expect(snapshot.coverage['nuxt-4.x']).toEqual(sourceCoverage(manifest, snapshot.bundle))
+    expect(snapshot.coverage['nuxt-4.x']![INTRODUCTION]!.words).toBeGreaterThan(0)
     expect(snapshot.bundle.record(first)?.text).toBe(records[first]!.text)
   })
 
@@ -123,7 +127,7 @@ describe('l10n snapshot', () => {
 
     const stored = await readL10nSnapshot(storage, SHA, 'fr')
     expect(stored?.bundle.sha).toBe(SHA)
-    expect(stored?.bundle.hashes().sort()).toEqual(Object.keys(records).sort())
+    expect([...stored!.bundle.hashes()].sort()).toEqual(Object.keys(records).sort())
     expect(stored?.bundle.record(second)).toEqual(records[second])
     expect(stored?.coverage).toEqual(buildL10nSnapshot(tree, 'fr').coverage)
     expect(stored?.glossary).toEqual({ terms: [{ term: 'Nuxt', decision: 'keep' }] })

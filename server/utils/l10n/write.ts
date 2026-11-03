@@ -1,16 +1,14 @@
-import { createRecord, normaliseRecord, parseRecord, recordStatus, validate, type Segment, type TranslationRecord, type ValidationIssue } from '@diglot/core'
+import { editRecord, rejectRecord, verifyRecord, type ReviewTransition, type Segment, type TranslationRecord, type ValidationIssue } from '@diglot/core'
 import { extract } from '@diglot/comark'
-import { recordPath, serialiseRecord } from '@diglot/store'
+import { parseRecordFile, recordPath, serialiseRecord } from '@diglot/store'
 import type { Node } from 'comark'
 import type { ContentFile } from 'comark-content'
 import type { L10nChange, L10nChangeAction, L10nChangeIssue, L10nLocale, L10nTranslator } from '../../../shared/utils/l10n'
 import type { GitAuthor, GitFileChange, GitPullRequest, TranslationsGit } from './git'
 
-/** Longest translation accepted, in characters, whatever its source. */
-const MAX_TEXT_LENGTH = 8000
+const STALE_MESSAGE = 'The translation changed since this change was made: review it again.'
 
-/** Upper bound of a translation's length against its source's: anything longer is not a translation of it. */
-const MAX_LENGTH_RATIO = 4
+const sentence = (message: string) => `${message[0]!.toUpperCase()}${message.slice(1)}.`
 
 /** The record files a set of changes writes, or why some of them cannot be applied. */
 export interface L10nPlan {
@@ -48,7 +46,7 @@ export function translatorAuthor(translator: L10nTranslator): GitAuthor {
 }
 
 /**
- * The record files `changes` write, built with `@diglot/core` and serialised by `@diglot/store`.
+ * The record files `changes` write, built with `@diglot/core`'s review transitions and serialised by `@diglot/store`.
  * - `edit` writes the translator's text as a human edit, keeping the machine candidate it replaces
  * - `verify` keeps the text and marks it verified
  * - `reject` keeps the text and marks it rejected, so the page shows the English source and
@@ -76,77 +74,38 @@ export function planChanges({ locale, segments, current, published = current, ch
       issue(hash, 'not-allowed', `Only members of the ${locale} translators team can verify translations.`)
       continue
     }
-    if ((published.get(hash)?.text ?? null) !== change.base) {
-      issue(hash, 'stale', 'The translation changed since this change was made: review it again.')
+    const sameBranch = published === current
+    if (!sameBranch && (published.get(hash)?.text ?? null) !== change.base) {
+      issue(hash, 'stale', STALE_MESSAGE)
       continue
     }
 
     const record = current.get(hash)
-    let next: TranslationRecord
-
+    const options = { by: translator.login, at, ...(sameBranch ? { expected: change.base } : {}) }
+    let transition: ReviewTransition
     if (action === 'edit') {
       const text = change.text?.trim() ?? ''
       if (!text) {
         issue(hash, 'missing-text', 'The translation is empty.')
         continue
       }
-      if (text.length > Math.min(MAX_TEXT_LENGTH, segment.skeleton.length * MAX_LENGTH_RATIO + 100)) {
-        issue(hash, 'too-long', 'The translation is much longer than its source.')
-        continue
-      }
-      const result = validate(text, segment)
-      if (!result.ok) {
-        issue(hash, 'invalid', result.errors[0]!.message, result.errors)
-        continue
-      }
-      if (record?.text === text && record.review !== 'rejected') {
-        issue(hash, 'unchanged', 'The translation is unchanged: verify it instead.')
-        continue
-      }
-      next = createRecord({
-        segment,
-        text,
-        origin: 'human',
-        review: 'edited',
-        derived: record?.derived ?? 'fresh',
-        prev: record?.prev,
-        mt: record?.mt,
-        by: translator.login,
-        updatedAt: at
-      })
+      transition = editRecord(record, { ...options, segment, text })
     } else if (action === 'verify') {
-      if (!record) {
-        issue(hash, 'no-record', 'There is no translation to verify.')
-        continue
-      }
-      if (record.review === 'rejected') {
-        issue(hash, 'invalid', 'The translation was rejected: edit it instead.')
-        continue
-      }
-      if (recordStatus(record, segment) === 'rejected') {
-        issue(hash, 'invalid', 'The translation no longer fits its source: edit it instead.')
-        continue
-      }
-      if (record.review === 'verified') {
-        issue(hash, 'unchanged', 'The translation is already verified.')
-        continue
-      }
-      next = normaliseRecord({ ...record, review: 'verified', verifiedBy: { by: translator.login, at }, updatedAt: at })
+      transition = verifyRecord(record, { ...options, segment })
     } else {
-      if (!record) {
-        issue(hash, 'no-record', 'There is no translation to reject.')
-        continue
-      }
-      if (record.review === 'rejected') {
-        issue(hash, 'unchanged', 'The translation is already rejected.')
-        continue
-      }
-      next = normaliseRecord({ ...record, review: 'rejected', rejectedBy: { by: translator.login, at }, verifiedBy: undefined, updatedAt: at })
+      transition = rejectRecord(record, options)
     }
 
-    plan.records.set(hash, next)
+    if (transition.ok === false) {
+      const { code, message, errors } = transition
+      if (code === 'stale') issue(hash, 'stale', STALE_MESSAGE)
+      else if (errors.some(error => error.code === 'too-long')) issue(hash, 'too-long', 'The translation is much longer than its source.')
+      else issue(hash, code === 'rejected' || code === 'mismatch' ? 'invalid' : code, sentence(message), errors)
+      continue
+    }
+    plan.records.set(hash, transition.record)
     plan.counts[action] = (plan.counts[action] ?? 0) + 1
-    plan.files.push({ path: recordPath(locale, hash), content: serialiseRecord(parseRecord(next)) })
+    plan.files.push({ path: recordPath(locale, hash), content: serialiseRecord(transition.record) })
   }
 
   return plan
@@ -156,16 +115,7 @@ export function planChanges({ locale, segments, current, published = current, ch
 export async function readRecordsAt(git: Pick<TranslationsGit, 'readFiles'>, commit: string, locale: L10nLocale, hashes: string[]): Promise<Map<string, TranslationRecord | undefined>> {
   const files = await git.readFiles(commit, hashes.map(hash => recordPath(locale, hash)))
   const records = new Map<string, TranslationRecord | undefined>()
-  for (const hash of hashes) {
-    const text = files.get(recordPath(locale, hash))
-    let record: TranslationRecord | undefined
-    try {
-      record = text === undefined ? undefined : parseRecord(JSON.parse(text))
-    } catch {
-      record = undefined
-    }
-    records.set(hash, record?.hash === hash ? record : undefined)
-  }
+  for (const hash of hashes) records.set(hash, parseRecordFile(files.get(recordPath(locale, hash)), hash))
   return records
 }
 

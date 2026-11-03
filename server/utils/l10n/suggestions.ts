@@ -1,5 +1,4 @@
-import { parseRecord } from '@diglot/core'
-import { recordPath } from '@diglot/store'
+import { parseRecordFile, parseRecordPath, recordPath } from '@diglot/store'
 import type { L10nLocale, L10nSuggestion } from '../../../shared/utils/l10n'
 import type { TranslationsGit } from './git'
 
@@ -7,7 +6,6 @@ import type { TranslationsGit } from './git'
 const SUGGESTIONS_TTL = 5 * 60_000
 
 const SUGGESTION_BRANCH_RE = /^suggest\/([^/]+)\/([^/]+)$/
-const RECORD_HASH_RE = /\/([0-9a-f]{16})\.json$/
 
 interface SuggestedRecord {
   login: string
@@ -25,8 +23,9 @@ async function indexSuggestions(git: TranslationsGit, locale: L10nLocale): Promi
   })
   await Promise.all(pulls.map(async ({ login, number, url, head }) => {
     for (const path of await git.pullFiles(number)) {
-      const hash = RECORD_HASH_RE.exec(path)?.[1]
-      if (!hash || path !== recordPath(locale, hash)) continue
+      const record = parseRecordPath(path)
+      if (record?.locale !== locale) continue
+      const { hash } = record
       const list = index.get(hash) ?? []
       list.push({ login, number, url, head })
       index.set(hash, list)
@@ -66,14 +65,9 @@ export async function suggestionsFor(git: TranslationsGit, locale: L10nLocale, h
   const result: Record<string, L10nSuggestion[]> = {}
   for (const hash of wanted) {
     const list = suggested.get(hash)!.flatMap(({ login, number, url, head }) => {
-      const text = files.get(head)?.get(recordPath(locale, hash))
-      try {
-        const record = text === undefined ? undefined : parseRecord(JSON.parse(text))
-        if (!record) return []
-        return [record.review === 'rejected' ? { login, number, url } : { login, number, url, text: record.text }]
-      } catch {
-        return []
-      }
+      const record = parseRecordFile(files.get(head)?.get(recordPath(locale, hash)), hash)
+      if (!record) return []
+      return [record.review === 'rejected' ? { login, number, url } : { login, number, url, text: record.text }]
     })
     if (list.length) result[hash] = list
   }

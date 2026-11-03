@@ -1,5 +1,5 @@
 import type { TranslationRecord } from '@diglot/core'
-import { serialiseRecord } from '@diglot/store'
+import { parseRecordPath, serialiseRecord } from '@diglot/store'
 import { createError, getRequestHeader, type H3Event } from 'h3'
 import type { L10nLocale, L10nRole } from '../../../shared/utils/l10n'
 import { TRANSLATIONS_BRANCH, TRANSLATIONS_REPO } from './bundle'
@@ -11,8 +11,6 @@ const TRANSLATORS_ORG = 'nuxt'
 
 /** How long a role shown in the editor is reused; saves always ask GitHub. */
 const ROLE_TTL = 5 * 60_000
-
-const RECORD_PATH_RE = /^([^/]+)\/segments\/[0-9a-f]{2}\/([0-9a-f]{16})\.json$/
 
 /** The team whose members commit `locale`'s translations: `translators-fr`. */
 export function translatorsTeam(locale: L10nLocale): string {
@@ -52,9 +50,9 @@ export function translationsGit(): { git: TranslationsGit, dryRun?: DryRunLog } 
   const git = dryRunGit({
     head: async branch => branch === TRANSLATIONS_BRANCH ? resolveTranslationsSha() : undefined,
     async read(sha, path) {
-      const [, locale, hash] = RECORD_PATH_RE.exec(path) ?? []
-      if (!locale || !hash) return
-      const record = (await getTranslationsTree(sha)).records(locale as L10nLocale).get(hash)
+      const file = parseRecordPath(path)
+      if (!file) return
+      const record = (await getTranslationsTree(sha)).records(file.locale as L10nLocale).get(file.hash)
       return record ? serialiseRecord(record as TranslationRecord) : undefined
     }
   })

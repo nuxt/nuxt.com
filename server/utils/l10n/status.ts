@@ -1,8 +1,8 @@
-import { editRatio, type SegmentStatus } from '@diglot/core'
+import { editRatio, recordStatus, type SegmentStatus } from '@diglot/core'
+import { validationTarget, type ManifestEntry } from '@diglot/store'
 import type { L10nLocale, L10nLocaleStatus, L10nPageStatus } from '../../../shared/utils/l10n'
 import { isIndexableCoverage, reviewedShare } from '../../../shared/utils/l10n'
 import type { L10nBundle } from './bundle'
-import { manifestStatus, type ManifestSegment } from './coverage'
 
 /** How far back a review counts towards a locale's active reviewers. */
 const ACTIVE_REVIEWER_WEEKS = 8
@@ -19,7 +19,7 @@ export interface StatusInput {
   locale: L10nLocale
   bundle: L10nBundle
   /** The segments of each localised page, by page path. */
-  pages: Map<string, ManifestSegment[]>
+  pages: Map<string, readonly ManifestEntry[]>
   indexable: Set<string>
   /** Whether the translations repository machine translates the locale (`<locale>/locale.yml`). */
   machine: boolean
@@ -51,7 +51,7 @@ export function localeStatus({ locale, bundle, pages, indexable, machine, now = 
       const { hash, words: count } = segment
       if (!count) continue
       const record = bundle.record(hash)
-      const status = manifestStatus(record, segment)
+      const status = recordStatus(record, validationTarget(segment))
       page.words += count
       page.byStatus[status] = (page.byStatus[status] ?? 0) + count
       if (status === 'pending-review') page.pending++

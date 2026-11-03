@@ -1,7 +1,7 @@
 import { readFileSync } from 'node:fs'
 import { describe, expect, it } from 'vitest'
-import { createBundle, emptyBundle } from '../../server/utils/l10n/bundle'
-import { coverageTable, fileCoverage, sourceCoverage, TRANSLATION_SOURCES, type SourceManifest } from '../../server/utils/l10n/coverage'
+import { createBundle, emptyBundle, type L10nBundle } from '../../server/utils/l10n/bundle'
+import { coverageTable, sourceCoverage, TRANSLATION_SOURCES, type SourceManifest } from '../../server/utils/l10n/coverage'
 import { visibleRecord } from '../../server/utils/l10n/localise'
 import { changedHashes, isTranslationsPush, rebuiltLocales } from '../../server/utils/l10n/webhook'
 import { instanceSource } from '../../server/utils/content/instances'
@@ -11,6 +11,7 @@ const fixture = (file: string) => JSON.parse(readFileSync(new URL(`../fixtures/l
 const raw = fixture('fr.json') as { version: number, locale: string, records: Record<string, Record<string, unknown>> }
 const manifest = fixture('manifest.json') as SourceManifest
 const INTRODUCTION = 'docs/1.getting-started/01.introduction.md'
+const fileCoverage = (entries: SourceManifest['files'][string], bundle: L10nBundle) => sourceCoverage({ files: { [INTRODUCTION]: entries } }, bundle)[INTRODUCTION]!
 
 /** The fixture bundle with some records replaced. */
 function bundleWith(records: Record<string, Record<string, unknown> | undefined> = {}, sha = 'a'.repeat(40)) {
@@ -77,8 +78,9 @@ describe('coverage', () => {
   })
 
   it('should count records carried over from an earlier source as pending review', () => {
-    const [{ hash, words }] = manifest.files[INTRODUCTION]!.filter(segment => segment.words > 0 && raw.records[segment.hash])
-    const coverage = fileCoverage([{ hash, words }], bundleWith({ [hash]: { ...raw.records[hash], derived: 'carry', prev: '1'.repeat(16) } }))
+    const [segment] = manifest.files[INTRODUCTION]!.filter(segment => segment.words > 0 && raw.records[segment.hash])
+    const { hash, words } = segment!
+    const coverage = fileCoverage([segment!], bundleWith({ [hash]: { ...raw.records[hash], derived: 'carry', prev: '1'.repeat(16) } }))
     expect(coverage.byStatus).toEqual({ 'pending-review': words })
   })
 
