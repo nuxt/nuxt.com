@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { getVersionByPath } from '../../shared/utils/docs'
-import { indexedLocales, isLocalisedPage, l10nHead, localeLinks, localeRedirect, parseLocalePath } from '../../shared/utils/l10n'
+import { indexedLocales, isLocalisedPage, l10nHead, localeLinks, localeRedirect, pageIndexable, parseLocalePath } from '../../shared/utils/l10n'
 
 /** A few of the site's redirect rules, keyed by English path. */
 const RULES: Record<string, string> = {
@@ -128,6 +128,14 @@ describe('indexedLocales', () => {
     expect(indexedLocales({})).toEqual([])
     expect(indexedLocales({ fr: [] })).toEqual([])
     expect(indexedLocales({ fr: ['/docs/4.x/guide'] })).toEqual(['fr'])
+  })
+})
+
+describe('pageIndexable', () => {
+  it('should keep only what one page reads of the indexable pages', () => {
+    const indexable = { fr: ['/docs/4.x/guide', '/docs/4.x/api'] }
+    expect(pageIndexable(indexable, '/docs/4.x/api')).toEqual({ locales: ['fr'], indexable: { fr: ['/docs/4.x/api'] } })
+    expect(pageIndexable(indexable, '/docs/4.x/other')).toEqual({ locales: ['fr'], indexable: {} })
   })
 })
 

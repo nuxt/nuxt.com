@@ -151,6 +151,14 @@ export function indexedLocales(indexable: L10nIndexable): L10nLocale[] {
   return L10N_LOCALE_CODES.filter(locale => indexable[locale]?.length)
 }
 
+/** The part of `indexable` one docs page reads: the locales readers may be pointed at, and which translations of `path` are indexed. */
+export function pageIndexable(indexable: L10nIndexable, path: string): { locales: L10nLocale[], indexable: L10nIndexable } {
+  return {
+    locales: indexedLocales(indexable),
+    indexable: Object.fromEntries(L10N_LOCALE_CODES.filter(locale => indexable[locale]?.includes(path)).map(locale => [locale, [path]]))
+  }
+}
+
 /** Where a locale's page is served from: `/api/l10n/fr/get/docs/4.x/guide`. */
 export function l10nContentBasePath(locale: L10nLocale): string {
   return `/api/l10n/${locale}`
