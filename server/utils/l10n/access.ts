@@ -52,7 +52,7 @@ export function translationsGit(): { git: TranslationsGit, dryRun?: DryRunLog } 
     async read(sha, path) {
       const [, locale, hash] = RECORD_PATH_RE.exec(path) ?? []
       if (!locale || !hash) return
-      const record = (await getTranslationsTree(sha)).records(locale as L10nLocale)[hash]
+      const record = (await getTranslationsTree(sha)).records(locale as L10nLocale).get(hash)
       return record ? serialiseRecord(record as TranslationRecord) : undefined
     }
   })

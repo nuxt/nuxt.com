@@ -25,7 +25,7 @@ const edited = (hash: string, by: string, at: string) => ({ ...records[hash], or
 
 const status = (overrides: Record<string, unknown> = {}, machine = true) => localeStatus({
   locale: 'fr',
-  bundle: createBundle({ ...records, ...overrides }, 'fr', 'a'.repeat(40)),
+  bundle: createBundle(new Map(Object.entries({ ...records, ...overrides })), 'fr', 'a'.repeat(40)),
   pages,
   indexable: new Set([USE_FETCH]),
   machine,

@@ -14,6 +14,8 @@ const records = (JSON.parse(readFileSync(`${FIXTURES}fr.json`, 'utf8')) as { rec
 const FIRST_PARAGRAPH = '839f9a4898b82644'
 const PREVIOUS = '1'.repeat(16)
 
+const bundleOf = (value: Record<string, unknown>) => createBundle(new Map(Object.entries(value)), 'fr', 'sha')
+
 let page: ContentFile
 
 beforeAll(async () => {
@@ -24,7 +26,7 @@ beforeAll(async () => {
 
 describe('editorSegments', () => {
   it('should list the translatable segments of a page with their records and glossary entries', async () => {
-    const segments = await editorSegments(page, createBundle(records, 'fr', 'sha'), { terms: [{ term: 'Vue.js', decision: 'keep' }] })
+    const segments = await editorSegments(page, bundleOf(records), { terms: [{ term: 'Vue.js', decision: 'keep' }] })
     expect(segments.every(segment => segment.words > 0)).toBe(true)
 
     const first = segments.find(segment => segment.hash === FIRST_PARAGRAPH)!
@@ -41,36 +43,36 @@ describe('editorSegments', () => {
 
   it('should show the sentences that are new since the source a record was carried from', async () => {
     const source = records[FIRST_PARAGRAPH]!.source as string
-    const bundle = createBundle({
+    const bundle = bundleOf({
       ...records,
       [FIRST_PARAGRAPH]: { ...records[FIRST_PARAGRAPH], derived: 'update', prev: PREVIOUS },
       [PREVIOUS]: { ...records[FIRST_PARAGRAPH], hash: PREVIOUS, source: 'Nuxt is a framework. It is free.' }
-    }, 'fr', 'sha')
+    })
     const first = (await editorSegments(page, bundle, { terms: [] })).find(segment => segment.hash === FIRST_PARAGRAPH)!
     expect(first.status).toBe('pending-review')
     expect(first.previous).toEqual({ source: 'Nuxt is a framework. It is free.', changed: [source] })
   })
 
   it('should not flag new sentences once a carried translation is reviewed', async () => {
-    const bundle = createBundle({
+    const bundle = bundleOf({
       ...records,
       [FIRST_PARAGRAPH]: { ...records[FIRST_PARAGRAPH], derived: 'update', prev: PREVIOUS, review: 'verified', verifiedBy: { by: 'danielroe', at: '2026-11-03T00:00:00Z' } },
       [PREVIOUS]: { ...records[FIRST_PARAGRAPH], hash: PREVIOUS, source: 'Nuxt is a framework. It is free.' }
-    }, 'fr', 'sha')
+    })
     const first = (await editorSegments(page, bundle, { terms: [] })).find(segment => segment.hash === FIRST_PARAGRAPH)!
     expect(first.status).toBe('verified')
     expect(first.previous).toBeUndefined()
   })
 
   it('should show who rejected a translation', async () => {
-    const bundle = createBundle({ ...records, [FIRST_PARAGRAPH]: { ...records[FIRST_PARAGRAPH], review: 'rejected', rejectedBy: { by: 'danielroe', at: '2026-11-03T00:00:00Z' } } }, 'fr', 'sha')
+    const bundle = bundleOf({ ...records, [FIRST_PARAGRAPH]: { ...records[FIRST_PARAGRAPH], review: 'rejected', rejectedBy: { by: 'danielroe', at: '2026-11-03T00:00:00Z' } } })
     const first = (await editorSegments(page, bundle, { terms: [] })).find(segment => segment.hash === FIRST_PARAGRAPH)!
     expect(first.status).toBe('rejected')
     expect(first.record).toMatchObject({ review: 'rejected', rejectedBy: 'danielroe', text: records[FIRST_PARAGRAPH]!.text })
   })
 
   it('should list a segment without a record as untranslated', async () => {
-    const segments = await editorSegments(page, createBundle({}, 'fr', 'sha'), { terms: [] })
+    const segments = await editorSegments(page, bundleOf({}), { terms: [] })
     expect(segments.every(segment => segment.status === 'untranslated' && !segment.record)).toBe(true)
   })
 })

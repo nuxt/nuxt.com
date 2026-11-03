@@ -1,12 +1,16 @@
-import { gunzipSync, gzipSync } from 'node:zlib'
+import * as zlib from 'node:zlib'
 import type { Glossary } from '@diglot/core'
+import { decodeRecords, encodeRecords } from '@diglot/store/runtime'
 import type { L10nCoverage, L10nLocale } from '../../../shared/utils/l10n'
 import { createBundle, emptyBundle, type L10nBundle } from './bundle'
 import { sourceCoverage, TRANSLATION_SOURCES } from './coverage'
 import type { TranslationsTree } from './tree'
 
 /** Bump when the stored layout changes: entries of another version are never read. */
-const L10N_SNAPSHOT_VERSION = 'v1'
+const L10N_SNAPSHOT_VERSION = 'v2'
+
+/** `decodeRecords` reads either; zstd is faster where `node:zlib` has it. */
+const COMPRESSION = 'zstdCompressSync' in zlib ? 'zstd' : 'gzip'
 
 /** Characters per stored shard of records, below the Runtime Cache's 2 MB item limit. */
 const SHARD_LENGTH = 1_000_000
@@ -50,12 +54,12 @@ export function buildL10nSnapshot(tree: TranslationsTree, locale: L10nLocale): L
 }
 
 /**
- * Store a snapshot: the records gzipped in as many shards as the item size limit needs, then the
+ * Store a snapshot: the encoded records in as many shards as the item size limit needs, then the
  * entry pointing at them, so a reader that finds the entry finds every shard.
  */
-export async function writeL10nSnapshot(storage: SnapshotStorage, snapshot: L10nSnapshot, records: Record<string, unknown>, { shardLength = SHARD_LENGTH } = {}): Promise<void> {
+export async function writeL10nSnapshot(storage: SnapshotStorage, snapshot: L10nSnapshot, records: ReadonlyMap<string, unknown>, { shardLength = SHARD_LENGTH } = {}): Promise<void> {
   const { locale, sha } = snapshot.bundle
-  const encoded = gzipSync(JSON.stringify(records)).toString('base64')
+  const encoded = await encodeRecords(records, { compression: COMPRESSION })
   const shards = Math.max(1, Math.ceil(encoded.length / shardLength))
   await Promise.all(Array.from({ length: shards }, (_, index) =>
     storage.setItem(key(sha, locale, index), encoded.slice(index * shardLength, (index + 1) * shardLength))))
@@ -70,6 +74,6 @@ export async function readL10nSnapshot(storage: SnapshotStorage, sha: string, lo
   const shards = await Promise.all(Array.from({ length: meta.shards }, (_, index) => storage.getItem(key(sha, locale, index))))
   if (shards.some(shard => typeof shard !== 'string')) return
 
-  const records = JSON.parse(gunzipSync(Buffer.from(shards.join(''), 'base64')).toString('utf8')) as Record<string, unknown>
+  const records = await decodeRecords(shards.join(''))
   return { bundle: createBundle(records, locale, sha), coverage: meta.coverage, glossary: meta.glossary }
 }

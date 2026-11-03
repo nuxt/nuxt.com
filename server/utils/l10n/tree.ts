@@ -1,10 +1,10 @@
 import { readFile } from 'node:fs/promises'
 import { join } from 'node:path'
 import type { Glossary, LocaleState } from '@diglot/core'
-import { loadLocale, parseGlossary, readManifests, recordPath, type Manifest } from '@diglot/store'
-import { parseTarGzip } from 'nanotar'
+import { loadLocale, parseGlossary, readManifests, type Manifest } from '@diglot/store'
+import { readArchive, type ArchiveInput } from '@diglot/store/runtime'
 import { parse as parseYaml } from 'yaml'
-import type { L10nLocale } from '../../../shared/utils/l10n'
+import { L10N_LOCALE_CODES, type L10nLocale } from '../../../shared/utils/l10n'
 
 /** The files of the translations repository the site reads, at one commit. */
 export interface TranslationsTree {
@@ -12,17 +12,15 @@ export interface TranslationsTree {
   /** Source manifests (`.diglot/manifest/<source>.json`), by source name. */
   manifests: Map<string, Manifest>
   /** Unparsed records of a locale (`<locale>/segments/<hh>/<hash>.json`), by hash. */
-  records: (locale: L10nLocale) => Record<string, unknown>
+  records: (locale: L10nLocale) => ReadonlyMap<string, unknown>
   /** A locale's terminology: the shared `glossary.yml`, overridden term by term by `<locale>/glossary.yml`. */
   glossary: (locale: L10nLocale) => Glossary
   /** A locale's `<locale>/locale.yml`: its machine translation switch and review metrics. */
   localeState: (locale: L10nLocale) => LocaleState
 }
 
-const RECORD_RE = /^([^/]+)\/segments\/[0-9a-f]{2}\/([0-9a-f]{16})\.json$/
-const MANIFEST_RE = /^\.diglot\/manifest\/([^/]+)\.json$/
-const CONFIG_RE = /^(?:[^/]+\/)?(?:glossary|locale)\.yml$/
 const SHARED_GLOSSARY = 'glossary.yml'
+const NO_RECORDS: ReadonlyMap<string, unknown> = new Map()
 
 /** A locale's state, read from `files`; empty when missing or unreadable. */
 function localeStates(files: Map<string, string>): TranslationsTree['localeState'] {
@@ -69,48 +67,14 @@ function glossaries(files: Map<string, string>): TranslationsTree['glossary'] {
 }
 
 /**
- * Read a tarball of the translations repository (GitHub's `tar.gz` of one commit).
- * Entries sit under one top-level directory, which is dropped. A file that is not valid JSON is skipped.
+ * Read a tarball of the translations repository (GitHub's `tar.gz` of one commit), as bytes or as it
+ * arrives. Records and manifests that cannot be read are skipped.
  */
-export async function parseTranslationsTarball(data: Uint8Array, sha: string): Promise<TranslationsTree> {
-  const records = new Map<string, Record<string, unknown>>()
-  const manifests = new Map<string, Manifest>()
-  const files = new Map<string, string>()
+export async function parseTranslationsTarball(data: ArchiveInput, sha: string): Promise<TranslationsTree> {
+  const { records, manifests, files, invalid } = await readArchive(data, { locales: L10N_LOCALE_CODES })
+  if (invalid.length) console.error(`[l10n] skipping ${invalid.length} unreadable files at ${sha}: ${invalid.slice(0, 5).join(', ')}`)
 
-  const entries = await parseTarGzip(data, {
-    filter: entry => entry.type === 'file' && /\.json$|\/(?:glossary|locale)\.yml$/.test(entry.name)
-  })
-  for (const entry of entries) {
-    const path = entry.name.slice(entry.name.indexOf('/') + 1)
-    if (CONFIG_RE.test(path)) {
-      files.set(path, entry.text)
-      continue
-    }
-    const record = RECORD_RE.exec(path)
-    const manifest = record ? undefined : MANIFEST_RE.exec(path)
-    if (!record && !manifest) continue
-
-    let value: unknown
-    try {
-      value = JSON.parse(entry.text)
-    } catch {
-      console.error(`[l10n] skipping ${path} at ${sha}: not valid JSON`)
-      continue
-    }
-
-    if (record) {
-      const locale = record[1]!
-      const hash = record[2]!
-      if (recordPath(locale, hash) !== path) continue
-      let byHash = records.get(locale)
-      if (!byHash) records.set(locale, byHash = {})
-      byHash[hash] = value
-    } else if ((value as Manifest | null)?.files) {
-      manifests.set(manifest![1]!, value as Manifest)
-    }
-  }
-
-  return { sha, manifests, records: locale => records.get(locale) ?? {}, glossary: glossaries(files), localeState: localeStates(files) }
+  return { sha, manifests, records: locale => records.get(locale) ?? NO_RECORDS, glossary: glossaries(files), localeState: localeStates(files) }
 }
 
 /** Read a local checkout of the translations repository through `@diglot/store`. */
@@ -119,7 +83,7 @@ export async function readTranslationsCheckout(root: string, sha: string, locale
     readManifests(join(root, '.diglot')),
     ...locales.map(locale => loadLocale(root, locale))
   ])
-  const byLocale = new Map(locales.map((locale, index) => [locale, Object.fromEntries(records[index]!) as Record<string, unknown>]))
+  const byLocale = new Map(locales.map((locale, index) => [locale, records[index]!]))
 
   const files = new Map<string, string>()
   await Promise.all([SHARED_GLOSSARY, ...locales.flatMap(locale => [`${locale}/glossary.yml`, `${locale}/locale.yml`])].map(async (path) => {
@@ -130,7 +94,7 @@ export async function readTranslationsCheckout(root: string, sha: string, locale
   return {
     sha,
     manifests: new Map(manifests.map(manifest => [manifest.source, manifest])),
-    records: locale => byLocale.get(locale) ?? {},
+    records: locale => byLocale.get(locale) ?? NO_RECORDS,
     glossary: glossaries(files),
     localeState: localeStates(files)
   }

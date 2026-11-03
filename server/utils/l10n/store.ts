@@ -21,8 +21,8 @@ async function fetchTranslationsTree(sha: string): Promise<TranslationsTree> {
   const local = process.env[TRANSLATIONS_PATH_ENV]?.trim()
   if (local) return readTranslationsCheckout(local, sha, L10N_LOCALE_CODES)
 
-  const data = await $fetch<ArrayBuffer>(`https://codeload.github.com/${TRANSLATIONS_REPO}/tar.gz/${sha}`, { responseType: 'arrayBuffer' })
-  return parseTranslationsTarball(new Uint8Array(data), sha)
+  const data = await $fetch<ReadableStream<Uint8Array>>(`https://codeload.github.com/${TRANSLATIONS_REPO}/tar.gz/${sha}`, { responseType: 'stream' })
+  return parseTranslationsTarball(data, sha)
 }
 
 /** The tree of the last commit read, for the lifetime of this server instance. */

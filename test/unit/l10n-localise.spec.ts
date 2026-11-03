@@ -11,7 +11,7 @@ import { createBuildInstance } from '../../utils/factory'
 
 const FIXTURES = fileURLToPath(new URL('../fixtures/l10n/', import.meta.url))
 const raw = JSON.parse(readFileSync(`${FIXTURES}fr.json`, 'utf8')) as { version: number, locale: string, records: Record<string, Record<string, unknown>> }
-const bundle = (records: Record<string, Record<string, unknown>> = {}) => createBundle({ ...raw.records, ...records }, 'fr', 'a'.repeat(40))
+const bundle = (records: Record<string, Record<string, unknown>> = {}) => createBundle(new Map(Object.entries({ ...raw.records, ...records })), 'fr', 'a'.repeat(40))
 
 const INTRODUCTION = '/docs/4.x/getting-started/introduction'
 const USE_FETCH = '/docs/4.x/api/composables/use-fetch'

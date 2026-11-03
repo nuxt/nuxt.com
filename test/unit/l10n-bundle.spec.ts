@@ -14,7 +14,7 @@ const INTRODUCTION = 'docs/1.getting-started/01.introduction.md'
 
 /** The fixture bundle with some records replaced. */
 function bundleWith(records: Record<string, Record<string, unknown> | undefined> = {}, sha = 'a'.repeat(40)) {
-  const merged = Object.fromEntries(Object.entries({ ...raw.records, ...records }).filter(([, record]) => record))
+  const merged = new Map(Object.entries({ ...raw.records, ...records }).filter(([, record]) => record))
   return createBundle(merged, 'fr', sha)
 }
 

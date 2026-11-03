@@ -34,7 +34,7 @@ describe('parseTranslationsTarball', () => {
   it('should read the records and manifests of a commit', async () => {
     const tree = await parseTranslationsTarball(await tarball(), SHA)
     expect(tree.sha).toBe(SHA)
-    expect(Object.keys(tree.records('fr')).sort()).toEqual(Object.keys(records).sort())
+    expect([...tree.records('fr').keys()].sort()).toEqual(Object.keys(records).sort())
     expect(tree.manifests.get('nuxt-4.x')?.files).toEqual(manifest.files)
 
     const bundle = createBundle(tree.records('fr'), 'fr', tree.sha)
@@ -47,8 +47,8 @@ describe('parseTranslationsTarball', () => {
       { name: `fr/segments/11/${'1'.repeat(16)}.json`, data: '{' },
       { name: 'dist/fr.json', data: JSON.stringify({ version: 1, locale: 'fr', records }) }
     ]), SHA)
-    expect(Object.keys(tree.records('fr'))).toHaveLength(Object.keys(records).length)
-    expect(tree.records('fr')['1'.repeat(16)]).toBeUndefined()
+    expect(tree.records('fr').size).toBe(Object.keys(records).length)
+    expect(tree.records('fr').get('1'.repeat(16))).toBeUndefined()
   })
 
   it('should merge the shared glossary with the locale glossary', async () => {
@@ -71,6 +71,18 @@ describe('parseTranslationsTarball', () => {
     expect(tree.localeState('fr')).toEqual({ mt: { enabled: true } })
     expect((await parseTranslationsTarball(await tarball(), SHA)).localeState('fr')).toEqual({})
   })
+
+  it('should read the records of a tarball as it arrives', async () => {
+    const data = await tarball()
+    const stream = new ReadableStream<Uint8Array>({
+      start(controller) {
+        for (let index = 0; index < data.length; index += 512) controller.enqueue(data.subarray(index, index + 512))
+        controller.close()
+      }
+    })
+    const tree = await parseTranslationsTarball(stream, SHA)
+    expect([...tree.records('fr').keys()].sort()).toEqual(Object.keys(records).sort())
+  })
 })
 
 describe('readTranslationsCheckout', () => {
@@ -87,7 +99,7 @@ describe('readTranslationsCheckout', () => {
 
   it('should read the records and manifests of a local clone', async () => {
     const tree = await readTranslationsCheckout(root, 'main', ['fr'])
-    expect(Object.keys(tree.records('fr')).sort()).toEqual([first, second].sort())
+    expect([...tree.records('fr').keys()].sort()).toEqual([first, second].sort())
     expect(tree.manifests.get('nuxt-4.x')?.files).toEqual(manifest.files)
   })
 })
