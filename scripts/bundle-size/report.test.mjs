@@ -204,6 +204,7 @@ test('links to the hosted comparison first, and only on bundle.nuxt.dev', () => 
     '',
     'Client JS 6 B (no change) · CSS 0 B (no change) · Brotli'
   ])
+  assert.match(compareSnapshots(base, head), /<sub>.*<code>aaaaaaaa<\/code> → <code>bbbbbbbb<\/code><\/sub>\n$/)
 
   // Less code is green and more is red, for each total on its own.
   const changed = { ...head, totals: { ...totals, javascript: { raw: 8, gzip: 6, brotli: 4 }, css: { raw: 2, gzip: 2, brotli: 2 } } }

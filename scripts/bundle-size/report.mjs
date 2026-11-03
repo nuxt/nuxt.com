@@ -475,7 +475,9 @@ export function compareSnapshots(base, head, expected = {}) {
 
   const notes = [
     ...routes.length > 0 ? ['Initial page load counts the entry script, <code>modulepreload</code> chunks and stylesheets referenced by the prerendered HTML.'] : [],
-    'Module values are attribution estimates from Nuxt’s analyzer. This workflow is report-only.'
+    'Module values are attribution estimates from Nuxt’s analyzer. This workflow is report-only.',
+    // So a comment left from an earlier push can be told apart from the latest one.
+    `<code>${base.sha.slice(0, 8)}</code> → <code>${head.sha.slice(0, 8)}</code>`
   ]
   lines.push('', `<sub>${notes.join(' ')}</sub>`)
 
