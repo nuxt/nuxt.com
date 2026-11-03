@@ -55,10 +55,18 @@ export function openSuggestions(git: TranslationsGit, locale: L10nLocale): Promi
 /** The suggestions for `hashes`: the text each pull request proposes, or none for a rejection. */
 export async function suggestionsFor(git: TranslationsGit, locale: L10nLocale, hashes: Iterable<string>, index?: Map<string, SuggestedRecord[]>): Promise<Record<string, L10nSuggestion[]>> {
   const suggested = index ?? await openSuggestions(git, locale)
+  const wanted = [...hashes].filter(hash => suggested.has(hash))
+
+  const byHead = new Map<string, string[]>()
+  for (const hash of wanted) {
+    for (const { head } of suggested.get(hash)!) byHead.set(head, [...byHead.get(head) ?? [], recordPath(locale, hash)])
+  }
+  const files = new Map(await Promise.all([...byHead].map(async ([head, paths]) => [head, await git.readFiles(head, paths)] as const)))
+
   const result: Record<string, L10nSuggestion[]> = {}
-  await Promise.all([...hashes].filter(hash => suggested.has(hash)).map(async (hash) => {
-    const list = await Promise.all(suggested.get(hash)!.map(async ({ login, number, url, head }) => {
-      const text = await git.read(head, recordPath(locale, hash))
+  for (const hash of wanted) {
+    const list = suggested.get(hash)!.flatMap(({ login, number, url, head }) => {
+      const text = files.get(head)?.get(recordPath(locale, hash))
       try {
         const record = text === undefined ? undefined : parseRecord(JSON.parse(text))
         if (!record) return []
@@ -66,9 +74,9 @@ export async function suggestionsFor(git: TranslationsGit, locale: L10nLocale, h
       } catch {
         return []
       }
-    }))
-    if (list.flat().length) result[hash] = list.flat()
-  }))
+    })
+    if (list.length) result[hash] = list
+  }
   return result
 }
 

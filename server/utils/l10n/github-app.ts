@@ -26,6 +26,9 @@ export interface GitHubRequestOptions {
   headers?: Record<string, string>
 }
 
+/** Files read in one GraphQL query. */
+const FILES_PER_QUERY = 100
+
 /** Pages of a pull request's files read, a hundred each. */
 const MAX_FILE_PAGES = 5
 
@@ -132,6 +135,27 @@ export function githubTranslationsGit(app: GitHubApp, repo: string, base = 'main
         query: { ref: commit },
         headers: { Accept: 'application/vnd.github.raw+json' }
       }))
+    },
+    async readFiles(commit, paths) {
+      const [owner, name] = repo.split('/')
+      const files = new Map<string, string>()
+      for (let index = 0; index < paths.length; index += FILES_PER_QUERY) {
+        const batch = paths.slice(index, index + FILES_PER_QUERY)
+        const query = `query($owner: String!, $name: String!${batch.map((_, i) => `, $f${i}: String!`).join('')}) {
+          repository(owner: $owner, name: $name) { ${batch.map((_, i) => `f${i}: object(expression: $f${i}) { ... on Blob { text } }`).join(' ')} }
+        }`
+        const variables = Object.fromEntries([['owner', owner], ['name', name], ...batch.map((path, i) => [`f${i}`, `${commit}:${path}`])])
+        const { data, errors } = await app.request<{ data?: { repository?: Record<string, { text?: string | null } | null> }, errors?: unknown }>('/graphql', {
+          method: 'POST',
+          body: { query, variables }
+        })
+        if (!data?.repository) throw new Error(`[l10n] could not read ${repo}@${commit}: ${JSON.stringify(errors)}`)
+        batch.forEach((path, i) => {
+          const text = data.repository![`f${i}`]?.text
+          if (typeof text === 'string') files.set(path, text)
+        })
+      }
+      return files
     },
     async commit({ parent, files, message, author }) {
       const date = new Date().toISOString()

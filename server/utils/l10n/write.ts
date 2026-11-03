@@ -12,9 +12,6 @@ const MAX_TEXT_LENGTH = 8000
 /** Upper bound of a translation's length against its source's: anything longer is not a translation of it. */
 const MAX_LENGTH_RATIO = 4
 
-/** Records read from GitHub at once. */
-const READ_CONCURRENCY = 8
-
 /** The record files a set of changes writes, or why some of them cannot be applied. */
 export interface L10nPlan {
   files: GitFileChange[]
@@ -150,19 +147,18 @@ export function planChanges({ locale, segments, current, changes, translator, su
 }
 
 /** The records of `hashes` at `commit`; a missing or malformed one reads as `undefined`. */
-export async function readRecordsAt(git: Pick<TranslationsGit, 'read'>, commit: string, locale: L10nLocale, hashes: string[]): Promise<Map<string, TranslationRecord | undefined>> {
+export async function readRecordsAt(git: Pick<TranslationsGit, 'readFiles'>, commit: string, locale: L10nLocale, hashes: string[]): Promise<Map<string, TranslationRecord | undefined>> {
+  const files = await git.readFiles(commit, hashes.map(hash => recordPath(locale, hash)))
   const records = new Map<string, TranslationRecord | undefined>()
-  for (let index = 0; index < hashes.length; index += READ_CONCURRENCY) {
-    await Promise.all(hashes.slice(index, index + READ_CONCURRENCY).map(async (hash) => {
-      const text = await git.read(commit, recordPath(locale, hash))
-      let record: TranslationRecord | undefined
-      try {
-        record = text === undefined ? undefined : parseRecord(JSON.parse(text))
-      } catch {
-        record = undefined
-      }
-      records.set(hash, record?.hash === hash ? record : undefined)
-    }))
+  for (const hash of hashes) {
+    const text = files.get(recordPath(locale, hash))
+    let record: TranslationRecord | undefined
+    try {
+      record = text === undefined ? undefined : parseRecord(JSON.parse(text))
+    } catch {
+      record = undefined
+    }
+    records.set(hash, record?.hash === hash ? record : undefined)
   }
   return records
 }

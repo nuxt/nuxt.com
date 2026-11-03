@@ -80,6 +80,20 @@ export async function createFakeGitHub({ repo = 'nuxt/translations', files = {} 
     if (path === `/users/${FAKE_BOT.slug}[bot]`) return send(200, { id: FAKE_BOT.id })
     if (req.headers.authorization !== `Bearer ${FAKE_INSTALLATION_TOKEN}`) return fail(401, 'Bad credentials')
 
+    if (req.method === 'POST' && path === '/graphql') {
+      const { owner, name, ...expressions } = body.variables as Record<string, string>
+      if (`${owner}/${name}` !== repo) return send(200, { errors: [{ message: 'Could not resolve to a Repository' }] })
+      const repository: Record<string, { text: string } | null> = {}
+      for (const [alias, expression] of Object.entries(expressions)) {
+        try {
+          repository[alias] = { text: `${git(['show', expression])}\n` }
+        } catch {
+          repository[alias] = null
+        }
+      }
+      return send(200, { data: { repository } })
+    }
+
     const membership = /^\/orgs\/[^/]+\/teams\/([^/]+)\/memberships\/([^/]+)$/.exec(path)
     if (membership) return teams[membership[1]!]?.includes(membership[2]!) ? send(200, { state: 'active' }) : fail(404, 'Not Found')
 

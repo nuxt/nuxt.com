@@ -309,6 +309,18 @@ describe('GitHub App', () => {
     expect(minted).toHaveLength(1)
   })
 
+  it('should read the changed records in one query per hundred', async () => {
+    const many = Array.from({ length: 250 }, (_, index) => recordPath('fr', index.toString(16).padStart(16, '0')))
+    const head = (await git.head('main'))!
+    const files = await git.readFiles(head, [...many, recordPath('fr', TIP)])
+    expect([...files.keys()]).toEqual([recordPath('fr', TIP)])
+    expect(github.requests.filter(request => request.path === '/graphql')).toHaveLength(3)
+
+    await save()
+    expect(github.requests.filter(request => request.path === '/graphql')).toHaveLength(4)
+    expect(github.requests.some(request => request.path.includes('/contents/'))).toBe(false)
+  })
+
   it('should retry once on top of a commit that landed in between', async () => {
     let pushed: string | undefined
     const racing: TranslationsGit = {

@@ -40,6 +40,8 @@ export interface TranslationsGit {
   head: (branch: string) => Promise<string | undefined>
   /** Text of `path` at `commit`, `undefined` when there is no such file. */
   read: (commit: string, path: string) => Promise<string | undefined>
+  /** Texts of `paths` at `commit`, in as few requests as the repository allows; missing files are left out. */
+  readFiles: (commit: string, paths: string[]) => Promise<Map<string, string>>
   /** A new commit on top of `parent` with `files` changed. The committer is the repository's own identity. */
   commit: (input: GitCommitInput) => Promise<string>
   /**
@@ -98,6 +100,14 @@ export function dryRunGit(base: Pick<TranslationsGit, 'head' | 'read'>): Transla
     log,
     head,
     read,
+    async readFiles(commit, paths) {
+      const files = new Map<string, string>()
+      for (const path of paths) {
+        const text = await read(commit, path)
+        if (text !== undefined) files.set(path, text)
+      }
+      return files
+    },
     async commit(input) {
       const sha = createHash('sha1').update(JSON.stringify([input, commits.size])).digest('hex')
       commits.set(sha, { parent: input.parent, files: new Map(input.files.map(file => [file.path, file.content])) })
