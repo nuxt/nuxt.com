@@ -205,7 +205,7 @@ if (isCanonicalDocsPath(path.value) && !locale.value) {
   useCanonical(() => isArchivedDocVersion(docsVersion.value) ? undefined : `/raw${path.value}.md`)
 }
 
-const { data: indexable } = await useAsyncData(() => `l10n-indexable:${path.value}`, () =>
+const { data: indexable } = await useAsyncData(computed(() => `l10n-indexable:${path.value}`), () =>
   $fetch<L10nIndexable>(L10N_INDEXABLE_PATH).catch(() => ({})), {
   transform: all => pageIndexable(all, path.value),
   default: () => ({ locales: [], indexable: {} })
