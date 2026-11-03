@@ -99,7 +99,6 @@ export function localeRedirect(url: string, redirectFor: (pathname: string) => s
   let pathname = path.slice(0, path.length - search.length).replace(/(.)\/+$/, '$1')
   if (pathname === '/') pathname = '/docs'
 
-  const start = pathname
   for (let hop = 0; hop < 4; hop++) {
     const next = redirectFor(pathname) ?? versionedDocsPath(pathname)
     if (!next || next === pathname) break
@@ -107,7 +106,8 @@ export function localeRedirect(url: string, redirectFor: (pathname: string) => s
   }
 
   if (isLocalisedPage(pathname)) {
-    return pathname === start && `${pathname}${search}` === path ? undefined : localisePath(locale, `${pathname}${search}`)
+    const target = localisePath(locale, `${pathname}${search}`)
+    return target === url ? undefined : target
   }
   return `${pathname}${search}`
 }

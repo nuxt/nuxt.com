@@ -96,6 +96,11 @@ describe('localeRedirect', () => {
     expect(redirect('/de/docs')).toBe('/docs')
   })
 
+  it('should send a localised page reached through a non-canonical prefix to its URL', () => {
+    expect(redirect('/FR/docs/4.x/getting-started/introduction')).toBe('/fr/docs/4.x/getting-started/introduction')
+    expect(redirect('/fr//docs/4.x/getting-started/introduction?x=1')).toBe('/fr/docs/4.x/getting-started/introduction?x=1')
+  })
+
   it('should serve localised pages as they are', () => {
     expect(redirect('/fr/docs/4.x/getting-started/introduction')).toBeUndefined()
     expect(redirect('/fr/docs/3.x/api/composables/use-fetch?x=1')).toBeUndefined()
