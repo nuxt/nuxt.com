@@ -1,15 +1,15 @@
 import * as zlib from 'node:zlib'
 import type { Glossary } from '@diglot/core'
-import { decodeRecords, encodeRecords } from '@diglot/store/runtime'
+import { decodeRecordsView, encodeRecords } from '@diglot/store/runtime'
 import type { L10nCoverage, L10nLocale } from '../../../shared/utils/l10n'
 import { createBundle, emptyBundle, type L10nBundle } from './bundle'
 import { sourceCoverage, TRANSLATION_SOURCES } from './coverage'
 import type { TranslationsTree } from './tree'
 
 /** Bump when the stored layout changes: entries of another version are never read. */
-const L10N_SNAPSHOT_VERSION = 'v2'
+const L10N_SNAPSHOT_VERSION = 'v3'
 
-/** `decodeRecords` reads either; zstd is faster where `node:zlib` has it. */
+/** `decodeRecordsView` reads either; zstd is faster where `node:zlib` has it. */
 const COMPRESSION = 'zstdCompressSync' in zlib ? 'zstd' : 'gzip'
 
 /** Characters per stored shard of records, below the Runtime Cache's 2 MB item limit. */
@@ -25,6 +25,7 @@ export interface L10nSnapshot {
 
 interface StoredMeta {
   shards: number
+  reviewed: boolean
   coverage: L10nSnapshot['coverage']
   glossary: Glossary
 }
@@ -63,17 +64,17 @@ export async function writeL10nSnapshot(storage: SnapshotStorage, snapshot: L10n
   const shards = Math.max(1, Math.ceil(encoded.length / shardLength))
   await Promise.all(Array.from({ length: shards }, (_, index) =>
     storage.setItem(key(sha, locale, index), encoded.slice(index * shardLength, (index + 1) * shardLength))))
-  await storage.setItem(key(sha, locale, 'meta'), { shards, coverage: snapshot.coverage, glossary: snapshot.glossary } satisfies StoredMeta)
+  await storage.setItem(key(sha, locale, 'meta'), { shards, reviewed: snapshot.bundle.reviewed, coverage: snapshot.coverage, glossary: snapshot.glossary } satisfies StoredMeta)
 }
 
 /** The stored snapshot of `locale` at `sha`, `undefined` when it is missing or incomplete. */
 export async function readL10nSnapshot(storage: SnapshotStorage, sha: string, locale: L10nLocale): Promise<L10nSnapshot | undefined> {
   const meta = await storage.getItem(key(sha, locale, 'meta')) as StoredMeta | null
-  if (!meta?.shards || !meta.coverage || !meta.glossary) return
+  if (!meta?.shards || typeof meta.reviewed !== 'boolean' || !meta.coverage || !meta.glossary) return
 
   const shards = await Promise.all(Array.from({ length: meta.shards }, (_, index) => storage.getItem(key(sha, locale, index))))
   if (shards.some(shard => typeof shard !== 'string')) return
 
-  const records = await decodeRecords(shards.join(''))
-  return { bundle: createBundle(records, locale, sha), coverage: meta.coverage, glossary: meta.glossary }
+  const records = await decodeRecordsView(shards.join(''))
+  return { bundle: createBundle(records, locale, sha, meta.reviewed), coverage: meta.coverage, glossary: meta.glossary }
 }

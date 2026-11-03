@@ -129,6 +129,14 @@ describe('l10n snapshot', () => {
     expect(stored?.glossary).toEqual({ terms: [{ term: 'Nuxt', decision: 'keep' }] })
   })
 
+  it('should keep whether a snapshot has reviewed records without reading them back', async () => {
+    const tree = await parseTranslationsTarball(await tarball(), SHA)
+    const storage = createStorage()
+    const snapshot = buildL10nSnapshot(tree, 'fr')
+    await writeL10nSnapshot(storage, { ...snapshot, bundle: { ...snapshot.bundle, reviewed: !snapshot.bundle.reviewed } }, tree.records('fr'))
+    expect((await readL10nSnapshot(storage, SHA, 'fr'))?.bundle.reviewed).toBe(!snapshot.bundle.reviewed)
+  })
+
   it('should read a missing or incomplete snapshot as missing', async () => {
     const tree = await parseTranslationsTarball(await tarball(), SHA)
     const storage = createStorage()

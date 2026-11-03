@@ -21,16 +21,19 @@ export function emptyBundle(locale: L10nLocale): L10nBundle {
   return { locale, sha: '', reviewed: false, record: () => undefined, hashes: () => [] }
 }
 
-/** Wrap a locale's unparsed records, keyed by hash. A malformed record reads as missing. */
-export function createBundle(records: ReadonlyMap<string, unknown>, locale: L10nLocale, sha: string): L10nBundle {
-  const parsed = new Map<string, TranslationRecord | null>()
-  let reviewed = false
+function hasReviewedRecord(records: ReadonlyMap<string, unknown>): boolean {
   for (const record of records.values() as Iterable<{ review?: unknown, origin?: unknown } | null>) {
-    if (record?.review === 'edited' || record?.review === 'verified' || record?.origin === 'human') {
-      reviewed = true
-      break
-    }
+    if (record?.review === 'edited' || record?.review === 'verified' || record?.origin === 'human') return true
   }
+  return false
+}
+
+/**
+ * Wrap a locale's records, keyed by hash, parsing each on first use. A malformed record reads as
+ * missing. Passing `reviewed` skips reading every record to find out.
+ */
+export function createBundle(records: ReadonlyMap<string, unknown>, locale: L10nLocale, sha: string, reviewed = hasReviewedRecord(records)): L10nBundle {
+  const parsed = new Map<string, TranslationRecord | null>()
 
   return {
     locale,
