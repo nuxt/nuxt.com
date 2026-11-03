@@ -592,7 +592,7 @@ export default defineNuxtConfig({
         'ai'
       ],
       // Pre-bundling `@sqlite.org/sqlite-wasm` breaks the wasm asset it resolves against its own module URL.
-      exclude: ['vue-chrts', 'shaders', '@sqlite.org/sqlite-wasm']
+      exclude: ['shaders', '@sqlite.org/sqlite-wasm']
     }
   },
   typescript: {
