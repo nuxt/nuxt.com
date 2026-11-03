@@ -379,6 +379,16 @@ describe('GitHub App', () => {
     expect(github.pulls.map(pull => pull.number)).toEqual([1, 2])
   })
 
+  it('should only list suggestions from branches of the translations repository', async () => {
+    const record = { ...records[TIP]!, text: 'Faux {0}texte{/0}.', origin: 'human', review: 'edited', by: 'danielroe' }
+    github.openForkPull('someone/translations', suggestionBranch('danielroe', 'fr'), recordPath('fr', TIP), serialiseRecord(parseRecord(record)))
+    await suggestChanges(git, { locale: 'fr', page: PAGE, segments, translator: { login: 'contributor', id: 1 }, changes: [{ hash: HEADING, action: 'reject' }] })
+
+    expect((await git.listPulls()).map(pull => pull.branch)).toEqual([suggestionBranch('contributor', 'fr')])
+    expect(Object.keys(await suggestionsFor(git, 'fr', [TIP, HEADING]))).toEqual([HEADING])
+    expect(github.requests.filter(request => /\/pulls\/1\/files$/.test(request.path))).toEqual([])
+  })
+
   it('should check team membership through the App', async () => {
     const app = createGitHubApp({ appId: '123', privateKey: github.privateKey, installationId: '1' }, { repo: 'nuxt/translations', baseURL: github.baseURL })
     expect(await isGitHubTeamMember(app, 'nuxt', 'translators-fr', 'danielroe')).toBe(true)

@@ -52,7 +52,7 @@ export interface TranslationsGit {
   /** The open pull request from `branch` into the default branch. */
   findPull: (branch: string) => Promise<GitPullRequest | undefined>
   openPull: (input: { branch: string, title: string, body: string }) => Promise<GitPullRequest>
-  /** Every open pull request into the default branch. */
+  /** Every open pull request into the default branch from a branch of the repository itself. */
   listPulls: () => Promise<GitOpenPull[]>
   /** Paths a pull request changes. */
   pullFiles: (number: number) => Promise<string[]>

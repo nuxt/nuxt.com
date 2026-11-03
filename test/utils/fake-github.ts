@@ -9,7 +9,7 @@ import { dirname, join } from 'node:path'
 export const FAKE_INSTALLATION_TOKEN = 'ghs_fake'
 export const FAKE_BOT = { slug: 'nuxt-translations', id: 4242 }
 
-interface FakePull { number: number, head: string, base: string, title: string, body: string, state: 'open' | 'closed' }
+interface FakePull { number: number, head: string, base: string, title: string, body: string, state: 'open' | 'closed', from?: string }
 
 /**
  * A bare git repository behind the slice of the GitHub API the write path uses: App authentication,
@@ -157,19 +157,25 @@ export async function createFakeGitHub({ repo = 'nuxt/translations', files = {} 
       return send(201, { object: { sha: body.sha } })
     }
     if (req.method === 'GET' && route === '/pulls') {
-      const head = url.searchParams.get('head')?.split(':')[1]
-      return send(200, pulls.filter(pull => pull.state === 'open' && (!head || pull.head === head)).map(pull => ({
-        number: pull.number,
-        html_url: `https://github.com/${repo}/pull/${pull.number}`,
-        head: { ref: pull.head, sha: git(['rev-parse', `refs/heads/${pull.head}`]) }
-      })))
+      const [owner, head] = url.searchParams.get('head')?.split(':') ?? []
+      const perPage = Number(url.searchParams.get('per_page') ?? 30)
+      const page = Number(url.searchParams.get('page') ?? 1)
+      return send(200, pulls
+        .filter(pull => pull.state === 'open' && (!head || (pull.head === head && (pull.from ?? repo).split('/')[0] === owner)))
+        .slice((page - 1) * perPage, page * perPage)
+        .map(pull => ({
+          number: pull.number,
+          html_url: `https://github.com/${repo}/pull/${pull.number}`,
+          head: { ref: pull.head, sha: git(['rev-parse', pull.from ? `refs/pull/${pull.number}/head` : `refs/heads/${pull.head}`]), repo: { full_name: pull.from ?? repo } }
+        })))
     }
     const files = /^\/pulls\/(\d+)\/files$/.exec(route)
     if (req.method === 'GET' && files) {
       const pull = pulls.find(item => item.number === Number(files[1]))
       if (!pull || url.searchParams.get('page') !== '1') return send(200, [])
-      const mergeBase = git(['merge-base', pull.base, pull.head])
-      return send(200, git(['diff', '--name-only', mergeBase, pull.head]).split('\n').filter(Boolean).map(filename => ({ filename })))
+      const ref = pull.from ? `refs/pull/${pull.number}/head` : pull.head
+      const mergeBase = git(['merge-base', pull.base, ref])
+      return send(200, git(['diff', '--name-only', mergeBase, ref]).split('\n').filter(Boolean).map(filename => ({ filename })))
     }
     if (req.method === 'POST' && route === '/pulls') {
       const pull: FakePull = { number: pulls.length + 1, head: body.head, base: body.base, title: body.title, body: body.body, state: 'open' }
@@ -198,6 +204,20 @@ export async function createFakeGitHub({ repo = 'nuxt/translations', files = {} 
     /** Reply to the next GraphQL query with null fields and `message` as an error, as a partial failure does. */
     failNextQuery(message: string) {
       queryErrors = [{ message }]
+    },
+    /** Open a pull request from a fork's `branch`, changing `path`. */
+    openForkPull(from: string, branch: string, path: string, content: string) {
+      const number = pulls.length + 1
+      git(['update-ref', `refs/pull/${number}/head`, git(['rev-parse', 'refs/heads/main'])])
+      const env = { GIT_INDEX_FILE: join(root, `index-fork-${Date.now()}`) }
+      git(['read-tree', 'main'], { env })
+      const blob = git(['hash-object', '-w', '--stdin'], { input: content })
+      git(['update-index', '--add', '--cacheinfo', `100644,${blob},${path}`], { env })
+      const tree = git(['write-tree'], { env })
+      const sha = git(['commit-tree', tree, '-p', 'main', '-m', 'fork'], { env: { GIT_AUTHOR_NAME: 'fork', GIT_AUTHOR_EMAIL: 'fork@example.com', GIT_COMMITTER_NAME: 'fork', GIT_COMMITTER_EMAIL: 'fork@example.com' } })
+      git(['update-ref', `refs/pull/${number}/head`, sha])
+      pulls.push({ number, head: branch, base: 'main', title: 'fork', body: '', state: 'open', from })
+      return number
     },
     /** Commit straight to a branch, as another writer would. */
     push(branch: string, path: string, content: string) {

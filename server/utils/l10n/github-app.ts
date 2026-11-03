@@ -1,6 +1,6 @@
 import { createPrivateKey, sign } from 'node:crypto'
 import { $fetch, FetchError } from 'ofetch'
-import type { GitAuthor, GitPullRequest, TranslationsGit } from './git'
+import type { GitAuthor, GitOpenPull, GitPullRequest, TranslationsGit } from './git'
 
 export interface GitHubAppCredentials {
   appId: string
@@ -29,8 +29,11 @@ export interface GitHubRequestOptions {
 /** Files read in one GraphQL query. */
 const FILES_PER_QUERY = 100
 
-/** Pages of a pull request's files read, a hundred each. */
-const MAX_FILE_PAGES = 5
+/** Pages of a pull request's files read, a hundred each: GitHub lists at most 3,000. */
+const MAX_FILE_PAGES = 30
+
+/** Pages of open pull requests read, a hundred each. */
+const MAX_PULL_PAGES = 10
 
 /** Renew installation tokens this long before they expire. */
 const TOKEN_MARGIN = 5 * 60_000
@@ -203,10 +206,17 @@ export function githubTranslationsGit(app: GitHubApp, repo: string, base = 'main
       }))
     },
     async listPulls() {
-      const pulls = await app.request<Array<{ number: number, html_url: string, head: { ref: string, sha: string } }>>(`/repos/${repo}/pulls`, {
-        query: { base, state: 'open', per_page: 100 }
-      })
-      return pulls.map(pull => ({ ...toPull(pull), branch: pull.head.ref, head: pull.head.sha }))
+      const open: GitOpenPull[] = []
+      for (let page = 1; page <= MAX_PULL_PAGES; page++) {
+        const pulls = await app.request<Array<{ number: number, html_url: string, head: { ref: string, sha: string, repo: { full_name: string } | null } }>>(`/repos/${repo}/pulls`, {
+          query: { base, state: 'open', per_page: 100, page }
+        })
+        for (const pull of pulls) {
+          if (pull.head.repo?.full_name === repo) open.push({ ...toPull(pull), branch: pull.head.ref, head: pull.head.sha })
+        }
+        if (pulls.length < 100) break
+      }
+      return open
     },
     async pullFiles(number) {
       const paths: string[] = []
