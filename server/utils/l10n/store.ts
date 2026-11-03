@@ -117,6 +117,16 @@ export async function getL10nStatus(locale: L10nLocale): Promise<L10nLocaleStatu
   return status
 }
 
+/** `indexablePages` of `snapshot`, kept in KV under `key` and the build so instances share one computation. */
+async function sharedIndexablePages(key: string, snapshot: L10nSnapshot): Promise<string[]> {
+  const storageKey = `l10n:indexable:${useRuntimeConfig().app.buildId}:${key}`
+  const stored = await kv.get<string[]>(storageKey).catch(() => null)
+  if (stored) return stored
+  const pages = await indexablePages(snapshot)
+  await kv.set(storageKey, pages, { ttl: 60 * 60 * 24 * 7 }).catch(() => {})
+  return pages
+}
+
 /** The localised pages of a snapshot reviewed enough to be indexed. */
 async function indexablePages({ bundle, coverage }: L10nSnapshot): Promise<string[]> {
   if (!bundle.reviewed) return []
@@ -175,7 +185,7 @@ export async function getL10nIndexable(): Promise<L10nIndexable> {
     let pages = indexable.get(key)
     if (!pages) {
       for (const stale of indexable.keys()) if (stale.startsWith(`${locale}@`)) indexable.delete(stale)
-      pages = indexablePages(snapshot).catch((error) => {
+      pages = sharedIndexablePages(key, snapshot).catch((error) => {
         console.error(`[l10n] could not compute the ${locale} coverage at ${bundle.sha}`, error?.message ?? error)
         indexable.delete(key)
         return []
