@@ -137,7 +137,7 @@ defineShortcuts({
 
     <div v-else-if="showFaqEmpty" class="flex flex-col">
       <div class="relative h-48 overflow-hidden rounded-lg mx-1">
-        <AgentShader />
+        <LazyAgentShader />
       </div>
 
       <div class="flex flex-col gap-6 mt-6">
