@@ -5,7 +5,7 @@ import { DocsProseImg, Browser, CodeExplorer, Important, LinkExample, ReadMore, 
 import { CLI_DOCS_REFS, CLI_DOCS_REPO, cliDocsPathPrefix, hasCliDocs } from '#shared/utils/cli'
 import { cliInstanceKey } from '#shared/utils/content'
 import { DOCS_REFS, DOCS_REPO, getVersionByPath, isArchivedDocVersion, isCanonicalDocsPath } from '#shared/utils/docs'
-import { isLocalisedPage, l10nHead, type L10nPageMeta } from '#shared/utils/l10n'
+import { isLocalisedPage, l10nHead, l10nPagePath, type L10nPageMeta } from '#shared/utils/l10n'
 
 definePageMeta({
   heroBackground: false,
@@ -88,6 +88,16 @@ const { data: page, status, refresh: refreshPage } = await useAsyncData(pageKey,
 })
 
 const locale = useDocsLocale()
+
+/** Read the localised page past the cache, once the editor sees a save served at translations commit `sha`. */
+async function showPublished(sha: string) {
+  try {
+    page.value = await $fetch<typeof page.value>(l10nPagePath(locale.value!, path.value), { query: { sha } })
+  } catch {
+    await refreshPage()
+  }
+}
+
 const l10n = computed(() => (page.value?.meta as { l10n?: L10nPageMeta } | undefined)?.l10n)
 const showL10nStatus = useState('docs-l10n-status', () => false)
 const pageBody = useTemplateRef<{ $el: HTMLElement }>('pageBody')
@@ -405,7 +415,7 @@ const noRightAside = computed(() => route.path.includes('/examples/'))
           :meta="l10n"
           :path="path"
           :target="pageBody?.$el"
-          @published="refreshPage()"
+          @published="showPublished"
         />
         <MarkdownDocument v-if="page.nodes?.length" :value="page" :components="markdownComponents" />
         <div>

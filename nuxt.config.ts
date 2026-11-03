@@ -246,6 +246,8 @@ export default defineNuxtConfig({
     // Main navigation
     '/api/navigation/**': { isr: CONTENT_ISR },
     '/api/l10n/*/navigation/**': { isr: CONTENT_ISR },
+    // `sha` fetches a page past the cache once the editor sees a save served.
+    '/api/l10n/*/get/**': { isr: { expiration: CONTENT_ISR, allowQuery: ['sha'] } },
     '/api/l10n/indexable': { isr: CONTENT_ISR },
     '/api/content/blob/**': { isr: true },
     '/api/content/pull/*/*/blob/**': { isr: true },

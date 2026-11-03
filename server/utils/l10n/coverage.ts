@@ -34,3 +34,33 @@ export function coverageTable(files: Record<string, L10nCoverage>, pathsOf: (fil
   }
   return table
 }
+
+/** The localised pages a change to `hashes` re-renders. */
+export interface L10nPagesUsing {
+  /** Pages rendering any of `hashes`, unprefixed: every page of the tree when `navigation` is set. */
+  pages: string[]
+  /** Pages whose own content uses any of `hashes`. */
+  content: string[]
+  /** Whether a navigation label or page title changed, which every page of the tree renders. */
+  navigation: boolean
+}
+
+/**
+ * The localised pages of `sources` that use any of `hashes`, or every localised page with `'all'`.
+ * `paths` maps each file of a source's manifest to the pages serving it.
+ */
+export function pagesUsing(sources: ReadonlyArray<{ manifest: SourceManifest, paths: ReadonlyMap<string, readonly string[]> }>, hashes: Set<string> | 'all'): L10nPagesUsing {
+  let navigation = hashes === 'all'
+  const content = new Set<string>()
+  for (const { manifest, paths } of sources) {
+    for (const [file, segments] of Object.entries(manifest.files ?? {})) {
+      const used = hashes === 'all' ? segments : segments.filter(segment => hashes.has(segment.hash))
+      if (!used.length) continue
+      if (used.some(segment => segment.kind === 'navigation' || segment.kind === 'frontmatter')) navigation = true
+      for (const path of paths.get(file) ?? []) content.add(path)
+    }
+  }
+  const pages = new Set(content)
+  if (navigation) for (const { paths } of sources) for (const path of [...paths.values()].flat()) pages.add(path)
+  return { pages: [...pages].sort(), content: [...content].sort(), navigation }
+}

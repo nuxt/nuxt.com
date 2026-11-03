@@ -142,25 +142,9 @@ async function indexablePages({ bundle, coverage }: L10nSnapshot): Promise<strin
     .sort()
 }
 
-/**
- * The localised pages of the sources that use any of `hashes` at the bundle's commit, or every
- * localised page with `'all'`. `navigation` tells whether a navigation label or page title changed,
- * which every page of the tree renders.
- */
-export async function l10nPagesUsing(bundle: L10nBundle, hashes: Set<string> | 'all'): Promise<{ pages: string[], navigation: boolean }> {
-  const sources = await readSources(bundle.sha)
-  let navigation = hashes === 'all'
-  const pages = new Set<string>()
-  for (const { manifest, paths } of sources) {
-    for (const [file, segments] of Object.entries(manifest.files ?? {})) {
-      const used = hashes === 'all' ? segments : segments.filter(segment => hashes.has(segment.hash))
-      if (!used.length) continue
-      if (used.some(segment => segment.kind === 'navigation' || segment.kind === 'frontmatter')) navigation = true
-      for (const path of paths.get(file) ?? []) pages.add(path)
-    }
-  }
-  if (navigation) for (const { paths } of sources) for (const path of [...paths.values()].flat()) pages.add(path)
-  return { pages: [...pages].sort(), navigation }
+/** `pagesUsing` the sources at the bundle's commit. */
+export async function l10nPagesUsing(bundle: L10nBundle, hashes: Set<string> | 'all'): Promise<L10nPagesUsing> {
+  return pagesUsing(await readSources(bundle.sha), hashes)
 }
 
 const indexable = new Map<string, Promise<string[]>>()
@@ -198,12 +182,9 @@ export async function getL10nIndexable(): Promise<L10nIndexable> {
 }
 
 /** What a translations push changed for one locale. */
-export interface L10nRefresh {
+export interface L10nRefresh extends L10nPagesUsing {
   locale: L10nLocale
   sha: string
-  /** Localised pages showing a changed record, unprefixed. */
-  pages: string[]
-  navigation: boolean
   /** English pages whose localised twin became indexable, or stopped being. */
   indexableChanged: string[]
 }
@@ -220,14 +201,14 @@ export async function refreshL10nBundles(locales: L10nLocale[]): Promise<L10nRef
   return Promise.all(locales.map(async (locale, index) => {
     const previous = before[index]!
     const current = after[index]!
-    const { pages, navigation } = previous.sha === current.sha
-      ? { pages: [], navigation: false }
+    const changed = previous.sha === current.sha
+      ? { pages: [], content: [], navigation: false }
       : await l10nPagesUsing(current, previous.sha ? changedHashes(previous, current) : 'all')
     const was = new Set(indexableBefore[locale] ?? [])
     const is = new Set(indexableAfter[locale] ?? [])
     const indexableChanged = [...new Set([...was, ...is])].filter(path => was.has(path) !== is.has(path)).sort()
 
-    return { locale, sha, pages, navigation, indexableChanged }
+    return { locale, sha, ...changed, indexableChanged }
   }))
 }
 

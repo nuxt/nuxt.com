@@ -1,7 +1,7 @@
 import { readFileSync } from 'node:fs'
 import { describe, expect, it } from 'vitest'
 import { createBundle, emptyBundle, type L10nBundle } from '../../server/utils/l10n/bundle'
-import { coverageTable, sourceCoverage, TRANSLATION_SOURCES, type SourceManifest } from '../../server/utils/l10n/coverage'
+import { coverageTable, pagesUsing, sourceCoverage, TRANSLATION_SOURCES, type SourceManifest } from '../../server/utils/l10n/coverage'
 import { visibleRecord } from '../../server/utils/l10n/localise'
 import { changedHashes, isTranslationsPush, rebuiltLocales } from '../../server/utils/l10n/webhook'
 import { instanceSource } from '../../server/utils/content/instances'
@@ -102,6 +102,20 @@ describe('coverage', () => {
     const table = coverageTable(sourceCoverage(manifest, bundleWith()), file => file === INTRODUCTION ? paths : undefined)
     expect(Object.keys(table)).toEqual(paths)
     expect(table[paths[0]!]).toEqual(table[paths[1]!])
+  })
+})
+
+describe('pagesUsing', () => {
+  const introduction = '/docs/4.x/getting-started/introduction'
+  const useFetch = '/docs/4.x/api/composables/use-fetch'
+  const sources = [{ manifest, paths: new Map([[INTRODUCTION, [introduction]], ['docs/4.api/2.composables/use-fetch.md', [useFetch]]]) }]
+
+  it('should list the pages rendering a changed paragraph', () => {
+    expect(pagesUsing(sources, new Set(['839f9a4898b82644']))).toEqual({ pages: [introduction], content: [introduction], navigation: false })
+  })
+
+  it('should re-render every page for a changed title, but only change the content of its own', () => {
+    expect(pagesUsing(sources, new Set(['633f7365b32e3cfb']))).toEqual({ pages: [useFetch, introduction], content: [introduction], navigation: true })
   })
 })
 

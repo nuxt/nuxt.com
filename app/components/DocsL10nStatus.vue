@@ -11,8 +11,8 @@ const props = defineProps<{
 }>()
 
 const emit = defineEmits<{
-  /** Saved translations are now served. */
-  published: []
+  /** Saved translations are now served, at translations commit `sha`. */
+  published: [sha: string]
 }>()
 
 /** Review mode: every block shows its status, its English source on hover, and opens the editor on click. */
@@ -109,9 +109,9 @@ watch(show, (value) => {
   editorOpen.value = false
 })
 
-function published() {
+function published(sha: string) {
   sources.clear()
-  emit('published')
+  emit('published', sha)
 }
 watch(open, (value) => {
   if (!value) reference.value = undefined

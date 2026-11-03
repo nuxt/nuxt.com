@@ -156,6 +156,11 @@ export function l10nContentBasePath(locale: L10nLocale): string {
   return `/api/l10n/${locale}`
 }
 
+/** A localised page as served to the browser: `/api/l10n/fr/get/docs/4.x/guide`. */
+export function l10nPagePath(locale: L10nLocale, path: string): string {
+  return `${l10nContentBasePath(locale)}/get${path}`
+}
+
 /** A version's navigation tree in a locale: `/api/l10n/fr/navigation/4.x`. */
 export function l10nNavigationPath(locale: L10nLocale, version: DocVersion): string {
   return `/api/l10n/${locale}/navigation/${version}`

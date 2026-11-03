@@ -12,8 +12,8 @@ const props = defineProps<{
 }>()
 
 const emit = defineEmits<{
-  /** The saved changes are now served: the page can be fetched again. */
-  published: []
+  /** The saved changes are now served, at translations commit `sha`: the page can be fetched again. */
+  published: [sha: string]
 }>()
 
 const open = defineModel<boolean>('open', { default: false })
@@ -175,7 +175,7 @@ async function waitForPublication(saved: L10nSaveResult['segments']) {
     if (disposed) return
     await refresh()
     if (served(saved)) {
-      emit('published')
+      emit('published', page.value!.sha)
       toast.add({ title: t.value.publishedNow, icon: 'i-lucide-check', color: 'success' })
       return
     }
