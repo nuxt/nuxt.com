@@ -2,8 +2,8 @@ import type { GitHubPushCommit } from '../../types/github'
 import { isL10nLocale, L10N_LOCALE_CODES, type L10nLocale } from '../../../shared/utils/l10n'
 import { TRANSLATIONS_BRANCH, TRANSLATIONS_REPO, type L10nBundle } from './bundle'
 
-const RECORD_RE = /^([^/]+)\/segments\//
-const MANIFEST_RE = /^\.diglot\/manifest\//
+const LOCALE_FILE_RE = /^([^/]+)\/(?:segments\/|locale\.yml$|glossary\.yml$)/
+const SHARED_FILE_RE = /^(?:\.diglot\/manifest\/|glossary\.yml$)/
 
 /** Whether a push is to the translations the site serves. */
 export function isTranslationsPush(repo: string, branch: string): boolean {
@@ -11,15 +11,15 @@ export function isTranslationsPush(repo: string, branch: string): boolean {
 }
 
 /**
- * Locales whose bundle a translations push changed: one of their records, or a source manifest,
- * which every locale's coverage reads.
+ * Locales whose snapshot a translations push changed: one of their records, their `locale.yml` or
+ * glossary, or a source manifest or the shared glossary, which every locale reads.
  */
 export function rebuiltLocales(commits: GitHubPushCommit[]): L10nLocale[] {
   const locales = new Set<L10nLocale>()
   for (const commit of commits) {
     for (const file of [...commit.added ?? [], ...commit.modified ?? [], ...commit.removed ?? []]) {
-      if (MANIFEST_RE.test(file)) return [...L10N_LOCALE_CODES]
-      const locale = RECORD_RE.exec(file)?.[1]
+      if (SHARED_FILE_RE.test(file)) return [...L10N_LOCALE_CODES]
+      const locale = LOCALE_FILE_RE.exec(file)?.[1]
       if (isL10nLocale(locale)) locales.add(locale)
     }
   }

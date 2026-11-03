@@ -119,11 +119,18 @@ describe('translations webhook', () => {
       { added: ['xx/segments/00/00033b4b33874d8a.json', 'README.md'] }
     ])).toEqual(['fr'])
     expect(rebuiltLocales([{ removed: ['fr/segments/00/00033b4b33874d8a.json'] }])).toEqual(['fr'])
-    expect(rebuiltLocales([{ modified: ['dist/fr.json', 'fr/glossary.yml'] }])).toEqual([])
+    expect(rebuiltLocales([{ modified: ['dist/fr.json', 'fr/style.yml', 'README.md'] }])).toEqual([])
   })
 
-  it('should list every locale when a push changed a source manifest', () => {
+  it('should list the locales whose state or glossary a push changed', () => {
+    expect(rebuiltLocales([{ modified: ['fr/locale.yml'] }])).toEqual(['fr'])
+    expect(rebuiltLocales([{ modified: ['fr/glossary.yml'] }])).toEqual(['fr'])
+    expect(rebuiltLocales([{ modified: ['xx/locale.yml'] }])).toEqual([])
+  })
+
+  it('should list every locale when a push changed a source manifest or the shared glossary', () => {
     expect(rebuiltLocales([{ modified: ['.diglot/manifest/nuxt-4.x.json'] }])).toEqual(['fr'])
+    expect(rebuiltLocales([{ modified: ['glossary.yml'] }])).toEqual(['fr'])
   })
 
   it('should list the records two bundles disagree on', () => {
