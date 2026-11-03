@@ -1,0 +1,6 @@
+name: 'Kontor'
+slug: 'kontor'
+description: 'Nuxt 4 admin dashboard for service businesses: jobs board, quotes, invoices and crew planning.'
+demo: 'https://kontor-nuxt-demo.pages.dev'
+purchase: 'https://stavreva68.gumroad.com/l/kontor-nuxt-admin'
+badge: 'Premium'
