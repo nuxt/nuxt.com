@@ -140,7 +140,7 @@ export function githubTranslationsGit(app: GitHubApp, repo: string, base = 'main
         method: 'POST',
         body: {
           base_tree: baseTree,
-          tree: files.map(({ path, content }) => ({ path, mode: '100644', type: 'blob', ...(content === null ? { sha: null } : { content }) }))
+          tree: files.map(({ path, content }) => ({ path, mode: '100644', type: 'blob', content }))
         }
       })
       const commit = await app.request<{ sha: string }>(`/repos/${repo}/git/commits`, {

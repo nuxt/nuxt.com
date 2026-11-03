@@ -51,6 +51,13 @@ describe('editorSegments', () => {
     expect(first.previous).toEqual({ source: 'Nuxt is a framework. It is free.', changed: [source] })
   })
 
+  it('should show who rejected a translation', async () => {
+    const bundle = createBundle({ ...records, [FIRST_PARAGRAPH]: { ...records[FIRST_PARAGRAPH], review: 'rejected', rejectedBy: { by: 'danielroe', at: '2026-11-03T00:00:00Z' } } }, 'fr', 'sha')
+    const first = (await editorSegments(page, bundle, { terms: [] })).find(segment => segment.hash === FIRST_PARAGRAPH)!
+    expect(first.status).toBe('rejected')
+    expect(first.record).toMatchObject({ review: 'rejected', rejectedBy: 'danielroe', text: records[FIRST_PARAGRAPH]!.text })
+  })
+
   it('should list a segment without a record as untranslated', async () => {
     const segments = await editorSegments(page, createBundle({}, 'fr', 'sha'), { terms: [] })
     expect(segments.every(segment => segment.status === 'untranslated' && !segment.record)).toBe(true)

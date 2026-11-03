@@ -53,7 +53,7 @@ export default defineEventHandler(async (event): Promise<L10nSaveResult> => {
     return {
       mode: role === 'translator' ? 'commit' : 'suggestion',
       sha: result.sha,
-      segments: Object.fromEntries([...result.records].map(([hash, record]) => [hash, record ? { status: recordStatus(record), text: record.text } : { status: recordStatus(undefined) }])),
+      segments: Object.fromEntries([...result.records].map(([hash, record]) => [hash, { status: recordStatus(record), text: record.text }])),
       ...(result.pull ? { pull: result.pull } : {}),
       ...(dryRun ? { dryRun: dryRun.commits.map(({ message, author, files }) => ({ message, author, files })) } : {})
     }

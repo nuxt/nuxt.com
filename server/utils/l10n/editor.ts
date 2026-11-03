@@ -36,6 +36,7 @@ export async function editorSegments(file: Pick<ContentFile, 'data' | 'nodes'>, 
               review: record.review,
               ...(record.by ? { by: record.by } : {}),
               ...(record.verifiedBy ? { verifiedBy: record.verifiedBy.by } : {}),
+              ...(record.rejectedBy ? { rejectedBy: record.rejectedBy.by } : {}),
               ...(record.mt ? { model: record.mt.model } : {}),
               updatedAt: record.updatedAt
             }

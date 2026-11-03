@@ -104,9 +104,8 @@ export async function createFakeGitHub({ repo = 'nuxt/translations', files = {} 
     if (req.method === 'POST' && route === '/git/trees') {
       const env = { GIT_INDEX_FILE: join(root, `index-${Date.now()}-${Math.random()}`) }
       git(['read-tree', body.base_tree], { env })
-      const lines = (body.tree as Array<{ path: string, sha?: null, content?: string }>).map(entry => entry.sha === null
-        ? `0 ${'0'.repeat(40)}\t${entry.path}`
-        : `100644 ${git(['hash-object', '-w', '--stdin'], { input: entry.content })}\t${entry.path}`)
+      const lines = (body.tree as Array<{ path: string, content: string }>).map(entry =>
+        `100644 ${git(['hash-object', '-w', '--stdin'], { input: entry.content })}\t${entry.path}`)
       git(['update-index', '--index-info'], { env, input: `${lines.join('\n')}\n` })
       return send(201, { sha: git(['write-tree'], { env }) })
     }

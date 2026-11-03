@@ -89,6 +89,17 @@ describe('localise', () => {
     expect(localised.meta.l10n.coverage.byStatus.rejected).toBeGreaterThan(0)
   })
 
+  it('should show the English segment of a translation a reviewer rejected', async () => {
+    const page = pages.get(INTRODUCTION)!
+    const rejected = { ...raw.records[FIRST_PARAGRAPH], review: 'rejected', rejectedBy: { by: 'danielroe', at: '2026-11-03T00:00:00Z' } }
+    const localised = await localise(page, bundle({ [FIRST_PARAGRAPH]: rejected }))
+    const paragraph = marked(localised.nodes).get(FIRST_PARAGRAPH)!
+
+    expect(paragraph[1]).toMatchObject({ 'data-l10n': 'rejected', 'lang': 'en' })
+    expect(textContent(paragraph)).toBe(textContent(marked((await localise(page, emptyBundle('fr'))).nodes).get(FIRST_PARAGRAPH)!))
+    expect(localised.meta.l10n.coverage.byStatus.rejected).toBe(27)
+  })
+
   it('should render every block in English from an empty bundle', async () => {
     const page = pages.get(INTRODUCTION)!
     const localised = await localise(page, emptyBundle('fr'))

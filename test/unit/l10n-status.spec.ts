@@ -57,6 +57,16 @@ describe('localeStatus', () => {
     expect(result.recommendation).toBeUndefined()
   })
 
+  it('should count a rejection as a review that kept nothing', () => {
+    const result = status({
+      [first.hash]: verified(first.hash, 'danielroe', '2026-11-01T00:00:00Z'),
+      [second.hash]: { ...records[second.hash], review: 'rejected', rejectedBy: { by: 'atinux', at: '2026-11-02T00:00:00Z' } }
+    })
+    expect(result.approvalRate).toBe(1 / 2)
+    expect(result.activeReviewers).toEqual([{ login: 'atinux', count: 1 }, { login: 'danielroe', count: 1 }])
+    expect(result.pages.find(page => page.path === INTRODUCTION)?.byStatus.rejected).toBe(second.words)
+  })
+
   it('should count segments waiting for review and how long they waited', () => {
     const result = status({
       [first.hash]: { ...records[first.hash], derived: 'update', prev: '1'.repeat(16), updatedAt: '2026-10-24T00:00:00Z' },

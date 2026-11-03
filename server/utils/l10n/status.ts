@@ -75,11 +75,13 @@ export function localeStatus({ locale, bundle, pages, indexable, machine, now = 
     if (!record) continue
     const verified = record.verifiedBy && Date.parse(record.verifiedBy.at) >= since ? record.verifiedBy.by : undefined
     const edited = record.review === 'edited' && record.by && Date.parse(record.updatedAt) >= since ? record.by : undefined
-    for (const login of new Set([verified, edited])) if (login) reviewers.set(login, (reviewers.get(login) ?? 0) + 1)
+    const rejected = record.rejectedBy && Date.parse(record.rejectedBy.at) >= since ? record.rejectedBy.by : undefined
+    for (const login of new Set([verified, edited, rejected])) if (login) reviewers.set(login, (reviewers.get(login) ?? 0) + 1)
 
     if (record.mt && record.review !== 'none') {
       reviewedMachine++
       const ratio = editRatio(record) ?? 0
+      if (record.review === 'rejected') continue
       if (ratio === 0) approved++
       else edits.push(ratio)
     }

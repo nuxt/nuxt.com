@@ -40,6 +40,7 @@ export async function localise<T extends Pick<ContentFile, 'path' | 'data' | 'no
     { frontmatter: (file.data ?? {}) as Record<string, unknown>, nodes: (file.nodes ?? []) as Node[] },
     segment => visibleRecord(bundle, segment.hash),
     {
+      spanSources: false,
       onSegment(event) {
         events.push(event)
         const { status, target } = event

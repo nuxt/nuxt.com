@@ -1,7 +1,7 @@
 import { readFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import type { Segment, TranslationRecord } from '@diglot/core'
-import { parseRecord } from '@diglot/core'
+import { parseRecord, recordStatus } from '@diglot/core'
 import { recordPath, serialiseRecord } from '@diglot/store'
 import fs from 'comark-content/sources/fs'
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest'
@@ -48,7 +48,7 @@ describe('planChanges', () => {
     expect(counts).toEqual({ edit: 1 })
     expect(files).toHaveLength(1)
     expect(files[0]!.path).toBe(`fr/segments/83/${FIRST_PARAGRAPH}.json`)
-    const record = parseRecord(JSON.parse(files[0]!.content!))
+    const record = parseRecord(JSON.parse(files[0]!.content))
     expect(record).toEqual({
       hash: FIRST_PARAGRAPH,
       source: records[FIRST_PARAGRAPH]!.source,
@@ -66,13 +66,13 @@ describe('planChanges', () => {
   it('should create a record for an untranslated segment', () => {
     const { files, issues } = plan([{ hash: HEADING, action: 'edit', text: 'Automatisation et conventions de Nuxt' }], { current: new Map() })
     expect(issues).toEqual([])
-    expect(JSON.parse(files[0]!.content!)).toMatchObject({ origin: 'human', review: 'edited', derived: 'fresh', source: 'Automation and Conventions' })
+    expect(JSON.parse(files[0]!.content)).toMatchObject({ origin: 'human', review: 'edited', derived: 'fresh', source: 'Automation and Conventions' })
   })
 
   it('should keep the text of a verified segment and record who verified it', () => {
     const { files, issues } = plan([{ hash: TIP, action: 'verify' }])
     expect(issues).toEqual([])
-    expect(JSON.parse(files[0]!.content!)).toEqual({
+    expect(JSON.parse(files[0]!.content)).toEqual({
       ...records[TIP],
       review: 'verified',
       verifiedBy: { by: 'danielroe', at: NOW.toISOString() },
@@ -80,11 +80,35 @@ describe('planChanges', () => {
     })
   })
 
-  it('should remove a rejected record', () => {
+  it('should keep a rejected translation as a record stamped with who rejected it', () => {
     const { files, records: next, counts } = plan([{ hash: TIP, action: 'reject' }])
-    expect(files).toEqual([{ path: recordPath('fr', TIP), content: null }])
-    expect(next.get(TIP)).toBeNull()
+    const rejected = { ...records[TIP], review: 'rejected', rejectedBy: { by: 'danielroe', at: NOW.toISOString() }, updatedAt: NOW.toISOString() }
+    expect(files).toEqual([{ path: recordPath('fr', TIP), content: serialiseRecord(parseRecord(rejected)) }])
+    expect(next.get(TIP)).toEqual(rejected)
+    expect(recordStatus(next.get(TIP))).toBe('rejected')
     expect(counts).toEqual({ reject: 1 })
+  })
+
+  it('should drop the verification of a rejected record', () => {
+    const verified = { ...records[TIP]!, review: 'verified' as const, verifiedBy: { by: 'someone', at: NOW.toISOString() } }
+    const record = plan([{ hash: TIP, action: 'reject' }], { current: new Map([[TIP, verified]]) }).records.get(TIP)!
+    expect(record.verifiedBy).toBeUndefined()
+    expect(record.rejectedBy).toEqual({ by: 'danielroe', at: NOW.toISOString() })
+  })
+
+  it('should clear a rejection with an edit, even one keeping the text', () => {
+    const rejected = plan([{ hash: TIP, action: 'reject' }]).records.get(TIP)!
+    const { records: next, issues } = plan([{ hash: TIP, action: 'edit', text: rejected.text }], { current: new Map([[TIP, rejected]]) })
+    expect(issues).toEqual([])
+    expect(next.get(TIP)).toMatchObject({ review: 'edited', origin: 'human', by: 'danielroe' })
+    expect(next.get(TIP)!.rejectedBy).toBeUndefined()
+  })
+
+  it('should refuse to verify or reject a rejected record again', () => {
+    const rejected = plan([{ hash: TIP, action: 'reject' }]).records.get(TIP)!
+    const current = new Map([[TIP, rejected]])
+    expect(plan([{ hash: TIP, action: 'verify' }], { current }).issues.map(issue => issue.code)).toEqual(['invalid'])
+    expect(plan([{ hash: TIP, action: 'reject' }], { current }).issues.map(issue => issue.code)).toEqual(['unchanged'])
   })
 
   it('should refuse edits that do not validate against the source', () => {
@@ -139,7 +163,7 @@ describe('planChanges', () => {
       { hash: TIP, action: 'verify' },
       { hash: HEADING, action: 'reject' }
     ], { suggestion: true })
-    expect(files.map(file => [file.path, file.content === null])).toEqual([[recordPath('fr', FIRST_PARAGRAPH), false], [recordPath('fr', HEADING), true]])
+    expect(files.map(file => [file.path, JSON.parse(file.content).review])).toEqual([[recordPath('fr', FIRST_PARAGRAPH), 'edited'], [recordPath('fr', HEADING), 'rejected']])
     expect(issues.map(issue => [issue.hash, issue.code])).toEqual([[TIP, 'not-allowed']])
   })
 })
@@ -176,10 +200,10 @@ describe('commitChanges (dry run)', () => {
       message: `chore(fr): edit 1, verify 1, reject 1 on ${PAGE}\n\nReviewed on nuxt.com by @danielroe.`,
       author: { name: 'danielroe', email: '28706372+danielroe@users.noreply.github.com' }
     })
-    expect(commit!.files.map(file => [file.path, file.content === null])).toEqual([
-      [recordPath('fr', FIRST_PARAGRAPH), false],
-      [recordPath('fr', TIP), false],
-      [recordPath('fr', HEADING), true]
+    expect(commit!.files.map(file => [file.path, JSON.parse(file.content).review])).toEqual([
+      [recordPath('fr', FIRST_PARAGRAPH), 'edited'],
+      [recordPath('fr', TIP), 'verified'],
+      [recordPath('fr', HEADING), 'rejected']
     ])
     expect(git.log.updates).toEqual([{ branch: 'main', sha: result.sha, force: false }])
     expect(await git.head('main')).toBe(result.sha)
@@ -273,8 +297,9 @@ describe('GitHub App', () => {
     )
     expect(github.git(['diff', '--name-status', before, sha]).split('\n')).toEqual([
       `M\t${recordPath('fr', FIRST_PARAGRAPH)}`,
-      `D\t${recordPath('fr', HEADING)}`
+      `M\t${recordPath('fr', HEADING)}`
     ])
+    expect(JSON.parse(github.git(['show', `${sha}:${recordPath('fr', HEADING)}`])).rejectedBy.by).toBe('danielroe')
     expect(JSON.parse(github.git(['show', `${sha}:${recordPath('fr', FIRST_PARAGRAPH)}`])).text).toBe(FIRST_TEXT)
   })
 

@@ -60,7 +60,9 @@ export async function suggestionsFor(git: TranslationsGit, locale: L10nLocale, h
     const list = await Promise.all(suggested.get(hash)!.map(async ({ login, number, url, head }) => {
       const text = await git.read(head, recordPath(locale, hash))
       try {
-        return [text === undefined ? { login, number, url } : { login, number, url, text: parseRecord(JSON.parse(text)).text }]
+        const record = text === undefined ? undefined : parseRecord(JSON.parse(text))
+        if (!record) return []
+        return [record.review === 'rejected' ? { login, number, url } : { login, number, url, text: record.text }]
       } catch {
         return []
       }

@@ -6,10 +6,10 @@ export interface GitAuthor {
   email: string
 }
 
-/** One file a commit writes; `content: null` deletes it. */
+/** One file a commit writes. */
 export interface GitFileChange {
   path: string
-  content: string | null
+  content: string
 }
 
 export interface GitCommitInput {
@@ -69,7 +69,7 @@ export interface DryRunLog {
  */
 export function dryRunGit(base: Pick<TranslationsGit, 'head' | 'read'>): TranslationsGit & { log: DryRunLog } {
   const log: DryRunLog = { commits: [], updates: [], pulls: [] }
-  const commits = new Map<string, { parent: string, files: Map<string, string | null> }>()
+  const commits = new Map<string, { parent: string, files: Map<string, string> }>()
   const heads = new Map<string, string>()
   const pulls = new Map<string, GitPullRequest & { files: Set<string> }>()
 
@@ -77,7 +77,7 @@ export function dryRunGit(base: Pick<TranslationsGit, 'head' | 'read'>): Transla
     for (let sha: string | undefined = commit; sha;) {
       const local = commits.get(sha)
       if (!local) return base.read(sha, path)
-      if (local.files.has(path)) return local.files.get(path) ?? undefined
+      if (local.files.has(path)) return local.files.get(path)
       sha = local.parent
     }
   }

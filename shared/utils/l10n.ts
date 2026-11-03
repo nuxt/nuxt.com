@@ -194,6 +194,7 @@ export interface L10nEditorSegment {
     review: Review
     by?: string
     verifiedBy?: string
+    rejectedBy?: string
     model?: string
     updatedAt: string
   }
@@ -227,9 +228,9 @@ export interface L10nLocaleStatus {
   /** Pages reviewed enough to be indexed whose version is not crawlable. */
   readyToIndex: number
   pending: { segments: number, oldestDays?: number, medianDays?: number }
-  /** Who edited or verified something recently, with how many records. */
+  /** Who edited, verified or rejected something recently, with how many records. */
   activeReviewers: Array<{ login: string, count: number }>
-  /** Share of reviewed machine translations kept unchanged, 0 to 1. */
+  /** Share of reviewed machine translations verified unchanged, 0 to 1. */
   approvalRate?: number
   /** Median share of a machine translation changed by reviewers who edited it, 0 to 1. */
   editRatio?: number
@@ -310,7 +311,7 @@ export interface L10nSaveResult {
   segments: Record<string, { status: SegmentStatus, text?: string }>
   pull?: { number: number, url: string }
   /** The commits a dry run would have made, where the GitHub App is not configured. */
-  dryRun?: Array<{ message: string, author: { name: string, email: string }, files: Array<{ path: string, content: string | null }> }>
+  dryRun?: Array<{ message: string, author: { name: string, email: string }, files: Array<{ path: string, content: string }> }>
 }
 
 /** Where a locale's translations are saved: `/api/l10n/fr/translations`. */
@@ -396,6 +397,7 @@ export const L10N_STRINGS = {
       glossaryTranslate: (target?: string) => target ? `à traduire par « ${target} »` : 'à traduire',
       glossaryKeepGloss: (gloss: string) => `à garder en anglais, avec « ${gloss} »`,
       by: (login: string) => `par @${login}`,
+      rejectedBy: (login: string) => `Rejetée par @${login} : la page affiche le texte anglais. Modifiez-la pour la rétablir.`,
       edit: 'Modifier',
       verify: 'Valider',
       reject: 'Rejeter',

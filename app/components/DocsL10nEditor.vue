@@ -57,6 +57,7 @@ const draft = computed({
 
 const validation = computed(() => segment.value && draft.value.trim() ? validate(draft.value.trim(), segment.value) : undefined)
 const changed = computed(() => !!segment.value && draft.value.trim() !== (segment.value.record?.text ?? ''))
+const rejected = computed(() => segment.value?.record?.review === 'rejected')
 const staged = computed(() => segment.value && changes.get(segment.value.hash))
 
 function stage(action: L10nChange['action']) {
@@ -240,7 +241,10 @@ function glossaryHint(entry: NonNullable<typeof segment.value>['glossary'][numbe
           <p v-else class="text-dimmed">
             {{ t.none }}
           </p>
-          <p v-if="segment.record?.verifiedBy || segment.record?.by || segment.record?.model" class="text-xs text-dimmed">
+          <p v-if="segment.record?.rejectedBy" class="text-xs text-error">
+            {{ t.rejectedBy(segment.record.rejectedBy) }}
+          </p>
+          <p v-else-if="segment.record?.verifiedBy || segment.record?.by || segment.record?.model" class="text-xs text-dimmed">
             {{ segment.record.verifiedBy ? t.by(segment.record.verifiedBy) : segment.record.by ? t.by(segment.record.by) : segment.record.model }}
           </p>
         </section>
@@ -305,7 +309,7 @@ function glossaryHint(entry: NonNullable<typeof segment.value>['glossary'][numbe
           </section>
 
           <div class="flex flex-wrap items-center gap-2">
-            <UButton :label="t.edit" icon="i-lucide-pencil" :disabled="!changed || !validation?.ok" @click="stage('edit')" />
+            <UButton :label="t.edit" icon="i-lucide-pencil" :disabled="!(changed || rejected) || !validation?.ok" @click="stage('edit')" />
             <template v-if="segment.record">
               <UButton
                 v-if="role === 'translator'"
@@ -316,7 +320,14 @@ function glossaryHint(entry: NonNullable<typeof segment.value>['glossary'][numbe
                 :disabled="segment.status === 'verified' || segment.status === 'rejected' || changed"
                 @click="stage('verify')"
               />
-              <UButton :label="t.reject" icon="i-lucide-x" color="error" variant="soft" @click="stage('reject')" />
+              <UButton
+                :label="t.reject"
+                icon="i-lucide-x"
+                color="error"
+                variant="soft"
+                :disabled="rejected"
+                @click="stage('reject')"
+              />
             </template>
             <UButton v-if="staged" :label="t.undo" color="neutral" variant="ghost" @click="unstage" />
           </div>

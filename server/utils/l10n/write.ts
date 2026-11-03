@@ -18,8 +18,8 @@ const READ_CONCURRENCY = 8
 /** The record files a set of changes writes, or why some of them cannot be applied. */
 export interface L10nPlan {
   files: GitFileChange[]
-  /** The record each change leaves, `null` for a removed one. */
-  records: Map<string, TranslationRecord | null>
+  /** The record each change leaves. */
+  records: Map<string, TranslationRecord>
   counts: Partial<Record<L10nChangeAction, number>>
   issues: L10nChangeIssue[]
 }
@@ -52,7 +52,8 @@ export function translatorAuthor(translator: L10nTranslator): GitAuthor {
  * The record files `changes` write, built with `@diglot/core` and serialised by `@diglot/store`.
  * - `edit` writes the translator's text as a human edit, keeping the machine candidate it replaces
  * - `verify` keeps the text and marks it verified
- * - `reject` removes the record, so the page shows the English source
+ * - `reject` keeps the text and marks it rejected, so the page shows the English source and
+ *   machine translation leaves the segment alone; an edit clears it
  */
 export function planChanges({ locale, segments, current, changes, translator, suggestion = false, now = new Date() }: PlanInput): L10nPlan {
   const plan: L10nPlan = { files: [], records: new Map(), counts: {}, issues: [] }
@@ -78,7 +79,7 @@ export function planChanges({ locale, segments, current, changes, translator, su
     }
 
     const record = current.get(hash)
-    let next: TranslationRecord | null
+    let next: TranslationRecord
 
     if (action === 'edit') {
       const text = change.text?.trim() ?? ''
@@ -95,7 +96,7 @@ export function planChanges({ locale, segments, current, changes, translator, su
         issue(hash, 'invalid', result.errors[0]!.message, result.errors)
         continue
       }
-      if (record?.text === text) {
+      if (record?.text === text && record.review !== 'rejected') {
         issue(hash, 'unchanged', 'The translation is unchanged: verify it instead.')
         continue
       }
@@ -115,6 +116,10 @@ export function planChanges({ locale, segments, current, changes, translator, su
         issue(hash, 'no-record', 'There is no translation to verify.')
         continue
       }
+      if (record.review === 'rejected') {
+        issue(hash, 'invalid', 'The translation was rejected: edit it instead.')
+        continue
+      }
       if (recordStatus(record, segment) === 'rejected') {
         issue(hash, 'invalid', 'The translation no longer fits its source: edit it instead.')
         continue
@@ -129,12 +134,16 @@ export function planChanges({ locale, segments, current, changes, translator, su
         issue(hash, 'no-record', 'There is no translation to reject.')
         continue
       }
-      next = null
+      if (record.review === 'rejected') {
+        issue(hash, 'unchanged', 'The translation is already rejected.')
+        continue
+      }
+      next = normaliseRecord({ ...record, review: 'rejected', rejectedBy: { by: translator.login, at }, verifiedBy: undefined, updatedAt: at })
     }
 
     plan.records.set(hash, next)
     plan.counts[action] = (plan.counts[action] ?? 0) + 1
-    plan.files.push({ path: recordPath(locale, hash), content: next && serialiseRecord(parseRecord(next)) })
+    plan.files.push({ path: recordPath(locale, hash), content: serialiseRecord(parseRecord(next)) })
   }
 
   return plan
@@ -249,7 +258,7 @@ export async function suggestChanges(git: TranslationsGit, input: SaveInput, bas
     body: [
       `Translations suggested on nuxt.com by @${input.translator.login}, who is not on the \`translators-${input.locale}\` team yet.`,
       '',
-      'Each commit is one page save. Merging accepts them: edits as human edits by the author, rejections as removed translations.'
+      'Each commit is one page save. Merging accepts them: edits as human edits by the author, rejections as rejected translations.'
     ].join('\n')
   })
 
