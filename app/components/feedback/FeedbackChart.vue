@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import type { ChartCategory } from '@nuxt/ui'
+
 type PageAnalytic = {
   path: string
   total: number
@@ -222,72 +224,36 @@ const chartData = computed(() => {
   return timeBasedChartData.value
 })
 
-const chartCategories = computed(() => {
+const chartCategories = computed<ChartCategory[]>(() => {
   if (!hasValidData.value) {
-    return {
-      placeholder: {
-        name: 'No Data Available',
-        color: '#6b7280'
-      }
-    }
+    return [{ key: 'placeholder', label: 'No Data Available', color: 'neutral' }]
   }
 
   if (chartType.value === 'compare') {
-    return {
-      positive: {
-        name: 'Positive',
-        color: 'var(--ui-success)'
-      },
-      negative: {
-        name: 'Negative',
-        color: 'var(--ui-error)'
-      }
-    }
+    return [
+      { key: 'positive', label: 'Positive', color: 'success' },
+      { key: 'negative', label: 'Negative', color: 'error' }
+    ]
   }
 
   if (chartType.value === 'overall') {
-    return {
-      average: {
-        name: 'Overall Rating',
-        color: '#3b82f6'
-      }
-    }
+    return [{ key: 'average', label: 'Overall Rating' }]
   }
 
   if (selectedPagePaths.value.length === 0 || !props.pageAnalytics) {
-    return {
-      placeholder: {
-        name: 'No Pages Selected',
-        color: '#6b7280'
+    return [{ key: 'placeholder', label: 'No Pages Selected', color: 'neutral' }]
+  }
+
+  return props.pageAnalytics
+    .filter(p => p && selectedPagePaths.value.includes(p.path))
+    .map((page) => {
+      const title = page.lastFeedback?.title || page.path
+      return {
+        key: page.path.split('/').pop()?.replace(/[^a-z0-9]/gi, '') || 'page',
+        label: title.length > 25 ? title.substring(0, 25) + '...' : title
       }
-    }
-  }
-
-  const selectedPages = props.pageAnalytics.filter(p => p && selectedPagePaths.value.includes(p.path))
-  const colors = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#06b6d4', '#84cc16', '#f97316']
-
-  return selectedPages.reduce((acc, page, index) => {
-    if (!page) return acc
-
-    const key = page.path.split('/').pop()?.replace(/[^a-z0-9]/gi, '') || 'page'
-    const title = page.lastFeedback?.title || page.path
-    acc[key] = {
-      name: title.length > 25 ? title.substring(0, 25) + '...' : title,
-      color: colors[index % colors.length]
-    }
-    return acc
-  }, {} as Record<string, { name: string, color: string }>)
+    })
 })
-
-const xFormatter = (index: number) => {
-  if (chartType.value === 'compare') {
-    return comparisonChartData.value[index]?.page || ''
-  }
-  if (chartType.value === 'overall') {
-    return overallChartData.value[index]?.day || ''
-  }
-  return timeBasedChartData.value[index]?.day || ''
-}
 
 const yFormatter = (value: number) => {
   if (chartType.value === 'compare') {
@@ -453,43 +419,19 @@ function selectWorstPages(count: number) {
     <div class="relative rounded-xl overflow-hidden mb-8">
       <div class="dot-pattern h-[300px] -top-5 left-0 right-0" />
 
-      <LineChart
-        v-if="chartType === 'overall'"
+      <UChart
+        :key="chartType"
+        :type="chartType === 'compare' ? 'bar' : 'line'"
         :data="chartData"
+        :index="chartType === 'compare' ? 'page' : 'day'"
         :categories="chartCategories"
-        :x-formatter="xFormatter"
-        :y-formatter="yFormatter"
+        :stacked="chartType === 'compare'"
+        :grid="chartType !== 'compare'"
+        :format="yFormatter"
         :x-label="dateRangeLabel"
-        y-label="Rating (out of 4)"
-        :show-tooltip="true"
-      />
-
-      <LineChart
-        v-else-if="chartType === 'line'"
-        :data="chartData"
-        :categories="chartCategories"
-        :x-formatter="xFormatter"
-        :y-formatter="yFormatter"
-        :x-label="dateRangeLabel"
-        y-label="Rating (out of 4)"
-        :show-tooltip="true"
-        class="min-h-[300px]"
-      />
-
-      <BarChart
-        v-else-if="chartType === 'compare'"
-        :data="chartData"
-        :categories="chartCategories"
-        :y-axis="['positive', 'negative']"
-        :stacked="true"
-        :x-formatter="xFormatter"
-        :y-formatter="yFormatter"
-        :x-label="dateRangeLabel"
-        y-label="Feedback Count"
-        :height="300"
-        :bar-padding="0.2"
-        :y-grid-line="false"
-        class="min-h-[300px]"
+        :y-label="chartType === 'compare' ? 'Feedback Count' : 'Rating (out of 4)'"
+        :aria-label="chartTitle"
+        class="relative"
       />
     </div>
 
@@ -625,30 +567,6 @@ function selectWorstPages(count: number) {
 
 <style>
 :root {
-  --vis-tooltip-background-color: rgba(255, 255, 255, 0.95) !important;
-  --vis-tooltip-border-color: rgba(0, 0, 0, 0.1) !important;
-  --vis-tooltip-text-color: rgba(0, 0, 0, 0.9) !important;
-  --vis-tooltip-label-color: rgba(0, 0, 0, 0.7) !important;
-  --vis-tooltip-value-color: rgba(0, 0, 0, 1) !important;
-
-  --vis-axis-grid-color: rgba(255, 255, 255, 0.1) !important;
-  --vis-axis-tick-label-color:  var(--ui-text-muted) !important;
-  --vis-axis-label-color: var(--ui-text-toned) !important;
-  --vis-legend-label-color: var(--ui-text-muted) !important;
-  --vis-tooltip-title-color: var(--ui-text) !important;
-  --vis-tooltip-title-border-bottom: 1px solid var(--ui-border) !important;
-  --vis-tooltip-title-padding: 0.2rem !important;
-  --vis-tooltip-box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1) !important;
-  --vis-tooltip-border-radius: 8px !important;
-  --vis-tooltip-border-color: var(--ui-border) !important;
-  --vis-tooltip-background-color: var(--ui-bg) !important;
-  --vis-tooltip-text-color: var(--ui-text) !important;
-  --vis-tooltip-divider: var(--ui-border) !important;
-  --vis-tooltip-value-font-size: 0.875rem !important;
-  --vis-tooltip-value-font-weight: 600 !important;
-  --vis-tooltip-value-color: var(--ui-text) !important;
-  --vis-tooltip-label-color: var(--ui-text-muted) !important;
-
   --dot-pattern-color: #111827;
 }
 

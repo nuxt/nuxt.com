@@ -44,7 +44,6 @@ export default defineNuxtConfig({
     'motion-v/nuxt',
     'nuxt-llms',
     '@nuxthub/core',
-    'nuxt-charts',
     'nuxt-auth-utils',
     'nuxt-schema-org',
     '@nuxtjs/mcp-toolkit',
