@@ -24,6 +24,7 @@ export default defineEventHandler(async (event): Promise<L10nSaveResult> => {
     throw createError({ statusCode: 404, statusMessage: 'Unknown locale' })
   }
 
+  assertSameOrigin(event)
   const { user } = await requireUserSession(event)
   const { page, changes } = await readValidatedBody(event, bodySchema.parse)
   if (!isLocalisedPage(page)) {

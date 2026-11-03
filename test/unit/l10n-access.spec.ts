@@ -3,7 +3,10 @@ import { drizzle } from 'drizzle-orm/libsql'
 import { generateSQLiteDrizzleJson, generateSQLiteMigration } from 'drizzle-kit/api'
 import { beforeEach, describe, expect, it } from 'vitest'
 import * as schema from '../../server/db/schema'
-import { translatorsTeam } from '../../server/utils/l10n/access'
+import { IncomingMessage, ServerResponse } from 'node:http'
+import { Socket } from 'node:net'
+import { createEvent } from 'h3'
+import { assertSameOrigin, translatorsTeam } from '../../server/utils/l10n/access'
 import { consumeL10nSave, consumeL10nSuggestion } from '../../server/utils/l10n/allowance'
 
 const NOW = Date.parse('2026-11-03T10:15:00Z')
@@ -57,6 +60,21 @@ describe('consumeL10nSuggestion', () => {
     }
     await expect(consumeL10nSuggestion(db, 'other', 1, NOW)).rejects.toMatchObject({ statusCode: 429 })
     await expect(consumeL10nSave(db, 'other', 1, NOW)).resolves.toBeUndefined()
+  })
+})
+
+describe('assertSameOrigin', () => {
+  const request = (headers: Record<string, string>) => {
+    const req = new IncomingMessage(new Socket())
+    req.headers = headers
+    return createEvent(req, new ServerResponse(req))
+  }
+
+  it('should refuse writes sent from another site or subdomain', () => {
+    expect(() => assertSameOrigin(request({ 'sec-fetch-site': 'same-site' }))).toThrow(expect.objectContaining({ statusCode: 403 }))
+    expect(() => assertSameOrigin(request({ 'sec-fetch-site': 'cross-site' }))).toThrow(expect.objectContaining({ statusCode: 403 }))
+    expect(() => assertSameOrigin(request({ 'sec-fetch-site': 'same-origin' }))).not.toThrow()
+    expect(() => assertSameOrigin(request({}))).not.toThrow()
   })
 })
 

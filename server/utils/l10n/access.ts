@@ -1,6 +1,6 @@
 import type { TranslationRecord } from '@diglot/core'
 import { serialiseRecord } from '@diglot/store'
-import { createError } from 'h3'
+import { createError, getRequestHeader, type H3Event } from 'h3'
 import type { L10nLocale, L10nRole } from '../../../shared/utils/l10n'
 import { TRANSLATIONS_BRANCH, TRANSLATIONS_REPO } from './bundle'
 import { dryRunGit, type DryRunLog, type TranslationsGit } from './git'
@@ -17,6 +17,14 @@ const RECORD_PATH_RE = /^([^/]+)\/segments\/[0-9a-f]{2}\/([0-9a-f]{16})\.json$/
 /** The team whose members commit `locale`'s translations: `translators-fr`. */
 export function translatorsTeam(locale: L10nLocale): string {
   return `translators-${locale}`
+}
+
+/** Refuse a write sent by a browser from another origin, even a sibling subdomain sharing the session cookie. */
+export function assertSameOrigin(event: H3Event): void {
+  const site = getRequestHeader(event, 'sec-fetch-site')
+  if (site && site !== 'same-origin') {
+    throw createError({ statusCode: 403, statusMessage: 'Cross-origin requests are not allowed' })
+  }
 }
 
 let app: GitHubApp | undefined

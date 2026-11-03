@@ -10,6 +10,7 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 404, statusMessage: 'Unknown locale' })
   }
 
+  assertSameOrigin(event)
   const { user } = await requireUserSession(event)
   if (user.role !== 'admin') {
     throw createError({ statusCode: 403, statusMessage: 'Admin access required' })
