@@ -77,6 +77,8 @@ export async function l10nRole(user: { username: string, role: string }, locale:
     ? await isGitHubTeamMember(configured, TRANSLATORS_ORG, translatorsTeam(locale), user.username)
     : user.role === 'admin'
   const role: L10nRole = member ? 'translator' : 'suggester'
-  roles.set(key, { role, expiresAt: Date.now() + ROLE_TTL })
+  const now = Date.now()
+  for (const [other, entry] of roles) if (entry.expiresAt <= now) roles.delete(other)
+  roles.set(key, { role, expiresAt: now + ROLE_TTL })
   return role
 }
