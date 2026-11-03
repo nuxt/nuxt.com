@@ -161,12 +161,20 @@ onScopeDispose(() => {
   for (const block of active) block.removeAttribute('data-l10n-active')
 })
 
-async function waitForPublication(previous: string) {
+/** Whether the editor's page shows every saved segment as saved. */
+function served(saved: L10nSaveResult['segments']): boolean {
+  return Object.entries(saved).every(([key, { status, text }]) => {
+    const item = segments.value.find(other => other.hash === key)
+    return !item || (item.status === status && item.record?.text === text)
+  })
+}
+
+async function waitForPublication(saved: L10nSaveResult['segments']) {
   for (let attempt = 0; attempt < 20; attempt++) {
     await new Promise(resolve => setTimeout(resolve, 3000))
     if (disposed) return
     await refresh()
-    if (page.value?.sha && page.value.sha !== previous) {
+    if (served(saved)) {
       emit('published')
       toast.add({ title: t.value.publishedNow, icon: 'i-lucide-check', color: 'success' })
       return
@@ -192,7 +200,7 @@ async function save() {
       for (const [hash, { status }] of Object.entries(response.segments)) {
         for (const block of blocks(hash)) block.setAttribute('data-l10n', status)
       }
-      waitForPublication(page.value?.sha ?? '')
+      waitForPublication(response.segments)
     }
   } catch (error) {
     const data = (error as { data?: { statusMessage?: string, data?: { issues?: L10nChangeIssue[] } } }).data
