@@ -29,7 +29,7 @@ export async function runWeeklyDigest({
 }
 
 export default defineSchedule({
-  cron: '0 5 * * 1',
+  cron: '0 9 * * 1',
   async run({ to, waitUntil, appAuth }) {
     waitUntil(runWeeklyDigest({ to, appAuth }))
   }

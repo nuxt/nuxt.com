@@ -15,7 +15,7 @@ export async function runShowcaseDiscovery({ to, appAuth, sinceDays }: {
 }
 
 export default defineSchedule({
-  cron: '30 6 * * 1',
+  cron: '0 9 * * 4',
   async run({ to, waitUntil, appAuth }) {
     waitUntil(runShowcaseDiscovery({ to, appAuth }))
   }

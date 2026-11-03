@@ -15,7 +15,7 @@ export async function runSeoOpportunities({ to, appAuth, sinceDays = 28 }: {
 }
 
 export default defineSchedule({
-  cron: '0 7 * * 1',
+  cron: '0 10 1,15 * *',
   async run({ to, waitUntil, appAuth }) {
     waitUntil(runSeoOpportunities({ to, appAuth }))
   }

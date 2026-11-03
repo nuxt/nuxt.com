@@ -136,13 +136,21 @@ export default defineSchedule({
 })
 ```
 
-All times below assume UTC+1 local mornings (6:00 local ≈ 5:00 UTC) — adjust the cron if the team's timezone/DST differs.
+All schedules use UTC and do not shift with daylight saving time. Reports are spread across the week; the standalone SEO report runs twice per calendar month.
+
+| Workflow | Schedule (UTC) |
+| --- | --- |
+| Firehose summary | Weekdays at 08:00 |
+| Weekly digest | Monday at 09:00 |
+| Showcase check | Tuesday at 09:00 |
+| Showcase discovery | Thursday at 09:00 |
+| SEO opportunities | 1st and 15th of each month at 10:00 |
 
 ### Weekly digest
 
 Single Monday digest: traffic (trend, top sections, referrers/audience), Search Console changes and SEO recommendations, docs feedback, Nuxi quality/runs, Nuxi-scoped AI Gateway spend, and **Fix this week** prioritized by traffic, feedback and evidenced opportunities.
 
-- Schedule: `agent/schedules/weekly-digest.ts` — Monday 5:00 UTC
+- Schedule: `agent/schedules/weekly-digest.ts` — Monday 09:00 UTC
 - Skill: `agent/skills/weekly-digest/SKILL.md`
 - Preview trigger: `POST /eve/v1/ops/weekly-digest/trigger`
 - Browser traffic via `vercel-mcp__count_pageviews` + `vercel-mcp__aggregate_pageviews`.
@@ -154,7 +162,7 @@ Single Monday digest: traffic (trend, top sections, referrers/audience), Search 
 
 Summarizes `#firehose-nuxt` (Octolens social mentions) and posts highlights to the workflow channel.
 
-- Schedule: `agent/schedules/firehose-summary.ts` — weekdays 5:00 UTC (last 24h)
+- Schedule: `agent/schedules/firehose-summary.ts` — weekdays 08:00 UTC (last 24h)
 - Skill: `agent/skills/firehose-summary/SKILL.md`
 - Tool: `read_slack_channel_history` (`agent/tools/slack-channel-history.ts`)
 - Preview trigger: `POST /eve/v1/ops/firehose-summary/trigger?sinceHours=24`
@@ -165,7 +173,7 @@ The Nuxi Slack bot must be invited to `#firehose-nuxt`. Required Connect scopes:
 
 Fetches the homepage of every site on `/showcase` and flags the ones that no longer serve Nuxt, so they can be removed or updated in `content/showcase.yml`.
 
-- Schedule: `agent/schedules/showcase-check.ts` — Monday 6:00 UTC
+- Schedule: `agent/schedules/showcase-check.ts` — Tuesday 09:00 UTC
 - Skill: `agent/skills/showcase-check/SKILL.md`
 - Tool: `check_showcase_sites` (`agent/tools/check_showcase_sites.ts`, admin only) — also answers ad-hoc questions such as "is Upwork still on Nuxt?"
 - Preview trigger: `POST /eve/v1/ops/showcase-check/trigger`
@@ -176,7 +184,7 @@ The site list comes from `POST /api/internal/content` (`kind: "showcase"`), so t
 
 Finds candidates to consider adding, separately from checking existing entries.
 
-- Schedule: `agent/schedules/showcase-discovery.ts` — Monday 6:30 UTC
+- Schedule: `agent/schedules/showcase-discovery.ts` — Thursday 09:00 UTC
 - Skill: `agent/skills/showcase-discovery/SKILL.md` (also available on request)
 - Tool: `discover_showcase_candidates` — admin only, with per-call authorization; `sinceDays` defaults to 7 and `limit` to 20 (maximum 30).
 - Preview trigger: `POST /eve/v1/ops/showcase-discovery/trigger?sinceDays=7`
@@ -187,11 +195,11 @@ These are recent scans, including rescans, not necessarily newly launched sites.
 
 ### SEO opportunities
 
-- Schedule: `agent/schedules/seo-opportunities.ts` — Monday 7:00 UTC
+- Schedule: `agent/schedules/seo-opportunities.ts` — 1st and 15th of each month at 10:00 UTC
 - Skill: `agent/skills/seo-opportunities/SKILL.md` (also available on request)
 - Preview trigger: `POST /eve/v1/ops/seo-opportunities/trigger?sinceDays=28` (1–90 days)
 
-Uses the existing admin MCP tools `search-console-analytics`, `search-console-inspect-url`, `search-console-sitemaps` and `crux-web-vitals`. The standalone report defaults to 28 days independently of `workflow.sinceDays`; it compares explicit equal-length windows ending 3 days ago. Every analytics call filters to `https://nuxt.com/`, excluding other products on subdomains. Ungrouped totals and daily trends establish the overview; page comparisons identify both gains and losses. Up to 5 pages receive paired query comparisons and current-content/feedback/indexing/field-performance checks before recommendations.
+Uses the existing admin MCP tools `search-console-analytics`, `search-console-inspect-url`, `search-console-sitemaps` and `crux-web-vitals`. The standalone report defaults to 28 days independently of `workflow.sinceDays`; it compares explicit equal-length windows ending 3 days ago. The twice-monthly reports intentionally overlap their rolling 28-day windows to retain enough data for trends; this is not a half-month reporting window. Every analytics call filters to `https://nuxt.com/`, excluding other products on subdomains. Ungrouped totals and daily trends establish the overview; page comparisons identify both gains and losses. Up to 5 pages receive paired query comparisons and current-content/feedback/indexing/field-performance checks before recommendations.
 
 The Slack report is a short briefing: **Scorecard**, **What improved**, **What regressed**, **Do next**, and **Watch next**. It prioritizes up to 3 specific changes (such as a drafted snippet, a named section/example to add, or a verified internal link), each with evidence, effort and a success check. Monitoring names the page/query, baseline, review timing and a proposed investigation trigger. Unread pages and unavailable comparisons are explicit limitations, not speculative rewrites. Compact weekly-digest mode keeps a gain, a loss and the best action. Neither workflow changes pages nor submits indexing requests. Missing credentials or API failures remain visible and do not prevent the rest of the weekly digest.
 
