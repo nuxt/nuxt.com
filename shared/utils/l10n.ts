@@ -365,7 +365,6 @@ export const L10N_STRINGS = {
     reviewed: (share: number) => `${Math.floor(share * 100)}\u202F% relue`,
     pending: 'Des passages attendent une relecture.',
     toReview: 'à relire',
-    viewInEnglish: 'Voir en anglais',
     review: 'Relire',
     reviewHint: 'Afficher l\'état de chaque passage et le modifier',
     improve: 'Améliorer cette traduction',

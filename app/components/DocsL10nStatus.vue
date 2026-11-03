@@ -61,18 +61,40 @@ function edit(hash: string | undefined) {
 }
 
 useEventListener(() => props.target, 'click', (event: MouseEvent) => {
-  if (!show.value) return
-  const block = (event.target as HTMLElement | null)?.closest<HTMLElement>('[data-l10n-hash]')
-  if (!block) return
+  if (!show.value || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return
+  const element = event.target as HTMLElement | null
+  const block = element?.closest<HTMLElement>('[data-l10n-hash]')
+  if (!block || element?.closest('a, button')) return
+  edit(block.dataset.l10nHash)
+})
+
+useEventListener(() => props.target, 'keydown', (event: KeyboardEvent) => {
+  const block = event.target as HTMLElement
+  if (!show.value || (event.key !== 'Enter' && event.key !== ' ') || !block.matches?.('[data-l10n-hash]')) return
   event.preventDefault()
   edit(block.dataset.l10nHash)
-}, { capture: true })
+})
+
+/** In review mode every block takes focus, so the keyboard reaches the popover and the editor. */
+function focusable(value: boolean) {
+  for (const block of props.target?.querySelectorAll<HTMLElement>('[data-l10n-hash]') ?? []) {
+    if (value) block.tabIndex = 0
+    else block.removeAttribute('tabindex')
+  }
+}
+
+watch([show, () => props.meta, () => props.target], ([value]) => nextTick(() => focusable(value)))
 
 watch(show, (value) => {
   if (value) return
   open.value = false
   editorOpen.value = false
 })
+
+function published() {
+  sources.clear()
+  emit('published')
+}
 watch(open, (value) => {
   if (!value) reference.value = undefined
 })
@@ -93,7 +115,6 @@ const status = computed(() => (source.value?.status ?? reference.value?.dataset.
       hreflang="en"
       lang="en"
       label="English"
-      :title="strings.viewInEnglish"
       icon="i-lucide-languages"
       size="xs"
       color="neutral"
@@ -143,12 +164,13 @@ const status = computed(() => (source.value?.status ?? reference.value?.dataset.
       </UPopover>
 
       <DocsL10nEditor
+        :key="`${meta.locale}:${path}`"
         v-model:open="editorOpen"
         v-model:hash="editorHash"
         :locale="meta.locale"
         :path="path"
         :target="target"
-        @published="emit('published')"
+        @published="published"
       />
     </ClientOnly>
   </div>
