@@ -44,7 +44,6 @@ export default defineNuxtConfig({
     'motion-v/nuxt',
     'nuxt-llms',
     '@nuxthub/core',
-    'nuxt-charts',
     'nuxt-auth-utils',
     'nuxt-schema-org',
     '@nuxtjs/mcp-toolkit',
@@ -595,7 +594,7 @@ export default defineNuxtConfig({
         'ai'
       ],
       // Pre-bundling `@sqlite.org/sqlite-wasm` breaks the wasm asset it resolves against its own module URL.
-      exclude: ['vue-chrts', 'shaders', '@sqlite.org/sqlite-wasm']
+      exclude: ['shaders', '@sqlite.org/sqlite-wasm']
     }
   },
   typescript: {
