@@ -246,7 +246,6 @@ export default defineNuxtConfig({
     // Main navigation
     '/api/navigation/**': { isr: CONTENT_ISR },
     '/api/l10n/*/navigation/**': { isr: CONTENT_ISR },
-    '/api/l10n/*/source/**': { isr: CONTENT_ISR },
     '/api/l10n/indexable': { isr: CONTENT_ISR },
     '/api/content/blob/**': { isr: true },
     '/api/content/pull/*/*/blob/**': { isr: true },
