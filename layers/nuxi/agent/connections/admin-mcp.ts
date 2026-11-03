@@ -3,14 +3,18 @@ import type { SessionContext } from 'eve/context'
 import { isAdminMode } from '../lib/identity/admin-mode.js'
 import { appOrigin } from '../lib/internal-api.js'
 
-/** The admin MCP server exposes exactly these; keep the surface explicit. */
+/** Read-only admin tools available to Nuxi; keep the surface explicit. */
 const ALLOWED_TOOLS = [
   'feedback-stats',
   'list-feedback',
   'agent-usage-stats',
   'list-agent-chats',
   'get-agent-chat',
-  'list-agent-votes'
+  'list-agent-votes',
+  'search-console-analytics',
+  'search-console-inspect-url',
+  'search-console-sitemaps',
+  'crux-web-vitals'
 ] as const
 
 export const ADMIN_MCP_INSTRUCTIONS = `**Admin MCP connection (\`admin-mcp__*\`, team only):**
@@ -20,6 +24,10 @@ export const ADMIN_MCP_INSTRUCTIONS = `**Admin MCP connection (\`admin-mcp__*\`,
 - \`admin-mcp__agent-usage-stats\` — web chat counts and vote quality (NOT tokens/cost — use \`vercel-mcp__*\` for runs, \`ai_gateway__*\` for tokens/cost)
 - \`admin-mcp__list-agent-chats\` / \`admin-mcp__get-agent-chat\` — web chats shared with admins or made public, and their transcripts (private chats are excluded)
 - \`admin-mcp__list-agent-votes\` — message upvotes/downvotes on those same chats
+- \`admin-mcp__search-console-analytics\` — Google Search clicks, impressions, CTR (percentage), and average position; data lags 2–3 days. Pass explicit inclusive dates for equal-length comparisons. Ungrouped queries (\`dimensions=[]\`) give totals; grouped rows are partial, never sum them into site totals.
+- \`admin-mcp__search-console-inspect-url\` / \`admin-mcp__search-console-sitemaps\` — indexing, canonical and sitemap diagnostics
+- \`admin-mcp__crux-web-vitals\` — field performance over rolling 28-day periods; origin fallback is not page-level evidence
+- For search performance and concrete SEO recommendations, load the \`seo-opportunities\` skill. For new showcase candidates from nuxt.fyi, load \`showcase-discovery\`.
 - For runs, Slack / Discord / web, duration: **Vercel Agent Runs** via \`vercel-mcp__*\` (see below)
 - For tokens, cost, model usage: **AI Gateway** via \`ai_gateway__*\` (see below)
 - Do not invent token/cost numbers from local DB.
@@ -53,7 +61,7 @@ async function adminOnlyToken(ctx: SessionContext) {
 
 export default defineMcpClientConnection({
   url: `${appOrigin()}/mcp/admin`,
-  description: 'Nuxi admin analytics: docs feedback ratings, shared web chat transcripts, and per-message votes. Admin/Slack/Discord/schedule sessions only.',
+  description: 'Nuxi admin analytics: docs feedback, shared web chats and votes, Google Search Console performance/indexing/sitemaps, and CrUX Core Web Vitals. Admin/Slack/Discord/schedule sessions only.',
   tools: { allow: ALLOWED_TOOLS },
   auth: adminOnlyToken
 })

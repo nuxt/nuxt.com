@@ -122,7 +122,7 @@ export function parseSinceHours(value: string | null | undefined): ParseWindowRe
   return { ok: true, value: Math.min(parsed, 168) }
 }
 
-const SLACK_WORKFLOW_DELIVERY = `Your text reply is posted verbatim to this Slack channel by Eve — there is no Slack post tool and you do not need one. Output only the formatted summary from the skill. Never say you cannot post, never mention missing tools, never ask anyone to copy-paste, and never add a "Note:" about delivery.`
+const SLACK_WORKFLOW_DELIVERY = `Your text reply is posted verbatim to this Slack channel by Eve — there is no Slack post tool and you do not need one. Output only the formatted summary from the skill. Never say you cannot post, never claim a Slack delivery tool is missing, never ask anyone to copy-paste, and never add a "Note:" about delivery. Keep genuine source-data or analytics-tool failures visible in the relevant section.`
 
 /** Opening line of every scheduled workflow prompt, and the only trace of which skill ran. */
 function loadSkillDirective(skillId: string): string {
