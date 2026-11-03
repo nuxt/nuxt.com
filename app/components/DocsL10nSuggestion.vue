@@ -4,7 +4,7 @@ import { L10N_STRINGS, localisePath, type L10nLocale } from '#shared/utils/l10n'
 const props = defineProps<{
   /** The English page, which has a localised twin. */
   path: string
-  /** Locales that may be suggested: those with reviewed, indexable pages. */
+  /** Locales that may be suggested: those whose translation of the page is indexable. */
   locales: L10nLocale[]
 }>()
 

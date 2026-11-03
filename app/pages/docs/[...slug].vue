@@ -5,7 +5,7 @@ import { DocsProseImg, Browser, CodeExplorer, Important, LinkExample, ReadMore, 
 import { CLI_DOCS_REFS, CLI_DOCS_REPO, cliDocsPathPrefix, hasCliDocs } from '#shared/utils/cli'
 import { cliInstanceKey } from '#shared/utils/content'
 import { DOCS_REFS, DOCS_REPO, getVersionByPath, isArchivedDocVersion, isCanonicalDocsPath } from '#shared/utils/docs'
-import { isLocalisedPage, l10nHead, L10N_INDEXABLE_PATH, pageIndexable, type L10nIndexable, type L10nPageMeta } from '#shared/utils/l10n'
+import { isLocalisedPage, l10nHead, L10N_INDEXABLE_PATH, L10N_LOCALE_CODES, pageIndexable, type L10nIndexable, type L10nPageMeta } from '#shared/utils/l10n'
 
 definePageMeta({
   heroBackground: false,
@@ -208,12 +208,13 @@ if (isCanonicalDocsPath(path.value) && !locale.value) {
 const { data: indexable } = await useAsyncData(computed(() => `l10n-indexable:${path.value}`), () =>
   $fetch<L10nIndexable>(L10N_INDEXABLE_PATH).catch(() => ({})), {
   transform: all => pageIndexable(all, path.value),
-  default: () => ({ locales: [], indexable: {} })
+  default: (): L10nIndexable => ({})
 })
+const indexedLocales = computed(() => L10N_LOCALE_CODES.filter(code => indexable.value[code]))
 
 const siteUrl = useSiteConfig().url
 const l10nHeadTags = computed(() => isLocalisedPage(path.value)
-  ? l10nHead({ siteUrl, path: path.value, locale: locale.value, indexable: indexable.value.indexable })
+  ? l10nHead({ siteUrl, path: path.value, locale: locale.value, indexable: indexable.value })
   : undefined)
 
 useHead({
@@ -411,7 +412,7 @@ const noRightAside = computed(() => route.path.includes('/examples/'))
           :target="pageBody?.$el"
           @published="refreshPage()"
         />
-        <DocsL10nSuggestion v-else-if="!locale && isLocalisedPage(path) && indexable.locales.length" :path="path" :locales="indexable.locales" />
+        <DocsL10nSuggestion v-else-if="!locale && indexedLocales.length" :path="path" :locales="indexedLocales" />
         <MarkdownDocument v-if="page.nodes?.length" :value="page" :components="markdownComponents" />
         <div>
           <Feedback :page="{ title: fm.title, stem: page.meta.stem }" :lang="locale ? 'en' : undefined" />

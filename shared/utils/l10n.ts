@@ -146,17 +146,9 @@ export interface L10nPageMeta {
 /** Paths of the localised pages that may be indexed, by locale. */
 export type L10nIndexable = Partial<Record<L10nLocale, string[]>>
 
-/** Locales with at least one indexable page: the only ones English readers are pointed at. */
-export function indexedLocales(indexable: L10nIndexable): L10nLocale[] {
-  return L10N_LOCALE_CODES.filter(locale => indexable[locale]?.length)
-}
-
-/** The part of `indexable` one docs page reads: the locales readers may be pointed at, and which translations of `path` are indexed. */
-export function pageIndexable(indexable: L10nIndexable, path: string): { locales: L10nLocale[], indexable: L10nIndexable } {
-  return {
-    locales: indexedLocales(indexable),
-    indexable: Object.fromEntries(L10N_LOCALE_CODES.filter(locale => indexable[locale]?.includes(path)).map(locale => [locale, [path]]))
-  }
+/** The part of `indexable` one docs page reads: which translations of `path` are indexed. */
+export function pageIndexable(indexable: L10nIndexable, path: string): L10nIndexable {
+  return Object.fromEntries(L10N_LOCALE_CODES.filter(locale => indexable[locale]?.includes(path)).map(locale => [locale, [path]]))
 }
 
 /** Where a locale's page is served from: `/api/l10n/fr/get/docs/4.x/guide`. */
