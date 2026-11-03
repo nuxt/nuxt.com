@@ -152,21 +152,6 @@ jobs:
         uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
         with:
           node-version: lts/-1
-      - name: Validate snapshots and render report
-        if: steps.pull.outputs.should-comment == 'true'
-        env:
-          BASE_SHA: ${{ steps.pull.outputs.base-sha }}
-          BASE_SNAPSHOT: ${{ runner.temp }}/bundle-size-report/base.json
-          HEAD_SHA: ${{ steps.pull.outputs.head-sha }}
-          HEAD_SNAPSHOT: ${{ runner.temp }}/bundle-size-report/pr.json
-          REPORT_PATH: ${{ runner.temp }}/bundle-size-comment.md
-        run: |
-          node scripts/bundle-size/report.mjs compare \
-            --base "$BASE_SNAPSHOT" \
-            --head "$HEAD_SNAPSHOT" \
-            --base-sha "$BASE_SHA" \
-            --head-sha "$HEAD_SHA" \
-            --output "$REPORT_PATH"
       - name: Resolve bundle analysis artifacts
         if: steps.pull.outputs.should-comment == 'true'
         id: analysis
@@ -208,7 +193,8 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           run-id: ${{ github.event.workflow_run.id }}
       # bundle.nuxt.dev checks this workflow's OIDC token and every file before storing the two runs,
-      # and answers with the link to their comparison. The comment is still posted if this fails.
+      # and answers with the link to their comparison, which leads the report. The comment is still
+      # posted without it if this fails.
       - name: Upload bundle analysis
         if: steps.analysis.outputs.pr
         id: analyzer
@@ -218,11 +204,28 @@ jobs:
           HEAD_SHA: ${{ steps.pull.outputs.head-sha }}
           PR_NUMBER: ${{ steps.pull.outputs.number }}
         run: >-
-          npx --yes nuxt-bundle-analyzer@0.1.2 upload
+          npx --yes nuxt-bundle-analyzer@0.1.3 upload
           --runs "$RUNNER_TEMP/bundle-analyzer"
           --pr "$PR_NUMBER"
           --sha "$HEAD_SHA"
           --url https://bundle.nuxt.dev
+      - name: Validate snapshots and render report
+        if: steps.pull.outputs.should-comment == 'true'
+        env:
+          BASE_SHA: ${{ steps.pull.outputs.base-sha }}
+          BASE_SNAPSHOT: ${{ runner.temp }}/bundle-size-report/base.json
+          HEAD_SHA: ${{ steps.pull.outputs.head-sha }}
+          HEAD_SNAPSHOT: ${{ runner.temp }}/bundle-size-report/pr.json
+          COMPARISON_URL: ${{ steps.analyzer.outputs.url }}
+          REPORT_PATH: ${{ runner.temp }}/bundle-size-comment.md
+        run: |
+          node scripts/bundle-size/report.mjs compare \
+            --base "$BASE_SNAPSHOT" \
+            --head "$HEAD_SNAPSHOT" \
+            --base-sha "$BASE_SHA" \
+            --head-sha "$HEAD_SHA" \
+            ${COMPARISON_URL:+--comparison-url "$COMPARISON_URL"} \
+            --output "$REPORT_PATH"
       - name: Mint bundle report app token
         if: steps.pull.outputs.should-comment == 'true'
         id: app-token
@@ -235,14 +238,12 @@ jobs:
         uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
         env:
           BUNDLE_REPORT_PATH: ${{ runner.temp }}/bundle-size-comment.md
-          COMPARISON_URL: ${{ steps.analyzer.outputs.url }}
           PR_NUMBER: ${{ steps.pull.outputs.number }}
         with:
           github-token: ${{ steps.app-token.outputs.token }}
           script: |
             const fs = require('node:fs')
             const marker = '<!-- nuxt.com-bundle-size-report -->'
-            const run = context.payload.workflow_run
             const prNumber = Number(process.env.PR_NUMBER)
 
             if (!Number.isSafeInteger(prNumber) || prNumber <= 0) {
@@ -256,10 +257,7 @@ jobs:
               return
             }
 
-            const comparison = process.env.COMPARISON_URL?.startsWith('https://bundle.nuxt.dev/')
-              ? `[Explore the comparison](${process.env.COMPARISON_URL}) · `
-              : ''
-            const body = `${marker}\n${report}\n${comparison}[Workflow run](${run.html_url})`
+            const body = `${marker}\n${report}`
 
             try {
               const comments = await github.paginate(github.rest.issues.listComments, {
