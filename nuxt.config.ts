@@ -535,7 +535,9 @@ export default defineNuxtConfig({
     '/modules/router': { redirect: { to: '/docs/guide/recipes/custom-routing', statusCode: 301 }, prerender: false },
     '/modules/separate-env': { redirect: { to: '/docs/guide/going-further/runtime-config', statusCode: 301 }, prerender: false },
     '/modules/svg': { redirect: { to: '/modules/nuxt-svgo', statusCode: 301 }, prerender: false },
-    '/modules/vuetify': { redirect: { to: '/modules/vuetify-nuxt-module', statusCode: 301 }, prerender: false }
+    '/modules/vuetify': { redirect: { to: '/modules/vuetify-nuxt-module', statusCode: 301 }, prerender: false },
+    // Deprecated modules removed from nuxt/modules
+    '/modules/google-fonts': { redirect: { to: '/modules/fonts/migrating-from-google-fonts', statusCode: 301 }, prerender: false }
   },
   sourcemap: true,
   experimental: {
