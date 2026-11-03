@@ -1,48 +1,29 @@
-import type { Session } from 'eve/channels'
+import type { Delivery } from 'eve/sessions'
 import { postDiscordWorkflowParts } from '../../channels/discord.js'
 import { slackTextToDiscord, splitDiscordMessages } from './format.js'
-
-/** `done: false` means the stream ended without a terminal event — an inconclusive drop, worth retrying. */
-type StreamReadResult
-  = | { done: true, message: string | null }
-    | { done: false }
-
-async function readFinalMessage(stream: Awaited<ReturnType<Session['getEventStream']>>): Promise<StreamReadResult> {
-  for await (const event of stream) {
-    if (event.type === 'message.completed') {
-      if (event.data.finishReason === 'tool-calls') continue
-      if (event.data.message) return { done: true, message: event.data.message }
-    }
-    if (event.type === 'session.completed' || event.type === 'session.failed') {
-      return { done: true, message: null }
-    }
-  }
-  return { done: false }
-}
 
 const FINAL_MESSAGE_MAX_ATTEMPTS = 3
 const FINAL_MESSAGE_RETRY_DELAY_MS = 2_000
 
-/** Retries on a fresh stream (cheap replay of the durable log) when a read ends inconclusively. */
-async function finalMessageText(
-  session: Session,
-  onStream: (stream: Awaited<ReturnType<Session['getEventStream']>>) => void
-): Promise<string | null> {
-  for (let attempt = 1; attempt <= FINAL_MESSAGE_MAX_ATTEMPTS; attempt++) {
-    const stream = await session.getEventStream({ startIndex: 0 })
-    onStream(stream)
-    const result = await readFinalMessage(stream)
-    if (result.done) return result.message
-
-    console.warn('[nuxi:digest-mirror] event stream ended without a terminal event, retrying', {
-      attempt,
-      maxAttempts: FINAL_MESSAGE_MAX_ATTEMPTS
-    })
-    if (attempt < FINAL_MESSAGE_MAX_ATTEMPTS) {
+/**
+ * In-process deliveries read the session stream once, so a drop before the
+ * delivery settles rejects `result()`. Retry on a fresh read (cheap replay of
+ * the durable log).
+ */
+async function finalMessageText(delivery: Delivery, signal: AbortSignal): Promise<string | null> {
+  for (let attempt = 1; ; attempt++) {
+    try {
+      const result = await delivery.result({ signal })
+      return result.reply || null
+    } catch (error) {
+      if (signal.aborted || attempt >= FINAL_MESSAGE_MAX_ATTEMPTS) throw error
+      console.warn('[nuxi:digest-mirror] event stream ended before the delivery settled, retrying', {
+        attempt,
+        maxAttempts: FINAL_MESSAGE_MAX_ATTEMPTS
+      })
       await new Promise(resolve => setTimeout(resolve, FINAL_MESSAGE_RETRY_DELAY_MS))
     }
   }
-  return null
 }
 
 function withTimeout<T>(promise: Promise<T>, ms: number, label: string, onTimeout?: () => void): Promise<T> {
@@ -74,10 +55,10 @@ const EVENT_STREAM_TIMEOUT_MS = 270_000
  * Never throws — mirroring must not affect Slack delivery.
  */
 export async function mirrorDigestToDiscord({
-  session,
+  delivery,
   channelId
 }: {
-  session: Session
+  delivery: Delivery
   channelId: string
 }): Promise<void> {
   try {
@@ -85,15 +66,15 @@ export async function mirrorDigestToDiscord({
       channelId,
       timeoutMs: EVENT_STREAM_TIMEOUT_MS
     })
-    let currentStream: Awaited<ReturnType<Session['getEventStream']>> | null = null
+    const controller = new AbortController()
     const text = await withTimeout(
-      finalMessageText(session, (stream) => { currentStream = stream }),
+      finalMessageText(delivery, controller.signal),
       EVENT_STREAM_TIMEOUT_MS,
       'reading Slack session event stream',
-      () => { void currentStream?.cancel() }
+      () => controller.abort()
     )
     if (!text) {
-      console.warn('[nuxi:digest-mirror] no final message.completed text on session stream, skipping mirror', {
+      console.warn('[nuxi:digest-mirror] no final reply text on session stream, skipping mirror', {
         channelId
       })
       return

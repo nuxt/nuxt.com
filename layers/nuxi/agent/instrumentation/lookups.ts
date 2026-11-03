@@ -48,7 +48,7 @@ initLogger({
 export default defineInstrumentation({
   tracePolicy: () => ({ emit: true, recordInputs: true, recordOutputs: false }),
   events: {
-    'tool.call.started': (event) => {
+    'call.requested': (event) => {
       const tool = lookupTool(event.toolName)
       if (!tool) return
       log.info({
