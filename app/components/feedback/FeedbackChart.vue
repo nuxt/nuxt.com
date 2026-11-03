@@ -148,7 +148,7 @@ const timeBasedChartData = computed(() => {
   for (const page of selectedPages) {
     if (!page || !page.feedback) continue
 
-    const pageKey = page.path.split('/').pop()?.replace(/[^a-z0-9]/gi, '') || 'page'
+    const pageKey = page.path
 
     for (const feedback of page.feedback) {
       const feedbackDate = new Date(feedback.createdAt)
@@ -183,7 +183,7 @@ const timeBasedChartData = computed(() => {
     for (const page of selectedPages) {
       if (!page) continue
 
-      const pageKey = page.path.split('/').pop()?.replace(/[^a-z0-9]/gi, '') || 'page'
+      const pageKey = page.path
 
       if (dailyScores[dateStr] && dailyScores[dateStr][pageKey] && dailyScores[dateStr][pageKey].length > 0) {
         const dayAverage = dailyScores[dateStr][pageKey].reduce((sum, score) => sum + score, 0) / dailyScores[dateStr][pageKey].length
@@ -257,7 +257,7 @@ const chartCategories = computed<ChartCategory[]>(() => {
     .map((page) => {
       const title = page.lastFeedback?.title || page.path
       return {
-        key: page.path.split('/').pop()?.replace(/[^a-z0-9]/gi, '') || 'page',
+        key: page.path,
         label: title.length > 25 ? title.substring(0, 25) + '...' : title
       }
     })
