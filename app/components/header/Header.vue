@@ -5,6 +5,7 @@ const stats = useStats()
 const { loggedIn } = useUserSession()
 const { headerLinks } = useHeaderLinks()
 const { track } = useAnalytics()
+const locale = useDocsLocale()
 
 function trackSearchOpen() {
   track('Search Opened')
@@ -46,7 +47,7 @@ function onWidthTransitionEnd(event: TransitionEvent) {
 </script>
 
 <template>
-  <UHeader :ui="{ left: 'min-w-0 items-end' }" class="flex flex-col">
+  <UHeader :lang="locale ? 'en' : undefined" :ui="{ left: 'min-w-0 items-end' }" class="flex flex-col">
     <template #left>
       <HeaderLogo />
 

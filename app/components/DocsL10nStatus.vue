@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { SegmentStatus } from '@diglot/core'
 import { L10N_STRINGS, l10nSourcePath, reviewedShare, type L10nPageMeta, type L10nSegmentSource } from '#shared/utils/l10n'
 
 const props = defineProps<{
@@ -22,6 +23,12 @@ const coverage = computed(() => props.meta.coverage)
 const machine = computed(() => (coverage.value.byStatus.machine ?? 0) + (coverage.value.byStatus['pending-review'] ?? 0) > 0)
 const pending = computed(() => (coverage.value.byStatus['pending-review'] ?? 0) > 0)
 
+const STATUSES: SegmentStatus[] = ['untranslated', 'machine', 'pending-review', 'edited', 'verified', 'rejected']
+const legend = computed(() => STATUSES.filter(status => coverage.value.byStatus[status]))
+
+const id = useId()
+const descriptionId = (status: string | undefined) => `${id}-${status ?? 'untranslated'}`
+
 const reference = ref<HTMLElement>()
 const open = ref(false)
 const sources = new Map<string, Promise<L10nSegmentSource | null>>()
@@ -32,6 +39,7 @@ function inspect(event: Event) {
   const block = (event.target as HTMLElement | null)?.closest<HTMLElement>('[data-l10n-hash]')
   if (!block || block === reference.value) return
 
+  block.setAttribute('aria-describedby', descriptionId(block.dataset.l10n))
   const hash = block.dataset.l10nHash!
   reference.value = block
   open.value = true
@@ -75,15 +83,20 @@ useEventListener(() => props.target, 'keydown', (event: KeyboardEvent) => {
   edit(block.dataset.l10nHash)
 })
 
-/** In review mode every block takes focus, so the keyboard reaches the popover and the editor. */
+/** In review mode every block takes focus, and describes its status and how to edit it. */
 function focusable(value: boolean) {
   for (const block of props.target?.querySelectorAll<HTMLElement>('[data-l10n-hash]') ?? []) {
-    if (value) block.tabIndex = 0
-    else block.removeAttribute('tabindex')
+    if (value) {
+      block.tabIndex = 0
+      block.setAttribute('aria-describedby', descriptionId(block.dataset.l10n))
+    } else {
+      block.removeAttribute('tabindex')
+      block.removeAttribute('aria-describedby')
+    }
   }
 }
 
-watch([show, () => props.meta, () => props.target], ([value]) => nextTick(() => focusable(value)))
+watch([show, () => props.meta, () => props.target], ([value]) => nextTick(() => focusable(value)), { immediate: true })
 
 watch(show, (value) => {
   if (value) return
@@ -100,64 +113,80 @@ watch(open, (value) => {
 })
 
 const hash = computed(() => reference.value?.dataset.l10nHash)
-const status = computed(() => (source.value?.status ?? reference.value?.dataset.l10n) as keyof typeof strings.value.status | undefined)
+const status = computed(() => (source.value?.status ?? reference.value?.dataset.l10n) as SegmentStatus | undefined)
 </script>
 
 <template>
-  <div class="not-prose flex items-center gap-2 text-sm text-muted mb-6" data-l10n-summary>
-    <p class="flex-1 min-w-0 flex flex-wrap gap-x-1">
-      <span class="whitespace-nowrap">{{ machine ? strings.machine : strings.reviewedTranslation }} ·</span>
-      <span class="whitespace-nowrap">{{ strings.reviewed(reviewedShare(coverage)) }}<span v-if="pending" class="text-warning" :title="strings.pending"> · {{ strings.toReview }}</span></span>
-    </p>
-    <UButton
-      :to="path"
-      external
-      hreflang="en"
-      lang="en"
-      label="English"
-      icon="i-lucide-languages"
-      size="xs"
-      color="neutral"
-      variant="ghost"
-    />
-    <UButton
-      :label="strings.review"
-      :title="strings.reviewHint"
-      :aria-label="strings.reviewHint"
-      :aria-pressed="show"
-      icon="i-lucide-pencil-line"
-      size="xs"
-      color="neutral"
-      :variant="show ? 'solid' : 'outline'"
-      :ui="{ label: 'hidden sm:inline' }"
-      @click="show = !show"
-    />
+  <div class="not-prose mb-6 space-y-2 text-sm text-muted" data-l10n-summary>
+    <div class="flex items-center gap-2">
+      <p class="flex-1 min-w-0 flex flex-wrap gap-x-1">
+        <span class="whitespace-nowrap">{{ machine ? strings.machine : strings.reviewedTranslation }} ·</span>
+        <span class="whitespace-nowrap">{{ strings.reviewed(reviewedShare(coverage)) }}<template v-if="pending"> · <span class="text-highlighted">{{ strings.toReview }}</span><span class="sr-only"> : {{ strings.pending }}</span></template></span>
+      </p>
+      <UButton
+        :to="path"
+        external
+        hreflang="en"
+        lang="en"
+        label="English"
+        icon="i-lucide-languages"
+        size="xs"
+        color="neutral"
+        variant="ghost"
+      />
+      <UTooltip :text="strings.reviewHint">
+        <UButton
+          :label="strings.review"
+          :aria-pressed="show"
+          icon="i-lucide-pencil-line"
+          size="xs"
+          color="neutral"
+          :variant="show ? 'solid' : 'outline'"
+          :ui="{ label: 'sr-only sm:not-sr-only' }"
+          @click="show = !show"
+        />
+      </UTooltip>
+    </div>
+
+    <ul v-if="show && legend.length" class="flex flex-wrap gap-x-4 gap-y-1 text-xs">
+      <li v-for="item in legend" :key="item" :data-l10n="item">
+        {{ strings.legend[item] }}
+      </li>
+    </ul>
+
+    <span v-for="item in STATUSES" :id="descriptionId(item)" :key="item" hidden>{{ strings.status[item] }}. {{ strings.reviewBlockHint }}</span>
 
     <ClientOnly>
       <UPopover
         v-model:open="open"
         :reference="reference"
-        :content="{ side: 'top', align: 'start' }"
+        :content="{ side: 'top', align: 'start', onOpenAutoFocus: (event: Event) => event.preventDefault() }"
       >
         <template #content>
           <div class="max-w-sm p-3 text-xs space-y-2">
             <p v-if="status" class="font-medium text-highlighted">
               {{ strings.status[status] }}
             </p>
-            <p v-if="source" lang="en" class="text-muted whitespace-pre-wrap">
-              <span class="sr-only">{{ strings.source }}: </span>{{ source.source }}
+            <p v-if="source" lang="en" class="text-toned whitespace-pre-wrap">
+              <span class="sr-only" :lang="meta.locale">{{ strings.source }} : </span>{{ source.source }}
             </p>
-            <p v-else-if="source === undefined" class="text-dimmed">
+            <p v-else-if="source === undefined" class="text-muted">
               {{ strings.loading }}
             </p>
-            <p v-if="source?.by || source?.model" class="text-dimmed">
+            <p v-if="source?.by || source?.model" class="text-muted">
               {{ source.by ? `@${source.by}` : source.model }}
             </p>
             <div class="flex items-center justify-between gap-3">
-              <code class="text-dimmed font-mono">{{ hash }}</code>
-              <button v-if="hash" type="button" class="text-primary underline underline-offset-2" @click="edit(hash)">
-                {{ strings.improve }}
-              </button>
+              <code class="text-muted font-mono">{{ hash }}</code>
+              <UButton
+                v-if="hash"
+                :label="strings.improve"
+                variant="link"
+                color="neutral"
+                size="xs"
+                class="p-0 underline underline-offset-2"
+                @click="edit(hash)"
+              />
             </div>
           </div>
         </template>

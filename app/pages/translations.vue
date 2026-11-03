@@ -12,7 +12,7 @@ const STATUSES: Array<{ status: SegmentStatus, label: string, color: string }> =
   { status: 'verified', label: 'Verified', color: 'bg-success' },
   { status: 'edited', label: 'Edited', color: 'bg-info' },
   { status: 'machine', label: 'Machine', color: 'bg-warning' },
-  { status: 'pending-review', label: 'Pending review', color: 'bg-warning/50' },
+  { status: 'pending-review', label: 'Pending review', color: 'bg-[repeating-linear-gradient(45deg,var(--ui-warning)_0_2px,transparent_2px_5px)]' },
   { status: 'rejected', label: 'Rejected', color: 'bg-error' },
   { status: 'untranslated', label: 'Untranslated', color: 'bg-accented' }
 ]
@@ -46,14 +46,14 @@ async function propose(locale: L10nLocale) {
         <section v-for="locale in data.locales" :key="locale.locale" class="space-y-6">
           <div class="flex flex-wrap items-baseline justify-between gap-2">
             <h2 class="text-2xl font-bold">
-              {{ L10N_STRINGS[locale.locale].language }} <span class="text-muted font-mono text-base">{{ locale.locale }}</span>
+              <span :lang="locale.locale">{{ L10N_STRINGS[locale.locale].language }}</span> <span class="text-muted font-mono text-base">{{ locale.locale }}</span>
             </h2>
-            <span class="text-xs text-dimmed font-mono">nuxt/translations@{{ locale.sha.slice(0, 7) }}</span>
+            <span class="text-xs text-muted font-mono">nuxt/translations@{{ locale.sha.slice(0, 7) }}</span>
           </div>
 
           <UAlert
             v-if="locale.recommendation"
-            color="warning"
+            color="neutral"
             variant="subtle"
             icon="i-lucide-scale"
             :description="locale.recommendation.reason"

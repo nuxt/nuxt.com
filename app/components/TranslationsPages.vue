@@ -1,7 +1,11 @@
 <script setup lang="ts">
+import type { TableColumn } from '@nuxt/ui'
+import { h, resolveComponent } from 'vue'
 import { l10nPagesStatusPath, localisePath, type L10nLocale, type L10nPageStatus } from '#shared/utils/l10n'
 
 const props = defineProps<{ locale: L10nLocale }>()
+
+const ULink = resolveComponent('ULink')
 
 const PAGE_SIZE = 25
 
@@ -25,71 +29,55 @@ watch([query, sort], () => {
 })
 
 const percent = (value: number) => `${Math.round(value * 100)}%`
+const numeric = { th: 'text-right', td: 'text-right tabular-nums' }
+
+const columns: TableColumn<L10nPageStatus>[] = [
+  {
+    accessorKey: 'path',
+    header: 'Page',
+    cell: ({ row }) => h(ULink, { to: localisePath(props.locale, row.original.path), external: true, class: 'text-highlighted hover:underline' }, () => row.original.path)
+  },
+  { accessorKey: 'words', header: 'Words', meta: { class: numeric } },
+  { accessorKey: 'reviewed', header: 'Reviewed', cell: ({ row }) => percent(row.original.reviewed), meta: { class: numeric } },
+  {
+    id: 'machine',
+    header: 'Machine',
+    cell: ({ row }) => row.original.words ? percent((row.original.byStatus.machine ?? 0) / row.original.words) : '',
+    meta: { class: numeric }
+  },
+  { accessorKey: 'pending', header: 'Pending', meta: { class: numeric } },
+  { accessorKey: 'indexable', header: 'Indexed', cell: ({ row }) => row.original.indexable ? 'Yes' : 'No' }
+]
 </script>
 
 <template>
   <div class="space-y-3">
-    <div class="flex flex-wrap gap-2">
-      <UInput v-model="query" icon="i-lucide-search" placeholder="Filter pages" class="w-full md:w-80" />
-      <USelect
-        v-model="sort"
-        :items="[{ label: 'Most pending first', value: 'pending' }, { label: 'Most reviewed first', value: 'reviewed' }, { label: 'By path', value: 'path' }]"
-        class="w-48"
-      />
+    <div class="flex flex-wrap items-end gap-2">
+      <UFormField label="Filter pages" class="w-full md:w-80">
+        <UInput v-model="query" icon="i-lucide-search" type="search" class="w-full" />
+      </UFormField>
+      <UFormField label="Sort" class="w-48">
+        <USelect
+          v-model="sort"
+          :items="[{ label: 'Most pending first', value: 'pending' }, { label: 'Most reviewed first', value: 'reviewed' }, { label: 'By path', value: 'path' }]"
+          class="w-full"
+        />
+      </UFormField>
+      <p class="ms-auto text-sm text-muted" role="status">
+        <template v-if="status === 'success'">
+          {{ filtered.length }} of {{ pages.length }} pages
+        </template>
+      </p>
     </div>
 
-    <p v-if="status !== 'success'" class="text-sm text-dimmed">
-      {{ status === 'error' ? 'Could not load the pages.' : 'Loading pages…' }}
-    </p>
-
-    <div v-else class="overflow-x-auto">
-      <table class="w-full text-sm">
-        <thead class="text-left text-xs text-muted">
-          <tr>
-            <th class="py-2 pe-4 font-medium">
-              Page
-            </th>
-            <th class="py-2 pe-4 font-medium text-right">
-              Words
-            </th>
-            <th class="py-2 pe-4 font-medium text-right">
-              Reviewed
-            </th>
-            <th class="py-2 pe-4 font-medium text-right">
-              Machine
-            </th>
-            <th class="py-2 pe-4 font-medium text-right">
-              Pending
-            </th>
-            <th class="py-2 font-medium">
-              Indexed
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="item in visible" :key="item.path" class="border-t border-default">
-            <td class="py-1.5 pe-4">
-              <a :href="localisePath(locale, item.path)" class="hover:underline">{{ item.path }}</a>
-            </td>
-            <td class="py-1.5 pe-4 text-right tabular-nums">
-              {{ item.words }}
-            </td>
-            <td class="py-1.5 pe-4 text-right tabular-nums">
-              {{ percent(item.reviewed) }}
-            </td>
-            <td class="py-1.5 pe-4 text-right tabular-nums">
-              {{ item.words ? percent((item.byStatus.machine ?? 0) / item.words) : '' }}
-            </td>
-            <td class="py-1.5 pe-4 text-right tabular-nums">
-              {{ item.pending || '' }}
-            </td>
-            <td class="py-1.5">
-              <span v-if="item.indexable" class="text-success">Yes</span>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+    <UTable
+      :data="visible"
+      :columns="columns"
+      :loading="status === 'pending' || status === 'idle'"
+      :empty="status === 'error' ? 'Could not load the pages.' : 'No pages match this filter.'"
+      caption="Review state of each translated page"
+      :ui="{ caption: 'sr-only', td: 'py-1.5' }"
+    />
 
     <UPagination v-if="filtered.length > PAGE_SIZE" v-model:page="page" :total="filtered.length" :items-per-page="PAGE_SIZE" />
   </div>

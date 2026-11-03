@@ -7,7 +7,7 @@ const props = defineProps<{
   placeholders: Placeholder[]
 }>()
 
-type Part = { type: 'text', value: string, linked: boolean } | { type: 'chip', label: string, title: string, icon: string }
+type Part = { type: 'text', value: string, linked: boolean } | { type: 'chip', marker: string, label: string, title: string, icon?: string }
 
 const ICONS: Record<Placeholder['type'], string> = {
   code: 'i-lucide-code',
@@ -20,10 +20,9 @@ const ICONS: Record<Placeholder['type'], string> = {
   other: 'i-lucide-puzzle'
 }
 
-function label(placeholder: Placeholder | undefined, id: number): string {
-  if (!placeholder) return `{${id}}`
+function label(placeholder: Placeholder | undefined): string {
+  if (!placeholder || placeholder.type === 'break') return ''
   if (placeholder.type === 'code') return placeholder.source.replace(/^`+\s?|\s?`+$/g, '')
-  if (placeholder.type === 'break') return ''
   if (placeholder.name) return placeholder.name
   return placeholder.source.length > 32 ? `${placeholder.source.slice(0, 31)}…` : placeholder.source
 }
@@ -52,11 +51,12 @@ const parts = computed<Part[]>(() => {
     const placeholder = byId.get(id)
     if (match[2]) {
       open.delete(id)
+      result.push({ type: 'chip', marker: match[0], label: '', title: placeholder?.close ?? match[0] })
     } else if (placeholder?.close !== undefined) {
       open.add(id)
-      result.push({ type: 'chip', label: '', title: `${placeholder.source}…${placeholder.close}`, icon: ICONS.link })
+      result.push({ type: 'chip', marker: match[0], label: '', title: placeholder.source, icon: ICONS.link })
     } else {
-      result.push({ type: 'chip', label: label(placeholder, id), title: placeholder?.source ?? match[0], icon: ICONS[placeholder?.type ?? 'other'] })
+      result.push({ type: 'chip', marker: match[0], label: label(placeholder), title: placeholder?.source ?? match[0], icon: ICONS[placeholder?.type ?? 'other'] })
     }
   }
   text(props.skeleton.slice(index))
@@ -73,12 +73,14 @@ const parts = computed<Part[]>(() => {
         v-else
         :title="part.title"
         :icon="part.icon"
-        :label="part.label || undefined"
         color="neutral"
         variant="subtle"
         size="sm"
         class="font-mono align-baseline mx-0.5"
-      />
+      >
+        <span class="text-muted">{{ part.marker }}</span>
+        <span v-if="part.label">{{ part.label }}</span>
+      </UBadge>
     </template>
   </span>
 </template>

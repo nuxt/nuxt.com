@@ -414,8 +414,8 @@ const noRightAside = computed(() => route.path.includes('/examples/'))
         <DocsL10nSuggestion v-else-if="!locale && isLocalisedPage(path) && indexable.locales.length" :path="path" :locales="indexable.locales" />
         <MarkdownDocument v-if="page.nodes?.length" :value="page" :components="markdownComponents" />
         <div>
-          <Feedback :page="{ title: fm.title, stem: page.meta.stem }" />
-          <USeparator class="mt-6 mb-10">
+          <Feedback :page="{ title: fm.title, stem: page.meta.stem }" :lang="locale ? 'en' : undefined" />
+          <USeparator class="mt-6 mb-10" :lang="locale ? 'en' : undefined">
             <div class="flex items-center gap-2 text-sm text-muted">
               <UButton
                 size="sm"

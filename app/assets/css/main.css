@@ -54,25 +54,41 @@ html.dark .shiki span {
   text-decoration: var(--shiki-dark-text-decoration) !important;
 }
 
+/* Shades with at least 3:1 against the page background in each mode. */
+:root {
+  --l10n-warning: var(--ui-color-warning-700);
+  --l10n-info: var(--ui-color-info-600);
+  --l10n-success: var(--ui-color-success-700);
+  --l10n-error: var(--ui-color-error-600);
+}
+
+.dark {
+  --l10n-warning: var(--ui-warning);
+  --l10n-info: var(--ui-info);
+  --l10n-success: var(--ui-success);
+  --l10n-error: var(--ui-error);
+}
+
 [data-l10n-show] [data-l10n]::before,
 [data-l10n="pending-review"]::before {
   content: '';
   display: inline-block;
-  inline-size: 6px;
-  block-size: 6px;
-  border-radius: 9999px;
+  inline-size: 0.5rem;
+  block-size: 0.5rem;
   margin-inline-end: 0.375rem;
   vertical-align: middle;
   background-color: var(--l10n-dot, transparent);
   box-shadow: var(--l10n-ring, none);
+  border-radius: var(--l10n-radius, 0);
+  clip-path: var(--l10n-shape, none);
 }
 
-[data-l10n="machine"] { --l10n-dot: var(--ui-warning); }
-[data-l10n="pending-review"] { --l10n-dot: var(--ui-warning); --l10n-ring: 0 0 0 2px color-mix(in oklab, var(--ui-warning) 35%, transparent); }
-[data-l10n="edited"] { --l10n-dot: var(--ui-info); }
-[data-l10n="verified"] { --l10n-dot: var(--ui-success); }
-[data-l10n="untranslated"] { --l10n-ring: inset 0 0 0 1px var(--ui-text-dimmed); }
-[data-l10n="rejected"] { --l10n-dot: var(--ui-error); }
+[data-l10n="untranslated"] { --l10n-ring: inset 0 0 0 1.5px var(--ui-text-muted); --l10n-radius: 9999px; }
+[data-l10n="machine"] { --l10n-dot: var(--l10n-warning); --l10n-radius: 9999px; }
+[data-l10n="pending-review"] { --l10n-dot: var(--l10n-warning); --l10n-shape: polygon(50% 0, 100% 100%, 0 100%); }
+[data-l10n="edited"] { --l10n-dot: var(--l10n-info); --l10n-radius: 1px; }
+[data-l10n="verified"] { --l10n-dot: var(--l10n-success); --l10n-shape: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0, 43% 62%); }
+[data-l10n="rejected"] { --l10n-dot: var(--l10n-error); --l10n-shape: polygon(20% 0, 50% 30%, 80% 0, 100% 20%, 70% 50%, 100% 80%, 80% 100%, 50% 70%, 20% 100%, 0 80%, 30% 50%, 0 20%); }
 
 [data-l10n-show] [data-l10n-hash] {
   cursor: pointer;
@@ -85,21 +101,32 @@ html.dark .shiki span {
 }
 
 [data-l10n-staged] {
-  outline: 1px dashed var(--ui-info);
+  outline: 2px dashed var(--l10n-info);
   outline-offset: 2px;
   border-radius: 0.25rem;
 }
 
-[data-l10n-staged="reject"] { outline-color: var(--ui-error); }
-[data-l10n-staged="verify"] { outline-color: var(--ui-success); }
+[data-l10n-staged="verify"] { outline-style: solid; outline-color: var(--l10n-success); }
+[data-l10n-staged="reject"] { outline-style: dotted; outline-color: var(--l10n-error); }
+
+[data-l10n-show] [data-l10n-hash]:focus-visible {
+  outline: 2px solid var(--ui-border-inverted);
+  outline-offset: 2px;
+}
+
+[data-l10n-active] {
+  border-radius: 0.25rem;
+  background-color: color-mix(in oklab, var(--ui-primary) 10%, transparent);
+  box-shadow: 0 0 0 0.25rem color-mix(in oklab, var(--ui-primary) 10%, transparent);
+}
 
 [data-l10n-suggested]::after {
   content: '';
   display: inline-block;
-  inline-size: 6px;
-  block-size: 6px;
+  inline-size: 0.5rem;
+  block-size: 0.5rem;
   border-radius: 9999px;
   margin-inline-start: 0.375rem;
   vertical-align: middle;
-  background-color: var(--ui-info);
+  background-color: var(--l10n-info);
 }
