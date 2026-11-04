@@ -9,7 +9,7 @@ const discovery = (await import('../../layers/nuxi/agent/tools/discover_showcase
 const connection = (await import('../../layers/nuxi/agent/connections/admin-mcp')).default as any
 const admin = { principalId: 'eve:app', principalType: 'runtime' }
 const publicAuth = { principalId: 'anon', principalType: 'anonymous', issuer: 'nuxt.com' }
-const context = (auth: unknown) => ({ session: { auth: { current: auth } } })
+const context = (auth: unknown) => ({ session: { auth: { current: auth } }, memo: (_key: unknown, fn: () => unknown) => fn() })
 
 afterEach(() => {
   vi.unstubAllEnvs()
@@ -18,8 +18,8 @@ afterEach(() => {
 
 describe('Nuxi discovery and SEO access', () => {
   it('hides discovery from public sessions and rechecks the caller before reading any content', async () => {
-    expect(await discovery.events['session.started']({}, context(publicAuth))).toBeNull()
-    const tools = await discovery.events['session.started']({}, context(admin))
+    expect(await discovery(context(publicAuth))).toBeNull()
+    const tools = await discovery(context(admin))
     await expect(tools.discover_showcase_candidates.execute({ sinceDays: 7, limit: 20 }, context(publicAuth))).rejects.toThrow('admin mode')
     expect(internalFetch).not.toHaveBeenCalled()
   })
