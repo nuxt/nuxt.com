@@ -128,7 +128,6 @@
     "evalite": "1.0.0-beta.16",
     "happy-dom": "^20.14.6",
     "microsandbox": "^0.7.12",
-    "nanotar": "^0.3.0",
     "nuxt-agent-discovery": "^0.8.1",
     "nuxtseo-layer-devtools": "^6.0.2",
     "playwright": "^1.64.1",

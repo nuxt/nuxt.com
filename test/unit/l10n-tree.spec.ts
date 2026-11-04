@@ -1,11 +1,10 @@
-import { mkdtemp, rm } from 'node:fs/promises'
+import { execFileSync } from 'node:child_process'
+import { mkdir, mkdtemp, rm, writeFile } from 'node:fs/promises'
 import { readFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
-import { join } from 'node:path'
+import { dirname, join } from 'node:path'
 import { recordPath, writeManifest, writePolicy, writeRecord, type Manifest } from '@diglot/store'
 import { defaultPolicy, policyFingerprint, snapshotPolicy, type TranslationRecord } from '@diglot/core'
-import { gzipSync } from 'node:zlib'
-import { createTar } from 'nanotar'
 import { createStorage } from 'unstorage'
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest'
 import { createBundle } from '../../server/utils/l10n/bundle'
@@ -20,18 +19,26 @@ const SHA = 'c'.repeat(40)
 const [first, second] = Object.keys(records) as [string, string]
 const POLICY = { ...defaultPolicy, props: { ...defaultPolicy.props, 'read-more': ['to'] } }
 
-/** A GitHub tarball of a translations repository holding the fixture records and manifest. */
-function tarball(extra: Array<{ name: string, data: string }> = []) {
-  const root = `translations-${SHA.slice(0, 7)}`
-  const tar = createTar([
-    { name: `${root}/` },
-    { name: `${root}/README.md`, data: '# translations' },
-    { name: `${root}/.diglot/manifest/nuxt-4.x.json`, data: JSON.stringify(manifest) },
-    ...Object.values(records).map(record => ({ name: `${root}/${recordPath('fr', record.hash)}`, data: JSON.stringify(record) })),
-    ...extra.map(({ name, data }) => ({ name: `${root}/${name}`, data }))
-  ])
-  // nanotar leaves out the end-of-archive blocks when the entries fill its last record
-  return gzipSync(Buffer.concat([tar, new Uint8Array(1024)]))
+/** A GitHub tarball of a translations repository holding the fixture records and manifest: `git archive` of one commit. */
+async function tarball(extra: Array<{ name: string, data: string }> = []): Promise<Uint8Array> {
+  const root = await mkdtemp(join(tmpdir(), 'l10n-tarball-'))
+  const files = [
+    { name: 'README.md', data: '# translations' },
+    { name: '.diglot/manifest/nuxt-4.x.json', data: JSON.stringify(manifest) },
+    ...Object.values(records).map(record => ({ name: recordPath('fr', record.hash), data: JSON.stringify(record) })),
+    ...extra
+  ]
+  for (const { name, data } of files) {
+    await mkdir(dirname(join(root, name)), { recursive: true })
+    await writeFile(join(root, name), data)
+  }
+  const git = (...args: string[]) => execFileSync('git', ['-C', root, '-c', 'user.name=fixture', '-c', 'user.email=fixture@example.com', '-c', 'commit.gpgsign=false', ...args])
+  git('init', '--quiet')
+  git('add', '-A')
+  git('commit', '--quiet', '--no-verify', '-m', 'init')
+  const data = git('archive', '--format=tar.gz', `--prefix=translations-${SHA.slice(0, 7)}/`, 'HEAD')
+  await rm(root, { recursive: true, force: true })
+  return data
 }
 
 describe('parseTranslationsTarball', () => {

@@ -449,9 +449,6 @@ importers:
       microsandbox:
         specifier: ^0.7.12
         version: 0.7.12
-      nanotar:
-        specifier: ^0.3.0
-        version: 0.3.0
       nuxt-agent-discovery:
         specifier: ^0.8.1
         version: 0.8.1(7506a2848eedd5727bd264a43fd95ad3)
