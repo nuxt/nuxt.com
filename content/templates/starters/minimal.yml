@@ -1,0 +1,10 @@
+name: 'Minimal'
+slug: 'minimal'
+kind: 'starter'
+template: 'minimal'
+order: 1
+description: 'Minimal starter with a single app.vue.'
+icon: 'i-custom-nuxt'
+repo: 'nuxt/starter'
+branch: 'v4'
+docs: '/docs/getting-started/installation'

@@ -2,6 +2,14 @@ export type TemplateCategory = 'saas' | 'dashboard' | 'ai' | 'docs' | 'content' 
 
 export type PackageManager = 'npm' | 'pnpm' | 'yarn' | 'bun'
 
+/** Gallery filters on the daily check: templates that build today, or that also run live. */
+export type TemplateStatusFilter = 'working'
+
+export type TemplateSort = 'recommended' | 'stars' | 'updated' | 'name'
+
+/** A host with a one-click deploy link that clones the template into the user's GitHub account. */
+export type TemplateDeployProvider = 'vercel' | 'netlify'
+
 /** An entry of a Vercel Deploy Button `stores` parameter. */
 export type DeployStore
   = | { type: 'blob', access?: 'public' | 'private' }
@@ -35,7 +43,10 @@ export interface Template {
   modules?: string[]
   deploy?: {
     env?: string[]
+    /** Vercel-only: templates with stores default to `providers: ['vercel']`. */
     stores?: DeployStore[]
+    /** Defaults to every provider. Narrow it, or set `[]`, when the template needs a specific host. */
+    providers?: TemplateDeployProvider[]
     /** Overrides the cloned URL when the template lives in a subdirectory. */
     repositoryUrl?: string
   }
