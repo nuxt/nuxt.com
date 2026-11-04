@@ -141,11 +141,15 @@ describe('l10n snapshot', () => {
     expect(snapshot.bundle.record(first)?.text).toBe(records[first]!.text)
   })
 
-  it('should store a snapshot in shards and read it back', async () => {
+  it.each([
+    ['in one item', undefined, false],
+    ['in shards', 4000, true]
+  ])('should store a snapshot %s and read it back', async (_, itemSize, sharded) => {
     const tree = await parseTranslationsTarball(await tarball([{ name: 'glossary.yml', data: '- term: Nuxt\n  doNotTranslate: true\n' }]), SHA)
     const storage = createStorage()
-    await writeL10nSnapshot(storage, buildL10nSnapshot(tree, 'fr'), tree.records('fr'), { shardLength: 4000 })
-    expect((await storage.getKeys()).length).toBeGreaterThan(2)
+    await writeL10nSnapshot(storage, buildL10nSnapshot(tree, 'fr'), tree.records('fr'), { itemSize })
+    const keys = (await storage.getKeys()).length
+    expect(sharded ? keys > 2 : keys === 1).toBe(true)
 
     const stored = await readL10nSnapshot(storage, SHA, 'fr')
     expect(stored?.bundle.sha).toBe(SHA)
@@ -176,7 +180,7 @@ describe('l10n snapshot', () => {
     const storage = createStorage()
     expect(await readL10nSnapshot(storage, SHA, 'fr')).toBeUndefined()
 
-    await writeL10nSnapshot(storage, buildL10nSnapshot(tree, 'fr'), tree.records('fr'), { shardLength: 4000 })
+    await writeL10nSnapshot(storage, buildL10nSnapshot(tree, 'fr'), tree.records('fr'), { itemSize: 4000 })
     await storage.removeItem((await storage.getKeys()).find(key => key.endsWith(':1'))!)
     expect(await readL10nSnapshot(storage, SHA, 'fr')).toBeUndefined()
   })

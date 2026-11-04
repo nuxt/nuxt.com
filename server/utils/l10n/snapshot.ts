@@ -12,8 +12,8 @@ const L10N_SNAPSHOT_VERSION = 'v4'
 /** `decodeRecordsView` reads either; zstd is faster where `node:zlib` has it. */
 const COMPRESSION = 'zstdCompressSync' in zlib ? 'zstd' : 'gzip'
 
-/** Characters per stored shard of records, below the Runtime Cache's 2 MB item limit. */
-const SHARD_LENGTH = 1_000_000
+/** Bytes per stored item, below the Runtime Cache's 2 MB item limit. */
+const ITEM_SIZE = 1_900_000
 
 /** What one locale is served from at one translations commit, built once and stored. */
 export interface L10nSnapshot {
@@ -24,7 +24,10 @@ export interface L10nSnapshot {
 }
 
 interface StoredMeta {
-  shards: number
+  /** The encoded records, when they fit in this item. */
+  records?: string
+  /** Otherwise, how many shards hold them. */
+  shards?: number
   reviewed: boolean
   coverage: L10nSnapshot['coverage']
   glossary: Glossary
@@ -56,26 +59,38 @@ export function buildL10nSnapshot(tree: TranslationsTree, locale: L10nLocale): L
 }
 
 /**
- * Store a snapshot: the encoded records in as many shards as the item size limit needs, then the
- * entry pointing at them, so a reader that finds the entry finds every shard.
+ * Store a snapshot in one item when it fits the item size limit. Otherwise the encoded records go in
+ * as many shards as the limit needs, then the entry pointing at them, so a reader that finds the
+ * entry finds every shard.
  */
-export async function writeL10nSnapshot(storage: SnapshotStorage, snapshot: L10nSnapshot, records: ReadonlyMap<string, unknown>, { shardLength = SHARD_LENGTH } = {}): Promise<void> {
+export async function writeL10nSnapshot(storage: SnapshotStorage, snapshot: L10nSnapshot, records: ReadonlyMap<string, unknown>, { itemSize = ITEM_SIZE } = {}): Promise<void> {
   const { locale, sha } = snapshot.bundle
   const encoded = await encodeRecords(records, { compression: COMPRESSION })
-  const shards = Math.max(1, Math.ceil(encoded.length / shardLength))
+  const meta: StoredMeta = { reviewed: snapshot.bundle.reviewed, coverage: snapshot.coverage, glossary: snapshot.glossary, policy: snapshotPolicy(snapshot.bundle.policy) }
+  if (encoded.length + Buffer.byteLength(JSON.stringify(meta)) < itemSize) {
+    await storage.setItem(key(sha, locale, 'meta'), { ...meta, records: encoded })
+    return
+  }
+
+  const shards = Math.ceil(encoded.length / itemSize)
   await Promise.all(Array.from({ length: shards }, (_, index) =>
-    storage.setItem(key(sha, locale, index), encoded.slice(index * shardLength, (index + 1) * shardLength))))
-  await storage.setItem(key(sha, locale, 'meta'), { shards, reviewed: snapshot.bundle.reviewed, coverage: snapshot.coverage, glossary: snapshot.glossary, policy: snapshotPolicy(snapshot.bundle.policy) } satisfies StoredMeta)
+    storage.setItem(key(sha, locale, index), encoded.slice(index * itemSize, (index + 1) * itemSize))))
+  await storage.setItem(key(sha, locale, 'meta'), { ...meta, shards })
 }
 
 /** The stored snapshot of `locale` at `sha`, `undefined` when it is missing or incomplete. */
 export async function readL10nSnapshot(storage: SnapshotStorage, sha: string, locale: L10nLocale): Promise<L10nSnapshot | undefined> {
   const meta = await storage.getItem(key(sha, locale, 'meta')) as StoredMeta | null
-  if (!meta?.shards || typeof meta.reviewed !== 'boolean' || !meta.coverage || !meta.glossary || !meta.policy) return
+  if (!meta || typeof meta.reviewed !== 'boolean' || !meta.coverage || !meta.glossary || !meta.policy) return
 
-  const shards = await Promise.all(Array.from({ length: meta.shards }, (_, index) => storage.getItem(key(sha, locale, index))))
-  if (shards.some(shard => typeof shard !== 'string')) return
+  let data = meta.records
+  if (typeof data !== 'string') {
+    if (!meta.shards) return
+    const shards = await Promise.all(Array.from({ length: meta.shards }, (_, index) => storage.getItem(key(sha, locale, index))))
+    if (shards.some(shard => typeof shard !== 'string')) return
+    data = shards.join('')
+  }
 
-  const records = await decodeRecordsView(shards.join(''))
+  const records = await decodeRecordsView(data)
   return { bundle: createBundle(records, locale, sha, { reviewed: meta.reviewed, policy: restorePolicy(meta.policy) }), coverage: meta.coverage, glossary: meta.glossary }
 }
