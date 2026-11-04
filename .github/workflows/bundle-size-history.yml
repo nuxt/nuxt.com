@@ -13,7 +13,7 @@ on:
         description: Analyze every commit on main since this date
         default: '2026-08-20'
       shas:
-        description: Or only these commits, separated by spaces
+        description: Or only these commits on main, separated by spaces
         default: ''
 
 permissions:
@@ -53,7 +53,13 @@ jobs:
           if [ "$EVENT" = push ]; then
             shas="$GITHUB_SHA"
           elif [ -n "$SHAS" ]; then
-            shas=$(for sha in $SHAS; do git rev-parse --verify --quiet "$sha^{commit}" || { echo "::error::$sha is not a commit of this repository." >&2; exit 1; }; done)
+            # Only commits already on main, as their code runs in main's context, with its cache, and
+            # their builds become main's history.
+            shas=$(for sha in $SHAS; do
+              full=$(git rev-parse --verify --quiet "$sha^{commit}") && git merge-base --is-ancestor "$full" HEAD \
+                || { echo "::error::$sha is not a commit on main." >&2; exit 1; }
+              echo "$full"
+            done)
           else
             shas=$(git log --first-parent --reverse --format=%H --since="$SINCE 00:00" HEAD)
           fi
