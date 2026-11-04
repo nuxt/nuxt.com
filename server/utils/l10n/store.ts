@@ -197,6 +197,13 @@ export interface L10nRefresh extends L10nPagesUsing {
   indexableChanged: string[]
 }
 
+/** Every localised page, as a change to all of them. Reads the content instances only. */
+async function everyL10nPage(): Promise<L10nPagesUsing> {
+  const paths = await Promise.all(TRANSLATION_SOURCES.map(source => sourcePaths(source)))
+  const pages = [...new Set(paths.flatMap(byFile => [...byFile.values()].flat()))].sort()
+  return { pages, content: pages, navigation: true }
+}
+
 /** Pin the translations commit the branch is at now, and list what changed for each of `locales` since the previous one. */
 export async function refreshL10nBundles(locales: L10nLocale[]): Promise<L10nRefresh[]> {
   const before = await Promise.all(locales.map(locale => getL10nBundle(locale)))
@@ -213,8 +220,8 @@ export async function refreshL10nBundles(locales: L10nLocale[]): Promise<L10nRef
     const changed = previous.sha === current.sha || !current.sha
       ? unchanged
       : await l10nPagesUsing(current, previous.sha ? changedHashes(previous, current) : 'all').catch((error) => {
-          console.error(`[l10n] could not list the ${locale} pages changed at ${sha}`, error?.message ?? error)
-          return unchanged
+          console.error(`[l10n] could not list the ${locale} pages changed at ${sha}, refreshing every page`, error?.message ?? error)
+          return everyL10nPage().catch(() => unchanged)
         })
     const was = new Set(indexableBefore[locale] ?? [])
     const is = new Set(indexableAfter[locale] ?? [])
