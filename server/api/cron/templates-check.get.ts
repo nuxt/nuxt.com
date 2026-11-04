@@ -12,9 +12,7 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 401, statusMessage: 'Unauthorized' })
   }
 
-  // The check sends internal secrets back to this URL, so production never takes it from request headers.
-  const baseURL = process.env.VERCEL_ENV === 'production' ? SITE_URL : getRequestURL(event, { xForwardedHost: true }).origin
-  const result = await startTemplateChecks(baseURL, { trigger: 'cron' })
+  const result = await startTemplateChecks(templateCheckBaseURL(event), { trigger: 'cron' })
   console.log(`[templates] cron queued ${result.queued.length} checks${result.runId ? ` (run ${result.runId})` : ''}`)
   return result
 })
