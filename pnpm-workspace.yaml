@@ -34,6 +34,9 @@ minimumReleaseAgeExclude:
   - vue
   - '@vue/*'
   - nuxt-agent-discovery@0.8.1
+  - '@diglot/code@0.1.0'
+  - '@diglot/comark@0.1.0'
+  - '@diglot/core@0.1.0'
 
 permissions:
   '@nuxtjs/sitemap':

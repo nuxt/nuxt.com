@@ -190,6 +190,12 @@ importers:
       '@comark/nuxt':
         specifier: ^0.8.1
         version: 0.8.1(@nuxt/schema@4.6.4)(confbox@0.3.2)(dotenv@17.4.2)(giget@3.3.1)(jiti@2.7.0)(magic-string@1.4.5)(mlly@1.8.2)(nuxt@4.6.4(8adf95bd70a3adbb8f39cc39e851cf37))(oxc-parser@0.153.0)(rangi@2.2.0)(rolldown@1.2.14)(shiki@4.5.0)(unplugin@3.7.0(esbuild@0.28.2)(rolldown@1.2.14)(rollup@4.67.4)(vite@8.3.5(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1)))(vue@3.5.44(typescript@6.0.3))
+      '@diglot/comark':
+        specifier: ^0.1.0
+        version: 0.1.0(rangi@2.2.0)(shiki@4.5.0)
+      '@diglot/core':
+        specifier: ^0.1.0
+        version: 0.1.0
       '@iconify-json/circle-flags':
         specifier: ^1.2.14
         version: 1.2.14
@@ -790,6 +796,18 @@ packages:
     resolution: {integrity: sha512-YLD+yCMiNuUnf1EslRWx0j+kwY8+ByX8RjKghC1ElqX/SrkMGw21K1u8+sd0REdX3uHy22nxL+X/tFaEjk0oLg==}
     peerDependencies:
       devframe: 1.1.0
+
+  '@diglot/code@0.1.0':
+    resolution: {integrity: sha512-WLmZuWHtVgGGuF5gxZ5L1dhi0QrDCD643Zqq1lSMv8nCl0pvyE4dnxKcp3PN+C1tXCIK22ElydB9KgusoDbHcg==}
+    engines: {node: '>=22'}
+
+  '@diglot/comark@0.1.0':
+    resolution: {integrity: sha512-FE+g1FF+beT9/2XHIChQclyZ2hIu3KCeWCcjvYNo4VoxTnsR6AaFpKrL1H3fBOsY+gLhZpQjvIsZLd2M4NYN2A==}
+    engines: {node: '>=22'}
+
+  '@diglot/core@0.1.0':
+    resolution: {integrity: sha512-C+30DZEOaldHJqn3S2+2yZNxuy94J/9O6rudcneENSvryjuJs8jU1GovTpPOcr/meivjeExYsJ7NhDm6N2XcTw==}
+    engines: {node: '>=22'}
 
   '@discordjs/builders@1.14.1':
     resolution: {integrity: sha512-gSKkhXLqs96TCzk66VZuHHl8z2bQMJFGwrXC0f33ngK+FLNau4hU1PYny3DNJfNdSH+gVMzE85/d5FQ2BpcNwQ==}
@@ -7111,6 +7129,10 @@ packages:
     resolution: {integrity: sha512-R9iDuNrQYeQut46cn2r2wHKn4HYzVDvDm5J1wW+koZewykv0yuO2HChTYeZtrULyHIDM9cj9TUXloCsueCQUog==}
     hasBin: true
 
+  fastest-levenshtein@1.0.16:
+    resolution: {integrity: sha512-eRnCtTTtGZFpQCwhJiUOuxPQWRXVKYDn0b2PeHfXL6/Zi53SLAzAHfVhVWK2AryC/WH05kGfxhFIPvTF0SXQzg==}
+    engines: {node: '>= 4.9.1'}
+
   fastify-plugin@5.1.0:
     resolution: {integrity: sha512-FAIDA8eovSt5qcDgcBvDuX/v0Cjz0ohGhENZ/wpc3y+oZCY2afZ9Baqql3g/lC+OHRnciQol4ww7tuthOb9idw==}
 
@@ -11741,6 +11763,26 @@ snapshots:
     transitivePeerDependencies:
       - crossws
       - ocache
+
+  '@diglot/code@0.1.0':
+    dependencies:
+      '@diglot/core': 0.1.0
+
+  '@diglot/comark@0.1.0(rangi@2.2.0)(shiki@4.5.0)':
+    dependencies:
+      '@diglot/code': 0.1.0
+      '@diglot/core': 0.1.0
+      comark: 0.8.1(rangi@2.2.0)(shiki@4.5.0)
+      yaml: 2.9.1
+    transitivePeerDependencies:
+      - beautiful-mermaid
+      - katex
+      - rangi
+      - shiki
+
+  '@diglot/core@0.1.0':
+    dependencies:
+      fastest-levenshtein: 1.0.16
 
   '@discordjs/builders@1.14.1':
     dependencies:
@@ -18545,6 +18587,8 @@ snapshots:
       path-expression-matcher: 1.6.2
       strnum: 2.4.2
       xml-naming: 0.3.0
+
+  fastest-levenshtein@1.0.16: {}
 
   fastify-plugin@5.1.0: {}
 

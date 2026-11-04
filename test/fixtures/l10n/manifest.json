@@ -1,0 +1,1114 @@
+{
+  "version": 1,
+  "source": "nuxt-4.x",
+  "ref": "4.x",
+  "sha": "6bc4a522fe2bfc4d07cabbf0b38772d0fdf7f1d8",
+  "files": {
+    "docs/1.getting-started/01.introduction.md": [
+      {
+        "hash": "633f7365b32e3cfb",
+        "words": 1,
+        "kind": "frontmatter"
+      },
+      {
+        "hash": "c18a9dd444a7535e",
+        "words": 17,
+        "kind": "frontmatter"
+      },
+      {
+        "hash": "839f9a4898b82644",
+        "words": 27,
+        "kind": "paragraph"
+      },
+      {
+        "hash": "5c9573fb173239c5",
+        "words": 30,
+        "kind": "paragraph"
+      },
+      {
+        "hash": "c913e520dd19d687",
+        "words": 16,
+        "kind": "paragraph"
+      },
+      {
+        "hash": "baf35e0f2e2e1937",
+        "words": 22,
+        "kind": "component-slot"
+      },
+      {
+        "hash": "b472c7e55313d66a",
+        "words": 3,
+        "kind": "heading"
+      },
+      {
+        "hash": "32cdb6b1a7cceee4",
+        "words": 31,
+        "kind": "paragraph"
+      },
+      {
+        "hash": "38a76dcda3bb4d58",
+        "words": 28,
+        "kind": "list-item"
+      },
+      {
+        "hash": "321ecc2a895edb10",
+        "words": 21,
+        "kind": "list-item"
+      },
+      {
+        "hash": "660617564bafe8c1",
+        "words": 23,
+        "kind": "list-item"
+      },
+      {
+        "hash": "a132fadbba912984",
+        "words": 27,
+        "kind": "list-item"
+      },
+      {
+        "hash": "56e65f886aea9355",
+        "words": 15,
+        "kind": "list-item"
+      },
+      {
+        "hash": "996c1cc88738ccf4",
+        "words": 16,
+        "kind": "list-item"
+      },
+      {
+        "hash": "351229c595dbb213",
+        "words": 25,
+        "kind": "list-item"
+      },
+      {
+        "hash": "1e6d5a7d27c8d619",
+        "words": 23,
+        "kind": "paragraph"
+      },
+      {
+        "hash": "ad7a1ea5c892a6e8",
+        "words": 2,
+        "kind": "heading"
+      },
+      {
+        "hash": "99b5caf73cec48ac",
+        "words": 24,
+        "kind": "paragraph"
+      },
+      {
+        "hash": "cfcd830bf5896106",
+        "words": 41,
+        "kind": "list-item"
+      },
+      {
+        "hash": "03cccf4d8ba810de",
+        "words": 27,
+        "kind": "list-item"
+      },
+      {
+        "hash": "dd5aac462a76a2c1",
+        "words": 36,
+        "kind": "list-item"
+      },
+      {
+        "hash": "4166b4891b1974ed",
+        "words": 25,
+        "kind": "list-item"
+      },
+      {
+        "hash": "1b37990fc080044c",
+        "words": 31,
+        "kind": "list-item"
+      },
+      {
+        "hash": "20f1018cb34624f5",
+        "words": 21,
+        "kind": "paragraph"
+      },
+      {
+        "hash": "4877973bc4c41023",
+        "words": 37,
+        "kind": "paragraph"
+      },
+      {
+        "hash": "7846375380df2791",
+        "words": 3,
+        "kind": "prop"
+      },
+      {
+        "hash": "fcf855dfb18d2dcb",
+        "words": 2,
+        "kind": "heading"
+      },
+      {
+        "hash": "9421e806535fee84",
+        "words": 9,
+        "kind": "paragraph"
+      },
+      {
+        "hash": "4073da3b5b905083",
+        "words": 30,
+        "kind": "paragraph"
+      },
+      {
+        "hash": "2d9f844f1444a6f5",
+        "words": 46,
+        "kind": "paragraph"
+      },
+      {
+        "hash": "33bae6629fd42c4a",
+        "words": 3,
+        "kind": "prop"
+      },
+      {
+        "hash": "de45a1ce1040c29d",
+        "words": 1,
+        "kind": "heading"
+      },
+      {
+        "hash": "a0b40c4b85500e69",
+        "words": 26,
+        "kind": "paragraph"
+      },
+      {
+        "hash": "6fcbff9c4a9c23c3",
+        "words": 2,
+        "kind": "prop"
+      },
+      {
+        "hash": "50678f008324fc4b",
+        "words": 1,
+        "kind": "heading"
+      },
+      {
+        "hash": "d1e4ca6ad9c92955",
+        "words": 16,
+        "kind": "paragraph"
+      },
+      {
+        "hash": "cd6597fd0167ded2",
+        "words": 3,
+        "kind": "prop"
+      },
+      {
+        "hash": "cd74053c54816e47",
+        "words": 1,
+        "kind": "heading"
+      },
+      {
+        "hash": "dc18e636721942b6",
+        "words": 7,
+        "kind": "paragraph"
+      },
+      {
+        "hash": "1194102050e81747",
+        "words": 3,
+        "kind": "list-item"
+      },
+      {
+        "hash": "979b7f8d599cced5",
+        "words": 8,
+        "kind": "list-item"
+      },
+      {
+        "hash": "9511242ba0690733",
+        "words": 5,
+        "kind": "list-item"
+      },
+      {
+        "hash": "91d901ff19ddf210",
+        "words": 3,
+        "kind": "list-item"
+      },
+      {
+        "hash": "415299450b37d4e9",
+        "words": 4,
+        "kind": "list-item"
+      },
+      {
+        "hash": "b328c94e6f738633",
+        "words": 19,
+        "kind": "paragraph"
+      }
+    ],
+    "docs/4.api/2.composables/use-fetch.md": [
+      {
+        "hash": "7bb9305bf108df44",
+        "words": 1,
+        "kind": "frontmatter"
+      },
+      {
+        "hash": "067097a60873e956",
+        "words": 10,
+        "kind": "frontmatter"
+      },
+      {
+        "hash": "49f035e526e93270",
+        "words": 1,
+        "kind": "frontmatter"
+      },
+      {
+        "hash": "199ff7fdfd257510",
+        "words": 31,
+        "kind": "paragraph"
+      },
+      {
+        "hash": "be6f96f6b665d737",
+        "words": 48,
+        "kind": "component-slot"
+      },
+      {
+        "hash": "8d59829c1e15afe1",
+        "words": 1,
+        "kind": "heading"
+      },
+      {
+        "hash": "d3fd96caadcba8ef",
+        "words": 18,
+        "kind": "component-slot"
+      },
+      {
+        "hash": "d2177f9649b5a87b",
+        "words": 101,
+        "kind": "component-slot"
+      },
+      {
+        "hash": "b4d6a30f4193b274",
+        "words": 19,
+        "kind": "component-slot"
+      },
+      {
+        "hash": "2576171161cdedcf",
+        "words": 31,
+        "kind": "paragraph"
+      },
+      {
+        "hash": "f2a0357adad537cc",
+        "words": 5,
+        "kind": "paragraph"
+      },
+      {
+        "hash": "1c1b06c6160e7583",
+        "words": 5,
+        "kind": "paragraph"
+      },
+      {
+        "hash": "ee1db8fcfb25af38",
+        "words": 4,
+        "kind": "code-comment"
+      },
+      {
+        "hash": "da0e2deddf95c51a",
+        "words": 13,
+        "kind": "code-comment"
+      },
+      {
+        "hash": "755ec21d28085412",
+        "words": 4,
+        "kind": "code-comment"
+      },
+      {
+        "hash": "50c967bd5760d127",
+        "words": 4,
+        "kind": "code-comment"
+      },
+      {
+        "hash": "7a341e6eb3ab65ff",
+        "words": 4,
+        "kind": "code-comment"
+      },
+      {
+        "hash": "fd64c164515cf5fd",
+        "words": 5,
+        "kind": "heading"
+      },
+      {
+        "hash": "87b59dd4b9419325",
+        "words": 25,
+        "kind": "paragraph"
+      },
+      {
+        "hash": "20026650a5530507",
+        "words": 13,
+        "kind": "code-comment"
+      },
+      {
+        "hash": "b60d37e4e9a1ac65",
+        "words": 63,
+        "kind": "paragraph"
+      },
+      {
+        "hash": "80546b1146ef6dce",
+        "words": 10,
+        "kind": "code-comment"
+      },
+      {
+        "hash": "ebdefea407df2581",
+        "words": 10,
+        "kind": "code-comment"
+      },
+      {
+        "hash": "45c0f28d67251ee2",
+        "words": 12,
+        "kind": "component-slot"
+      },
+      {
+        "hash": "b96266c22316fd47",
+        "words": 27,
+        "kind": "component-slot"
+      },
+      {
+        "hash": "37b0e189f523c67c",
+        "words": 28,
+        "kind": "component-slot"
+      },
+      {
+        "hash": "eeb5bf5bd20ced26",
+        "words": 13,
+        "kind": "prop"
+      },
+      {
+        "hash": "8e435cc5bf61089e",
+        "words": 3,
+        "kind": "heading"
+      },
+      {
+        "hash": "8f700c74287158ba",
+        "words": 29,
+        "kind": "paragraph"
+      },
+      {
+        "hash": "16d5f5ba666162b3",
+        "words": 8,
+        "kind": "code-comment"
+      },
+      {
+        "hash": "73f363dfecb2cfb6",
+        "words": 10,
+        "kind": "paragraph"
+      },
+      {
+        "hash": "b2329f4a71330345",
+        "words": 5,
+        "kind": "code-comment"
+      },
+      {
+        "hash": "baaddf70fb5d432b",
+        "words": 1,
+        "kind": "heading"
+      },
+      {
+        "hash": "8625881623433ef6",
+        "words": 1,
+        "kind": "code-label"
+      },
+      {
+        "hash": "3ca197762871c6bd",
+        "words": 6,
+        "kind": "code-comment"
+      },
+      {
+        "hash": "e68b36b17cbd9908",
+        "words": 1,
+        "kind": "heading"
+      },
+      {
+        "hash": "151b2ab61c2c9b39",
+        "words": 28,
+        "kind": "list-item"
+      },
+      {
+        "hash": "be16ead4974b3669",
+        "words": 23,
+        "kind": "list-item"
+      },
+      {
+        "hash": "45aaacba7ea1a668",
+        "words": 1,
+        "kind": "table-cell"
+      },
+      {
+        "hash": "baaddf70fb5d432b",
+        "words": 1,
+        "kind": "table-cell"
+      },
+      {
+        "hash": "21b111cbfe6e8fca",
+        "words": 1,
+        "kind": "table-cell"
+      },
+      {
+        "hash": "526e0087cc3f254d",
+        "words": 1,
+        "kind": "table-cell"
+      },
+      {
+        "hash": "a00644508de97e85",
+        "words": 0,
+        "kind": "table-cell"
+      },
+      {
+        "hash": "a00644508de97e85",
+        "words": 0,
+        "kind": "table-cell"
+      },
+      {
+        "hash": "c13155c197f788bd",
+        "words": 1,
+        "kind": "table-cell"
+      },
+      {
+        "hash": "dc490d3d4fa8b73d",
+        "words": 20,
+        "kind": "table-cell"
+      },
+      {
+        "hash": "a00644508de97e85",
+        "words": 0,
+        "kind": "table-cell"
+      },
+      {
+        "hash": "a00644508de97e85",
+        "words": 0,
+        "kind": "table-cell"
+      },
+      {
+        "hash": "a00644508de97e85",
+        "words": 0,
+        "kind": "table-cell"
+      },
+      {
+        "hash": "f54fbcada4608444",
+        "words": 3,
+        "kind": "table-cell"
+      },
+      {
+        "hash": "a00644508de97e85",
+        "words": 0,
+        "kind": "table-cell"
+      },
+      {
+        "hash": "a00644508de97e85",
+        "words": 0,
+        "kind": "table-cell"
+      },
+      {
+        "hash": "0dacd8512ba5c35b",
+        "words": 0,
+        "kind": "table-cell"
+      },
+      {
+        "hash": "bf41bcc351bea9ce",
+        "words": 9,
+        "kind": "table-cell"
+      },
+      {
+        "hash": "a00644508de97e85",
+        "words": 0,
+        "kind": "table-cell"
+      },
+      {
+        "hash": "a00644508de97e85",
+        "words": 0,
+        "kind": "table-cell"
+      },
+      {
+        "hash": "0dacd8512ba5c35b",
+        "words": 0,
+        "kind": "table-cell"
+      },
+      {
+        "hash": "bcc36032192b4b13",
+        "words": 2,
+        "kind": "table-cell"
+      },
+      {
+        "hash": "a00644508de97e85",
+        "words": 0,
+        "kind": "table-cell"
+      },
+      {
+        "hash": "a00644508de97e85",
+        "words": 0,
+        "kind": "table-cell"
+      },
+      {
+        "hash": "0dacd8512ba5c35b",
+        "words": 0,
+        "kind": "table-cell"
+      },
+      {
+        "hash": "58291470b844c00a",
+        "words": 6,
+        "kind": "table-cell"
+      },
+      {
+        "hash": "a00644508de97e85",
+        "words": 0,
+        "kind": "table-cell"
+      },
+      {
+        "hash": "a00644508de97e85",
+        "words": 0,
+        "kind": "table-cell"
+      },
+      {
+        "hash": "0dacd8512ba5c35b",
+        "words": 0,
+        "kind": "table-cell"
+      },
+      {
+        "hash": "80a5009a6c6f5195",
+        "words": 2,
+        "kind": "table-cell"
+      },
+      {
+        "hash": "a00644508de97e85",
+        "words": 0,
+        "kind": "table-cell"
+      },
+      {
+        "hash": "a00644508de97e85",
+        "words": 0,
+        "kind": "table-cell"
+      },
+      {
+        "hash": "0dacd8512ba5c35b",
+        "words": 0,
+        "kind": "table-cell"
+      },
+      {
+        "hash": "f75e08315c4cbf8d",
+        "words": 5,
+        "kind": "table-cell"
+      },
+      {
+        "hash": "a00644508de97e85",
+        "words": 0,
+        "kind": "table-cell"
+      },
+      {
+        "hash": "a00644508de97e85",
+        "words": 0,
+        "kind": "table-cell"
+      },
+      {
+        "hash": "0dacd8512ba5c35b",
+        "words": 0,
+        "kind": "table-cell"
+      },
+      {
+        "hash": "b21507a5631fb4f7",
+        "words": 11,
+        "kind": "table-cell"
+      },
+      {
+        "hash": "a00644508de97e85",
+        "words": 0,
+        "kind": "table-cell"
+      },
+      {
+        "hash": "a00644508de97e85",
+        "words": 0,
+        "kind": "table-cell"
+      },
+      {
+        "hash": "a00644508de97e85",
+        "words": 0,
+        "kind": "table-cell"
+      },
+      {
+        "hash": "3a205130690e35a2",
+        "words": 6,
+        "kind": "table-cell"
+      },
+      {
+        "hash": "a00644508de97e85",
+        "words": 0,
+        "kind": "table-cell"
+      },
+      {
+        "hash": "a00644508de97e85",
+        "words": 0,
+        "kind": "table-cell"
+      },
+      {
+        "hash": "a00644508de97e85",
+        "words": 0,
+        "kind": "table-cell"
+      },
+      {
+        "hash": "5e86207fe1e14bbb",
+        "words": 10,
+        "kind": "table-cell"
+      },
+      {
+        "hash": "a00644508de97e85",
+        "words": 0,
+        "kind": "table-cell"
+      },
+      {
+        "hash": "a00644508de97e85",
+        "words": 0,
+        "kind": "table-cell"
+      },
+      {
+        "hash": "a00644508de97e85",
+        "words": 0,
+        "kind": "table-cell"
+      },
+      {
+        "hash": "a98dc10b5a3468f3",
+        "words": 7,
+        "kind": "table-cell"
+      },
+      {
+        "hash": "a00644508de97e85",
+        "words": 0,
+        "kind": "table-cell"
+      },
+      {
+        "hash": "a00644508de97e85",
+        "words": 0,
+        "kind": "table-cell"
+      },
+      {
+        "hash": "0dacd8512ba5c35b",
+        "words": 0,
+        "kind": "table-cell"
+      },
+      {
+        "hash": "004d0f59f0298fd3",
+        "words": 8,
+        "kind": "table-cell"
+      },
+      {
+        "hash": "10866a9df5f8be5b",
+        "words": 0,
+        "kind": "table-cell"
+      },
+      {
+        "hash": "a00644508de97e85",
+        "words": 0,
+        "kind": "table-cell"
+      },
+      {
+        "hash": "0dacd8512ba5c35b",
+        "words": 0,
+        "kind": "table-cell"
+      },
+      {
+        "hash": "04694293866b112c",
+        "words": 17,
+        "kind": "table-cell"
+      },
+      {
+        "hash": "a00644508de97e85",
+        "words": 0,
+        "kind": "table-cell"
+      },
+      {
+        "hash": "a00644508de97e85",
+        "words": 0,
+        "kind": "table-cell"
+      },
+      {
+        "hash": "0dacd8512ba5c35b",
+        "words": 0,
+        "kind": "table-cell"
+      },
+      {
+        "hash": "b02f92cc23624b38",
+        "words": 7,
+        "kind": "table-cell"
+      },
+      {
+        "hash": "10866a9df5f8be5b",
+        "words": 0,
+        "kind": "table-cell"
+      },
+      {
+        "hash": "a00644508de97e85",
+        "words": 0,
+        "kind": "table-cell"
+      },
+      {
+        "hash": "0dacd8512ba5c35b",
+        "words": 0,
+        "kind": "table-cell"
+      },
+      {
+        "hash": "4d0eb44b3d61c7ec",
+        "words": 9,
+        "kind": "table-cell"
+      },
+      {
+        "hash": "a00644508de97e85",
+        "words": 0,
+        "kind": "table-cell"
+      },
+      {
+        "hash": "a00644508de97e85",
+        "words": 0,
+        "kind": "table-cell"
+      },
+      {
+        "hash": "0dacd8512ba5c35b",
+        "words": 0,
+        "kind": "table-cell"
+      },
+      {
+        "hash": "0ea8be1b2eb798ce",
+        "words": 7,
+        "kind": "table-cell"
+      },
+      {
+        "hash": "a00644508de97e85",
+        "words": 0,
+        "kind": "table-cell"
+      },
+      {
+        "hash": "a00644508de97e85",
+        "words": 0,
+        "kind": "table-cell"
+      },
+      {
+        "hash": "0dacd8512ba5c35b",
+        "words": 0,
+        "kind": "table-cell"
+      },
+      {
+        "hash": "db0d621a0d954ad1",
+        "words": 10,
+        "kind": "table-cell"
+      },
+      {
+        "hash": "10866a9df5f8be5b",
+        "words": 0,
+        "kind": "table-cell"
+      },
+      {
+        "hash": "a00644508de97e85",
+        "words": 0,
+        "kind": "table-cell"
+      },
+      {
+        "hash": "a00644508de97e85",
+        "words": 0,
+        "kind": "table-cell"
+      },
+      {
+        "hash": "a2f3d773112ff021",
+        "words": 15,
+        "kind": "table-cell"
+      },
+      {
+        "hash": "10866a9df5f8be5b",
+        "words": 0,
+        "kind": "table-cell"
+      },
+      {
+        "hash": "a00644508de97e85",
+        "words": 0,
+        "kind": "table-cell"
+      },
+      {
+        "hash": "a00644508de97e85",
+        "words": 0,
+        "kind": "table-cell"
+      },
+      {
+        "hash": "383c64439234ac51",
+        "words": 10,
+        "kind": "table-cell"
+      },
+      {
+        "hash": "10866a9df5f8be5b",
+        "words": 0,
+        "kind": "table-cell"
+      },
+      {
+        "hash": "a00644508de97e85",
+        "words": 0,
+        "kind": "table-cell"
+      },
+      {
+        "hash": "a00644508de97e85",
+        "words": 0,
+        "kind": "table-cell"
+      },
+      {
+        "hash": "7d588b9ff76459a2",
+        "words": 33,
+        "kind": "table-cell"
+      },
+      {
+        "hash": "10866a9df5f8be5b",
+        "words": 0,
+        "kind": "table-cell"
+      },
+      {
+        "hash": "a00644508de97e85",
+        "words": 0,
+        "kind": "table-cell"
+      },
+      {
+        "hash": "a00644508de97e85",
+        "words": 0,
+        "kind": "table-cell"
+      },
+      {
+        "hash": "6eafb61d4fd28b8e",
+        "words": 42,
+        "kind": "table-cell"
+      },
+      {
+        "hash": "10866a9df5f8be5b",
+        "words": 0,
+        "kind": "table-cell"
+      },
+      {
+        "hash": "a00644508de97e85",
+        "words": 0,
+        "kind": "table-cell"
+      },
+      {
+        "hash": "0dacd8512ba5c35b",
+        "words": 0,
+        "kind": "table-cell"
+      },
+      {
+        "hash": "edcdc6a921d8f3b5",
+        "words": 39,
+        "kind": "table-cell"
+      },
+      {
+        "hash": "10866a9df5f8be5b",
+        "words": 0,
+        "kind": "table-cell"
+      },
+      {
+        "hash": "a00644508de97e85",
+        "words": 0,
+        "kind": "table-cell"
+      },
+      {
+        "hash": "0dacd8512ba5c35b",
+        "words": 0,
+        "kind": "table-cell"
+      },
+      {
+        "hash": "7059e95691f869fd",
+        "words": 8,
+        "kind": "table-cell"
+      },
+      {
+        "hash": "c0d8626c6e4b572c",
+        "words": 30,
+        "kind": "component-slot"
+      },
+      {
+        "hash": "eb90e4abfaab2bf4",
+        "words": 2,
+        "kind": "paragraph"
+      },
+      {
+        "hash": "d2f4f126c719a2c5",
+        "words": 3,
+        "kind": "code-label"
+      },
+      {
+        "hash": "7f9e78db1516a4b8",
+        "words": 8,
+        "kind": "paragraph"
+      },
+      {
+        "hash": "c9edc9e1cccf8003",
+        "words": 2,
+        "kind": "heading"
+      },
+      {
+        "hash": "0d80e77c4a94e952",
+        "words": 51,
+        "kind": "paragraph"
+      },
+      {
+        "hash": "28eb23eb80e2a79d",
+        "words": 27,
+        "kind": "component-slot"
+      },
+      {
+        "hash": "b1a0577456f93779",
+        "words": 34,
+        "kind": "component-slot"
+      },
+      {
+        "hash": "dcd1d5223f73b3a9",
+        "words": 1,
+        "kind": "table-cell"
+      },
+      {
+        "hash": "baaddf70fb5d432b",
+        "words": 1,
+        "kind": "table-cell"
+      },
+      {
+        "hash": "526e0087cc3f254d",
+        "words": 1,
+        "kind": "table-cell"
+      },
+      {
+        "hash": "a00644508de97e85",
+        "words": 0,
+        "kind": "table-cell"
+      },
+      {
+        "hash": "a00644508de97e85",
+        "words": 0,
+        "kind": "table-cell"
+      },
+      {
+        "hash": "08133143795056d2",
+        "words": 6,
+        "kind": "table-cell"
+      },
+      {
+        "hash": "a00644508de97e85",
+        "words": 0,
+        "kind": "table-cell"
+      },
+      {
+        "hash": "a00644508de97e85",
+        "words": 0,
+        "kind": "table-cell"
+      },
+      {
+        "hash": "b7d7a702d61de532",
+        "words": 20,
+        "kind": "table-cell"
+      },
+      {
+        "hash": "a00644508de97e85",
+        "words": 0,
+        "kind": "table-cell"
+      },
+      {
+        "hash": "a00644508de97e85",
+        "words": 0,
+        "kind": "table-cell"
+      },
+      {
+        "hash": "bcc36032192b4b13",
+        "words": 2,
+        "kind": "table-cell"
+      },
+      {
+        "hash": "a00644508de97e85",
+        "words": 0,
+        "kind": "table-cell"
+      },
+      {
+        "hash": "a00644508de97e85",
+        "words": 0,
+        "kind": "table-cell"
+      },
+      {
+        "hash": "4a932bc801fb4b2a",
+        "words": 7,
+        "kind": "table-cell"
+      },
+      {
+        "hash": "a00644508de97e85",
+        "words": 0,
+        "kind": "table-cell"
+      },
+      {
+        "hash": "a00644508de97e85",
+        "words": 0,
+        "kind": "table-cell"
+      },
+      {
+        "hash": "2f32c3bce7175e77",
+        "words": 10,
+        "kind": "table-cell"
+      },
+      {
+        "hash": "a00644508de97e85",
+        "words": 0,
+        "kind": "table-cell"
+      },
+      {
+        "hash": "a00644508de97e85",
+        "words": 0,
+        "kind": "table-cell"
+      },
+      {
+        "hash": "106de6d81ebe55b4",
+        "words": 18,
+        "kind": "table-cell"
+      },
+      {
+        "hash": "a00644508de97e85",
+        "words": 0,
+        "kind": "table-cell"
+      },
+      {
+        "hash": "a00644508de97e85",
+        "words": 0,
+        "kind": "table-cell"
+      },
+      {
+        "hash": "0f87282a419d6f91",
+        "words": 16,
+        "kind": "table-cell"
+      },
+      {
+        "hash": "2f96fcc37b437fb2",
+        "words": 16,
+        "kind": "component-slot"
+      },
+      {
+        "hash": "6b73ef40a05404ca",
+        "words": 2,
+        "kind": "heading"
+      },
+      {
+        "hash": "b0cb6177322f0258",
+        "words": 10,
+        "kind": "list-item"
+      },
+      {
+        "hash": "04ade59c6b7ce28a",
+        "words": 4,
+        "kind": "list-item"
+      },
+      {
+        "hash": "a33984ac574c9ae0",
+        "words": 3,
+        "kind": "list-item"
+      },
+      {
+        "hash": "3cc366b1276b7d79",
+        "words": 2,
+        "kind": "list-item"
+      },
+      {
+        "hash": "d029f87e3d80f8fd",
+        "words": 1,
+        "kind": "heading"
+      }
+    ],
+    "docs/1.getting-started/.navigation.yml": [
+      {
+        "hash": "c778a5039e0ca98f",
+        "words": 2,
+        "kind": "navigation"
+      },
+      {
+        "hash": "1e704e7d95d266fa",
+        "words": 4,
+        "kind": "navigation"
+      }
+    ]
+  }
+}

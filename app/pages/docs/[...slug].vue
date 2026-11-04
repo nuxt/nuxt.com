@@ -5,6 +5,7 @@ import { DocsProseImg, Browser, CodeExplorer, Important, LinkExample, ReadMore, 
 import { CLI_DOCS_REFS, CLI_DOCS_REPO, cliDocsPathPrefix, hasCliDocs } from '#shared/utils/cli'
 import { cliInstanceKey } from '#shared/utils/content'
 import { DOCS_REFS, DOCS_REPO, getVersionByPath, isArchivedDocVersion, isCanonicalDocsPath } from '#shared/utils/docs'
+import { indexedLocales, isLocalisedPage, l10nHead, L10N_INDEXABLE_PATH, type L10nIndexable, type L10nPageMeta } from '#shared/utils/l10n'
 
 definePageMeta({
   heroBackground: false,
@@ -83,6 +84,11 @@ const { data: page, status } = await useAsyncData(pageKey, () => {
   const client = useContent(instanceKey.value)
   return paintResponse().then(() => client.get(pagePath))
 })
+
+const locale = useDocsLocale()
+const l10n = computed(() => (page.value?.meta as { l10n?: L10nPageMeta } | undefined)?.l10n)
+const showL10nStatus = useState('docs-l10n-status', () => false)
+const pageBody = useTemplateRef<{ $el: HTMLElement }>('pageBody')
 
 const surround = computed(() => findSurroundLinks(navigation.value, path.value))
 
@@ -195,8 +201,27 @@ useSeoMeta({
 })
 // Only emit canonical where the URL is authoritative.
 // Archived versions get no markdown alternate (not exposed to agents)
-if (isCanonicalDocsPath(path.value)) {
+if (isCanonicalDocsPath(path.value) && !locale.value) {
   useCanonical(() => isArchivedDocVersion(docsVersion.value) ? undefined : `/raw${path.value}.md`)
+}
+
+const { data: indexable } = await useAsyncData('l10n-indexable', () =>
+  $fetch<L10nIndexable>(L10N_INDEXABLE_PATH).catch(() => ({})), { default: () => ({}) })
+const suggestedLocales = computed(() => indexedLocales(indexable.value))
+
+const siteUrl = useSiteConfig().url
+const l10nHeadTags = computed(() => isLocalisedPage(path.value)
+  ? l10nHead({ siteUrl, path: path.value, locale: locale.value, indexable: indexable.value })
+  : undefined)
+
+useHead({
+  link: () => [
+    ...(locale.value && l10nHeadTags.value && isCanonicalDocsPath(path.value) ? [{ rel: 'canonical' as const, href: l10nHeadTags.value.url }] : []),
+    ...(l10nHeadTags.value?.alternates ?? []).map(({ hreflang, href }) => ({ rel: 'alternate' as const, hreflang, href }))
+  ]
+})
+if (locale.value) {
+  useSeoMeta({ ogUrl: () => l10nHeadTags.value?.url, robots: () => l10nHeadTags.value?.robots })
 }
 
 if (import.meta.server) {
@@ -371,11 +396,19 @@ const noRightAside = computed(() => route.path.includes('/examples/'))
             </template>
           </UButton>
 
-          <PageHeaderLinks v-if="!isArchivedDocVersion(docsVersion)" :key="page.path" />
+          <PageHeaderLinks v-if="!isArchivedDocVersion(docsVersion) && !locale" :key="page.path" />
         </template>
       </UPageHeader>
 
-      <UPageBody>
+      <UPageBody ref="pageBody" :data-l10n-show="l10n && showL10nStatus ? '' : undefined">
+        <DocsL10nStatus
+          v-if="l10n"
+          v-model:show="showL10nStatus"
+          :meta="l10n"
+          :path="path"
+          :target="pageBody?.$el"
+        />
+        <DocsL10nSuggestion v-else-if="!locale && isLocalisedPage(path) && suggestedLocales.length" :path="path" :locales="suggestedLocales" />
         <MarkdownDocument v-if="page.nodes?.length" :value="page" :components="markdownComponents" />
         <div>
           <Feedback :page="{ title: fm.title, stem: page.meta.stem }" />

@@ -3,6 +3,7 @@ import type { NavigationItem } from 'comark-content'
 import type { ContentShas } from '#shared/types'
 import { navigationPath, searchInstanceKeys } from '#shared/utils/content'
 import { pullNavigationPath } from '#shared/utils/pull'
+import { l10nNavigationPath } from '#shared/utils/l10n'
 
 const colorMode = useColorMode()
 const route = useRoute()
@@ -30,9 +31,12 @@ watch(() => colorMode.preference, (newMode, oldMode) => {
 })
 
 const pull = usePullPreview()
+const locale = useDocsLocale()
 
-const { data: navigation } = await useFetch<NavigationItem[]>(() =>
-  pull.value ? pullNavigationPath(docsVersion.value, pull.value) : navigationPath(docsVersion.value), { key: () => `navigation:${docsVersion.value}` })
+const { data: navigation } = await useFetch<NavigationItem[]>(() => {
+  if (pull.value) return pullNavigationPath(docsVersion.value, pull.value)
+  return locale.value ? l10nNavigationPath(locale.value, docsVersion.value) : navigationPath(docsVersion.value)
+}, { key: () => `navigation:${docsVersion.value}` })
 
 const searchKeys = computed(() => searchInstanceKeys(docsVersion.value))
 // Client-only: an SSR value gets baked into the page's ISR entry and would pin search to a stale commit.
@@ -65,7 +69,7 @@ if (import.meta.server) {
       { rel: 'icon', type: 'image/png', href: '/icon.png' }
     ],
     htmlAttrs: {
-      lang: 'en'
+      lang: locale.value ?? 'en'
     }
   })
   useSeoMeta({

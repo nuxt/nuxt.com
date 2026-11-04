@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { localeLinks } from '#shared/utils/l10n'
+
 const route = useRoute()
 const toast = useToast()
 const { copy, copied } = useClipboard()
@@ -61,8 +63,15 @@ const items = [
       to: `/mcp/deeplink`,
       onSelect: () => track('Page Action', { action: 'Add MCP Server' })
     }
-  ]
-]
+  ],
+  localeLinks(route.path).map(({ locale, ...link }) => ({
+    ...link,
+    icon: 'i-lucide-languages',
+    external: true,
+    externalIcon: false,
+    onSelect: () => track('Page Action', { action: 'View Translation', locale })
+  }))
+].filter(group => group.length)
 
 async function copyPage() {
   track('Page Action', { action: 'Copy Page' })
