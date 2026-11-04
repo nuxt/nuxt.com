@@ -1,0 +1,89 @@
+name: bundle-size-history
+
+# Records the bundle of each commit pushed to main at https://bundle.nuxt.dev/nuxt/nuxt.com/tree/main,
+# which charts the size after each commit and compares any commit with the one before it.
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+env:
+  # The first release with `upload --branch`.
+  NUXT_BUNDLE_ANALYZER_VERSION: 0.1.4
+
+jobs:
+  analyze:
+    name: analyze
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - name: Check out the commit
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - uses: pnpm/setup@703c52620218391530e48b9e8870d5c0082e1b9b # v2.1.0
+        with:
+          cache: true
+          cache-dependency-path: pnpm-lock.yaml
+      - name: Prepare the commit
+        run: pnpm nuxt prepare
+      # Outside the app, so it needs no change to the lockfile.
+      - name: Install nuxt-bundle-analyzer
+        run: npm install --prefix "$RUNNER_TEMP/nuxt-bundle-analyzer" --no-save --ignore-scripts --no-audit --no-fund "nuxt-bundle-analyzer@$NUXT_BUNDLE_ANALYZER_VERSION"
+      # Without --prerender, unlike bundle-size.yml: the PR comment reads the prerendered HTML, the
+      # history only the reports, and the build takes about half as long without it.
+      - name: Analyze the bundle
+        run: >-
+          pnpm --package=@nuxt/cli-nightly@3.38.0-20260726-220626-c3c9e90
+          dlx nuxt analyze
+          --extends=./scripts/bundle-size/nuxt-layer
+          --no-serve
+          --logLevel=info
+        env:
+          NODE_OPTIONS: --max-old-space-size=8192
+          NUXT_TELEMETRY_DISABLED: 1
+          NUXT_BUNDLE_ANALYZER_MODULE: ${{ runner.temp }}/nuxt-bundle-analyzer/node_modules/nuxt-bundle-analyzer/dist/module.mjs
+          NUXT_BUNDLE_ANALYZER_NAME: main
+      - name: Upload the bundle analysis
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: bundle-history
+          path: node_modules/.cache/nuxt-bundle-analyzer/main
+          if-no-files-found: error
+          retention-days: 1
+
+  # Apart from the build, so the dependencies it installs never run in a job that can prove to
+  # bundle.nuxt.dev that it is this workflow.
+  upload:
+    name: upload
+    needs: analyze
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      # Proves to bundle.nuxt.dev that the upload comes from this workflow on the default branch.
+      id-token: write
+    steps:
+      # The upload reads the commit's message and time from git.
+      - name: Check out the commit
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+          sparse-checkout: package.json
+          sparse-checkout-cone-mode: false
+      - name: Download the bundle analysis
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: bundle-history
+          path: ${{ runner.temp }}/runs/main
+      - name: Upload to bundle.nuxt.dev
+        run: >-
+          npx --yes "nuxt-bundle-analyzer@$NUXT_BUNDLE_ANALYZER_VERSION" upload .
+          --runs "$RUNNER_TEMP/runs"
+          --name main
+          --branch main
+          --sha "$GITHUB_SHA"
+          --url https://bundle.nuxt.dev
