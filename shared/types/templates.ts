@@ -3,7 +3,7 @@ export type TemplateCategory = 'saas' | 'dashboard' | 'ai' | 'docs' | 'content' 
 export type PackageManager = 'npm' | 'pnpm' | 'yarn' | 'bun'
 
 /** Gallery filters on the daily check: templates that build today, or that also run live. */
-export type TemplateStatusFilter = 'working'
+export type TemplateStatusFilter = 'working' | 'live'
 
 export type TemplateSort = 'recommended' | 'stars' | 'updated' | 'name'
 
@@ -65,6 +65,17 @@ export interface TemplateModule {
   icon?: string
   description?: string
 }
+
+/** The stages a live preview reports while it boots, in order. */
+export type PreviewStep = 'restored' | 'serving'
+
+/** One line of the `POST /api/templates/preview` NDJSON stream. */
+export type PreviewEvent
+  = | { type: 'step', step: PreviewStep }
+    | { type: 'ready', id: string, url: string }
+    /** The app moved to another server of the same sandbox. The page loads it out of sight and swaps over once it mounts. */
+    | { type: 'url', url: string }
+    | { type: 'error', message: string }
 
 /** What nuxt.com reads from a template's repository and its nightly preview build, so listings stay current without manual edits. */
 export interface TemplateHealth {

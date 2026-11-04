@@ -7,6 +7,8 @@
   --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
   --font-heading: 'Outfit', var(--font-sans);
 
+  --ease-snappy: cubic-bezier(0.23, 1, 0.32, 1);
+
   --color-green-50: #EFFDF5;
   --color-green-100: #D9FBE8;
   --color-green-200: #B3F5D1;
