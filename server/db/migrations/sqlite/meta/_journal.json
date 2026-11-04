@@ -85,6 +85,20 @@
       "when": 1793613152387,
       "tag": "0011_nuxters_username_lower_rank_idx",
       "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "6",
+      "when": 1793613152388,
+      "tag": "0012_template_checks",
+      "breakpoints": true
+    },
+    {
+      "idx": 13,
+      "version": "6",
+      "when": 1793613152389,
+      "tag": "0013_template_previews",
+      "breakpoints": true
     }
   ]
 }
