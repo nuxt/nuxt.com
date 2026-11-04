@@ -34,6 +34,7 @@ export default defineNuxtConfig({
   extends: ['./layers/nuxi'],
 
   modules: [
+    '@nuxt/fonts',
     '@nuxt/ui',
     '@nuxt/test-utils',
     '@comark/nuxt',
@@ -707,6 +708,12 @@ export default defineNuxtConfig({
         { duration: 2000 }
       ]
     }
+  },
+  fonts: {
+    families: [
+      { name: 'Inter', weights: [400, 500, 600, 700], global: true },
+      { name: 'Outfit', weights: [400, 500, 600, 700], global: true }
+    ]
   },
   hints: {
     features: {
