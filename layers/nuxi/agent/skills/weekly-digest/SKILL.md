@@ -1,5 +1,5 @@
 ---
-description: Produce the Nuxt Monday digest — traffic, docs feedback, Nuxi quality, and prioritized follow-ups for a recent window.
+description: Produce the Nuxt Monday digest — traffic, Google Search and SEO opportunities, docs feedback, Nuxi quality, and prioritized follow-ups for a recent window.
 ---
 
 When producing a digest (scheduled or on request):
@@ -63,6 +63,9 @@ Agent-facing output contract:
 - Keep each factual bullet to one line when Slack wrapping allows it. Do not add parenthetical methodology notes, per-version arithmetic, exhaustive lists, speculative attribution, query-progress narration, or Markdown horizontal rules.
 - End with exactly this caveat and nothing else: `_HTTP requests, not tool calls, sessions, or unique agents._`
 
+Search & SEO:
+- Load `seo-opportunities` and follow its **compact mode** for the same N-day window. Include a **Search & SEO** section after **Referrers & audience**, with the actual delayed Search Console dates, authoritative totals vs the previous equal-length window, and at most 2 validated page recommendations. Keep any unavailable-data note in this section so the rest of the digest can finish.
+
 Docs feedback:
 5. `admin-mcp__feedback-stats` — `topPages=5`
 6. `admin-mcp__list-feedback` — `ratings=["not-helpful", "confusing"]`, `limit=30`
@@ -101,6 +104,10 @@ AI agent:
 • Top: Direct (55%), <https://google.com|Google> (40%), then GitHub / DuckDuckGo
 • Countries: US, DE, FR — mostly desktop (~80%)
 
+:mag: **Search & SEO**
+• Search Console (delayed dates): clicks / impressions and changes vs the previous equal-length window, CTR and position — <https://search.google.com/search-console|Search Console>
+• <https://nuxt.com/docs/…|Page> — query evidence, current metrics and one concrete recommendation (or an explicit unavailable-data reason).
+
 :satellite: **Agent-facing usage**
 *Nuxt*
 • *MCP* — `<current>` HTTP requests (`<delta>` vs `<previous>`)
@@ -138,7 +145,7 @@ _HTTP requests, not tool calls, sessions, or unique agents._
 Rules:
 - If a section has zero data, say so in one bullet. Give a cause only when a tool result establishes it; otherwise say no data was returned.
 - **Fix this week** must have exactly 3 items when there is anything to improve; if truly quiet, 1–2 items with ":large_green_circle: *all clear*" is fine.
-- Rank **Fix this week** by traffic × bad feedback (and agent quality issues) — a bad score on a high-traffic page outranks the same score on a rarely-visited one.
+- Rank **Fix this week** by traffic × bad feedback, evidenced SEO opportunities, and agent quality issues — a bad score on a high-traffic page outranks the same score on a rarely-visited one. Include a search recommendation when its evidence warrants a top-3 priority.
 - Never list a page or chat without its `<url|label>` link.
 - Never invent traffic, run, or cost numbers — if a tool call fails or returns nothing attributable, say so instead of guessing.
 - Do not duplicate the same page in both **Docs feedback** and **Fix this week** as a long write-up; feedback states the problem, Fix this week owns the action.

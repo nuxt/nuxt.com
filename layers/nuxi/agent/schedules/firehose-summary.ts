@@ -33,7 +33,7 @@ export async function runFirehoseSummary({
 }
 
 export default defineSchedule({
-  cron: '0 5 * * 1-5',
+  cron: '0 8 * * 1-5',
   async run({ to, waitUntil, appAuth }) {
     waitUntil(runFirehoseSummary({ to, appAuth }))
   }

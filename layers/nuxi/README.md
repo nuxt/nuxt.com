@@ -136,24 +136,33 @@ export default defineSchedule({
 })
 ```
 
-All times below assume UTC+1 local mornings (6:00 local ≈ 5:00 UTC) — adjust the cron if the team's timezone/DST differs.
+All schedules use UTC and do not shift with daylight saving time. Reports are spread across the week; the standalone SEO report runs twice per calendar month.
+
+| Workflow | Schedule (UTC) |
+| --- | --- |
+| Firehose summary | Weekdays at 08:00 |
+| Weekly digest | Monday at 09:00 |
+| Showcase check | Tuesday at 09:00 |
+| Showcase discovery | Thursday at 09:00 |
+| SEO opportunities | 1st and 15th of each month at 10:00 |
 
 ### Weekly digest
 
-Single Monday digest: traffic (trend, top sections, referrers/audience), docs feedback, Nuxi quality/runs, Nuxi-scoped AI Gateway spend, and **Fix this week** prioritized by traffic × feedback.
+Single Monday digest: traffic (trend, top sections, referrers/audience), Search Console changes and SEO recommendations, docs feedback, Nuxi quality/runs, Nuxi-scoped AI Gateway spend, and **Fix this week** prioritized by traffic, feedback and evidenced opportunities.
 
-- Schedule: `agent/schedules/weekly-digest.ts` — Monday 5:00 UTC
+- Schedule: `agent/schedules/weekly-digest.ts` — Monday 09:00 UTC
 - Skill: `agent/skills/weekly-digest/SKILL.md`
 - Preview trigger: `POST /eve/v1/ops/weekly-digest/trigger`
 - Browser traffic via `vercel-mcp__count_pageviews` + `vercel-mcp__aggregate_pageviews`.
 - MCP and agent-facing traffic via the read-only `vercel-mcp__create_observability_query` tool using `vercel.request.count`: Nuxt and Nuxt UI each report `/mcp`, explicit `.md` URLs, `Accept: text/markdown`, and discovery endpoints such as `/llms.txt`. The reusable ad-hoc recipe is in `agent/skills/ecosystem-usage/SKILL.md`.
 - Spend via `ai_gateway__report` (scoped to `app:nuxi` tags and/or `AI_GATEWAY_REPORT_API_KEY_NAME` — never account-wide); runs via `vercel-mcp__list_agent_runs`.
+- Search via the admin MCP's Search Console tools, using the digest's N-day window ending 3 days ago and the preceding equal-length window. `seo-opportunities` owns the reusable analysis procedure; compact mode validates at most 2 pages.
 
 ### Firehose summary
 
 Summarizes `#firehose-nuxt` (Octolens social mentions) and posts highlights to the workflow channel.
 
-- Schedule: `agent/schedules/firehose-summary.ts` — weekdays 5:00 UTC (last 24h)
+- Schedule: `agent/schedules/firehose-summary.ts` — weekdays 08:00 UTC (last 24h)
 - Skill: `agent/skills/firehose-summary/SKILL.md`
 - Tool: `read_slack_channel_history` (`agent/tools/slack-channel-history.ts`)
 - Preview trigger: `POST /eve/v1/ops/firehose-summary/trigger?sinceHours=24`
@@ -164,16 +173,43 @@ The Nuxi Slack bot must be invited to `#firehose-nuxt`. Required Connect scopes:
 
 Fetches the homepage of every site on `/showcase` and flags the ones that no longer serve Nuxt, so they can be removed or updated in `content/showcase.yml`.
 
-- Schedule: `agent/schedules/showcase-check.ts` — Monday 6:00 UTC
+- Schedule: `agent/schedules/showcase-check.ts` — Tuesday 09:00 UTC
 - Skill: `agent/skills/showcase-check/SKILL.md`
 - Tool: `check_showcase_sites` (`agent/tools/check_showcase_sites.ts`, admin only) — also answers ad-hoc questions such as "is Upwork still on Nuxt?"
 - Preview trigger: `POST /eve/v1/ops/showcase-check/trigger`
 
 The site list comes from `POST /api/internal/content` (`kind: "showcase"`), so the check always matches what is live. Detection lives in `agent/lib/showcase/check.ts`: any Nuxt marker (`__NUXT_DATA__`, `window.__NUXT__`, `#__nuxt`, `/_nuxt/`, `data-n-head`) confirms a site. A site is only reported as switched when it served a real page without one. Sites behind bot protection (Cloudflare, Akamai, Vercel challenge) often reject requests from Vercel's datacenter IPs, and which ones do changes from run to run; they are listed as "couldn't check", never as switched.
 
+### Showcase discovery
+
+Finds candidates to consider adding, separately from checking existing entries.
+
+- Schedule: `agent/schedules/showcase-discovery.ts` — Thursday 09:00 UTC
+- Skill: `agent/skills/showcase-discovery/SKILL.md` (also available on request)
+- Tool: `discover_showcase_candidates` — admin only, with per-call authorization; `sinceDays` defaults to 7 and `limit` to 20 (maximum 30).
+- Preview trigger: `POST /eve/v1/ops/showcase-discovery/trigger?sinceDays=7`
+
+Reads the public `https://nuxt.fyi/api/hits?page=N&sort=scanned_at&order=desc` feed (at most 3 pages), filters by scan date and source safety label, excludes current showcase hosts (including `www` and final redirect hosts), and deduplicates results. Lower Tranco rank sorts first, then most recent scan; unranked sites remain eligible. The result includes titles, detection signals and nuxt.fyi evidence links. The skill shortlists at most 5 with a reason to review each; it does not add content or contact site owners.
+
+These are recent scans, including rescans, not necessarily newly launched sites. The API is public but not a versioned contract; schema/HTTP failures surface explicitly. Pagination or sort mismatches stop discovery with a coverage warning. Reports disclose the bounded sample and any omitted candidates. `api/recent` was tested but ignored requested filters on the live service, so this workflow uses the Nuxt-only hits feed. No API key or arbitrary candidate-site fetching is required.
+
+### SEO opportunities
+
+- Schedule: `agent/schedules/seo-opportunities.ts` — 1st and 15th of each month at 10:00 UTC
+- Skill: `agent/skills/seo-opportunities/SKILL.md` (also available on request)
+- Preview trigger: `POST /eve/v1/ops/seo-opportunities/trigger?sinceDays=28` (1–90 days)
+
+Uses the existing admin MCP tools `search-console-analytics`, `search-console-inspect-url`, `search-console-sitemaps` and `crux-web-vitals`. The standalone report defaults to 28 days independently of `workflow.sinceDays`; it compares explicit equal-length windows ending 3 days ago. The twice-monthly reports intentionally overlap their rolling 28-day windows to retain enough data for trends; this is not a half-month reporting window. By default every analytics call includes nuxt.com and all its subdomains (HTTP and HTTPS), including ui.nuxt.com. The scorecard covers this whole domain scope; a selected **By site** breakdown uses separately queried host totals, and every page finding is labelled with its actual hostname. Ungrouped totals and daily trends establish the overview; page comparisons identify both gains and losses. Up to 5 pages receive paired query comparisons and current-content/feedback/indexing/field-performance checks before recommendations.
+
+The Slack report is a short briefing: **Scorecard**, **What improved**, **What regressed**, **Do next**, and **Watch next**. It prioritizes up to 3 specific changes (such as a drafted snippet, a named section/example to add, or a verified internal link), each with evidence, effort and a success check. Monitoring names the page/query, baseline, review timing and a proposed investigation trigger. Unread pages and unavailable comparisons are explicit limitations, not speculative rewrites. Compact weekly-digest mode keeps a gain, a loss and the best action. Neither workflow changes pages nor submits indexing requests. Missing credentials or API failures remain visible and do not prevent the rest of the weekly digest.
+
+Both standalone and compact reports check daily date coverage before calculating changes. Search Console retains only 16 months, and reporting can lag beyond 3 days. Incomplete or unverified windows show separately labelled available totals and a coverage limitation instead of misleading period deltas. On request, the skill can narrow the report to an exact host using a replacement filter and suitable content readers. The admin SEO MCP prompt exposes the same selection through `host` (default `*.nuxt.com`, which includes the apex too). URL-prefix Search Console properties may not cover subdomains; the report must disclose that limitation. Content readers, docs feedback and origin performance evidence must match the actual site; nuxt.com evidence cannot be attributed to another host.
+
+The Google credentials belong on the **Nuxt web runtime**, which serves `/mcp/admin`: `NUXT_GOOGLE_SEARCH_CONSOLE_CLIENT_EMAIL`, `NUXT_GOOGLE_SEARCH_CONSOLE_PRIVATE_KEY`, optionally `NUXT_GOOGLE_SEARCH_CONSOLE_SITE_URL` (default `sc-domain:nuxt.com`), and `NUXT_GOOGLE_CRUX_API_KEY`. The service account needs read access to that Search Console property. Eve reuses `NUXT_MCP_ADMIN_TOKEN`; no Google credentials are passed to the model.
+
 ### Discord mirror
 
-Set `discord.digestChannel` (raw Discord channel id) in Global Config to also post the weekly digest and firehose summary to a Discord channel — distinct from `discord.channels`, which only gates live @mentions. This reuses the Slack-generated text (no second agent run): `agent/lib/discord/digest-mirror.ts` reads the finished Slack session's final message, `agent/lib/discord/format.ts` converts Slack-only syntax (`<url|label>` links, `:nuxter:`-style emoji, bare `@names`) to Discord Markdown, then posts via the unwrapped Discord adapter (so conversion runs once). Conversion is best-effort — an emoji shortcode outside the known set passes through unchanged. Unset disables the mirror; a mirroring failure is logged and never affects the Slack post. The bot needs **View Channel** + **Send Messages** in the target channel.
+Set `discord.digestChannel` (raw Discord channel id) in Global Config to also post workflow reports to a Discord channel — distinct from `discord.channels`, which only gates live @mentions. This reuses the Slack-generated text (no second agent run): `agent/lib/discord/digest-mirror.ts` reads the finished Slack session's final message, `agent/lib/discord/format.ts` converts Slack-only syntax (`<url|label>` links, `:nuxter:`-style emoji, bare `@names`) to Discord Markdown, then posts via the unwrapped Discord adapter (so conversion runs once). Conversion is best-effort — an emoji shortcode outside the known set passes through unchanged. Unset disables the mirror; a mirroring failure is logged and never affects the Slack post. The bot needs **View Channel** + **Send Messages** in the target channel.
 
 ### Test locally
 
@@ -183,6 +219,8 @@ With the dev server running (`pnpm dev` from repo root — Eve is bundled via th
 curl -X POST "http://localhost:3000/eve/v1/dev/schedules/weekly-digest"
 curl -X POST "http://localhost:3000/eve/v1/dev/schedules/firehose-summary"
 curl -X POST "http://localhost:3000/eve/v1/dev/schedules/showcase-check"
+curl -X POST "http://localhost:3000/eve/v1/dev/schedules/showcase-discovery"
+curl -X POST "http://localhost:3000/eve/v1/dev/schedules/seo-opportunities"
 # -> { "scheduleId": "...", "sessionIds": ["..."] }
 ```
 
@@ -196,6 +234,12 @@ curl -X POST "https://<preview-url>/eve/v1/ops/firehose-summary/trigger?sinceHou
   -H "Authorization: Bearer $INTERNAL_API_SECRET"
 
 curl -X POST "https://<preview-url>/eve/v1/ops/showcase-check/trigger" \
+  -H "Authorization: Bearer $INTERNAL_API_SECRET"
+
+curl -X POST "https://<preview-url>/eve/v1/ops/showcase-discovery/trigger?sinceDays=7" \
+  -H "Authorization: Bearer $INTERNAL_API_SECRET"
+
+curl -X POST "https://<preview-url>/eve/v1/ops/seo-opportunities/trigger?sinceDays=28" \
   -H "Authorization: Bearer $INTERNAL_API_SECRET"
 ```
 

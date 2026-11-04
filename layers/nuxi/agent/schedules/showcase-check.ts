@@ -19,7 +19,7 @@ export async function runShowcaseCheck({
 }
 
 export default defineSchedule({
-  cron: '0 6 * * 1',
+  cron: '0 9 * * 2',
   async run({ to, waitUntil, appAuth }) {
     waitUntil(runShowcaseCheck({ to, appAuth }))
   }

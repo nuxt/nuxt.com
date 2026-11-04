@@ -15,7 +15,7 @@ import { readGlobalConfig } from '../global-config.js'
  * logs a clear warning and falls back to defaults instead of failing silently.
  */
 const workflowConfigSchema = z.strictObject({
-  sinceDays: z.number().optional(),
+  sinceDays: z.number().int().positive().optional(),
   manualTrigger: z.boolean().optional()
 })
 

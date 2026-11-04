@@ -26,10 +26,11 @@ export type ParseWindowResult
   = | { ok: true, value: number | undefined }
     | { ok: false, error: string }
 
+/** Validate the entire optional day count before applying the supported window cap. */
 export function parseSinceDays(value: string | null | undefined): ParseWindowResult {
   if (!value?.trim()) return { ok: true, value: undefined }
-  const parsed = Number.parseInt(value, 10)
-  if (!Number.isFinite(parsed) || parsed < 1) {
+  const parsed = Number(value.trim())
+  if (!/^\d+$/.test(value.trim()) || !Number.isSafeInteger(parsed) || parsed < 1) {
     return { ok: false, error: 'sinceDays must be a positive integer' }
   }
   return { ok: true, value: Math.min(parsed, 365) }
@@ -113,16 +114,17 @@ export function verifyWorkflowTriggerAuth(req: Request): boolean {
   return false
 }
 
+/** Validate the entire optional hour count; reject fractional or partially numeric inputs. */
 export function parseSinceHours(value: string | null | undefined): ParseWindowResult {
   if (!value?.trim()) return { ok: true, value: undefined }
-  const parsed = Number.parseInt(value, 10)
-  if (!Number.isFinite(parsed) || parsed < 1) {
+  const parsed = Number(value.trim())
+  if (!/^\d+$/.test(value.trim()) || !Number.isSafeInteger(parsed) || parsed < 1) {
     return { ok: false, error: 'sinceHours must be a positive integer' }
   }
   return { ok: true, value: Math.min(parsed, 168) }
 }
 
-const SLACK_WORKFLOW_DELIVERY = `Your text reply is posted verbatim to this Slack channel by Eve — there is no Slack post tool and you do not need one. Output only the formatted summary from the skill. Never say you cannot post, never mention missing tools, never ask anyone to copy-paste, and never add a "Note:" about delivery.`
+const SLACK_WORKFLOW_DELIVERY = `Your text reply is posted verbatim to this Slack channel by Eve — there is no Slack post tool and you do not need one. Output only the formatted summary from the skill. Never say you cannot post, never claim a Slack delivery tool is missing, never ask anyone to copy-paste, and never add a "Note:" about delivery. Keep genuine source-data or analytics-tool failures visible in the relevant section.`
 
 /** Opening line of every scheduled workflow prompt, and the only trace of which skill ran. */
 function loadSkillDirective(skillId: string): string {
