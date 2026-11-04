@@ -45,6 +45,7 @@ const filtered = computed(() => {
     const templateHealth = health.value[template.slug]
     if (category.value && template.category !== category.value) return false
     if (status.value === 'working' && !isWorking(templateHealth)) return false
+    if (status.value === 'live' && !(isWorking(templateHealth) && templateHealth?.check?.live)) return false
     if (!query) return true
     const modules = templateModules(template, templateHealth).map(module => module.npm)
     return [template.name, template.description, ...modules].some(value => value?.toLowerCase().includes(query))

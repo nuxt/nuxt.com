@@ -17,7 +17,8 @@ const category = computed(() => TEMPLATE_CATEGORIES.find(item => item.value === 
 const details = computed(() => [
   { label: 'Nuxt', value: props.health?.check?.nuxt || props.health?.nuxt, mono: true },
   { label: 'Package manager', value: packageManager.value, icon: packageManager.value && PACKAGE_MANAGER_ICONS[packageManager.value] },
-  { label: 'Category', value: category.value?.label, icon: category.value?.icon }
+  { label: 'Category', value: category.value?.label, icon: category.value?.icon },
+  { label: 'Runs live', value: props.health?.check?.status === 'passed' ? (props.health.check.live ? 'Yes' : 'Needs env vars') : undefined }
 ].filter(item => item.value))
 
 function copyEnv() {

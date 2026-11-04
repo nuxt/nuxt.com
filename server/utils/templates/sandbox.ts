@@ -1,15 +1,21 @@
 import { Sandbox } from '@vercel/sandbox'
 import { and, desc, eq, lt, sql } from 'drizzle-orm'
-import type { Template } from '#shared/types'
+import type { PreviewEvent, PreviewStep, Template } from '#shared/types'
 import { TEMPLATE_WORKDIR } from './check-scripts'
 import { DEV_PORT } from './dev-server'
 import { SERVE_SCRIPT_PATH } from './static-server'
+
+declare module 'nitropack/types' {
+  interface NitroRuntimeHooks {
+    /** Runs once a live preview serves, while its stream is still open: a Nitro plugin can keep working on the sandbox and `send` more events. */
+    'templates:preview': (context: { template: Template, owner: string, sandbox: Sandbox, send: (event: PreviewEvent) => void }) => Promise<void> | void
+  }
+}
 
 export const PREVIEW_PORT = 3000
 const PREVIEW_TAGS = { app: 'nuxt-com', purpose: 'templates-preview' }
 /** Bounds what anonymous previews can cost at once. Not a per-visitor limit: a visitor already has one preview at a time. */
 const MAX_RUNNING_PREVIEWS = 50
-const PREVIEW_TIMEOUT_MS = 10 * 60 * 1000
 
 async function waitUntilServing(url: string, timeoutMs: number) {
   const deadline = Date.now() + timeoutMs
@@ -64,7 +70,7 @@ export async function releasePreview(owner: string, id: string) {
  * Restores the snapshot of a template's last passing check and starts its production server. Resolves once it answers, in about 3s.
  * The sandbox stops after 10 minutes, or once its owner starts another preview.
  */
-export async function startPreview(template: Template, owner: string) {
+export async function startPreview(template: Template, owner: string, onStep?: (step: PreviewStep) => void) {
   const snapshotId = await getPassingSnapshotId(template.slug)
   if (!snapshotId) {
     throw createError({ statusCode: 409, message: 'This template has no live preview right now.' })
@@ -89,6 +95,7 @@ export async function startPreview(template: Template, owner: string) {
     await releasePreview(owner, name)
     throw error
   }
+  onStep?.('restored')
   try {
     // Another start from the same visitor came after this one while this sandbox was created, and its `stopPreviews` may have run too early to see it.
     if (!await holdsPreview(owner, name)) {
@@ -104,7 +111,8 @@ export async function startPreview(template: Template, owner: string) {
     if (!await waitUntilServing(url, 20_000)) {
       throw createError({ statusCode: 504, message: 'The preview server did not start.' })
     }
-    return { id: sandbox.name, url }
+    onStep?.('serving')
+    return { id: sandbox.name, url, sandbox }
   } catch (error) {
     await stopPreview(owner, sandbox)
     throw error
