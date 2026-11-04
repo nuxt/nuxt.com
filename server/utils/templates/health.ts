@@ -1,4 +1,5 @@
 import type { H3Event } from 'h3'
+import { isTemplateCheckFresh } from '#shared/utils/templates'
 import type { BaseModule, PackageManager, Template, TemplateCheck, TemplateHealth, TemplateModule } from '#shared/types'
 
 interface RepoNode {
@@ -83,7 +84,7 @@ const fetchLatestNuxt = cachedFunction(async () => {
 async function fetchTemplateChecks(): Promise<Record<string, TemplateCheck>> {
   const [rows, latest] = await Promise.all([listTemplateChecks(), fetchLatestNuxt().catch(() => undefined)])
   return Object.fromEntries(rows.flatMap((row) => {
-    if (!row.status || !row.checkedAt) return []
+    if (!row.status || !row.checkedAt || !isTemplateCheckFresh({ checkedAt: row.checkedAt.toISOString() })) return []
     const passed = row.status === 'passed'
     const nuxt = passed ? row.nuxt ?? undefined : undefined
     return [[row.slug, {
@@ -93,7 +94,7 @@ async function fetchTemplateChecks(): Promise<Record<string, TemplateCheck>> {
       latest: !!nuxt && !!latest && minor(nuxt) === minor(latest),
       checkedAt: row.checkedAt.toISOString(),
       passedAt: row.passedAt?.toISOString(),
-      live: passed && !!row.snapshotId
+      live: hasLiveSnapshot(row)
     } satisfies TemplateCheck]]
   }))
 }
