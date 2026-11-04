@@ -99,6 +99,13 @@
       "when": 1793613152389,
       "tag": "0013_template_previews",
       "breakpoints": true
+    },
+    {
+      "idx": 14,
+      "version": "6",
+      "when": 1793710296576,
+      "tag": "0014_l10n_saves",
+      "breakpoints": true
     }
   ]
 }

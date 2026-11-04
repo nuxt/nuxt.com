@@ -1,11 +1,12 @@
 <script setup lang="ts">
 const { footerLinks } = useFooterLinks()
+const locale = useDocsLocale()
 </script>
 
 <template>
   <USeparator icon="i-simple-icons-nuxtdotjs" class="h-px" />
 
-  <UFooter :ui="{ top: 'border-b border-default' }">
+  <UFooter :lang="locale ? 'en' : undefined" :ui="{ top: 'border-b border-default' }">
     <template #top>
       <UContainer>
         <UFooterColumns :columns="footerLinks">

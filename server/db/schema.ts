@@ -160,3 +160,14 @@ export const templatePreviews = sqliteTable('template_previews', {
   index('template_previews_owner_idx').on(table.owner),
   index('template_previews_expires_at_idx').on(table.expiresAt)
 ])
+
+/** Translation saves and the segments they changed, per user per hour (hours since the epoch). */
+export const l10nSaves = sqliteTable('l10n_saves', {
+  userId: text('user_id').notNull(),
+  hour: integer('hour').notNull(),
+  saves: integer('saves').notNull(),
+  changes: integer('changes').notNull()
+}, table => [
+  primaryKey({ columns: [table.userId, table.hour] }),
+  index('l10n_saves_hour_idx').on(table.hour)
+])

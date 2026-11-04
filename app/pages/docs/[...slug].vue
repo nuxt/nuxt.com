@@ -5,7 +5,7 @@ import { DocsProseImg, Browser, CodeExplorer, Important, LinkExample, ReadMore, 
 import { CLI_DOCS_REFS, CLI_DOCS_REPO, cliDocsPathPrefix, hasCliDocs } from '#shared/utils/cli'
 import { cliInstanceKey } from '#shared/utils/content'
 import { DOCS_REFS, DOCS_REPO, getVersionByPath, isArchivedDocVersion, isCanonicalDocsPath } from '#shared/utils/docs'
-import { indexedLocales, isLocalisedPage, l10nHead, L10N_INDEXABLE_PATH, type L10nIndexable, type L10nPageMeta } from '#shared/utils/l10n'
+import { isLocalisedPage, l10nHead, l10nPagePath, type L10nPageMeta } from '#shared/utils/l10n'
 
 definePageMeta({
   heroBackground: false,
@@ -79,13 +79,25 @@ const instanceKey = computed(() => {
   return cliVersion.value ? cliInstanceKey(cliVersion.value) : docsInstanceKey.value
 })
 
-const { data: page, status } = await useAsyncData(pageKey, () => {
+const { data: indexable } = useL10nIndexable(path)
+
+const { data: page, status, refresh: refreshPage } = await useAsyncData(pageKey, () => {
   const pagePath = path.value
   const client = useContent(instanceKey.value)
   return paintResponse().then(() => client.get(pagePath))
 })
 
 const locale = useDocsLocale()
+
+/** Read the localised page past the cache, once the editor sees a save served at translations commit `sha`. */
+async function showPublished(sha: string) {
+  try {
+    page.value = await $fetch<typeof page.value>(l10nPagePath(locale.value!, path.value), { query: { sha } })
+  } catch {
+    await refreshPage()
+  }
+}
+
 const l10n = computed(() => (page.value?.meta as { l10n?: L10nPageMeta } | undefined)?.l10n)
 const showL10nStatus = useState('docs-l10n-status', () => false)
 const pageBody = useTemplateRef<{ $el: HTMLElement }>('pageBody')
@@ -204,10 +216,6 @@ useSeoMeta({
 if (isCanonicalDocsPath(path.value) && !locale.value) {
   useCanonical(() => isArchivedDocVersion(docsVersion.value) ? undefined : `/raw${path.value}.md`)
 }
-
-const { data: indexable } = await useAsyncData('l10n-indexable', () =>
-  $fetch<L10nIndexable>(L10N_INDEXABLE_PATH).catch(() => ({})), { default: () => ({}) })
-const suggestedLocales = computed(() => indexedLocales(indexable.value))
 
 const siteUrl = useSiteConfig().url
 const l10nHeadTags = computed(() => isLocalisedPage(path.value)
@@ -401,18 +409,18 @@ const noRightAside = computed(() => route.path.includes('/examples/'))
       </UPageHeader>
 
       <UPageBody ref="pageBody" :data-l10n-show="l10n && showL10nStatus ? '' : undefined">
-        <DocsL10nStatus
+        <LazyDocsL10nStatus
           v-if="l10n"
           v-model:show="showL10nStatus"
           :meta="l10n"
           :path="path"
           :target="pageBody?.$el"
+          @published="showPublished"
         />
-        <DocsL10nSuggestion v-else-if="!locale && isLocalisedPage(path) && suggestedLocales.length" :path="path" :locales="suggestedLocales" />
         <MarkdownDocument v-if="page.nodes?.length" :value="page" :components="markdownComponents" />
         <div>
-          <Feedback :page="{ title: fm.title, stem: page.meta.stem }" />
-          <USeparator class="mt-6 mb-10">
+          <Feedback :page="{ title: fm.title, stem: page.meta.stem }" :lang="locale ? 'en' : undefined" />
+          <USeparator class="mt-6 mb-10" :lang="locale ? 'en' : undefined">
             <div class="flex items-center gap-2 text-sm text-muted">
               <UButton
                 size="sm"

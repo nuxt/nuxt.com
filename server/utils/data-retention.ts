@@ -2,7 +2,8 @@ import { inArray, lt, sql } from 'drizzle-orm'
 import type { SQL } from 'drizzle-orm'
 import type { LibSQLDatabase } from 'drizzle-orm/libsql'
 import type { SQLiteTable } from 'drizzle-orm/sqlite-core'
-import { feedback, users } from '../db/schema'
+import { feedback, l10nSaves, users } from '../db/schema'
+import { saveHour } from './l10n/allowance'
 
 const PERSONAL_DATA_RETENTION_MONTHS = 12
 
@@ -45,7 +46,7 @@ export async function deleteInBatches<TSchema extends Record<string, unknown>>(
   return total
 }
 
-/** Deletes accounts not seen for 12 months (dependent rows cascade) and page feedback older than 12 months. */
+/** Deletes accounts not seen for 12 months (dependent rows cascade), page feedback older than 12 months and translation save counts of past hours. */
 export async function purgeExpiredSiteData<TSchema extends Record<string, unknown>>(
   database: LibSQLDatabase<TSchema>,
   options: DataRetentionOptions = {}
@@ -54,6 +55,7 @@ export async function purgeExpiredSiteData<TSchema extends Record<string, unknow
 
   return {
     users: await deleteInBatches(database, users, lt(sql`coalesce(${users.lastSeenAt}, ${users.createdAt})`, Math.floor(cutoff.getTime() / 1000)), options),
-    feedback: await deleteInBatches(database, feedback, lt(feedback.updatedAt, cutoff), options)
+    feedback: await deleteInBatches(database, feedback, lt(feedback.updatedAt, cutoff), options),
+    l10nSaves: await deleteInBatches(database, l10nSaves, lt(l10nSaves.hour, saveHour((options.now ?? new Date()).getTime())), options)
   }
 }

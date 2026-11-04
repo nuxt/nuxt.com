@@ -1,0 +1,80 @@
+import * as zlib from 'node:zlib'
+import type { Glossary } from '@diglot/core'
+import { decodeRecordsView, encodeRecords } from '@diglot/store/runtime'
+import type { L10nCoverage, L10nLocale } from '../../../shared/utils/l10n'
+import { createBundle, emptyBundle, type L10nBundle } from './bundle'
+import { sourceCoverage, TRANSLATION_SOURCES } from './coverage'
+import type { TranslationsTree } from './tree'
+
+/** Bump when the stored layout changes: entries of another version are never read. */
+const L10N_SNAPSHOT_VERSION = 'v3'
+
+/** `decodeRecordsView` reads either; zstd is faster where `node:zlib` has it. */
+const COMPRESSION = 'zstdCompressSync' in zlib ? 'zstd' : 'gzip'
+
+/** Characters per stored shard of records, below the Runtime Cache's 2 MB item limit. */
+const SHARD_LENGTH = 1_000_000
+
+/** What one locale is served from at one translations commit, built once and stored. */
+export interface L10nSnapshot {
+  bundle: L10nBundle
+  /** Coverage of each file of each translated source, by source name, then repository path. */
+  coverage: Record<string, Record<string, L10nCoverage>>
+  glossary: Glossary
+}
+
+interface StoredMeta {
+  shards: number
+  reviewed: boolean
+  coverage: L10nSnapshot['coverage']
+  glossary: Glossary
+}
+
+/** The subset of an unstorage `Storage` the snapshot reads and writes. */
+export interface SnapshotStorage {
+  getItem: (key: string) => Promise<unknown>
+  setItem: (key: string, value: unknown) => Promise<void>
+}
+
+/** A snapshot without records: every segment shows its English source. */
+export function emptySnapshot(locale: L10nLocale): L10nSnapshot {
+  return { bundle: emptyBundle(locale), coverage: {}, glossary: { terms: [] } }
+}
+
+const key = (sha: string, locale: L10nLocale, part: string | number) => `${L10N_SNAPSHOT_VERSION}:${sha}:${locale}:${part}`
+
+/** Build `locale`'s snapshot from the repository at one commit: its records, and the coverage of every source file. */
+export function buildL10nSnapshot(tree: TranslationsTree, locale: L10nLocale): L10nSnapshot {
+  const bundle = createBundle(tree.records(locale), locale, tree.sha)
+  const coverage: L10nSnapshot['coverage'] = {}
+  for (const source of TRANSLATION_SOURCES) {
+    const manifest = tree.manifests.get(source.name)
+    if (manifest) coverage[source.name] = sourceCoverage(manifest, bundle)
+  }
+  return { bundle, coverage, glossary: tree.glossary(locale) }
+}
+
+/**
+ * Store a snapshot: the encoded records in as many shards as the item size limit needs, then the
+ * entry pointing at them, so a reader that finds the entry finds every shard.
+ */
+export async function writeL10nSnapshot(storage: SnapshotStorage, snapshot: L10nSnapshot, records: ReadonlyMap<string, unknown>, { shardLength = SHARD_LENGTH } = {}): Promise<void> {
+  const { locale, sha } = snapshot.bundle
+  const encoded = await encodeRecords(records, { compression: COMPRESSION })
+  const shards = Math.max(1, Math.ceil(encoded.length / shardLength))
+  await Promise.all(Array.from({ length: shards }, (_, index) =>
+    storage.setItem(key(sha, locale, index), encoded.slice(index * shardLength, (index + 1) * shardLength))))
+  await storage.setItem(key(sha, locale, 'meta'), { shards, reviewed: snapshot.bundle.reviewed, coverage: snapshot.coverage, glossary: snapshot.glossary } satisfies StoredMeta)
+}
+
+/** The stored snapshot of `locale` at `sha`, `undefined` when it is missing or incomplete. */
+export async function readL10nSnapshot(storage: SnapshotStorage, sha: string, locale: L10nLocale): Promise<L10nSnapshot | undefined> {
+  const meta = await storage.getItem(key(sha, locale, 'meta')) as StoredMeta | null
+  if (!meta?.shards || typeof meta.reviewed !== 'boolean' || !meta.coverage || !meta.glossary) return
+
+  const shards = await Promise.all(Array.from({ length: meta.shards }, (_, index) => storage.getItem(key(sha, locale, index))))
+  if (shards.some(shard => typeof shard !== 'string')) return
+
+  const records = await decodeRecordsView(shards.join(''))
+  return { bundle: createBundle(records, locale, sha, meta.reviewed), coverage: meta.coverage, glossary: meta.glossary }
+}

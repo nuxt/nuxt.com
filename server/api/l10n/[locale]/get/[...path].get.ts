@@ -4,7 +4,6 @@ import { isL10nLocale, isLocalisedPage } from '#shared/utils/l10n'
 /**
  * A localised docs page: the English page at the instance's head commit, with the translations of
  * the pinned bundle substituted. Same shape as `/api/content/<instance>/get/<path>`, plus `meta.l10n`.
- * Not cached, like the live content endpoint: the page that renders it is.
  */
 export default defineEventHandler(async (event) => {
   const locale = getRouterParam(event, 'locale')

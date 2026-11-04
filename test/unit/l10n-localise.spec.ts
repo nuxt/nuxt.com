@@ -5,13 +5,13 @@ import { textContent } from 'comark/utils'
 import fs from 'comark-content/sources/fs'
 import type { ContentFile } from 'comark-content'
 import { beforeAll, describe, expect, it } from 'vitest'
-import { emptyBundle, parseBundle } from '../../server/utils/l10n/bundle'
+import { createBundle, emptyBundle } from '../../server/utils/l10n/bundle'
 import { localise, localiseLabel, localiseNavigation, segmentSource } from '../../server/utils/l10n/localise'
 import { createBuildInstance } from '../../utils/factory'
 
 const FIXTURES = fileURLToPath(new URL('../fixtures/l10n/', import.meta.url))
 const raw = JSON.parse(readFileSync(`${FIXTURES}fr.json`, 'utf8')) as { version: number, locale: string, records: Record<string, Record<string, unknown>> }
-const bundle = (records: Record<string, Record<string, unknown>> = {}) => parseBundle({ ...raw, records: { ...raw.records, ...records } }, 'fr', 'a'.repeat(40))
+const bundle = (records: Record<string, Record<string, unknown>> = {}) => createBundle(new Map(Object.entries({ ...raw.records, ...records })), 'fr', 'a'.repeat(40))
 
 const INTRODUCTION = '/docs/4.x/getting-started/introduction'
 const USE_FETCH = '/docs/4.x/api/composables/use-fetch'
@@ -89,6 +89,17 @@ describe('localise', () => {
     expect(localised.meta.l10n.coverage.byStatus.rejected).toBeGreaterThan(0)
   })
 
+  it('should show the English segment of a translation a reviewer rejected', async () => {
+    const page = pages.get(INTRODUCTION)!
+    const rejected = { ...raw.records[FIRST_PARAGRAPH], review: 'rejected', rejectedBy: { by: 'danielroe', at: '2026-11-03T00:00:00Z' } }
+    const localised = await localise(page, bundle({ [FIRST_PARAGRAPH]: rejected }))
+    const paragraph = marked(localised.nodes).get(FIRST_PARAGRAPH)!
+
+    expect(paragraph[1]).toMatchObject({ 'data-l10n': 'rejected', 'lang': 'en' })
+    expect(textContent(paragraph)).toBe(textContent(marked((await localise(page, emptyBundle('fr'))).nodes).get(FIRST_PARAGRAPH)!))
+    expect(localised.meta.l10n.coverage.byStatus.rejected).toBe(27)
+  })
+
   it('should render every block in English from an empty bundle', async () => {
     const page = pages.get(INTRODUCTION)!
     const localised = await localise(page, emptyBundle('fr'))
@@ -161,5 +172,11 @@ describe('localiseNavigation', () => {
   it('should keep a label without a valid translation', () => {
     expect(localiseLabel('Get Started', emptyBundle('fr'))).toBe('Get Started')
     expect(localiseLabel('No such label', bundle())).toBe('No such label')
+  })
+
+  it('should keep a label whose translation was rejected', () => {
+    const hash = 'c778a5039e0ca98f'
+    const rejected = bundle({ [hash]: { ...raw.records[hash], review: 'rejected', rejectedBy: { by: 'danielroe', at: '2026-11-02T00:00:00.000Z' } } })
+    expect(localiseLabel('Get Started', rejected)).toBe('Get Started')
   })
 })

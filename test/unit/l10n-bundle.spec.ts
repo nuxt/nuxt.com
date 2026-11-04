@@ -1,7 +1,7 @@
 import { readFileSync } from 'node:fs'
 import { describe, expect, it } from 'vitest'
-import { emptyBundle, parseBundle } from '../../server/utils/l10n/bundle'
-import { coverageTable, fileCoverage, TRANSLATION_SOURCES, type SourceManifest } from '../../server/utils/l10n/coverage'
+import { createBundle, emptyBundle, type L10nBundle } from '../../server/utils/l10n/bundle'
+import { coverageTable, pagesUsing, sourceCoverage, TRANSLATION_SOURCES, type SourceManifest } from '../../server/utils/l10n/coverage'
 import { visibleRecord } from '../../server/utils/l10n/localise'
 import { changedHashes, isTranslationsPush, rebuiltLocales } from '../../server/utils/l10n/webhook'
 import { instanceSource } from '../../server/utils/content/instances'
@@ -11,28 +11,22 @@ const fixture = (file: string) => JSON.parse(readFileSync(new URL(`../fixtures/l
 const raw = fixture('fr.json') as { version: number, locale: string, records: Record<string, Record<string, unknown>> }
 const manifest = fixture('manifest.json') as SourceManifest
 const INTRODUCTION = 'docs/1.getting-started/01.introduction.md'
+const fileCoverage = (entries: SourceManifest['files'][string], bundle: L10nBundle) => sourceCoverage({ files: { [INTRODUCTION]: entries } }, bundle)[INTRODUCTION]!
 
 /** The fixture bundle with some records replaced. */
 function bundleWith(records: Record<string, Record<string, unknown> | undefined> = {}, sha = 'a'.repeat(40)) {
-  const merged = Object.fromEntries(Object.entries({ ...raw.records, ...records }).filter(([, record]) => record))
-  return parseBundle({ ...raw, records: merged }, 'fr', sha)
+  const merged = new Map(Object.entries({ ...raw.records, ...records }).filter(([, record]) => record))
+  return createBundle(merged, 'fr', sha)
 }
 
 const anyHash = Object.keys(raw.records)[0]!
 
-describe('parseBundle', () => {
+describe('createBundle', () => {
   it('should read the records of a bundle', () => {
     const bundle = bundleWith()
     expect(bundle.record(anyHash)?.text).toBe(raw.records[anyHash]!.text)
     expect(bundle.record('0'.repeat(16))).toBeUndefined()
     expect(bundle.reviewed).toBe(false)
-  })
-
-  it('should reject a bundle for another locale or version', () => {
-    expect(() => parseBundle({ ...raw, locale: 'de' }, 'fr', 'sha')).toThrow('unexpected shape')
-    expect(() => parseBundle({ ...raw, version: 2 }, 'fr', 'sha')).toThrow('unexpected shape')
-    expect(() => parseBundle({ version: 1, locale: 'fr' }, 'fr', 'sha')).toThrow('no records')
-    expect(() => parseBundle(null, 'fr', 'sha')).toThrow('unexpected shape')
   })
 
   it('should read a malformed record as missing', () => {
@@ -84,21 +78,44 @@ describe('coverage', () => {
   })
 
   it('should count records carried over from an earlier source as pending review', () => {
-    const [{ hash, words }] = manifest.files[INTRODUCTION]!.filter(segment => segment.words > 0 && raw.records[segment.hash])
-    const coverage = fileCoverage([{ hash, words }], bundleWith({ [hash]: { ...raw.records[hash], derived: 'carry', prev: '1'.repeat(16) } }))
+    const [segment] = manifest.files[INTRODUCTION]!.filter(segment => segment.words > 0 && raw.records[segment.hash])
+    const { hash, words } = segment!
+    const coverage = fileCoverage([segment!], bundleWith({ [hash]: { ...raw.records[hash], derived: 'carry', prev: '1'.repeat(16) } }))
     expect(coverage.byStatus).toEqual({ 'pending-review': words })
   })
 
+  it('should count a translation that no longer fits its source as rejected', () => {
+    const hash = 'baf35e0f2e2e1937'
+    const segment = { hash, words: 22, kind: 'component-slot' as const, format: 'markdown' as const, skeleton: raw.records[hash]!.source as string, placeholders: ['link' as const] }
+    expect(fileCoverage([segment], bundleWith()).byStatus).toEqual({ machine: 22 })
+    const broken = bundleWith({ [hash]: { ...raw.records[hash], text: 'Essayez Nuxt en ligne.', review: 'verified', verifiedBy: { by: 'danielroe', at: '2026-11-02T00:00:00Z' } } })
+    expect(fileCoverage([segment], broken).byStatus).toEqual({ rejected: 22 })
+  })
+
   it('should key the table by page path and leave out files without a page', () => {
-    const table = coverageTable(manifest, bundleWith(), file => file === INTRODUCTION ? ['/docs/4.x/getting-started/introduction'] : undefined)
+    const table = coverageTable(sourceCoverage(manifest, bundleWith()), file => file === INTRODUCTION ? ['/docs/4.x/getting-started/introduction'] : undefined)
     expect(Object.keys(table)).toEqual(['/docs/4.x/getting-started/introduction'])
   })
 
   it('should list every page serving the same file', () => {
     const paths = ['/docs/4.x/getting-started/introduction', '/docs/5.x/getting-started/introduction']
-    const table = coverageTable(manifest, bundleWith(), file => file === INTRODUCTION ? paths : undefined)
+    const table = coverageTable(sourceCoverage(manifest, bundleWith()), file => file === INTRODUCTION ? paths : undefined)
     expect(Object.keys(table)).toEqual(paths)
     expect(table[paths[0]!]).toEqual(table[paths[1]!])
+  })
+})
+
+describe('pagesUsing', () => {
+  const introduction = '/docs/4.x/getting-started/introduction'
+  const useFetch = '/docs/4.x/api/composables/use-fetch'
+  const sources = [{ manifest, paths: new Map([[INTRODUCTION, [introduction]], ['docs/4.api/2.composables/use-fetch.md', [useFetch]]]) }]
+
+  it('should list the pages rendering a changed paragraph', () => {
+    expect(pagesUsing(sources, new Set(['839f9a4898b82644']))).toEqual({ pages: [introduction], content: [introduction], navigation: false })
+  })
+
+  it('should re-render every page for a changed title, but only change the content of its own', () => {
+    expect(pagesUsing(sources, new Set(['633f7365b32e3cfb']))).toEqual({ pages: [useFetch, introduction], content: [introduction], navigation: true })
   })
 })
 
@@ -120,12 +137,24 @@ describe('translations webhook', () => {
     expect(isTranslationsPush('nuxt/nuxt', 'main')).toBe(false)
   })
 
-  it('should list the locales whose bundle a push rebuilt', () => {
+  it('should list the locales whose records a push changed', () => {
     expect(rebuiltLocales([
       { modified: ['fr/segments/00/00033b4b33874d8a.json', 'dist/fr.json'] },
-      { added: ['dist/xx.json', 'README.md'] }
+      { added: ['xx/segments/00/00033b4b33874d8a.json', 'README.md'] }
     ])).toEqual(['fr'])
-    expect(rebuiltLocales([{ modified: ['fr/segments/00/00033b4b33874d8a.json'] }])).toEqual([])
+    expect(rebuiltLocales([{ removed: ['fr/segments/00/00033b4b33874d8a.json'] }])).toEqual(['fr'])
+    expect(rebuiltLocales([{ modified: ['dist/fr.json', 'fr/style.yml', 'README.md'] }])).toEqual([])
+  })
+
+  it('should list the locales whose state or glossary a push changed', () => {
+    expect(rebuiltLocales([{ modified: ['fr/locale.yml'] }])).toEqual(['fr'])
+    expect(rebuiltLocales([{ modified: ['fr/glossary.yml'] }])).toEqual(['fr'])
+    expect(rebuiltLocales([{ modified: ['xx/locale.yml'] }])).toEqual([])
+  })
+
+  it('should list every locale when a push changed a source manifest or the shared glossary', () => {
+    expect(rebuiltLocales([{ modified: ['.diglot/manifest/nuxt-4.x.json'] }])).toEqual(['fr'])
+    expect(rebuiltLocales([{ modified: ['glossary.yml'] }])).toEqual(['fr'])
   })
 
   it('should list the records two bundles disagree on', () => {

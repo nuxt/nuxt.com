@@ -3,7 +3,7 @@ import { waitUntil } from '@vercel/functions'
 import type { ComarkContent } from 'comark-content'
 import { instanceBlobPath, navPathsForInstance, SEARCH_INDEXED_KEYS } from '#shared/utils/content'
 import { DOC_VERSIONS, isDocVersion } from '#shared/utils/docs'
-import { isLocalisedDocVersion, isLocalisedPage, L10N_INDEXABLE_PATH, L10N_LOCALE_CODES, l10nNavigationPath, localisePath } from '#shared/utils/l10n'
+import { isLocalisedDocVersion, isLocalisedPage, L10N_INDEXABLE_PATH, L10N_LOCALE_CODES, l10nNavigationPath, l10nPagePath, localisePath } from '#shared/utils/l10n'
 import type { GitHubPushPayload } from '../types/github'
 import type { ContentChanges } from '../utils/content/webhook'
 
@@ -139,6 +139,7 @@ export default defineEventHandler(async (event) => {
       if (rawPath) addPath(instanceKey, 'raw', rawPath)
       // Localised pages are rendered from the English one.
       for (const localised of localisedTwins(path)) addPath(instanceKey, 'page', localised)
+      for (const localised of localisedPayloads(path)) addPath(instanceKey, 'payload', localised)
     }
 
     // Navigation renders on every page of the instance, so a change re-renders all of them.
@@ -190,9 +191,10 @@ export default defineEventHandler(async (event) => {
   // whose `hreflang` lists their translation, or stops listing it.
   if (rebuilt.length) {
     const refreshed = await timings.time('l10n', () => refreshL10nBundles(rebuilt))
-    for (const { locale, sha, pages, navigation, indexableChanged } of refreshed) {
+    for (const { locale, sha, pages, content, navigation, indexableChanged } of refreshed) {
       const scope = `l10n:${locale}`
       for (const path of pages) addPath(scope, navigation ? 'nav' : 'page', localisePath(locale, path))
+      for (const path of content) addPath(scope, 'payload', l10nPagePath(locale, path))
       for (const version of DOC_VERSIONS.filter(isLocalisedDocVersion)) addPath(scope, 'nav', l10nNavigationPath(locale, version))
       for (const path of indexableChanged) {
         addPath(scope, 'linked', path)
@@ -206,6 +208,10 @@ export default defineEventHandler(async (event) => {
   const globalPaths = changesByInstance.size
     ? ['/llms.txt', '/llms-full.txt', '/sitemap.xml', '/sitemap.md', '/blog/rss.xml', '/design.md', L10N_INDEXABLE_PATH]
     : ['/sitemap.xml', L10N_INDEXABLE_PATH]
+  const translatedInstances = new Set<ContentInstanceKey>(TRANSLATION_SOURCES.flatMap(source => source.instances))
+  if (rebuilt.length || [...changesByInstance.keys()].some(key => translatedInstances.has(key))) {
+    globalPaths.push('/translations', payloadUrlForPage('/translations', buildId))
+  }
   for (const path of globalPaths) {
     addPath('global', 'global', path)
   }
@@ -289,6 +295,11 @@ export default defineEventHandler(async (event) => {
 /** The localised URLs of an English page, when it has any. */
 function localisedTwins(path: string): string[] {
   return isLocalisedPage(path) ? L10N_LOCALE_CODES.map(locale => localisePath(locale, path)) : []
+}
+
+/** What client-side navigation fetches for the localised URLs of an English page. */
+function localisedPayloads(path: string): string[] {
+  return isLocalisedPage(path) ? L10N_LOCALE_CODES.map(locale => l10nPagePath(locale, path)) : []
 }
 
 /** The localised trees of a navigation endpoint (`/api/navigation/4.x`). */

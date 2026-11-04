@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { getVersionByPath } from '../../shared/utils/docs'
-import { indexedLocales, isLocalisedPage, l10nHead, localeLinks, localeRedirect, parseLocalePath } from '../../shared/utils/l10n'
+import { isLocalisedPage, l10nHead, localeLinks, localeRedirect, pageIndexable, parseLocalePath } from '../../shared/utils/l10n'
 
 /** A few of the site's redirect rules, keyed by English path. */
 const RULES: Record<string, string> = {
@@ -96,6 +96,11 @@ describe('localeRedirect', () => {
     expect(redirect('/de/docs')).toBe('/docs')
   })
 
+  it('should send a localised page reached through a non-canonical prefix to its URL', () => {
+    expect(redirect('/FR/docs/4.x/getting-started/introduction')).toBe('/fr/docs/4.x/getting-started/introduction')
+    expect(redirect('/fr//docs/4.x/getting-started/introduction?x=1')).toBe('/fr/docs/4.x/getting-started/introduction?x=1')
+  })
+
   it('should serve localised pages as they are', () => {
     expect(redirect('/fr/docs/4.x/getting-started/introduction')).toBeUndefined()
     expect(redirect('/fr/docs/3.x/api/composables/use-fetch?x=1')).toBeUndefined()
@@ -118,11 +123,11 @@ describe('localeLinks', () => {
   })
 })
 
-describe('indexedLocales', () => {
-  it('should only suggest locales with an indexable page', () => {
-    expect(indexedLocales({})).toEqual([])
-    expect(indexedLocales({ fr: [] })).toEqual([])
-    expect(indexedLocales({ fr: ['/docs/4.x/guide'] })).toEqual(['fr'])
+describe('pageIndexable', () => {
+  it('should keep only the indexable translations of one page', () => {
+    const indexable = { fr: ['/docs/4.x/guide', '/docs/4.x/api'] }
+    expect(pageIndexable(indexable, '/docs/4.x/api')).toEqual({ fr: ['/docs/4.x/api'] })
+    expect(pageIndexable(indexable, '/docs/4.x/other')).toEqual({})
   })
 })
 

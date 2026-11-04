@@ -145,7 +145,13 @@ export default defineNuxtConfig({
       apiKey: ''
     },
     github: {
-      token: ''
+      token: '',
+      // The `nuxt-translations` GitHub App, which commits translations to nuxt/translations
+      app: {
+        id: '',
+        privateKey: '',
+        installationId: ''
+      }
     },
     linear: {
       apiKey: '',
@@ -213,6 +219,8 @@ export default defineNuxtConfig({
     '/new': { redirect: '/templates' },
     '/showcase': { isr: CONTENT_ISR },
     '/team': { isr: CONTENT_ISR },
+    // Purged by the translations push webhook.
+    '/translations': { isr: CONTENT_ISR },
     '/design-kit': { isr: CONTENT_ISR },
     '/video-courses': { isr: CONTENT_ISR },
     '/newsletter': { isr: CONTENT_ISR },
@@ -238,7 +246,8 @@ export default defineNuxtConfig({
     // Main navigation
     '/api/navigation/**': { isr: CONTENT_ISR },
     '/api/l10n/*/navigation/**': { isr: CONTENT_ISR },
-    '/api/l10n/*/source/**': { isr: CONTENT_ISR },
+    // `sha` fetches a page past the cache once the editor sees a save served.
+    '/api/l10n/*/get/**': { isr: { expiration: CONTENT_ISR, allowQuery: ['sha'] } },
     '/api/l10n/indexable': { isr: CONTENT_ISR },
     '/api/content/blob/**': { isr: true },
     '/api/content/pull/*/*/blob/**': { isr: true },

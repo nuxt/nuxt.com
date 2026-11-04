@@ -36,7 +36,7 @@ const oauthHandler = defineOAuthGitHubEventHandler({
       await db.update(schema.chats).set({ userId: user!.id })
         .where(eq(schema.chats.userId, session.id))
 
-      const [updated] = await db.update(schema.users).set({ role, lastSeenAt: new Date() })
+      const [updated] = await db.update(schema.users).set({ role, username: ghUser.login, lastSeenAt: new Date() })
         .where(eq(schema.users.id, user.id))
         .returning()
       user = updated
