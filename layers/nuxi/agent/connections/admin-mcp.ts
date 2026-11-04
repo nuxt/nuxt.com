@@ -25,7 +25,7 @@ export const ADMIN_MCP_INSTRUCTIONS = `**Admin MCP connection (\`admin-mcp__*\`,
 - \`admin-mcp__list-agent-votes\` — message upvotes/downvotes on those same chats
 - \`admin-mcp__template-check-status\` — which templates pass or fail the daily check, at which step and why (\`includeLog\`)
 - \`admin-mcp__start-template-checks\` — re-check templates on Vercel Sandbox (\`slugs\` or \`failing\`). Each one costs a sandbox for up to 15 minutes: never check every template unless asked. It returns right away; follow it with \`template-check-status\`
-- An empty \`template-check-status\` result means there is no recorded check history for that query. It does not mean the template is missing or that starting a check is unavailable.
+- An empty \`templates\` list from \`template-check-status\` can mean no template matches the filters, such as \`only: 'failed'\` when every last check passed. Check the filters and the \`runs\` list before reporting missing history. An empty result does not mean the template is missing or that starting a check is unavailable.
 - When asked to build a template, discover and call \`start-template-checks\` with that template’s slug, even if its check history is empty. If the user has not identified a specific template, ask which one; “Nuxt UI template” can refer to several templates. Never turn an ambiguous request into a check of every template.
 - For runs, Slack / Discord / web, duration: **Vercel Agent Runs** via \`vercel-mcp__*\` (see below)
 - For tokens, cost, model usage: **AI Gateway** via \`ai_gateway__*\` (see below)
