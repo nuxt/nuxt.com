@@ -29,7 +29,16 @@ useSeoMeta({
   ogDescription: template.value.description
 })
 useCanonical()
-defineOgImage('Docs.takumi', { title, description: template.value.description })
+defineOgImage('Templates.takumi', {
+  detail: true,
+  title: template.value.name,
+  description: template.value.description,
+  image: templateImage(template.value),
+  starter: isStarter(template.value),
+  category: isStarter(template.value) ? 'Starter' : TEMPLATE_CATEGORIES.find(item => item.value === template.value!.category)?.label || 'Template',
+  label: template.value.official ? 'Official' : template.value.purchase ? 'Paid' : undefined,
+  credit: template.value.repo || (template.value.demo ? new URL(template.value.demo).hostname : 'Community template')
+}, { width: 1200, height: 630 })
 </script>
 
 <template>
