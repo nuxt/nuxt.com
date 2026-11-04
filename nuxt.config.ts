@@ -573,6 +573,16 @@ export default defineNuxtConfig({
   },
   compatibilityDate: '2026-01-14',
   nitro: {
+    // Tag only the health response so a completed check can expire it in every Vercel region.
+    storage: process.env.VERCEL
+      ? {
+          'cache:nitro:handlers:template-health': {
+            driver: 'vercel-runtime-cache',
+            base: 'nitro:handlers:template-health',
+            tags: ['template-health']
+          }
+        }
+      : undefined,
     experimental: {
       // `pnpm nuxters:sync` (server/tasks/nuxters/sync.ts)
       tasks: true

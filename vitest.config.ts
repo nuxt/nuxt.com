@@ -16,6 +16,7 @@ export default defineConfig({
         },
         test: {
           name: 'unit',
+          server: { deps: { inline: ['nitropack'] } },
           exclude: [
             ...defaultExclude,
             '.data/**',

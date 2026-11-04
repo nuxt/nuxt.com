@@ -1,4 +1,5 @@
 import { desc, inArray } from 'drizzle-orm'
+import { getCache } from '@vercel/functions'
 import type { BatchItem } from 'drizzle-orm/batch'
 import type { H3Event } from 'h3'
 import { start } from 'workflow/api'
@@ -31,8 +32,11 @@ export async function recordTemplateCheck(report: CheckReport) {
 /** `/api/templates/health` caches for 10 minutes: a new result shows right away instead. Otherwise it shows once the cache expires. */
 async function clearHealthCache() {
   const storage = useStorage('cache')
-  const keys = await storage.getKeys('nitro:handlers:template-health')
-  await Promise.all(keys.map(key => storage.removeItem(key)))
+  await Promise.all([
+    storage.removeItem('nitro:handlers:template-health:all.json'),
+    storage.removeItem('nitro:handlers:template-health:all:HEAD.json'),
+    ...(!import.meta.dev && process.env.VERCEL ? [getCache().expireTag('template-health')] : [])
+  ])
 }
 
 /** Called by the run itself: its Chromium sandbox once created, then its end. Templates it didn't get to are no longer queued. */
