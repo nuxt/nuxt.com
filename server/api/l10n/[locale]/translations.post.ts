@@ -33,9 +33,10 @@ export default defineEventHandler(async (event): Promise<L10nSaveResult> => {
 
   await consumeL10nSave(db, user.id, changes.length)
 
-  const [role, file] = await Promise.all([
+  const [role, file, bundle] = await Promise.all([
     l10nRole(user, locale),
-    getInstanceAtHead(instanceFromPagePath(page)).then(content => content.get(page))
+    getInstanceAtHead(instanceFromPagePath(page)).then(content => content.get(page)),
+    getL10nBundle(locale)
   ])
   if (!file) {
     throw createError({ statusCode: 404, statusMessage: 'Page not found' })
@@ -43,7 +44,7 @@ export default defineEventHandler(async (event): Promise<L10nSaveResult> => {
   if (role === 'suggester') await consumeL10nSuggestion(db, user.id, changes.length)
 
   const { git, dryRun } = translationsGit()
-  const input = { locale, page, changes: changes.map(change => ({ ...change, base: change.base ?? null })), segments: await pageSegments(file), translator: { login: user.username, id: user.providerId } }
+  const input = { locale, page, changes: changes.map(change => ({ ...change, base: change.base ?? null })), segments: await pageSegments(file, bundle.policy), translator: { login: user.username, id: user.providerId } }
 
   try {
     const result = role === 'translator'

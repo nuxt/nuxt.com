@@ -1,7 +1,7 @@
 import { readFile } from 'node:fs/promises'
 import { join } from 'node:path'
-import type { Glossary, LocaleState } from '@diglot/core'
-import { loadLocale, readManifests, type Manifest } from '@diglot/store'
+import { defaultPolicy, policyFingerprint, restorePolicy, type Glossary, type LocaleState, type Policy, type PolicySnapshot } from '@diglot/core'
+import { loadLocale, readManifests, readPolicy, type Manifest } from '@diglot/store'
 import { archiveGlossary, archiveLocaleState, readArchive, type ArchiveInput } from '@diglot/store/runtime'
 import { L10N_LOCALE_CODES, type L10nLocale } from '../../../shared/utils/l10n'
 
@@ -16,10 +16,24 @@ export interface TranslationsTree {
   glossary: (locale: L10nLocale) => Glossary
   /** A locale's `<locale>/locale.yml`: its machine translation switch and review metrics. */
   localeState: (locale: L10nLocale) => LocaleState
+  /** The extraction policy of `.diglot/policy.json`, diglot's default without one: what segments are hashed under. */
+  policy: Policy
 }
 
 const SHARED_GLOSSARY = 'glossary.yml'
 const NO_RECORDS: ReadonlyMap<string, unknown> = new Map()
+
+/**
+ * The policy restored from `snapshot`, or diglot's default without one. Manifests extracted under
+ * another policy are reported: their hashes may not match the segments the site extracts.
+ */
+function treePolicy(snapshot: PolicySnapshot | undefined, manifests: Map<string, Manifest>, sha: string): Policy {
+  const policy = snapshot ? restorePolicy(snapshot) : defaultPolicy
+  const fingerprint = policyFingerprint(policy)
+  const stale = [...manifests].filter(([, manifest]) => manifest.policy && manifest.policy !== fingerprint).map(([name]) => name)
+  if (stale.length) console.error(`[l10n] ${stale.join(', ')} at ${sha} were extracted under another policy than ${snapshot ? '.diglot/policy.json' : 'the default'} (${fingerprint})`)
+  return policy
+}
 
 /** A locale's state, read from `files`; empty when missing or unreadable. */
 function localeStates(files: Map<string, string>): TranslationsTree['localeState'] {
@@ -58,19 +72,28 @@ function glossaries(files: Map<string, string>): TranslationsTree['glossary'] {
  * arrives. Records and manifests that cannot be read are skipped.
  */
 export async function parseTranslationsTarball(data: ArchiveInput, sha: string): Promise<TranslationsTree> {
-  const { records, manifests, files, invalid } = await readArchive(data, { locales: L10N_LOCALE_CODES })
+  const { records, manifests, files, invalid, policy } = await readArchive(data, { locales: L10N_LOCALE_CODES })
   if (invalid.length) console.error(`[l10n] skipping ${invalid.length} unreadable files at ${sha}: ${invalid.slice(0, 5).join(', ')}`)
 
-  return { sha, manifests, records: locale => records.get(locale) ?? NO_RECORDS, glossary: glossaries(files), localeState: localeStates(files) }
+  return {
+    sha,
+    manifests,
+    records: locale => records.get(locale) ?? NO_RECORDS,
+    glossary: glossaries(files),
+    localeState: localeStates(files),
+    policy: treePolicy(policy, manifests, sha)
+  }
 }
 
 /** Read a local checkout of the translations repository through `@diglot/store`. */
 export async function readTranslationsCheckout(root: string, sha: string, locales: L10nLocale[]): Promise<TranslationsTree> {
-  const [manifests, ...records] = await Promise.all([
+  const [manifests, policy, ...records] = await Promise.all([
     readManifests(join(root, '.diglot')),
+    readPolicy(join(root, '.diglot')),
     ...locales.map(locale => loadLocale(root, locale))
   ])
   const byLocale = new Map(locales.map((locale, index) => [locale, records[index]!]))
+  const byName = new Map(manifests.map(manifest => [manifest.source, manifest]))
 
   const files = new Map<string, string>()
   await Promise.all([SHARED_GLOSSARY, ...locales.flatMap(locale => [`${locale}/glossary.yml`, `${locale}/locale.yml`])].map(async (path) => {
@@ -80,9 +103,10 @@ export async function readTranslationsCheckout(root: string, sha: string, locale
 
   return {
     sha,
-    manifests: new Map(manifests.map(manifest => [manifest.source, manifest])),
+    manifests: byName,
     records: locale => byLocale.get(locale) ?? NO_RECORDS,
     glossary: glossaries(files),
-    localeState: localeStates(files)
+    localeState: localeStates(files),
+    policy: treePolicy(policy, byName, sha)
   }
 }

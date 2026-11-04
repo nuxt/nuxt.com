@@ -15,7 +15,7 @@ function newSentences(before: string, after: string): string[] {
  */
 export async function editorSegments(file: Pick<ContentFile, 'data' | 'nodes'>, bundle: L10nBundle, glossary: Glossary): Promise<L10nEditorSegment[]> {
   const segments: L10nEditorSegment[] = []
-  for (const segment of (await pageSegments(file)).values()) {
+  for (const segment of (await pageSegments(file, bundle.policy)).values()) {
     if (!segment.words) continue
 
     const record = bundle.record(segment.hash)

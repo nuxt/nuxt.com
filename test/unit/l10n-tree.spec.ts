@@ -2,12 +2,12 @@ import { mkdtemp, rm } from 'node:fs/promises'
 import { readFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
-import { recordPath, writeManifest, writeRecord, type Manifest } from '@diglot/store'
-import type { TranslationRecord } from '@diglot/core'
+import { recordPath, writeManifest, writePolicy, writeRecord, type Manifest } from '@diglot/store'
+import { defaultPolicy, policyFingerprint, snapshotPolicy, type TranslationRecord } from '@diglot/core'
 import { gzipSync } from 'node:zlib'
 import { createTar } from 'nanotar'
 import { createStorage } from 'unstorage'
-import { afterAll, beforeAll, describe, expect, it } from 'vitest'
+import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest'
 import { createBundle } from '../../server/utils/l10n/bundle'
 import { sourceCoverage } from '../../server/utils/l10n/coverage'
 import { buildL10nSnapshot, readL10nSnapshot, writeL10nSnapshot } from '../../server/utils/l10n/snapshot'
@@ -18,6 +18,7 @@ const records = (fixture('fr.json') as { records: Record<string, TranslationReco
 const manifest = { ...fixture('manifest.json'), source: 'nuxt-4.x' } as Manifest
 const SHA = 'c'.repeat(40)
 const [first, second] = Object.keys(records) as [string, string]
+const POLICY = { ...defaultPolicy, props: { ...defaultPolicy.props, 'read-more': ['to'] } }
 
 /** A GitHub tarball of a translations repository holding the fixture records and manifest. */
 function tarball(extra: Array<{ name: string, data: string }> = []) {
@@ -75,6 +76,21 @@ describe('parseTranslationsTarball', () => {
     expect((await parseTranslationsTarball(await tarball(), SHA)).localeState('fr')).toEqual({})
   })
 
+  it('should restore the policy the manifests were extracted under', async () => {
+    expect((await parseTranslationsTarball(await tarball(), SHA)).policy).toBe(defaultPolicy)
+
+    const tree = await parseTranslationsTarball(await tarball([{ name: '.diglot/policy.json', data: JSON.stringify(snapshotPolicy(POLICY)) }]), SHA)
+    expect(tree.policy.props['read-more']).toEqual(['to'])
+    expect(policyFingerprint(tree.policy)).toBe(policyFingerprint(POLICY))
+  })
+
+  it('should report manifests extracted under another policy', async () => {
+    const error = vi.spyOn(console, 'error').mockImplementation(() => {})
+    await parseTranslationsTarball(await tarball([{ name: '.diglot/manifest/nuxt-main.json', data: JSON.stringify({ ...manifest, source: 'nuxt-main', policy: policyFingerprint(POLICY) }) }]), SHA)
+    expect(error).toHaveBeenCalledWith(expect.stringContaining('nuxt-main at'))
+    error.mockRestore()
+  })
+
   it('should read the records of a tarball as it arrives', async () => {
     const data = await tarball()
     const stream = new ReadableStream<Uint8Array>({
@@ -104,6 +120,12 @@ describe('readTranslationsCheckout', () => {
     const tree = await readTranslationsCheckout(root, 'main', ['fr'])
     expect([...tree.records('fr').keys()].sort()).toEqual([first, second].sort())
     expect(tree.manifests.get('nuxt-4.x')?.files).toEqual(manifest.files)
+    expect(tree.policy).toBe(defaultPolicy)
+  })
+
+  it('should restore the policy of a local clone', async () => {
+    await writePolicy(join(root, '.diglot'), POLICY)
+    expect((await readTranslationsCheckout(root, 'main', ['fr'])).policy.props['read-more']).toEqual(['to'])
   })
 })
 
@@ -131,6 +153,14 @@ describe('l10n snapshot', () => {
     expect(stored?.bundle.record(second)).toEqual(records[second])
     expect(stored?.coverage).toEqual(buildL10nSnapshot(tree, 'fr').coverage)
     expect(stored?.glossary).toEqual({ terms: [{ term: 'Nuxt', decision: 'keep' }] })
+  })
+
+  it('should keep the policy of a snapshot', async () => {
+    const tree = await parseTranslationsTarball(await tarball([{ name: '.diglot/policy.json', data: JSON.stringify(snapshotPolicy(POLICY)) }]), SHA)
+    const storage = createStorage()
+    await writeL10nSnapshot(storage, buildL10nSnapshot(tree, 'fr'), tree.records('fr'))
+    const stored = await readL10nSnapshot(storage, SHA, 'fr')
+    expect(policyFingerprint(stored!.bundle.policy)).toBe(policyFingerprint(POLICY))
   })
 
   it('should keep whether a snapshot has reviewed records without reading them back', async () => {
