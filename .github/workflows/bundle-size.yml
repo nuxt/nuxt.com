@@ -40,6 +40,9 @@ jobs:
         run: pnpm nuxt prepare
       - name: Link the base Nuxt metadata
         run: ln -s .bundle-base/.nuxt .nuxt
+      # Outside the app, so neither revision needs it in its lockfile.
+      - name: Install nuxt-bundle-analyzer
+        run: npm install --prefix "$RUNNER_TEMP/nuxt-bundle-analyzer" --no-save --ignore-scripts --no-audit --no-fund nuxt-bundle-analyzer@0.1.3
       - name: Analyze the base bundle
         working-directory: .bundle-base
         run: >-
@@ -52,6 +55,8 @@ jobs:
         env:
           NODE_OPTIONS: --max-old-space-size=8192
           NUXT_TELEMETRY_DISABLED: 1
+          NUXT_BUNDLE_ANALYZER_MODULE: ${{ runner.temp }}/nuxt-bundle-analyzer/node_modules/nuxt-bundle-analyzer/dist/module.mjs
+          NUXT_BUNDLE_ANALYZER_NAME: base
       - name: Snapshot the base bundle
         run: >-
           node scripts/bundle-size/report.mjs snapshot
@@ -67,6 +72,13 @@ jobs:
           path: ${{ runner.temp }}/bundle-size/base.json
           if-no-files-found: error
           retention-days: 1
+      - name: Upload base bundle analysis
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: bundle-analyzer-base
+          path: .bundle-base/node_modules/.cache/nuxt-bundle-analyzer/base
+          if-no-files-found: error
+          retention-days: 7
 
   analyze-pr:
     name: analyze (PR)
@@ -83,6 +95,8 @@ jobs:
           cache-dependency-path: pnpm-lock.yaml
       - name: Prepare the PR revision
         run: pnpm nuxt prepare
+      - name: Install nuxt-bundle-analyzer
+        run: npm install --prefix "$RUNNER_TEMP/nuxt-bundle-analyzer" --no-save --ignore-scripts --no-audit --no-fund nuxt-bundle-analyzer@0.1.3
       - name: Analyze the PR bundle
         run: >-
           pnpm --package=@nuxt/cli-nightly@3.38.0-20260726-220626-c3c9e90
@@ -94,6 +108,8 @@ jobs:
         env:
           NODE_OPTIONS: --max-old-space-size=8192
           NUXT_TELEMETRY_DISABLED: 1
+          NUXT_BUNDLE_ANALYZER_MODULE: ${{ runner.temp }}/nuxt-bundle-analyzer/node_modules/nuxt-bundle-analyzer/dist/module.mjs
+          NUXT_BUNDLE_ANALYZER_NAME: pr
       - name: Snapshot the PR bundle
         run: >-
           node scripts/bundle-size/report.mjs snapshot
@@ -109,6 +125,13 @@ jobs:
           path: ${{ runner.temp }}/bundle-size/pr.json
           if-no-files-found: error
           retention-days: 1
+      - name: Upload PR bundle analysis
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: bundle-analyzer-pr
+          path: node_modules/.cache/nuxt-bundle-analyzer/pr
+          if-no-files-found: error
+          retention-days: 7
 
   report:
     name: analyze

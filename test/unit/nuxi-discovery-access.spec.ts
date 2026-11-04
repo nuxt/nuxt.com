@@ -24,9 +24,10 @@ describe('Nuxi discovery and SEO access', () => {
     expect(internalFetch).not.toHaveBeenCalled()
   })
 
-  it('exposes the read-only Google tools but refuses public calls before returning a token', async () => {
+  it('preserves Google and template tools but refuses public calls before returning a token', async () => {
     expect(connection.tools.allow).toEqual(expect.arrayContaining([
-      'search-console-analytics', 'search-console-inspect-url', 'search-console-sitemaps', 'crux-web-vitals'
+      'search-console-analytics', 'search-console-inspect-url', 'search-console-sitemaps', 'crux-web-vitals',
+      'start-template-checks', 'template-check-status'
     ]))
     const denied = await connection.auth(context(publicAuth))
     await expect(denied.getToken()).rejects.toThrow('not available')

@@ -73,16 +73,16 @@ export async function sendToSlack({
 }) {
   const resolved = await resolveSlackChannelRef(channelRef ?? await digestSlackChannelRef())
 
-  const session = await to(slack, { channelId: resolved.id }).send(message, { auth: appAuth })
+  const delivery = await to(slack, { channelId: resolved.id }).send(message, { auth: appAuth })
 
   const discordChannelId = await discordDigestChannelId()
   if (discordChannelId) {
     // Dynamic import: keep Slack digest schedules loadable without Discord env.
     const { mirrorDigestToDiscord } = await import('../discord/digest-mirror.js')
-    await mirrorDigestToDiscord({ session, channelId: discordChannelId })
+    await mirrorDigestToDiscord({ delivery, channelId: discordChannelId })
   }
 
-  return session
+  return delivery
 }
 
 /** Force-enable manual ops triggers on production via `workflow.manualTrigger` in Global Config; always allowed on preview. */

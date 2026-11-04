@@ -1,13 +1,55 @@
-import type { UIMessage } from 'ai'
-import type { EveMessage } from 'eve/vue'
+import type { DynamicToolUIPart, UIMessage } from 'ai'
+import type { EveMessage, EveMessagePart, EveToolPart } from 'eve/vue'
 import { expandAttachmentParts } from '../../../shared/utils/paste-attachment'
 import type { AgentChatStatus } from './types'
 
-export function eveMessagesToUIMessages(messages: readonly EveMessage[]): UIMessage[] {
-  return (messages as readonly UIMessage[]).map((message) => {
-    if (message.role !== 'user') return message
-    const parts = expandAttachmentParts(message.parts)
-    return parts === message.parts ? message : { ...message, parts }
+function toolPartToUIPart(part: EveToolPart): DynamicToolUIPart {
+  const base = { type: 'dynamic-tool' as const, toolCallId: part.callId, toolName: part.name }
+
+  switch (part.state) {
+    case 'streaming':
+      return { ...base, state: 'input-streaming', input: undefined }
+    case 'completed':
+      return { ...base, state: 'output-available', input: part.input, output: part.output }
+    case 'failed':
+    case 'cancelled':
+      return { ...base, state: 'output-error', input: part.input, errorText: part.error?.message ?? `Tool call ${part.state}` }
+    case 'rejected':
+      return { ...base, state: 'output-denied', input: part.input, approval: { id: part.interaction?.interactionId ?? part.callId, approved: false } }
+    default:
+      // Generator tools stream preliminary output while the call is still running.
+      return part.output !== undefined
+        ? { ...base, state: 'output-available', input: part.input, output: part.output, preliminary: true }
+        : { ...base, state: 'input-available', input: part.input }
+  }
+}
+
+/** Interaction parts (sign-ins, budget prompts) have no UI here and are dropped. */
+function eveToUIParts(parts: readonly EveMessagePart[]): UIMessage['parts'] {
+  return parts.flatMap((part): UIMessage['parts'] => {
+    if (part.type === 'tool') return [toolPartToUIPart(part)]
+    if (part.type === 'interaction') return []
+    return [part as UIMessage['parts'][number]]
+  })
+}
+
+/**
+ * Eve derives assistant ids from turn ids (`turn_N:assistant`), which restart
+ * for every session. They are persisted as DB rows, so prefix them with the
+ * session id to keep them unique across the sessions of a chat.
+ */
+export function eveMessagesToUIMessages(messages: readonly EveMessage[], sessionId?: string): UIMessage[] {
+  return messages.map((message) => {
+    const parts = eveToUIParts(message.parts)
+    if (message.role === 'user') {
+      return { id: message.id, role: message.role, metadata: message.metadata, parts: expandAttachmentParts(parts) }
+    }
+    return {
+      id: sessionId ? `${sessionId}:${message.id}` : message.id,
+      role: message.role,
+      metadata: message.metadata,
+      parts
+    }
   })
 }
 

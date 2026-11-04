@@ -44,7 +44,6 @@ export default defineNuxtConfig({
     'motion-v/nuxt',
     'nuxt-llms',
     '@nuxthub/core',
-    'nuxt-charts',
     'nuxt-auth-utils',
     'nuxt-schema-org',
     '@nuxtjs/mcp-toolkit',
@@ -205,7 +204,10 @@ export default defineNuxtConfig({
     '/deploy/**': { isr: CONTENT_ISR },
     '/raw/**': { isr: CONTENT_ISR, robots: 'noindex' },
     '/enterprise/**': { isr: CONTENT_ISR },
-    '/templates': { isr: CONTENT_ISR },
+    // Filtered from the query, like `/modules`.
+    '/templates': { isr: { expiration: CONTENT_ISR, allowQuery: ['category', 'status', 'sort', 'q'], passQuery: true } },
+    // nuxt.new redirects here (`nuxt.new/s/ui` → `/new/s/ui`).
+    '/new': { redirect: '/templates' },
     '/showcase': { isr: CONTENT_ISR },
     '/team': { isr: CONTENT_ISR },
     '/design-kit': { isr: CONTENT_ISR },
@@ -536,7 +538,9 @@ export default defineNuxtConfig({
     '/modules/router': { redirect: { to: '/docs/guide/recipes/custom-routing', statusCode: 301 }, prerender: false },
     '/modules/separate-env': { redirect: { to: '/docs/guide/going-further/runtime-config', statusCode: 301 }, prerender: false },
     '/modules/svg': { redirect: { to: '/modules/nuxt-svgo', statusCode: 301 }, prerender: false },
-    '/modules/vuetify': { redirect: { to: '/modules/vuetify-nuxt-module', statusCode: 301 }, prerender: false }
+    '/modules/vuetify': { redirect: { to: '/modules/vuetify-nuxt-module', statusCode: 301 }, prerender: false },
+    // Deprecated modules removed from nuxt/modules
+    '/modules/google-fonts': { redirect: { to: '/modules/fonts/migrating-from-google-fonts', statusCode: 301 }, prerender: false }
   },
   sourcemap: true,
   experimental: {
@@ -566,7 +570,9 @@ export default defineNuxtConfig({
     vercel: {
       config: {
         // Required for `x-prerender-revalidate` to purge an ISR route.
-        bypassToken: process.env.VERCEL_BYPASS_TOKEN
+        bypassToken: process.env.VERCEL_BYPASS_TOKEN,
+        // Checks every template daily (server/workflows/check-templates.ts). Vercel sends `CRON_SECRET` as a bearer token.
+        crons: [{ path: '/api/cron/templates-check', schedule: '0 4 * * *' }]
       }
     }
   },
@@ -593,7 +599,7 @@ export default defineNuxtConfig({
         'ai'
       ],
       // Pre-bundling `@sqlite.org/sqlite-wasm` breaks the wasm asset it resolves against its own module URL.
-      exclude: ['vue-chrts', 'shaders', '@sqlite.org/sqlite-wasm']
+      exclude: ['shaders', '@sqlite.org/sqlite-wasm']
     }
   },
   typescript: {

@@ -4,3 +4,16 @@ description: "Full-featured AI Chatbot with authentication & chat history."
 repo: 'nuxt-ui-templates/chat'
 demo: 'https://chat-template.nuxt.dev'
 featured: true
+category: 'ai'
+official: true
+deploy:
+  env:
+    - 'NUXT_OAUTH_GITHUB_CLIENT_ID'
+    - 'NUXT_OAUTH_GITHUB_CLIENT_SECRET'
+    - 'NUXT_SESSION_PASSWORD'
+  stores:
+    - type: 'integration'
+      integrationSlug: 'tursocloud'
+      productSlug: 'database'
+      protocol: 'storage'
+    - type: 'blob'
