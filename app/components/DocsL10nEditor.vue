@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { validate } from '@diglot/core'
+import { maxTranslationLength, validate } from '@diglot/core'
 import type { ButtonProps } from '@nuxt/ui'
 import { L10N_STRINGS, l10nEditorPath, l10nTranslationsPath, localisePath, type L10nChange, type L10nChangeIssue, type L10nEditorPage, type L10nLocale, type L10nSaveResult } from '#shared/utils/l10n'
 
@@ -76,7 +76,7 @@ const draft = computed({
   }
 })
 
-const validation = computed(() => segment.value && draft.value.trim() ? validate(draft.value.trim(), segment.value) : undefined)
+const validation = computed(() => segment.value && draft.value.trim() ? validate(draft.value.trim(), segment.value, { maxLength: maxTranslationLength(segment.value.skeleton) }) : undefined)
 const changed = computed(() => !!segment.value && draft.value.trim() !== (segment.value.record?.text ?? ''))
 const rejected = computed(() => segment.value?.record?.review === 'rejected')
 const staged = computed(() => segment.value && changes.value.get(segment.value.hash))

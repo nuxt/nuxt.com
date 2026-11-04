@@ -4,6 +4,7 @@ import type { ElementNode, Node } from 'comark'
 import { textContent } from 'comark/utils'
 import fs from 'comark-content/sources/fs'
 import type { ContentFile } from 'comark-content'
+import { defaultPolicy } from '@diglot/core'
 import { beforeAll, describe, expect, it } from 'vitest'
 import { createBundle, emptyBundle } from '../../server/utils/l10n/bundle'
 import { localise, localiseLabel, localiseNavigation, segmentSource } from '../../server/utils/l10n/localise'
@@ -75,6 +76,15 @@ describe('localise', () => {
     const toc = (localised.meta as { toc: { links: Array<{ id: string, text: string }> } }).toc.links
     expect(toc.find(link => link.id === 'automation-and-conventions')?.text).toBe('Automatisation et conventions')
     expect((page.meta as { toc: { links: Array<{ id: string, text: string }> } }).toc.links.find(link => link.id === 'automation-and-conventions')?.text).toBe('Automation and Conventions')
+  })
+
+  it('should extract under the policy of the bundle', async () => {
+    const page = pages.get(INTRODUCTION)!
+    const records = new Map(Object.entries(raw.records))
+    const localised = await localise(page, createBundle(records, 'fr', 'a'.repeat(40), { policy: { ...defaultPolicy, frontmatter: [] } }))
+
+    expect(localised.data.description).toBe(page.data.description)
+    expect(marked(localised.nodes).get(FIRST_PARAGRAPH)?.[1]).toMatchObject({ 'data-l10n': 'machine' })
   })
 
   it('should fall back to the English segment when a translation fails validation', async () => {

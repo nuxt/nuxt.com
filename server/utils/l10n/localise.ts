@@ -40,6 +40,7 @@ export async function localise<T extends Pick<ContentFile, 'path' | 'data' | 'no
     { frontmatter: (file.data ?? {}) as Record<string, unknown>, nodes: (file.nodes ?? []) as Node[] },
     segment => visibleRecord(bundle, segment.hash),
     {
+      policy: bundle.policy,
       spanSources: false,
       onSegment(event) {
         events.push(event)
@@ -68,7 +69,7 @@ export async function localise<T extends Pick<ContentFile, 'path' | 'data' | 'no
 
 /** The English source and provenance of the segment `hash` of `file`, `undefined` when the page has no such segment. */
 export async function segmentSource(file: Pick<ContentFile, 'data' | 'nodes'>, bundle: L10nBundle, hash: string): Promise<L10nSegmentSource | undefined> {
-  const { segments } = await extract({ frontmatter: (file.data ?? {}) as Record<string, unknown>, nodes: (file.nodes ?? []) as Node[] })
+  const { segments } = await extract({ frontmatter: (file.data ?? {}) as Record<string, unknown>, nodes: (file.nodes ?? []) as Node[] }, { policy: bundle.policy })
   const segment = segments.find(item => item.hash === hash)
   if (!segment) return
 
@@ -88,7 +89,7 @@ export async function segmentSource(file: Pick<ContentFile, 'data' | 'nodes'>, b
  * itself without a valid translation. `%s` is kept as a placeholder.
  */
 export function localiseLabel(label: string, bundle: L10nBundle, detail?: 'title' | 'titleTemplate'): string {
-  return translateLabel(label, segment => visibleRecord(bundle, segment.hash), { detail })
+  return translateLabel(label, segment => visibleRecord(bundle, segment.hash), { detail, policy: bundle.policy })
 }
 
 /** A navigation tree with the titles and title templates of localised pages and their directories translated. */

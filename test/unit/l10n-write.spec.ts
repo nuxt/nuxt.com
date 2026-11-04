@@ -1,7 +1,7 @@
 import { readFileSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import type { Segment, TranslationRecord } from '@diglot/core'
-import { parseRecord, recordStatus } from '@diglot/core'
+import { defaultPolicy, parseRecord, recordStatus } from '@diglot/core'
 import { recordPath, serialiseRecord } from '@diglot/store'
 import fs from 'comark-content/sources/fs'
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest'
@@ -32,7 +32,7 @@ let segments: Map<string, Segment>
 beforeAll(async () => {
   const content = createBuildInstance('docs:4.x', { source: fs(`${FIXTURES}docs`, { prefix: '/docs/4.x' }) })
   await content.init({ partial: false })
-  segments = await pageSegments((await content.get(PAGE))!)
+  segments = await pageSegments((await content.get(PAGE))!, defaultPolicy)
 })
 
 const current = (...hashes: string[]) => new Map(hashes.map(hash => [hash, records[hash]]))

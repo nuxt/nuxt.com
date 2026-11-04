@@ -1,4 +1,4 @@
-import { editRecord, rejectRecord, verifyRecord, type ReviewTransition, type Segment, type TranslationRecord, type ValidationIssue } from '@diglot/core'
+import { editRecord, rejectRecord, verifyRecord, type Policy, type ReviewTransition, type Segment, type TranslationRecord, type ValidationIssue } from '@diglot/core'
 import { extract } from '@diglot/comark'
 import { parseRecordFile, recordPath, serialiseRecord } from '@diglot/store'
 import type { Node } from 'comark'
@@ -34,9 +34,9 @@ export interface PlanInput {
   now?: Date
 }
 
-/** The segments of an English page, by hash: what a save on that page may change. */
-export async function pageSegments(file: Pick<ContentFile, 'data' | 'nodes'>): Promise<Map<string, Segment>> {
-  const { segments } = await extract({ frontmatter: (file.data ?? {}) as Record<string, unknown>, nodes: (file.nodes ?? []) as Node[] })
+/** The segments of an English page under `policy`, by hash: what a save on that page may change. */
+export async function pageSegments(file: Pick<ContentFile, 'data' | 'nodes'>, policy: Policy): Promise<Map<string, Segment>> {
+  const { segments } = await extract({ frontmatter: (file.data ?? {}) as Record<string, unknown>, nodes: (file.nodes ?? []) as Node[] }, { policy })
   return new Map(segments.map(segment => [segment.hash, segment]))
 }
 

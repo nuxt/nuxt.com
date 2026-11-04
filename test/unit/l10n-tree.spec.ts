@@ -1,13 +1,12 @@
-import { mkdtemp, rm } from 'node:fs/promises'
+import { execFileSync } from 'node:child_process'
+import { mkdir, mkdtemp, rm, writeFile } from 'node:fs/promises'
 import { readFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
-import { join } from 'node:path'
-import { recordPath, writeManifest, writeRecord, type Manifest } from '@diglot/store'
-import type { TranslationRecord } from '@diglot/core'
-import { gzipSync } from 'node:zlib'
-import { createTar } from 'nanotar'
+import { dirname, join } from 'node:path'
+import { recordPath, writeManifest, writePolicy, writeRecord, type Manifest } from '@diglot/store'
+import { defaultPolicy, policyFingerprint, snapshotPolicy, type TranslationRecord } from '@diglot/core'
 import { createStorage } from 'unstorage'
-import { afterAll, beforeAll, describe, expect, it } from 'vitest'
+import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest'
 import { createBundle } from '../../server/utils/l10n/bundle'
 import { sourceCoverage } from '../../server/utils/l10n/coverage'
 import { buildL10nSnapshot, readL10nSnapshot, writeL10nSnapshot } from '../../server/utils/l10n/snapshot'
@@ -18,19 +17,28 @@ const records = (fixture('fr.json') as { records: Record<string, TranslationReco
 const manifest = { ...fixture('manifest.json'), source: 'nuxt-4.x' } as Manifest
 const SHA = 'c'.repeat(40)
 const [first, second] = Object.keys(records) as [string, string]
+const POLICY = { ...defaultPolicy, props: { ...defaultPolicy.props, 'read-more': ['to'] } }
 
-/** A GitHub tarball of a translations repository holding the fixture records and manifest. */
-function tarball(extra: Array<{ name: string, data: string }> = []) {
-  const root = `translations-${SHA.slice(0, 7)}`
-  const tar = createTar([
-    { name: `${root}/` },
-    { name: `${root}/README.md`, data: '# translations' },
-    { name: `${root}/.diglot/manifest/nuxt-4.x.json`, data: JSON.stringify(manifest) },
-    ...Object.values(records).map(record => ({ name: `${root}/${recordPath('fr', record.hash)}`, data: JSON.stringify(record) })),
-    ...extra.map(({ name, data }) => ({ name: `${root}/${name}`, data }))
-  ])
-  // nanotar leaves out the end-of-archive blocks when the entries fill its last record
-  return gzipSync(Buffer.concat([tar, new Uint8Array(1024)]))
+/** A GitHub tarball of a translations repository holding the fixture records and manifest: `git archive` of one commit. */
+async function tarball(extra: Array<{ name: string, data: string }> = []): Promise<Uint8Array> {
+  const root = await mkdtemp(join(tmpdir(), 'l10n-tarball-'))
+  const files = [
+    { name: 'README.md', data: '# translations' },
+    { name: '.diglot/manifest/nuxt-4.x.json', data: JSON.stringify(manifest) },
+    ...Object.values(records).map(record => ({ name: recordPath('fr', record.hash), data: JSON.stringify(record) })),
+    ...extra
+  ]
+  for (const { name, data } of files) {
+    await mkdir(dirname(join(root, name)), { recursive: true })
+    await writeFile(join(root, name), data)
+  }
+  const git = (...args: string[]) => execFileSync('git', ['-C', root, '-c', 'user.name=fixture', '-c', 'user.email=fixture@example.com', '-c', 'commit.gpgsign=false', ...args])
+  git('init', '--quiet')
+  git('add', '-A')
+  git('commit', '--quiet', '--no-verify', '-m', 'init')
+  const data = git('archive', '--format=tar.gz', `--prefix=translations-${SHA.slice(0, 7)}/`, 'HEAD')
+  await rm(root, { recursive: true, force: true })
+  return data
 }
 
 describe('parseTranslationsTarball', () => {
@@ -75,6 +83,21 @@ describe('parseTranslationsTarball', () => {
     expect((await parseTranslationsTarball(await tarball(), SHA)).localeState('fr')).toEqual({})
   })
 
+  it('should restore the policy the manifests were extracted under', async () => {
+    expect((await parseTranslationsTarball(await tarball(), SHA)).policy).toBe(defaultPolicy)
+
+    const tree = await parseTranslationsTarball(await tarball([{ name: '.diglot/policy.json', data: JSON.stringify(snapshotPolicy(POLICY)) }]), SHA)
+    expect(tree.policy.props['read-more']).toEqual(['to'])
+    expect(policyFingerprint(tree.policy)).toBe(policyFingerprint(POLICY))
+  })
+
+  it('should report manifests extracted under another policy', async () => {
+    const error = vi.spyOn(console, 'error').mockImplementation(() => {})
+    await parseTranslationsTarball(await tarball([{ name: '.diglot/manifest/nuxt-main.json', data: JSON.stringify({ ...manifest, source: 'nuxt-main', policy: policyFingerprint(POLICY) }) }]), SHA)
+    expect(error).toHaveBeenCalledWith(expect.stringContaining('nuxt-main at'))
+    error.mockRestore()
+  })
+
   it('should read the records of a tarball as it arrives', async () => {
     const data = await tarball()
     const stream = new ReadableStream<Uint8Array>({
@@ -104,6 +127,12 @@ describe('readTranslationsCheckout', () => {
     const tree = await readTranslationsCheckout(root, 'main', ['fr'])
     expect([...tree.records('fr').keys()].sort()).toEqual([first, second].sort())
     expect(tree.manifests.get('nuxt-4.x')?.files).toEqual(manifest.files)
+    expect(tree.policy).toBe(defaultPolicy)
+  })
+
+  it('should restore the policy of a local clone', async () => {
+    await writePolicy(join(root, '.diglot'), POLICY)
+    expect((await readTranslationsCheckout(root, 'main', ['fr'])).policy.props['read-more']).toEqual(['to'])
   })
 })
 
@@ -119,11 +148,15 @@ describe('l10n snapshot', () => {
     expect(snapshot.bundle.record(first)?.text).toBe(records[first]!.text)
   })
 
-  it('should store a snapshot in shards and read it back', async () => {
+  it.each([
+    ['in one item', undefined, false],
+    ['in shards', 4000, true]
+  ])('should store a snapshot %s and read it back', async (_, itemSize, sharded) => {
     const tree = await parseTranslationsTarball(await tarball([{ name: 'glossary.yml', data: '- term: Nuxt\n  doNotTranslate: true\n' }]), SHA)
     const storage = createStorage()
-    await writeL10nSnapshot(storage, buildL10nSnapshot(tree, 'fr'), tree.records('fr'), { shardLength: 4000 })
-    expect((await storage.getKeys()).length).toBeGreaterThan(2)
+    await writeL10nSnapshot(storage, buildL10nSnapshot(tree, 'fr'), tree.records('fr'), { itemSize })
+    const keys = (await storage.getKeys()).length
+    expect(sharded ? keys > 2 : keys === 1).toBe(true)
 
     const stored = await readL10nSnapshot(storage, SHA, 'fr')
     expect(stored?.bundle.sha).toBe(SHA)
@@ -131,6 +164,14 @@ describe('l10n snapshot', () => {
     expect(stored?.bundle.record(second)).toEqual(records[second])
     expect(stored?.coverage).toEqual(buildL10nSnapshot(tree, 'fr').coverage)
     expect(stored?.glossary).toEqual({ terms: [{ term: 'Nuxt', decision: 'keep' }] })
+  })
+
+  it('should keep the policy of a snapshot', async () => {
+    const tree = await parseTranslationsTarball(await tarball([{ name: '.diglot/policy.json', data: JSON.stringify(snapshotPolicy(POLICY)) }]), SHA)
+    const storage = createStorage()
+    await writeL10nSnapshot(storage, buildL10nSnapshot(tree, 'fr'), tree.records('fr'))
+    const stored = await readL10nSnapshot(storage, SHA, 'fr')
+    expect(policyFingerprint(stored!.bundle.policy)).toBe(policyFingerprint(POLICY))
   })
 
   it('should keep whether a snapshot has reviewed records without reading them back', async () => {
@@ -146,7 +187,7 @@ describe('l10n snapshot', () => {
     const storage = createStorage()
     expect(await readL10nSnapshot(storage, SHA, 'fr')).toBeUndefined()
 
-    await writeL10nSnapshot(storage, buildL10nSnapshot(tree, 'fr'), tree.records('fr'), { shardLength: 4000 })
+    await writeL10nSnapshot(storage, buildL10nSnapshot(tree, 'fr'), tree.records('fr'), { itemSize: 4000 })
     await storage.removeItem((await storage.getKeys()).find(key => key.endsWith(':1'))!)
     expect(await readL10nSnapshot(storage, SHA, 'fr')).toBeUndefined()
   })
