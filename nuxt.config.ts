@@ -182,7 +182,9 @@ export default defineNuxtConfig({
           moduleAuthor: '',
           // One key per hackathon id in `NUXTERS_HACKATHONS`
           nuxtathon1: '',
-          nuxtathon2: ''
+          nuxtathon2: '',
+          // One key per locale in `L10N_LOCALES` (`nuxterTranslatorRole`)
+          translatorFr: ''
         }
       }
     }
