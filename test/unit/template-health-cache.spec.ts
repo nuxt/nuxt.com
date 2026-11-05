@@ -1,19 +1,19 @@
 import { and, eq } from 'drizzle-orm'
-import { createApp, toWebHandler } from 'h3'
+import { createApp, defineEventHandler, setResponseHeader, toWebHandler } from 'h3'
 import { createStorage, prefixStorage } from 'unstorage'
 import vercelRuntimeCache from 'unstorage/drivers/vercel-runtime-cache'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import * as schema from '../../server/db/schema'
 import { emptyCheckRow, type CheckRow } from '../../server/utils/templates/check-report'
 
-const context = vi.hoisted(() => ({ storage: null as unknown, expireTag: vi.fn() }))
+const context = vi.hoisted(() => ({ storage: null as unknown, expireTag: vi.fn(), fetchHealth: vi.fn() }))
 vi.mock('nitropack/runtime/internal/storage', () => ({ useStorage: () => context.storage }))
 vi.mock('nitropack/runtime/internal/app', () => ({ useNitroApp: () => ({ captureError: vi.fn() }) }))
 vi.mock('@vercel/functions', () => ({ getCache: () => ({ expireTag: context.expireTag }) }))
 vi.mock('workflow/api', () => ({ start: vi.fn() }))
 vi.mock('../../server/workflows/check-templates', () => ({ checkTemplatesWorkflow: vi.fn() }))
 
-const { defineCachedEventHandler } = await import('nitropack/runtime/internal/cache')
+const { defineCachedFunction } = await import('nitropack/runtime/internal/cache')
 const { recordTemplateCheck } = await import('../../server/utils/templates/checks')
 
 const REQUEST_CONTEXT = Symbol.for('@vercel/request-context')
@@ -32,12 +32,18 @@ function enterRegion(index: number) {
   } }) })
 }
 
-async function healthRequest(method = 'GET', query = '') {
-  vi.stubGlobal('defineCachedEventHandler', defineCachedEventHandler)
-  vi.stubGlobal('fetchTemplateHealth', async () => ({ canvas: { check: { status: row.status } } }))
+async function healthResponse(method = 'GET', query = '') {
+  vi.stubGlobal('defineCachedFunction', defineCachedFunction)
+  vi.stubGlobal('defineEventHandler', defineEventHandler)
+  vi.stubGlobal('setResponseHeader', setResponseHeader)
+  vi.stubGlobal('fetchTemplateHealth', context.fetchHealth)
   const { default: handler } = await import('../../server/api/templates/health.get')
   const app = createApp().use(handler)
-  const response = await toWebHandler(app)(new Request(`http://localhost/api/templates/health${query}`, { method }))
+  return toWebHandler(app)(new Request(`http://localhost/api/templates/health${query}`, { method }))
+}
+
+async function healthRequest(method = 'GET', query = '') {
+  const response = await healthResponse(method, query)
   return method === 'HEAD' ? response.status : (await response.json()).canvas.check.status
 }
 
@@ -45,6 +51,7 @@ beforeEach(() => {
   row = { ...emptyCheckRow('canvas'), state: 'running', runId: 'run', status: 'failed', step: 'build', checkedAt: new Date(), startedAt: new Date() }
   ownsRow = true
   failInvalidation = false
+  context.fetchHealth.mockReset().mockImplementation(async () => ({ canvas: { check: { status: row.status } } }))
   regions = [new Map(), new Map()]
   storage = createStorage({ driver: vercelRuntimeCache() })
   // Match the dedicated tagged mount, leaving unrelated caches outside its scope.
@@ -79,6 +86,15 @@ afterEach(() => {
 })
 
 describe('template health cache after a check', () => {
+  it('prevents HTTP caching on fresh and cached GET and HEAD responses while retaining the server cache', async () => {
+    for (const method of ['GET', 'GET', 'HEAD']) {
+      const response = await healthResponse(method)
+      expect(response.status).toBe(200)
+      expect(response.headers.get('cache-control')).toBe('no-store')
+    }
+    expect(context.fetchHealth).toHaveBeenCalledTimes(1)
+  })
+
   it.each(['passed', 'failed'] as const)('serves the new %s result in both regions without listing keys', async (status) => {
     row.status = status === 'passed' ? 'failed' : 'passed'
     const previous = row.status
