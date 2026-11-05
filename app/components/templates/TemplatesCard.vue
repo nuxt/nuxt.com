@@ -22,6 +22,7 @@ const badge = computed(() => props.template.official
     :description="template.description"
     :ui="{
       container: 'p-0 sm:p-0 gap-y-0',
+      wrapper: 'min-w-0',
       header: 'relative mb-0 w-full aspect-video overflow-hidden border-b border-default',
       body: 'w-full p-4 pb-3',
       title: 'flex items-center w-full',
