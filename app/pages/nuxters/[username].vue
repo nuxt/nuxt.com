@@ -474,7 +474,7 @@ defineOgImage('Nuxter.takumi', { username, period: () => period.value === 'all' 
               Translations
             </h2>
             <p class="text-muted mb-6">
-              Segments of the Nuxt docs {{ nuxter.username }} edited, verified or rejected, in the <ULink to="/translations" class="text-highlighted hover:underline">translations</ULink> served today.
+              Segments of the Nuxt docs {{ nuxter.username }} edited, verified or rejected, in <ULink to="/translations" class="text-highlighted hover:underline">Nuxt's current translations</ULink>.
             </p>
             <!-- Localised docs are served under their own base: a full page load -->
             <ul class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
