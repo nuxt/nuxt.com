@@ -436,6 +436,14 @@ export function canUnlockNuxterRole(nuxter: Nuxter | null | undefined): boolean 
   return nuxter.mergedPullRequests.all + nuxter.helpfulIssues + nuxter.helpfulComments + nuxter.translations.edited + nuxter.translations.verified > 0
 }
 
+/**
+ * The Discord role of the translators of a locale (`fr` → `translatorFr`, `pt-br` → `translatorPtBr`),
+ * also its key in `runtimeConfig.nuxters.discord.roles`.
+ */
+export function nuxterTranslatorRole(locale: string): string {
+  return `translator${locale.split('-').map(part => part.charAt(0).toUpperCase() + part.slice(1).toLowerCase()).join('')}`
+}
+
 export const NUXTERS_HACKATHONS: NuxtersHackathon[] = [
   {
     id: 'nuxtathon1',

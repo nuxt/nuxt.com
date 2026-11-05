@@ -5,6 +5,7 @@ import {
   nuxterForPeriod,
   nuxterGithubSearchUrl,
   nuxterHackathons,
+  nuxterTranslatorRole,
   nuxterScoreBreakdown,
   nuxtersPeriodFile,
   nuxtersPeriodFromFile,
@@ -298,6 +299,14 @@ describe('nuxter scoring', () => {
     expect(canUnlockNuxterRole({ ...none, translations: { ...none.translations, edited: 1 } })).toBe(true)
     expect(canUnlockNuxterRole({ ...none, translations: { ...none.translations, verified: 1 } })).toBe(true)
     expect(canUnlockNuxterRole(null)).toBe(false)
+  })
+})
+
+describe('nuxterTranslatorRole', () => {
+  it('names one role per locale, usable as a runtime config key', () => {
+    expect(nuxterTranslatorRole('fr')).toBe('translatorFr')
+    expect(nuxterTranslatorRole('pt-br')).toBe('translatorPtBr')
+    expect(nuxterTranslatorRole('zh-Hans')).toBe('translatorZhHans')
   })
 })
 
