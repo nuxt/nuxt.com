@@ -166,8 +166,9 @@ export function sanitiseNote(note: string | undefined): string | undefined {
 /** A sanitised note quoted in markdown, with mentions, issue references, links and HTML left inert. */
 export function quoteNote(note: string): string {
   return note
-    .replace(/[\\`*_[\]<>|~]/g, '\\$&')
+    .replace(/[\\`*_[\]<>|~&]/g, '\\$&')
     .replace(/([@#])(?=[\w-])/g, '$1\u200B')
+    .replace(/(:\/|\bwww)(?=[/.])/gi, '$1\u200B')
     .split('\n')
     .map(line => `> ${line}`)
     .join('\n')

@@ -308,8 +308,8 @@ describe('sanitiseNote', () => {
   })
 
   it('should quote a note in markdown with mentions, references, links and HTML left inert', () => {
-    expect(quoteNote('Merci @danielroe, voir #12 et [ici](https://example.com) <img src=x>\n**gras**')).toBe(
-      '> Merci @\u200Bdanielroe, voir #\u200B12 et \\[ici\\](https://example.com) \\<img src=x\\>\n> \\*\\*gras\\*\\*'
+    expect(quoteNote('Merci @danielroe, voir #12 et [ici](https://example.com) <img src=x>\n**gras** &#64;team www.example.com')).toBe(
+      '> Merci @\u200Bdanielroe, voir #\u200B12 et \\[ici\\](https:/\u200B/example.com) \\<img src=x\\>\n> \\*\\*gras\\*\\* \\&#\u200B64;team www\u200B.example.com'
     )
   })
 })
