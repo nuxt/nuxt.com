@@ -20,7 +20,7 @@ import {
   sortNuxtersPeriods
 } from '#shared/utils/nuxters'
 
-/** 18 columns per row: stays well under SQLite's 32,766 bound-variable limit. */
+/** 28 columns per row: stays well under SQLite's 32,766 bound-variable limit. */
 const INSERT_CHUNK_SIZE = 500
 /** The `nuxters_syncs` key of `profiles.json`: never a period. */
 const PROFILES_SYNC_KEY = 'profiles'

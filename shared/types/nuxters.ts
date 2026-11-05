@@ -15,6 +15,13 @@ export interface NuxterCoreContributions {
   helpfulComments: number
 }
 
+/** Segments of the docs translations (nuxt/translations) a contributor edited, verified or rejected. */
+export interface NuxterTranslations {
+  edited: number
+  verified: number
+  rejected: number
+}
+
 /** `all`, `30d`, `12m`, or a year from 2016 (`'2025'`). */
 export type NuxtersPeriod = string
 
@@ -34,6 +41,8 @@ export interface Nuxter {
   mergedPullRequests: NuxterMergedPullRequests
   /** The part made in nuxt/nuxt, nuxt/framework and nuxt/docs: it counts double in the score. */
   core: NuxterCoreContributions
+  /** Counted in the score, without the core bonus. */
+  translations: NuxterTranslations
 }
 
 /** A contributor's full stats over one period of their profile. */
