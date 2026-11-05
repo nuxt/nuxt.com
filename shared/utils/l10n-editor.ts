@@ -1,5 +1,5 @@
 import type { Review, SegmentKind, SegmentStatus } from '@diglot/core'
-import { L10N_TRANSLATIONS_REPO, type L10nChangeIssue, type L10nEditorSegment, type L10nLocale, type L10nRole } from './l10n'
+import { L10N_TRANSLATIONS_REPO, type L10nChangeIssue, type L10nEditorSegment, type L10nLocale, type L10nRole, type L10nSaveResult } from './l10n'
 
 /** A translation the translations branch is known to hold for a segment, ahead of the page the editor loaded. */
 export interface L10nKnownRecord {
@@ -58,32 +58,42 @@ export interface L10nTextGroup {
 
 /**
  * The segments of a page without a block of their own (frontmatter, props, image alts, code labels and
- * comments), grouped under their nearest heading in page order, the page's frontmatter first.
+ * comments), grouped by the section of the page they are in, in page order, the page's frontmatter first.
  */
 export function otherTextGroups(segments: L10nEditorSegment[]): L10nTextGroup[] {
-  const headings = new Map<string, string>()
-  for (const segment of segments) {
-    if (segment.kind === 'heading' && !segment.placeholders.length && !headings.has(segment.skeleton)) headings.set(segment.skeleton, segment.hash)
-  }
-
   const meta: L10nTextGroup = { type: 'meta', segments: [] }
-  const sections = new Map<string, L10nTextGroup>()
+  const sections: L10nTextGroup[] = []
+  let section: { group: L10nTextGroup, trail: string } | undefined
+  let heading: L10nEditorSegment | undefined
   for (const segment of segments) {
+    if (segment.kind === 'heading') {
+      heading = segment
+      section = undefined
+      continue
+    }
     if (hasL10nBlock(segment)) continue
     if (segment.kind === 'frontmatter' || segment.kind === 'navigation') {
       meta.segments.push(segment)
       continue
     }
-    const heading = segment.context.headingTrail.at(-1)
-    const key = heading ?? ''
-    let group = sections.get(key)
-    if (!group) {
-      group = { type: 'section', ...(heading ? { heading } : {}), ...(heading && headings.has(heading) ? { headingHash: headings.get(heading) } : {}), segments: [] }
-      sections.set(key, group)
+    const trail = segment.context.headingTrail.join('\n')
+    if (section?.trail !== trail) {
+      const text = segment.context.headingTrail.at(-1)
+      const hash = text && heading?.skeleton === text && !heading.placeholders.length ? heading.hash : undefined
+      section = { group: { type: 'section', ...(text ? { heading: text } : {}), ...(hash ? { headingHash: hash } : {}), segments: [] }, trail }
+      sections.push(section.group)
     }
-    group.segments.push(segment)
+    section.group.segments.push(segment)
   }
-  return [...(meta.segments.length ? [meta] : []), ...sections.values()]
+  return [...(meta.segments.length ? [meta] : []), ...sections]
+}
+
+/** Whether a page, as fetched by the editor, shows every segment of a save as saved. */
+export function isSaveServed(segments: L10nEditorSegment[], saved: L10nSaveResult['segments']): boolean {
+  return Object.entries(saved).every(([hash, { status, text }]) => {
+    const item = segments.find(segment => segment.hash === hash)
+    return !!item && item.status === status && item.record?.text === text
+  })
 }
 
 /** A commit of the translations repository on GitHub. */

@@ -6,7 +6,8 @@ import { beforeAll, describe, expect, it } from 'vitest'
 import { createBundle } from '../../server/utils/l10n/bundle'
 import { editorSegments } from '../../server/utils/l10n/editor'
 import { createBuildInstance } from '../../utils/factory'
-import { hasL10nBlock, otherTextGroups, withKnownRecord } from '../../shared/utils/l10n-editor'
+import { hasL10nBlock, isSaveServed, otherTextGroups, withKnownRecord } from '../../shared/utils/l10n-editor'
+import type { L10nEditorSegment } from '../../shared/utils/l10n'
 
 const FIXTURES = fileURLToPath(new URL('../fixtures/l10n/', import.meta.url))
 const records = (JSON.parse(readFileSync(`${FIXTURES}fr.json`, 'utf8')) as { records: Record<string, Record<string, unknown>> }).records
@@ -109,6 +110,39 @@ describe('otherTextGroups', () => {
     expect(groups.find(group => group.heading === 'Type')!.segments.map(segment => segment.kind)).toEqual(['code-label', 'code-comment'])
     expect(groups.find(group => group.heading === 'Reactive Keys and Shared State')!.segments.map(segment => `${segment.kind}:${segment.context.containers.join('/')}`))
       .toEqual(['code-comment:', 'code-comment:code-group', 'code-comment:code-group', 'prop:video-accordion'])
+  })
+})
+
+describe('otherTextGroups sections', () => {
+  const segment = (hash: string, kind: L10nEditorSegment['kind'], skeleton: string, headingTrail: string[]): L10nEditorSegment => ({
+    hash, kind, format: 'plain', skeleton, words: 2, placeholders: [], context: { headingTrail, containers: [] }, status: 'untranslated', glossary: []
+  })
+
+  it('should keep sections with the same heading apart', () => {
+    const groups = otherTextGroups([
+      segment('a'.repeat(16), 'heading', 'Usage', []),
+      segment('b'.repeat(16), 'code-comment', 'First comment', ['Usage']),
+      segment('c'.repeat(16), 'heading', 'Usage', []),
+      segment('d'.repeat(16), 'code-comment', 'Second comment', ['Usage']),
+      segment('e'.repeat(16), 'code-comment', 'Code only heading', ['Usage', '`alias`'])
+    ])
+
+    expect(groups.map(group => [group.heading, group.headingHash, group.segments.map(item => item.skeleton)])).toEqual([
+      ['Usage', 'a'.repeat(16), ['First comment']],
+      ['Usage', 'c'.repeat(16), ['Second comment']],
+      ['`alias`', undefined, ['Code only heading']]
+    ])
+  })
+})
+
+describe('isSaveServed', () => {
+  it('should report a save served only once the page shows every saved segment', async () => {
+    const segments = await editorSegments(page, bundleOf(records), { terms: [] })
+    const first = segments.find(item => item.hash === FIRST_PARAGRAPH)!
+
+    expect(isSaveServed(segments, { [FIRST_PARAGRAPH]: { status: 'machine', text: first.record!.text } })).toBe(true)
+    expect(isSaveServed(segments, { [FIRST_PARAGRAPH]: { status: 'edited', text: 'Nuxt est un framework.' } })).toBe(false)
+    expect(isSaveServed(segments, { [PREVIOUS]: { status: 'edited', text: 'Nuxt est un framework.' } })).toBe(false)
   })
 })
 

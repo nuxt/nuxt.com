@@ -2,7 +2,7 @@
 import { maxTranslationLength, validate } from '@diglot/core'
 import type { ButtonProps } from '@nuxt/ui'
 import { L10N_NOTE_MAX_LENGTH, L10N_STRINGS, l10nEditorPath, l10nTranslationsPath, localisePath, type L10nChange, type L10nChangeIssue, type L10nEditorPage, type L10nLocale, type L10nSaveResult } from '#shared/utils/l10n'
-import { hasL10nBlock, L10N_EDITOR_STRINGS, l10nCommitUrl, otherTextGroups, withKnownRecord, type L10nKnownRecord } from '#shared/utils/l10n-editor'
+import { hasL10nBlock, isSaveServed, L10N_EDITOR_STRINGS, l10nCommitUrl, otherTextGroups, withKnownRecord, type L10nKnownRecord } from '#shared/utils/l10n-editor'
 
 const props = defineProps<{
   locale: L10nLocale
@@ -241,14 +241,6 @@ onScopeDispose(() => {
   for (const block of active) block.removeAttribute('data-l10n-active')
 })
 
-/** Whether the editor's page, as fetched, shows every saved segment as saved. */
-function served(saved: L10nSaveResult['segments']): boolean {
-  return Object.entries(saved).every(([key, { status, text }]) => {
-    const item = page.value?.segments.find(other => other.hash === key)
-    return !item || (item.status === status && item.record?.text === text)
-  })
-}
-
 /** Seconds between two checks of whether a save is served. */
 const PUBLICATION_CHECKS = [...Array.from({ length: 20 }, () => 3), ...Array.from({ length: 36 }, () => 15)]
 
@@ -260,7 +252,7 @@ async function waitForPublication(sha: string, saved: L10nSaveResult['segments']
     if (disposed || !current()) return
     await refresh()
     if (!current()) return
-    if (served(saved)) {
+    if (isSaveServed(page.value?.segments ?? [], saved)) {
       publication.value = { sha, state: 'online' }
       emit('published', page.value!.sha)
       toast.add({ title: t.value.publishedNow, icon: 'i-lucide-check', color: 'success' })
@@ -285,17 +277,18 @@ async function save() {
   result.value = undefined
   issues.value = []
   const sent = [...changes.value.values()]
+  const sentNote = note.value
   try {
     const response = await $fetch<L10nSaveResult>(l10nTranslationsPath(props.locale), {
       method: 'POST',
-      body: { page: props.path, changes: sent, ...(note.value.trim() ? { note: note.value.trim() } : {}) }
+      body: { page: props.path, changes: sent, ...(sentNote.trim() ? { note: sentNote.trim() } : {}) }
     })
     result.value = response
     const refused = new Set(response.issues?.map(item => item.hash))
     for (const change of sent) {
       if (!refused.has(change.hash) && JSON.stringify(changes.value.get(change.hash)) === JSON.stringify(change)) changes.value.delete(change.hash)
     }
-    note.value = ''
+    if (note.value === sentNote) note.value = ''
     showIssues(response.issues ?? [])
     if (response.mode === 'commit' && !response.dryRun) {
       const at = Date.now()
