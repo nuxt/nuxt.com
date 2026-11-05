@@ -19,5 +19,5 @@ export default defineEventHandler(async (event) => {
   if (!user || user.provider !== 'github' || user.role !== 'admin' || !(await isAuthorizedAdmin(toH3Event(event), user.username))) {
     throw createError({ statusCode: 403, statusMessage: 'Nuxt team access required' })
   }
-  return { id: user.id, name: user.name || user.username, login: user.username, avatarUrl: user.avatar, expiresAt: credential.expiresAt }
+  return { id: user.id, name: user.name || user.username, login: user.username, role: user.role, avatarUrl: user.avatar, expiresAt: credential.expiresAt }
 })

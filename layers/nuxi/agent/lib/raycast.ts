@@ -15,6 +15,7 @@ export interface RaycastAccount {
   id: string
   name: string
   login: string
+  role: 'admin' | 'user'
   avatarUrl: string
   expiresAt: string
 }
@@ -22,7 +23,7 @@ export interface RaycastAccount {
 export function raycastAuth(account: RaycastAccount) {
   return {
     issuer: 'raycast', authenticator: 'github', principalType: 'user', principalId: account.id,
-    attributes: { name: account.name, login: account.login }
+    attributes: { name: account.name, login: account.login, role: account.role }
   } satisfies AuthContext
 }
 

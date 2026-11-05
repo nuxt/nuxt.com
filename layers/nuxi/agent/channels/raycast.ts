@@ -9,8 +9,12 @@ import {
 // Use the existing Eve mount so Nuxt development and Vercel previews route it too.
 const BASE = '/eve/v1/raycast/v1'
 const BOT = {
-  id: 'nuxi', name: 'Nuxi', description: 'Your Nuxt companion', iconUrl: 'https://nuxt.com/nuxt-agent.jpg',
+  id: 'nuxi', name: 'Nuxi', description: 'Your Nuxt companion',
   capabilities: { attachments: false, screenAwareness: false, events: false }
+}
+
+function bot(request: Request) {
+  return { ...BOT, iconUrl: new URL('/nuxi.png', request.url).href }
 }
 
 type Args = RouteHandlerArgs<Record<string, never>>
@@ -32,8 +36,8 @@ export default defineChannel({
   audience: () => 'private',
   turnPolicy: 'queue',
   routes: [
-    GET(`${BASE}/status`, route(async request => Response.json({ online: true, bot: BOT, signIn: { start: new URL('/raycast/connect', request.url).href, configured: true } }), true)),
-    GET(`${BASE}/me`, route(async (_request, _args, _address, account) => Response.json({ user: { id: account.id, name: account.name, avatarUrl: account.avatarUrl }, token: { expiresAt: account.expiresAt }, bot: BOT }))),
+    GET(`${BASE}/status`, route(async request => Response.json({ online: true, bot: bot(request), signIn: { start: new URL('/raycast/connect', request.url).href, configured: true } }), true)),
+    GET(`${BASE}/me`, route(async (request, _args, _address, account) => Response.json({ user: { id: account.id, name: account.name, avatarUrl: account.avatarUrl }, token: { expiresAt: account.expiresAt }, bot: bot(request) }))),
     POST(`${BASE}/threads/:threadId/messages`, route(async (request, { params, from, resolveSession, attachSession }, address, account) => {
       const message = await readRaycastMessage(request)
       const current = await resolveSession(address)

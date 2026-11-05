@@ -7,7 +7,7 @@ import { resolveContext } from '../../layers/nuxi/agent/lib/identity/context'
 import { isAdminMode } from '../../layers/nuxi/agent/lib/identity/admin-mode'
 
 const TOKEN = `nuxi_rc_${'a'.repeat(43)}`
-const ACCOUNT = { id: 'user-1', name: 'Nuxt team member', login: 'demo-user', avatarUrl: '', expiresAt: '2026-12-05T00:00:00Z' }
+const ACCOUNT = { id: 'user-1', name: 'Nuxt team member', login: 'demo-user', role: 'admin' as const, avatarUrl: '', expiresAt: '2026-12-05T00:00:00Z' }
 beforeEach(() => {
   vi.stubEnv('INTERNAL_API_SECRET', 'test-internal-secret')
   vi.stubEnv('VERCEL_URL', 'test-preview.vercel.app')
@@ -76,9 +76,9 @@ describe('Raycast HTTP channel', () => {
     const h = harness()
     const status = await h.request('/status', 'GET', undefined, false)
     expect(status.status).toBe(200)
-    expect(await status.json()).toMatchObject({ online: true, bot: { name: 'Nuxi' }, signIn: { start: 'http://localhost/raycast/connect', configured: true } })
+    expect(await status.json()).toMatchObject({ online: true, bot: { name: 'Nuxi', iconUrl: 'http://localhost/nuxi.png' }, signIn: { start: 'http://localhost/raycast/connect', configured: true } })
     const me = await h.request('/me')
-    expect(await me.json()).toMatchObject({ user: { id: ACCOUNT.id }, bot: { capabilities: { attachments: false, screenAwareness: false, events: false } } })
+    expect(await me.json()).toMatchObject({ user: { id: ACCOUNT.id }, bot: { iconUrl: 'http://localhost/nuxi.png', capabilities: { attachments: false, screenAwareness: false, events: false } } })
     expect(me.headers.get('cache-control')).toBe('no-store')
     expect(fetch).toHaveBeenCalledWith('https://test-preview.vercel.app/api/internal/raycast-auth', expect.objectContaining({
       headers: expect.objectContaining({ Authorization: 'Bearer test-internal-secret' }), body: JSON.stringify({ action: 'authenticate', token: TOKEN })
@@ -140,9 +140,14 @@ describe('Raycast HTTP channel', () => {
     expect(h.send).not.toHaveBeenCalled()
   })
 
-  it('uses the public toolset with the signed-in GitHub identity', async () => {
+  it('grants admin tools to the verified GitHub admin identity on each delivery', async () => {
     expect(resolveContext(raycastAuth(ACCOUNT))).toMatchObject({ surface: 'raycast', person: { id: ACCOUNT.id } })
-    expect(await isAdminMode(raycastAuth(ACCOUNT))).toBe(false)
+    const h = harness()
+    await h.request('/threads/:threadId/messages', 'POST', { text: 'Is the Canvas template building?' })
+    const auth = raycastAuth(ACCOUNT)
+    expect(h.send).toHaveBeenCalledWith(expect.any(Array), expect.objectContaining({ auth }))
+    expect(auth.attributes).toMatchObject({ role: 'admin', login: ACCOUNT.login })
+    expect(await isAdminMode(auth)).toBe(true)
   })
 })
 

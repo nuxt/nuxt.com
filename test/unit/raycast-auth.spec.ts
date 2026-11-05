@@ -161,7 +161,7 @@ describe('connect with the website GitHub session', () => {
 describe('agent credential verification', () => {
   it('resolves the current account, revokes connections and rejects deleted or expired credentials', async () => {
     const { token } = await issueRaycastCredential(kv, USER.id)
-    expect(await account(event({ action: 'authenticate', token }))).toMatchObject({ id: USER.id, login: USER.username })
+    expect(await account(event({ action: 'authenticate', token }))).toMatchObject({ id: USER.id, login: USER.username, role: 'admin' })
     findUser.mockResolvedValueOnce({ ...USER, role: 'user' })
     await expect(account(event({ action: 'authenticate', token }))).rejects.toMatchObject({ statusCode: 403 })
     findUser.mockResolvedValueOnce(undefined)
