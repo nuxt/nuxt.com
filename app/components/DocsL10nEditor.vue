@@ -391,9 +391,23 @@ function glossaryHint(entry: NonNullable<typeof segment.value>['glossary'][numbe
         </p>
 
         <section class="space-y-1">
-          <h3 class="text-xs font-medium uppercase text-muted">
-            {{ t.english }}
-          </h3>
+          <div class="flex items-center justify-between gap-2">
+            <h3 class="text-xs font-medium uppercase text-muted">
+              {{ t.english }}
+            </h3>
+            <UTooltip v-if="role" :text="t.fromSource" :content="{ side: 'left' }">
+              <UButton
+                icon="i-lucide-copy"
+                color="neutral"
+                variant="ghost"
+                size="xs"
+                class="-my-1"
+                :aria-label="t.fromSource"
+                :disabled="draft === segment.skeleton"
+                @click="draft = segment.skeleton"
+              />
+            </UTooltip>
+          </div>
           <p lang="en" class="text-highlighted">
             <DocsL10nSkeleton :skeleton="segment.skeleton" :placeholders="segment.placeholders" />
           </p>
@@ -521,19 +535,6 @@ function glossaryHint(entry: NonNullable<typeof segment.value>['glossary'][numbe
             :help="validation?.warnings.map(warning => warning.message).join(' ') || undefined"
             :ui="{ label: 'text-xs font-medium uppercase text-muted', description: 'text-xs', error: 'text-xs text-(--l10n-error)', help: 'text-xs text-(--l10n-warning)' }"
           >
-            <template #hint>
-              <UButton
-                :label="t.fromSource"
-                icon="i-lucide-copy"
-                color="neutral"
-                variant="link"
-                size="xs"
-                class="p-0"
-                :disabled="draft === segment.skeleton"
-                @click="draft = segment.skeleton"
-              />
-            </template>
-
             <UTextarea
               ref="draftField"
               v-model="draft"

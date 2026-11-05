@@ -115,7 +115,7 @@ export const L10N_EDITOR_STRINGS = {
     current: 'Traduction actuelle',
     none: 'Pas encore traduit.',
     yours: 'Votre traduction',
-    fromSource: 'Partir du texte anglais',
+    fromSource: 'Copier dans votre traduction',
     placeholders: 'Les marqueurs {0}, {1}… représentent le code et les liens du texte anglais : gardez-les tous, et le texte d\'un lien entre {0} et {/0}.',
     glossary: 'Glossaire',
     glossaryKeep: 'à garder en anglais',
