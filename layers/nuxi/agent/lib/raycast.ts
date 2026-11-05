@@ -1,9 +1,9 @@
 import { setTimeout } from 'node:timers/promises'
-import { timingSafeEqual } from 'node:crypto'
 import { z } from 'zod'
 import { call, emptySessionView, foldEvents, reply } from 'eve/events'
 import type { SessionReader } from 'eve/sessions'
 import type { AuthContext } from './identity/context.js'
+import { appOrigin, internalHeaders } from './internal-api.js'
 
 export class RaycastHttpError extends Error {
   constructor(readonly status: number) {
@@ -11,10 +11,18 @@ export class RaycastHttpError extends Error {
   }
 }
 
-export function raycastAuth() {
+export interface RaycastAccount {
+  id: string
+  name: string
+  login: string
+  avatarUrl: string
+  expiresAt: string
+}
+
+export function raycastAuth(account: RaycastAccount) {
   return {
-    issuer: 'raycast', authenticator: 'raycast-token', principalType: 'user', principalId: 'raycast-team',
-    attributes: { name: 'Nuxt team' }
+    issuer: 'raycast', authenticator: 'github', principalType: 'user', principalId: account.id,
+    attributes: { name: account.name, login: account.login }
   } satisfies AuthContext
 }
 
@@ -22,12 +30,17 @@ export function raycastAddress(userId: string, threadId: string) {
   return JSON.stringify([userId, threadId])
 }
 
-export function authenticateRaycast(request: Request) {
-  const token = process.env.NUXT_MCP_ADMIN_TOKEN?.trim()
-  if (!token) throw new RaycastHttpError(503)
-  const expected = Buffer.from(`Bearer ${token}`)
-  const provided = Buffer.from(request.headers.get('authorization') ?? '')
-  if (provided.length !== expected.length || !timingSafeEqual(provided, expected)) throw new RaycastHttpError(401)
+export async function raycastCredential(request: Request, action = 'authenticate'): Promise<RaycastAccount> {
+  const authorization = request.headers.get('authorization') ?? ''
+  if (!/^Bearer nuxi_rc_[\w-]{43}$/.test(authorization)) throw new RaycastHttpError(401)
+  // Verify against this deployment's web service, including on branch previews.
+  const origin = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : appOrigin()
+  const response = await fetch(`${origin}/api/internal/raycast-auth`, {
+    method: 'POST', headers: internalHeaders(),
+    body: JSON.stringify({ action, token: authorization.slice(7) }), signal: AbortSignal.timeout(10_000)
+  })
+  if (!response.ok) throw new RaycastHttpError(response.status === 401 || response.status === 403 ? response.status : 503)
+  return response.json() as Promise<RaycastAccount>
 }
 
 const MAX_MESSAGE_BYTES = 64 * 1024

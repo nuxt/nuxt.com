@@ -287,10 +287,10 @@ Every field is optional and falls back to a sane default: `sinceDays` → 7, `sl
 
 ## Talk to Nuxi in Raycast
 
-In Raycast → Settings → AI → External Agents, add `https://nuxt.com/eve/v1/raycast` and paste the existing MCP token (`NUXT_MCP_ADMIN_TOKEN`). For a preview, replace `https://nuxt.com` with its deployment URL. No new token, migration, extension or sign-in flow is needed. External Agents is currently an alpha feature; ask Raycast to enable it if the setting is missing.
+In Raycast → Settings → AI → External Agents, add `https://nuxt.com/eve/v1/raycast`, choose **Sign in**, and continue with your existing GitHub account on nuxt.com. Click **Connect to Raycast** to finish. For a preview, replace `https://nuxt.com` with its deployment URL. External Agents is currently an alpha feature; ask Raycast to enable it if the setting is missing.
 
-Locally, run `pnpm dev:nuxi` and use `http://localhost:3000/eve/v1/raycast`. The MCP token must be available to the Eve service.
+Access uses the same Nuxt core-team/admin check as the website. Each account has its own conversations. A connection lasts 30 days; sign in again when Raycast asks. Removing Nuxi from Raycast revokes that connection. Account and team access are checked on every request. The existing KV stores only credential hashes and their expiry; no new database, migration, OAuth provider or shared secret is required. Preview credentials are separate from production.
 
-This initial team connection uses Nuxi's public tools and supports text, text context, tool activity, Markdown replies and cancellation. Eve stores the conversation; Raycast reads that same history to recover replies after reconnecting. Files and screen context are disabled. Actions requiring approval or sign-in direct you to nuxt.com. Start a new Raycast chat after an Eve version upgrade or history expiry.
+Locally, run `pnpm dev:nuxi` and use `http://localhost:3000/eve/v1/raycast`. GitHub login and `INTERNAL_API_SECRET` must be configured as for Nuxi's web channel. The MCP token is no longer used by Raycast.
 
-The token is shared with MCP: rotating it revokes both connections. Removing the agent in Raycast only removes the local connection.
+Nuxi supports text, text context, tool activity, Markdown replies and cancellation with its public tools. Eve stores the conversation; Raycast reads that same history to recover replies after reconnecting. Files and screen context are disabled. Actions requiring approval direct you to nuxt.com. Start a new Raycast chat after an Eve version upgrade or history expiry.

@@ -6,9 +6,23 @@ import { raycastAuth, raycastAddress, raycastEventStream, readRaycastHistory, re
 import { resolveContext } from '../../layers/nuxi/agent/lib/identity/context'
 import { isAdminMode } from '../../layers/nuxi/agent/lib/identity/admin-mode'
 
-const TOKEN = 'test-mcp-token'
-beforeEach(() => vi.stubEnv('NUXT_MCP_ADMIN_TOKEN', TOKEN))
-afterEach(() => vi.unstubAllEnvs())
+const TOKEN = `nuxi_rc_${'a'.repeat(43)}`
+const ACCOUNT = { id: 'user-1', name: 'Nuxt team member', login: 'demo-user', avatarUrl: '', expiresAt: '2026-12-05T00:00:00Z' }
+beforeEach(() => {
+  vi.stubEnv('INTERNAL_API_SECRET', 'test-internal-secret')
+  vi.stubEnv('VERCEL_URL', 'test-preview.vercel.app')
+  vi.stubEnv('NUXT_PUBLIC_SITE_URL', 'https://nuxt.com')
+  vi.stubGlobal('fetch', vi.fn(async (_url, init) => {
+    const { token, action } = JSON.parse(init.body)
+    if (action === 'revoke') return Response.json({ ok: true })
+    if (token === TOKEN) return Response.json(ACCOUNT)
+    return Response.json({ ...ACCOUNT, id: 'user-2', login: 'another-user' })
+  }))
+})
+afterEach(() => {
+  vi.unstubAllEnvs()
+  vi.unstubAllGlobals()
+})
 
 type Event = ReturnType<SessionReader['stream']> extends AsyncIterable<infer T> ? T : never
 function facts(outcome: 'completed' | 'failed' | 'cancelled' | 'paused' = 'completed'): Event[] {
@@ -44,12 +58,12 @@ function harness(events = facts()) {
   const from = vi.fn(() => ({ send }))
   const resolveSession = vi.fn(async () => session)
   const attachSession = vi.fn(() => session)
-  async function request(path: string, method = 'GET', body?: unknown, authorized = true) {
+  async function request(path: string, method = 'GET', body?: unknown, authorized = true, token = TOKEN) {
     const route = channel.routes.find(route => route.method === method && route.path === `/eve/v1/raycast/v1${path}`)
     if (!route || route.transport === 'websocket') throw new Error('Missing route')
     const req = new Request(`http://localhost/eve/v1/raycast/v1${path.replace(':threadId', 'rc-chat').replace(':turnId', 'delivery-1')}`, {
       method,
-      headers: { ...(authorized ? { authorization: `Bearer ${TOKEN}` } : {}), ...(body ? { 'content-type': 'application/json' } : {}) },
+      headers: { ...(authorized ? { authorization: `Bearer ${token}` } : {}), ...(body ? { 'content-type': 'application/json' } : {}) },
       body: body ? JSON.stringify(body) : undefined
     })
     return route.handler(req, { params: { threadId: 'rc-chat', turnId: 'delivery-1' }, from, resolveSession, attachSession } as unknown as RouteHandlerArgs<never>)
@@ -58,25 +72,26 @@ function harness(events = facts()) {
 }
 
 describe('Raycast HTTP channel', () => {
-  it('discovers without auth and reuses the MCP token', async () => {
+  it('discovers the browser sign-in flow and verifies the personal credential', async () => {
     const h = harness()
     const status = await h.request('/status', 'GET', undefined, false)
     expect(status.status).toBe(200)
-    expect(await status.json()).toMatchObject({ online: true, bot: { name: 'Nuxi' } })
+    expect(await status.json()).toMatchObject({ online: true, bot: { name: 'Nuxi' }, signIn: { start: 'http://localhost/raycast/connect', configured: true } })
     const me = await h.request('/me')
-    expect(await me.json()).toMatchObject({ user: { id: 'raycast-team' }, bot: { capabilities: { attachments: false, screenAwareness: false, events: false } } })
+    expect(await me.json()).toMatchObject({ user: { id: ACCOUNT.id }, bot: { capabilities: { attachments: false, screenAwareness: false, events: false } } })
     expect(me.headers.get('cache-control')).toBe('no-store')
-    vi.stubEnv('NUXT_MCP_ADMIN_TOKEN', `${TOKEN}-rotated`)
+    expect(fetch).toHaveBeenCalledWith('https://test-preview.vercel.app/api/internal/raycast-auth', expect.objectContaining({
+      headers: expect.objectContaining({ Authorization: 'Bearer test-internal-secret' }), body: JSON.stringify({ action: 'authenticate', token: TOKEN })
+    }))
+    vi.mocked(fetch).mockResolvedValueOnce(Response.json({}, { status: 401 }))
     expect((await h.request('/me')).status).toBe(401)
-    vi.stubEnv('NUXT_MCP_ADMIN_TOKEN', '')
-    expect((await h.request('/me')).status).toBe(503)
-    expect(await (await h.request('/status', 'GET', undefined, false)).json()).toMatchObject({ online: false })
+    expect((await h.request('/me', 'GET', undefined, true, 'old-shared-mcp-token')).status).toBe(401)
   })
 
   it('protects every conversation route before accessing Eve', async () => {
     const h = harness()
     for (const [path, method] of [
-      ['/me', 'GET'], ['/threads/:threadId/messages', 'POST'], ['/threads/:threadId/events', 'GET'],
+      ['/me', 'GET'], ['/auth/revoke', 'POST'], ['/threads/:threadId/messages', 'POST'], ['/threads/:threadId/events', 'GET'],
       ['/threads/:threadId/turns/:turnId', 'GET'], ['/threads/:threadId/cancel', 'POST']
     ]) expect((await h.request(path!, method, undefined, false)).status).toBe(401)
     expect(h.send).not.toHaveBeenCalled()
@@ -90,14 +105,24 @@ describe('Raycast HTTP channel', () => {
     })
     expect(response.status).toBe(202)
     expect(await response.json()).toEqual({ turnId: 'delivery-1', threadId: 'rc-chat', eventId: 1 })
-    expect(h.resolveSession).toHaveBeenCalledWith(raycastAddress('raycast-team', 'rc-chat'))
+    expect(h.resolveSession).toHaveBeenCalledWith(raycastAddress(ACCOUNT.id, 'rc-chat'))
     expect(h.send).toHaveBeenCalledWith([
       { type: 'text', text: 'Selection (selection):\nconst data = useFetch(...)' }, { type: 'text', text: 'How does useFetch work?' }
-    ], expect.objectContaining({ auth: raycastAuth(), turnPolicy: 'queue' }))
+    ], expect.objectContaining({ auth: raycastAuth(ACCOUNT), turnPolicy: 'queue' }))
     const stream = await h.request('/threads/:threadId/events')
     expect(stream.headers.get('content-type')).toBe('text/event-stream')
     expect(await stream.text()).toContain('"type":"message.completed"')
     expect(await (await h.request('/threads/:threadId/turns/:turnId')).json()).toEqual({ state: 'completed', text: 'Use **useFetch**.' })
+  })
+
+  it('isolates the same thread ID between accounts and revokes personal credentials', async () => {
+    const h = harness()
+    await h.request('/threads/:threadId/cancel', 'POST')
+    await h.request('/threads/:threadId/cancel', 'POST', undefined, true, `nuxi_rc_${'b'.repeat(43)}`)
+    expect(h.resolveSession.mock.calls).toEqual([[raycastAddress(ACCOUNT.id, 'rc-chat')], [raycastAddress('user-2', 'rc-chat')]])
+    const response = await h.request('/auth/revoke', 'POST')
+    expect(response.status).toBe(200)
+    expect(fetch).toHaveBeenLastCalledWith(expect.any(String), expect.objectContaining({ body: JSON.stringify({ action: 'revoke', token: TOKEN }) }))
   })
 
   it('cancels the existing conversation', async () => {
@@ -115,9 +140,9 @@ describe('Raycast HTTP channel', () => {
     expect(h.send).not.toHaveBeenCalled()
   })
 
-  it('uses the public toolset for the shared team connection', async () => {
-    expect(resolveContext(raycastAuth())).toMatchObject({ surface: 'raycast', person: { id: 'raycast-team' } })
-    expect(await isAdminMode(raycastAuth())).toBe(false)
+  it('uses the public toolset with the signed-in GitHub identity', async () => {
+    expect(resolveContext(raycastAuth(ACCOUNT))).toMatchObject({ surface: 'raycast', person: { id: ACCOUNT.id } })
+    expect(await isAdminMode(raycastAuth(ACCOUNT))).toBe(false)
   })
 })
 
