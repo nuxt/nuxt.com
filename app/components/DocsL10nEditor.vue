@@ -85,11 +85,13 @@ watch(otherCount, (count, before) => {
 }, { immediate: true })
 
 const formTop = useTemplateRef<HTMLElement>('formTop')
+const draftField = useTemplateRef<{ textareaRef?: HTMLTextAreaElement }>('draftField')
 
 function select(key: string) {
   hash.value = key
   nextTick(() => {
-    formTop.value?.focus({ preventScroll: true })
+    const field = draftField.value?.textareaRef ?? formTop.value
+    field?.focus({ preventScroll: true })
     formTop.value?.scrollIntoView({ block: 'start', behavior: reducedMotion.value === 'reduce' ? 'auto' : 'smooth' })
   })
 }
@@ -529,6 +531,7 @@ function glossaryHint(entry: NonNullable<typeof segment.value>['glossary'][numbe
             </template>
 
             <UTextarea
+              ref="draftField"
               v-model="draft"
               :rows="3"
               autoresize
@@ -779,8 +782,8 @@ function glossaryHint(entry: NonNullable<typeof segment.value>['glossary'][numbe
             class="w-full"
             :lang="locale"
             data-l10n-note
-            @keydown.meta.enter.prevent="save"
-            @keydown.ctrl.enter.prevent="save"
+            @keydown.meta.enter.prevent.stop="save"
+            @keydown.ctrl.enter.prevent.stop="save"
           />
         </UFormField>
 
