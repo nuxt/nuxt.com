@@ -59,6 +59,18 @@ describe('rate-limit hook', () => {
     expect(fetchMock).toHaveBeenCalledOnce()
   })
 
+  it('gives signed-in admins the higher daily allowance', async () => {
+    fetchMock.mockResolvedValue(new Response('{}', { status: 200 }))
+    await turnStarted({}, context({ ...webAuth, principalType: 'user', attributes: { role: 'admin' } }))
+    expect(JSON.parse(fetchMock.mock.calls[0]![1].body)).toEqual({ userId: 'anon-1', defaultLimit: 200 })
+  })
+
+  it('does not give anonymous principals the admin allowance', async () => {
+    fetchMock.mockResolvedValue(new Response('{}', { status: 200 }))
+    await turnStarted({}, context({ ...webAuth, attributes: { role: 'admin' } }))
+    expect(JSON.parse(fetchMock.mock.calls[0]![1].body)).toEqual({ userId: 'anon-1' })
+  })
+
   it('skips Slack turns and subagent turns', async () => {
     await turnStarted({}, context(slackAuth))
     await turnStarted({}, context(webAuth, { sessionId: 'parent' }))

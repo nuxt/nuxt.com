@@ -1,4 +1,5 @@
 import type { UIMessage } from 'ai'
+import { DEFAULT_DAILY_LIMIT } from '../../shared/utils/rate-limit'
 
 interface AgentUsage {
   used: number
@@ -106,7 +107,7 @@ export const useNuxtAgent = createSharedComposable(() => {
   const { data: usage, execute: refreshUsage } = useFetch<AgentUsage>('/api/agent/usage', {
     server: false,
     lazy: false,
-    default: () => ({ used: 0, remaining: 20, limit: 20 })
+    default: () => ({ used: 0, remaining: DEFAULT_DAILY_LIMIT, limit: DEFAULT_DAILY_LIMIT })
   })
   const rateLimitReached = computed(() => (usage.value?.remaining ?? Infinity) <= 0)
   function onMessageSent() {
