@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { maxTranslationLength, validate } from '@diglot/core'
 import type { ButtonProps } from '@nuxt/ui'
-import { hasL10nBlock, L10N_NOTE_MAX_LENGTH, L10N_STRINGS, l10nEditorPath, l10nTranslationsPath, localisePath, otherTextGroups, type L10nChange, type L10nChangeIssue, type L10nEditorPage, type L10nLocale, type L10nSaveResult } from '#shared/utils/l10n'
+import { hasL10nBlock, L10N_NOTE_MAX_LENGTH, L10N_STRINGS, l10nCommitUrl, l10nEditorPath, l10nTranslationsPath, localisePath, otherTextGroups, withKnownRecord, type L10nChange, type L10nKnownRecord, type L10nChangeIssue, type L10nEditorPage, type L10nLocale, type L10nSaveResult } from '#shared/utils/l10n'
 
 const props = defineProps<{
   locale: L10nLocale
@@ -26,6 +26,9 @@ const toast = useToast()
 const closeButton = computed(() => ({ 'aria-label': t.value.close }) as ButtonProps)
 const reducedMotion = usePreferredReducedMotion()
 
+/** How long a translation known ahead of the editor's page is shown in its place. */
+const KNOWN_TTL = 60 * 60_000
+
 const { data: page, refresh, status: loading } = useFetch<L10nEditorPage>(() => l10nEditorPath(props.locale, props.path), {
   server: false,
   immediate: false,
@@ -36,7 +39,23 @@ watch(open, (value) => {
   if (value && !page.value) refresh()
 }, { immediate: true })
 
-const segments = computed(() => page.value?.segments ?? [])
+const storageKey = `docs-l10n:${props.locale}:${props.path}`
+const changes = useLocalStorage(`${storageKey}:changes`, new Map<string, L10nChange>())
+const drafts = useLocalStorage(`${storageKey}:drafts`, new Map<string, string>())
+const note = useLocalStorage(`${storageKey}:note`, '')
+/** Translations saved or reported as current that the editor's page does not show yet. */
+const known = useLocalStorage(`${storageKey}:known`, new Map<string, L10nKnownRecord>())
+
+watch(page, (value) => {
+  if (!value) return
+  const fetched = new Map(value.segments.map(item => [item.hash, item]))
+  for (const [key, entry] of [...known.value]) {
+    const item = fetched.get(key)
+    if (!item || Date.now() - entry.at > KNOWN_TTL || ((item.record?.text ?? null) === entry.text && item.status === entry.status)) known.value.delete(key)
+  }
+})
+
+const segments = computed(() => (page.value?.segments ?? []).map(item => withKnownRecord(item, known.value.get(item.hash))))
 
 const index = computed(() => segments.value.findIndex(segment => segment.hash === hash.value))
 const segment = computed(() => segments.value[index.value])
@@ -91,23 +110,19 @@ const listsCode = computed(() => !codeInView.value && otherGroups.value.some(gro
 const where = (item: { kind: Parameters<typeof t.value.where>[0], context: { detail?: string, containers: string[] } }) =>
   t.value.where(item.kind, item.context.detail, item.context.containers.at(-1))
 
-const storageKey = `docs-l10n:${props.locale}:${props.path}`
-const changes = useLocalStorage(`${storageKey}:changes`, new Map<string, L10nChange>())
-const drafts = useLocalStorage(`${storageKey}:drafts`, new Map<string, string>())
-const note = useLocalStorage(`${storageKey}:note`, '')
-
 watch([segments, hash], ([list, current]) => {
   if (!list.length) return
   if (!list.some(item => item.hash === current)) hash.value = list[0]!.hash
-  const published = new Map(list.map(item => [item.hash, item.record?.text ?? null]))
+  const published = new Map(list.map(item => [item.hash, item]))
   const stale: L10nChangeIssue[] = []
   for (const [key, change] of [...changes.value]) {
-    if (!published.has(key)) {
+    const item = published.get(key)
+    if (!item) {
       changes.value.delete(key)
-    } else if (change.base !== published.get(key)) {
+    } else if (change.base !== (item.record?.text ?? null)) {
       changes.value.delete(key)
       if (change.action === 'edit' && change.text && !drafts.value.has(key)) drafts.value.set(key, change.text)
-      stale.push({ hash: key, code: 'stale', message: 'The translation changed since this change was made: review it again.' })
+      stale.push({ hash: key, code: 'stale', message: t.value.issues.stale, current: { text: item.record?.text ?? null, status: item.status } })
     }
   }
   for (const key of [...drafts.value.keys()]) if (!published.has(key)) drafts.value.delete(key)
@@ -198,7 +213,26 @@ const result = ref<L10nSaveResult>()
 const failure = ref<string>()
 const issues = ref<L10nChangeIssue[]>([])
 const issue = computed(() => issues.value.find(item => item.hash === segment.value?.hash))
-const errorMessage = computed(() => validation.value?.errors[0]?.message ?? issue.value?.message)
+const staleIssue = computed(() => issue.value?.code === 'stale' ? issue.value : undefined)
+const fieldIssue = computed(() => issue.value?.code === 'stale' ? undefined : issue.value)
+const errorMessage = computed(() => validation.value?.errors[0]?.message ?? (fieldIssue.value ? t.value.issues[fieldIssue.value.code] : undefined))
+
+/** Show the translation a stale change would replace, keeping the change as a draft. */
+function reload(key: string) {
+  const found = issues.value.find(item => item.hash === key && item.code === 'stale')
+  if (found?.current) known.value.set(key, { ...found.current, at: Date.now() })
+  const change = changes.value.get(key)
+  if (change) {
+    if (change.action === 'edit' && change.text) drafts.value.set(key, change.text)
+    changes.value.delete(key)
+  }
+  issues.value = issues.value.filter(item => item.hash !== key)
+  announcement.value = t.value.reloaded
+}
+
+/** Where the last save is: written to the translations repository, served, or still waiting to be. */
+const publication = ref<{ sha: string, state: 'publishing' | 'online' | 'slow' }>()
+const commitUrl = computed(() => publication.value ? l10nCommitUrl(publication.value.sha) : undefined)
 
 let disposed = false
 onScopeDispose(() => {
@@ -206,26 +240,41 @@ onScopeDispose(() => {
   for (const block of active) block.removeAttribute('data-l10n-active')
 })
 
-/** Whether the editor's page shows every saved segment as saved. */
+/** Whether the editor's page, as fetched, shows every saved segment as saved. */
 function served(saved: L10nSaveResult['segments']): boolean {
   return Object.entries(saved).every(([key, { status, text }]) => {
-    const item = segments.value.find(other => other.hash === key)
+    const item = page.value?.segments.find(other => other.hash === key)
     return !item || (item.status === status && item.record?.text === text)
   })
 }
 
-async function waitForPublication(saved: L10nSaveResult['segments']) {
-  for (let attempt = 0; attempt < 20; attempt++) {
-    await new Promise(resolve => setTimeout(resolve, 3000))
-    if (disposed) return
+/** Seconds between two checks of whether a save is served. */
+const PUBLICATION_CHECKS = [...Array.from({ length: 20 }, () => 3), ...Array.from({ length: 36 }, () => 15)]
+
+async function waitForPublication(sha: string, saved: L10nSaveResult['segments']) {
+  publication.value = { sha, state: 'publishing' }
+  const current = () => publication.value?.sha === sha
+  for (const [attempt, delay] of PUBLICATION_CHECKS.entries()) {
+    await new Promise(resolve => setTimeout(resolve, delay * 1000))
+    if (disposed || !current()) return
     await refresh()
+    if (!current()) return
     if (served(saved)) {
+      publication.value = { sha, state: 'online' }
       emit('published', page.value!.sha)
       toast.add({ title: t.value.publishedNow, icon: 'i-lucide-check', color: 'success' })
       return
     }
+    if (attempt === 19) {
+      publication.value = { sha, state: 'slow' }
+      toast.add({ title: t.value.publishSlow, icon: 'i-lucide-clock', color: 'neutral' })
+    }
   }
-  toast.add({ title: t.value.publishSlow, icon: 'i-lucide-clock', color: 'neutral' })
+}
+
+function showIssues(list: L10nChangeIssue[]) {
+  issues.value = list
+  if (list[0] && !list.some(item => item.hash === hash.value)) hash.value = list[0].hash
 }
 
 async function save() {
@@ -234,25 +283,31 @@ async function save() {
   failure.value = undefined
   result.value = undefined
   issues.value = []
+  const sent = [...changes.value.values()]
   try {
     const response = await $fetch<L10nSaveResult>(l10nTranslationsPath(props.locale), {
       method: 'POST',
-      body: { page: props.path, changes: [...changes.value.values()], ...(note.value.trim() ? { note: note.value.trim() } : {}) }
+      body: { page: props.path, changes: sent, ...(note.value.trim() ? { note: note.value.trim() } : {}) }
     })
     result.value = response
-    changes.value.clear()
+    const refused = new Set(response.issues?.map(item => item.hash))
+    for (const change of sent) {
+      if (!refused.has(change.hash) && JSON.stringify(changes.value.get(change.hash)) === JSON.stringify(change)) changes.value.delete(change.hash)
+    }
     note.value = ''
+    showIssues(response.issues ?? [])
     if (response.mode === 'commit' && !response.dryRun) {
-      for (const [hash, { status }] of Object.entries(response.segments)) {
-        for (const block of blocks(hash)) block.setAttribute('data-l10n', status)
+      const at = Date.now()
+      for (const [key, { status, text }] of Object.entries(response.segments)) {
+        known.value.set(key, { text: text ?? null, status, at })
+        for (const block of blocks(key)) block.setAttribute('data-l10n', status)
       }
-      waitForPublication(response.segments)
+      waitForPublication(response.sha, response.segments)
     }
   } catch (error) {
-    const data = (error as { data?: { statusMessage?: string, data?: { issues?: L10nChangeIssue[] } } }).data
-    issues.value = data?.data?.issues ?? []
-    failure.value = data?.statusMessage ?? t.value.failed
-    if (issues.value[0]) hash.value = issues.value[0].hash
+    const { statusCode, data } = error as { statusCode?: number, data?: { data?: { issues?: L10nChangeIssue[] } } }
+    if (statusCode === 422 && data?.data?.issues?.length) showIssues(data.data.issues)
+    else failure.value = statusCode === 409 ? t.value.conflict : statusCode === 429 ? t.value.tooMany : t.value.failed
   } finally {
     saving.value = false
   }
@@ -426,6 +481,35 @@ function glossaryHint(entry: NonNullable<typeof segment.value>['glossary'][numbe
             :description="t.suggesterNote"
           />
 
+          <div v-if="staleIssue" class="space-y-2 rounded-md border border-(--l10n-warning) p-3" role="alert" data-l10n-stale>
+            <p class="flex gap-1.5 font-medium text-highlighted">
+              <UIcon name="i-lucide-git-compare" class="size-4 shrink-0 translate-y-0.5 text-(--l10n-warning)" />
+              {{ t.issues.stale }}
+            </p>
+            <div v-if="staleIssue.current" class="space-y-0.5">
+              <p class="text-xs font-medium uppercase text-muted">
+                {{ t.current }}
+              </p>
+              <p v-if="staleIssue.current.text !== null" class="text-highlighted">
+                <DocsL10nSkeleton :skeleton="staleIssue.current.text" :placeholders="segment.placeholders" />
+              </p>
+              <p v-else class="text-muted">
+                {{ t.none }}
+              </p>
+            </div>
+            <p class="text-xs text-toned">
+              {{ t.staleHint }}
+            </p>
+            <UButton
+              :label="t.reloadCurrent"
+              icon="i-lucide-refresh-cw"
+              color="neutral"
+              variant="outline"
+              size="sm"
+              @click="reload(staleIssue.hash)"
+            />
+          </div>
+
           <UFormField
             :label="t.yours"
             :description="segment.placeholders.length ? t.placeholders : undefined"
@@ -455,13 +539,16 @@ function glossaryHint(entry: NonNullable<typeof segment.value>['glossary'][numbe
             />
 
             <template v-if="errorMessage" #error>
-              <ul lang="en" class="space-y-0.5">
-                <li v-for="error in validation?.errors" :key="error.code + error.at">
+              <ul class="space-y-0.5">
+                <li v-for="error in validation?.errors" :key="error.code + error.at" lang="en">
                   {{ error.message }}
                 </li>
-                <li v-if="issue">
-                  {{ issue.message }}
-                </li>
+                <template v-if="fieldIssue && !validation?.errors.length">
+                  <li>{{ t.issues[fieldIssue.code] }}</li>
+                  <li v-for="error in fieldIssue.errors" :key="error.code + error.at" lang="en">
+                    {{ error.message }}
+                  </li>
+                </template>
               </ul>
             </template>
             <template v-if="validation?.warnings.length" #help>
@@ -582,15 +669,49 @@ function glossaryHint(entry: NonNullable<typeof segment.value>['glossary'][numbe
             icon="i-lucide-flask-conical"
             :description="t.dryRun"
           />
-          <UAlert
-            v-else-if="result"
-            color="neutral"
-            variant="subtle"
-            icon="i-lucide-circle-check"
-            :ui="{ icon: 'text-(--l10n-success)' }"
-            :description="result.mode === 'commit' ? t.published : t.proposed"
-            :actions="result.pull ? [{ label: t.viewPull, to: result.pull.url, target: '_blank', color: 'neutral', variant: 'outline' }] : undefined"
-          />
+          <p v-if="saving" class="flex items-center gap-1.5 text-xs text-toned" data-l10n-save-state="saving">
+            <UIcon name="i-lucide-loader-circle" class="size-3.5 shrink-0 animate-spin motion-reduce:animate-none" />
+            {{ t.saving(changes.size) }}
+          </p>
+          <p v-else-if="publication" class="flex gap-1.5 text-xs text-toned" :data-l10n-save-state="publication.state">
+            <UIcon
+              :name="publication.state === 'online' ? 'i-lucide-circle-check' : publication.state === 'slow' ? 'i-lucide-clock' : 'i-lucide-loader-circle'"
+              class="size-3.5 shrink-0 translate-y-0.5"
+              :class="publication.state === 'online' ? 'text-(--l10n-success)' : publication.state === 'publishing' ? 'animate-spin motion-reduce:animate-none' : undefined"
+            />
+            <span>
+              <span class="font-medium text-highlighted">{{ t.state[publication.state].label }}</span>
+              ({{ t.commit }} <ULink :to="commitUrl" target="_blank" class="font-mono underline underline-offset-2">{{ publication.sha.slice(0, 7) }}</ULink>) : {{ t.state[publication.state].hint }}
+            </span>
+          </p>
+          <p v-else-if="result?.pull" class="flex gap-1.5 text-xs text-toned" data-l10n-save-state="proposed">
+            <UIcon name="i-lucide-git-pull-request" class="size-3.5 shrink-0 translate-y-0.5 text-(--l10n-success)" />
+            <span>
+              {{ t.proposedIn(result.pull.number) }}
+              <ULink :to="result.pull.url" target="_blank" class="underline underline-offset-2">{{ t.viewPull }}</ULink>
+            </span>
+          </p>
+        </div>
+
+        <div v-if="issues.length" class="space-y-1 rounded-md border border-default p-2 text-xs" data-l10n-not-saved>
+          <p class="font-medium text-highlighted">
+            {{ t.notSaved(issues.length) }}
+          </p>
+          <ul class="max-h-32 space-y-1 overflow-y-auto">
+            <li v-for="item in issues" :key="item.hash" class="flex flex-wrap items-baseline gap-x-2">
+              <UButton
+                :label="excerpt(item.hash)"
+                lang="en"
+                color="neutral"
+                variant="link"
+                size="xs"
+                class="max-w-full p-0"
+                :ui="{ label: 'truncate' }"
+                @click="hash = item.hash"
+              />
+              <span class="text-toned">{{ t.issues[item.code] }}</span>
+            </li>
+          </ul>
         </div>
 
         <p v-if="Object.keys(suggestions).length" class="text-xs text-toned">
@@ -633,6 +754,9 @@ function glossaryHint(entry: NonNullable<typeof segment.value>['glossary'][numbe
             </ul>
           </template>
         </UCollapsible>
+        <p v-if="changes.size && !saving" class="-mt-2 text-xs text-muted" data-l10n-save-state="staged">
+          {{ t.stagedHint }}
+        </p>
 
         <UFormField
           v-if="changes.size"

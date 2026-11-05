@@ -179,6 +179,7 @@ describe('planChanges', () => {
     })
     expect(files).toHaveLength(1)
     expect(issues.map(issue => [issue.hash, issue.code])).toEqual([[TIP, 'stale'], [FIRST_PARAGRAPH, 'stale']])
+    expect(issues.map(issue => issue.current)).toEqual([{ text: edited.text, status: 'edited' }, { text: null, status: 'untranslated' }])
   })
 
   it('should let suggestions edit and reject, but not verify', () => {
@@ -234,18 +235,47 @@ describe('commitChanges (dry run)', () => {
     expect((await readRecordsAt(git, result.sha, 'fr', [TIP])).get(TIP)?.review).toBe('verified')
   })
 
-  it('should commit nothing when any change is refused', async () => {
+  it('should commit the changes that can be applied and list the others', async () => {
     const git = dryRunGit(fixtureRepository())
-    const save = commitChanges(git, {
+    const result = await commitChanges(git, {
       locale: 'fr',
       page: PAGE,
       segments,
       translator,
       changes: withBase([{ hash: TIP, action: 'verify' }, { hash: FIRST_PARAGRAPH, action: 'edit', text: 'Nuxt.' }])
     })
+    expect(result.issues).toMatchObject([{ hash: FIRST_PARAGRAPH, code: 'invalid' }])
+    expect([...result.records.keys()]).toEqual([TIP])
+    expect(git.log.commits).toHaveLength(1)
+    expect(git.log.commits[0]!.message).toBe(`chore(fr): verify 1 on ${PAGE}\n\nReviewed on nuxt.com by @danielroe.`)
+  })
+
+  it('should commit nothing when no change can be applied', async () => {
+    const git = dryRunGit(fixtureRepository())
+    const save = commitChanges(git, {
+      locale: 'fr',
+      page: PAGE,
+      segments,
+      translator,
+      changes: withBase([{ hash: FIRST_PARAGRAPH, action: 'edit', text: 'Nuxt.' }])
+    })
     await expect(save).rejects.toBeInstanceOf(L10nChangeError)
     await expect(save).rejects.toMatchObject({ issues: [{ hash: FIRST_PARAGRAPH, code: 'invalid' }] })
     expect(git.log.commits).toEqual([])
+  })
+
+  it('should report the current translation of a change made against an older one', async () => {
+    const git = dryRunGit(fixtureRepository())
+    const input = { locale: 'fr' as const, page: PAGE, segments, translator }
+    await commitChanges(git, { ...input, changes: withBase([{ hash: FIRST_PARAGRAPH, action: 'edit', text: FIRST_TEXT }]) })
+
+    const second = commitChanges(git, { ...input, changes: withBase([{ hash: FIRST_PARAGRAPH, action: 'verify' }]) })
+    await expect(second).rejects.toMatchObject({
+      issues: [{ hash: FIRST_PARAGRAPH, code: 'stale', current: { text: FIRST_TEXT, status: 'edited' } }]
+    })
+
+    const rebased = await commitChanges(git, { ...input, changes: [{ hash: FIRST_PARAGRAPH, action: 'verify', base: FIRST_TEXT }] })
+    expect(rebased.records.get(FIRST_PARAGRAPH)).toMatchObject({ text: FIRST_TEXT, review: 'verified' })
   })
 
   it('should put the note in the commit message, above the reviewer line', async () => {
@@ -452,7 +482,7 @@ describe('GitHub App', () => {
     })
 
     await expect(suggestChanges(git, { ...input, changes: [{ hash: TIP, action: 'reject', base: 'Essayez Nuxt {0}en ligne{/0}.' }] }))
-      .rejects.toMatchObject({ issues: [{ hash: TIP, code: 'stale' }] })
+      .rejects.toMatchObject({ issues: [{ hash: TIP, code: 'stale', current: { text: records[TIP]!.text, status: 'machine' } }] })
 
     github.pulls[0]!.state = 'closed'
     const third = await suggestChanges(git, { ...input, changes: withBase([{ hash: TIP, action: 'edit', text: 'Testez Nuxt {0}en ligne{/0}.' }]) })

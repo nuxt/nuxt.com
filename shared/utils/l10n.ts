@@ -211,6 +211,42 @@ export interface L10nEditorSegment {
   glossary: GlossaryEntry[]
 }
 
+/** A translation the translations branch is known to hold for a segment, ahead of the page the editor loaded. */
+export interface L10nKnownRecord {
+  /** `null` for no translation. */
+  text: string | null
+  status: SegmentStatus
+  /** When it was learnt, in milliseconds since the epoch. */
+  at: number
+}
+
+const STATUS_REVIEW: Record<SegmentStatus, Review> = {
+  'untranslated': 'none',
+  'machine': 'none',
+  'pending-review': 'none',
+  'edited': 'edited',
+  'verified': 'verified',
+  'rejected': 'rejected'
+}
+
+/** `segment` showing the `known` translation in place of the one it was loaded with. */
+export function withKnownRecord(segment: L10nEditorSegment, known: L10nKnownRecord | undefined): L10nEditorSegment {
+  if (!known) return segment
+  const { record, previous, ...rest } = segment
+  if (known.text === null) return { ...rest, status: 'untranslated' }
+  return {
+    ...rest,
+    ...(previous && known.status === 'pending-review' ? { previous } : {}),
+    status: known.status,
+    record: {
+      text: known.text,
+      origin: known.status === 'machine' || known.status === 'pending-review' ? (record?.origin ?? 'mt') : 'human',
+      review: STATUS_REVIEW[known.status],
+      updatedAt: new Date(known.at).toISOString()
+    }
+  }
+}
+
 /** Kinds of segment rendered without a block of their own: they cannot be reached by clicking the page. */
 const BLOCKLESS_KINDS = new Set<SegmentKind>(['frontmatter', 'navigation', 'prop', 'image-alt', 'code-label', 'code-comment'])
 
@@ -361,6 +397,8 @@ export interface L10nChangeIssue {
   message: string
   /** The validation errors of an `invalid` edit. */
   errors?: Array<{ code: string, message: string, at?: number }>
+  /** For a `stale` change: the translation it would replace now, `null` for none. */
+  current?: { text: string | null, status: SegmentStatus }
 }
 
 /** The response to a page save. */
@@ -371,8 +409,18 @@ export interface L10nSaveResult {
   /** What each changed segment shows once the commit is served; a suggestion changes nothing until merged. */
   segments: Record<string, { status: SegmentStatus, text?: string }>
   pull?: { number: number, url: string }
+  /** The changes that were not saved, and why; the others were. */
+  issues?: L10nChangeIssue[]
   /** The commits a dry run would have made, where the GitHub App is not configured. */
   dryRun?: Array<{ message: string, author: { name: string, email: string }, files: Array<{ path: string, content: string }> }>
+}
+
+/** The repository translations are saved to. */
+export const L10N_TRANSLATIONS_REPO = 'nuxt/translations'
+
+/** A commit of the translations repository on GitHub. */
+export function l10nCommitUrl(sha: string): string {
+  return `https://github.com/${L10N_TRANSLATIONS_REPO}/commit/${sha}`
 }
 
 /** Where a locale's translations are saved: `/api/l10n/fr/translations`. */
@@ -477,10 +525,34 @@ export const L10N_STRINGS = {
       pendingChanges: (count: number) => `${count} changement${count > 1 ? 's' : ''} en attente`,
       publish: (count: number) => count ? `Publier ${count} changement${count > 1 ? 's' : ''}` : 'Publier',
       propose: (count: number) => count ? `Proposer ${count} changement${count > 1 ? 's' : ''}` : 'Proposer',
-      published: 'Publié : la page sera à jour dans quelques secondes.',
       publishedNow: 'Traduction publiée : la page est à jour.',
-      publishSlow: 'La page n\'est pas encore à jour : rechargez-la dans quelques minutes.',
-      proposed: 'Proposition envoyée.',
+      publishSlow: 'La page n\'est pas encore à jour : vos changements sont enregistrés et seront en ligne d\'ici quelques minutes.',
+      saving: (count: number) => `Enregistrement de ${count} changement${count > 1 ? 's' : ''}…`,
+      stagedHint: 'Pas encore enregistrés : ils restent dans ce navigateur jusqu\'à la publication.',
+      state: {
+        publishing: { label: 'Enregistré', hint: 'mise en ligne en cours, en général en moins d\'une minute…' },
+        online: { label: 'En ligne', hint: 'la page affiche vos changements.' },
+        slow: { label: 'Enregistré', hint: 'la mise en ligne prend plus de temps que prévu : la page sera à jour d\'ici quelques minutes.' }
+      },
+      commit: 'commit',
+      proposedIn: (number: number) => `Proposé dans la pull request #${number} : en ligne une fois accepté par l'équipe de traduction.`,
+      notSaved: (count: number) => `${count} changement${count > 1 ? 's' : ''} non enregistré${count > 1 ? 's' : ''} :`,
+      issues: {
+        'unknown-segment': 'Ce passage n\'est plus sur la page.',
+        'duplicate': 'Ce passage est modifié deux fois.',
+        'not-allowed': 'Seule l\'équipe de traduction peut valider une traduction.',
+        'missing-text': 'La traduction est vide.',
+        'too-long': 'La traduction est beaucoup plus longue que le texte source.',
+        'invalid': 'La traduction ne correspond pas au texte source.',
+        'unchanged': 'Ce changement ne modifie rien.',
+        'no-record': 'Il n\'y a pas encore de traduction à valider ou à rejeter.',
+        'stale': 'La traduction a changé depuis votre modification.'
+      } satisfies Record<L10nChangeIssue['code'], string>,
+      staleHint: 'Votre version est gardée : rechargez la traduction actuelle, comparez, puis appliquez à nouveau votre changement.',
+      reloadCurrent: 'Recharger la traduction actuelle',
+      reloaded: 'Traduction actuelle rechargée : votre version est dans le champ.',
+      conflict: 'Les traductions ont changé pendant l\'enregistrement : réessayez.',
+      tooMany: 'Trop d\'enregistrements : réessayez dans l\'heure.',
       viewPull: 'Voir la pull request',
       suggestions: 'Suggestions',
       suggestedReject: 'Propose de rejeter la traduction actuelle.',

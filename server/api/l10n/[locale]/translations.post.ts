@@ -54,18 +54,19 @@ export default defineEventHandler(async (event): Promise<L10nSaveResult> => {
       : await suggestChanges(git, input, TRANSLATIONS_BRANCH)
     if (result.pull) forgetSuggestions(git, locale)
 
-    console.log(`[l10n] ${user.username} saved ${changes.length} ${locale} change(s) on ${page} as ${result.pull ? `#${result.pull.number}` : 'a commit'}: ${result.sha}${dryRun ? ' (dry run)' : ''}`)
+    console.log(`[l10n] ${user.username} saved ${changes.length - result.issues.length} of ${changes.length} ${locale} change(s) on ${page} as ${result.pull ? `#${result.pull.number}` : 'a commit'}: ${result.sha}${dryRun ? ' (dry run)' : ''}`)
 
     return {
       mode: role === 'translator' ? 'commit' : 'suggestion',
       sha: result.sha,
       segments: Object.fromEntries([...result.records].map(([hash, record]) => [hash, { status: recordStatus(record), text: record.text }])),
       ...(result.pull ? { pull: result.pull } : {}),
+      ...(result.issues.length ? { issues: result.issues } : {}),
       ...(dryRun ? { dryRun: dryRun.commits.map(({ message, author, files }) => ({ message, author, files })) } : {})
     }
   } catch (error) {
     if (error instanceof L10nChangeError) {
-      throw createError({ statusCode: 422, statusMessage: 'Some changes cannot be saved', data: { issues: error.issues } })
+      throw createError({ statusCode: 422, statusMessage: 'No change can be saved', data: { issues: error.issues } })
     }
     if (error instanceof L10nConflictError) {
       throw createError({ statusCode: 409, statusMessage: 'The translations changed while saving: try again' })

@@ -6,7 +6,7 @@ import { beforeAll, describe, expect, it } from 'vitest'
 import { createBundle } from '../../server/utils/l10n/bundle'
 import { editorSegments } from '../../server/utils/l10n/editor'
 import { createBuildInstance } from '../../utils/factory'
-import { hasL10nBlock, otherTextGroups } from '../../shared/utils/l10n'
+import { hasL10nBlock, otherTextGroups, withKnownRecord } from '../../shared/utils/l10n'
 
 const FIXTURES = fileURLToPath(new URL('../fixtures/l10n/', import.meta.url))
 const records = (JSON.parse(readFileSync(`${FIXTURES}fr.json`, 'utf8')) as { records: Record<string, Record<string, unknown>> }).records
@@ -109,5 +109,22 @@ describe('otherTextGroups', () => {
     expect(groups.find(group => group.heading === 'Type')!.segments.map(segment => segment.kind)).toEqual(['code-label', 'code-comment'])
     expect(groups.find(group => group.heading === 'Reactive Keys and Shared State')!.segments.map(segment => `${segment.kind}:${segment.context.containers.join('/')}`))
       .toEqual(['code-comment:', 'code-comment:code-group', 'code-comment:code-group', 'prop:video-accordion'])
+  })
+})
+
+describe('withKnownRecord', () => {
+  it('should show a translation saved ahead of the page in place of the loaded one', async () => {
+    const first = (await editorSegments(page, bundleOf(records), { terms: [] })).find(segment => segment.hash === FIRST_PARAGRAPH)!
+    const at = Date.parse('2026-11-04T22:20:00.000Z')
+
+    expect(withKnownRecord(first, undefined)).toBe(first)
+    expect(withKnownRecord(first, { text: 'Nuxt est un framework.', status: 'edited', at })).toEqual({
+      ...first,
+      status: 'edited',
+      record: { text: 'Nuxt est un framework.', origin: 'human', review: 'edited', updatedAt: '2026-11-04T22:20:00.000Z' }
+    })
+    expect(withKnownRecord(first, { text: first.record!.text, status: 'rejected', at }).record).toMatchObject({ text: first.record!.text, review: 'rejected' })
+    const { record: _, ...untranslated } = first
+    expect(withKnownRecord(first, { text: null, status: 'untranslated', at })).toEqual({ ...untranslated, status: 'untranslated' })
   })
 })

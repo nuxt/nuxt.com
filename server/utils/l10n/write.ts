@@ -1,4 +1,4 @@
-import { editRecord, rejectRecord, verifyRecord, type Policy, type ReviewTransition, type Segment, type TranslationRecord, type ValidationIssue } from '@diglot/core'
+import { editRecord, recordStatus, rejectRecord, verifyRecord, type Policy, type ReviewTransition, type Segment, type TranslationRecord, type ValidationIssue } from '@diglot/core'
 import { extract } from '@diglot/comark'
 import { parseRecordFile, recordPath, serialiseRecord } from '@diglot/store'
 import type { Node } from 'comark'
@@ -58,6 +58,10 @@ export function planChanges({ locale, segments, current, published = current, ch
   const issue = (hash: string, code: L10nChangeIssue['code'], message: string, errors?: ValidationIssue[]) => {
     plan.issues.push({ hash, code, message, ...(errors?.length ? { errors } : {}) })
   }
+  const stale = (hash: string, segment: Segment) => {
+    const record = published.get(hash)
+    plan.issues.push({ hash, code: 'stale', message: STALE_MESSAGE, current: { text: record?.text ?? null, status: recordStatus(record, segment) } })
+  }
 
   for (const change of changes) {
     const { hash, action } = change
@@ -76,7 +80,7 @@ export function planChanges({ locale, segments, current, published = current, ch
     }
     const sameBranch = published === current
     if (!sameBranch && (published.get(hash)?.text ?? null) !== change.base) {
-      issue(hash, 'stale', STALE_MESSAGE)
+      stale(hash, segment)
       continue
     }
 
@@ -98,7 +102,7 @@ export function planChanges({ locale, segments, current, published = current, ch
 
     if (transition.ok === false) {
       const { code, message, errors } = transition
-      if (code === 'stale') issue(hash, 'stale', STALE_MESSAGE)
+      if (code === 'stale') stale(hash, segment)
       else if (errors.some(error => error.code === 'too-long')) issue(hash, 'too-long', 'The translation is much longer than its source.')
       else issue(hash, code === 'rejected' || code === 'mismatch' ? 'invalid' : code, sentence(message), errors)
       continue
@@ -119,7 +123,7 @@ export async function readRecordsAt(git: Pick<TranslationsGit, 'readFiles'>, com
   return records
 }
 
-/** Thrown when changes cannot be applied: an invalid translation, or a segment not on the page. */
+/** Thrown when none of the changes can be applied: an invalid translation, or a segment not on the page. */
 export class L10nChangeError extends Error {
   constructor(readonly issues: L10nChangeIssue[]) {
     super(issues.map(issue => `${issue.hash}: ${issue.message}`).join('\n'))
@@ -174,6 +178,8 @@ export interface SaveResult {
   branch: string
   counts: L10nPlan['counts']
   records: L10nPlan['records']
+  /** The changes that were left out, and why. */
+  issues: L10nChangeIssue[]
   pull?: GitPullRequest
 }
 
@@ -194,8 +200,8 @@ function noteMarkdown(input: SaveInput, note: string, sha: string): string {
 }
 
 /**
- * Read the current records, plan, commit on top of `parent()` and move `branch` there.
- * Retried once when the branch moved in between.
+ * Read the current records, plan, commit the changes that can be applied on top of `parent()` and
+ * move `branch` there. Retried once when the branch moved in between.
  */
 async function commitPlan(git: TranslationsGit, input: SaveInput, branch: string, parent: (attempt: number) => Promise<{ sha: string, force: boolean, published?: string }>, suggestion: boolean): Promise<SaveResult> {
   const hashes = [...new Set(input.changes.map(change => change.hash))]
@@ -207,7 +213,7 @@ async function commitPlan(git: TranslationsGit, input: SaveInput, branch: string
       base.published && base.published !== base.sha ? readRecordsAt(git, base.published, input.locale, hashes) : undefined
     ])
     const plan = planChanges({ ...input, current, published, suggestion })
-    if (plan.issues.length) throw new L10nChangeError(plan.issues)
+    if (!plan.files.length) throw new L10nChangeError(plan.issues)
 
     const sha = await git.commit({
       parent: base.sha,
@@ -216,7 +222,7 @@ async function commitPlan(git: TranslationsGit, input: SaveInput, branch: string
       author: translatorAuthor(input.translator)
     })
     if (await git.update(branch, sha, { force: base.force })) {
-      return { sha, branch, counts: plan.counts, records: plan.records }
+      return { sha, branch, counts: plan.counts, records: plan.records, issues: plan.issues }
     }
     if (attempt >= 1) throw new L10nConflictError(`${branch} moved while saving, twice`)
   }
