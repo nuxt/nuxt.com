@@ -7,7 +7,8 @@ import { issueRaycastCredential } from '../../../layers/nuxi/server/utils/raycas
 export default defineEventHandler(async (event) => {
   event.res.headers.set('cache-control', 'no-store')
   event.res.headers.set('referrer-policy', 'no-referrer')
-  if (getRequestHeader(event, 'origin') !== getRequestURL(event).origin || (getRequestHeader(event, 'sec-fetch-site') && getRequestHeader(event, 'sec-fetch-site') !== 'same-origin')) {
+  const origin = getRequestURL(event, { xForwardedHost: true, xForwardedProto: true }).origin
+  if (getRequestHeader(event, 'origin') !== origin || (getRequestHeader(event, 'sec-fetch-site') && getRequestHeader(event, 'sec-fetch-site') !== 'same-origin')) {
     throw createError({ statusCode: 403, statusMessage: 'Connect to Raycast from this website' })
   }
   const { user } = await requireUserSession(event)

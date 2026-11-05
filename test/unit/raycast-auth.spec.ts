@@ -9,7 +9,15 @@ vi.mock('nuxt/server', async () => {
     createError: h3.createError,
     defineEventHandler: (handler: unknown) => handler,
     getRequestHeader: (event: TestEvent, name: string) => event.headers[name],
-    getRequestURL: (event: TestEvent) => new URL(event.url),
+    getRequestURL: (event: TestEvent, options: { xForwardedHost?: boolean, xForwardedProto?: boolean } = {}) => {
+      const url = new URL(event.url)
+      if (options.xForwardedHost && event.headers['x-forwarded-host']) {
+        url.port = ''
+        url.host = event.headers['x-forwarded-host']
+      }
+      if (options.xForwardedProto && event.headers['x-forwarded-proto']) url.protocol = event.headers['x-forwarded-proto']
+      return url
+    },
     readValidatedBody: async (event: TestEvent, validate: (value: unknown) => unknown) => validate(event.body)
   }
 })
@@ -101,6 +109,20 @@ describe('personal Raycast credentials', () => {
 })
 
 describe('connect with the website GitHub session', () => {
+  it('uses the public origin behind the deployment proxy and still rejects other origins', async () => {
+    const request = event()
+    request.url = 'http://internal:3000/api/auth/raycast'
+    request.headers['x-forwarded-host'] = 'preview.example'
+    request.headers['x-forwarded-proto'] = 'https'
+    vi.stubGlobal('requireUserSession', vi.fn(async () => {
+      throw Object.assign(new Error('Unauthorized'), { statusCode: 401 })
+    }))
+    await expect(connect(request)).rejects.toMatchObject({ statusCode: 401 })
+    request.headers.origin = 'https://evil.example'
+    await expect(connect(request)).rejects.toMatchObject({ statusCode: 403 })
+    expect(await kv.keys()).toHaveLength(0)
+  })
+
   it('hands the credential to Raycast in the fragment without exposing the browser session', async () => {
     const request = event()
     const result = await connect(request)
