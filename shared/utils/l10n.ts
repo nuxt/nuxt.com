@@ -1,4 +1,4 @@
-import type { GlossaryEntry, Placeholder, Review, Origin, SegmentFormat, SegmentKind, SegmentStatus } from '@diglot/core'
+import type { GlossaryEntry, Placeholder, Review, Origin, SegmentContext, SegmentFormat, SegmentKind, SegmentStatus } from '@diglot/core'
 import { withLeadingSlash } from 'ufo'
 import { CURRENT_DOCS_VERSION, docsPathPrefix, docsStatus, isArchivedDocVersion, isDocVersion, type DocVersion } from './docs'
 
@@ -192,6 +192,8 @@ export interface L10nEditorSegment {
   skeleton: string
   words: number
   placeholders: Placeholder[]
+  /** Where the segment is on the page: its enclosing headings and containers, and its prop name, frontmatter path or code language. */
+  context: Pick<SegmentContext, 'headingTrail' | 'containers' | 'detail'>
   status: SegmentStatus
   record?: {
     text: string
@@ -291,6 +293,9 @@ export interface L10nChange {
   base: string | null
 }
 
+/** Longest note a translator can attach to a save, in characters. */
+export const L10N_NOTE_MAX_LENGTH = 500
+
 /** The GitHub account changes are made by. */
 export interface L10nTranslator {
   login: string
@@ -307,6 +312,8 @@ export interface L10nChangeIssue {
   message: string
   /** The validation errors of an `invalid` edit. */
   errors?: Array<{ code: string, message: string, at?: number }>
+  /** For a `stale` change: the translation it would replace now, `null` for none. */
+  current?: { text: string | null, status: SegmentStatus }
 }
 
 /** The response to a page save. */
@@ -317,9 +324,14 @@ export interface L10nSaveResult {
   /** What each changed segment shows once the commit is served; a suggestion changes nothing until merged. */
   segments: Record<string, { status: SegmentStatus, text?: string }>
   pull?: { number: number, url: string }
+  /** The changes that were not saved, and why; the others were. */
+  issues?: L10nChangeIssue[]
   /** The commits a dry run would have made, where the GitHub App is not configured. */
   dryRun?: Array<{ message: string, author: { name: string, email: string }, files: Array<{ path: string, content: string }> }>
 }
+
+/** The repository translations are saved to. */
+export const L10N_TRANSLATIONS_REPO = 'nuxt/translations'
 
 /** Where a locale's translations are saved: `/api/l10n/fr/translations`. */
 export function l10nTranslationsPath(locale: L10nLocale): string {
@@ -384,7 +396,8 @@ export const L10N_STRINGS = {
       'rejected': 'Rejeté'
     } satisfies Record<SegmentStatus, string>,
     improve: 'Améliorer cette traduction',
-    source: 'Texte anglais',
+    readMore: { before: 'Pour en savoir plus, consultez ', after: '.' },
+    source: 'Texte source (anglais)',
     loading: 'Chargement…',
     status: {
       'untranslated': 'Pas encore traduit : texte anglais',
@@ -393,53 +406,7 @@ export const L10N_STRINGS = {
       'edited': 'Traduction relue et modifiée',
       'verified': 'Traduction vérifiée',
       'rejected': 'Traduction rejetée : texte anglais'
-    } satisfies Record<SegmentStatus, string>,
-    editor: {
-      title: 'Traduction',
-      close: 'Fermer',
-      signIn: 'Se connecter avec GitHub pour modifier',
-      suggesterNote: 'Vous ne faites pas partie de l\'équipe de traduction : vos modifications seront proposées dans une pull request.',
-      english: 'Texte anglais',
-      previousSource: 'Ancien texte anglais',
-      changedSentences: 'Les phrases surlignées sont nouvelles dans le texte anglais.',
-      current: 'Traduction actuelle',
-      none: 'Pas encore traduit.',
-      yours: 'Votre traduction',
-      fromSource: 'Partir du texte anglais',
-      placeholders: 'Les marqueurs {0}, {1}… représentent le code et les liens du texte anglais : gardez-les tous, et le texte d\'un lien entre {0} et {/0}.',
-      glossary: 'Glossaire',
-      glossaryKeep: 'à garder en anglais',
-      glossaryTranslate: (target?: string) => target ? `à traduire par « ${target} »` : 'à traduire',
-      glossaryKeepGloss: (gloss: string) => `à garder en anglais, avec « ${gloss} »`,
-      by: (login: string) => `par @${login}`,
-      rejectedBy: (login: string) => `Rejetée par @${login} : la page affiche le texte anglais. Modifiez-la pour la rétablir.`,
-      edit: 'Modifier',
-      verify: 'Valider',
-      reject: 'Rejeter',
-      undo: 'Annuler',
-      rejectHint: 'La page affichera le texte anglais pour ce passage.',
-      staged: { edit: 'Modification en attente', verify: 'Validation en attente', reject: 'Rejet en attente' },
-      pendingChanges: (count: number) => `${count} changement${count > 1 ? 's' : ''} en attente`,
-      publish: (count: number) => count ? `Publier ${count} changement${count > 1 ? 's' : ''}` : 'Publier',
-      propose: (count: number) => count ? `Proposer ${count} changement${count > 1 ? 's' : ''}` : 'Proposer',
-      published: 'Publié : la page sera à jour dans quelques secondes.',
-      publishedNow: 'Traduction publiée : la page est à jour.',
-      publishSlow: 'La page n\'est pas encore à jour : rechargez-la dans quelques minutes.',
-      proposed: 'Proposition envoyée.',
-      viewPull: 'Voir la pull request',
-      suggestions: 'Suggestions',
-      suggestedReject: 'Propose de rejeter la traduction actuelle.',
-      suggestionCount: (count: number) => `${count} passage${count > 1 ? 's' : ''} avec des suggestions`,
-      dryRun: 'Essai : rien n\'a été publié, l\'application GitHub n\'est pas configurée.',
-      failed: 'La publication a échoué.',
-      verifyAll: (count: number) => `Valider les ${count} traductions automatiques`,
-      verifyAllConfirm: (count: number) => `Valider ${count} traductions automatiques de cette page sans les modifier ? Elles seront publiées comme vérifiées par vous, en une seule fois avec vos autres changements.`,
-      confirm: 'Confirmer',
-      cancel: 'Annuler',
-      previous: 'Passage précédent',
-      next: 'Passage suivant',
-      position: (index: number, count: number) => `${index} sur ${count}`
-    }
+    } satisfies Record<SegmentStatus, string>
   }
 } as const satisfies Record<L10nLocale, unknown>
 

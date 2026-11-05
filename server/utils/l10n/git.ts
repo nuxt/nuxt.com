@@ -52,6 +52,8 @@ export interface TranslationsGit {
   /** The open pull request from `branch` into the default branch. */
   findPull: (branch: string) => Promise<GitPullRequest | undefined>
   openPull: (input: { branch: string, title: string, body: string }) => Promise<GitPullRequest>
+  /** Comment on a pull request, as the repository's own identity. */
+  comment: (number: number, body: string) => Promise<void>
   /** Every open pull request into the default branch from a branch of the repository itself. */
   listPulls: () => Promise<GitOpenPull[]>
   /** Paths a pull request changes. */
@@ -63,6 +65,7 @@ export interface DryRunLog {
   commits: Array<GitCommitInput & { sha: string }>
   updates: Array<{ branch: string, sha: string, force: boolean }>
   pulls: Array<{ branch: string, title: string, body: string } & GitPullRequest>
+  comments: Array<{ number: number, body: string }>
 }
 
 /**
@@ -70,7 +73,7 @@ export interface DryRunLog {
  * Commits it creates can be read back and built on, so a whole save or suggestion runs as it would on GitHub.
  */
 export function dryRunGit(base: Pick<TranslationsGit, 'head' | 'read'>): TranslationsGit & { log: DryRunLog } {
-  const log: DryRunLog = { commits: [], updates: [], pulls: [] }
+  const log: DryRunLog = { commits: [], updates: [], pulls: [], comments: [] }
   const commits = new Map<string, { parent: string, files: Map<string, string> }>()
   const heads = new Map<string, string>()
   const pulls = new Map<string, GitPullRequest & { files: Set<string> }>()
@@ -138,6 +141,9 @@ export function dryRunGit(base: Pick<TranslationsGit, 'head' | 'read'>): Transla
       pulls.set(input.branch, { ...pull, files })
       log.pulls.push({ ...input, ...pull })
       return pull
+    },
+    async comment(number, body) {
+      log.comments.push({ number, body })
     },
     async listPulls() {
       return Promise.all([...pulls].map(async ([branch, pull]) => ({ number: pull.number, url: pull.url, branch, head: (await head(branch))! })))
