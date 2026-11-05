@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { maxTranslationLength, validate } from '@diglot/core'
 import type { ButtonProps } from '@nuxt/ui'
-import { hasL10nBlock, L10N_STRINGS, l10nEditorPath, l10nTranslationsPath, localisePath, otherTextGroups, type L10nChange, type L10nChangeIssue, type L10nEditorPage, type L10nLocale, type L10nSaveResult } from '#shared/utils/l10n'
+import { hasL10nBlock, L10N_NOTE_MAX_LENGTH, L10N_STRINGS, l10nEditorPath, l10nTranslationsPath, localisePath, otherTextGroups, type L10nChange, type L10nChangeIssue, type L10nEditorPage, type L10nLocale, type L10nSaveResult } from '#shared/utils/l10n'
 
 const props = defineProps<{
   locale: L10nLocale
@@ -94,6 +94,7 @@ const where = (item: { kind: Parameters<typeof t.value.where>[0], context: { det
 const storageKey = `docs-l10n:${props.locale}:${props.path}`
 const changes = useLocalStorage(`${storageKey}:changes`, new Map<string, L10nChange>())
 const drafts = useLocalStorage(`${storageKey}:drafts`, new Map<string, string>())
+const note = useLocalStorage(`${storageKey}:note`, '')
 
 watch([segments, hash], ([list, current]) => {
   if (!list.length) return
@@ -236,10 +237,11 @@ async function save() {
   try {
     const response = await $fetch<L10nSaveResult>(l10nTranslationsPath(props.locale), {
       method: 'POST',
-      body: { page: props.path, changes: [...changes.value.values()] }
+      body: { page: props.path, changes: [...changes.value.values()], ...(note.value.trim() ? { note: note.value.trim() } : {}) }
     })
     result.value = response
     changes.value.clear()
+    note.value = ''
     if (response.mode === 'commit' && !response.dryRun) {
       for (const [hash, { status }] of Object.entries(response.segments)) {
         for (const block of blocks(hash)) block.setAttribute('data-l10n', status)
@@ -631,6 +633,25 @@ function glossaryHint(entry: NonNullable<typeof segment.value>['glossary'][numbe
             </ul>
           </template>
         </UCollapsible>
+
+        <UFormField
+          v-if="changes.size"
+          :label="t.noteLabel"
+          :help="t.noteHelp(role ?? 'suggester')"
+          :hint="note.length ? `${note.length}/${L10N_NOTE_MAX_LENGTH}` : undefined"
+          :ui="{ label: 'text-xs font-medium text-toned', help: 'text-xs', hint: 'text-xs' }"
+        >
+          <UTextarea
+            v-model="note"
+            :maxlength="L10N_NOTE_MAX_LENGTH"
+            :rows="1"
+            autoresize
+            :maxrows="4"
+            class="w-full"
+            :lang="locale"
+            data-l10n-note
+          />
+        </UFormField>
 
         <div class="flex flex-wrap items-center gap-2">
           <UButton

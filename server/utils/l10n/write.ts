@@ -3,7 +3,7 @@ import { extract } from '@diglot/comark'
 import { parseRecordFile, recordPath, serialiseRecord } from '@diglot/store'
 import type { Node } from 'comark'
 import type { ContentFile } from 'comark-content'
-import type { L10nChange, L10nChangeAction, L10nChangeIssue, L10nLocale, L10nTranslator } from '../../../shared/utils/l10n'
+import { L10N_NOTE_MAX_LENGTH, type L10nChange, type L10nChangeAction, type L10nChangeIssue, type L10nLocale, type L10nTranslator } from '../../../shared/utils/l10n'
 import type { GitAuthor, GitFileChange, GitPullRequest, TranslationsGit } from './git'
 
 const STALE_MESSAGE = 'The translation changed since this change was made: review it again.'
@@ -132,6 +132,41 @@ export class L10nConflictError extends Error {}
 export interface SaveInput extends Omit<PlanInput, 'current' | 'suggestion' | 'now'> {
   /** The English page the changes were made on, unprefixed. */
   page: string
+  /** Why the changes were made, as the translator wrote it: sanitised before it is written anywhere. */
+  note?: string
+}
+
+// eslint-disable-next-line no-control-regex
+const CONTROL_RE = /[\u0000-\u0008\u000B-\u001F\u007F-\u009F\u200B-\u200F\u202A-\u202E\u2060-\u2069\uFEFF]/g
+
+/**
+ * A translator's note as one paragraph of plain text: control, zero-width and bidirectional characters
+ * dropped, each line trimmed, blank lines removed, at most `L10N_NOTE_MAX_LENGTH` characters.
+ * `undefined` when nothing is left.
+ */
+export function sanitiseNote(note: string | undefined): string | undefined {
+  if (!note) return
+  const text = note
+    .normalize('NFC')
+    .replace(/\r\n?/g, '\n')
+    .replace(/\t/g, ' ')
+    .replace(CONTROL_RE, '')
+    .split('\n')
+    .map(line => line.replace(/ {2,}/g, ' ').trim())
+    .filter(Boolean)
+    .join('\n')
+  const capped = [...text].slice(0, L10N_NOTE_MAX_LENGTH).join('').trim()
+  return capped || undefined
+}
+
+/** A sanitised note quoted in markdown, with mentions, issue references, links and HTML left inert. */
+export function quoteNote(note: string): string {
+  return note
+    .replace(/[\\`*_[\]<>|~]/g, '\\$&')
+    .replace(/([@#])(?=[\w-])/g, '$1\u200B')
+    .split('\n')
+    .map(line => `> ${line}`)
+    .join('\n')
 }
 
 export interface SaveResult {
@@ -142,12 +177,20 @@ export interface SaveResult {
   pull?: GitPullRequest
 }
 
-function commitMessage(locale: L10nLocale, page: string, counts: L10nPlan['counts'], translator: L10nTranslator, suggestion: boolean): string {
+function commitMessage(locale: L10nLocale, page: string, counts: L10nPlan['counts'], translator: L10nTranslator, suggestion: boolean, note?: string): string {
   const summary = (['edit', 'verify', 'reject'] as const)
     .filter(action => counts[action])
     .map(action => `${action} ${counts[action]}`)
     .join(', ')
-  return `chore(${locale}): ${summary} on ${page}\n\n${suggestion ? 'Suggested' : 'Reviewed'} on nuxt.com by @${translator.login}.`
+  return [
+    `chore(${locale}): ${summary} on ${page}`,
+    ...(note ? [note] : []),
+    `${suggestion ? 'Suggested' : 'Reviewed'} on nuxt.com by @${translator.login}.`
+  ].join('\n\n')
+}
+
+function noteMarkdown(input: SaveInput, note: string, sha: string): string {
+  return `**Note from @${input.translator.login}** on \`${input.page}\` (${sha.slice(0, 7)}):\n\n${quoteNote(note)}`
 }
 
 /**
@@ -169,7 +212,7 @@ async function commitPlan(git: TranslationsGit, input: SaveInput, branch: string
     const sha = await git.commit({
       parent: base.sha,
       files: plan.files,
-      message: commitMessage(input.locale, input.page, plan.counts, input.translator, suggestion),
+      message: commitMessage(input.locale, input.page, plan.counts, input.translator, suggestion, sanitiseNote(input.note)),
       author: translatorAuthor(input.translator)
     })
     if (await git.update(branch, sha, { force: base.force })) {
@@ -209,19 +252,31 @@ export async function suggestChanges(git: TranslationsGit, input: SaveInput, bas
     return head && (pull || attempt) ? { sha: head, force: false, published: main } : { sha: main, force: !!head }
   }, true)
 
+  const note = sanitiseNote(input.note)
+  let noted = false
   pull ??= await git.openPull({
     branch,
     title: `chore(${input.locale}): suggestions from @${input.translator.login}`,
     body: [
       `Translations suggested on nuxt.com by @${input.translator.login}, who is not on the \`translators-${input.locale}\` team yet.`,
       '',
-      'Each commit is one page save. Merging accepts them: edits as human edits by the author, rejections as rejected translations.'
+      'Each commit is one page save. Merging accepts them: edits as human edits by the author, rejections as rejected translations.',
+      ...(note ? ['', noteMarkdown(input, note, result.sha)] : [])
     ].join('\n')
-  }).catch(async (error) => {
+  }).then((opened) => {
+    noted = true
+    return opened
+  }, async (error) => {
     const opened = await git.findPull(branch)
     if (!opened) throw error
     return opened
   })
+
+  if (note && !noted) {
+    await git.comment(pull.number, noteMarkdown(input, note, result.sha)).catch((error) => {
+      console.error(`[l10n] could not add the note of ${result.sha} to #${pull!.number}`, error?.message ?? error)
+    })
+  }
 
   return { ...result, pull }
 }

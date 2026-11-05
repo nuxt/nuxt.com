@@ -1,6 +1,6 @@
 import { recordStatus } from '@diglot/core'
 import { z } from 'zod'
-import { isL10nLocale, isLocalisedPage, type L10nSaveResult } from '#shared/utils/l10n'
+import { isL10nLocale, isLocalisedPage, L10N_NOTE_MAX_LENGTH, type L10nSaveResult } from '#shared/utils/l10n'
 
 const bodySchema = z.object({
   /** The English page the changes were made on, unprefixed. */
@@ -10,7 +10,9 @@ const bodySchema = z.object({
     action: z.enum(['edit', 'verify', 'reject']),
     text: z.string().max(10_000).optional(),
     base: z.string().max(10_000).nullable()
-  })).min(1).max(500)
+  })).min(1).max(500),
+  /** Why the changes were made: in the commit message, and on the suggestion pull request. */
+  note: z.string().max(L10N_NOTE_MAX_LENGTH * 2).optional()
 })
 
 /**
@@ -26,7 +28,7 @@ export default defineEventHandler(async (event): Promise<L10nSaveResult> => {
 
   assertSameOrigin(event)
   const { user } = await requireUserSession(event)
-  const { page, changes } = await readValidatedBody(event, bodySchema.parse)
+  const { page, changes, note } = await readValidatedBody(event, bodySchema.parse)
   if (!isLocalisedPage(page)) {
     throw createError({ statusCode: 404, statusMessage: 'Page not found' })
   }
@@ -44,7 +46,7 @@ export default defineEventHandler(async (event): Promise<L10nSaveResult> => {
   if (role === 'suggester') await consumeL10nSuggestion(db, user.id, changes.length)
 
   const { git, dryRun } = translationsGit()
-  const input = { locale, page, changes: changes.map(change => ({ ...change, base: change.base ?? null })), segments: await pageSegments(file, bundle.policy), translator: { login: user.username, id: user.providerId } }
+  const input = { locale, page, changes: changes.map(change => ({ ...change, base: change.base ?? null })), segments: await pageSegments(file, bundle.policy), translator: { login: user.username, id: user.providerId }, note }
 
   try {
     const result = role === 'translator'

@@ -7,10 +7,10 @@ import fs from 'comark-content/sources/fs'
 import { afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest'
 import { dryRunGit, type TranslationsGit } from '../../server/utils/l10n/git'
 import { createGitHubApp, githubTranslationsGit, isGitHubTeamMember } from '../../server/utils/l10n/github-app'
-import { commitChanges, L10nChangeError, L10nConflictError, pageSegments, planChanges, readRecordsAt, suggestChanges, suggestionBranch } from '../../server/utils/l10n/write'
+import { commitChanges, L10nChangeError, L10nConflictError, pageSegments, planChanges, quoteNote, readRecordsAt, sanitiseNote, suggestChanges, suggestionBranch } from '../../server/utils/l10n/write'
 import { openSuggestions, suggestionsFor } from '../../server/utils/l10n/suggestions'
 import { createBuildInstance } from '../../utils/factory'
-import type { L10nChange } from '../../shared/utils/l10n'
+import { L10N_NOTE_MAX_LENGTH, type L10nChange } from '../../shared/utils/l10n'
 import { createFakeGitHub, FAKE_BOT, FAKE_INSTALLATION_TOKEN } from '../utils/fake-github'
 
 const FIXTURES = fileURLToPath(new URL('../fixtures/l10n/', import.meta.url))
@@ -247,9 +247,61 @@ describe('commitChanges (dry run)', () => {
     await expect(save).rejects.toMatchObject({ issues: [{ hash: FIRST_PARAGRAPH, code: 'invalid' }] })
     expect(git.log.commits).toEqual([])
   })
+
+  it('should put the note in the commit message, above the reviewer line', async () => {
+    const git = dryRunGit(fixtureRepository())
+    await commitChanges(git, {
+      locale: 'fr',
+      page: PAGE,
+      segments,
+      translator,
+      changes: withBase([{ hash: TIP, action: 'verify' }]),
+      note: '  « Bac à sable » est le terme\u00A0courant.\r\n\r\n\u202EVoir le glossaire.\u0007\nCo-authored-by: someone <someone@example.com>  '
+    })
+
+    expect(git.log.commits[0]!.message).toBe([
+      `chore(fr): verify 1 on ${PAGE}`,
+      '« Bac à sable » est le terme\u00A0courant.\nVoir le glossaire.\nCo-authored-by: someone <someone@example.com>',
+      'Reviewed on nuxt.com by @danielroe.'
+    ].join('\n\n'))
+  })
+})
+
+describe('sanitiseNote', () => {
+  it('should drop a blank note', () => {
+    expect(sanitiseNote(undefined)).toBeUndefined()
+    expect(sanitiseNote(' \n\u200B\t ')).toBeUndefined()
+  })
+
+  it('should cap a note at its maximum length', () => {
+    expect(sanitiseNote('é'.repeat(L10N_NOTE_MAX_LENGTH + 20))).toBe('é'.repeat(L10N_NOTE_MAX_LENGTH))
+  })
+
+  it('should quote a note in markdown with mentions, references, links and HTML left inert', () => {
+    expect(quoteNote('Merci @danielroe, voir #12 et [ici](https://example.com) <img src=x>\n**gras**')).toBe(
+      '> Merci @\u200Bdanielroe, voir #\u200B12 et \\[ici\\](https://example.com) \\<img src=x\\>\n> \\*\\*gras\\*\\*'
+    )
+  })
 })
 
 describe('suggestChanges (dry run)', () => {
+  it('should put the note of the first suggestion in the pull request, and comment with later ones', async () => {
+    const git = dryRunGit(fixtureRepository())
+    const input = { locale: 'fr' as const, page: PAGE, segments, translator: { login: 'contributor', id: 1 } }
+
+    const first = await suggestChanges(git, { ...input, note: 'Terme du glossaire @team', changes: withBase([{ hash: FIRST_PARAGRAPH, action: 'edit', text: FIRST_TEXT }]) })
+    expect(git.log.pulls[0]!.body).toContain(`**Note from @contributor** on \`${PAGE}\` (${first.sha.slice(0, 7)}):\n\n> Terme du glossaire @\u200Bteam`)
+    expect(git.log.commits[0]!.message).toBe(`chore(fr): edit 1 on ${PAGE}\n\nTerme du glossaire @team\n\nSuggested on nuxt.com by @contributor.`)
+    expect(git.log.comments).toEqual([])
+
+    const second = await suggestChanges(git, { ...input, note: 'Plus naturel.', changes: withBase([{ hash: TIP, action: 'edit', text: 'Essayez Nuxt {0}en ligne{/0}.' }]) })
+    expect(git.log.comments).toEqual([{ number: 1, body: `**Note from @contributor** on \`${PAGE}\` (${second.sha.slice(0, 7)}):\n\n> Plus naturel.` }])
+
+    await suggestChanges(git, { ...input, note: ' ', changes: withBase([{ hash: HEADING, action: 'reject' }]) })
+    expect(git.log.comments).toHaveLength(1)
+    expect(git.log.pulls).toHaveLength(1)
+  })
+
   it('should open one pull request per user and locale, and add later suggestions to it', async () => {
     const git = dryRunGit(fixtureRepository())
     const input = { locale: 'fr' as const, page: PAGE, segments, translator: { login: 'contributor', id: 1 } }
@@ -406,6 +458,16 @@ describe('GitHub App', () => {
     const third = await suggestChanges(git, { ...input, changes: withBase([{ hash: TIP, action: 'edit', text: 'Testez Nuxt {0}en ligne{/0}.' }]) })
     expect(github.git(['rev-parse', `${third.sha}^`])).toBe(github.git(['rev-parse', 'main']))
     expect(github.pulls.map(pull => pull.number)).toEqual([1, 2])
+  })
+
+  it('should comment on the suggestion pull request with the note of a later save', async () => {
+    const input = { locale: 'fr' as const, page: PAGE, segments, translator: { login: 'contributor', id: 1 } }
+    await suggestChanges(git, { ...input, note: 'Premier essai.', changes: withBase([{ hash: FIRST_PARAGRAPH, action: 'edit', text: FIRST_TEXT }]) })
+    const second = await suggestChanges(git, { ...input, note: 'Plus naturel.', changes: withBase([{ hash: TIP, action: 'edit', text: 'Essayez Nuxt {0}en ligne{/0}.' }]) })
+
+    expect(github.pulls[0]!.body).toContain('> Premier essai.')
+    expect(github.comments).toEqual([{ number: 1, body: `**Note from @contributor** on \`${PAGE}\` (${second.sha.slice(0, 7)}):\n\n> Plus naturel.` }])
+    expect(github.requests.find(request => request.path.endsWith('/issues/1/comments'))?.authorization).toBe(`Bearer ${FAKE_INSTALLATION_TOKEN}`)
   })
 
   it('should keep both of two concurrent first suggestions of a user', async () => {
