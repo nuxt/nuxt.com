@@ -64,4 +64,16 @@ describe('DocsL10nEditor code policy', () => {
     expect(lines).toHaveLength(1)
     expect(lines[0]!.closest('[data-l10n-other-texts]')).toBeNull()
   })
+
+  it('should explain it once the page renders its code after the editor loaded', async () => {
+    const target = document.createElement('div')
+    target.innerHTML = '<p>Configuration</p>'
+    document.body.append(target)
+    await mountSuspended({ render: () => h(UApp, () => h(DocsL10nEditor, { locale: 'fr', path: CODE_PATH, open: true, hash: HASH, target })) }, { attachTo: document.body })
+
+    await vi.waitFor(() => expect(document.querySelector('[data-l10n-other-texts]')).not.toBeNull())
+    expect(document.querySelector('[data-l10n-code-policy]')).toBeNull()
+    target.insertAdjacentHTML('beforeend', '<pre><code>export default defineNuxtConfig({})</code></pre>')
+    await vi.waitFor(() => expect(document.querySelector('[data-l10n-code-policy]')).not.toBeNull())
+  })
 })
