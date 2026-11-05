@@ -172,9 +172,14 @@ const status = computed(() => (source.value?.status ?? reference.value?.dataset.
             <p v-if="status" class="font-medium text-highlighted">
               {{ strings.status[status] }}
             </p>
-            <p v-if="source" lang="en" class="text-toned whitespace-pre-wrap">
-              <span class="sr-only" :lang="meta.locale">{{ strings.source }} : </span>{{ source.source }}
-            </p>
+            <div v-if="source" class="space-y-0.5" data-l10n-source>
+              <p class="font-medium uppercase text-muted">
+                {{ strings.source }}
+              </p>
+              <p lang="en" class="text-toned whitespace-pre-wrap">
+                {{ source.source }}
+              </p>
+            </div>
             <p v-else-if="source === undefined" class="text-muted">
               {{ strings.loading }}
             </p>

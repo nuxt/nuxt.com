@@ -435,7 +435,7 @@ export const L10N_STRINGS = {
       'rejected': 'Rejeté'
     } satisfies Record<SegmentStatus, string>,
     improve: 'Améliorer cette traduction',
-    source: 'Texte anglais',
+    source: 'Texte source (anglais)',
     loading: 'Chargement…',
     status: {
       'untranslated': 'Pas encore traduit : texte anglais',
@@ -450,8 +450,9 @@ export const L10N_STRINGS = {
       close: 'Fermer',
       signIn: 'Se connecter avec GitHub pour modifier',
       suggesterNote: 'Vous ne faites pas partie de l\'équipe de traduction : vos modifications seront proposées dans une pull request.',
-      english: 'Texte anglais',
-      previousSource: 'Ancien texte anglais',
+      english: 'Texte source (anglais)',
+      previousSource: 'Ancien texte source (anglais)',
+      translation: 'Traduction',
       changedSentences: 'Les phrases surlignées sont nouvelles dans le texte anglais.',
       current: 'Traduction actuelle',
       none: 'Pas encore traduit.',

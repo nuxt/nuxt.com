@@ -522,6 +522,10 @@ function glossaryHint(entry: NonNullable<typeof segment.value>['glossary'][numbe
                 <UIcon name="i-lucide-code" class="size-3.5 shrink-0 translate-y-0.5" />
                 {{ t.codePolicy }}
               </p>
+              <p class="grid grid-cols-2 gap-2 px-2 text-xs font-medium uppercase text-muted" aria-hidden="true">
+                <span>{{ t.english }}</span>
+                <span>{{ t.translation }}</span>
+              </p>
               <section v-for="group in otherGroups" :key="`${group.type}:${group.heading ?? ''}`" class="space-y-1">
                 <h3 class="text-xs font-medium text-toned" :lang="groupLabel(group).lang">
                   {{ groupLabel(group).text }}
@@ -539,6 +543,7 @@ function glossaryHint(entry: NonNullable<typeof segment.value>['glossary'][numbe
                       <span class="block text-muted">{{ where(item) }}</span>
                       <span class="mt-1 grid grid-cols-2 gap-2">
                         <span lang="en" class="text-toned">
+                          <span class="sr-only" :lang="locale">{{ t.english }} : </span>
                           <DocsL10nSkeleton :skeleton="item.skeleton" :placeholders="item.placeholders" />
                         </span>
                         <span v-if="item.record" :lang="locale" class="text-highlighted">
