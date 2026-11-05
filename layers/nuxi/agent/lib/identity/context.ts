@@ -9,7 +9,7 @@ export interface AuthContext {
   attributes?: AuthAttributes
 }
 
-export type Surface = 'web' | 'slack' | 'discord' | 'schedule' | 'cli' | 'unknown'
+export type Surface = 'web' | 'slack' | 'discord' | 'raycast' | 'schedule' | 'cli' | 'unknown'
 
 export interface Person {
   readonly id: string
@@ -85,9 +85,9 @@ export function resolveContext(auth: AuthContext | null | undefined): Context {
     }
   }
 
-  if (auth.issuer === 'nuxt.com') {
+  if (auth.issuer === 'nuxt.com' || auth.issuer === 'raycast') {
     return {
-      surface: 'web',
+      surface: auth.issuer === 'raycast' ? 'raycast' : 'web',
       person: {
         id: auth.principalId ?? 'unknown',
         name: attr(auth, 'login') ?? attr(auth, 'name'),

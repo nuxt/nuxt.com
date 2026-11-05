@@ -284,3 +284,13 @@ One root key per surface — each self-contained, so you never have to jump else
 Every field is optional and falls back to a sane default: `sinceDays` → 7, `slack.workspace` → `vercel`, each Slack channel's `id` → `name` → a hardcoded default (`project-nuxi`/`firehose-nuxt`, resolved via `users.conversations` — slower, and needs `channels:read`/`groups:read`), `manualTrigger` → `false` (production `/ops/*/trigger` stays disabled; preview is always allowed), `discord.digestChannel` → mirror disabled, `discord.channels` unset/empty → deny everywhere. Preview and production share the same `GLOBAL_CONFIG` store.
 
 `admin`, `slack`, `discord`, and `workflow` are all read through `agent/lib/global-config.ts` (`readGlobalConfig`), a thin wrapper around `@vercel/global-config` that caches each key set for 30s (a single scheduled run can otherwise trigger several redundant reads of the same key) and turns a Global Config outage into a logged warning + empty result instead of an unhandled throw. Each is parsed with zod, so a malformed dashboard edit falls back to defaults with a clear warning instead of failing silently.
+
+## Talk to Nuxi in Raycast
+
+In Raycast → Settings → AI → External Agents, add `https://nuxt.com/eve/v1/raycast` and paste the existing MCP token (`NUXT_MCP_ADMIN_TOKEN`). For a preview, replace `https://nuxt.com` with its deployment URL. No new token, migration, extension or sign-in flow is needed. External Agents is currently an alpha feature; ask Raycast to enable it if the setting is missing.
+
+Locally, run `pnpm dev:nuxi` and use `http://localhost:3000/eve/v1/raycast`. The MCP token must be available to the Eve service.
+
+This initial team connection uses Nuxi's public tools and supports text, text context, tool activity, Markdown replies and cancellation. Eve stores the conversation; Raycast reads that same history to recover replies after reconnecting. Files and screen context are disabled. Actions requiring approval or sign-in direct you to nuxt.com. Start a new Raycast chat after an Eve version upgrade or history expiry.
+
+The token is shared with MCP: rotating it revokes both connections. Removing the agent in Raycast only removes the local connection.
