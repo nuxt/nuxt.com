@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import type { Module, Nuxter, NuxterPeriodStats, NuxterProfilePage, NuxtersPeriod } from '#shared/types'
+import type { Module, Nuxter, NuxterLocaleTranslations, NuxterPeriodStats, NuxterProfilePage, NuxtersPeriod } from '#shared/types'
 import { isNuxtersPeriod, nuxterForPeriod, nuxterGithubSearchUrl, nuxterHackathons, nuxtersPeriodPhrase } from '#shared/utils/nuxters'
 import { countryName } from '#shared/utils/nuxters-countries'
+import { L10N_STRINGS, localisePath } from '#shared/utils/l10n'
 
 definePageMeta({
   heroBackground: 'opacity-30 -z-10'
@@ -88,6 +89,12 @@ const yearly = computed(() => (nuxter.value?.periods ?? []).filter(row => /^\d{4
 const maintained = computed(() => nuxter.value?.modules.maintained ?? [])
 const contributed = computed(() => nuxter.value?.modules.contributed ?? [])
 const blogPosts = computed(() => nuxter.value?.blogPosts ?? [])
+const translationLocales = computed(() => nuxter.value?.translationLocales ?? [])
+const translator = computed(() => translationLocales.value.filter(locale => locale.edited + locale.verified > 0).map(locale => locale.locale))
+const translationSummary = (locale: NuxterLocaleTranslations) => [
+  ...(['edited', 'verified', 'rejected'] as const).filter(action => locale[action] > 0).map(action => `${format(locale[action])} ${action}`),
+  `${format(locale.words)} ${locale.words === 1 ? 'word' : 'words'}`
+].join(' · ')
 // Long lists show their first rows, "Show all" expands them.
 function usePreview<T>(items: Ref<T[]>, size: number) {
   const expanded = ref(false)
@@ -273,7 +280,7 @@ defineOgImage('Nuxter.takumi', { username, period: () => period.value === 'all' 
             </p>
           </div>
 
-          <div v-if="hackathons.length || maintained.length" class="flex flex-wrap gap-2">
+          <div v-if="hackathons.length || maintained.length || translator.length" class="flex flex-wrap gap-2">
             <UBadge
               v-for="hackathon in hackathons"
               :key="hackathon.id"
@@ -286,6 +293,14 @@ defineOgImage('Nuxter.takumi', { username, period: () => period.value === 'all' 
               v-if="maintained.length"
               label="Module author"
               icon="i-lucide-puzzle"
+              color="neutral"
+              variant="subtle"
+              class="lg:text-sm"
+            />
+            <UBadge
+              v-if="translator.length"
+              :label="`Translator (${translator.join(', ')})`"
+              icon="i-lucide-languages"
               color="neutral"
               variant="subtle"
               class="lg:text-sm"
@@ -452,6 +467,31 @@ defineOgImage('Nuxter.takumi', { username, period: () => period.value === 'all' 
               class="mt-4"
               @click="blogPostsPreview.expanded = !blogPostsPreview.expanded"
             />
+          </section>
+
+          <section v-if="translationLocales.length" aria-labelledby="translations">
+            <h2 id="translations" class="text-2xl font-bold text-highlighted mb-1">
+              Translations
+            </h2>
+            <p class="text-muted mb-6">
+              Segments of the Nuxt docs {{ nuxter.username }} edited, verified or rejected, in the <ULink to="/translations" class="text-highlighted hover:underline">translations</ULink> served today.
+            </p>
+            <!-- Localised docs are served under their own base: a full page load -->
+            <ul class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+              <li v-for="locale in translationLocales" :key="locale.locale">
+                <ULink
+                  :to="localisePath(locale.locale, '/docs')"
+                  external
+                  class="flex items-center gap-3 rounded-lg px-3 py-2 ring ring-default hover:bg-elevated/50 transition-colors"
+                >
+                  <span class="flex items-center justify-center size-8 shrink-0 rounded-md bg-elevated font-mono text-xs uppercase text-highlighted">{{ locale.locale }}</span>
+                  <span class="min-w-0">
+                    <span class="block font-medium text-sm text-highlighted truncate" :lang="locale.locale">{{ L10N_STRINGS[locale.locale].language }}</span>
+                    <span class="block text-xs text-muted truncate tabular-nums">{{ translationSummary(locale) }}</span>
+                  </span>
+                </ULink>
+              </li>
+            </ul>
           </section>
         </div>
       </UContainer>

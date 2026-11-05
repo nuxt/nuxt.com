@@ -1,3 +1,4 @@
+import type { L10nLocale } from '../utils/l10n'
 import type { Module } from './modules'
 
 export interface NuxterMergedPullRequests {
@@ -99,11 +100,20 @@ export interface NuxterBlogPost {
   category?: string
 }
 
-/** /api/nuxters/[username]: the profile, its modules and blog posts. */
+/** What a contributor did in one locale of the docs translations, as served now. */
+export interface NuxterLocaleTranslations extends NuxterTranslations {
+  locale: L10nLocale
+  /** Source words of the segments they edited, verified or rejected. */
+  words: number
+}
+
+/** /api/nuxters/[username]: the profile, its modules, blog posts and translations. */
 export interface NuxterProfilePage extends NuxterProfile {
   modules: NuxterModules
   /** Newest first, matched on the `username` of the blog authors. */
   blogPosts: NuxterBlogPost[]
+  /** The locales with a segment attributed to the user's login, in locale order. */
+  translationLocales: NuxterLocaleTranslations[]
 }
 
 /** The light shape of the leaderboard. */
@@ -170,6 +180,8 @@ export interface NuxterBadges {
   moduleAuthor: boolean
   /** Hackathon ids. */
   hackathons: string[]
+  /** The locales with a segment the user edited or verified. */
+  translator: L10nLocale[]
 }
 
 /** The signed-in user's view of /nuxters. */

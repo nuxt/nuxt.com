@@ -256,13 +256,17 @@ export const nuxters = {
   /** Badges are earned on all-time stats. */
   async badges(event: H3Event, user: { username: string, providerId: string }, nuxter: NuxterProfile | null): Promise<NuxterBadges> {
     const login = user.username.toLowerCase()
-    const modules = await fetchModules(event).catch(() => undefined) ?? []
+    const [modules, translations] = await Promise.all([
+      fetchModules(event).catch(() => undefined).then(modules => modules ?? []),
+      nuxterTranslations(event, user.username)
+    ])
     const moduleAuthor = modules.some(module => module.maintainers?.some(maintainer => maintainer.github?.toLowerCase() === login))
 
     return {
       nuxter: moduleAuthor || canUnlockNuxterRole(nuxter),
       moduleAuthor,
-      hackathons: nuxterHackathons(user.providerId).map(hackathon => hackathon.id)
+      hackathons: nuxterHackathons(user.providerId).map(hackathon => hackathon.id),
+      translator: translations.filter(locale => locale.edited + locale.verified > 0).map(locale => locale.locale)
     }
   }
 }
