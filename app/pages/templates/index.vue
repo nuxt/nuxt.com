@@ -81,10 +81,11 @@ useSeoMeta({
   ogTitle: title
 })
 useCanonical()
-defineOgImage('Docs.takumi', {
-  title,
-  description
-})
+defineOgImage('Templates.takumi', {
+  title: pageData.value.hero.title,
+  highlight: pageData.value.hero.highlight,
+  description: 'Starters and complete apps, built with Nuxt.'
+}, { width: 1200, height: 630 })
 </script>
 
 <template>

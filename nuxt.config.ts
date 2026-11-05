@@ -34,6 +34,8 @@ export default defineNuxtConfig({
   extends: ['./layers/nuxi'],
 
   modules: [
+    // TODO: Revisit this explicit registration and dependency once Nuxt UI ships @nuxt/fonts >=1.0, required for OG font extraction.
+    '@nuxt/fonts',
     '@nuxt/ui',
     '@nuxt/test-utils',
     '@comark/nuxt',
@@ -707,6 +709,12 @@ export default defineNuxtConfig({
         { duration: 2000 }
       ]
     }
+  },
+  fonts: {
+    families: [
+      { name: 'Inter', weights: [400, 500, 600, 700], global: true },
+      { name: 'Outfit', weights: [400, 500, 600, 700], global: true }
+    ]
   },
   hints: {
     features: {

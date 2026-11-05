@@ -52,6 +52,7 @@
     "@iconify-json/vscode-icons": "^1.2.95",
     "@libsql/client": "^0.18.0",
     "@npm/types": "^2.1.0",
+    "@nuxt/fonts": "^1.2.0",
     "@nuxt/hints": "^1.1.5",
     "@nuxt/image": "^2.2.1",
     "@nuxt/scripts": "^1.3.12",
