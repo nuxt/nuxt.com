@@ -486,6 +486,7 @@ export const L10N_STRINGS = {
       'rejected': 'Rejeté'
     } satisfies Record<SegmentStatus, string>,
     improve: 'Améliorer cette traduction',
+    readMore: { before: 'Pour en savoir plus, consultez ', after: '.' },
     source: 'Texte source (anglais)',
     loading: 'Chargement…',
     status: {
