@@ -342,29 +342,33 @@ function glossaryHint(entry: NonNullable<typeof segment.value>['glossary'][numbe
     :content="{ onInteractOutside: (event: Event) => event.preventDefault(), onCloseAutoFocus: returnFocus }"
     :title="t.title"
     :description="segment ? strings.status[segment.status] : undefined"
-    :ui="{ content: 'max-w-lg', body: 'space-y-5 text-sm' }"
+    :ui="{ content: 'max-w-lg', header: 'items-start pe-14 sm:pe-16', wrapper: 'flex-1 min-w-0', body: 'space-y-5 text-sm' }"
   >
     <template #actions>
-      <div v-if="segments.length" class="flex items-center gap-1 text-xs text-muted">
-        <UButton
-          icon="i-lucide-chevron-up"
-          color="neutral"
-          variant="ghost"
-          size="xs"
-          :aria-label="t.previous"
-          :disabled="index <= 0"
-          @click="go(-1)"
-        />
-        <span v-if="index >= 0" aria-live="polite">{{ t.position(index + 1, segments.length) }}</span>
-        <UButton
-          icon="i-lucide-chevron-down"
-          color="neutral"
-          variant="ghost"
-          size="xs"
-          :aria-label="t.next"
-          :disabled="index >= segments.length - 1"
-          @click="go(1)"
-        />
+      <div v-if="segments.length" class="mt-0.5 flex items-center gap-2 text-xs text-muted">
+        <span v-if="index >= 0" class="tabular-nums" aria-live="polite">{{ t.position(index + 1, segments.length) }}</span>
+        <UFieldGroup size="sm">
+          <UTooltip :text="t.previous">
+            <UButton
+              icon="i-lucide-chevron-up"
+              color="neutral"
+              variant="outline"
+              :aria-label="t.previous"
+              :disabled="index <= 0"
+              @click="go(-1)"
+            />
+          </UTooltip>
+          <UTooltip :text="t.next">
+            <UButton
+              icon="i-lucide-chevron-down"
+              color="neutral"
+              variant="outline"
+              :aria-label="t.next"
+              :disabled="index >= segments.length - 1"
+              @click="go(1)"
+            />
+          </UTooltip>
+        </UFieldGroup>
       </div>
     </template>
 
