@@ -58,6 +58,6 @@ lolipop deploy --name my-app --framework nuxt --root apps/web
 - `useStorage` with the `fs` driver is not supported. Use an external data store for anything that must persist.
 - `routeRules` `isr` is not supported. Use `swr` instead.
 
-::read-more{to="https://deploy.lolipop.jp/docs/frameworks/nuxt" target="_blank"}
+::read-more{to="https://deploy.lolipop.jp/docs/en/frameworks/nuxt" target="_blank"}
 For more information, refer to the **LOLIPOP! Deploy Now documentation**.
 ::
