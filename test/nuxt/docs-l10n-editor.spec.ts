@@ -51,11 +51,11 @@ registerEndpoint(`/api/l10n/fr/editor${CODE_PATH}`, (): L10nEditorPage => ({
 
 describe('DocsL10nEditor code policy', () => {
   it.each([
-    ['a paragraph', HASH],
-    ['a code comment', COMMENT]
-  ])('should explain once, above the form, that code is not translated, with %s selected', async (_, hash) => {
+    ['a paragraph on a page with code', HASH, '<pre><code>export default defineNuxtConfig({})</code></pre>'],
+    ['a code comment on a page not rendered yet', COMMENT, '<p>Configuration</p>']
+  ])('should explain once, above the form, that code is not translated, with %s selected', async (_, hash, html) => {
     const target = document.createElement('div')
-    target.innerHTML = '<pre><code>export default defineNuxtConfig({})</code></pre>'
+    target.innerHTML = html
     document.body.append(target)
     await mountSuspended({ render: () => h(UApp, () => h(DocsL10nEditor, { locale: 'fr', path: CODE_PATH, open: true, hash, target })) }, { attachTo: document.body })
 
