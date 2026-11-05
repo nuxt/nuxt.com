@@ -36,3 +36,29 @@ describe('DocsL10nEditor', () => {
     expect(edit?.disabled).toBe(true)
   })
 })
+
+const CODE_PATH = '/docs/4.x/getting-started/configuration'
+const COMMENT = 'fedcba9876543210'
+
+registerEndpoint(`/api/l10n/fr/editor${CODE_PATH}`, (): L10nEditorPage => ({
+  sha: 'sha',
+  role: 'translator',
+  segments: [
+    { hash: HASH, kind: 'paragraph', format: 'markdown', skeleton: 'Hello', words: 1, placeholders: [], context: { headingTrail: [], containers: [] }, status: 'untranslated', glossary: [] },
+    { hash: COMMENT, kind: 'code-comment', format: 'plain', skeleton: 'My Nuxt config', words: 3, placeholders: [], context: { headingTrail: [], containers: [], detail: 'ts' }, status: 'untranslated', glossary: [] }
+  ]
+}))
+
+describe('DocsL10nEditor code policy', () => {
+  it.each([
+    ['a paragraph', HASH],
+    ['a code comment', COMMENT]
+  ])('should explain once that code is not translated, with %s selected', async (_, hash) => {
+    await mountSuspended({ render: () => h(UApp, () => h(DocsL10nEditor, { locale: 'fr', path: CODE_PATH, open: true, hash })) }, { attachTo: document.body })
+
+    await vi.waitFor(() => expect(document.querySelector('[data-l10n-other-texts]')).not.toBeNull())
+    const lines = document.querySelectorAll('[data-l10n-code-policy]')
+    expect(lines).toHaveLength(1)
+    expect(!!lines[0]!.closest('[data-l10n-other-texts]')).toBe(hash === HASH)
+  })
+})

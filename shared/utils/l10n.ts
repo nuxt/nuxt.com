@@ -493,6 +493,7 @@ export const L10N_STRINGS = {
       otherTexts: 'Autres textes de cette page',
       otherTextsCount: (count: number) => `${count} texte${count > 1 ? 's' : ''}`,
       otherTextsHint: 'Ces textes n\'ont pas de bloc à cliquer sur la page : titre et description, titres des liens « En savoir plus », textes alternatifs des images, titres et commentaires des blocs de code.',
+      codePolicy: 'Dans les blocs de code, seuls les commentaires se traduisent : le code reste le même dans toutes les langues.',
       pageMeta: 'Titre et description de la page',
       pageStart: 'Début de la page',
       editThis: 'Modifier ce texte',

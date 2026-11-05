@@ -71,6 +71,23 @@ function groupLabel(group: ReturnType<typeof otherTextGroups>[number]): { text: 
   return translated ? { text: translated } : { text: group.heading, lang: 'en' }
 }
 
+const codeBlocks = ref<HTMLElement[]>([])
+watch([open, () => props.target, () => page.value], ([isOpen, target]) => {
+  codeBlocks.value = isOpen && target ? [...target.querySelectorAll<HTMLElement>('pre')] : []
+}, { flush: 'post' })
+const visibleCode = ref(new Set<Element>())
+useIntersectionObserver(codeBlocks, (entries) => {
+  const next = new Set(visibleCode.value)
+  for (const entry of entries) {
+    if (entry.isIntersecting) next.add(entry.target)
+    else next.delete(entry.target)
+  }
+  visibleCode.value = next
+})
+const CODE_KINDS = new Set(['code-comment', 'code-label'])
+const codeInView = computed(() => !!segment.value && (CODE_KINDS.has(segment.value.kind) || codeBlocks.value.some(block => visibleCode.value.has(block))))
+const listsCode = computed(() => !codeInView.value && otherGroups.value.some(group => group.segments.some(item => item.kind === 'code-comment')))
+
 const where = (item: { kind: Parameters<typeof t.value.where>[0], context: { detail?: string, containers: string[] } }) =>
   t.value.where(item.kind, item.context.detail, item.context.containers.at(-1))
 
@@ -307,6 +324,11 @@ function glossaryHint(entry: NonNullable<typeof segment.value>['glossary'][numbe
         </p>
         <span v-else ref="formTop" />
 
+        <p v-if="codeInView" class="flex gap-1.5 text-xs text-toned" data-l10n-code-policy>
+          <UIcon name="i-lucide-code" class="size-3.5 shrink-0 translate-y-0.5" />
+          {{ t.codePolicy }}
+        </p>
+
         <section class="space-y-1">
           <h3 class="text-xs font-medium uppercase text-muted">
             {{ t.english }}
@@ -495,6 +517,10 @@ function glossaryHint(entry: NonNullable<typeof segment.value>['glossary'][numbe
             <div class="mt-2 space-y-4">
               <p class="text-xs text-muted">
                 {{ t.otherTextsHint }}
+              </p>
+              <p v-if="listsCode" class="flex gap-1.5 text-xs text-toned" data-l10n-code-policy>
+                <UIcon name="i-lucide-code" class="size-3.5 shrink-0 translate-y-0.5" />
+                {{ t.codePolicy }}
               </p>
               <section v-for="group in otherGroups" :key="`${group.type}:${group.heading ?? ''}`" class="space-y-1">
                 <h3 class="text-xs font-medium text-toned" :lang="groupLabel(group).lang">
