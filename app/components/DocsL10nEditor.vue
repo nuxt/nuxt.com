@@ -44,6 +44,13 @@ const storageKey = `docs-l10n:${props.locale}:${props.path}`
 const changes = useLocalStorage(`${storageKey}:changes`, new Map<string, L10nChange>())
 const drafts = useLocalStorage(`${storageKey}:drafts`, new Map<string, string>())
 const note = useLocalStorage(`${storageKey}:note`, '')
+/** The note field stays a one-line link until asked for, so the footer leaves room for the form. */
+const noteOpen = ref(false)
+const noteField = useTemplateRef<{ textareaRef?: HTMLTextAreaElement }>('noteField')
+function openNote() {
+  noteOpen.value = true
+  nextTick(() => noteField.value?.textareaRef?.focus())
+}
 /** Translations saved or reported as current that the editor's page does not show yet. */
 const known = useLocalStorage(`${storageKey}:known`, new Map<string, L10nKnownRecord>())
 
@@ -81,7 +88,10 @@ const formTop = useTemplateRef<HTMLElement>('formTop')
 
 function select(key: string) {
   hash.value = key
-  nextTick(() => formTop.value?.scrollIntoView({ block: 'start', behavior: reducedMotion.value === 'reduce' ? 'auto' : 'smooth' }))
+  nextTick(() => {
+    formTop.value?.focus({ preventScroll: true })
+    formTop.value?.scrollIntoView({ block: 'start', behavior: reducedMotion.value === 'reduce' ? 'auto' : 'smooth' })
+  })
 }
 
 function groupLabel(group: ReturnType<typeof otherTextGroups>[number]): { text: string, lang?: string } {
@@ -91,22 +101,13 @@ function groupLabel(group: ReturnType<typeof otherTextGroups>[number]): { text: 
   return translated ? { text: translated } : { text: group.heading, lang: 'en' }
 }
 
-const codeBlocks = ref<HTMLElement[]>([])
+/** Whether the page has code blocks: the code policy shows for as long as it does, so the form does not move as the page scrolls. */
+const pageHasCode = ref(false)
 watch([open, () => props.target, () => page.value], ([isOpen, target]) => {
-  codeBlocks.value = isOpen && target ? [...target.querySelectorAll<HTMLElement>('pre')] : []
+  pageHasCode.value = !!(isOpen && target?.querySelector('pre'))
 }, { flush: 'post' })
-const visibleCode = ref(new Set<Element>())
-useIntersectionObserver(codeBlocks, (entries) => {
-  const next = new Set(visibleCode.value)
-  for (const entry of entries) {
-    if (entry.isIntersecting) next.add(entry.target)
-    else next.delete(entry.target)
-  }
-  visibleCode.value = next
-})
 const CODE_KINDS = new Set(['code-comment', 'code-label'])
-const codeInView = computed(() => !!segment.value && (CODE_KINDS.has(segment.value.kind) || codeBlocks.value.some(block => visibleCode.value.has(block))))
-const listsCode = computed(() => !codeInView.value && otherGroups.value.some(group => group.segments.some(item => item.kind === 'code-comment')))
+const codeInView = computed(() => !!segment.value && (CODE_KINDS.has(segment.value.kind) || pageHasCode.value))
 
 const where = (item: { kind: Parameters<typeof t.value.where>[0], context: { detail?: string, containers: string[] } }) =>
   t.value.where(item.kind, item.context.detail, item.context.containers.at(-1))
@@ -288,7 +289,10 @@ async function save() {
     for (const change of sent) {
       if (!refused.has(change.hash) && JSON.stringify(changes.value.get(change.hash)) === JSON.stringify(change)) changes.value.delete(change.hash)
     }
-    if (note.value === sentNote) note.value = ''
+    if (note.value === sentNote) {
+      note.value = ''
+      noteOpen.value = false
+    }
     showIssues(response.issues ?? [])
     if (response.mode === 'commit' && !response.dryRun) {
       const at = Date.now()
@@ -368,7 +372,7 @@ function glossaryHint(entry: NonNullable<typeof segment.value>['glossary'][numbe
       </p>
 
       <template v-else-if="segment">
-        <p v-if="!hasL10nBlock(segment)" ref="formTop" class="text-xs text-muted">
+        <p v-if="!hasL10nBlock(segment)" ref="formTop" tabindex="-1" class="text-xs text-muted outline-none">
           {{ where(segment) }}<template v-if="segment.context.headingTrail.length">
             · <span lang="en">{{ segment.context.headingTrail.at(-1) }}</span>
           </template>
@@ -601,10 +605,6 @@ function glossaryHint(entry: NonNullable<typeof segment.value>['glossary'][numbe
               <p class="text-xs text-muted">
                 {{ t.otherTextsHint }}
               </p>
-              <p v-if="listsCode" class="flex gap-1.5 text-xs text-toned" data-l10n-code-policy>
-                <UIcon name="i-lucide-code" class="size-3.5 shrink-0 translate-y-0.5" />
-                {{ t.codePolicy }}
-              </p>
               <p class="grid grid-cols-2 gap-2 px-2 text-xs font-medium uppercase text-muted" aria-hidden="true">
                 <span>{{ t.english }}</span>
                 <span>{{ t.translation }}</span>
@@ -752,14 +752,25 @@ function glossaryHint(entry: NonNullable<typeof segment.value>['glossary'][numbe
           {{ t.stagedHint }}
         </p>
 
+        <UButton
+          v-if="changes.size && !noteOpen && !note"
+          :label="t.noteAdd"
+          icon="i-lucide-message-square-plus"
+          color="neutral"
+          variant="link"
+          size="xs"
+          class="p-0"
+          @click="openNote"
+        />
         <UFormField
-          v-if="changes.size"
+          v-else-if="changes.size"
           :label="t.noteLabel"
           :help="t.noteHelp(role ?? 'suggester')"
           :hint="note.length ? `${note.length}/${L10N_NOTE_MAX_LENGTH}` : undefined"
           :ui="{ label: 'text-xs font-medium text-toned', help: 'text-xs', hint: 'text-xs' }"
         >
           <UTextarea
+            ref="noteField"
             v-model="note"
             :maxlength="L10N_NOTE_MAX_LENGTH"
             :rows="1"
@@ -768,6 +779,8 @@ function glossaryHint(entry: NonNullable<typeof segment.value>['glossary'][numbe
             class="w-full"
             :lang="locale"
             data-l10n-note
+            @keydown.meta.enter.prevent="save"
+            @keydown.ctrl.enter.prevent="save"
           />
         </UFormField>
 

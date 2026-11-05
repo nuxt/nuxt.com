@@ -53,12 +53,15 @@ describe('DocsL10nEditor code policy', () => {
   it.each([
     ['a paragraph', HASH],
     ['a code comment', COMMENT]
-  ])('should explain once that code is not translated, with %s selected', async (_, hash) => {
-    await mountSuspended({ render: () => h(UApp, () => h(DocsL10nEditor, { locale: 'fr', path: CODE_PATH, open: true, hash })) }, { attachTo: document.body })
+  ])('should explain once, above the form, that code is not translated, with %s selected', async (_, hash) => {
+    const target = document.createElement('div')
+    target.innerHTML = '<pre><code>export default defineNuxtConfig({})</code></pre>'
+    document.body.append(target)
+    await mountSuspended({ render: () => h(UApp, () => h(DocsL10nEditor, { locale: 'fr', path: CODE_PATH, open: true, hash, target })) }, { attachTo: document.body })
 
     await vi.waitFor(() => expect(document.querySelector('[data-l10n-other-texts]')).not.toBeNull())
     const lines = document.querySelectorAll('[data-l10n-code-policy]')
     expect(lines).toHaveLength(1)
-    expect(!!lines[0]!.closest('[data-l10n-other-texts]')).toBe(hash === HASH)
+    expect(lines[0]!.closest('[data-l10n-other-texts]')).toBeNull()
   })
 })

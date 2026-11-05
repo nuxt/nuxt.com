@@ -176,6 +176,7 @@ export const L10N_EDITOR_STRINGS = {
     otherTexts: 'Autres textes de cette page',
     otherTextsCount: (count: number) => `${count} texte${count > 1 ? 's' : ''}`,
     otherTextsHint: 'Ces textes n\'ont pas de bloc à cliquer sur la page : titre et description, titres des liens « En savoir plus », textes alternatifs des images, titres et commentaires des blocs de code.',
+    noteAdd: 'Expliquer ce changement (facultatif)',
     noteLabel: 'Pourquoi ce changement ? (facultatif)',
     noteHelp: (role: L10nRole) => role === 'translator' ? 'Ajouté au message du commit, pour l\'historique.' : 'Ajouté à la pull request, pour les relecteurs.',
     codePolicy: 'Dans les blocs de code, seuls les commentaires se traduisent : le code reste le même dans toutes les langues.',
