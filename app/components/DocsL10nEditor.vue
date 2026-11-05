@@ -44,6 +44,13 @@ const storageKey = `docs-l10n:${props.locale}:${props.path}`
 const changes = useLocalStorage(`${storageKey}:changes`, new Map<string, L10nChange>())
 const drafts = useLocalStorage(`${storageKey}:drafts`, new Map<string, string>())
 const note = useLocalStorage(`${storageKey}:note`, '')
+/** The note field stays a one-line link until asked for, so the footer leaves room for the form. */
+const noteOpen = ref(false)
+const noteField = useTemplateRef<{ textareaRef?: HTMLTextAreaElement }>('noteField')
+function openNote() {
+  noteOpen.value = true
+  nextTick(() => noteField.value?.textareaRef?.focus())
+}
 /** Translations saved or reported as current that the editor's page does not show yet. */
 const known = useLocalStorage(`${storageKey}:known`, new Map<string, L10nKnownRecord>())
 
@@ -78,10 +85,16 @@ watch(otherCount, (count, before) => {
 }, { immediate: true })
 
 const formTop = useTemplateRef<HTMLElement>('formTop')
+const draftField = useTemplateRef<{ textareaRef?: HTMLTextAreaElement }>('draftField')
 
 function select(key: string) {
   hash.value = key
-  nextTick(() => formTop.value?.scrollIntoView({ block: 'start', behavior: reducedMotion.value === 'reduce' ? 'auto' : 'smooth' }))
+  nextTick(() => {
+    const field = draftField.value?.textareaRef
+    const focused = field ?? formTop.value
+    focused?.focus({ preventScroll: true })
+    focused?.scrollIntoView({ block: field ? 'center' : 'start', behavior: reducedMotion.value === 'reduce' ? 'auto' : 'smooth' })
+  })
 }
 
 function groupLabel(group: ReturnType<typeof otherTextGroups>[number]): { text: string, lang?: string } {
@@ -91,22 +104,16 @@ function groupLabel(group: ReturnType<typeof otherTextGroups>[number]): { text: 
   return translated ? { text: translated } : { text: group.heading, lang: 'en' }
 }
 
-const codeBlocks = ref<HTMLElement[]>([])
-watch([open, () => props.target, () => page.value], ([isOpen, target]) => {
-  codeBlocks.value = isOpen && target ? [...target.querySelectorAll<HTMLElement>('pre')] : []
-}, { flush: 'post' })
-const visibleCode = ref(new Set<Element>())
-useIntersectionObserver(codeBlocks, (entries) => {
-  const next = new Set(visibleCode.value)
-  for (const entry of entries) {
-    if (entry.isIntersecting) next.add(entry.target)
-    else next.delete(entry.target)
-  }
-  visibleCode.value = next
-})
+/** Whether the page has code blocks: the code policy shows for as long as it does, so the form does not move as the page scrolls. */
+const pageHasCode = ref(false)
+function checkCode() {
+  pageHasCode.value = !!(open.value && props.target?.querySelector('pre'))
+}
+watch([open, () => props.target, () => page.value], checkCode, { flush: 'post' })
+/** The page can render its document after the editor loaded, when the editor stays open across a navigation. */
+useMutationObserver(() => props.target, checkCode, { childList: true, subtree: true })
 const CODE_KINDS = new Set(['code-comment', 'code-label'])
-const codeInView = computed(() => !!segment.value && (CODE_KINDS.has(segment.value.kind) || codeBlocks.value.some(block => visibleCode.value.has(block))))
-const listsCode = computed(() => !codeInView.value && otherGroups.value.some(group => group.segments.some(item => item.kind === 'code-comment')))
+const codeInView = computed(() => !!segment.value && (CODE_KINDS.has(segment.value.kind) || pageHasCode.value))
 
 const where = (item: { kind: Parameters<typeof t.value.where>[0], context: { detail?: string, containers: string[] } }) =>
   t.value.where(item.kind, item.context.detail, item.context.containers.at(-1))
@@ -288,7 +295,10 @@ async function save() {
     for (const change of sent) {
       if (!refused.has(change.hash) && JSON.stringify(changes.value.get(change.hash)) === JSON.stringify(change)) changes.value.delete(change.hash)
     }
-    if (note.value === sentNote) note.value = ''
+    if (note.value === sentNote) {
+      note.value = ''
+      noteOpen.value = false
+    }
     showIssues(response.issues ?? [])
     if (response.mode === 'commit' && !response.dryRun) {
       const at = Date.now()
@@ -336,29 +346,33 @@ function glossaryHint(entry: NonNullable<typeof segment.value>['glossary'][numbe
     :content="{ onInteractOutside: (event: Event) => event.preventDefault(), onCloseAutoFocus: returnFocus }"
     :title="t.title"
     :description="segment ? strings.status[segment.status] : undefined"
-    :ui="{ content: 'max-w-lg', body: 'space-y-5 text-sm' }"
+    :ui="{ content: 'max-w-lg', header: 'items-start pe-14 sm:pe-16', wrapper: 'flex-1 min-w-0', body: 'space-y-5 text-sm' }"
   >
     <template #actions>
-      <div v-if="segments.length" class="flex items-center gap-1 text-xs text-muted">
-        <UButton
-          icon="i-lucide-chevron-up"
-          color="neutral"
-          variant="ghost"
-          size="xs"
-          :aria-label="t.previous"
-          :disabled="index <= 0"
-          @click="go(-1)"
-        />
-        <span v-if="index >= 0" aria-live="polite">{{ t.position(index + 1, segments.length) }}</span>
-        <UButton
-          icon="i-lucide-chevron-down"
-          color="neutral"
-          variant="ghost"
-          size="xs"
-          :aria-label="t.next"
-          :disabled="index >= segments.length - 1"
-          @click="go(1)"
-        />
+      <div v-if="segments.length" class="mt-0.5 flex items-center gap-2 text-xs text-muted">
+        <span v-if="index >= 0" class="tabular-nums" aria-live="polite">{{ t.position(index + 1, segments.length) }}</span>
+        <UFieldGroup size="sm">
+          <UTooltip :text="t.previous">
+            <UButton
+              icon="i-lucide-chevron-up"
+              color="neutral"
+              variant="outline"
+              :aria-label="t.previous"
+              :disabled="index <= 0"
+              @click="go(-1)"
+            />
+          </UTooltip>
+          <UTooltip :text="t.next">
+            <UButton
+              icon="i-lucide-chevron-down"
+              color="neutral"
+              variant="outline"
+              :aria-label="t.next"
+              :disabled="index >= segments.length - 1"
+              @click="go(1)"
+            />
+          </UTooltip>
+        </UFieldGroup>
       </div>
     </template>
 
@@ -368,7 +382,7 @@ function glossaryHint(entry: NonNullable<typeof segment.value>['glossary'][numbe
       </p>
 
       <template v-else-if="segment">
-        <p v-if="!hasL10nBlock(segment)" ref="formTop" class="text-xs text-muted">
+        <p v-if="!hasL10nBlock(segment)" ref="formTop" tabindex="-1" class="text-xs text-muted outline-none">
           {{ where(segment) }}<template v-if="segment.context.headingTrail.length">
             · <span lang="en">{{ segment.context.headingTrail.at(-1) }}</span>
           </template>
@@ -381,9 +395,23 @@ function glossaryHint(entry: NonNullable<typeof segment.value>['glossary'][numbe
         </p>
 
         <section class="space-y-1">
-          <h3 class="text-xs font-medium uppercase text-muted">
-            {{ t.english }}
-          </h3>
+          <div class="flex items-center justify-between gap-2">
+            <h3 class="text-xs font-medium uppercase text-muted">
+              {{ t.english }}
+            </h3>
+            <UTooltip v-if="role" :text="t.fromSource" :content="{ side: 'left' }">
+              <UButton
+                icon="i-lucide-copy"
+                color="neutral"
+                variant="ghost"
+                size="xs"
+                class="-my-1"
+                :aria-label="t.fromSource"
+                :disabled="draft === segment.skeleton"
+                @click="draft = segment.skeleton"
+              />
+            </UTooltip>
+          </div>
           <p lang="en" class="text-highlighted">
             <DocsL10nSkeleton :skeleton="segment.skeleton" :placeholders="segment.placeholders" />
           </p>
@@ -511,20 +539,8 @@ function glossaryHint(entry: NonNullable<typeof segment.value>['glossary'][numbe
             :help="validation?.warnings.map(warning => warning.message).join(' ') || undefined"
             :ui="{ label: 'text-xs font-medium uppercase text-muted', description: 'text-xs', error: 'text-xs text-(--l10n-error)', help: 'text-xs text-(--l10n-warning)' }"
           >
-            <template #hint>
-              <UButton
-                :label="t.fromSource"
-                icon="i-lucide-copy"
-                color="neutral"
-                variant="link"
-                size="xs"
-                class="p-0"
-                :disabled="draft === segment.skeleton"
-                @click="draft = segment.skeleton"
-              />
-            </template>
-
             <UTextarea
+              ref="draftField"
               v-model="draft"
               :rows="3"
               autoresize
@@ -600,10 +616,6 @@ function glossaryHint(entry: NonNullable<typeof segment.value>['glossary'][numbe
             <div class="mt-2 space-y-4">
               <p class="text-xs text-muted">
                 {{ t.otherTextsHint }}
-              </p>
-              <p v-if="listsCode" class="flex gap-1.5 text-xs text-toned" data-l10n-code-policy>
-                <UIcon name="i-lucide-code" class="size-3.5 shrink-0 translate-y-0.5" />
-                {{ t.codePolicy }}
               </p>
               <p class="grid grid-cols-2 gap-2 px-2 text-xs font-medium uppercase text-muted" aria-hidden="true">
                 <span>{{ t.english }}</span>
@@ -752,14 +764,25 @@ function glossaryHint(entry: NonNullable<typeof segment.value>['glossary'][numbe
           {{ t.stagedHint }}
         </p>
 
+        <UButton
+          v-if="changes.size && !noteOpen && !note"
+          :label="t.noteAdd"
+          icon="i-lucide-message-square-plus"
+          color="neutral"
+          variant="link"
+          size="xs"
+          class="p-0"
+          @click="openNote"
+        />
         <UFormField
-          v-if="changes.size"
+          v-else-if="changes.size"
           :label="t.noteLabel"
           :help="t.noteHelp(role ?? 'suggester')"
           :hint="note.length ? `${note.length}/${L10N_NOTE_MAX_LENGTH}` : undefined"
           :ui="{ label: 'text-xs font-medium text-toned', help: 'text-xs', hint: 'text-xs' }"
         >
           <UTextarea
+            ref="noteField"
             v-model="note"
             :maxlength="L10N_NOTE_MAX_LENGTH"
             :rows="1"
@@ -768,6 +791,8 @@ function glossaryHint(entry: NonNullable<typeof segment.value>['glossary'][numbe
             class="w-full"
             :lang="locale"
             data-l10n-note
+            @keydown.meta.enter.prevent.stop="save"
+            @keydown.ctrl.enter.prevent.stop="save"
           />
         </UFormField>
 

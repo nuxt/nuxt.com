@@ -51,14 +51,29 @@ registerEndpoint(`/api/l10n/fr/editor${CODE_PATH}`, (): L10nEditorPage => ({
 
 describe('DocsL10nEditor code policy', () => {
   it.each([
-    ['a paragraph', HASH],
-    ['a code comment', COMMENT]
-  ])('should explain once that code is not translated, with %s selected', async (_, hash) => {
-    await mountSuspended({ render: () => h(UApp, () => h(DocsL10nEditor, { locale: 'fr', path: CODE_PATH, open: true, hash })) }, { attachTo: document.body })
+    ['a paragraph on a page with code', HASH, '<pre><code>export default defineNuxtConfig({})</code></pre>'],
+    ['a code comment on a page not rendered yet', COMMENT, '<p>Configuration</p>']
+  ])('should explain once, above the form, that code is not translated, with %s selected', async (_, hash, html) => {
+    const target = document.createElement('div')
+    target.innerHTML = html
+    document.body.append(target)
+    await mountSuspended({ render: () => h(UApp, () => h(DocsL10nEditor, { locale: 'fr', path: CODE_PATH, open: true, hash, target })) }, { attachTo: document.body })
 
     await vi.waitFor(() => expect(document.querySelector('[data-l10n-other-texts]')).not.toBeNull())
     const lines = document.querySelectorAll('[data-l10n-code-policy]')
     expect(lines).toHaveLength(1)
-    expect(!!lines[0]!.closest('[data-l10n-other-texts]')).toBe(hash === HASH)
+    expect(lines[0]!.closest('[data-l10n-other-texts]')).toBeNull()
+  })
+
+  it('should explain it once the page renders its code after the editor loaded', async () => {
+    const target = document.createElement('div')
+    target.innerHTML = '<p>Configuration</p>'
+    document.body.append(target)
+    await mountSuspended({ render: () => h(UApp, () => h(DocsL10nEditor, { locale: 'fr', path: CODE_PATH, open: true, hash: HASH, target })) }, { attachTo: document.body })
+
+    await vi.waitFor(() => expect(document.querySelector('[data-l10n-other-texts]')).not.toBeNull())
+    expect(document.querySelector('[data-l10n-code-policy]')).toBeNull()
+    target.insertAdjacentHTML('beforeend', '<pre><code>export default defineNuxtConfig({})</code></pre>')
+    await vi.waitFor(() => expect(document.querySelector('[data-l10n-code-policy]')).not.toBeNull())
   })
 })
