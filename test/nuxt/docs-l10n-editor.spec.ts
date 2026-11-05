@@ -1,4 +1,5 @@
 import { mountSuspended, registerEndpoint } from '@nuxt/test-utils/runtime'
+import { enableAutoUnmount } from '@vue/test-utils'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { h } from 'vue'
 import { UApp } from '#components'
@@ -18,6 +19,8 @@ afterEach(() => {
   document.body.innerHTML = ''
   localStorage.clear()
 })
+// Registered last so it runs first: editors left mounted on a cleared body re-render into detached nodes.
+enableAutoUnmount(afterEach)
 
 describe('DocsL10nEditor', () => {
   it('should refuse a translation much longer than its source before it is staged', async () => {
