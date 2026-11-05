@@ -70,6 +70,20 @@ describe('localise', () => {
     expect(links(tip)).toEqual(['/docs/4.x/getting-started/installation#play-online'])
   })
 
+  it('should mark a component with the segment of its translated prop', async () => {
+    const page = pages.get(INTRODUCTION)!
+    const props = [...(await pageSegments(page, defaultPolicy)).values()].filter(segment => segment.kind === 'prop')
+    const [rendering, serverEngine] = props
+    const localised = await localise(page, bundle({
+      [rendering!.hash]: { hash: rendering!.hash, source: rendering!.skeleton, text: 'Modes de rendu de Nuxt', origin: 'human', review: 'edited', derived: 'fresh', by: 'danielroe', updatedAt: '2026-11-03T00:00:00Z' }
+    }))
+    const found = marked(localised.nodes)
+
+    expect(found.get(rendering!.hash)).toEqual(['read-more', { 'title': 'Modes de rendu de Nuxt', 'to': '/docs/4.x/guide/concepts/rendering', 'data-l10n': 'edited', 'data-l10n-hash': rendering!.hash }])
+    expect(found.get(serverEngine!.hash)?.[1]).toMatchObject({ 'title': raw.records[serverEngine!.hash]!.text, 'data-l10n': 'machine' })
+    expect(props.every(segment => found.get(segment.hash)?.[0] === 'read-more')).toBe(true)
+  })
+
   it('should translate the frontmatter and relabel the table of contents', async () => {
     const page = pages.get(INTRODUCTION)!
     const localised = await localise(page, bundle())
