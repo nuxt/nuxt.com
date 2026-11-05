@@ -1,0 +1,49 @@
+import type { UIMessage } from 'ai'
+import {
+  buildMessageParts,
+  guessAttachmentName,
+  shouldConvertPasteToAttachment,
+  type TextPasteAttachment
+} from '../../shared/utils/paste-attachment'
+
+export function usePasteAttachment(input: Ref<string>) {
+  const attachments = ref<TextPasteAttachment[]>([])
+
+  const canSubmit = computed(() =>
+    Boolean(input.value.trim() || attachments.value.length)
+  )
+
+  function handlePaste(event: ClipboardEvent) {
+    const text = event.clipboardData?.getData('text/plain')
+    if (!text || !shouldConvertPasteToAttachment(text)) return
+
+    event.preventDefault()
+    attachments.value.push({
+      content: text,
+      name: guessAttachmentName(text, attachments.value.map(attachment => attachment.name))
+    })
+  }
+
+  function removeAttachment(index: number) {
+    attachments.value.splice(index, 1)
+  }
+
+  function clearAttachments() {
+    attachments.value = []
+  }
+
+  const prompt = computed(() => ({
+    pasteAttachments: attachments.value,
+    canSubmit: canSubmit.value
+  }))
+
+  return {
+    attachments,
+    canSubmit,
+    handlePaste,
+    removeAttachment,
+    buildMessageParts: (): UIMessage['parts'] => buildMessageParts(input.value, attachments.value),
+    clearAttachments,
+    prompt
+  }
+}

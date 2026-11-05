@@ -1,4 +1,5 @@
-import { queryCollection } from '@nuxt/content/server'
+import type { BlogArticle } from '#shared/types'
+import { blogAuthors } from '#shared/utils/blog'
 
 export default defineMcpTool({
   description: `Lists all Nuxt blog posts with metadata including titles, dates, categories, tags, and descriptions.
@@ -18,13 +19,9 @@ OUTPUT: Returns list of posts with title, description, date, path. Use get_blog_
   },
   cache: '1h',
   async handler() {
-    const event = useEvent()
+    const blogPosts = (await listByDir<BlogArticle>('/blog')).filter(post => post.extension === '.md' && post.path !== '/blog')
 
-    const blogPosts = await queryCollection(event, 'blog')
-      .select('title', 'path', 'description', 'date', 'category', 'tags', 'authors', 'image')
-      .all()
-
-    if (!blogPosts) {
+    if (!blogPosts.length) {
       throw createError({ statusCode: 404, message: 'Blog posts collection not found' })
     }
 
@@ -35,7 +32,8 @@ OUTPUT: Returns list of posts with title, description, date, path. Use get_blog_
       date: post.date,
       category: post.category,
       tags: post.tags,
-      authors: post.authors,
+      // GitHub usernames: get-nuxter / show_nuxter take them
+      authors: blogAuthors(post.authors).map(({ name, username }) => ({ name, username })),
       image: post.image,
       url: `https://nuxt.com${post.path}`
     }))

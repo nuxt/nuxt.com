@@ -1,5 +1,8 @@
 import { z } from 'zod'
-import { queryCollection } from '@nuxt/content/server'
+import { getAgentSiteUrl } from '#agent-discovery'
+import { cliInstanceKey, docsInstanceKey } from '#shared/utils/content'
+import type { CliDocVersion } from '#shared/utils/cli'
+import { AGENT_DOC_VERSIONS } from '#shared/utils/docs'
 
 export default defineMcpTool({
   description: `Lists Nuxt documentation pages, optionally filtered by search term.
@@ -25,20 +28,19 @@ TIPS: Always pass a search term to narrow results — avoids dumping the entire 
     const event = useEvent()
     let allDocs: { title: string, path: string, description: string }[] = []
 
-    const collections = version === 'all'
-      ? ['docsv3', 'docsv4', 'docsv5'] as const
-      : [version === '3.x' ? 'docsv3' : version === '5.x' ? 'docsv5' : 'docsv4'] as const
+    const versions: CliDocVersion[] = version === 'all' ? [...AGENT_DOC_VERSIONS] : [version as CliDocVersion]
 
-    for (const col of collections) {
-      const docs = await queryCollection(event, col)
-        .select('title', 'path', 'description')
-        .all()
-      if (!docs) {
+    for (const docsVersion of versions) {
+      const docs = await listInstancePages(docsInstanceKey(docsVersion))
+      if (!docs.length) {
         if (version === 'all') continue
         throw createError({ statusCode: 404, message: 'Documentation pages collection not found' })
       }
       allDocs.push(...docs)
+      allDocs.push(...await listInstancePages(cliInstanceKey(docsVersion)).catch(() => []))
     }
+
+    allDocs.push(...await listInstancePages('examples'))
 
     if (search) {
       const terms = search.toLowerCase().split(/\s+/)
@@ -52,7 +54,7 @@ TIPS: Always pass a search term to narrow results — avoids dumping the entire 
       title: doc.title,
       path: doc.path,
       ...(search ? { description: doc.description } : {}),
-      url: `https://nuxt.com${doc.path}`
+      url: `${getAgentSiteUrl(event)}${doc.path}`
     }))
   }
 })

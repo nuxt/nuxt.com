@@ -1,10 +1,6 @@
 <script setup lang="ts">
-import { hasProtocol, joinURL } from 'ufo'
-
-const route = useRoute()
-const { data: module } = useNuxtData(`module-${route.params?.slug}`)
-
-const props = defineProps({
+// Relative sources are resolved on the server (`resolveReadmeUrls`).
+defineProps({
   src: {
     type: String,
     default: ''
@@ -21,11 +17,6 @@ const props = defineProps({
     type: [String, Number],
     default: undefined
   }
-})
-const src = computed(() => {
-  if (hasProtocol(props.src) || !module.value?.repo) return props.src
-  const repo = module.value.repo.split('#')[0]
-  return joinURL('https://raw.githubusercontent.com/', repo, module.value.stats.defaultBranch, props.src)
 })
 </script>
 

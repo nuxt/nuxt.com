@@ -19,6 +19,11 @@ export const formatDateByLocale = (locale: string, d: string | number | Date) =>
   })
 }
 
+// In UTC, so the server and the browser render the same day
+export const formatShortDate = (date: string | number | Date) => {
+  return new Date(date).toLocaleDateString('en', { dateStyle: 'medium', timeZone: 'UTC' })
+}
+
 export const toRelativeDate = (date: string | number | Date) => {
   const diff = Math.floor((new Date().getTime() - new Date(date).getTime()) / 1000)
   if (diff < 60) {
@@ -48,5 +53,12 @@ export const createBreadcrumb = (link: string = 'Missing link') => {
   if (link.startsWith('http')) {
     return link
   }
-  return link.split('/').filter(Boolean).map(part => splitByCase(part).map(p => upperFirst(p)).join(' ')).join(' > ').replace('Api', 'API')
+  return link
+    .split('/')
+    .filter(Boolean)
+    // Docs version folders (`4.x`, `3.x`) become "4 X" via splitByCase — skip them.
+    .filter(part => !/^\d+\.x$/i.test(part))
+    .map(part => splitByCase(part).map(p => upperFirst(p)).join(' '))
+    .join(' > ')
+    .replace('Api', 'API')
 }

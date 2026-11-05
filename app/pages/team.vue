@@ -7,7 +7,7 @@ definePageMeta({
 })
 
 const [{ data: page }, { data: teams }] = await Promise.all([
-  useAsyncData(kebabCase(route.path), () => queryCollection('team').first()),
+  useAsyncData(kebabCase(route.path), () => useContent('site').get('/team')),
   useFetch('/api/v1/teams', {
     key: 'teams',
     default: () => ([{ name: 'Core Team', team: [], link: 'https://github.com/orgs/nuxt/teams/core' }, { name: 'Ecosystem Team', team: [], link: 'https://github.com/orgs/nuxt/teams/ecosystem' }]),
@@ -26,8 +26,14 @@ const [{ data: page }, { data: teams }] = await Promise.all([
   })
 ])
 
-const title = page.value!.title
-const description = page.value!.description
+if (!page.value) {
+  throw createError({ statusCode: 404, statusMessage: 'Page not found', fatal: true })
+}
+
+const pageData = computed(() => page.value!.data)
+
+const title = pageData.value.head?.title || pageData.value.title
+const description = pageData.value.head?.description || pageData.value.description
 
 useSeoMeta({
   titleTemplate: '%s',
@@ -56,14 +62,14 @@ const icons = {
 </script>
 
 <template>
-  <UContainer v-if="page">
+  <UPage v-if="pageData">
     <UPageHero
-      :title="title"
-      :description="description"
+      :title="pageData.title"
+      :description="pageData.description"
     />
 
-    <UPage>
-      <UPageBody class="mt-0">
+    <UPageBody class="mt-0">
+      <UContainer>
         <template v-for="(team, index) of teams" :key="index">
           <h2 class="font-bold text-2xl mb-4 flex gap-2 items-center justify-between" :class="{ 'mt-12 md:mt-24': !!index }">
             <span>{{ team.name }}</span>
@@ -131,7 +137,7 @@ const icons = {
             </UPageCard>
           </UPageGrid>
         </template>
-      </UPageBody>
-    </UPage>
-  </UContainer>
+      </UContainer>
+    </UPageBody>
+  </UPage>
 </template>

@@ -1,8 +1,20 @@
 shamefullyHoist: true
 strictPeerDependencies: false
 
+overrides:
+  # TODO: drop once comark-content accepts comark 0.8 (0.4.1 requires `^0.7.0`).
+  # One copy: comark-content's parser runs the plugins we build from comark.
+  comark: 0.8.1
+  nostics: ^1.3.0
+  # chat@4.34.0 pins the 4.1.0-beta.2 prerelease, flagged as a downgrade by check-provenance.
+  # Scoped to `chat`: `workflow` needs its own `@workflow/serde` major.
+  "chat>@workflow/serde": 4.1.2
+  "@ai-sdk/provider-utils>@workflow/serde": 4.1.2
+
 allowBuilds:
-  better-sqlite3: true
+  # `workflow` deps: the native bindings ship as optional packages, the build scripts are not needed.
+  "@swc/core": false
+  cbor-extract: false
   esbuild: true
   rolldown: true
   sharp: true
@@ -11,6 +23,30 @@ allowBuilds:
   puppeteer: false
   unrs-resolver: false
   vue-demi: false
+  zlib-sync: true
 
 minimumReleaseAgeExclude:
-  - '@nuxt/ui@4.8.0'
+  - eve@0.24.3 || 0.27.0 || 0.40.0
+  - evlog
+  - '@nuxt/*'
+  - nuxt
+  - nuxt-nightly
+  - vue
+  - '@vue/*'
+  - nuxt-agent-discovery@0.8.1
+  - '@diglot/*'
+  - nuxt-auth-utils@0.6.1
+
+permissions:
+  '@nuxtjs/sitemap':
+    skills: false
+  nuxt-og-image:
+    skills: false
+  nuxt-schema-org:
+    skills: false
+  nuxtseo-layer-devtools:
+    skills: false
+
+patchedDependencies:
+  # Redraw once the map texture loads, and free it on destroy: https://github.com/shuding/cobe/pull/125
+  cobe@2.0.1: patches/cobe@2.0.1.patch

@@ -1,46 +1,53 @@
 <script setup lang="ts">
-import type { Module } from '#shared/types'
+import type { Module, ModuleProvider } from '#shared/types'
+import { hasModuleDocs } from '#shared/utils/module-docs'
 
 const emit = defineEmits<{
   add: [module: Module]
   remove: [module: Module]
+  select: [module: Module, event: MouseEvent]
 }>()
 
 const props = withDefaults(
   defineProps<{
     module: Module
+    /** Provider that matched the search, shown when the module itself did not */
+    provider?: ModuleProvider
     showBadge?: boolean
     isAdded: boolean
     showAddButton?: boolean
+    selectable?: boolean
+    sortKey?: string
   }>(),
   {
     showBadge: true,
-    showAddButton: true
+    showAddButton: true,
+    selectable: false,
+    sortKey: 'downloads'
   }
 )
 
-const { copy } = useClipboard()
-const { selectedSort } = useModules()
 const { track } = useAnalytics()
+const {
+  copyInstall: copyInstallCommand,
+  copyPrompt: copyAgentPrompt,
+  openCursor: openPromptInCursor,
+  openClaude: openPromptInClaudeCode,
+  openVSCode: openPromptInVSCode
+} = useModuleInstallActions(() => props.module, 'context-menu')
 
 const publishedAgo = useTimeAgo(() => props.module.stats.publishedAt)
 const createdAgo = useTimeAgo(() => props.module.stats.createdAt)
 
 const relativeDate = computed(() =>
-  selectedSort.value.key === 'publishedAt' ? publishedAgo.value : createdAgo.value
+  props.sortKey === 'publishedAt' ? publishedAgo.value : createdAgo.value
 )
 
 const staticModuleDate = computed(() =>
-  selectedSort.value.key === 'publishedAt'
+  props.sortKey === 'publishedAt'
     ? formatDateByLocale('en', props.module.stats.publishedAt)
     : formatDateByLocale('en', props.module.stats.createdAt)
 )
-
-function copyInstallCommand(moduleName: string) {
-  track('Module Install Command Copied', { module: moduleName })
-  const command = `npx nuxt@latest module add ${moduleName}`
-  copy(command, { title: 'Command copied to clipboard:', description: command })
-}
 
 function toggleModule(m: Module) {
   const action = props.isAdded ? 'remove' : 'add'
@@ -53,9 +60,10 @@ function toggleModule(m: Module) {
 }
 
 function handleCardClick(event: MouseEvent) {
-  if (event.shiftKey) {
+  if (!props.selectable) return
+  if (event.shiftKey || event.metaKey || event.ctrlKey) {
     event.preventDefault()
-    toggleModule(props.module)
+    emit('select', props.module, event)
   }
 }
 
@@ -69,15 +77,39 @@ const items = computed(() => [
     {
       label: 'Copy install command',
       icon: 'i-lucide-terminal',
-      onSelect: () => copyInstallCommand(props.module.name)
+      onSelect: copyInstallCommand
+    },
+    {
+      label: 'Copy agent prompt',
+      icon: 'i-custom-ai',
+      onSelect: copyAgentPrompt
+    }
+  ],
+  [
+    {
+      label: 'Open in Cursor',
+      icon: 'i-simple-icons-cursor',
+      onSelect: openPromptInCursor
+    },
+    {
+      label: 'Open in Claude Code',
+      icon: 'i-simple-icons-anthropic',
+      onSelect: openPromptInClaudeCode
+    },
+    {
+      label: 'Open in VS Code',
+      icon: 'i-simple-icons-visualstudiocode',
+      onSelect: openPromptInVSCode
     }
   ],
   [
     {
       icon: 'i-lucide-book',
       label: 'Documentation',
-      to: `${props.module.website}?utm_source=nuxt.com&utm_medium=aside-module&utm_campaign=nuxt.com`,
-      target: '_blank'
+      // Hosted docs live on the module page, not on the registry `website`.
+      ...(hasModuleDocs(props.module.name)
+        ? { to: `/modules/${props.module.name}` }
+        : { to: `${props.module.website}?utm_source=nuxt.com&utm_medium=aside-module&utm_campaign=nuxt.com`, target: '_blank' })
     },
     {
       label: 'View on GitHub',
@@ -88,7 +120,7 @@ const items = computed(() => [
     {
       label: 'View on npm',
       icon: 'i-lucide-package',
-      to: `https://npm.chart.dev/${props.module.npm}`,
+      to: `https://npmx.dev/package/${props.module.npm}`,
       target: '_blank'
     }
   ]
@@ -109,7 +141,7 @@ const items = computed(() => [
         container: 'flex flex-col',
         wrapper: 'flex flex-col min-h-0 items-start',
         body: 'flex-none',
-        footer: 'w-full mt-auto pointer-events-auto pt-4 z-[1]'
+        footer: 'w-full mt-auto pointer-events-auto pt-4 z-1'
       }"
       @click="handleCardClick"
     >
@@ -140,6 +172,12 @@ const items = computed(() => [
       />
 
       <template #footer>
+        <p v-if="provider" class="flex items-center gap-1.5 mb-3 text-sm text-muted">
+          <!-- Keyed by name: Nuxt Icon's CSS mode writes a late-loading icon under the current name, so a reused instance can show the previous provider's icon. -->
+          <UIcon :key="provider.icon" :name="provider.icon || 'i-lucide-plug'" class="size-4 shrink-0" />
+          <span>Supports <span class="font-medium text-highlighted">{{ provider.label }}</span></span>
+        </p>
+
         <USeparator type="dashed" class="mb-4" />
 
         <div class="flex items-center justify-between gap-3 -my-1 text-muted">
@@ -147,7 +185,7 @@ const items = computed(() => [
             <UTooltip text="Monthly NPM Downloads">
               <NuxtLink
                 class="flex items-center gap-1 hover:text-highlighted"
-                :to="`https://npm.chart.dev/${module.npm}`"
+                :to="`https://npmx.dev/package-stats/${module.npm}/v/${module.stats.version}?granularity=monthly`"
                 target="_blank"
               >
                 <UIcon name="i-lucide-circle-arrow-down" class="size-4 shrink-0" />
@@ -166,7 +204,22 @@ const items = computed(() => [
               </NuxtLink>
             </UTooltip>
 
-            <UTooltip v-if="selectedSort.key === 'publishedAt'" :text="`Updated ${formatDateByLocale('en', module.stats.publishedAt)}`">
+            <template v-if="module.health">
+              <UTooltip :text="`Health: ${module.health.status} - ${module.health.score}/100`">
+                <NuxtLink
+                  :to="`https://nuxt.care/?search=npm:${module.npm}`"
+                  class="flex items-center gap-1 hover:text-highlighted"
+                  target="_blank"
+                >
+                  <UIcon name="i-lucide-heart-pulse" class="size-4 shrink-0" :style="{ color: module.health.color }" />
+                  <span class="text-sm font-medium whitespace-normal">
+                    {{ module.health.score }}
+                  </span>
+                </NuxtLink>
+              </UTooltip>
+            </template>
+
+            <UTooltip v-if="sortKey === 'publishedAt'" :text="`Updated ${formatDateByLocale('en', module.stats.publishedAt)}`">
               <NuxtLink
                 class="flex items-center gap-1 hover:text-highlighted"
                 :to="`https://github.com/${module.repo}`"
@@ -184,7 +237,7 @@ const items = computed(() => [
               </NuxtLink>
             </UTooltip>
 
-            <UTooltip v-if="selectedSort.key === 'createdAt'" :text="`Created ${formatDateByLocale('en', module.stats.createdAt)}`">
+            <UTooltip v-if="sortKey === 'createdAt'" :text="`Created ${formatDateByLocale('en', module.stats.createdAt)}`">
               <NuxtLink
                 class="flex items-center gap-1 hover:text-highlighted"
                 :to="`https://github.com/${module.repo}`"
@@ -221,7 +274,7 @@ const items = computed(() => [
                 color="neutral"
                 size="xs"
                 variant="outline"
-                @click="copyInstallCommand(module.name)"
+                @click="copyInstallCommand"
               >
                 <span class="sr-only">Copy command to install {{ module.name }}</span>
               </UButton>

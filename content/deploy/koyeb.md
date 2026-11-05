@@ -15,10 +15,12 @@ Nuxt supports deploying on the [Koyeb serverless platform](https://www.koyeb.com
 
 2. Set the `engines.node` field in your project's `package.json` file to a [Koyeb-supported version of Node.js](https://www.koyeb.com/docs/build-and-deploy/build-from-git/nodejs#runtime):
 
+    <!-- Supported Node versions: https://www.koyeb.com/docs/build-and-deploy/build-from-git/nodejs -->
+
     ```json [package.json]
     {
       "engines": {
-          "node": "20.x"
+          "node": "24.x"
       }
     }
     ```

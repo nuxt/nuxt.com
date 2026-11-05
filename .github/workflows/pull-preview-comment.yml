@@ -1,0 +1,87 @@
+name: pull-preview-comment
+
+# Reusable: the repos nuxt.com reads content from call it on their pull requests (nuxt.com: `pull-preview.yml`).
+# DO NOT add actions/checkout: callers run it on `pull_request_target`.
+on:
+  workflow_call:
+
+permissions: {}
+
+jobs:
+  comment:
+    runs-on: ubuntu-slim
+    timeout-minutes: 5
+    permissions:
+      pull-requests: write
+    steps:
+      - name: Revoke the preview on new commits, then create or update the preview comment
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
+        env:
+          SITE_URL: https://nuxt.com
+          PREVIEW_LABEL: preview:enabled
+        with:
+          script: |
+            const marker = '<!-- nuxt-com-preview -->'
+            const { SITE_URL, PREVIEW_LABEL } = process.env
+            const { owner, repo } = context.repo
+            const number = context.payload.pull_request.number
+
+            // `/pull/:repo/:number` mirrors `github.com/nuxt/:repo/pull/:number`.
+            const previewUrl = `${SITE_URL}/pull/${repo}/${number}`
+
+            const comments = await github.paginate(github.rest.issues.listComments, {
+              owner,
+              repo,
+              issue_number: number,
+              per_page: 100
+            })
+            // Only this workflow's comment: other bots can quote PR content, marker included.
+            const existing = comments.find(comment => comment.user?.login === 'github-actions[bot]' && comment.body?.startsWith(marker))
+
+            // The approved commit: the head the label was added at, else the one this comment recorded.
+            const isLabelEvent = context.payload.action === 'labeled' && context.payload.label?.name === PREVIEW_LABEL
+            const approvedSha = isLabelEvent
+              ? context.payload.pull_request.head.sha
+              : existing?.body.match(/^<!-- nuxt-com-preview-sha: ([0-9a-f]{40}) -->$/m)?.[1]
+
+            // Live state, not the payload: a newer event may have cancelled the run that should have revoked.
+            const { data: pr } = await github.rest.pulls.get({ owner, repo, pull_number: number })
+            const closed = pr.state !== 'open'
+            const hasLabel = pr.labels.some(label => label.name === PREVIEW_LABEL)
+
+            // nuxt.com only previews open PRs a maintainer labelled, same-repo ones included.
+            // Any commit since the approval revokes it, until a maintainer reviews it and labels again.
+            const enabled = hasLabel && approvedSha === pr.head.sha
+            const revoked = hasLabel && !enabled
+            if (revoked) {
+              await github.rest.issues.removeLabel({ owner, repo, issue_number: number, name: PREVIEW_LABEL }).catch((error) => {
+                // Already removed.
+                if (error.status !== 404) throw error
+              })
+            }
+
+            let message
+            if (closed) {
+              message = ['This pull request is closed: its preview is no longer available.']
+            } else if (enabled) {
+              message = [
+                `📚 [Preview the changes on nuxt.com](${previewUrl}) at ${pr.head.sha.slice(0, 7)}`,
+                '',
+                `Enabled by the \`${PREVIEW_LABEL}\` label — a new push removes it until a maintainer reviews the changes and adds it back.`
+              ]
+            } else if (revoked) {
+              message = [`New commits were pushed after the preview was enabled: a maintainer can review them and add the \`${PREVIEW_LABEL}\` label back.`]
+            } else {
+              message = [`A maintainer can add the \`${PREVIEW_LABEL}\` label to preview this pull request on nuxt.com.`]
+            }
+
+            // Kept while closed, so reopening at the same commit keeps the approval.
+            const approval = enabled ? [`<!-- nuxt-com-preview-sha: ${pr.head.sha} -->`] : []
+            const body = [marker, ...approval, '## nuxt.com preview', '', ...message].join('\n')
+
+            if (existing) {
+              await github.rest.issues.updateComment({ owner, repo, comment_id: existing.id, body })
+            } else if (!closed) {
+              // A PR closed before this workflow ever ran on it gets no comment.
+              await github.rest.issues.createComment({ owner, repo, issue_number: pr.number, body })
+            }

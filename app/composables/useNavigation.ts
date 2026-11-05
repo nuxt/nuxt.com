@@ -1,12 +1,14 @@
 import type { CommandPaletteGroup } from '@nuxt/ui'
+import type { NuxterSummary } from '#shared/types'
 import { createSharedComposable } from '@vueuse/core'
 
 function _useHeaderLinks() {
   const route = useRoute()
-  const { version } = useDocsVersion()
+  const { meta: docsMeta } = useDocsVersion()
 
   const headerLinks = computed(() => {
-    const to = version.value.path
+    const to = docsMeta.value.path
+    const archived = docsMeta.value.status === 'archived'
 
     return [{
       label: 'Docs',
@@ -38,25 +40,29 @@ function _useHeaderLinks() {
         icon: 'i-lucide-code-xml',
         to: `${to}/api`,
         active: route.path.startsWith(`${to}/api`)
-      }, {
-        label: 'Deploy',
-        description: 'Deploy your Nuxt project anywhere.',
-        icon: 'i-lucide-cloud',
-        to: '/deploy',
-        active: route.path.startsWith('/deploy')
-      }, {
-        label: 'Examples',
-        description: 'Discover and explore official and community examples.',
-        icon: 'i-lucide-app-window-mac',
-        to: `${to}/examples`,
-        active: route.path.startsWith(`${to}/examples`)
-      }, {
-        label: 'Community',
-        description: 'Find answers and support from the community.',
-        icon: 'i-lucide-messages-square',
-        to: `${to}/community`,
-        active: route.path.startsWith(`${to}/community`)
-      }]
+      },
+      // Archived versions have no deploy guides, examples or community section.
+      ...(archived
+        ? []
+        : [{
+            label: 'Deploy',
+            description: 'Deploy your Nuxt project anywhere.',
+            icon: 'i-lucide-cloud',
+            to: '/deploy',
+            active: route.path.startsWith('/deploy')
+          }, {
+            label: 'Examples',
+            description: 'Discover and explore official and community examples.',
+            icon: 'i-lucide-app-window-mac',
+            to: '/docs/examples',
+            active: route.path.startsWith('/docs/examples')
+          }, {
+            label: 'Community',
+            description: 'Find answers and support from the community.',
+            icon: 'i-lucide-messages-square',
+            to: `${to}/community`,
+            active: route.path.startsWith(`${to}/community`)
+          }])]
     }, {
       label: 'Modules',
       icon: 'i-lucide-puzzle',
@@ -65,62 +71,53 @@ function _useHeaderLinks() {
     }, {
       label: 'Templates',
       icon: 'i-lucide-app-window',
+      to: '/templates',
       description: 'Start your next project with a Nuxt template.',
-      to: '/templates'
+      active: route.path.startsWith('/templates')
     }, {
-      label: 'Resources',
+      label: 'Showcase',
+      icon: 'i-lucide-presentation',
+      description: 'Discover and explore projects built with Nuxt.',
+      to: '/showcase'
+    }, {
+      label: 'Nuxters',
+      icon: 'i-lucide-award',
+      description: 'Discover the contributors of the Nuxt ecosystem and share your Nuxter profile.',
+      to: '/nuxters',
+      active: route.path.startsWith('/nuxters')
+    }, {
+      label: 'Updates',
+      icon: 'i-lucide-newspaper',
+      to: '/updates',
+      description: 'Releases and blog posts from the Nuxt team.',
+      active: route.path.startsWith('/updates') || route.path.startsWith('/blog') || route.path.startsWith('/changelog')
+    }, {
+      label: 'More',
       icon: 'i-lucide-library',
-      to: '/showcase',
+      to: '/video-courses',
       search: false,
-      active: route.path.startsWith('/video-courses') || route.path.startsWith('/showcase'),
+      active: ['/video-courses', '/enterprise', '/sponsors'].some(path => route.path.startsWith(path)),
       children: [{
-        label: 'Showcase',
-        description: 'Discover and explore projects built with Nuxt.',
-        icon: 'i-lucide-presentation',
-        to: '/showcase'
-      }, {
         label: 'Video Courses',
         description: 'Learn Nuxt by watching video courses.',
         icon: 'i-lucide-graduation-cap',
         to: '/video-courses'
+      }, {
+        label: 'Agencies',
+        description: 'Agencies specialized in Nuxt development.',
+        icon: 'i-lucide-handshake',
+        to: '/enterprise/agencies'
+      }, {
+        label: 'Sponsors',
+        description: 'Help us sustain Nuxt development.',
+        icon: 'i-lucide-hand-heart',
+        to: '/sponsors'
       }, {
         label: 'Nuxt Certification',
         description: 'Obtain your Certification of Competence.',
         icon: 'i-lucide-medal',
         to: 'https://certification.nuxt.com',
         target: '_blank'
-      }]
-    }, {
-      label: 'Enterprise',
-      icon: 'i-lucide-building-2',
-      to: '/enterprise',
-      search: false,
-      children: [{
-        label: 'Agencies',
-        to: '/enterprise/agencies',
-        description: 'Agencies specialized in Nuxt development.',
-        icon: 'i-lucide-handshake'
-      }, {
-        label: 'Sponsors',
-        to: '/enterprise/sponsors',
-        description: 'Help us sustain Nuxt development.',
-        icon: 'i-lucide-hand-heart'
-      }]
-    }, {
-      label: 'Updates',
-      icon: 'i-lucide-newspaper',
-      search: false,
-      to: '/blog',
-      children: [{
-        label: 'Blog',
-        to: '/blog',
-        description: 'News and updates about Nuxt.',
-        icon: 'i-lucide-newspaper'
-      }, {
-        label: 'Changelog',
-        to: '/changelog',
-        description: 'Latest releases from Nuxt and official modules.',
-        icon: 'i-lucide-history'
       }]
     }]
   })
@@ -134,8 +131,7 @@ const footerLinks = [{
   label: 'Community',
   children: [{
     label: 'Nuxters',
-    to: 'https://nuxters.nuxt.com',
-    target: '_blank'
+    to: '/nuxters'
   }, {
     label: 'Team',
     to: '/team'
@@ -162,7 +158,7 @@ const footerLinks = [{
     to: '/enterprise/agencies'
   }, {
     label: 'Sponsors',
-    to: '/enterprise/sponsors'
+    to: '/sponsors'
   }]
 }]
 
@@ -180,11 +176,11 @@ const _useNavigation = () => {
   const { articles: blogArticles, fetchList: fetchBlog } = useBlog()
 
   const searchLinks = computed(() => [{
-    label: 'Ask Agent',
-    icon: 'i-lucide-wand',
+    label: 'Ask Nuxi',
+    icon: 'i-custom-nuxi',
     to: 'javascript:void(0);',
     onSelect: () => {
-      track('Nuxt Agent Opened', { source: 'search-links' })
+      track('Nuxi Opened', { source: 'search-links' })
       openAgent()
     }
   }, ...headerLinks.value.flatMap((link) => {
@@ -196,6 +192,10 @@ const _useNavigation = () => {
     }
     return [link]
   }), {
+    label: 'Changelog',
+    icon: 'i-lucide-history',
+    to: '/changelog'
+  }, {
     label: 'Team',
     icon: 'i-lucide-users',
     to: '/team'
@@ -256,6 +256,36 @@ const _useNavigation = () => {
     to: article.path
   })))
 
+  // Nuxters: 27k usernames, so the server searches them (lazy, one request per pause in typing).
+  const nuxterResults = ref<NuxterSummary[]>([])
+  let nuxtersRequest = 0
+  watchDebounced(searchTerm, async (term) => {
+    const query = term.trim()
+    const current = ++nuxtersRequest
+    if (query.length < 2) {
+      nuxterResults.value = []
+      return
+    }
+    const items = await $fetch<NuxterSummary[]>('/api/search/nuxters', { query: { q: query, limit: 5 } }).catch(() => [])
+    // A slower, older request must not replace newer results.
+    if (current === nuxtersRequest) nuxterResults.value = items
+  }, { debounce: 200 })
+
+  const { format } = new Intl.NumberFormat('en-US')
+  const nuxterItems = computed(() => nuxterResults.value.map(nuxter => ({
+    id: `nuxter-${nuxter.githubId}`,
+    label: nuxter.username,
+    suffix: `Nuxter #${format(nuxter.rank)} · ${format(nuxter.score)} pts`,
+    // UAvatar renders with <NuxtImg> (IPX): pass the source path, not an IPX URL.
+    avatar: {
+      src: `/gh_avatar/${nuxter.username}`,
+      alt: nuxter.username,
+      densities: 'x1 x2',
+      ui: { root: 'rounded-md' }
+    },
+    to: `/nuxters/${nuxter.username}`
+  })))
+
   const postFilter = (searchTerm: string, items: any[]) => {
     if (!searchTerm) {
       return []
@@ -279,16 +309,22 @@ const _useNavigation = () => {
     items: blogItems.value,
     postFilter
   }, {
+    id: 'nuxters-search',
+    label: 'Nuxters',
+    items: nuxterItems.value,
+    // Already filtered and ranked by the server
+    ignoreFilter: true,
+    postFilter
+  }, {
     id: 'ask-ai-search',
     label: 'AI',
     ignoreFilter: true,
     postFilter,
     items: [{
-      label: 'Ask Agent',
-      icon: 'i-lucide-wand',
-      to: 'javascript:void(0);',
+      label: 'Ask Nuxi',
+      icon: 'i-custom-nuxi',
       onSelect() {
-        track('Nuxt Agent Opened', { source: 'search-palette', query: searchTerm.value })
+        track('Nuxi Opened', { source: 'search-palette', query: searchTerm.value })
         openAgent(searchTerm.value)
       }
     }]
@@ -302,12 +338,6 @@ const _useNavigation = () => {
       fetchBlog()
     }
   })
-
-  watchDebounced(searchTerm, (term) => {
-    if (term) {
-      track('Search Performed', { term })
-    }
-  }, { debounce: 500 })
 
   return {
     searchTerm,

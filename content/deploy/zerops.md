@@ -13,6 +13,8 @@ website: "https://zerops.io"
 
 :read-more{title="Zerops" to="https://zerops.io"}
 
+<!-- Supported Node versions: https://docs.zerops.io/zerops-yaml/base-list -->
+
 ::tip
 **Nuxt x Zerops Quickrun ✨**
 :br
@@ -46,7 +48,7 @@ To tell Zerops how to build and run your app, add a `zerops.yml` to your root:
 zerops:
   - setup: app
     build:
-      base: nodejs@20
+      base: nodejs@24
       buildCommands:
         - yarn
         - yarn nuxi generate
@@ -68,7 +70,7 @@ project:
 
 services:
   - hostname: app
-    type: nodejs@20
+    type: nodejs@24
 ```
 
 This will create a project called `recipe-nuxt` with a Zerops Node.js service called `app`.
@@ -81,14 +83,14 @@ To tell Zerops how to build and run your app, add a `zerops.yml` to your root:
 zerops:
   - setup: nuxt
     build:
-      base: nodejs@20
+      base: nodejs@24
       buildCommands:
         - yarn
         - yarn build
       deployFiles:
         - .output/~
     run:
-      base: nodejs@20
+      base: nodejs@24
       ports:
         - port: 3000
           httpSupport: true

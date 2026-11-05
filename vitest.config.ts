@@ -1,3 +1,4 @@
+import { fileURLToPath } from 'node:url'
 import { defineConfig, defaultExclude } from 'vitest/config'
 import { defineVitestProject } from '@nuxt/test-utils/config'
 
@@ -5,6 +6,14 @@ export default defineConfig({
   test: {
     projects: [
       {
+        // Stub server utils imports
+        resolve: {
+          alias: {
+            '#shared': fileURLToPath(new URL('./shared', import.meta.url)),
+            '#server': fileURLToPath(new URL('./server', import.meta.url)),
+            '#agent-discovery': fileURLToPath(new URL('./test/stubs/agent-discovery.ts', import.meta.url))
+          }
+        },
         test: {
           name: 'unit',
           exclude: [
@@ -19,8 +28,14 @@ export default defineConfig({
         test: {
           name: 'nuxt',
           environment: 'nuxt',
+          // Nuxt environment setup (beforeAll) can exceed the 10s default on CI
+          hookTimeout: 60_000,
           include: ['test/nuxt/**.spec.ts'],
           setupFiles: ['./test/nuxt/setup.ts'],
+          env: {
+            // Skip spawning `eve dev` during @nuxt/test-utils setup (30s+ on CI).
+            EVE_BASE_URL: 'http://127.0.0.1:1'
+          },
           environmentOptions: {
             nuxt: {
               overrides: {

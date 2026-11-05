@@ -5,4 +5,4 @@ export interface NpmDownloadStats {
   package?: string
 }
 
-export type NpmPeriod = 'last-day' | 'last-week' | 'last-month' | 'last-year'
+export type NpmPeriod = 'last-day' | 'last-week' | 'last-month' | 'last-year' | `${string}:${string}`

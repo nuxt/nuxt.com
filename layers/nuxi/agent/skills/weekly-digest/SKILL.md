@@ -1,0 +1,156 @@
+---
+description: Produce the Nuxt Monday digest — traffic, Google Search and SEO opportunities, docs feedback, Nuxi quality, and prioritized follow-ups for a recent window.
+---
+
+When producing a digest (scheduled or on request):
+
+**Slack delivery:** Your reply IS the Slack message — Eve posts it verbatim to this channel. There is no Slack post tool; never say you cannot post or ask anyone to copy-paste. You are Nuxi (:nuxi:) giving the team a weekly pulse. Be concise, linked, and actionable — not a wall of text.
+
+Always write Slack mrkdwn (`<url|label>`, `:emoji:`). If this run is mirrored to Discord, the channel converts that syntax — do not emit Discord markdown yourself.
+
+- First line: **Nuxt weekly digest — last N days** plus date range in parentheses.
+- No preamble ("All the data is in…", "Here's the digest:"), no delivery disclaimers, and no meta wrap-up. Start with the title line.
+- Use **bold** section labels — never markdown `#` headings.
+- ONE message only. Blank line between sections.
+- Every bullet that references a page, chat, or dashboard must include a clickable link via Slack syntax: `<https://…|label>`.
+- Sparingly use :nuxter: or :nuxt_cool: (0–2 total) when something is worth celebrating or urgent.
+
+**Data steps** (parallel where possible; Vercel / AI Gateway tools need admin/Slack/schedule-only access):
+
+Traffic (nuxt.com project — use the first-class Vercel Web Analytics tools):
+Pass the configured Nuxt `projectId` and `teamId` to every Web Analytics tool call; do not pass `slug`.
+1. `count_pageviews` for the current window AND the previous window → visitors/pageviews + WoW %.
+2. `aggregate_pageviews` with `by=['day']` current window → daily trend (spot spikes/drops). The API may round `until` forward to a day boundary; ignore returned buckets whose timestamp is outside the requested half-open `[start, end)` window.
+3. Same aggregate with `by=['route'], limit=10` current + previous window → top sections with per-route deltas.
+4. Same aggregate with `by=['referrerHostname'], limit=8` + `by=['country'], limit=5` + `by=['deviceType']` → audience snapshot.
+
+Agent-facing usage (Vercel Observability — use the read-only `create_observability_query` tool):
+- Complete every required query below. A tool-call concurrency limit is not a total-query limit: continue with additional calls until all required results are collected. Never omit a metric because the first batch is full.
+- Required totals:
+  1. Nuxt `/mcp`, current and previous equal-length windows.
+  2. Nuxt UI `/mcp`, current and previous equal-length windows.
+  3. For **each** project, explicit Markdown in the current window: `endswith(request_path, '.md') and environment eq 'production'`.
+  4. For **each** project, negotiated Markdown in the current window: `contains(http_accept, 'text/markdown') and environment eq 'production'`.
+  5. For **each** project, discovery/intake in the current window: `(request_path eq '/llms.txt' or request_path eq '/llms-full.txt' or request_path eq '/sitemap.md' or request_path eq '/openapi.json' or request_path eq '/.well-known/mcp/server-card.json') and environment eq 'production'`.
+- Required detail queries after the totals:
+  - For **each** MCP project, group the current window by `client_user_agent` (limit 25), then by `request_method` + `http_status` (limit 20).
+  - For **each** project, group explicit Markdown by `request_path` (limit 5).
+  - For **each** project, group discovery/intake by `request_path` (limit 5).
+- Use the ungrouped `summary` as the authoritative total. Do not derive a total by adding grouped rows or timeseries buckets.
+- Keep all returned user-agent rows available for analysis. For digest rendering, choose the highest-volume row for up to three distinct named products and preserve that row's count. Use friendly product labels only (`Claude Code`, `Codex`, `Cursor`, `OpenCode`, `WorkBuddy`); never print user-agent versions or integration suffixes. Do not sum version/integration variants in the model.
+- Treat `claude-code`, `codex-mcp-client`, `Cursor`, `opencode`, and `WorkBuddy` as named product rows. Generic stacks include `undici`, `node`, `Go-http-client`, `python-httpx`, and similar libraries. If the named-product cap is full, omit additional named rows; never move them into the generic list.
+- Present exact method/status rows under three labels without category totals or equations: successful POST (`200`, `202`), protocol noise (`GET/HEAD 405`), and POST errors (`4xx/5xx`). Mention another row only when materially large or actionable.
+- A response with `truncated: true` or `truncation.omittedArrayItems` means the tool shortened the returned timeseries; it does **not** prove a source-data gap. Never report those omitted rows as missing traffic. Use the ungrouped summary for totals and comparisons.
+- Only label a real data gap when the API explicitly reports one after truncation is ruled out. Avoid causal claims about rises or falls unless a grouped result supports them.
+- These are HTTP requests, not logical tool calls, sessions, or unique agents.
+
+Agent-facing output contract:
+- Start this section directly with `*Nuxt*`; do not announce completed tasks, batches, or collected data.
+- Collect the full detail queries for analysis, but render only the compact summary below. The ad-hoc `ecosystem-usage` skill owns exhaustive breakdowns.
+- Keep exactly two project blocks in this order: `*Nuxt*`, then `*Nuxt UI*`. Never combine their clients, health, totals, or trends.
+- Under both `*Nuxt*` and `*Nuxt UI*`, render exactly four labeled bullets: *MCP*, *Clients*, *Content*, and *Health*.
+- Every bullet must contain values from the corresponding query. Do not emit placeholders such as “report…”, “see Observability”, “not separately queried”, or “included in the batch”.
+- Replace every `<…>` slot in the output template with returned data or an explicit `unavailable — <concrete error>` value.
+- If a required query failed after retrying, keep its bullet and write `unavailable — <concrete error>`. Do not silently omit it.
+- In *Clients*, show at most three distinct named products using the selected exact rows. Omit additional version variants, generic stacks, and empty-user-agent counts unless one is itself the evidence for a notable observation.
+- In *Content*, show the three totals (explicit Markdown, negotiated Markdown, discovery), plus exactly one leading Markdown path and one leading discovery path when returned. For each displayed path, take only the final non-empty segment, keep at most 60 characters, replace every character outside `[A-Za-z0-9._-]` with `-`, and wrap the result in backticks. Never insert the raw request path or allow `<`, `>`, `&`, `@`, `|`, backticks, or other Slack mrkdwn control characters into the label.
+- Never infer a leading path from another project or a prior report. If its grouped query was not completed, render `top path unavailable — <concrete reason>`.
+- In *Health*, render every returned row in these classes: successful POST (`200`, `202`), protocol noise (`GET/HEAD 405`), and POST errors (`4xx/5xx`). Keep exact rows separate rather than calculating category totals; write `none returned` for an empty class.
+- After both complete project blocks, optionally add `:mag: **What stands out**` with at most one observation of at most 20 words. Cite returned values directly; do not calculate new differences or rates, show equations, recommend actions, or add causal explanations. Omit the heading when nothing is clearly notable.
+- Top-N grouped rows are partial. Describe them as “top returned paths/clients”; never claim they represent all or most traffic unless their displayed counts are compared with the authoritative total and actually support that share.
+- HTTP request volume does not establish demand, adoption, unique agents, or intentional workflow behavior. Avoid claims such as “structurally higher”, “confirms agents are…”, “working as designed”, or “growing” unless the queried data directly establishes them across a sufficient period.
+- Format counts of 10,000 or more with one-decimal compact notation (`29.7K`, `4.3M`); keep smaller counts exact. Round percentage changes to whole numbers.
+- Keep each factual bullet to one line when Slack wrapping allows it. Do not add parenthetical methodology notes, per-version arithmetic, exhaustive lists, speculative attribution, query-progress narration, or Markdown horizontal rules.
+- End with exactly this caveat and nothing else: `_HTTP requests, not tool calls, sessions, or unique agents._`
+
+Search & SEO:
+- Load `seo-opportunities` and follow its **compact mode** for the same N-day window. Include a **Search & SEO** section after **Referrers & audience**, with the actual delayed Search Console dates, authoritative totals vs the previous equal-length window, and at most 2 validated page recommendations. Keep any unavailable-data note in this section so the rest of the digest can finish.
+
+Docs feedback:
+5. `admin-mcp__feedback-stats` — `topPages=5`
+6. `admin-mcp__list-feedback` — `ratings=["not-helpful", "confusing"]`, `limit=30`
+7. For each worst page from step 5/6: traffic from step 3, or a targeted `count_pageviews` call with `filter="requestPath eq '<path>'"` if missing from top routes — weigh urgency by real visits.
+
+AI agent:
+8. `admin-mcp__agent-usage-stats` — web chat counts and vote quality
+9. `admin-mcp__list-agent-chats` — `hasDownvotes=true`, `limit=5` (shared or public chats only; private chats are never readable)
+10. `admin-mcp__list-agent-votes` — `onlyDownvotes=true`, `limit=15`
+11. `vercel-mcp__list_agent_runs` over the window → Slack / Discord / web run split (discover eve project via `list_agent_run_projects` first).
+12. `ai_gateway__report` — `groupBy=model` over the window → **Nuxi-scoped** spend/tokens only (tool filters by tags / API key name). Asking for a `groupBy` always forces tag scoping when an API key name is configured — check `scope.mode`, not `scope.matchedRows`: whenever `scope.mode` is `"tags"` and `scope.note` names an API key, that result only covers tagged traffic and can undercount the real historical total, even if `scope.matchedRows` is non-zero. Re-run with no `groupBy` for the full key-name-scoped total. If that ungrouped report is still unavailable or empty, present the tagged numbers but label them explicitly as partial (tagged traffic only) — never as the complete historical spend. If both come back empty, say spend is not attributable yet — **never** quote account-wide / other-product totals (no fable, no team-wide $).
+13. `ai_gateway__report` — `groupBy=tag` over the window → spend per `surface:*` (web / Slack / Discord / schedules). Skip the split if only `app:nuxi` comes back, which means the window predates per-surface tagging.
+
+**Link cheat sheet** (use real paths/ids from tool output):
+
+- Docs page: `<https://nuxt.com/docs/…|Page title>`
+- Chat review: `<https://nuxt.com/dashboard/chat/<id>|Open chat>`
+- Analytics: `<https://vercel.com/nuxt-js/nuxt/analytics|Vercel Web Analytics>`
+- Agent runs: `<https://vercel.com/nuxt-js/nuxt/observability/agent-runs|Vercel Agent Runs>`
+- AI Gateway: `<https://vercel.com/nuxt-js/nuxt/ai-gateway|Vercel AI Gateway>`
+
+**Output template:**
+
+**Nuxt weekly digest — last 7 days** (Jun 23 – Jun 30, 2026)
+
+:bar_chart: **Traffic pulse**
+• *12,430 visitors* (-8% WoW), *31,200 pageviews* (-5% WoW)
+• Trend: solid Mon–Wed, dip Thu, weekend quieter — see <https://vercel.com/nuxt-js/nuxt/analytics|Vercel Web Analytics>
+
+:page_facing_up: **Top sections**
+1. <https://nuxt.com/docs/…|/docs/[...slug]> — 8,200 visitors (-3%)
+2. <https://nuxt.com/|/ (homepage)> — 4,100 visitors (+2%)
+3. …
+
+:compass: **Referrers & audience**
+• Top: Direct (55%), <https://google.com|Google> (40%), then GitHub / DuckDuckGo
+• Countries: US, DE, FR — mostly desktop (~80%)
+
+:mag: **Search & SEO**
+• Search Console (delayed dates): clicks / impressions and changes vs the previous equal-length window, CTR and position — <https://search.google.com/search-console|Search Console>
+• <https://nuxt.com/docs/…|Page> — query evidence, current metrics and one concrete recommendation (or an explicit unavailable-data reason).
+
+:satellite: **Agent-facing usage**
+*Nuxt*
+• *MCP* — `<current>` HTTP requests (`<delta>` vs `<previous>`)
+• *Clients* — `<up to three named client rows>`
+• *Content* — `.md` `<count>` (top: `<short path + count>`) · negotiated `<count>` · discovery `<count>` (top: `<short path + count>`)
+• *Health* — success: POST 200 `<count>`, 202 `<count>` · noise: GET 405 `<count>`, HEAD 405 `<count>` · errors: `<all POST 4xx/5xx rows, or none returned>`
+
+*Nuxt UI*
+• *MCP* — `<current>` HTTP requests (`<delta>` vs `<previous>`)
+• *Clients* — `<up to three named client rows>`
+• *Content* — `.md` `<count>` (top: `<short path + count>`) · negotiated `<count>` · discovery `<count>` (top: `<short path + count>`)
+• *Health* — success: POST 200 `<count>`, 202 `<count>` · noise: GET 405 `<count>`, HEAD 405 `<count>` · errors: `<all POST 4xx/5xx rows, or none returned>`
+
+:mag: **What stands out**
+• `<one evidence-backed observation of at most 20 words; omit this heading and bullet rather than inventing one>`
+
+_HTTP requests, not tool calls, sessions, or unique agents._
+
+:speech_balloon: **Docs feedback**
+• *12 responses* — 83% positive, avg 4.2/5
+• Worst: <https://nuxt.com/docs/…|Installation> — 1,800 visits, "missing existing-project guide"
+• Recurring: hydration mismatch docs unclear (3 mentions)
+
+:robot_face: **AI agent**
+• *Web chats* — 178 sessions, 114 users, 4 up / 1 down — <https://nuxt.com/dashboard/chat/abc123|worst chat>
+• *Runs* — 340 runs (180 Slack / 30 Discord / 130 web) — <https://vercel.com/nuxt-js/nuxt/observability/agent-runs|Agent Runs>
+• *Spend* — $12.40, 1.8M tokens (mostly anthropic/claude-sonnet-4.6) — web $7.10 / Slack $4.20 / Discord $1.10 — <https://vercel.com/nuxt-js/nuxt/ai-gateway|AI Gateway>
+  (or: *Spend* — not attributable yet for this window — <https://vercel.com/nuxt-js/nuxt/ai-gateway|AI Gateway>)
+
+:hammer_and_wrench: **Fix this week** (numbered — owner · action · link)
+1. :red_circle: *docs* — add "existing project" section to Installation (1,800 visits) — <https://nuxt.com/docs/…|page>
+2. :large_yellow_circle: *Nuxi* — fix module routing edge case — <https://nuxt.com/dashboard/chat/abc123|chat>
+3. :large_green_circle: *infra* — confirm WoW traffic dip is seasonal — <https://vercel.com/nuxt-js/nuxt/analytics|analytics>
+
+Rules:
+- If a section has zero data, say so in one bullet. Give a cause only when a tool result establishes it; otherwise say no data was returned.
+- **Fix this week** must have exactly 3 items when there is anything to improve; if truly quiet, 1–2 items with ":large_green_circle: *all clear*" is fine.
+- Rank **Fix this week** by traffic × bad feedback, evidenced SEO opportunities, and agent quality issues — a bad score on a high-traffic page outranks the same score on a rarely-visited one. Include a search recommendation when its evidence warrants a top-3 priority.
+- Never list a page or chat without its `<url|label>` link.
+- Never invent traffic, run, or cost numbers — if a tool call fails or returns nothing attributable, say so instead of guessing.
+- Do not duplicate the same page in both **Docs feedback** and **Fix this week** as a long write-up; feedback states the problem, Fix this week owns the action.
+- The digest title must be the first visible line. Keep AI Gateway scope/coverage caveats inside the *Spend* bullet; never prepend a note before the title.
+- For a section-only request, return the rendered section itself. Never replace it with query coverage, compliance notes, completed-task counts, or a description of the data collected.
+- Before sending an Agent-facing usage section, verify that both project headings and all eight required factual bullets are present. If not, rewrite it before responding.
+
+<!-- Format aligned with server/mcp/prompts/admin/weekly-digest.ts for Cursor/IDE admin MCP. -->

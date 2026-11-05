@@ -1,6 +1,5 @@
 const validTeams = ['ecosystem', 'core', 'ui']
 export default cachedEventHandler(async (event) => {
-  const contributors = await $fetch('/api/contributors')
   const teamName = getRouterParam(event, 'slug')
   if (!teamName || !validTeams.includes(teamName)) {
     return createError({
@@ -11,10 +10,15 @@ export default cachedEventHandler(async (event) => {
 
   const members = await github.fetchTeam(event, 'nuxt', teamName)
 
+  // Nuxters score, to sort the team by contributions
+  const scores = await nuxters.scores(members.map(member => member.login)).catch((error) => {
+    console.error('Cannot load Nuxters scores:', error)
+    return new Map<string, number>()
+  })
   for (const member of members) {
-    const contributor = contributors.find(c => c.username === member.login)
-    if (contributor) {
-      member.score = contributor.score || 0
+    const score = scores.get(member.login.toLowerCase())
+    if (score !== undefined) {
+      member.score = score
     }
   }
 

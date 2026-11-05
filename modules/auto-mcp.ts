@@ -16,7 +16,7 @@ export default defineNuxtModule<ModuleOptions>({
   },
   defaults: {},
   setup(_options, nuxt) {
-    if (!nuxt.options.dev && !nuxt.options._prepare) {
+    if (!nuxt.options.dev) {
       return
     }
 
@@ -29,8 +29,8 @@ export default defineNuxtModule<ModuleOptions>({
       const localMcpJson = join(nuxt.options.rootDir, `.${ide}/mcp.json`)
       const globalMcpJson = join(homedir(), `.${ide}/mcp.json`)
       const mcpConfigs = {
-        localMcpJson: existsSync(localMcpJson) ? JSON.parse(readFileSync(localMcpJson, 'utf8')) : {},
-        globalMcpJson: existsSync(globalMcpJson) ? JSON.parse(readFileSync(globalMcpJson, 'utf8')) : {}
+        localMcpJson: readMcpJson(localMcpJson),
+        globalMcpJson: readMcpJson(globalMcpJson)
       }
 
       const mcpToInstall = []
@@ -116,4 +116,22 @@ function isMCPInstalled(mcpConfigs: { localMcpJson: any, globalMcpJson: any }, u
   return Object.values(mcpConfigs.localMcpJson.mcpServers ?? {}).some((server: any) => server.url === url)
     || Object.values(mcpConfigs.globalMcpJson.mcpServers ?? {}).some((server: any) => server.url === url)
     || false
+}
+
+function readMcpJson(path: string) {
+  if (!existsSync(path)) {
+    return {}
+  }
+
+  const raw = readFileSync(path, 'utf8')
+  try {
+    return JSON.parse(raw)
+  } catch {
+    try {
+      return JSON.parse(raw.replace(/^\s*\/\/.*$/gm, ''))
+    } catch {
+      consola.warn(`[auto-mcp] Could not parse ${path}, ignoring`)
+      return {}
+    }
+  }
 }

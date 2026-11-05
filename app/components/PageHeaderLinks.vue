@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { localeLinks } from '#shared/utils/l10n'
+
 const route = useRoute()
 const toast = useToast()
 const { copy, copied } = useClipboard()
@@ -61,8 +63,16 @@ const items = [
       to: `/mcp/deeplink`,
       onSelect: () => track('Page Action', { action: 'Add MCP Server' })
     }
-  ]
-]
+  ],
+  localeLinks(route.path).map(link => ({
+    ...link,
+    slot: 'locale' as const,
+    icon: 'i-lucide-languages',
+    external: true,
+    externalIcon: false,
+    onSelect: () => track('Page Action', { action: 'View Translation', locale: link.locale })
+  }))
+].filter(group => group.length)
 
 async function copyPage() {
   track('Page Action', { action: 'Copy Page' })
@@ -98,6 +108,12 @@ async function copyPage() {
         content: 'w-48'
       }"
     >
+      <template #locale-label="{ item }">
+        <span :lang="item.locale">{{ item.label }}</span>
+      </template>
+      <template #locale-description="{ item }">
+        <span :lang="item.locale">{{ item.description }}</span>
+      </template>
       <UButton
         icon="i-lucide-chevron-down"
         size="sm"

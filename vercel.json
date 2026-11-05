@@ -1,8 +1,4 @@
 {
-  "crons": [
-    {
-      "path": "/api/agent/cleanup",
-      "schedule": "0 3 * * *"
-    }
-  ]
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "ignoreCommand": "git diff --quiet HEAD^ HEAD -- ':!content'"
 }

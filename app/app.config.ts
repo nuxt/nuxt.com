@@ -30,7 +30,7 @@ export default defineAppConfig({
   ui: {
     colors: {
       primary: 'green',
-      neutral: 'slate',
+      neutral: 'neutral',
       important: 'violet'
     },
     pageHero: {
@@ -41,13 +41,18 @@ export default defineAppConfig({
     },
     prose: {
       img: {
-        base: 'w-full'
+        slots: {
+          base: 'w-full'
+        }
       },
       codeTree: {
         slots: {
           root: 'bg-default m-0',
           content: '[&>div>pre]:rounded-r-none'
         }
+      },
+      codeIcon: {
+        wat: 'i-lucide-file-braces'
       }
     }
   }

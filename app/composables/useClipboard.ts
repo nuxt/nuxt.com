@@ -12,8 +12,9 @@ export const useClipboard = () => {
 
   const toast = useToast()
 
-  const copy = (source: string, optionsOptions?: toastOptions) => {
-    _copy(source)
+  const copy = async (source: string, optionsOptions?: toastOptions) => {
+    await _copy(source)
+    if (!copied.value) throw new Error('Could not copy to clipboard')
     if (optionsOptions) {
       toast.add(optionsOptions)
     }

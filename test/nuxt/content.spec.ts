@@ -1,11 +1,11 @@
 import { describe, expect, it } from 'vitest'
 import { navPageFromPath, findTitleTemplate } from '../../app/utils/content'
-import type { ContentNavigationItem } from '@nuxt/content'
+import type { NavigationItem } from 'comark-content'
 
 describe('utils/content', () => {
   describe('navPageFromPath', () => {
     it('should find page at root level', () => {
-      const tree: ContentNavigationItem[] = [
+      const tree: NavigationItem[] = [
         { title: 'Blog', path: '/blog', stem: 'blog' },
         { title: 'Team', path: '/team', stem: 'team' }
       ]
@@ -14,7 +14,7 @@ describe('utils/content', () => {
     })
 
     it('should find page in nested children', () => {
-      const tree: ContentNavigationItem[] = [
+      const tree: NavigationItem[] = [
         {
           title: 'Docs',
           path: '/docs/4.x',
@@ -29,7 +29,7 @@ describe('utils/content', () => {
     })
 
     it('should find page in deeply nested structure', () => {
-      const tree: ContentNavigationItem[] = [
+      const tree: NavigationItem[] = [
         {
           title: 'Docs',
           path: '/docs/4.x',
@@ -58,7 +58,7 @@ describe('utils/content', () => {
     })
 
     it('should return undefined for non-existent path', () => {
-      const tree: ContentNavigationItem[] = [
+      const tree: NavigationItem[] = [
         { title: 'Blog', path: '/blog', stem: 'blog' }
       ]
       const result = navPageFromPath('/non-existent', tree)
@@ -80,7 +80,7 @@ describe('utils/content', () => {
     })
 
     it('should use page titleTemplate if available', () => {
-      const page = { value: { path: '/test', titleTemplate: '%s | Custom' } } as any
+      const page = { value: { path: '/test', data: { titleTemplate: '%s | Custom' } } } as any
       const navigation = { value: [] } as any
       const result = findTitleTemplate(page, navigation, '/docs/4.x')
       expect(result).toBe('%s | Custom')

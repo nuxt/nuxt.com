@@ -2,6 +2,7 @@
 const route = useRoute()
 const heroBackgroundClass = computed(() => route.meta?.heroBackground || '')
 const { isLoading } = useLoadingIndicator()
+const pull = usePullPreview()
 
 const appear = ref(false)
 const appeared = ref(false)
@@ -35,10 +36,13 @@ onMounted(() => {
       ]"
     /> -->
 
+    <LazyPullPreviewBanner v-if="pull" :pull="pull" />
+
     <Header />
 
     <UMain class="relative">
       <HeroBackground
+        v-if="route.meta?.heroBackground !== false"
         class="absolute w-full -top-px transition-all text-primary shrink-0 -z-10"
         :class="[
           isLoading ? 'animate-pulse' : (appear ? heroBackgroundClass : 'opacity-0'),

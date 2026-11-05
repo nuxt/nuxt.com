@@ -1,36 +1,39 @@
 import type { H3Event } from 'h3'
+import { checkBotId } from 'botid/server'
+import { deriveSecret } from 'nuxt/server'
 
-export async function generateHash(
-  today: string,
-  ip: string,
-  domain: string,
-  userAgent: string
-): Promise<string> {
-  const data = `${today}+${domain}+${ip}+${userAgent}`
+let warnedMissingSecret = false
 
-  const buffer = await crypto.subtle.digest(
-    'SHA-1',
-    new TextEncoder().encode(data)
-  )
-
-  return [...new Uint8Array(buffer)]
-    .map(b => b.toString(16).padStart(2, '0'))
-    .join('')
+async function fingerprintSecret(): Promise<string | undefined> {
+  try {
+    return await deriveSecret('nuxt.com:feedback-fingerprint')
+  } catch (error) {
+    if (!warnedMissingSecret) {
+      warnedMissingSecret = true
+      console.warn('[feedback] Feedback is not deduplicated:', (error as Error).message)
+    }
+  }
 }
 
 async function getFingerprint(event: H3Event): Promise<string> {
-  const ip = event.context.cf?.ip || 'unknown'
-  const userAgent = getHeader(event, 'user-agent') || 'unknown'
-  const domain = getHeader(event, 'host') || 'localhost'
-  const today = new Date().toISOString().split('T')[0]!
+  const input = fingerprintInput(event)
+  if (!input) return crypto.randomUUID()
 
-  return generateHash(today, ip, domain, userAgent)
+  const secret = await fingerprintSecret()
+  if (!secret) return crypto.randomUUID()
+
+  return feedbackFingerprint(secret, input)
 }
 
 export default defineEventHandler(async (event: H3Event) => {
+  const verification = await checkBotId()
+  if (verification.isBot) {
+    throw createError({ statusCode: 403, statusMessage: 'Forbidden' })
+  }
+
   const data: FeedbackInput = await readValidatedBody(event, feedbackSchema.parse)
 
-  const country = event.context.cf?.country || 'unknown'
+  const country = getHeader(event, 'x-vercel-ip-country') || 'unknown'
   const fingerprint = await getFingerprint(event)
 
   await db.insert(schema.feedback).values({

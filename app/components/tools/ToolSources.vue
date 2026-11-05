@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import type { Source } from '~/utils/tool'
-
 defineProps<{
   sources: Source[]
 }>()

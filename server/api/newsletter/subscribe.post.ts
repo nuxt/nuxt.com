@@ -1,19 +1,19 @@
 import { Resend } from 'resend'
 import { z } from 'zod'
 import { withQuery, withTrailingSlash } from 'ufo'
+import { checkBotId } from 'botid/server'
 
 export default eventHandler(async (event) => {
+  const verification = await checkBotId()
+  if (verification.isBot) {
+    throw createError({ statusCode: 403, statusMessage: 'Forbidden' })
+  }
+
   const { email } = await readValidatedBody(event, z.object({
     email: z.string().email().trim()
   }).parse)
 
-  const { apiKey, audienceId } = useRuntimeConfig(event).resend
-  if (!apiKey || !audienceId) {
-    throw createError({
-      statusCode: 500,
-      message: 'Missing Resend configuration'
-    })
-  }
+  const { apiKey, audienceId, secret } = useNewsletterConfig(event)
 
   const resend = new Resend(apiKey)
 
@@ -26,7 +26,7 @@ export default eventHandler(async (event) => {
     })
   }
 
-  const confirmation = generateConfirmation(event, email)
+  const confirmation = generateConfirmation(secret, email)
   const origin = import.meta.dev ? getRequestURL(event).origin : 'https://nuxt.com'
   const confirmationURL = withQuery(withTrailingSlash(origin), { email, confirmation })
 

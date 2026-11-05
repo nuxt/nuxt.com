@@ -135,11 +135,13 @@ export default defineNuxtConfig({
 
 You can set a custom Node.js version in configuration:
 
+<!-- Supported Node runtimes: https://docs.cloud.google.com/functions/docs/runtime-support -->
+
 ```ts [nuxt.config.ts]
 export default defineNuxtConfig({
   nitro: {
     firebase: {
-      nodeVersion: '18' // Can be '16' or '18' or '20'
+      nodeVersion: '24'
     },
   },
 });
@@ -153,7 +155,7 @@ You might also need to add a runtime key to your `firebase.json` file:
 {
   "functions": {
     "source": ".output/server",
-    "runtime": "nodejs20"
+    "runtime": "nodejs24"
   }
 }
 ```
@@ -164,7 +166,46 @@ You can read more about this in **Firebase Docs**.
 
 ## Other Cloud Functions
 
-You may be warned that other cloud functions will be deleted when you deploy your Nuxt project. This is because Nitro will deploy your entire project to firebase functions. If you want to deploy only your Nuxt project, you can use the `--only` flag:
+Firebase may warn that other Cloud Functions will be deleted when you deploy. That warning depends on `codebase` identifiers, not on how many function sources you list. Without a unique `codebase`, the CLI treats functions outside the current deploy as candidates for deletion.
+
+A single functions source can coexist with other functions if you give it a unique `codebase` (for example in a separate repository that deploys to the same Firebase project). Use a different `codebase` in each repository's `firebase.json`.
+
+In one repository, configure multiple function sources with distinct `codebase` values:
+
+```json [firebase.json]
+{
+  "functions": [
+    {
+      "source": "functions",
+      "codebase": "default"
+    },
+    {
+      "source": ".output/server",
+      "codebase": "nuxt"
+    }
+  ],
+  "hosting": [
+    {
+      "site": "<your_project_id>",
+      "public": ".output/public",
+      "cleanUrls": true,
+      "rewrites": [{ "source": "**", "function": "server" }]
+    }
+  ]
+}
+```
+
+::read-more{to="https://firebase.google.com/docs/functions/organize-functions?gen=2nd#managing_multiple_source_packages_monorepo" target="_blank"}
+See **Managing multiple source packages** in the Firebase docs.
+::
+
+To deploy only the Nuxt codebase and hosting:
+
+```bash
+firebase deploy --only functions:nuxt,hosting
+```
+
+With a single functions source (no separate `codebase`), target the `server` function instead:
 
 ```bash
 firebase deploy --only functions:server,hosting

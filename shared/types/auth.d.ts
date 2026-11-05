@@ -1,7 +1,18 @@
 declare module '#auth-utils' {
   interface User {
-    avatar_url: string
-    login: string
+    id: string
+    name: string
+    email?: string | null
+    avatar: string
+    username: string
+    provider: 'github'
+    providerId: string
+    role: 'user' | 'admin'
+  }
+
+  interface UserSession {
+    /** Stable anonymous id for rate limiting only. */
+    anonymousUserId?: string
   }
 }
 

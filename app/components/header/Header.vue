@@ -1,35 +1,11 @@
 <script setup lang="ts">
 const route = useRoute()
 
-const logo = useTemplateRef('logo')
 const stats = useStats()
-const { copy } = useClipboard()
+const { loggedIn } = useUserSession()
 const { headerLinks } = useHeaderLinks()
 const { track } = useAnalytics()
-
-const logoContextMenuItems = [
-  [{
-    label: 'Copy logo as SVG',
-    icon: 'i-simple-icons-nuxtdotjs',
-    onSelect() {
-      track('Logo Action', { action: 'Copy SVG' })
-      if (logo.value) {
-        copy(logo.value.$el.outerHTML, {
-          title: 'Nuxt logo copied as SVG',
-          description: 'You can now paste it into your project',
-          icon: 'i-lucide-circle-check',
-          color: 'success'
-        })
-      }
-    }
-  }],
-  [{
-    label: 'Browse design kit',
-    icon: 'i-lucide-shapes',
-    to: '/design-kit',
-    onSelect: () => track('Logo Action', { action: 'Browse Design Kit' })
-  }]
-]
+const locale = useDocsLocale()
 
 function trackSearchOpen() {
   track('Search Opened')
@@ -38,16 +14,42 @@ function trackSearchOpen() {
 function trackGitHubClick() {
   track('Header Action', { action: 'GitHub Stars' })
 }
+
+// Animate the width of the auth actions when switching between guest and user
+// so the buttons on the left slide instead of jumping
+const authActions = useTemplateRef<HTMLElement>('authActions')
+let fromWidth = 0
+
+function onBeforeLeave() {
+  fromWidth = authActions.value?.offsetWidth || 0
+}
+
+function onEnter() {
+  const el = authActions.value
+  if (!el || !fromWidth || matchMedia('(prefers-reduced-motion: reduce)').matches) return
+
+  el.style.width = ''
+  const toWidth = el.offsetWidth
+  el.style.width = `${fromWidth}px`
+  void el.offsetWidth
+  el.style.width = `${toWidth}px`
+}
+
+// Also runs on `transitioncancel` (e.g. reduced motion turned on mid-animation)
+function onWidthTransitionEnd(event: TransitionEvent) {
+  const el = authActions.value
+  if (!el || event.target !== el || event.propertyName !== 'width') return
+  // A newer swap restarted the width transition: keep its inline width
+  if (el.getAnimations().some(animation => animation instanceof CSSTransition && animation.transitionProperty === 'width')) return
+
+  el.style.removeProperty('width')
+}
 </script>
 
 <template>
-  <UHeader :ui="{ left: 'min-w-0 items-end' }" class="flex flex-col">
+  <UHeader :lang="locale ? 'en' : undefined" :ui="{ left: 'min-w-0 items-end' }" class="flex flex-col">
     <template #left>
-      <NuxtLink to="/" aria-label="Back to home">
-        <UContextMenu :items="logoContextMenuItems" size="xs">
-          <NuxtLogo ref="logo" class="block w-auto h-6" />
-        </UContextMenu>
-      </NuxtLink>
+      <HeaderLogo />
 
       <VersionMenu />
     </template>
@@ -65,30 +67,53 @@ function trackGitHubClick() {
     />
 
     <template #right>
+      <AgentChatButton />
       <UTooltip text="Search" :kbds="['meta', 'K']" ignore-non-keyboard-focus>
         <UContentSearchButton @click="trackSearchOpen" />
       </UTooltip>
 
-      <AgentChatButton />
+      <div
+        ref="authActions"
+        class="relative flex items-center justify-end transition-[width] duration-300 ease-out motion-reduce:transition-none"
+        @transitionend="onWidthTransitionEnd"
+        @transitioncancel="onWidthTransitionEnd"
+      >
+        <Transition
+          enter-active-class="transition duration-300 ease-out motion-reduce:transition-none"
+          enter-from-class="opacity-0 scale-50 blur-xs"
+          leave-active-class="absolute right-0 origin-right transition duration-200 ease-in motion-reduce:transition-none"
+          leave-to-class="opacity-0 scale-75 blur-xs"
+          @before-leave="onBeforeLeave"
+          @enter="onEnter"
+        >
+          <div v-if="!loggedIn" key="guest" class="flex items-center gap-1.5 origin-right">
+            <UTooltip text="Toggle theme" :kbds="['d']">
+              <UColorModeButton />
+            </UTooltip>
 
-      <UColorModeButton />
+            <UTooltip text="GitHub Stars">
+              <UButton
+                icon="i-simple-icons-github"
+                to="https://go.nuxt.com/github"
+                target="_blank"
+                variant="ghost"
+                color="neutral"
+                square
+                :label="stats ? formatNumber(stats.stars) : '...'"
+                aria-label="Nuxt on GitHub"
+                :ui="{
+                  label: 'hidden sm:inline-flex'
+                }"
+                @click="trackGitHubClick"
+              />
+            </UTooltip>
+          </div>
 
-      <UTooltip text="GitHub Stars">
-        <UButton
-          icon="i-simple-icons-github"
-          to="https://go.nuxt.com/github"
-          target="_blank"
-          variant="ghost"
-          color="neutral"
-          square
-          :label="stats ? formatNumber(stats.stars) : '...'"
-          aria-label="Nuxt on GitHub"
-          :ui="{
-            label: 'hidden sm:inline-flex'
-          }"
-          @click="trackGitHubClick"
-        />
-      </UTooltip>
+          <div v-else key="user" class="flex items-center">
+            <HeaderUserMenu />
+          </div>
+        </Transition>
+      </div>
     </template>
 
     <template #toggle="{ open, toggle }">

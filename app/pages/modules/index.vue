@@ -1,47 +1,126 @@
 <script setup lang="ts">
 import { motion, AnimatePresence } from 'motion-v'
+import type { DropdownMenuItem } from '@nuxt/ui'
 import type { Module } from '#shared/types'
-import { joinURL } from 'ufo'
+import { joinURL, withQuery } from 'ufo'
+import { resolveModuleCategory } from '#shared/utils/modules'
+import { isNavigationFailure, NavigationFailureType } from 'vue-router'
+import type { LocationQuery } from 'vue-router'
 
 definePageMeta({
-  heroBackground: 'opacity-50'
+  heroBackground: 'opacity-50',
+  middleware: [
+    function (to) {
+      const category = to.query.category
+      if (typeof category === 'string' && resolveModuleCategory(category) !== category) {
+        return navigateTo({ ...to, query: { ...to.query, category: resolveModuleCategory(category) } }, { redirectCode: 301 })
+      }
+    }
+  ]
 })
 
 const input = useTemplateRef('input')
 const modulesToAdd = ref<Module[]>([])
 const el = useTemplateRef<HTMLElement>('el')
 
-const { replaceRoute } = useFilters('modules')
-const { fetchList, filteredModules, q, categories, modules, stats, selectedSort, selectedOrder, selectedCategory, sorts } = useModules()
+const route = useRoute()
+const router = useRouter()
+const { fetchList, filteredModules, q, categories, modules, stats, selectedSort, selectedOrder, selectedCategory, sorts, category, sortBy, orderBy } = useModules()
+
+const filters = { q, category, sortBy, orderBy }
+
+function applyQuery(query: LocationQuery) {
+  for (const [key, filter] of Object.entries(filters)) {
+    const value = query[key]
+    filter.value = typeof value === 'string' ? value : ''
+  }
+}
+
+// A navigation to `/modules?…` (shared link, back/forward, a link elsewhere) sets the filters.
+watch(() => route.query, applyQuery, { immediate: true })
+
+// The router does not see filter changes, so a link to the route it is still on (such as the
+// header "Modules" link after a search) is a duplicated navigation that leaves `route.query` unchanged.
+const removeAfterEach = router.afterEach((to, _from, failure) => {
+  if (isNavigationFailure(failure, NavigationFailureType.duplicated)) applyQuery(to.query)
+})
+onBeforeUnmount(removeAfterEach)
+
+// Filtering happens in memory, so only mirror the filters in the URL: a router navigation
+// would fetch `_payload.json` for this ISR route on every keystroke.
+watch(Object.values(filters), () => {
+  // Keep unrelated params (e.g. `utm_*`) from the last navigation.
+  const query = { ...route.query, ...Object.fromEntries(Object.entries(filters).map(([key, filter]) => [key, filter.value || undefined])) }
+  const { fullPath, href } = router.resolve({ path: route.path, query, hash: route.hash })
+  // vue-router writes `state.current` back to the URL on the next push, so keep it in sync.
+  history.replaceState({ ...history.state, current: fullPath }, '', href)
+})
+
+function resetFilters() {
+  for (const filter of Object.values(filters)) filter.value = ''
+}
+
+function filterKey(param: string | { key: string | number }) {
+  return typeof param === 'string' ? param : String(param?.key ?? '')
+}
+
+const { health } = useModuleHealth()
 const { track } = useAnalytics()
+const { openInCursor, openInClaudeCode, openInVSCode } = useIdeDeeplink()
+
+// Health and the matched provider are merged only for visible rows so typing in search does not remap the full list.
+const searchRegExp = computed(() => q.value ? searchTextRegExp(q.value) : undefined)
+function withModuleHealth(module: Module) {
+  const query = searchRegExp.value
+  return {
+    ...module,
+    health: health.value[module.name] ?? module.health ?? null,
+    // Shows why a module matched when only one of its providers did (e.g. "cloudinary" → @nuxt/image).
+    matchedProvider: query && !moduleMatchesSearch(module, query) ? findModuleProvider(module, query) : undefined
+  }
+}
 
 const cacheControl = useResponseHeader('Cache-Control')
 const cdnCacheControl = useResponseHeader('CDN-Cache-Control')
 
-const { data: page } = await useAsyncData('modules-landing', () => queryCollection('landing').path('/modules').first())
+const { data: page } = await useAsyncData('modules-landing', () => useContent('site').get('/modules'))
 if (!page.value) {
   cacheControl.value = 'no-store, no-cache, must-revalidate'
   cdnCacheControl.value = 'no-store'
   throw createError({ statusCode: 404, statusMessage: 'Page not found', fatal: true })
 }
 
-const title = page.value.title
-const description = page.value.description
+const pageData = computed(() => page.value!.data)
+
+const site = useSiteConfig()
+const title = pageData.value.head?.title || pageData.value.title
+const description = pageData.value.head?.description || pageData.value.description
+
+// `?category=` is server-rendered (ISR entry per category), so each category is indexed as its own page.
+const seo = computed(() => {
+  const category = selectedCategory.value?.key as string | undefined
+  if (!category) return { title, description }
+  const count = modules.value.filter(m => category === 'Official' ? m.type === 'official' : m.category === category).length
+  return moduleCategorySeo(category, count)
+})
 
 useSeoMeta({
   titleTemplate: '%s',
-  title,
-  description
+  title: () => seo.value.title,
+  description: () => seo.value.description,
+  ogTitle: () => seo.value.title,
+  ogDescription: () => seo.value.description
 })
 useCanonical('/raw/modules.md')
+// useCanonical() drops the query: a category page is its own canonical URL (the last canonical link wins).
+useHead({
+  link: () => selectedCategory.value
+    ? [{ rel: 'canonical', href: withQuery(joinURL(site.url, '/modules'), { category: selectedCategory.value.key }) }]
+    : []
+})
 
 if (import.meta.server) {
-  prerenderRoutes(['/raw/modules.md'])
-
-  const site = useSiteConfig()
   useSeoMeta({
-    ogDescription: description,
-    ogTitle: title,
     ogImage: joinURL(site.url, '/modules-social-card.jpg'),
     twitterImage: joinURL(site.url, '/modules-social-card.jpg')
   })
@@ -49,40 +128,90 @@ if (import.meta.server) {
 
 await fetchList()
 
+const lastSelectedIndex = ref<number | null>(null)
+
+// O(1) membership lookup so re-rendering the grid on every add/remove doesn't
+// re-scan the whole selection for each card (was `modulesToAdd.some(...)`).
+const addedModuleNames = computed(() => new Set(modulesToAdd.value.map(m => m.name)))
+
+function toggleModuleSelection(module: Module) {
+  const idx = modulesToAdd.value.findIndex(m => m.name === module.name)
+  if (idx === -1) {
+    modulesToAdd.value.push(module)
+  } else {
+    modulesToAdd.value.splice(idx, 1)
+  }
+}
+
+function selectModuleRange(module: Module) {
+  const currentIndex = displayedModules.value.findIndex(m => m.name === module.name)
+  if (currentIndex === -1) return
+
+  if (lastSelectedIndex.value === null) {
+    lastSelectedIndex.value = currentIndex
+    toggleModuleSelection(module)
+    return
+  }
+
+  const [start, end] = [lastSelectedIndex.value, currentIndex].sort((a, b) => a - b)
+  modulesToAdd.value = displayedModules.value.slice(start, end + 1)
+}
+
+function handleModuleSelect(module: Module, event: MouseEvent) {
+  if (event.shiftKey) {
+    selectModuleRange(module)
+    return
+  }
+
+  // metaKey = Cmd on macOS, ctrlKey = Ctrl on Windows/Linux
+  toggleModuleSelection(module)
+  lastSelectedIndex.value = displayedModules.value.findIndex(m => m.name === module.name)
+}
+
 defineShortcuts({
   '/': () => {
     input.value?.inputRef?.focus()
+  },
+  'escape': {
+    usingInput: true,
+    handler: () => {
+      if (modulesToAdd.value.length) clearAllModules()
+    }
   }
 })
 
 const ITEMS_PER_PAGE = 9
+const INITIAL_VISIBLE = ITEMS_PER_PAGE * 2
 const SCROLL_THRESHOLD = 450
-const displayedModules = ref<Module[]>([])
+const visibleCount = ref(INITIAL_VISIBLE)
 const isLoading = ref(false)
+let loadMoreTimer: ReturnType<typeof setTimeout> | null = null
+
+const displayedModules = computed(() =>
+  filteredModules.value.slice(0, visibleCount.value).map(withModuleHealth)
+)
 
 const { y: scrollY } = useWindowScroll()
 const { copy } = useClipboard()
 
-const loadMoreModules = () => {
-  if (isLoading.value) return
-
-  const currentLength = displayedModules.value.length
-  if (currentLength >= filteredModules.value.length) return
-
-  isLoading.value = true
-
-  setTimeout(() => {
-    const nextItems = filteredModules.value.slice(
-      currentLength,
-      currentLength + ITEMS_PER_PAGE
-    )
-    displayedModules.value.push(...nextItems)
-    isLoading.value = false
-  }, 300)
+const clearLoadMoreTimer = () => {
+  if (loadMoreTimer === null) return
+  clearTimeout(loadMoreTimer)
+  loadMoreTimer = null
 }
 
-const initializeModules = () => {
-  displayedModules.value = filteredModules.value.slice(0, ITEMS_PER_PAGE * 2)
+const loadMoreModules = () => {
+  if (isLoading.value) return
+  if (visibleCount.value >= filteredModules.value.length) return
+
+  isLoading.value = true
+  clearLoadMoreTimer()
+
+  loadMoreTimer = setTimeout(() => {
+    loadMoreTimer = null
+    visibleCount.value += ITEMS_PER_PAGE
+    isLoading.value = false
+  }, 300)
 }
 
 const debouncedLoadMore = useDebounceFn(loadMoreModules, 50)
@@ -93,16 +222,25 @@ watch(scrollY, (y) => {
   }
 })
 
-watch(filteredModules, () => {
-  isLoading.value = false
-  displayedModules.value = []
-  initializeModules()
-})
+watch(
+  () => [
+    q.value,
+    selectedCategory.value?.key,
+    selectedSort.value?.key,
+    selectedOrder.value?.key
+  ],
+  () => {
+    clearLoadMoreTimer()
+    isLoading.value = false
+    lastSelectedIndex.value = null
+    visibleCount.value = INITIAL_VISIBLE
+  }
+)
 
 const copyAllInstallCommands = () => {
-  const moduleNames = modulesToAdd.value.map(module => module.name).join(' ')
-  const command = `npx nuxt@latest module add ${moduleNames}`
-  track('Modules Bulk Install Copied', { count: modulesToAdd.value.length, modules: moduleNames })
+  const moduleNames = modulesToAdd.value.map(module => module.name)
+  const command = buildModuleInstallCommand(moduleNames)
+  track('Modules Bulk Install Copied', { count: modulesToAdd.value.length, modules: moduleNames.join(' ') })
   copy(command, {
     title: 'Install command copied to clipboard:',
     description: `Ready to install ${modulesToAdd.value.length} module${modulesToAdd.value.length > 1 ? 's' : ''} at once`
@@ -110,22 +248,8 @@ const copyAllInstallCommands = () => {
 }
 
 const copyAgentPrompt = () => {
-  const modulesList = modulesToAdd.value.map((m) => {
-    const lines = [`- ${m.npm}: ${m.description}`]
-    if (m.website) lines.push(`  Docs: ${m.website}`)
-    if (m.repo) lines.push(`  GitHub: https://github.com/${m.repo}`)
-    return lines.join('\n')
-  }).join('\n')
+  const prompt = buildBulkModuleAgentPrompt(modulesToAdd.value)
   const moduleNames = modulesToAdd.value.map(m => m.name).join(' ')
-  const prompt = `Install and configure the following Nuxt modules in my project:
-
-${modulesList}
-
-Steps:
-1. Run \`npx nuxt@latest module add ${moduleNames}\` to install all modules at once
-2. For each module, read its documentation and add the recommended configuration in \`nuxt.config.ts\`
-3. List any required environment variables in \`.env.example\` without filling in actual values
-4. Verify the setup is correct by checking that the modules are properly registered`
   track('Modules Agent Prompt Copied', { count: modulesToAdd.value.length, modules: moduleNames })
   copy(prompt, {
     title: 'Agent prompt copied to clipboard!',
@@ -134,15 +258,52 @@ Steps:
   })
 }
 
-const clearAllModules = () => {
-  modulesToAdd.value = []
+function openBulkPromptInCursor() {
+  track('Modules Agent Prompt Opened', { count: modulesToAdd.value.length, ide: 'cursor' })
+  openInCursor(buildBulkModuleAgentPrompt(modulesToAdd.value))
 }
 
-initializeModules()
+function openBulkPromptInClaudeCode() {
+  track('Modules Agent Prompt Opened', { count: modulesToAdd.value.length, ide: 'claude' })
+  openInClaudeCode(buildBulkModuleAgentPrompt(modulesToAdd.value))
+}
+
+function openBulkPromptInVSCode() {
+  track('Modules Agent Prompt Opened', { count: modulesToAdd.value.length, ide: 'vscode' })
+  openInVSCode(buildBulkModuleAgentPrompt(modulesToAdd.value))
+}
+
+const agentPromptItems = computed<DropdownMenuItem[]>(() => [
+  {
+    label: 'Copy agent prompt',
+    icon: 'i-custom-ai',
+    onSelect: copyAgentPrompt
+  },
+  {
+    label: 'Open in Cursor',
+    icon: 'i-simple-icons-cursor',
+    onSelect: openBulkPromptInCursor
+  },
+  {
+    label: 'Open in Claude Code',
+    icon: 'i-simple-icons-anthropic',
+    onSelect: openBulkPromptInClaudeCode
+  },
+  {
+    label: 'Open in VS Code',
+    icon: 'i-simple-icons-visualstudiocode',
+    onSelect: openBulkPromptInVSCode
+  }
+])
+
+const clearAllModules = () => {
+  modulesToAdd.value = []
+  lastSelectedIndex.value = null
+}
 </script>
 
 <template>
-  <UContainer ref="el">
+  <div ref="el">
     <ClientOnly>
       <LazyModulesMarquee :modules="modules" />
     </ClientOnly>
@@ -151,7 +312,7 @@ initializeModules()
       class="z-20 relative pt-24"
       :ui="{
         title: 'text-4xl sm:text-7xl text-balance max-w-4xl mx-auto',
-        links: 'max-w-2xl mx-auto'
+        links: 'max-w-6xl mx-auto'
       }"
     >
       <template #title>
@@ -163,11 +324,11 @@ initializeModules()
       </template>
 
       <template #links>
-        <div class="flex flex-col w-full gap-3">
+        <div class="flex flex-col w-full max-w-2xl mx-auto gap-3">
           <div class="flex flex-col sm:flex-row w-full gap-2 relative">
             <UInput
               ref="input"
-              :model-value="q"
+              v-model="q"
               name="q"
               icon="i-lucide-search"
               placeholder="Search a module..."
@@ -176,7 +337,6 @@ initializeModules()
               autofocus
               autocomplete="off"
               variant="subtle"
-              @update:model-value="replaceRoute('q', $event as string)"
             >
               <template #trailing>
                 <UButton
@@ -185,7 +345,7 @@ initializeModules()
                   variant="link"
                   size="lg"
                   icon="i-lucide-x"
-                  @click="replaceRoute('q', '')"
+                  @click="q = ''"
                 />
                 <UKbd v-else value="/" class="hidden sm:flex" />
               </template>
@@ -199,7 +359,7 @@ initializeModules()
                 color="neutral"
                 class="w-auto"
                 variant="outline"
-                @update:model-value="replaceRoute('sortBy', $event)"
+                @update:model-value="sortBy = filterKey($event)"
               />
 
               <UButton
@@ -207,7 +367,7 @@ initializeModules()
                 size="lg"
                 color="neutral"
                 variant="outline"
-                @click="replaceRoute('orderBy', selectedOrder.key === 'desc' ? 'asc' : 'desc')"
+                @click="orderBy = selectedOrder.key === 'desc' ? 'asc' : 'desc'"
               >
                 <span class="sr-only">Sort by {{ selectedOrder.label }}</span>
               </UButton>
@@ -222,8 +382,9 @@ initializeModules()
               color="neutral"
               variant="outline"
               class="flex-1"
+              :ui="{ content: 'min-w-fit' }"
               placeholder="Select category"
-              @update:model-value="replaceRoute('category', $event)"
+              @update:model-value="category = filterKey($event)"
             />
             <UButton
               v-if="selectedCategory"
@@ -232,7 +393,7 @@ initializeModules()
               color="neutral"
               variant="outline"
               aria-label="Clear category filter"
-              @click="replaceRoute('category', '')"
+              @click="category = ''"
             />
             <USelectMenu
               :model-value="selectedSort"
@@ -241,23 +402,23 @@ initializeModules()
               color="neutral"
               class="w-1/3"
               variant="outline"
-              @update:model-value="replaceRoute('sortBy', $event)"
+              @update:model-value="sortBy = filterKey($event)"
             />
             <UButton
               :icon="selectedOrder.icon"
               size="lg"
               color="neutral"
               variant="outline"
-              @click="replaceRoute('orderBy', selectedOrder.key === 'desc' ? 'asc' : 'desc')"
+              @click="orderBy = selectedOrder.key === 'desc' ? 'asc' : 'desc'"
             />
           </div>
         </div>
 
         <div class="hidden sm:flex mt-6 flex-wrap gap-1.5 justify-center">
           <UButton
-            v-for="category in categories"
-            :key="category.key"
-            v-bind="category"
+            v-for="categoryFilter in categories"
+            :key="categoryFilter.key"
+            v-bind="categoryFilter"
             color="neutral"
             variant="outline"
             active-color="primary"
@@ -268,127 +429,179 @@ initializeModules()
       </template>
     </UPageHero>
 
-    <UPage id="smooth" class="relative z-20">
-      <UPageBody>
-        <div class="flex justify-between mb-4 text-muted text-xs">
-          <div class="flex items-center gap-2">
-            <UIcon name="i-lucide-info" class="size-4" />
-            <span>Shift+click to select modules for bulk installation</span>
-          </div>
-          <ULink to="/docs/guide/modules/getting-started" class="hidden md:flex items-center gap-1">
-            Create your own module
-            <UIcon name="i-lucide-arrow-right" class="size-4" />
-          </ULink>
-        </div>
-
-        <UPageGrid v-if="filteredModules?.length" class="lg:grid-cols-2 xl:grid-cols-3">
-          <ModuleItem
-            v-for="module in displayedModules"
-            :key="module.name"
-            :module="module"
-            :is-added="modulesToAdd.some(m => m.name === module.name)"
-            @add="modulesToAdd.push(module)"
-            @remove="modulesToAdd = modulesToAdd.filter(m => m.name !== module.name)"
-          />
-
-          <template v-if="isLoading">
-            <div v-for="n in ITEMS_PER_PAGE" :key="n" class="flex flex-col gap-4 p-4 rounded-lg border border-default">
-              <div class="flex items-center gap-3">
-                <USkeleton class="h-8 w-8 rounded" />
-              </div>
-              <USkeleton class="h-4 w-3/4" />
-              <USkeleton class="h-4 w-full" />
-              <div class="flex gap-2">
-                <USkeleton class="h-6 w-16" />
-                <USkeleton class="h-6 w-16" />
-              </div>
+    <UContainer>
+      <UPage id="smooth" class="relative z-20">
+        <UPageBody>
+          <div class="flex justify-between mb-4 text-muted text-xs">
+            <div class="flex items-center gap-2">
+              <span class="flex items-center gap-1.5">
+                <UKbd value="meta" size="sm" />+click to select · Shift+click for a range · Esc to clear
+              </span>
             </div>
-          </template>
-        </UPageGrid>
+            <ULink to="/docs/guide/modules/getting-started" class="hidden md:flex items-center gap-1">
+              Create your own module
+              <UIcon name="i-lucide-arrow-right" class="size-4" />
+            </ULink>
+          </div>
 
-        <EmptyCard v-else :label="`There is no module found for ${q} yet. Become the first one to create it!`">
-          <UButton
-            label="Contribute on GitHub"
-            color="neutral"
-            to="https://github.com/nuxt/modules"
-            target="_blank"
-            size="md"
-            @click="$router.replace({ query: {} })"
-          />
-          <UButton to="/docs/guide/going-further/modules" color="neutral" size="md" label="How to create a module?" />
-        </EmptyCard>
-      </UPageBody>
+          <UPageGrid v-if="filteredModules?.length" class="lg:grid-cols-2 xl:grid-cols-3">
+            <ModuleItem
+              v-for="module in displayedModules"
+              :key="module.name"
+              :module="module"
+              :provider="module.matchedProvider"
+              :is-added="addedModuleNames.has(module.name)"
+              :sort-key="String(selectedSort.key)"
+              selectable
+              @add="modulesToAdd.push(module)"
+              @remove="modulesToAdd = modulesToAdd.filter(m => m.name !== module.name)"
+              @select="handleModuleSelect"
+            />
 
-      <AnimatePresence>
-        <motion.div
-          v-if="modulesToAdd.length"
-          key="toolbar"
-          class="fixed z-50 bottom-0 left-0 right-0"
-          :initial="{ y: 100, opacity: 0 }"
-          :animate="{ y: 0, opacity: 1 }"
-          :exit="{ y: 100, opacity: 0 }"
-          :transition="{ type: 'spring', stiffness: 400, damping: 30 }"
-        >
-          <div layout class="flex justify-center mb-6">
-            <div class="bg-default/80 backdrop-blur-lg rounded-full p-1 border border-default dark:shadow-[0_25px_50px_-12px_rgba(0,0,0,0.9)] shadow-[0_25px_50px_-12px_rgba(0,0,0,0.25)] flex items-center gap-4">
-              <motion.div class="flex items-center gap-1">
-                <UTooltip text="Copy install command">
-                  <Motion
-                    :press="{
-                      scale: 0.99
-                    }"
-                  >
-                    <UButton
-                      color="primary"
-                      variant="soft"
-                      size="lg"
-                      icon="i-lucide-download"
-                      class="font-medium rounded-full"
-                      @click="copyAllInstallCommands"
+            <template v-if="isLoading">
+              <div v-for="n in ITEMS_PER_PAGE" :key="n" class="flex flex-col gap-4 p-4 rounded-lg border border-default">
+                <div class="flex items-center gap-3">
+                  <USkeleton class="h-8 w-8 rounded" />
+                </div>
+                <USkeleton class="h-4 w-3/4" />
+                <USkeleton class="h-4 w-full" />
+                <div class="flex gap-2">
+                  <USkeleton class="h-6 w-16" />
+                  <USkeleton class="h-6 w-16" />
+                </div>
+              </div>
+            </template>
+          </UPageGrid>
+
+          <EmptyCard v-else :label="`There is no module found for ${q || selectedCategory?.label} yet. Become the first one to create it!`">
+            <UButton
+              label="Contribute on GitHub"
+              color="neutral"
+              to="https://github.com/nuxt/modules"
+              target="_blank"
+              size="md"
+              @click="resetFilters"
+            />
+            <UButton to="/docs/guide/going-further/modules" color="neutral" size="md" label="How to create a module?" />
+          </EmptyCard>
+        </UPageBody>
+
+        <AnimatePresence>
+          <motion.div
+            v-if="modulesToAdd.length"
+            key="toolbar"
+            class="fixed z-50 bottom-0 left-0 right-0"
+            :initial="{ y: 100, opacity: 0 }"
+            :animate="{ y: 0, opacity: 1 }"
+            :exit="{ y: 100, opacity: 0 }"
+            :transition="{ type: 'spring', stiffness: 400, damping: 30 }"
+          >
+            <div class="flex flex-col items-center mb-6">
+              <div class="relative flex mb-0.5 p-1 rounded-full border border-default bg-default/90 backdrop-blur-lg">
+                <UAvatarGroup size="3xs" :max="6">
+                  <TransitionGroup name="avatar-pop">
+                    <UTooltip
+                      v-for="m in modulesToAdd"
+                      :key="m.name"
+                      :text="m.npm"
+                      :content="{
+                        side: 'top'
+                      }"
                     >
-                      Install {{ modulesToAdd.length }} module{{ modulesToAdd.length > 1 ? 's' : '' }}
-                    </UButton>
-                  </Motion>
-                </UTooltip>
+                      <UAvatar
+                        :src="moduleImage(m.icon)"
+                        :icon="moduleIcon(m.category)"
+                        :alt="m.name"
+                        :ui="{ root: 'size-3.5 text-[6px]' }"
+                        class="rounded-full bg-default ring-1 ring-default"
+                      />
+                    </UTooltip>
+                  </TransitionGroup>
+                </UAvatarGroup>
+              </div>
 
-                <UTooltip text="Copy agent prompt to install & configure">
-                  <Motion
-                    :press="{
-                      scale: 0.99
-                    }"
-                  >
-                    <UButton
-                      color="neutral"
-                      variant="soft"
-                      size="lg"
-                      icon="i-custom-ai"
-                      class="rounded-full"
-                      @click="copyAgentPrompt"
-                    />
-                  </Motion>
-                </UTooltip>
+              <div class="relative z-10 bg-default/80 backdrop-blur-lg rounded-full p-1 border border-default dark:shadow-[0_25px_50px_-12px_rgba(0,0,0,0.9)] shadow-[0_25px_50px_-12px_rgba(0,0,0,0.25)] flex items-center gap-4">
+                <motion.div class="flex items-center gap-1">
+                  <UTooltip text="Copy install command">
+                    <Motion :press="{ scale: 0.99 }">
+                      <UButton
+                        color="primary"
+                        variant="soft"
+                        size="lg"
+                        icon="i-lucide-download"
+                        class="font-medium rounded-full"
+                        @click="copyAllInstallCommands"
+                      >
+                        Install {{ modulesToAdd.length }} module{{ modulesToAdd.length > 1 ? 's' : '' }}
+                      </UButton>
+                    </Motion>
+                  </UTooltip>
 
-                <UTooltip text="Clear selection">
-                  <Motion
-                    :press="{
-                      scale: 0.99
-                    }"
-                  >
-                    <UButton
-                      color="neutral"
-                      variant="soft"
-                      size="lg"
-                      icon="i-lucide-x"
-                      class="hover:bg-error/10 hover:text-error rounded-full"
-                      @click="clearAllModules"
-                    />
+                  <Motion :press="{ scale: 0.99 }">
+                    <UFieldGroup>
+                      <UTooltip text="Copy agent prompt to install & configure">
+                        <UButton
+                          color="neutral"
+                          variant="soft"
+                          size="lg"
+                          icon="i-custom-ai"
+                          class="rounded-s-full"
+                          @click="copyAgentPrompt"
+                        />
+                      </UTooltip>
+
+                      <UDropdownMenu :items="agentPromptItems" :content="{ align: 'end' }">
+                        <UButton
+                          color="neutral"
+                          variant="soft"
+                          size="lg"
+                          icon="i-lucide-chevron-down"
+                          class="rounded-e-full"
+                          aria-label="More agent prompt options"
+                        />
+                      </UDropdownMenu>
+                    </UFieldGroup>
                   </Motion>
-                </UTooltip>
-              </motion.div>
+
+                  <UTooltip text="Clear selection">
+                    <Motion :press="{ scale: 0.99 }">
+                      <UButton
+                        color="neutral"
+                        variant="soft"
+                        size="lg"
+                        icon="i-lucide-x"
+                        class="rounded-full"
+                        @click="clearAllModules"
+                      />
+                    </Motion>
+                  </UTooltip>
+                </motion.div>
+              </div>
             </div>
-          </div>
-        </motion.div>
-      </AnimatePresence>
-    </UPage>
-  </UContainer>
+          </motion.div>
+        </AnimatePresence>
+      </UPage>
+    </UContainer>
+  </div>
 </template>
+
+<style scoped>
+.avatar-pop-move {
+  transition: transform 0.15s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.avatar-pop-enter-active {
+  transition: opacity 0.15s cubic-bezier(0.23, 1, 0.32, 1), scale 0.15s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.avatar-pop-leave-active {
+  position: absolute;
+  transition: opacity 0.1s ease-in, scale 0.1s ease-in;
+}
+
+.avatar-pop-enter-from,
+.avatar-pop-leave-to {
+  opacity: 0;
+  scale: 0.9;
+}
+</style>

@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { splitByCase, upperFirst } from 'scule'
-
 const props = defineProps({
   to: {
     type: String,
@@ -12,22 +10,6 @@ const props = defineProps({
     default: ''
   }
 })
-
-const createBreadcrumb = (link: string = 'Missing link') => {
-  if (link.startsWith('http')) {
-    return link
-  }
-  return link
-    .split('/')
-    .filter(Boolean)
-    .map(part =>
-      splitByCase(part)
-        .map(p => upperFirst(p))
-        .join(' ')
-    )
-    .join(' > ')
-    .replace('Api', 'API')
-}
 
 const computedTitle = computed<string>(() => props.title || createBreadcrumb(props.to))
 </script>

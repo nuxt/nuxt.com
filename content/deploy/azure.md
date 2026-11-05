@@ -38,13 +38,15 @@ It adds the following properties based on the following criteria:
 
 | Property | Criteria | Default |
 | --- | --- | --- |
-| **[platform.apiRuntime](https://learn.microsoft.com/en-us/azure/static-web-apps/configuration#platform)** | Will automatically set to `node:16` or `node:14` depending on your package configuration. | `node:16` |
+| **[platform.apiRuntime](https://learn.microsoft.com/en-us/azure/static-web-apps/configuration#platform)** | Set to `node:20` or `node:22` based on the `engines.node` field in your `package.json`. | `node:22` |
 | **[navigationFallback.rewrite](https://learn.microsoft.com/en-us/azure/static-web-apps/configuration#fallback-routes)** | Is always `/api/server` | `/api/server` |
 | **[routes](https://learn.microsoft.com/en-us/azure/static-web-apps/configuration#routes)** | All prerendered routes are added. Additionally, if you do not have an `index.html` file an empty one is created for you for compatibility purposes and also requests to `/index.html` are redirected to the root directory which is handled by `/api/server`.  | `[]` |
 
 ### Custom Configuration
 
 You can alter the generated configuration using `azure.config` option. For instance, if you wanted to specify a Node runtime for your Azure Functions, edit your `nuxt.config.ts` file to the following:
+
+<!-- Supported apiRuntime versions: https://learn.microsoft.com/en-us/azure/static-web-apps/configuration#select-the-api-language-runtime-version -->
 
 ```ts [nuxt.config.ts]
 export default defineNuxtConfig({
@@ -54,7 +56,7 @@ export default defineNuxtConfig({
       config: {
         // ...
         platform: {
-          apiRuntime: 'node:18'
+          apiRuntime: 'node:22'
         }
       }
     }

@@ -1,11 +1,28 @@
 <script setup lang="ts">
+import type { NavigationItem } from 'comark-content'
+import type { ContentShas } from '#shared/types'
+import { navigationPath, searchInstanceKeys } from '#shared/utils/content'
+import { pullNavigationPath } from '#shared/utils/pull'
+import { l10nNavigationPath } from '#shared/utils/l10n'
+
 const colorMode = useColorMode()
 const route = useRoute()
-const isChatRoute = computed(() => route.path === '/chat' || route.path.startsWith('/chat/'))
-const { version } = useDocsVersion()
+const { isAgentEnabled } = useNuxtAgent()
+const isChatRoute = computed(() => route.path.startsWith('/dashboard/chat') || route.path.startsWith('/admin/analytics'))
+const showAgent = computed(() => isAgentEnabled.value && !isChatRoute.value)
+
+const { version: docsVersion } = useDocsVersion()
 const { track } = useAnalytics()
 
 const color = computed(() => colorMode.value === 'dark' ? '#020420' : 'white')
+
+defineShortcuts({
+  d: {
+    handler: () => {
+      colorMode.preference = colorMode.value === 'dark' ? 'light' : 'dark'
+    }
+  }
+})
 
 watch(() => colorMode.preference, (newMode, oldMode) => {
   if (oldMode && newMode !== oldMode) {
@@ -13,7 +30,28 @@ watch(() => colorMode.preference, (newMode, oldMode) => {
   }
 })
 
-const { data: navigation } = await useFetch('/api/navigation.json')
+const pull = usePullPreview()
+const locale = useDocsLocale()
+
+const { data: navigation } = await useFetch<NavigationItem[]>(() => {
+  if (pull.value) return pullNavigationPath(docsVersion.value, pull.value)
+  return locale.value ? l10nNavigationPath(locale.value, docsVersion.value) : navigationPath(docsVersion.value)
+}, { key: () => `navigation:${docsVersion.value}` })
+
+const searchKeys = computed(() => searchInstanceKeys(docsVersion.value))
+// Client-only: an SSR value gets baked into the page's ISR entry and would pin search to a stale commit.
+const { data: searchShas } = useAsyncData(
+  // A `computed()` key, not a getter: `experimental.extractAsyncDataHandlers` takes the first arrow
+  // function as the handler, so a getter key is extracted instead (NUXT_E3008 in production).
+  computed(() => `content-heads:${searchKeys.value.join(',')}`),
+  () => $fetch<ContentShas>('/api/content/heads', {
+    query: { keys: searchKeys.value.join(',') }
+  }).catch((error) => {
+    console.error('[search] could not resolve the content heads', error)
+    return null
+  }),
+  { server: false, watch: [searchKeys] }
+)
 
 useHead({
   titleTemplate: title => title ? `${title} · Nuxt` : 'Nuxt: The Intuitive Web Framework',
@@ -31,7 +69,7 @@ if (import.meta.server) {
       { rel: 'icon', type: 'image/png', href: '/icon.png' }
     ],
     htmlAttrs: {
-      lang: 'en'
+      lang: locale.value ?? 'en'
     }
   })
   useSeoMeta({
@@ -52,14 +90,15 @@ if (import.meta.server) {
   ])
 }
 
-const versionNavigation = computed(() => navigation.value?.filter(item => item.path === version.value.path || item.path === '/blog') ?? [])
+const navigationByVersion = computed(() => navigation.value ?? [])
 
-provide('navigation', versionNavigation)
+provide('navigation', navigationByVersion)
+provide('searchShas', searchShas)
 </script>
 
 <template>
-  <UApp :tooltip="{ delayDuration: 500 }">
-    <NuxtLoadingIndicator color="var(--ui-primary)" />
+  <UApp :tooltip="{ delayDuration: 300 }">
+    <!-- <NuxtLoadingIndicator color="var(--ui-primary)  /> -->
 
     <div class="flex">
       <div class="flex-1 min-w-0">
@@ -68,14 +107,14 @@ provide('navigation', versionNavigation)
         </NuxtLayout>
       </div>
 
-      <ClientOnly v-if="!isChatRoute">
+      <ClientOnly v-if="showAgent">
         <LazyAgentFloatingInput />
         <LazyAgentPanel />
       </ClientOnly>
     </div>
 
     <ClientOnly>
-      <Search :navigation="versionNavigation" />
+      <Search :navigation="navigationByVersion" />
     </ClientOnly>
   </UApp>
 </template>

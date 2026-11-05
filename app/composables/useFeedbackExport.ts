@@ -40,9 +40,9 @@ export function useFeedbackExport() {
         item.rating,
         ratingOption?.score || 0,
         ratingOption?.label || 'Unknown',
-        `"${(item.feedback || '').replace(/"/g, '""')}"`, // Escape quotes
+        item.feedback || '',
         item.path,
-        `"${item.title.replace(/"/g, '""')}"`, // Escape quotes
+        item.title,
         item.stem,
         item.country || '',
         formatDateForCSV(item.createdAt),
@@ -50,11 +50,7 @@ export function useFeedbackExport() {
       ]
     })
 
-    const csvContent = [headers, ...rows]
-      .map(row => row.join(','))
-      .join('\n')
-
-    return csvContent
+    return toCSV([headers, ...rows])
   }
 
   function downloadCSV(csvContent: string, filename: string) {
@@ -124,7 +120,7 @@ export function useFeedbackExport() {
 
       const rows = pageAnalytics.map(page => [
         page.path,
-        `"${page.lastFeedback.title.replace(/"/g, '""')}"`,
+        page.lastFeedback.title,
         page.total,
         page.positive,
         page.negative,
@@ -134,9 +130,7 @@ export function useFeedbackExport() {
         formatDateForCSV(page.updatedAt)
       ])
 
-      const csvContent = [headers, ...rows]
-        .map(row => row.join(','))
-        .join('\n')
+      const csvContent = toCSV([headers, ...rows])
 
       const timestamp = new Date().toISOString().split('T')[0]
       const filename = `page-analytics-export-${timestamp}.csv`
