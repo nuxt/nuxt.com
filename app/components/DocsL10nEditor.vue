@@ -90,9 +90,10 @@ const draftField = useTemplateRef<{ textareaRef?: HTMLTextAreaElement }>('draftF
 function select(key: string) {
   hash.value = key
   nextTick(() => {
-    const field = draftField.value?.textareaRef ?? formTop.value
-    field?.focus({ preventScroll: true })
-    formTop.value?.scrollIntoView({ block: 'start', behavior: reducedMotion.value === 'reduce' ? 'auto' : 'smooth' })
+    const field = draftField.value?.textareaRef
+    const focused = field ?? formTop.value
+    focused?.focus({ preventScroll: true })
+    focused?.scrollIntoView({ block: field ? 'center' : 'start', behavior: reducedMotion.value === 'reduce' ? 'auto' : 'smooth' })
   })
 }
 
@@ -105,9 +106,12 @@ function groupLabel(group: ReturnType<typeof otherTextGroups>[number]): { text: 
 
 /** Whether the page has code blocks: the code policy shows for as long as it does, so the form does not move as the page scrolls. */
 const pageHasCode = ref(false)
-watch([open, () => props.target, () => page.value], ([isOpen, target]) => {
-  pageHasCode.value = !!(isOpen && target?.querySelector('pre'))
-}, { flush: 'post' })
+function checkCode() {
+  pageHasCode.value = !!(open.value && props.target?.querySelector('pre'))
+}
+watch([open, () => props.target, () => page.value], checkCode, { flush: 'post' })
+/** The page can render its document after the editor loaded, when the editor stays open across a navigation. */
+useMutationObserver(() => props.target, checkCode, { childList: true, subtree: true })
 const CODE_KINDS = new Set(['code-comment', 'code-label'])
 const codeInView = computed(() => !!segment.value && (CODE_KINDS.has(segment.value.kind) || pageHasCode.value))
 
