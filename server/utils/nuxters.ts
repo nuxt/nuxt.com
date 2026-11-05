@@ -262,11 +262,13 @@ export const nuxters = {
     ])
     const moduleAuthor = modules.some(module => module.maintainers?.some(maintainer => maintainer.github?.toLowerCase() === login))
 
+    const translator = translations.filter(locale => locale.edited + locale.verified > 0).map(locale => locale.locale)
+
     return {
-      nuxter: moduleAuthor || canUnlockNuxterRole(nuxter),
+      nuxter: moduleAuthor || translator.length > 0 || canUnlockNuxterRole(nuxter),
       moduleAuthor,
       hackathons: nuxterHackathons(user.providerId).map(hackathon => hackathon.id),
-      translator: translations.filter(locale => locale.edited + locale.verified > 0).map(locale => locale.locale)
+      translator
     }
   }
 }

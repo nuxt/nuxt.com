@@ -35,19 +35,17 @@ const roleLabels: Record<string, string> = {
   ...Object.fromEntries(NUXTERS_HACKATHONS.map(hackathon => [hackathon.id, hackathon.name]))
 }
 
-const roles = computed(() => {
+const badges = computed(() => {
   const badges = me.value?.badges
   if (!badges) return []
   return [
-    ...(badges.nuxter ? ['nuxter'] : []),
-    ...(badges.moduleAuthor ? ['moduleAuthor'] : []),
-    ...badges.hackathons
-  ].map(key => roleLabels[key] ?? key)
-})
-
-const badges = computed(() => {
-  const translator = me.value?.badges.translator ?? []
-  return [...roles.value, ...(translator.length ? [`Translator (${translator.join(', ')})`] : [])]
+    ...[
+      ...(badges.nuxter ? ['nuxter'] : []),
+      ...(badges.moduleAuthor ? ['moduleAuthor'] : []),
+      ...badges.hackathons
+    ].map(key => roleLabels[key] ?? key),
+    ...(badges.translator.length ? [`Translator (${badges.translator.join(', ')})`] : [])
+  ]
 })
 
 onMounted(() => {
@@ -145,13 +143,13 @@ onMounted(() => {
           />
         </template>
         <p v-else class="text-sm text-muted">
-          One merged PR, helpful issue or helpful comment unlocks the Nuxter badge.
+          One merged PR, helpful issue, helpful comment or translation unlocks the Nuxter badge.
         </p>
       </div>
 
       <!-- One row of actions, unlocked with a badge: the card keeps its height with or without Discord.
            Sharing is the all-time profile: the card does not follow the leaderboard period. -->
-      <div v-if="me.nuxter && roles.length" class="flex flex-wrap items-center gap-2 pt-4 border-t border-default">
+      <div v-if="me.nuxter && badges.length" class="flex flex-wrap items-center gap-2 pt-4 border-t border-default">
         <UTooltip v-if="me.discord.enabled" :text="me.discord.username ? `Linked as ${me.discord.username}` : 'Get your roles on the Nuxt Discord server'">
           <UButton
             :label="me.discord.username ? 'Sync Discord roles' : 'Unlock Discord roles'"

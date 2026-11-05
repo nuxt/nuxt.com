@@ -290,11 +290,13 @@ describe('nuxter scoring', () => {
     ])
   })
 
-  it('unlocks the Nuxter role with one merged PR, helpful issue or helpful comment', () => {
-    const none = { ...nuxter, helpfulIssues: 0, helpfulComments: 0, mergedPullRequests: { ...nuxter.mergedPullRequests, all: 0 } }
+  it('unlocks the Nuxter role with one merged PR, helpful issue, helpful comment, or edited or verified translation', () => {
+    const none = { ...nuxter, helpfulIssues: 0, helpfulComments: 0, mergedPullRequests: { ...nuxter.mergedPullRequests, all: 0 }, translations: { edited: 0, verified: 0, rejected: 3 } }
     expect(canUnlockNuxterRole(nuxter)).toBe(true)
     expect(canUnlockNuxterRole(none)).toBe(false)
     expect(canUnlockNuxterRole({ ...none, helpfulComments: 1 })).toBe(true)
+    expect(canUnlockNuxterRole({ ...none, translations: { ...none.translations, edited: 1 } })).toBe(true)
+    expect(canUnlockNuxterRole({ ...none, translations: { ...none.translations, verified: 1 } })).toBe(true)
     expect(canUnlockNuxterRole(null)).toBe(false)
   })
 })

@@ -175,7 +175,7 @@ export interface NuxtersHackathon {
 }
 
 export interface NuxterBadges {
-  /** At least one merged PR, helpful issue or helpful comment. */
+  /** At least one merged PR, helpful issue, helpful comment, or edited or verified translation. */
   nuxter: boolean
   moduleAuthor: boolean
   /** Hackathon ids. */

@@ -430,10 +430,10 @@ export function nuxterScoreBreakdown(nuxter: Nuxter): NuxterScoreRow[] {
   ]
 }
 
-/** The Discord `nuxter` role needs one merged PR, one helpful issue or one helpful comment. */
+/** The Discord `nuxter` role needs one merged PR, helpful issue, helpful comment, or edited or verified translation. */
 export function canUnlockNuxterRole(nuxter: Nuxter | null | undefined): boolean {
   if (!nuxter) return false
-  return nuxter.mergedPullRequests.all + nuxter.helpfulIssues + nuxter.helpfulComments > 0
+  return nuxter.mergedPullRequests.all + nuxter.helpfulIssues + nuxter.helpfulComments + nuxter.translations.edited + nuxter.translations.verified > 0
 }
 
 export const NUXTERS_HACKATHONS: NuxtersHackathon[] = [
