@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { maxTranslationLength, validate } from '@diglot/core'
 import type { ButtonProps } from '@nuxt/ui'
-import { hasL10nBlock, L10N_NOTE_MAX_LENGTH, L10N_STRINGS, l10nCommitUrl, l10nEditorPath, l10nTranslationsPath, localisePath, otherTextGroups, withKnownRecord, type L10nChange, type L10nKnownRecord, type L10nChangeIssue, type L10nEditorPage, type L10nLocale, type L10nSaveResult } from '#shared/utils/l10n'
+import { L10N_NOTE_MAX_LENGTH, L10N_STRINGS, l10nEditorPath, l10nTranslationsPath, localisePath, type L10nChange, type L10nChangeIssue, type L10nEditorPage, type L10nLocale, type L10nSaveResult } from '#shared/utils/l10n'
+import { hasL10nBlock, L10N_EDITOR_STRINGS, l10nCommitUrl, otherTextGroups, withKnownRecord, type L10nKnownRecord } from '#shared/utils/l10n-editor'
 
 const props = defineProps<{
   locale: L10nLocale
@@ -20,7 +21,7 @@ const open = defineModel<boolean>('open', { default: false })
 const hash = defineModel<string | undefined>('hash')
 
 const strings = computed(() => L10N_STRINGS[props.locale])
-const t = computed(() => strings.value.editor)
+const t = computed(() => L10N_EDITOR_STRINGS[props.locale])
 const toast = useToast()
 /** Close buttons labelled in the page's language. */
 const closeButton = computed(() => ({ 'aria-label': t.value.close }) as ButtonProps)

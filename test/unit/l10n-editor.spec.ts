@@ -6,7 +6,7 @@ import { beforeAll, describe, expect, it } from 'vitest'
 import { createBundle } from '../../server/utils/l10n/bundle'
 import { editorSegments } from '../../server/utils/l10n/editor'
 import { createBuildInstance } from '../../utils/factory'
-import { hasL10nBlock, otherTextGroups, withKnownRecord } from '../../shared/utils/l10n'
+import { hasL10nBlock, otherTextGroups, withKnownRecord } from '../../shared/utils/l10n-editor'
 
 const FIXTURES = fileURLToPath(new URL('../fixtures/l10n/', import.meta.url))
 const records = (JSON.parse(readFileSync(`${FIXTURES}fr.json`, 'utf8')) as { records: Record<string, Record<string, unknown>> }).records

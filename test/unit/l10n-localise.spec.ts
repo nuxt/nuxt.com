@@ -9,7 +9,7 @@ import { beforeAll, describe, expect, it } from 'vitest'
 import { createBundle, emptyBundle } from '../../server/utils/l10n/bundle'
 import { localise, localiseLabel, localiseNavigation, segmentSource } from '../../server/utils/l10n/localise'
 import { pageSegments } from '../../server/utils/l10n/write'
-import { hasL10nBlock } from '../../shared/utils/l10n'
+import { hasL10nBlock } from '../../shared/utils/l10n-editor'
 import { createBuildInstance } from '../../utils/factory'
 
 const FIXTURES = fileURLToPath(new URL('../fixtures/l10n/', import.meta.url))
