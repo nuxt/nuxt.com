@@ -18,7 +18,10 @@ const VERBS: Record<string, [string, string]> = {
   show: ['Finding', 'Found'],
   open: ['Opening', 'Opened'],
   generate: ['Generating', 'Generated'],
-  create: ['Creating', 'Created']
+  create: ['Creating', 'Created'],
+  edit: ['Editing', 'Edited'],
+  add: ['Adding', 'Added'],
+  check: ['Checking', 'Checked']
 }
 
 /**
@@ -407,6 +410,10 @@ export function getToolSuffix(part: ToolPart): string | undefined {
 export function getToolIcon(part: ToolPart): string {
   const name = normalizeToolName(getToolName(part)).toLowerCase()
 
+  if (/^add[-_]app[-_]module/.test(name)) return 'i-lucide-package-plus'
+  if (/^edit[-_]app/.test(name)) return 'i-lucide-file-pen'
+  if (/^(?:list|read)[-_]app/.test(name)) return 'i-lucide-file-code'
+  if (/^check[-_]app/.test(name)) return 'i-lucide-scan-eye'
   if (/icon/.test(name)) return 'i-lucide-smile'
   if (/component/.test(name)) return 'i-lucide-box'
   if (/composable/.test(name)) return 'i-lucide-square-function'
