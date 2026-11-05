@@ -11,7 +11,7 @@ const PATH = '/docs/4.x/getting-started/introduction'
 registerEndpoint(`/api/l10n/fr/editor${PATH}`, (): L10nEditorPage => ({
   sha: 'sha',
   role: 'translator',
-  segments: [{ hash: HASH, kind: 'paragraph', format: 'markdown', skeleton: 'Hello', words: 1, placeholders: [], status: 'untranslated', glossary: [] }]
+  segments: [{ hash: HASH, kind: 'paragraph', format: 'markdown', skeleton: 'Hello', words: 1, placeholders: [], context: { headingTrail: [], containers: [] }, status: 'untranslated', glossary: [] }]
 }))
 
 afterEach(() => {

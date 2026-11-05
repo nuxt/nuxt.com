@@ -1,4 +1,4 @@
-import type { GlossaryEntry, Placeholder, Review, Origin, SegmentFormat, SegmentKind, SegmentStatus } from '@diglot/core'
+import type { GlossaryEntry, Placeholder, Review, Origin, SegmentContext, SegmentFormat, SegmentKind, SegmentStatus } from '@diglot/core'
 import { withLeadingSlash } from 'ufo'
 import { CURRENT_DOCS_VERSION, docsPathPrefix, docsStatus, isArchivedDocVersion, isDocVersion, type DocVersion } from './docs'
 
@@ -192,6 +192,8 @@ export interface L10nEditorSegment {
   skeleton: string
   words: number
   placeholders: Placeholder[]
+  /** Where the segment is on the page: its enclosing headings and containers, and its prop name, frontmatter path or code language. */
+  context: Pick<SegmentContext, 'headingTrail' | 'containers' | 'detail'>
   status: SegmentStatus
   record?: {
     text: string
@@ -207,6 +209,55 @@ export interface L10nEditorSegment {
   previous?: { source: string, changed: string[] }
   /** Glossary entries whose term occurs in the source. */
   glossary: GlossaryEntry[]
+}
+
+/** Kinds of segment rendered without a block of their own: they cannot be reached by clicking the page. */
+const BLOCKLESS_KINDS = new Set<SegmentKind>(['frontmatter', 'navigation', 'prop', 'image-alt', 'code-label', 'code-comment'])
+
+/** Whether a segment is rendered as a block of the page, which carries `data-l10n-hash`. */
+export function hasL10nBlock(segment: Pick<L10nEditorSegment, 'kind'>): boolean {
+  return !BLOCKLESS_KINDS.has(segment.kind)
+}
+
+/** Segments without a block of their own under one heading of the page. */
+export interface L10nTextGroup {
+  /** `meta` for the page's title, description and other frontmatter; `section` for texts under `heading`, or before the first heading. */
+  type: 'meta' | 'section'
+  /** The English text of the nearest enclosing heading. */
+  heading?: string
+  /** The segment of that heading, when the page has one with that text. */
+  headingHash?: string
+  segments: L10nEditorSegment[]
+}
+
+/**
+ * The segments of a page without a block of their own (frontmatter, props, image alts, code labels and
+ * comments), grouped under their nearest heading in page order, the page's frontmatter first.
+ */
+export function otherTextGroups(segments: L10nEditorSegment[]): L10nTextGroup[] {
+  const headings = new Map<string, string>()
+  for (const segment of segments) {
+    if (segment.kind === 'heading' && !segment.placeholders.length && !headings.has(segment.skeleton)) headings.set(segment.skeleton, segment.hash)
+  }
+
+  const meta: L10nTextGroup = { type: 'meta', segments: [] }
+  const sections = new Map<string, L10nTextGroup>()
+  for (const segment of segments) {
+    if (hasL10nBlock(segment)) continue
+    if (segment.kind === 'frontmatter' || segment.kind === 'navigation') {
+      meta.segments.push(segment)
+      continue
+    }
+    const heading = segment.context.headingTrail.at(-1)
+    const key = heading ?? ''
+    let group = sections.get(key)
+    if (!group) {
+      group = { type: 'section', ...(heading ? { heading } : {}), ...(heading && headings.has(heading) ? { headingHash: headings.get(heading) } : {}), segments: [] }
+      sections.set(key, group)
+    }
+    group.segments.push(segment)
+  }
+  return [...(meta.segments.length ? [meta] : []), ...sections.values()]
 }
 
 /** The review state of one localised page. */
@@ -438,7 +489,23 @@ export const L10N_STRINGS = {
       cancel: 'Annuler',
       previous: 'Passage précédent',
       next: 'Passage suivant',
-      position: (index: number, count: number) => `${index} sur ${count}`
+      position: (index: number, count: number) => `${index} sur ${count}`,
+      otherTexts: 'Autres textes de cette page',
+      otherTextsCount: (count: number) => `${count} texte${count > 1 ? 's' : ''}`,
+      otherTextsHint: 'Ces textes n\'ont pas de bloc à cliquer sur la page : titre et description, titres des liens « En savoir plus », textes alternatifs des images, titres et commentaires des blocs de code.',
+      pageMeta: 'Titre et description de la page',
+      pageStart: 'Début de la page',
+      editThis: 'Modifier ce texte',
+      untranslatedShort: 'Pas encore traduit',
+      where: (kind: SegmentKind, detail?: string, container?: string): string => {
+        if (kind === 'frontmatter') return detail === 'title' ? 'Titre de la page' : detail === 'description' ? 'Description de la page' : `Métadonnée ${detail ?? ''}`.trim()
+        if (kind === 'navigation') return `Navigation ${detail ?? ''}`.trim()
+        if (kind === 'prop') return `Propriété « ${detail ?? '?'} »${container ? ` de ${container}` : ''}`
+        if (kind === 'image-alt') return 'Texte alternatif d\'une image'
+        if (kind === 'code-label') return 'Titre d\'un bloc de code'
+        if (kind === 'code-comment') return detail ? `Commentaire de code (${detail})` : 'Commentaire de code'
+        return 'Passage'
+      }
     }
   }
 } as const satisfies Record<L10nLocale, unknown>

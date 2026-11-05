@@ -8,6 +8,8 @@ import { defaultPolicy } from '@diglot/core'
 import { beforeAll, describe, expect, it } from 'vitest'
 import { createBundle, emptyBundle } from '../../server/utils/l10n/bundle'
 import { localise, localiseLabel, localiseNavigation, segmentSource } from '../../server/utils/l10n/localise'
+import { pageSegments } from '../../server/utils/l10n/write'
+import { hasL10nBlock } from '../../shared/utils/l10n'
 import { createBuildInstance } from '../../utils/factory'
 
 const FIXTURES = fileURLToPath(new URL('../fixtures/l10n/', import.meta.url))
@@ -141,6 +143,25 @@ describe('localise', () => {
 
     expect(counted).toBe(coverage.words)
     expect(coverage.byStatus.machine).toBeGreaterThan(coverage.words * 0.9)
+  })
+
+  it('should count the segments without a block of their own', async () => {
+    const page = pages.get(INTRODUCTION)!
+    const blockless = [...(await pageSegments(page, defaultPolicy)).values()].filter(segment => !hasL10nBlock(segment) && segment.words)
+    const verified = Object.fromEntries(blockless.map(segment => [segment.hash, {
+      hash: segment.hash,
+      source: segment.skeleton,
+      text: `${segment.skeleton} (fr)`,
+      origin: 'human',
+      review: 'verified',
+      derived: 'fresh',
+      verifiedBy: { by: 'danielroe', at: '2026-11-03T00:00:00Z' },
+      updatedAt: '2026-11-03T00:00:00Z'
+    }]))
+    const { coverage } = (await localise(page, createBundle(new Map(Object.entries(verified)), 'fr', 'a'.repeat(40)))).meta.l10n
+
+    expect(blockless.map(segment => segment.kind)).toEqual(['frontmatter', 'frontmatter', 'prop', 'prop', 'prop', 'prop'])
+    expect(coverage.byStatus.verified).toBe(blockless.reduce((sum, segment) => sum + segment.words, 0))
   })
 })
 

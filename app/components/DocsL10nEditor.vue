@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { maxTranslationLength, validate } from '@diglot/core'
 import type { ButtonProps } from '@nuxt/ui'
-import { L10N_STRINGS, l10nEditorPath, l10nTranslationsPath, localisePath, type L10nChange, type L10nChangeIssue, type L10nEditorPage, type L10nLocale, type L10nSaveResult } from '#shared/utils/l10n'
+import { hasL10nBlock, L10N_STRINGS, l10nEditorPath, l10nTranslationsPath, localisePath, otherTextGroups, type L10nChange, type L10nChangeIssue, type L10nEditorPage, type L10nLocale, type L10nSaveResult } from '#shared/utils/l10n'
 
 const props = defineProps<{
   locale: L10nLocale
@@ -46,6 +46,33 @@ function go(offset: number) {
   const next = segments.value[index.value + offset]
   if (next) hash.value = next.hash
 }
+
+/** Lists of other texts up to this long start open. */
+const OTHER_TEXTS_OPEN_LIMIT = 6
+
+const otherGroups = computed(() => otherTextGroups(segments.value))
+const otherCount = computed(() => otherGroups.value.reduce((count, group) => count + group.segments.length, 0))
+const otherOpen = ref(false)
+watch(otherCount, (count, before) => {
+  if (!before) otherOpen.value = count <= OTHER_TEXTS_OPEN_LIMIT
+}, { immediate: true })
+
+const formTop = useTemplateRef<HTMLElement>('formTop')
+
+function select(key: string) {
+  hash.value = key
+  nextTick(() => formTop.value?.scrollIntoView({ block: 'start', behavior: reducedMotion.value === 'reduce' ? 'auto' : 'smooth' }))
+}
+
+function groupLabel(group: ReturnType<typeof otherTextGroups>[number]): { text: string, lang?: string } {
+  if (group.type === 'meta') return { text: t.value.pageMeta }
+  if (!group.heading) return { text: t.value.pageStart }
+  const translated = segments.value.find(item => item.hash === group.headingHash)?.record?.text
+  return translated ? { text: translated } : { text: group.heading, lang: 'en' }
+}
+
+const where = (item: { kind: Parameters<typeof t.value.where>[0], context: { detail?: string, containers: string[] } }) =>
+  t.value.where(item.kind, item.context.detail, item.context.containers.at(-1))
 
 const storageKey = `docs-l10n:${props.locale}:${props.path}`
 const changes = useLocalStorage(`${storageKey}:changes`, new Map<string, L10nChange>())
@@ -273,6 +300,13 @@ function glossaryHint(entry: NonNullable<typeof segment.value>['glossary'][numbe
       </p>
 
       <template v-else-if="segment">
+        <p v-if="!hasL10nBlock(segment)" ref="formTop" class="text-xs text-muted">
+          {{ where(segment) }}<template v-if="segment.context.headingTrail.length">
+            · <span lang="en">{{ segment.context.headingTrail.at(-1) }}</span>
+          </template>
+        </p>
+        <span v-else ref="formTop" />
+
         <section class="space-y-1">
           <h3 class="text-xs font-medium uppercase text-muted">
             {{ t.english }}
@@ -446,6 +480,53 @@ function glossaryHint(entry: NonNullable<typeof segment.value>['glossary'][numbe
             </template>
           </p>
         </template>
+
+        <UCollapsible v-if="otherCount" v-model:open="otherOpen" class="border-t border-default pt-4" data-l10n-other-texts>
+          <UButton
+            :label="`${t.otherTexts} (${t.otherTextsCount(otherCount)})`"
+            color="neutral"
+            variant="link"
+            size="sm"
+            trailing-icon="i-lucide-chevron-down"
+            class="group p-0 font-medium"
+            :ui="{ trailingIcon: 'group-data-[state=open]:rotate-180 transition-transform' }"
+          />
+          <template #content>
+            <div class="mt-2 space-y-4">
+              <p class="text-xs text-muted">
+                {{ t.otherTextsHint }}
+              </p>
+              <section v-for="group in otherGroups" :key="`${group.type}:${group.heading ?? ''}`" class="space-y-1">
+                <h3 class="text-xs font-medium text-toned" :lang="groupLabel(group).lang">
+                  {{ groupLabel(group).text }}
+                </h3>
+                <ul class="space-y-1">
+                  <li v-for="item in group.segments" :key="item.hash">
+                    <button
+                      type="button"
+                      class="w-full rounded-md border p-2 text-start text-xs transition-colors hover:bg-elevated focus-visible:outline-2 focus-visible:outline-primary"
+                      :class="item.hash === segment.hash ? 'border-primary bg-elevated' : 'border-default'"
+                      :aria-current="item.hash === segment.hash ? 'true' : undefined"
+                      :aria-label="`${t.editThis} : ${where(item)}`"
+                      @click="select(item.hash)"
+                    >
+                      <span class="block text-muted">{{ where(item) }}</span>
+                      <span class="mt-1 grid grid-cols-2 gap-2">
+                        <span lang="en" class="text-toned">
+                          <DocsL10nSkeleton :skeleton="item.skeleton" :placeholders="item.placeholders" />
+                        </span>
+                        <span v-if="item.record" :lang="locale" class="text-highlighted">
+                          <DocsL10nSkeleton :skeleton="item.record.text" :placeholders="item.placeholders" />
+                        </span>
+                        <span v-else class="text-muted">{{ t.untranslatedShort }}</span>
+                      </span>
+                    </button>
+                  </li>
+                </ul>
+              </section>
+            </div>
+          </template>
+        </UCollapsible>
       </template>
     </template>
 

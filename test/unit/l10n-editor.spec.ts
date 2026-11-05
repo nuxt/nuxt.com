@@ -6,6 +6,7 @@ import { beforeAll, describe, expect, it } from 'vitest'
 import { createBundle } from '../../server/utils/l10n/bundle'
 import { editorSegments } from '../../server/utils/l10n/editor'
 import { createBuildInstance } from '../../utils/factory'
+import { hasL10nBlock, otherTextGroups } from '../../shared/utils/l10n'
 
 const FIXTURES = fileURLToPath(new URL('../fixtures/l10n/', import.meta.url))
 const records = (JSON.parse(readFileSync(`${FIXTURES}fr.json`, 'utf8')) as { records: Record<string, Record<string, unknown>> }).records
@@ -17,11 +18,13 @@ const PREVIOUS = '1'.repeat(16)
 const bundleOf = (value: Record<string, unknown>) => createBundle(new Map(Object.entries(value)), 'fr', 'sha')
 
 let page: ContentFile
+let useFetch: ContentFile
 
 beforeAll(async () => {
   const content = createBuildInstance('docs:4.x', { source: fs(`${FIXTURES}docs`, { prefix: '/docs/4.x' }) })
   await content.init({ partial: false })
   page = (await content.get('/docs/4.x/getting-started/introduction'))!
+  useFetch = (await content.get('/docs/4.x/api/composables/use-fetch'))!
 })
 
 describe('editorSegments', () => {
@@ -74,5 +77,37 @@ describe('editorSegments', () => {
   it('should list a segment without a record as untranslated', async () => {
     const segments = await editorSegments(page, bundleOf({}), { terms: [] })
     expect(segments.every(segment => segment.status === 'untranslated' && !segment.record)).toBe(true)
+  })
+})
+
+describe('otherTextGroups', () => {
+  it('should group the segments without a block under their nearest heading, frontmatter first', async () => {
+    const segments = await editorSegments(page, bundleOf(records), { terms: [] })
+    const groups = otherTextGroups(segments)
+
+    expect(groups.map(group => [group.type, group.heading, group.segments.map(segment => `${segment.kind}:${segment.skeleton}`)])).toEqual([
+      ['meta', undefined, ['frontmatter:Introduction', `frontmatter:${page.data!.description}`]],
+      ['section', 'Server-Side Rendering', ['prop:Nuxt rendering modes']],
+      ['section', 'Server engine', ['prop:Nuxt server engine']],
+      ['section', 'Production-ready', ['prop:Deployment section']],
+      ['section', 'Modular', ['prop:Nuxt Modules Concept']]
+    ])
+    const heading = segments.find(segment => segment.kind === 'heading' && segment.skeleton === 'Server-Side Rendering')!
+    expect(groups[1]!.headingHash).toBe(heading.hash)
+    expect(groups.flatMap(group => group.segments).every(segment => !hasL10nBlock(segment))).toBe(true)
+    expect(segments.filter(segment => !hasL10nBlock(segment))).toHaveLength(6)
+  })
+
+  it('should list code comments and labels, and texts before the first heading', async () => {
+    const segments = await editorSegments(useFetch, bundleOf({}), { terms: [] })
+    const groups = otherTextGroups(segments)
+
+    expect(groups[0]).toMatchObject({ type: 'meta' })
+    expect(groups[0]!.segments.map(segment => segment.context.detail)).toEqual(['title', 'description', 'links.0.label'])
+    const usage = groups.find(group => group.heading === 'Usage')!
+    expect(usage.segments.map(segment => [segment.kind, segment.context.detail])).toEqual(Array.from({ length: 5 }, () => ['code-comment', 'ts']))
+    expect(groups.find(group => group.heading === 'Type')!.segments.map(segment => segment.kind)).toEqual(['code-label', 'code-comment'])
+    expect(groups.find(group => group.heading === 'Reactive Keys and Shared State')!.segments.map(segment => `${segment.kind}:${segment.context.containers.join('/')}`))
+      .toEqual(['code-comment:', 'code-comment:code-group', 'code-comment:code-group', 'prop:video-accordion'])
   })
 })
