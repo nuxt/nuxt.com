@@ -86,6 +86,24 @@ afterEach(() => {
 })
 
 describe('template health cache after a check', () => {
+  it('does not return a cached response wrapper from the previous handler', async () => {
+    context.fetchHealth.mockImplementationOnce(async () => {
+      await new Promise(resolve => setTimeout(resolve, 20))
+      return { canvas: { check: { status: row.status } } }
+    })
+    await storage.setItem('cache:nitro:handlers:template-health:all.json', {
+      integrity: 'previous-handler',
+      mtime: Date.now(),
+      value: { code: 200, headers: {}, body: { canvas: { check: { status: 'passed' } } } }
+    })
+    try {
+      const response = await healthResponse()
+      expect(await response.json()).toEqual({ canvas: { check: { status: 'failed' } } })
+    } finally {
+      await context.fetchHealth.mock.results[0]?.value
+    }
+  })
+
   it('prevents HTTP caching on fresh and cached GET and HEAD responses while retaining the server cache', async () => {
     for (const method of ['GET', 'GET', 'HEAD']) {
       const response = await healthResponse(method)
@@ -110,6 +128,7 @@ describe('template health cache after a check', () => {
     await recordTemplateCheck({ kind: 'finish', slug: 'canvas', runId: 'run', status })
     for (const region of [0, 1]) {
       enterRegion(region)
+      expect(await storage.getItem('cache:nitro:handlers:template-health:all-v2.json')).toBeNull()
       expect(await storage.getItem('cache:nitro:handlers:template-health:all:HEAD.json')).toBeNull()
       expect(await healthRequest()).toBe(status)
       expect(await healthRequest('GET', '?ignored=1')).toBe(status)

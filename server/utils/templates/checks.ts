@@ -33,6 +33,7 @@ export async function recordTemplateCheck(report: CheckReport) {
 async function clearHealthCache() {
   const storage = useStorage('cache')
   await Promise.all([
+    storage.removeItem('nitro:handlers:template-health:all-v2.json'),
     storage.removeItem('nitro:handlers:template-health:all.json'),
     storage.removeItem('nitro:handlers:template-health:all:HEAD.json'),
     ...(!import.meta.dev && process.env.VERCEL ? [getCache().expireTag('template-health')] : [])
