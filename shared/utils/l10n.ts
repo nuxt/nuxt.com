@@ -379,6 +379,8 @@ export function l10nHead({ siteUrl, path, locale, indexable }: { siteUrl: string
 export const L10N_STRINGS = {
   fr: {
     language: 'Français',
+    /** Prefixes the current language in the language menu. */
+    languageLabel: 'Langue\u00A0:',
     machine: 'Traduction automatique',
     reviewedTranslation: 'Traduction relue',
     reviewed: (share: number) => `${Math.floor(share * 100)}\u202F% relue`,
