@@ -228,15 +228,15 @@ function promote() {
     shared.editStep.value = 3
     shared.editor.value = 'on'
     flash()
-    if (reloadAfterSwitch) {
-      reloadAfterSwitch = false
-      reload()
-    }
   }
   if (reloading) {
     reloading = false
     shared.activity.value = { id: 'reload', label: 'Preview updated', state: 'done' }
     flash()
+  }
+  if (reloadAfterSwitch) {
+    reloadAfterSwitch = false
+    reload()
   }
 }
 
