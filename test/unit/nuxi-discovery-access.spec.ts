@@ -66,4 +66,28 @@ describe('Nuxi live preview access', () => {
       expect(JSON.parse(request!.body as string)).toEqual({ action, principalId: caller.principalId, sandboxId: 'preview' })
     }
   })
+
+  it('keeps an edit connected while the server starts and then restarts after a config change', async () => {
+    vi.useFakeTimers()
+    const timeout = vi.spyOn(AbortSignal, 'timeout').mockImplementation((ms) => {
+      const controller = new AbortController()
+      setTimeout(() => controller.abort(new Error('Request timed out')), ms)
+      return controller.signal
+    })
+    try {
+      vi.mocked(internalFetch).mockImplementationOnce((_path, request) => new Promise((resolve, reject) => {
+        request!.signal!.addEventListener('abort', () => reject(request!.signal!.reason), { once: true })
+        // The API allows 130s for startup, then 150s for the config restart.
+        setTimeout(() => resolve({ path: 'nuxt.config.ts', restarted: true }), 280_000)
+      }))
+      const result = preview(context(publicAuth)).edit_app_file.execute({ sandboxId: 'preview', path: 'nuxt.config.ts', content: 'export default {}' }, context(publicAuth))
+        .then((value: unknown) => ({ value }), (error: unknown) => ({ error }))
+      await vi.advanceTimersByTimeAsync(280_000)
+      expect(await result).toEqual({ value: { path: 'nuxt.config.ts', restarted: true } })
+      expect(internalFetch).toHaveBeenCalledOnce()
+    } finally {
+      timeout.mockRestore()
+      vi.useRealTimers()
+    }
+  })
 })
