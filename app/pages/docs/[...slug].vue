@@ -183,6 +183,9 @@ const editLink = computed(() => {
   return `https://github.com/${DOCS_REPO}/edit/${ref}/docs/${meta.stem}${meta.extension}`
 })
 
+// Archived versions and translations are not served as raw Markdown.
+const markdown = computed(() => !isArchivedDocVersion(docsVersion.value) && !locale.value)
+
 const communityLinks = [{
   icon: 'i-lucide-heart',
   label: 'Become a Sponsor',
@@ -345,7 +348,11 @@ const noRightAside = computed(() => route.path.includes('/examples/'))
               trailingIcon: 'hidden',
               bottom: 'flex flex-col'
             }"
-          />
+          >
+            <template #aside>
+              <DocsPageAsideLinks :path="path" :edit-link="editLink" :markdown="markdown" />
+            </template>
+          </ContentToc>
         </template>
       </UDrawer>
     </div>
@@ -403,8 +410,6 @@ const noRightAside = computed(() => route.path.includes('/examples/'))
               <UAvatar v-bind="pickAvatar(link.avatar)" size="2xs" :alt="`${link.label} avatar`" />
             </template>
           </UButton>
-
-          <PageHeaderLinks v-if="!isArchivedDocVersion(docsVersion) && !locale" :key="page.path" />
         </template>
       </UPageHeader>
 
@@ -457,7 +462,11 @@ const noRightAside = computed(() => route.path.includes('/examples/'))
             container: 'lg:max-h-[inherit]',
             content: 'lg:min-h-[min(var(--list-height,8rem),16rem)]'
           }"
-        />
+        >
+          <template #aside>
+            <DocsPageAsideLinks :path="path" :edit-link="editLink" :markdown="markdown" />
+          </template>
+        </ContentToc>
       </template>
     </UPage>
   </UContainer>

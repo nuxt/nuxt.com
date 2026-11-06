@@ -147,17 +147,6 @@ const status = computed(() => (source.value?.status ?? reference.value?.dataset.
         <span class="whitespace-nowrap">{{ machine ? strings.machine : strings.reviewedTranslation }} ·</span>
         <span class="whitespace-nowrap">{{ strings.reviewed(reviewedShare(coverage)) }}<template v-if="pending"> · <span class="text-highlighted">{{ strings.toReview }}</span><span class="sr-only"> : {{ strings.pending }}</span></template></span>
       </p>
-      <UButton
-        :to="path"
-        external
-        hreflang="en"
-        lang="en"
-        label="English"
-        icon="i-lucide-languages"
-        size="xs"
-        color="neutral"
-        variant="ghost"
-      />
       <UTooltip :text="strings.reviewHint">
         <UButton
           :label="strings.review"
