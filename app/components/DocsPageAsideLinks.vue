@@ -7,7 +7,7 @@ const props = defineProps<{
   /** The English page, unprefixed. */
   path: string
   editLink: string
-  /** Whether the page is served as raw Markdown, which archived versions and translations are not. */
+  /** Whether the page is served as raw Markdown: only live versions in English are. */
   markdown: boolean
 }>()
 
@@ -66,16 +66,22 @@ const items = computed(() => [
     icon: 'i-lucide-copy',
     async onSelect() {
       track('Page Action', { action: 'Copy Page' })
-      copy(await $fetch<string>(mdPath.value))
-      toast.add({ title: 'Page copied to clipboard', icon: 'i-lucide-check-circle' })
+      try {
+        await copy(await $fetch<string>(mdPath.value), { title: 'Page copied to clipboard', icon: 'i-lucide-check-circle' })
+      } catch {
+        toast.add({ title: 'Could not copy the page', icon: 'i-lucide-circle-alert', color: 'error' })
+      }
     }
   }, {
     label: 'Copy Markdown link',
     icon: 'i-lucide-link',
-    onSelect() {
+    async onSelect() {
       track('Page Action', { action: 'Copy Markdown Link' })
-      copy(mdUrl.value)
-      toast.add({ title: 'Copied to clipboard', icon: 'i-lucide-check-circle' })
+      try {
+        await copy(mdUrl.value, { title: 'Copied to clipboard', icon: 'i-lucide-check-circle' })
+      } catch {
+        toast.add({ title: 'Could not copy the link', icon: 'i-lucide-circle-alert', color: 'error' })
+      }
     }
   }],
   [{

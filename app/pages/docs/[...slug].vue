@@ -4,7 +4,7 @@ import type { NavigationItem } from 'comark-content'
 import { DocsProseImg, Browser, CodeExplorer, Important, LinkExample, ReadMore, VideoAccordion } from '#components'
 import { CLI_DOCS_REFS, CLI_DOCS_REPO, cliDocsPathPrefix, hasCliDocs } from '#shared/utils/cli'
 import { cliInstanceKey } from '#shared/utils/content'
-import { DOCS_REFS, DOCS_REPO, getVersionByPath, isArchivedDocVersion, isCanonicalDocsPath } from '#shared/utils/docs'
+import { DOCS_REFS, DOCS_REPO, docsStatus, getVersionByPath, isArchivedDocVersion, isCanonicalDocsPath } from '#shared/utils/docs'
 import { isLocalisedPage, l10nHead, l10nPagePath, type L10nPageMeta } from '#shared/utils/l10n'
 
 definePageMeta({
@@ -183,8 +183,8 @@ const editLink = computed(() => {
   return `https://github.com/${DOCS_REPO}/edit/${ref}/docs/${meta.stem}${meta.extension}`
 })
 
-// Archived versions and translations are not served as raw Markdown.
-const markdown = computed(() => !isArchivedDocVersion(docsVersion.value) && !locale.value)
+// Only live versions in English are served as raw Markdown.
+const markdown = computed(() => docsStatus(docsVersion.value) === 'live' && !locale.value)
 
 const communityLinks = [{
   icon: 'i-lucide-heart',
