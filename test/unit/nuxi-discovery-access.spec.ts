@@ -52,6 +52,17 @@ describe('Nuxi internal preview requests', () => {
       'cookie': 'session=test'
     })
   })
+
+  it('preserves app authentication when a Vercel identity is unavailable', async () => {
+    vi.stubEnv('INTERNAL_API_SECRET', 'test-internal-secret')
+    vi.stubEnv('VERCEL', '1')
+    vi.stubEnv('VERCEL_OIDC_TOKEN_FILE', new URL('./missing-oidc-token', import.meta.url).pathname)
+    const { internalHeaders } = await vi.importActual<typeof import('../../layers/nuxi/agent/lib/internal-api')>('../../layers/nuxi/agent/lib/internal-api')
+    await expect(internalHeaders()).resolves.toEqual({
+      'Authorization': 'Bearer test-internal-secret',
+      'content-type': 'application/json'
+    })
+  })
 })
 
 describe('Nuxi discovery and SEO access', () => {

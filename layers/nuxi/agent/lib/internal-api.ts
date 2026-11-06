@@ -22,9 +22,9 @@ export async function internalHeaders(extra?: Record<string, string>) {
     throw new Error('INTERNAL_API_SECRET is not configured')
   }
 
-  // Resolve per request: Vercel rotates its runtime identity independently of the app secret.
+  // Read the current identity per request; unavailable OIDC must not block bearer-only targets.
   const token = process.env.VERCEL === '1' || process.env.VERCEL_OIDC_TOKEN || process.env.VERCEL_OIDC_TOKEN_FILE
-    ? await getVercelOidcToken()
+    ? await getVercelOidcToken().catch(() => undefined)
     : undefined
 
   return {
