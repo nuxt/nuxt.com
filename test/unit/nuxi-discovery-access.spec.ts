@@ -14,7 +14,44 @@ const context = (auth: unknown) => ({ session: { auth: { current: auth } }, memo
 
 afterEach(() => {
   vi.unstubAllEnvs()
+  vi.unstubAllGlobals()
   vi.clearAllMocks()
+})
+
+describe('Nuxi internal preview requests', () => {
+  it('authenticates with deployment protection as well as the internal API', async () => {
+    const { internalFetch: request } = await vi.importActual<typeof import('../../layers/nuxi/agent/lib/internal-api')>('../../layers/nuxi/agent/lib/internal-api')
+    const token = `test.${Buffer.from(JSON.stringify({ exp: Math.floor(Date.now() / 1000) + 3600 })).toString('base64url')}.test`
+    vi.stubEnv('INTERNAL_API_SECRET', 'test-internal-secret')
+    vi.stubEnv('VERCEL_OIDC_TOKEN', token)
+    vi.stubEnv('VERCEL_OIDC_TOKEN_FILE', undefined)
+    vi.stubGlobal('fetch', vi.fn(async (_url, init) => {
+      const headers = new Headers(init.headers)
+      if (headers.get('x-vercel-trusted-oidc-idp-token') !== token) {
+        return new Response('Protected by Vercel Authentication', { status: 401 })
+      }
+      if (headers.get('authorization') !== 'Bearer test-internal-secret') {
+        return new Response('Unauthorized', { status: 401 })
+      }
+      return Response.json({ files: ['app.vue'] })
+    }))
+
+    await expect(request('/api/internal/templates/preview', { method: 'POST', body: JSON.stringify({ action: 'list', sandboxId: 'preview', principalId: 'visitor' }) }))
+      .resolves.toEqual({ files: ['app.vue'] })
+  })
+
+  it('keeps local requests working without a deployment protection secret', async () => {
+    const { internalHeaders } = await vi.importActual<typeof import('../../layers/nuxi/agent/lib/internal-api')>('../../layers/nuxi/agent/lib/internal-api')
+    vi.stubEnv('INTERNAL_API_SECRET', 'test-internal-secret')
+    vi.stubEnv('VERCEL', undefined)
+    vi.stubEnv('VERCEL_OIDC_TOKEN', undefined)
+    vi.stubEnv('VERCEL_OIDC_TOKEN_FILE', undefined)
+    expect(await internalHeaders({ cookie: 'session=test' })).toEqual({
+      'Authorization': 'Bearer test-internal-secret',
+      'content-type': 'application/json',
+      'cookie': 'session=test'
+    })
+  })
 })
 
 describe('Nuxi discovery and SEO access', () => {

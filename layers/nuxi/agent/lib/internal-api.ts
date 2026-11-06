@@ -1,3 +1,5 @@
+import { getVercelOidcToken } from '@vercel/functions/oidc'
+
 export function appOrigin() {
   const configured = process.env.NUXT_PUBLIC_SITE_URL?.trim().replace(/\/$/, '')
     || process.env.NUXT_SITE_URL?.trim().replace(/\/$/, '')
@@ -14,15 +16,21 @@ export function appOrigin() {
   return 'http://localhost:3000'
 }
 
-export function internalHeaders(extra?: Record<string, string>) {
+export async function internalHeaders(extra?: Record<string, string>) {
   const secret = process.env.INTERNAL_API_SECRET?.trim()
   if (!secret) {
     throw new Error('INTERNAL_API_SECRET is not configured')
   }
 
+  // Resolve per request: Vercel rotates its runtime identity independently of the app secret.
+  const token = process.env.VERCEL === '1' || process.env.VERCEL_OIDC_TOKEN || process.env.VERCEL_OIDC_TOKEN_FILE
+    ? await getVercelOidcToken()
+    : undefined
+
   return {
     'Authorization': `Bearer ${secret}`,
     'content-type': 'application/json',
+    ...(token && { 'x-vercel-trusted-oidc-idp-token': token }),
     ...extra
   }
 }
@@ -34,7 +42,7 @@ export async function internalFetch<T>(path: string, init?: RequestInit): Promis
     ...init,
     signal: init?.signal ?? AbortSignal.timeout(INTERNAL_FETCH_TIMEOUT_MS),
     headers: {
-      ...internalHeaders(),
+      ...await internalHeaders(),
       ...(init?.headers as Record<string, string> | undefined)
     }
   })
