@@ -1,6 +1,7 @@
 import { defineDynamic, defineInstructions } from 'eve/instructions'
 import { ADMIN_MCP_INSTRUCTIONS } from './connections/admin-mcp.js'
 import { AI_GATEWAY_INSTRUCTIONS } from './tools/ai-gateway.js'
+import { APP_PREVIEW_INSTRUCTIONS } from './tools/app-preview.js'
 import { ARTIFACTS_MCP_INSTRUCTIONS } from './connections/artifacts-mcp.js'
 import { VERCEL_MCP_INSTRUCTIONS } from './connections/vercel-mcp.js'
 import { isAdminMode } from './lib/identity/admin-mode.js'
@@ -31,6 +32,8 @@ export default defineDynamic(async (ctx) => {
       surfaceInstructions(context.surface),
       callerInstructions(context.person)
     ]
+
+    if (context.surface === 'web') blocks.push(APP_PREVIEW_INSTRUCTIONS)
 
     if (await isAdminMode(auth)) {
       blocks.push(ADMIN_MCP_INSTRUCTIONS, VERCEL_MCP_INSTRUCTIONS, AI_GATEWAY_INSTRUCTIONS, ARTIFACTS_MCP_INSTRUCTIONS)

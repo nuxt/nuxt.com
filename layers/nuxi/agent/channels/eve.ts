@@ -30,7 +30,7 @@ function nuxtSessionAuth(): AuthFn<Request> {
       }
 
       const response = await fetch(`${appOrigin()}/api/internal/session`, {
-        headers: internalHeaders({ cookie })
+        headers: await internalHeaders({ cookie })
       })
 
       if (!response.ok) return null
@@ -76,7 +76,7 @@ export default eveChannel({
       try {
         const cookie = ctx.eve.request.headers.get('cookie') ?? ''
         const response = await fetch(`${appOrigin()}/api/internal/chats/${encodeURIComponent(chatId)}/context`, {
-          headers: internalHeaders(cookie ? { cookie } : undefined)
+          headers: await internalHeaders(cookie ? { cookie } : undefined)
         })
 
         if (response.ok) {
