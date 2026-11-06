@@ -3,6 +3,7 @@ import type { RouteHandlerArgs } from 'eve/channels'
 import type { SessionReader } from 'eve/sessions'
 import { createRaycastChannel } from 'eve-raycast/channel'
 import raycast from 'eve-raycast'
+import { getVercelOidcToken } from '@vercel/functions/oidc'
 import { raycastAuth } from '../../layers/nuxi/agent/lib/raycast'
 import '../../layers/nuxi/agent/extensions/raycast'
 import { raycastAddress, raycastEventStream, readRaycastHistory, readRaycastMessage } from 'eve-raycast/protocol'
@@ -10,12 +11,14 @@ import { resolveContext } from '../../layers/nuxi/agent/lib/identity/context'
 import { isAdminMode } from '../../layers/nuxi/agent/lib/identity/admin-mode'
 
 vi.mock('eve-raycast', () => ({ default: vi.fn() }))
+vi.mock('@vercel/functions/oidc', () => ({ getVercelOidcToken: vi.fn(async () => 'test-service-identity') }))
 
 const channel = createRaycastChannel({ ...vi.mocked(raycast).mock.calls[0]![0], publicOrigin: undefined })
 
 const TOKEN = `nuxi_rc_${'a'.repeat(43)}`
 const ACCOUNT = { id: 'user-1', name: 'Nuxt team member', login: 'demo-user', role: 'admin' as const, avatarUrl: '', expiresAt: '2026-12-05T00:00:00Z' }
 beforeEach(() => {
+  vi.stubEnv('VERCEL', '')
   vi.stubEnv('INTERNAL_API_SECRET', 'test-internal-secret')
   vi.stubEnv('VERCEL_URL', 'test-preview.vercel.app')
   vi.stubEnv('NUXT_PUBLIC_SITE_URL', 'https://nuxt.com')
@@ -79,6 +82,32 @@ function harness(events = facts()) {
 }
 
 describe('Raycast HTTP channel', () => {
+  it('authenticates the agent to the protected website before verifying the personal credential', async () => {
+    vi.stubEnv('VERCEL', '1')
+    vi.mocked(fetch).mockImplementation(async (_url, init) => {
+      const headers = new Headers(init?.headers)
+      if (headers.get('x-vercel-trusted-oidc-idp-token') !== 'test-service-identity') {
+        return new Response('Protected by Vercel Authentication', { status: 401 })
+      }
+      expect(headers.get('authorization')).toBe('Bearer test-internal-secret')
+      return Response.json(ACCOUNT)
+    })
+    const response = await harness().request('/me')
+    expect(response.status).toBe(200)
+    expect(await response.json()).toMatchObject({ user: { id: ACCOUNT.id } })
+  })
+
+  it('reports a hosting authentication failure as unavailable instead of expiring the user credential', async () => {
+    vi.mocked(fetch).mockResolvedValueOnce(new Response('Protected by Vercel Authentication', { status: 401 }))
+    expect((await harness().request('/me')).status).toBe(503)
+  })
+
+  it('does not require a Vercel service identity when running locally', async () => {
+    vi.mocked(getVercelOidcToken).mockClear()
+    expect((await harness().request('/me')).status).toBe(200)
+    expect(getVercelOidcToken).not.toHaveBeenCalled()
+  })
+
   it('discovers the browser sign-in flow and verifies the personal credential', async () => {
     const h = harness()
     const status = await h.request('/status', 'GET', undefined, false)

@@ -1,5 +1,6 @@
 import { RaycastHttpError } from 'eve-raycast/channel'
 import type { RaycastAuth } from 'eve-raycast/channel'
+import { getVercelOidcToken } from '@vercel/functions/oidc'
 import type { AuthContext } from './identity/context.js'
 import { appOrigin, internalHeaders } from './internal-api.js'
 
@@ -24,10 +25,14 @@ export async function raycastCredential(request: Request, action = 'authenticate
   if (!/^Bearer nuxi_rc_[\w-]{43}$/.test(authorization)) throw new RaycastHttpError(401)
   // Verify against this deployment's web service, including on branch previews.
   const origin = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : appOrigin()
+  const protectionHeaders = process.env.VERCEL
+    ? { 'x-vercel-trusted-oidc-idp-token': await getVercelOidcToken() }
+    : undefined
   const response = await fetch(`${origin}/api/internal/raycast-auth`, {
-    method: 'POST', headers: internalHeaders(),
+    method: 'POST', headers: internalHeaders(protectionHeaders), redirect: 'error',
     body: JSON.stringify({ action, token: authorization.slice(7) }), signal: AbortSignal.timeout(10_000)
   })
+  if (!response.headers.get('content-type')?.includes('application/json')) throw new RaycastHttpError(503)
   if (!response.ok) throw new RaycastHttpError(response.status === 401 || response.status === 403 ? response.status : 503)
   return response.json() as Promise<RaycastAccount>
 }
