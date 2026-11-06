@@ -413,6 +413,9 @@ const noRightAside = computed(() => route.path.includes('/examples/'))
               <UAvatar v-bind="pickAvatar(link.avatar)" size="2xs" :alt="`${link.label} avatar`" />
             </template>
           </UButton>
+
+          <!-- Examples have no aside to hold the page links. -->
+          <PageHeaderLinks v-if="noRightAside" :key="page.path" />
         </template>
       </UPageHeader>
 
