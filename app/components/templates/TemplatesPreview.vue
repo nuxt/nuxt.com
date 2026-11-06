@@ -179,7 +179,7 @@ function stop() {
           class="absolute inset-y-0 left-1/2 -translate-x-1/2 transition-[width] duration-300 ease-snappy"
           :class="device === 'mobile' ? 'w-[390px] max-w-full border-x border-default' : 'w-full'"
         >
-          <TemplatesLivePreview :template="template" @url="liveUrl = $event" @status="onStatus" />
+          <LazyTemplatesLivePreview :template="template" @url="liveUrl = $event" @status="onStatus" />
         </div>
       </Transition>
 

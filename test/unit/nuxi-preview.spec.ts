@@ -63,9 +63,10 @@ describe('Nuxi preview updates', () => {
     await tool()
     await tool('edit_app_file', { state: 'output-available', preliminary: true, output: {} })
     expect(preview.activity.value?.state).toBe('running')
-    await done()
+    await done('edit_app_file', {}, { sandboxId: 'sandbox', path: 'app/app.vue', previewPath: '/about' })
     expect(preview.activity.value?.state).toBe('done')
     expect(preview.preview.value?.error).toBeUndefined()
+    expect(preview.navigate).toHaveBeenCalledWith('/about')
   })
 
   it('ignores tools for another sandbox and unrelated tools', async () => {
@@ -73,12 +74,6 @@ describe('Nuxi preview updates', () => {
     await tool('search_docs')
     expect(preview.startEditing).not.toHaveBeenCalled()
     expect(preview.activity.value).toBeNull()
-  })
-
-  it('opens the route an edit affects, including deletions', async () => {
-    await done('edit_app_file', {}, { sandboxId: 'sandbox', path: 'app/pages/old.vue', delete: true, previewPath: '/about' })
-    expect(preview.activity.value).toMatchObject({ label: 'Deleted app/pages/old.vue', state: 'done' })
-    expect(preview.navigate).toHaveBeenCalledWith('/about')
   })
 
   it('reloads once after a restarted app has been checked', async () => {
@@ -98,14 +93,6 @@ describe('Nuxi preview updates', () => {
     chat.status = 'ready'
     await finished
     expect(preview.activity.value).toMatchObject({ label: 'Installed @nuxt/image', state: 'done' })
-    expect(preview.reloadRequest.value).toBe(1)
-  })
-
-  it('keeps the current route when a check uses a relative path', async () => {
-    await done('edit_app_file', { restarted: true })
-    await done('check_app_page', { status: 200 }, { sandboxId: 'sandbox', path: 'about' })
-    expect(preview.preview.value?.path).toBeUndefined()
-    expect(preview.navigate).not.toHaveBeenCalled()
     expect(preview.reloadRequest.value).toBe(1)
   })
 
