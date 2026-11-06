@@ -11,7 +11,7 @@ permissions:
   contents: read
 
 env:
-  NUXT_BUNDLE_ANALYZER_VERSION: 0.1.6
+  NUXT_BUNDLE_ANALYZER_VERSION: 0.1.7
 
 jobs:
   analyze:
