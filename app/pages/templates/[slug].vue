@@ -5,12 +5,14 @@ definePageMeta({
 
 const route = useRoute()
 const { all, templates, health } = await useTemplates()
+const { user } = useUserSession()
 
 const template = computed(() => all.value.find(item => item.slug === route.params.slug))
 if (!template.value) {
   throw createError({ statusCode: 404, statusMessage: 'Template not found', fatal: true })
 }
 const templateHealth = computed(() => health.value[template.value!.slug])
+const canRecheck = computed(() => user.value?.role === 'admin' && template.value?.repo && template.value.template !== 'module')
 const hasWorkingAlternative = computed(() => templates.value.some(item => item.slug !== template.value?.slug && item.category === template.value?.category && isWorking(health.value[item.slug])))
 
 const { track } = useAnalytics()
@@ -66,7 +68,7 @@ defineOgImage('Templates.takumi', {
             {{ template.description }}
           </p>
         </div>
-        <div v-if="links.length" class="flex gap-2 shrink-0">
+        <div v-if="links.length || canRecheck" class="flex flex-wrap items-start gap-2 shrink-0">
           <UButton
             v-for="link in links"
             :key="link.label"
@@ -77,6 +79,12 @@ defineOgImage('Templates.takumi', {
             color="neutral"
             variant="ghost"
             @click="track('Template Action', { template: template.name, action: link.action })"
+          />
+          <LazyTemplatesAdminCheck
+            v-if="canRecheck"
+            :key="template.slug"
+            :slug="template.slug"
+            @checked="refreshNuxtData('templates-health')"
           />
         </div>
       </div>
