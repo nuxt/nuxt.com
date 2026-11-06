@@ -85,6 +85,7 @@
     "date-fns": "^4.4.0",
     "drizzle-orm": "^0.45.4",
     "eve": "^0.91.0",
+    "eve-raycast": "file:vendor/eve-raycast-0.0.0-prototype.2.tgz",
     "evlog": "^2.34.0",
     "feed": "^5.2.1",
     "fflate": "^0.8.3",

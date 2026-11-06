@@ -88,6 +88,15 @@ describe('isAdminMode', () => {
     expect(await isAdminMode({ issuer: 'nuxt.com', principalId: 'anon', principalType: 'anonymous' })).toBe(false)
   })
 
+  it('grants Raycast only with a verified GitHub user and an admin role', async () => {
+    const auth = { issuer: 'raycast', authenticator: 'github', principalId: 'u1', principalType: 'user', attributes: { role: 'admin' } }
+    expect(await isAdminMode(auth)).toBe(true)
+    expect(await isAdminMode({ ...auth, attributes: { role: 'user' } })).toBe(false)
+    expect(await isAdminMode({ ...auth, attributes: {} })).toBe(false)
+    expect(await isAdminMode({ ...auth, authenticator: 'unverified' })).toBe(false)
+    expect(await isAdminMode({ ...auth, principalType: 'anonymous' })).toBe(false)
+  })
+
   it('denies an unrecognized issuer even with a stray admin role attribute (intentional hardening)', async () => {
     expect(await isAdminMode({
       issuer: 'some-future-channel',

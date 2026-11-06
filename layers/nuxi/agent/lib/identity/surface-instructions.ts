@@ -17,6 +17,7 @@ const DISCORD_INSTRUCTIONS = `**You are on Discord, answering in a thread (like 
 - Prefer compact replies — Discord caps a message at 2000 characters, so anything longer is split across follow-up messages.`
 
 const BY_SURFACE: Partial<Record<Surface, string>> = {
+  raycast: 'Never use show_prompt, report_issue or app_preview in Raycast. Write prompts directly as text. For website interactions, use the continuation link supplied by the Raycast integration.',
   discord: DISCORD_INSTRUCTIONS,
   slack: SLACK_INSTRUCTIONS
 }

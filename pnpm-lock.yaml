@@ -325,6 +325,9 @@ importers:
       eve:
         specifier: ^0.91.0
         version: 0.91.0(41565f2ac514d06d072fe521c365399a)
+      eve-raycast:
+        specifier: file:vendor/eve-raycast-0.0.0-prototype.2.tgz
+        version: file:vendor/eve-raycast-0.0.0-prototype.2.tgz(eve@0.91.0)
       evlog:
         specifier: ^2.34.0
         version: 2.34.0(2f396904bf8fe385422d84ba814f0a48)
@@ -6921,6 +6924,13 @@ packages:
         optional: true
       better-sqlite3:
         optional: true
+
+  eve-raycast@file:vendor/eve-raycast-0.0.0-prototype.2.tgz:
+    resolution: {integrity: sha512-c/e23OJuS9mJP5oegooLorFMPR32t+Xg8xIV2E+SGKQjw//W733LrALvt32Jup4jG6JJP2zTz4SkOa89YS0Lhw==, tarball: file:vendor/eve-raycast-0.0.0-prototype.2.tgz}
+    version: 0.0.0-prototype.2
+    engines: {node: '>=24'}
+    peerDependencies:
+      eve: '>=0.91.0'
 
   eve@0.91.0:
     resolution: {integrity: sha512-IVZ73uGFUm3k5sUju/XNi/O3z9Rmq6Iv8mfA0nzrDMypRu+N7iJUIcOhxuU6qDWxLglfqoXimfoOZiyd9/UCxg==}
@@ -18544,6 +18554,11 @@ snapshots:
     transitivePeerDependencies:
       - bufferutil
       - utf-8-validate
+
+  eve-raycast@file:vendor/eve-raycast-0.0.0-prototype.2.tgz(eve@0.91.0):
+    dependencies:
+      eve: 0.91.0(41565f2ac514d06d072fe521c365399a)
+      zod: 4.6.7
 
   eve@0.91.0(41565f2ac514d06d072fe521c365399a):
     dependencies:
