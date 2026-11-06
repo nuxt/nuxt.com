@@ -54,7 +54,7 @@ export const VERCEL_MCP_INSTRUCTIONS = VERCEL_TEAM_ID && VERCEL_PROJECT_ID
 
 export default defineMcpClientConnection({
   url: 'https://mcp.vercel.com/nuxt-js/nuxt',
-  description: 'Vercel platform for nuxt.com: deployments, runtime logs/errors, web analytics, and Nuxi\'s own Agent Runs observability. Admin/Slack/schedule sessions only.',
+  description: 'Read-only Vercel observability for nuxt.com: runtime logs/errors, web analytics and Nuxi\'s Agent Runs. To run a template build, use admin-mcp start-template-checks instead. Admin/Slack/schedule sessions only.',
   tools: { allow: ALLOWED_TOOLS },
   auth: adminOnlyVercelAuth('Vercel MCP', { connector: 'vercel/mcp', principalType: 'app', autoProvision: false })
 })

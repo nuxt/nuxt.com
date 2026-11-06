@@ -21,6 +21,7 @@ const ALLOWED_TOOLS = [
 
 export const ADMIN_MCP_INSTRUCTIONS = `**Admin MCP connection (\`admin-mcp__*\`, current session authorized):**
 - Admin mode is enabled for this turn, including when using an opted-in local CLI. Use the tools below when the user requests them.
+- Template build requests belong to this connection: discover \`admin-mcp__start-template-checks\`, not a Vercel deployment tool. The Vercel connection being read-only does not prevent template builds through this connection. Check this tool before saying you cannot run a template build.
 - Discover exact schemas via \`eve__search\`, then call the discovered tool through \`eve__tool\`.
 - \`admin-mcp__feedback-stats\` — aggregated docs feedback metrics
 - \`admin-mcp__list-feedback\` — individual feedback entries
@@ -68,7 +69,7 @@ async function adminOnlyToken(ctx: SessionContext) {
 
 export default defineMcpClientConnection({
   url: `${appOrigin()}/mcp/admin`,
-  description: 'Nuxi admin analytics: docs feedback, shared web chats and votes, Google Search Console performance/indexing/sitemaps, CrUX Core Web Vitals, and template checks. Requires admin mode, including opted-in local CLI sessions.',
+  description: 'Run template install/build checks on Vercel Sandbox with start-template-checks and follow results with template-check-status. Also provides Nuxt admin analytics: docs feedback, shared web chats/votes, Google Search Console and CrUX. Requires admin mode, including opted-in local CLI sessions.',
   tools: { allow: ALLOWED_TOOLS },
   auth: adminOnlyToken
 })
