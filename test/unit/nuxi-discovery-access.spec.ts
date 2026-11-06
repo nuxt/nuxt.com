@@ -40,7 +40,7 @@ describe('Nuxi discovery and SEO access', () => {
 
 describe('Nuxi live preview access', () => {
   it('offers editing tools only to browser sessions', () => {
-    for (const auth of [undefined, { issuer: 'slack' }, { issuer: 'discord' }, { principalId: 'eve:app', principalType: 'runtime' }]) {
+    for (const auth of [undefined, { issuer: 'slack' }, { issuer: 'discord' }, { issuer: 'nuxt.com' }, { issuer: 'nuxt.com', principalId: '' }, { principalId: 'eve:app', principalType: 'runtime' }]) {
       expect(preview(context(auth))).toBeNull()
     }
     expect(preview(context(publicAuth))?.edit_app_file).toBeDefined()
@@ -48,17 +48,22 @@ describe('Nuxi live preview access', () => {
 
   it('rechecks the caller when executing a previously offered tool', () => {
     const tools = preview(context(publicAuth))
-    expect(() => tools.read_app_file.execute({ sandboxId: 'preview', path: 'app.vue' }, context({ issuer: 'slack' }))).toThrow('browser session')
-    expect(() => tools.read_app_file.execute({ sandboxId: 'preview', path: 'app.vue' }, context({ issuer: 'nuxt.com' }))).toThrow('browser session')
+    for (const tool of Object.values(tools) as any[]) {
+      expect(() => tool.execute({ sandboxId: 'preview' }, context({ issuer: 'slack' }))).toThrow('browser session')
+      expect(() => tool.execute({ sandboxId: 'preview' }, context({ issuer: 'nuxt.com' }))).toThrow('browser session')
+    }
     expect(internalFetch).not.toHaveBeenCalled()
   })
 
-  it('binds sandbox requests to the authenticated visitor', async () => {
-    await preview(context(publicAuth)).edit_app_file.execute({ sandboxId: 'preview', path: 'app.vue', content: '<h1>Hello</h1>' }, context(publicAuth))
-    const [path, request] = vi.mocked(internalFetch).mock.calls[0]!
-    expect(path).toBe('/api/internal/templates/preview')
-    expect(JSON.parse(request!.body as string)).toEqual({
-      action: 'edit', principalId: publicAuth.principalId, sandboxId: 'preview', path: 'app.vue', content: '<h1>Hello</h1>'
-    })
+  it('takes ownership and the action from the executing session and tool, never model arguments', async () => {
+    const tools = preview(context(publicAuth))
+    const caller = { ...publicAuth, principalId: 'current-visitor' }
+    const actions = { list_app_files: 'list', read_app_file: 'read', edit_app_file: 'edit', add_app_module: 'add_module', check_app_page: 'check' }
+    for (const [name, action] of Object.entries(actions)) {
+      await tools[name].execute({ sandboxId: 'preview', principalId: 'model-supplied', action: 'model-supplied' }, context(caller))
+      const [path, request] = vi.mocked(internalFetch).mock.lastCall!
+      expect(path).toBe('/api/internal/templates/preview')
+      expect(JSON.parse(request!.body as string)).toEqual({ action, principalId: caller.principalId, sandboxId: 'preview' })
+    }
   })
 })
