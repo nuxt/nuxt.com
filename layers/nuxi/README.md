@@ -287,10 +287,26 @@ Every field is optional and falls back to a sane default: `sinceDays` → 7, `sl
 
 ## Talk to Nuxi in Raycast
 
+Nuxi mounts the `eve-raycast` extension in `agent/extensions/raycast.ts`. The factory supplies the types and enables supported features by default:
+
+```ts
+export default raycast({
+  basePath: '/eve/v1/raycast',
+  // The local Nuxt proxy does not forward its public origin to the agent.
+  publicOrigin: process.env.VERCEL_URL ? undefined : appOrigin(),
+  bot: { id: 'nuxi', name: 'Nuxi', description: 'Your Nuxt companion', icon: '/nuxi.png' },
+  auth: raycastAuthAdapter
+})
+```
+
+Set `enabled: false` to disable the integration, or use `features: { toolActivity: false, cancellation: false, textContext: false }` to disable individual features. Branding lives in the same configuration; `agent/lib/raycast.ts` adapts the website's verified GitHub account. Discovery, icons and continuation links follow the current deployment. Optional `continueUrl` accepts a relative path or an absolute URL and defaults to `/`.
+
+The prototype source lives in the separate `~/Dev/eve-raycast` repository. The built npm archive is checked into `vendor/` and referenced by both manifests and the root lockfile, so local installs and Vercel previews use the same package without an npm publication. See `vendor/README.md` for rebuilding it. The extension uses the new Eve channel namespace `raycast__raycast`; start a new Raycast chat after updating, since old root-channel conversations are not migrated.
+
 In Raycast → Settings → AI → External Agents, add `https://nuxt.com/eve/v1/raycast`, choose **Sign in**, and continue with your existing GitHub account on nuxt.com. Click **Connect to Raycast** to finish. For a preview, replace `https://nuxt.com` with its deployment URL and add `<preview origin>/api/auth/github` as an additional callback on the existing GitHub OAuth app. External Agents is currently an alpha feature; ask Raycast to enable it if the setting is missing.
 
 Access uses the same Nuxt core-team/admin check as the website. Each account has its own conversations. A connection lasts 30 days; sign in again when Raycast asks. Removing Nuxi from Raycast revokes that connection. Account and team access are checked on every request. The existing KV stores only credential hashes and their expiry; no new database, migration, OAuth provider or shared secret is required. Preview credentials are separate from production.
 
 Locally, run `pnpm dev:nuxi` and use `http://localhost:3000/eve/v1/raycast`. GitHub login and `INTERNAL_API_SECRET` must be configured as for Nuxi's web channel. The MCP token is no longer used by Raycast.
 
-Nuxi supports text, text context, tool activity, Markdown replies and cancellation. Verified GitHub admins have the same admin tools and connections as on the website. Eve stores the conversation; Raycast reads that same history to recover replies after reconnecting. Files and screen context are disabled. Actions requiring approval direct you to nuxt.com. Start a new Raycast chat after an Eve version upgrade or history expiry.
+Nuxi supports text, text context, tool activity, Markdown replies and cancellation. Verified GitHub admins have the same admin tools and connections as on the website. Eve stores the conversation; Raycast reads that same history to recover replies after reconnecting. Files and screen context are disabled. Actions requiring approval direct you to the current deployment; they are never approved automatically. Start a new Raycast chat after an Eve version upgrade or history expiry.

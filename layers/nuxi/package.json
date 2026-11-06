@@ -17,6 +17,7 @@
     "ai": "^7.0.159",
     "chat": "^4.43.0",
     "eve": "^0.91.0",
+    "eve-raycast": "file:../../vendor/eve-raycast-0.0.0-prototype.2.tgz",
     "evlog": "^2.34.0",
     "zod": "^4.6.7"
   },

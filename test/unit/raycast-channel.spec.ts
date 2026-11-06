@@ -1,10 +1,17 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import type { RouteHandlerArgs } from 'eve/channels'
 import type { SessionReader } from 'eve/sessions'
-import channel from '../../layers/nuxi/agent/channels/raycast'
-import { raycastAuth, raycastAddress, raycastEventStream, readRaycastHistory, readRaycastMessage } from '../../layers/nuxi/agent/lib/raycast'
+import { createRaycastChannel } from 'eve-raycast/channel'
+import raycast from 'eve-raycast'
+import { raycastAuth } from '../../layers/nuxi/agent/lib/raycast'
+import '../../layers/nuxi/agent/extensions/raycast'
+import { raycastAddress, raycastEventStream, readRaycastHistory, readRaycastMessage } from 'eve-raycast/protocol'
 import { resolveContext } from '../../layers/nuxi/agent/lib/identity/context'
 import { isAdminMode } from '../../layers/nuxi/agent/lib/identity/admin-mode'
+
+vi.mock('eve-raycast', () => ({ default: vi.fn() }))
+
+const channel = createRaycastChannel({ ...vi.mocked(raycast).mock.calls[0]![0], publicOrigin: undefined })
 
 const TOKEN = `nuxi_rc_${'a'.repeat(43)}`
 const ACCOUNT = { id: 'user-1', name: 'Nuxt team member', login: 'demo-user', role: 'admin' as const, avatarUrl: '', expiresAt: '2026-12-05T00:00:00Z' }
@@ -28,7 +35,7 @@ type Event = ReturnType<SessionReader['stream']> extends AsyncIterable<infer T> 
 function facts(outcome: 'completed' | 'failed' | 'cancelled' | 'paused' = 'completed'): Event[] {
   const scope = { turnId: 'turn_0', runId: 'run_0' }
   const events = [
-    { type: 'delivery.admitted', data: { deliveryId: 'delivery-1', source: { channel: 'channel:raycast' } } },
+    { type: 'delivery.admitted', data: { deliveryId: 'delivery-1', source: { channel: 'channel:raycast__raycast' } } },
     { type: 'turn.started', data: { turnId: 'turn_0', follows: null, cause: { deliveryId: 'delivery-1' } }, scope },
     { type: 'delivery.consumed', data: { deliveryId: 'delivery-1', turnId: 'turn_0', parts: [] }, scope },
     { type: 'model.requested', data: { runId: 'run_0', owner: { turnId: 'turn_0' } }, scope },
@@ -129,6 +136,15 @@ describe('Raycast HTTP channel', () => {
     const h = harness()
     expect(await (await h.request('/threads/:threadId/cancel', 'POST')).json()).toEqual({ ok: true })
     expect(h.session.cancel).toHaveBeenCalledOnce()
+  })
+
+  it('continues paused turns on the current deployment', async () => {
+    const h = harness(facts('paused'))
+    const turn = await (await h.request('/threads/:threadId/turns/:turnId')).json()
+    expect(turn.error).toContain('http://localhost/')
+    const stream = await (await h.request('/threads/:threadId/events')).text()
+    expect(stream).toContain('http://localhost/')
+    expect(stream).not.toContain('https://nuxt.com')
   })
 
   it('rejects files, screen captures, empty messages and oversized inputs before dispatch', async () => {
