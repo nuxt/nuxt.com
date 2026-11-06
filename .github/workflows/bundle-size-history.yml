@@ -79,6 +79,10 @@ jobs:
         with:
           name: bundle-history
           path: ${{ runner.temp }}/runs/main
+      # The runner's own Node.js is older than the `devEngines` of package.json, which npx warns about.
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
+        with:
+          node-version: lts/-1
       - name: Upload to bundle.nuxt.dev
         run: >-
           npx --yes "nuxt-bundle-analyzer@$NUXT_BUNDLE_ANALYZER_VERSION" upload .
