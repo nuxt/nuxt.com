@@ -14,7 +14,7 @@ export default defineHook({
       try {
         const response = await fetch(`${appOrigin()}/api/internal/chats/${encodeURIComponent(chatId)}/title`, {
           method: 'POST',
-          headers: internalHeaders(),
+          headers: await internalHeaders(),
           body: JSON.stringify({
             userId: auth.principalId,
             message: {
