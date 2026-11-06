@@ -13,8 +13,15 @@ const status = ref<LivePreviewStatus>()
 const readyIn = ref<number>()
 const device = ref<'desktop' | 'mobile'>('desktop')
 
-const { preview: livePreview, reloadRequest } = useLivePreview()
+const { preview: livePreview, editor, reloadRequest, startEditing } = useLivePreview()
+const { open: openNuxi } = useNuxtAgent()
 const { track } = useAnalytics()
+
+function editWithNuxi() {
+  track('Template Action', { template: props.template.name, action: 'Edit with Nuxi' })
+  startEditing()
+  openNuxi()
+}
 
 const image = computed(() => templateImage(props.template))
 const canGoLive = computed(() => canLivePreview(props.template) && !!props.health?.check?.live)
@@ -80,10 +87,23 @@ function stop() {
       <div class="min-w-0 flex items-center justify-center gap-1.5 text-xs text-muted">
         <UIcon v-if="!live" name="i-lucide-lock" class="size-3 shrink-0 text-dimmed" />
         <span class="truncate font-mono">{{ address }}</span>
+        <UTooltip v-if="live && editor === 'on'" text="Running nuxt dev: edits show live">
+          <span class="shrink-0 px-1.5 rounded-sm bg-primary/10 text-primary font-mono text-[10px] leading-4 cursor-default">dev</span>
+        </UTooltip>
       </div>
 
       <div class="flex items-center justify-end gap-0.5">
         <template v-if="live">
+          <UTooltip v-if="status === 'live'" text="Edit with Nuxi">
+            <UButton
+              icon="i-lucide-sparkles"
+              aria-label="Edit with Nuxi"
+              color="neutral"
+              variant="ghost"
+              size="xs"
+              @click="editWithNuxi"
+            />
+          </UTooltip>
           <UTooltip v-if="status === 'live'" text="Reload">
             <UButton
               icon="i-lucide-rotate-cw"
@@ -159,9 +179,21 @@ function stop() {
           class="absolute inset-y-0 left-1/2 -translate-x-1/2 transition-[width] duration-300 ease-snappy"
           :class="device === 'mobile' ? 'w-[390px] max-w-full border-x border-default' : 'w-full'"
         >
-          <TemplatesLivePreview :template="template" @url="liveUrl = $event" @status="onStatus" />
+          <NuxtErrorBoundary @error="onStatus('failed')">
+            <LazyTemplatesLivePreview :template="template" @url="liveUrl = $event" @status="onStatus" />
+            <template #error>
+              <div class="absolute inset-0 flex flex-col items-center justify-center gap-3 p-6" role="alert">
+                <p class="text-sm text-highlighted">
+                  The preview could not load.
+                </p>
+                <UButton label="Reload page" color="neutral" variant="subtle" icon="i-lucide-rotate-ccw" @click="reloadNuxtApp()" />
+              </div>
+            </template>
+          </NuxtErrorBoundary>
         </div>
       </Transition>
+
+      <TemplatesPreviewIsland :active="live && status === 'live'" />
 
       <Transition
         enter-from-class="opacity-0 translate-y-2"

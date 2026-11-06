@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { PreviewEvent, PreviewStep, Template } from '#shared/types'
+import type { PreviewEditEvent, PreviewEvent, PreviewStep, Template } from '#shared/types'
 
 export type LivePreviewStatus = 'booting' | 'mounting' | 'live' | 'failed'
 
@@ -40,6 +40,14 @@ const frameEls = new Map<number, HTMLIFrameElement>()
 function load(url: string, path = '') {
   clearTimeout(promoteFallback)
   pending.value = { id: ++frameIds, url, src: `${url}${path}` }
+}
+
+/** The dev server's page failed to fetch some of its modules: loading it again only fetches the ones the browser missed. */
+let bootRetries = 0
+function retry(frame: Frame) {
+  if (bootRetries >= 3 || (frame === shown.value && pending.value)) return
+  bootRetries++
+  load(frame.url, frame === shown.value ? shared.preview.value?.path ?? '' : frame.src.slice(frame.url.length))
 }
 
 const current = computed(() => STEPS.findIndex(step => !doneAt.value[step.key]))
@@ -124,21 +132,69 @@ function visitorMessage(err: any, fallback: string) {
   return err instanceof SyntaxError ? fallback : err?.message || fallback
 }
 
-/** Briefly outlines the frame once a new page takes over. */
+/** The dev server's frame is loading out of sight: the swap that follows ends the edit startup. */
+let switchingToDev = false
+let editController: AbortController | undefined
+/** Briefly outlines the frame once the dev server takes over, or reloads after a restart. */
 const handedOver = ref(false)
 function flash() {
   handedOver.value = true
   setTimeout(() => handedOver.value = false, 900)
 }
 
-// The new page loads under the current one and takes over once it mounts, so the visitor never watches it load unstyled.
+async function startEditing() {
+  if (!preview.value || status.value !== 'live') return
+  editController?.abort()
+  editController = new AbortController()
+  shared.editor.value = 'starting'
+  shared.editError.value = ''
+  shared.editStep.value = 0
+
+  try {
+    const response = await fetch(`/api/templates/preview/${preview.value.id}/edit`, { method: 'POST', signal: editController.signal })
+    let devUrl: string | undefined
+    await readEvents<PreviewEditEvent>(response, (data) => {
+      if (data.type === 'error') throw new Error(data.message)
+      shared.editStep.value = data.type === 'started' ? 1 : 2
+      if (data.type === 'ready') devUrl = data.url
+    }, 'The dev server could not start.')
+    if (!devUrl) throw new Error('The dev server could not start.')
+    // The visitor asked for it: swap even after they clicked into the frame, and keep them on their page.
+    switchingToDev = true
+    pendingPath = shared.preview.value?.path ?? null
+    load(devUrl)
+  } catch (err: any) {
+    if (err?.name === 'AbortError') return
+    shared.editor.value = 'failed'
+    shared.editError.value = visitorMessage(err, 'The dev server could not start.')
+  }
+}
+
+watch(() => shared.editRequest.value, startEditing)
+
+// Installing a module restarts `nuxt dev`, and a page open during the restart stays broken. The new page loads under the
+// current one and takes over once it mounts, so the visitor never watches it load unstyled.
 let reloading = false
+/** An edit can land while the dev server's first page loads: that page may render the old version, so it reloads once it takes over. */
+let reloadAfterSwitch = false
 watch(() => shared.reloadRequest.value, reload)
 function reload() {
   if (!preview.value || status.value !== 'live') return
+  if (switchingToDev) {
+    reloadAfterSwitch = true
+    return
+  }
   reloading = true
+  shared.activity.value = { id: 'reload', label: 'Loading the new version', state: 'running' }
   load(preview.value.url, shared.preview.value?.path ?? '')
 }
+
+/** Nuxi's change stays on screen a moment after it lands. */
+let activityTimer: ReturnType<typeof setTimeout> | undefined
+watch(() => shared.activity.value, (activity) => {
+  clearTimeout(activityTimer)
+  if (activity && activity.state !== 'running') activityTimer = setTimeout(() => shared.activity.value = null, 2500)
+})
 
 function mounted() {
   if (status.value !== 'mounting') return
@@ -153,6 +209,7 @@ function mounted() {
 function promote() {
   clearTimeout(promoteFallback)
   if (!preview.value || !pending.value) return
+  bootRetries = 0
   const previous = shown.value
   retiring.value = previous
   shown.value = pending.value
@@ -166,9 +223,20 @@ function promote() {
   setTimeout(() => {
     if (retiring.value === previous) retiring.value = null
   }, 500)
+  if (switchingToDev) {
+    switchingToDev = false
+    shared.editStep.value = 3
+    shared.editor.value = 'on'
+    flash()
+  }
   if (reloading) {
     reloading = false
+    shared.activity.value = { id: 'reload', label: 'Preview updated', state: 'done' }
     flash()
+  }
+  if (reloadAfterSwitch) {
+    reloadAfterSwitch = false
+    reload()
   }
 }
 
@@ -189,8 +257,10 @@ watch(() => shared.navigation.value?.id, () => {
 })
 
 function onIframeLoad(frame: Frame) {
-  // Snapshots built before the bridge plugin never post `ready`.
-  if (frame === pending.value) promoteFallback = setTimeout(promote, 3000)
+  // Snapshots built before the bridge plugin never post `ready`. The dev server always has it, and its first page can take
+  // well over 3s past `load` to fetch its modules one import level at a time: swapping earlier shows a page that never starts.
+  // A page that fails to fetch them reports it and loads again, so the dev server's wait only covers one that hangs.
+  if (frame === pending.value) promoteFallback = setTimeout(promote, switchingToDev || shared.editor.value === 'on' ? 25_000 : 3000)
   else if (frame === shown.value) fallback = setTimeout(mounted, 1500)
 }
 
@@ -204,7 +274,16 @@ function stop() {
   clearTimeout(fallback)
   clearTimeout(promoteFallback)
   controller?.abort()
+  editController?.abort()
+  clearTimeout(activityTimer)
+  switchingToDev = false
   reloading = false
+  reloadAfterSwitch = false
+  bootRetries = 0
+  shared.editor.value = 'off'
+  shared.editStep.value = 0
+  shared.editError.value = ''
+  shared.activity.value = null
   if (preview.value) {
     fetch(`/api/templates/preview/${preview.value.id}`, { method: 'DELETE', keepalive: true }).catch(() => {})
   }
@@ -231,9 +310,10 @@ useEventListener(import.meta.client ? window : undefined, 'message', (event: Mes
   // A reload shares its origin with the frame it replaces: only the sending window tells them apart.
   const from = frames.value.find(frame => frameEls.get(frame.id)?.contentWindow === event.source)
   if (!from || event.origin !== new URL(from.url).origin) return
+  if (event.data.type === 'boot-failed') return retry(from)
   if (from === pending.value) {
     if (event.data.type === 'ready') promote()
-    // A page that crashed is still the page the server serves now: show it, and expose the error.
+    // A page that crashed is still the page the dev server serves now: show it, so Nuxi and the visitor see the error.
     if (event.data.type === 'error') {
       promote()
       if (shared.preview.value) shared.preview.value = { ...shared.preview.value, error: event.data.message }
