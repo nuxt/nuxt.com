@@ -179,7 +179,17 @@ function stop() {
           class="absolute inset-y-0 left-1/2 -translate-x-1/2 transition-[width] duration-300 ease-snappy"
           :class="device === 'mobile' ? 'w-[390px] max-w-full border-x border-default' : 'w-full'"
         >
-          <LazyTemplatesLivePreview :template="template" @url="liveUrl = $event" @status="onStatus" />
+          <NuxtErrorBoundary @error="onStatus('failed')">
+            <LazyTemplatesLivePreview :template="template" @url="liveUrl = $event" @status="onStatus" />
+            <template #error>
+              <div class="absolute inset-0 flex flex-col items-center justify-center gap-3 p-6" role="alert">
+                <p class="text-sm text-highlighted">
+                  The preview could not load.
+                </p>
+                <UButton label="Reload page" color="neutral" variant="subtle" icon="i-lucide-rotate-ccw" @click="reloadNuxtApp()" />
+              </div>
+            </template>
+          </NuxtErrorBoundary>
         </div>
       </Transition>
 
