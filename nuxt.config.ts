@@ -109,6 +109,8 @@ export default defineNuxtConfig({
   site: {
     name: 'Nuxt',
     url: PREVIEW_URL ?? SITE_URL,
+    // Previews are public: keep crawlers out, every page they render reads the preview database.
+    indexable: process.env.VERCEL_ENV !== 'preview',
     description: 'Build fast, production-ready web apps with Vue. File-based routing, auto-imports, and server-side rendering — all configured out of the box.',
     defaultLocale: 'en'
   },
