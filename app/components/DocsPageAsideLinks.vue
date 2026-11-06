@@ -37,12 +37,15 @@ const languageItems = computed<DropdownMenuItem[]>(() => languages.value.map(lan
       }))
 
 const links = computed<PageLink[]>(() => [
-  {
-    icon: 'i-simple-icons-github',
-    label: 'Edit this page on GitHub',
-    to: props.editLink,
-    target: '_blank'
-  },
+  // Translations are edited through the review mode, not the English source on GitHub.
+  ...(locale.value
+    ? []
+    : [{
+        icon: 'i-simple-icons-github',
+        label: 'Edit this page on GitHub',
+        to: props.editLink,
+        target: '_blank'
+      }]),
   {
     icon: 'i-lucide-star',
     label: 'Star on GitHub',
