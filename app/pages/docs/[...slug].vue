@@ -277,8 +277,11 @@ const noRightAside = computed(() => route.path.includes('/examples/'))
 <template>
   <UContainer v-if="page">
     <DocsVersionAlert />
-    <!-- mobile -->
-    <div class="lg:hidden sticky top-(--ui-header-height) z-10 bg-default/75 backdrop-blur -mx-4 sm:-mx-6 p-6 border-b border-dashed border-default flex justify-between">
+    <!-- Docking the agent hides the right aside, so this bar then stays on desktop to keep its table of contents and links. -->
+    <div
+      class="sticky top-(--ui-header-height) z-10 bg-default/75 backdrop-blur -mx-4 sm:-mx-6 p-6 border-b border-dashed border-default flex justify-between"
+      :class="isAgentDocked && !noRightAside ? 'lg:justify-end lg:-mx-8 lg:py-4' : 'lg:hidden'"
+    >
       <UDrawer
         v-model:open="menuDrawerOpen"
         direction="left"
@@ -297,7 +300,7 @@ const noRightAside = computed(() => route.path.includes('/examples/'))
           variant="link"
           size="xs"
           aria-label="Open navigation"
-          class="-m-4"
+          class="-m-4 lg:hidden"
         />
         <template #body>
           <UContentNavigation
@@ -322,7 +325,7 @@ const noRightAside = computed(() => route.path.includes('/examples/'))
         inset
         no-body-styles
         :ui="{
-          content: 'w-full max-w-2/3'
+          content: 'w-full max-w-2/3 lg:max-w-sm'
         }"
         @update:open="refreshHeading"
       >
