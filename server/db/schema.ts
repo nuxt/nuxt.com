@@ -140,7 +140,7 @@ export const templateCheckRuns = sqliteTable('template_check_runs', {
   // Workflow run, set once it started
   runId: text('run_id'),
   state: text('state', { enum: ['running', 'finished'] }).notNull(),
-  trigger: text('trigger', { enum: ['cron', 'task', 'mcp'] }).notNull(),
+  trigger: text('trigger', { enum: ['cron', 'task', 'mcp', 'admin'] }).notNull(),
   startedBy: text('started_by'),
   total: integer('total').notNull(),
   browser: text('browser'),
