@@ -4,6 +4,7 @@ import assert from 'node:assert/strict'
 import { readFile } from 'node:fs/promises'
 import { Sandbox } from '@vercel/sandbox'
 import { parseYAML } from 'confbox'
+import { Window } from 'happy-dom'
 import type { Template } from '../../shared/types/templates'
 import { INSTALL_SCRIPT, TEMPLATE_WORKDIR } from '../../server/utils/templates/check-scripts'
 import { DEV_PORT } from '../../server/utils/templates/dev-server'
@@ -13,6 +14,7 @@ const args = process.argv.slice(2)
 const module = args.find(arg => arg.startsWith('--module='))?.slice(9)
 const slugs = args.filter(arg => !arg.startsWith('--'))
 assert(slugs.length, 'Pass template slugs, for example: minimal nuxt-ui-dashboard docus')
+const window = new Window()
 
 for (const slug of slugs) {
   assert(/^[\w-]+$/.test(slug), `Invalid template slug: ${slug}`)
@@ -53,7 +55,9 @@ for (const slug of slugs) {
       assert(!page.devServerErrors?.length, page.devServerErrors?.join('\n'))
       // The tool deliberately limits its text excerpt; check the full HTML without serialized payloads.
       const html = await sandbox.readFileToBuffer({ path: '/tmp/nuxt-com-page.html' })
-      assert(html!.toString().replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, '').includes(expected), 'Edited text is missing from the rendered page')
+      const document = new window.DOMParser().parseFromString(html!.toString(), 'text/html')
+      document.querySelectorAll('script, style, template').forEach(element => element.remove())
+      assert(document.body.textContent.includes(expected), 'Edited text is missing from the rendered page')
     }
     for (const expected of [before, after]) {
       const offset = await devLogSize(sandbox)
@@ -82,3 +86,5 @@ for (const slug of slugs) {
     await sandbox.stop()
   }
 }
+
+await window.happyDOM.close()
