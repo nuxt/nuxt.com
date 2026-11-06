@@ -5,6 +5,7 @@ definePageMeta({
 
 const route = useRoute()
 const { all, templates, health } = await useTemplates()
+const { user } = useUserSession()
 
 const template = computed(() => all.value.find(item => item.slug === route.params.slug))
 if (!template.value) {
@@ -82,6 +83,12 @@ defineOgImage('Templates.takumi', {
       </div>
 
       <TemplatesMeta :template="template" :health="templateHealth" />
+      <LazyTemplatesAdminCheck
+        v-if="user?.role === 'admin' && template.repo && template.template !== 'module'"
+        :key="template.slug"
+        :slug="template.slug"
+        @checked="refreshNuxtData('templates-health')"
+      />
     </div>
 
     <TemplatesAlert :template="template" :health="templateHealth" :has-working-alternative="hasWorkingAlternative" />
