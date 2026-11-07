@@ -7,7 +7,8 @@ import { CURRENT_DOCS_VERSION, docsPathPrefix, docsStatus, isArchivedDocVersion,
  * `machine` shows unreviewed machine translations; without it only edited and verified segments are shown.
  */
 export const L10N_LOCALES = {
-  fr: { machine: true }
+  fr: { machine: true },
+  de: { machine: true }
 } as const satisfies Record<string, { machine: boolean }>
 
 export type L10nLocale = keyof typeof L10N_LOCALES
@@ -83,7 +84,7 @@ function versionedDocsPath(pathname: string): string | undefined {
  * - `/fr` and `/fr/docs` → the French docs index of the current version
  * - `/fr/docs/4.x` and other English redirects → their target, kept French when it is a localised page
  * - `/fr/docs/guide` → `/fr/docs/4.x/guide`
- * - anything else (`/fr/modules`, `/fr/raw/…`, `/fr/llms.txt`) and unknown locales (`/de/docs/…`) → the English URL
+ * - anything else (`/fr/modules`, `/fr/raw/…`, `/fr/llms.txt`) and unknown locales (`/es/docs/…`) → the English URL
  *
  * `undefined` when `url` is a localised page, or has no locale prefix.
  * `redirectFor` resolves the site's own redirect rules for an English path.
@@ -381,6 +382,8 @@ export const L10N_STRINGS = {
     language: 'Français',
     /** Prefixes the current language in the language menu. */
     languageLabel: 'Langue\u00A0:',
+    /** Separates a label from what it introduces. */
+    colon: ' : ',
     machine: 'Traduction automatique',
     reviewedTranslation: 'Traduction relue',
     reviewed: (share: number) => `${Math.floor(share * 100)}\u202F% relue`,
@@ -408,6 +411,39 @@ export const L10N_STRINGS = {
       'edited': 'Traduction relue et modifiée',
       'verified': 'Traduction vérifiée',
       'rejected': 'Traduction rejetée : texte anglais'
+    } satisfies Record<SegmentStatus, string>
+  },
+  de: {
+    language: 'Deutsch',
+    languageLabel: 'Sprache:',
+    colon: ': ',
+    machine: 'Maschinelle Übersetzung',
+    reviewedTranslation: 'Geprüfte Übersetzung',
+    reviewed: (share: number) => `${Math.floor(share * 100)}\u00A0% geprüft`,
+    pending: 'Einige Abschnitte müssen noch geprüft werden.',
+    toReview: 'zu prüfen',
+    review: 'Prüfen',
+    reviewHint: 'Zeige den Status jedes Abschnitts an und bearbeite ihn',
+    reviewBlockHint: 'Drücke die Eingabetaste, um diesen Abschnitt zu bearbeiten.',
+    legend: {
+      'untranslated': 'Nicht übersetzt',
+      'machine': 'Maschinell',
+      'pending-review': 'Zu prüfen',
+      'edited': 'Bearbeitet',
+      'verified': 'Bestätigt',
+      'rejected': 'Abgelehnt'
+    } satisfies Record<SegmentStatus, string>,
+    improve: 'Verbessere diese Übersetzung',
+    readMore: { before: 'Weitere Informationen findest du unter ', after: '.' },
+    source: 'Originaltext (Englisch)',
+    loading: 'Wird geladen…',
+    status: {
+      'untranslated': 'Noch nicht übersetzt: englischer Text',
+      'machine': 'Maschinelle Übersetzung',
+      'pending-review': 'Übersetzung zu prüfen: Der englische Text hat sich geändert',
+      'edited': 'Übersetzung geprüft und bearbeitet',
+      'verified': 'Übersetzung bestätigt',
+      'rejected': 'Übersetzung abgelehnt: englischer Text'
     } satisfies Record<SegmentStatus, string>
   }
 } as const satisfies Record<L10nLocale, unknown>

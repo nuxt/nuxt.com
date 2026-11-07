@@ -145,7 +145,7 @@ const status = computed(() => (source.value?.status ?? reference.value?.dataset.
     <div class="flex items-center gap-2">
       <p class="flex-1 min-w-0 flex flex-wrap gap-x-1">
         <span class="whitespace-nowrap">{{ machine ? strings.machine : strings.reviewedTranslation }} ·</span>
-        <span class="whitespace-nowrap">{{ strings.reviewed(reviewedShare(coverage)) }}<template v-if="pending"> · <span class="text-highlighted">{{ strings.toReview }}</span><span class="sr-only"> : {{ strings.pending }}</span></template></span>
+        <span class="whitespace-nowrap">{{ strings.reviewed(reviewedShare(coverage)) }}<template v-if="pending"> · <span class="text-highlighted">{{ strings.toReview }}</span><span class="sr-only">{{ strings.colon }}{{ strings.pending }}</span></template></span>
       </p>
       <UTooltip :text="strings.reviewHint">
         <UButton
