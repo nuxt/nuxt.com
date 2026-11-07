@@ -16,14 +16,14 @@ export const SNAPSHOT_ASSET_BASE = 'comark-content'
  * Instances shipped with a build-time snapshot.
  *
  * Not every instance earns one:
+ * - `site` (most visible content)
  * - `examples` (search index)
  * - `docs:<version>` (search index)
  * - `cli:<version>` (search index)
  * - `module:<name>` (search index)
- *
- * `site` is snapshotted by `@nuxt/content`, which owns it (`server/content.ts`).
  */
 export const SNAPSHOT_INSTANCE_KEYS: ContentInstanceKey[] = [
+  'site',
   'examples',
   docsInstanceKey(CURRENT_DOCS_VERSION),
   cliInstanceKey(CURRENT_DOCS_VERSION),

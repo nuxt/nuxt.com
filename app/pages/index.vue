@@ -88,7 +88,7 @@ if (import.meta.server) {
 const tabs = computed(() => pageData.value?.hero.tabs.map(tab => ({
   label: tab.title,
   icon: tab.icon,
-  document: tab.content
+  content: tab.content
 })))
 
 const activeBundlerIndex = ref(0)
@@ -219,7 +219,7 @@ useNuxtBirthday()
           }"
         >
           <template #content="{ item, index }">
-            <MarkdownDocument :key="index" :value="item.document" :components="{ ProseCodeTree, ProsePre }" />
+            <MarkdownDocument :key="index" :value="(item as any).content" :components="{ ProseCodeTree, ProsePre }" />
           </template>
         </UTabs>
       </UPageCard>

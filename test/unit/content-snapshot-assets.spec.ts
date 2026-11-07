@@ -41,8 +41,9 @@ describe('SNAPSHOT_INSTANCE_KEYS', () => {
     }
   })
 
-  it('leaves the site instance to `@nuxt/content`, which snapshots it', () => {
-    expect(SNAPSHOT_INSTANCE_KEYS).not.toContain('site')
+  it('ships the local site instance, whose content the build already holds', () => {
+    expect(SNAPSHOT_INSTANCE_KEYS).toContain('site')
+    expect(instanceSource('site').source.local).toBe(true)
   })
 
   it('ships every instance the current version\'s search palette hydrates from', () => {

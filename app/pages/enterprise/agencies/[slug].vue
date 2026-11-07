@@ -100,7 +100,7 @@ defineOgImage('Docs.takumi', {
 
     <UPage :ui="{ right: 'my-8' }">
       <UPageBody>
-        <ContentRenderer v-if="agency" :value="agency" :components="proseComponents" />
+        <MarkdownDocument v-if="agency" :value="agency" :components="proseComponents" />
       </UPageBody>
 
       <template #right>

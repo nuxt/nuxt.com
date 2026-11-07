@@ -56,7 +56,6 @@
     "@nuxt/hints": "^1.1.5",
     "@nuxt/image": "^2.2.1",
     "@nuxt/scripts": "^1.3.12",
-    "@nuxt/content": "https://pkg.pr.new/nuxt/content-v4-temp/@nuxt/content4@60b0921",
     "@nuxt/ui": "^4.12.0",
     "@nuxthub/core": "^0.10.12",
     "@nuxtjs/html-validator": "^2.1.0",

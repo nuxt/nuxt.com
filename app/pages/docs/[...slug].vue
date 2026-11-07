@@ -425,7 +425,7 @@ const noRightAside = computed(() => route.path.includes('/examples/'))
           :target="pageBody?.$el"
           @published="showPublished"
         />
-        <ContentRenderer v-if="page.nodes?.length" :value="page" :components="markdownComponents" />
+        <MarkdownDocument v-if="page.nodes?.length" :value="page" :components="markdownComponents" />
         <div>
           <Feedback :page="{ title: fm.title, stem: page.meta.stem }" :lang="locale ? 'en' : undefined" />
           <USeparator class="mt-6 mb-10" :lang="locale ? 'en' : undefined">

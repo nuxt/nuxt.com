@@ -225,7 +225,7 @@ function copyLink() {
       </aside>
 
       <div ref="articleBody" class="min-w-0 xl:col-start-2 xl:row-start-2">
-        <ContentRenderer :value="article!" :components="markdownComponents" />
+        <MarkdownDocument :value="article!" :components="markdownComponents" />
 
         <div class="mt-16 border-t border-default pt-6">
           <UButton

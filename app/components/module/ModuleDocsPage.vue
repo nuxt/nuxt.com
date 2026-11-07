@@ -17,7 +17,7 @@ const markdownComponents = {
 </script>
 
 <template>
-  <ContentRenderer v-if="page.nodes?.length" :value="page" :components="markdownComponents" />
+  <MarkdownDocument v-if="page.nodes?.length" :value="page" :components="markdownComponents" />
   <div>
     <USeparator class="mt-6 mb-10">
       <UButton

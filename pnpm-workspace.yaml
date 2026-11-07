@@ -54,5 +54,3 @@ permissions:
 patchedDependencies:
   # Redraw once the map texture loads, and free it on destroy: https://github.com/shuding/cobe/pull/125
   cobe@2.0.1: patches/cobe@2.0.1.patch
-  # Accept @nuxt/content v4: its built-in v3 source is unused, nuxt.com passes its own (`agentDiscovery.source`).
-  nuxt-agent-discovery@0.8.1: patches/nuxt-agent-discovery@0.8.1.patch
