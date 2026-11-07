@@ -56,6 +56,9 @@ export function instanceSourceFor(key: ContentInstanceKey, { remote = false } = 
 }
 
 /**
+ * Not `@nuxt/content`'s, which only owns `site` (`server/content.ts`): it serves one exported instance or hub
+ * under a fixed `/__nuxt_content` base, so it can't hold an instance per commit, nor several sharing a name.
+ *
  * Unpinned base per instance: owns its source, plugin chain and cache driver.
  * Every commit-pinned instance derives from it with `withRef(sha)`, sharing its driver.
  */
@@ -91,6 +94,8 @@ const instances = new Map<ContentInstanceKey, { sha: string, instance: Promise<C
  * Each call resolves that instance's latest commit.
  */
 export async function getInstanceAtHead(key: ContentInstanceKey): Promise<ComarkContent> {
+  if (key === 'site') return siteInstance()
+
   const sha = await resolveInstanceSha(key)
   const current = instances.get(key)
 
@@ -112,6 +117,18 @@ export async function getInstanceAtHead(key: ContentInstanceKey): Promise<Comark
   instances.set(key, { sha, instance })
 
   return instance
+}
+
+let siteWatch: Promise<unknown> | undefined
+
+/**
+ * nuxt.com's own content, defined in `server/content.ts` and owned by `@nuxt/content`.
+ * The module watches its own copy in dev, for the browser: this one is the copy server code reads.
+ */
+async function siteInstance(): Promise<ComarkContent> {
+  const site = content as unknown as ComarkContent
+  if (import.meta.dev) await (siteWatch ??= site.watch())
+  return site
 }
 
 /** Dev serves the unpinned base directly: its source is the working tree, which `watch()` follows. */

@@ -1,0 +1,13 @@
+diff --git a/dist/module.mjs b/dist/module.mjs
+index 29c82ee3e10c50e587d40962c7f233072b5123aa..0b388fe26113a3f7d0d47cd5169702fb8f02067f 100644
+--- a/dist/module.mjs
++++ b/dist/module.mjs
+@@ -578,7 +578,7 @@ const module$1 = defineNuxtModule({
+   // `#content/manifest`, `minimark/stringify`) that a major bump would break
+   // silently. Keep in step with `peerDependencies`.
+   moduleDependencies: {
+-    "@nuxt/content": { version: "^3.7.0", optional: true }
++    "@nuxt/content": { version: "^3.7.0 || ^4.0.0", optional: true }
+   },
+   defaults: {
+     siteUrl: "",

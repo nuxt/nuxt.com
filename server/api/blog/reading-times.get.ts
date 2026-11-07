@@ -12,7 +12,8 @@ export default defineCachedEventHandler(async () => {
   return Object.fromEntries(entries) as Record<string, number>
 }, {
   name: 'blog-reading-times',
-  getKey: () => resolveInstanceSha('site'),
+  // The site content ships with the deployment.
+  getKey: () => useRuntimeConfig().app.buildId,
   swr: true,
   maxAge: 60 * 60
 })

@@ -38,6 +38,7 @@ export default defineNuxtConfig({
     '@nuxt/fonts',
     '@nuxt/ui',
     '@nuxt/test-utils',
+    '@nuxt/content',
     '@comark/nuxt',
     '@nuxt/image',
     '@nuxt/eslint',
@@ -117,6 +118,13 @@ export default defineNuxtConfig({
   colorMode: {
     preference: 'dark'
   },
+  // nuxt.com's own content, defined in `server/content.ts`.
+  content: {
+    // Pages are ISR: the browser asks the server instead of downloading the snapshot.
+    mode: 'server-only',
+    // Native `content` API only, without `queryCollection*()`, `<MDC>` or their SQLite.
+    v3Composables: false
+  },
   ui: {
     theme: {
       colors: ['primary', 'secondary', 'info', 'success', 'warning', 'error', 'important']
@@ -129,13 +137,7 @@ export default defineNuxtConfig({
   },
   runtimeConfig: {
     public: {
-      eveEnabled: nuxiEnabled,
-      // Nuxt UI prose headings read this MDC setting to render anchor links, which comark doesn't set.
-      mdc: {
-        headings: {
-          anchorLinks: { h2: true, h3: true, h4: true }
-        }
-      }
+      eveEnabled: nuxiEnabled
     },
     mcpAdminToken: '',
     // Service account added as a user of the Search Console property (admin MCP `search-console-*` tools)

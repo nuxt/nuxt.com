@@ -46,7 +46,7 @@ defineOgImage('Docs.takumi', {
 
     <UPageBody>
       <UContainer>
-        <MarkdownDocument v-if="page" :value="page" :components="markdownComponents" />
+        <ContentRenderer v-if="page" :value="page" :components="markdownComponents" />
       </UContainer>
     </UPageBody>
   </UPage>

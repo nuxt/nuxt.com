@@ -113,7 +113,7 @@ links.push({
         } : { root: 'lg:grid-cols-12', center: 'lg:col-span-9', right: 'lg:col-span-3' }"
       >
         <UPageBody>
-          <MarkdownDocument v-if="provider" :value="provider" :components="markdownComponents" />
+          <ContentRenderer v-if="provider" :value="provider" :components="markdownComponents" />
 
           <USeparator v-if="surround?.length" />
 

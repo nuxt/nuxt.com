@@ -17,9 +17,13 @@ const CONTENT_EXTENSIONS = ['.md', '.yml', '.yaml', '.json']
 
 /**
  * Every instance reading `repo` at `branch`.
+ *
+ * Not `site`: it ships with the deployment (`server/content.ts`), and the push that changes it
+ * deploys again, with an ISR cache of its own.
  */
 export function impactedInstances(repo: string, branch: string): ContentInstanceKey[] {
   return CONTENT_INSTANCE_KEYS.filter((key) => {
+    if (key === 'site') return false
     const { source } = instanceSource(key)
     return source.repo === repo && source.branch === branch
   })
