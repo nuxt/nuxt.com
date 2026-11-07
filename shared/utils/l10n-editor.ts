@@ -193,5 +193,98 @@ export const L10N_EDITOR_STRINGS = {
       if (kind === 'code-comment') return detail ? `Commentaire de code (${detail})` : 'Commentaire de code'
       return 'Passage'
     }
+  },
+  de: {
+    title: 'Übersetzung',
+    close: 'Schließen',
+    signIn: 'Melde dich mit GitHub an, um zu bearbeiten',
+    suggesterNote: 'Du gehörst nicht zum Übersetzungsteam: Deine Änderungen werden in einem Pull-Request vorgeschlagen.',
+    english: 'Originaltext (Englisch)',
+    previousSource: 'Früherer Originaltext (Englisch)',
+    translation: 'Übersetzung',
+    changedSentences: 'Die hervorgehobenen Sätze sind im englischen Text neu.',
+    current: 'Aktuelle Übersetzung',
+    none: 'Noch nicht übersetzt.',
+    yours: 'Deine Übersetzung',
+    fromSource: 'In deine Übersetzung kopieren',
+    placeholders: 'Die Platzhalter {0}, {1}… stehen für den Code und die Links des englischen Textes: Behalte alle bei und setze den Text eines Links zwischen {0} und {/0}.',
+    glossary: 'Glossar',
+    glossaryKeep: 'auf Englisch belassen',
+    glossaryTranslate: (target?: string) => target ? `mit „${target}“ übersetzen` : 'übersetzen',
+    glossaryKeepGloss: (gloss: string) => `auf Englisch belassen, ergänzt um „${gloss}“`,
+    by: (login: string) => `von @${login}`,
+    rejectedBy: (login: string) => `Abgelehnt von @${login}: Die Seite zeigt den englischen Text. Bearbeite die Übersetzung, um sie wiederherzustellen.`,
+    edit: 'Bearbeiten',
+    verify: 'Bestätigen',
+    reject: 'Ablehnen',
+    undo: 'Rückgängig',
+    rejectHint: 'Die Seite zeigt für diesen Abschnitt den englischen Text.',
+    staged: { edit: 'Bearbeitung ausstehend', verify: 'Bestätigung ausstehend', reject: 'Ablehnung ausstehend' },
+    pendingChanges: (count: number) => `${count} ${count === 1 ? 'Änderung' : 'Änderungen'} ausstehend`,
+    publish: (count: number) => count ? `${count} ${count === 1 ? 'Änderung' : 'Änderungen'} veröffentlichen` : 'Veröffentlichen',
+    propose: (count: number) => count ? `${count} ${count === 1 ? 'Änderung' : 'Änderungen'} vorschlagen` : 'Vorschlagen',
+    publishedNow: 'Übersetzung veröffentlicht: Die Seite ist aktuell.',
+    publishSlow: 'Die Seite ist noch nicht aktuell: Deine Änderungen sind gespeichert und in wenigen Minuten online.',
+    saving: (count: number) => count === 1 ? '1 Änderung wird gespeichert…' : `${count} Änderungen werden gespeichert…`,
+    stagedHint: 'Noch nicht gespeichert: Die Änderungen bleiben bis zur Veröffentlichung in diesem Browser.',
+    state: {
+      publishing: { label: 'Gespeichert', hint: 'Die Veröffentlichung läuft und dauert meist weniger als eine Minute…' },
+      online: { label: 'Online', hint: 'Die Seite zeigt deine Änderungen.' },
+      slow: { label: 'Gespeichert', hint: 'Die Veröffentlichung dauert länger als erwartet: Die Seite ist in wenigen Minuten aktuell.' }
+    },
+    commit: 'Commit',
+    proposedIn: (number: number) => `Vorgeschlagen in Pull-Request #${number}: online, sobald das Übersetzungsteam ihn annimmt.`,
+    notSaved: (count: number) => `${count} ${count === 1 ? 'Änderung' : 'Änderungen'} nicht gespeichert:`,
+    issues: {
+      'unknown-segment': 'Dieser Abschnitt ist nicht mehr auf der Seite.',
+      'duplicate': 'Dieser Abschnitt wird zweimal geändert.',
+      'not-allowed': 'Nur das Übersetzungsteam kann eine Übersetzung bestätigen.',
+      'missing-text': 'Die Übersetzung ist leer.',
+      'too-long': 'Die Übersetzung ist viel länger als der Originaltext.',
+      'invalid': 'Die Übersetzung passt nicht zum Originaltext.',
+      'unchanged': 'Diese Änderung bewirkt nichts.',
+      'no-record': 'Es gibt noch keine Übersetzung, die bestätigt oder abgelehnt werden kann.',
+      'stale': 'Die Übersetzung wurde seit deiner Änderung geändert.'
+    } satisfies Record<L10nChangeIssue['code'], string>,
+    staleHint: 'Deine Fassung bleibt erhalten: Lade die aktuelle Übersetzung neu, vergleiche beide und übernimm deine Änderung erneut.',
+    reloadCurrent: 'Aktuelle Übersetzung neu laden',
+    reloaded: 'Aktuelle Übersetzung neu geladen: Deine Fassung steht im Eingabefeld.',
+    conflict: 'Die Übersetzungen wurden während des Speicherns geändert: Versuche es erneut.',
+    tooMany: 'Zu viele Speichervorgänge: Versuche es in einer Stunde erneut.',
+    viewPull: 'Pull-Request ansehen',
+    suggestions: 'Vorschläge',
+    suggestedReject: 'Schlägt vor, die aktuelle Übersetzung abzulehnen.',
+    suggestionCount: (count: number) => `${count} ${count === 1 ? 'Abschnitt' : 'Abschnitte'} mit Vorschlägen`,
+    dryRun: 'Testlauf: Nichts wurde veröffentlicht, die GitHub-App ist nicht eingerichtet.',
+    failed: 'Die Veröffentlichung ist fehlgeschlagen.',
+    verifyAll: (count: number) => count === 1 ? 'Die maschinelle Übersetzung bestätigen' : `Alle ${count} maschinellen Übersetzungen bestätigen`,
+    verifyAllConfirm: (count: number) => count === 1
+      ? 'Möchtest du die maschinelle Übersetzung dieser Seite unverändert bestätigen? Die Übersetzung wird zusammen mit deinen anderen Änderungen als von dir bestätigt veröffentlicht.'
+      : `Möchtest du ${count} maschinelle Übersetzungen dieser Seite unverändert bestätigen? Die Übersetzungen werden zusammen mit deinen anderen Änderungen als von dir bestätigt veröffentlicht.`,
+    confirm: 'Bestätigen',
+    cancel: 'Abbrechen',
+    previous: 'Vorheriger Abschnitt',
+    next: 'Nächster Abschnitt',
+    position: (index: number, count: number) => `${index} von ${count}`,
+    otherTexts: 'Weitere Texte dieser Seite',
+    otherTextsCount: (count: number) => `${count} ${count === 1 ? 'Text' : 'Texte'}`,
+    otherTextsHint: 'Diese Texte haben auf der Seite keinen anklickbaren Block: Titel und Beschreibung, Titel der „Weitere Informationen“-Links, Alternativtexte von Bildern sowie Titel und Kommentare von Codeblöcken.',
+    noteAdd: 'Erläutere diese Änderung (optional)',
+    noteLabel: 'Warum diese Änderung? (optional)',
+    noteHelp: (role: L10nRole) => role === 'translator' ? 'Wird zur Nachvollziehbarkeit an die Commit-Nachricht angehängt.' : 'Wird dem Pull-Request für die Prüfung hinzugefügt.',
+    codePolicy: 'In Codeblöcken werden nur Kommentare übersetzt: Der Code bleibt in allen Sprachen gleich.',
+    pageMeta: 'Titel und Beschreibung der Seite',
+    pageStart: 'Anfang der Seite',
+    editThis: 'Bearbeite diesen Text',
+    untranslatedShort: 'Noch nicht übersetzt',
+    where: (kind: SegmentKind, detail?: string, container?: string): string => {
+      if (kind === 'frontmatter') return detail === 'title' ? 'Titel der Seite' : detail === 'description' ? 'Beschreibung der Seite' : `Metadaten ${detail ?? ''}`.trim()
+      if (kind === 'navigation') return `Navigation ${detail ?? ''}`.trim()
+      if (kind === 'prop') return `Prop „${detail ?? '?'}“${container ? ` von ${container}` : ''}`
+      if (kind === 'image-alt') return 'Alternativtext eines Bildes'
+      if (kind === 'code-label') return 'Titel eines Codeblocks'
+      if (kind === 'code-comment') return detail ? `Codekommentar (${detail})` : 'Codekommentar'
+      return 'Abschnitt'
+    }
   }
 } as const satisfies Record<L10nLocale, unknown>
