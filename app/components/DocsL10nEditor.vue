@@ -440,7 +440,7 @@ function glossaryHint(entry: NonNullable<typeof segment.value>['glossary'][numbe
           <ul class="space-y-0.5">
             <li v-for="entry in segment.glossary" :key="entry.term">
               <span lang="en" class="font-medium text-highlighted">{{ entry.term }}</span>
-              <span class="text-muted"> : {{ glossaryHint(entry) }}</span>
+              <span class="text-muted">{{ strings.colon }}{{ glossaryHint(entry) }}</span>
               <span v-if="entry.note" lang="en" class="text-muted"> ({{ entry.note }})</span>
             </li>
           </ul>
@@ -596,9 +596,7 @@ function glossaryHint(entry: NonNullable<typeof segment.value>['glossary'][numbe
             <UButton v-if="staged" :label="t.undo" color="neutral" variant="ghost" @click="unstage()" />
           </div>
           <p v-if="staged" class="text-xs text-toned">
-            {{ t.staged[staged.action] }}<template v-if="staged.action === 'reject'">
-              : {{ t.rejectHint }}
-            </template>
+            {{ t.staged[staged.action] }}{{ staged.action === 'reject' ? `${strings.colon}${t.rejectHint}` : '' }}
           </p>
         </template>
 
@@ -632,13 +630,13 @@ function glossaryHint(entry: NonNullable<typeof segment.value>['glossary'][numbe
                       class="w-full rounded-md border p-2 text-start text-xs transition-colors hover:bg-elevated focus-visible:outline-2 focus-visible:outline-primary"
                       :class="item.hash === segment.hash ? 'border-primary bg-elevated' : 'border-default'"
                       :aria-current="item.hash === segment.hash ? 'true' : undefined"
-                      :aria-label="`${t.editThis} : ${where(item)}`"
+                      :aria-label="`${t.editThis}${strings.colon}${where(item)}`"
                       @click="select(item.hash)"
                     >
                       <span class="block text-muted">{{ where(item) }}</span>
                       <span class="mt-1 grid grid-cols-2 gap-2">
                         <span lang="en" class="text-toned">
-                          <span class="sr-only" :lang="locale">{{ t.english }} : </span>
+                          <span class="sr-only" :lang="locale">{{ t.english }}{{ strings.colon }}</span>
                           <DocsL10nSkeleton :skeleton="item.skeleton" :placeholders="item.placeholders" />
                         </span>
                         <span v-if="item.record" :lang="locale" class="text-highlighted">
@@ -687,7 +685,7 @@ function glossaryHint(entry: NonNullable<typeof segment.value>['glossary'][numbe
             />
             <span>
               <span class="font-medium text-highlighted">{{ t.state[publication.state].label }}</span>
-              ({{ t.commit }} <ULink :to="commitUrl" target="_blank" class="font-mono underline underline-offset-2">{{ publication.sha.slice(0, 7) }}</ULink>) : {{ t.state[publication.state].hint }}
+              ({{ t.commit }} <ULink :to="commitUrl" target="_blank" class="font-mono underline underline-offset-2">{{ publication.sha.slice(0, 7) }}</ULink>){{ strings.colon }}{{ t.state[publication.state].hint }}
             </span>
           </p>
           <p v-else-if="result?.pull" class="flex gap-1.5 text-xs text-toned" data-l10n-save-state="proposed">
@@ -750,7 +748,7 @@ function glossaryHint(entry: NonNullable<typeof segment.value>['glossary'][numbe
                 />
                 <UButton
                   icon="i-lucide-undo-2"
-                  :aria-label="`${t.undo} : ${excerpt(change.hash)}`"
+                  :aria-label="`${t.undo}${strings.colon}${excerpt(change.hash)}`"
                   color="neutral"
                   variant="ghost"
                   size="xs"
