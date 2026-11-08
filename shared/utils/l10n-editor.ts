@@ -101,6 +101,15 @@ export function l10nCommitUrl(sha: string): string {
   return `https://github.com/${L10N_TRANSLATIONS_REPO}/commit/${sha}`
 }
 
+/** Russian plural form for a count: `one` for 1, `few` for 2–4, `many` for 0 and 5+. */
+function ruPlural(count: number, one: string, few: string, many: string): string {
+  const mod10 = count % 10
+  const mod100 = count % 100
+  if (mod10 === 1 && mod100 !== 11) return one
+  if (mod10 >= 2 && mod10 <= 4 && (mod100 < 12 || mod100 > 14)) return few
+  return many
+}
+
 /** The strings of the translation editor, by locale. */
 export const L10N_EDITOR_STRINGS = {
   fr: {
@@ -285,6 +294,99 @@ export const L10N_EDITOR_STRINGS = {
       if (kind === 'code-label') return 'Titel eines Codeblocks'
       if (kind === 'code-comment') return detail ? `Codekommentar (${detail})` : 'Codekommentar'
       return 'Abschnitt'
+    }
+  },
+  ru: {
+    title: 'Перевод',
+    close: 'Закрыть',
+    signIn: 'Войдите через GitHub, чтобы редактировать',
+    suggesterNote: 'Вы не входите в команду переводчиков: ваши изменения будут предложены в pull request.',
+    english: 'Исходный текст (английский)',
+    previousSource: 'Предыдущий исходный текст (английский)',
+    translation: 'Перевод',
+    changedSentences: 'Выделенные предложения появились в английском тексте.',
+    current: 'Текущий перевод',
+    none: 'Ещё не переведено.',
+    yours: 'Ваш перевод',
+    fromSource: 'Скопировать в ваш перевод',
+    placeholders: 'Заполнители {0}, {1}… обозначают код и ссылки английского текста: сохраните их все, а текст ссылки поместите между {0} и {/0}.',
+    glossary: 'Глоссарий',
+    glossaryKeep: 'оставить на английском',
+    glossaryTranslate: (target?: string) => target ? `перевести как «${target}»` : 'перевести',
+    glossaryKeepGloss: (gloss: string) => `оставить на английском, добавив «${gloss}»`,
+    by: (login: string) => `от @${login}`,
+    rejectedBy: (login: string) => `Отклонено пользователем @${login}: страница показывает английский текст. Отредактируйте перевод, чтобы восстановить его.`,
+    edit: 'Изменить',
+    verify: 'Подтвердить',
+    reject: 'Отклонить',
+    undo: 'Отменить',
+    rejectHint: 'Страница покажет английский текст для этого фрагмента.',
+    staged: { edit: 'Изменение ожидает публикации', verify: 'Подтверждение ожидает публикации', reject: 'Отклонение ожидает публикации' },
+    pendingChanges: (count: number) => `${count} ${ruPlural(count, 'изменение', 'изменения', 'изменений')} в ожидании`,
+    publish: (count: number) => count ? `Опубликовать ${count} ${ruPlural(count, 'изменение', 'изменения', 'изменений')}` : 'Опубликовать',
+    propose: (count: number) => count ? `Предложить ${count} ${ruPlural(count, 'изменение', 'изменения', 'изменений')}` : 'Предложить',
+    publishedNow: 'Перевод опубликован: страница обновлена.',
+    publishSlow: 'Страница ещё не обновлена: ваши изменения сохранены и появятся онлайн через несколько минут.',
+    saving: (count: number) => `${ruPlural(count, 'Сохраняется', 'Сохраняются', 'Сохраняются')} ${count} ${ruPlural(count, 'изменение', 'изменения', 'изменений')}…`,
+    stagedHint: 'Ещё не сохранено: изменения останутся в этом браузере до публикации.',
+    state: {
+      publishing: { label: 'Сохранено', hint: 'Публикация идёт, обычно это занимает меньше минуты…' },
+      online: { label: 'Опубликовано', hint: 'Страница показывает ваши изменения.' },
+      slow: { label: 'Сохранено', hint: 'Публикация занимает больше времени, чем ожидалось: страница обновится через несколько минут.' }
+    },
+    commit: 'коммит',
+    proposedIn: (number: number) => `Предложено в pull request #${number}: появится онлайн, когда команда переводчиков его примет.`,
+    notSaved: (count: number) => `Не удалось сохранить ${count} ${ruPlural(count, 'изменение', 'изменения', 'изменений')}:`,
+    issues: {
+      'unknown-segment': 'Этого фрагмента больше нет на странице.',
+      'duplicate': 'Этот фрагмент изменяется дважды.',
+      'not-allowed': 'Только команда переводчиков может подтверждать перевод.',
+      'missing-text': 'Перевод пуст.',
+      'too-long': 'Перевод намного длиннее исходного текста.',
+      'invalid': 'Перевод не соответствует исходному тексту.',
+      'unchanged': 'Это изменение ничего не меняет.',
+      'no-record': 'Пока нет перевода, который можно подтвердить или отклонить.',
+      'stale': 'Перевод изменился после вашего изменения.'
+    } satisfies Record<L10nChangeIssue['code'], string>,
+    staleHint: 'Ваша версия сохранена: загрузите текущий перевод заново, сравните и примените изменение ещё раз.',
+    reloadCurrent: 'Загрузить текущий перевод заново',
+    reloaded: 'Текущий перевод загружен заново: ваша версия находится в поле ввода.',
+    conflict: 'Переводы изменились во время сохранения: попробуйте ещё раз.',
+    tooMany: 'Слишком много сохранений: попробуйте через час.',
+    viewPull: 'Открыть pull request',
+    suggestions: 'Предложения',
+    suggestedReject: 'Предлагает отклонить текущий перевод.',
+    suggestionCount: (count: number) => `${count} ${ruPlural(count, 'фрагмент', 'фрагмента', 'фрагментов')} с предложениями`,
+    dryRun: 'Пробный запуск: ничего не опубликовано, GitHub App не настроен.',
+    failed: 'Не удалось опубликовать.',
+    verifyAll: (count: number) => count === 1 ? 'Подтвердить машинный перевод' : `Подтвердить все машинные переводы (${count})`,
+    verifyAllConfirm: (count: number) => count === 1
+      ? 'Подтвердить машинный перевод этой страницы без изменений? Перевод будет опубликован как проверенный вами вместе с остальными вашими изменениями.'
+      : `Подтвердить ${count} ${ruPlural(count, 'машинный перевод', 'машинных перевода', 'машинных переводов')} этой страницы без изменений? Переводы будут опубликованы как проверенные вами вместе с остальными вашими изменениями.`,
+    confirm: 'Подтвердить',
+    cancel: 'Отмена',
+    previous: 'Предыдущий фрагмент',
+    next: 'Следующий фрагмент',
+    position: (index: number, count: number) => `${index} из ${count}`,
+    otherTexts: 'Другие тексты этой страницы',
+    otherTextsCount: (count: number) => `${count} ${ruPlural(count, 'текст', 'текста', 'текстов')}`,
+    otherTextsHint: 'У этих текстов нет блока, на который можно нажать: заголовок и описание страницы, заголовки ссылок «Подробнее», альтернативные тексты изображений, а также заголовки и комментарии блоков кода.',
+    noteAdd: 'Объясните это изменение (необязательно)',
+    noteLabel: 'Почему это изменение? (необязательно)',
+    noteHelp: (role: L10nRole) => role === 'translator' ? 'Добавляется к сообщению коммита для истории.' : 'Добавляется в pull request для проверяющих.',
+    codePolicy: 'В блоках кода переводятся только комментарии: код одинаков во всех языках.',
+    pageMeta: 'Заголовок и описание страницы',
+    pageStart: 'Начало страницы',
+    editThis: 'Изменить этот текст',
+    untranslatedShort: 'Ещё не переведено',
+    where: (kind: SegmentKind, detail?: string, container?: string): string => {
+      if (kind === 'frontmatter') return detail === 'title' ? 'Заголовок страницы' : detail === 'description' ? 'Описание страницы' : `Метаданные ${detail ?? ''}`.trim()
+      if (kind === 'navigation') return `Навигация ${detail ?? ''}`.trim()
+      if (kind === 'prop') return `Свойство «${detail ?? '?'}»${container ? ` в ${container}` : ''}`
+      if (kind === 'image-alt') return 'Альтернативный текст изображения'
+      if (kind === 'code-label') return 'Заголовок блока кода'
+      if (kind === 'code-comment') return detail ? `Комментарий в коде (${detail})` : 'Комментарий в коде'
+      return 'Фрагмент'
     }
   }
 } as const satisfies Record<L10nLocale, unknown>
