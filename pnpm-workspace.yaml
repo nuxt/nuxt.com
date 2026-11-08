@@ -2,7 +2,7 @@ shamefullyHoist: true
 strictPeerDependencies: false
 
 overrides:
-  # TODO: drop once comark-content and @diglot/comark accept comark 0.9 (both require `^0.8.1`).
+  # TODO: drop once @diglot/comark accepts comark 0.9 (it requires `^0.8.1`).
   # One copy: comark-content's parser runs the plugins we build from comark.
   comark: 0.9.0
   nostics: ^1.3.0
@@ -39,6 +39,7 @@ minimumReleaseAgeExclude:
   - '@comark/nuxt@0.9.0'
   - '@comark/vue@0.9.0'
   - comark@0.9.0
+  - comark-content@0.5.1
 
 permissions:
   '@nuxtjs/sitemap':
