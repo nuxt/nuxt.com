@@ -71,8 +71,7 @@ describe('checking an edited page', () => {
       stream,
       sandbox: {
         runCommand: vi.fn(async ({ args }) => ({ exitCode, stdout: async () => args[1].startsWith('curl') ? '200' : '', stderr: async () => '' })),
-        readFile: vi.fn(async () => stream),
-        readFileToBuffer: vi.fn(async () => Buffer.concat(chunks))
+        readFile: vi.fn(async () => stream)
       }
     }
   }
@@ -85,7 +84,7 @@ describe('checking an edited page', () => {
     await expect(checkAppPage(sandbox as unknown as Sandbox, '/')).resolves.toMatchObject({ text: 'Hello & caf\u00E9 \uD83D\uDE80 world' })
   })
 
-  it('handles unfinished raw-text markup without backtracking', async () => {
+  it('keeps unfinished script content out of the text excerpt', async () => {
     const { sandbox } = pageSandbox([Buffer.from('<p>Visible</p><script>' + '<script>'.repeat(8192))])
     await expect(checkAppPage(sandbox as unknown as Sandbox, '/')).resolves.toMatchObject({ text: 'Visible' })
   })
@@ -97,7 +96,6 @@ describe('checking an edited page', () => {
     const { sandbox, stream } = pageSandbox(chunks)
     await expect(checkAppPage(sandbox as unknown as Sandbox, '/')).rejects.toMatchObject({ statusCode: 413 })
     expect(stream.destroyed).toBe(true)
-    expect(sandbox.readFileToBuffer).not.toHaveBeenCalled()
   })
 
   it('allows exactly 1 MiB while retaining only the text excerpt', async () => {
@@ -172,7 +170,7 @@ describe('editing a template preview', () => {
     expect(getSandbox).not.toHaveBeenCalled()
   })
 
-  it('refuses missing, stopped or differently owned previews', async () => {
+  it('looks up the caller’s preview and refuses missing or stopped previews', async () => {
     for (const value of [null, { status: 'stopped' }]) {
       getSandbox.mockResolvedValueOnce(value)
       await expect(request({ content: 'Hello' })).rejects.toMatchObject({ statusCode: 404 })
@@ -211,8 +209,13 @@ describe('starting the preview editor', () => {
     vi.stubGlobal('getRateLimitPrincipalId', vi.fn().mockResolvedValue('visitor'))
     vi.stubGlobal('getRouterParam', vi.fn().mockReturnValue('preview'))
     vi.stubGlobal('setResponseHeaders', vi.fn())
+    let finish!: () => void
+    const pending = new Promise<void>((resolve) => {
+      finish = resolve
+    })
     const start = vi.fn(async (_sandbox, onStarted: () => void) => {
       onStarted()
+      await pending
       if (failed) throw new Error('Startup failed')
       return 'https://preview.vercel.run'
     })
@@ -220,15 +223,19 @@ describe('starting the preview editor', () => {
     const log = vi.spyOn(console, 'error').mockImplementation(() => {})
     try {
       const edit = (await import('../../server/api/templates/preview/[id]/edit.post')).default as any
-      const stream = await edit({})
-      const events = (await new Response(stream).text()).trim().split('\n').map(line => JSON.parse(line))
-      expect(events).toEqual([
-        { type: 'started' },
-        failed ? { type: 'error', message: 'The dev server could not start.' } : { type: 'ready', url: 'https://preview.vercel.run' }
-      ])
+      const reader = (await edit({})).getReader()
+      const next = async () => {
+        const { value } = await reader.read()
+        return value && JSON.parse(new TextDecoder().decode(value))
+      }
+      expect(await next()).toEqual({ type: 'started' })
+      finish()
+      expect(await next()).toEqual(failed ? { type: 'error', message: 'The dev server could not start.' } : { type: 'ready', url: 'https://preview.vercel.run' })
+      expect(await reader.read()).toMatchObject({ done: true })
       expect(start).toHaveBeenCalledTimes(1)
       expect(getSandbox).toHaveBeenCalledWith('preview', 'visitor')
     } finally {
+      finish()
       log.mockRestore()
     }
   })
@@ -241,7 +248,7 @@ describe('downloading an edited project', () => {
     vi.stubGlobal('setResponseHeaders', vi.fn())
   })
 
-  it('refuses missing, stopped or differently owned previews and unidentified visitors', async () => {
+  it('requires an identified visitor and looks up their running preview', async () => {
     const download = (await import('../../server/api/templates/preview/[id]/download.get')).default as any
     for (const value of [null, { status: 'stopped' }]) {
       getSandbox.mockResolvedValueOnce(value)
@@ -254,7 +261,7 @@ describe('downloading an edited project', () => {
     expect(getSandbox).not.toHaveBeenCalled()
   })
 
-  it('streams edited sources, lockfiles and binary assets, excludes generated files and symlinks, then removes the ZIP', async () => {
+  it('archives edited sources, lockfiles and binary assets, excludes generated files and symlinks, then removes the ZIP', async () => {
     const directory = mkdtempSync(join(tmpdir(), 'template-zip-'))
     const files: Record<string, string | Buffer> = {
       'app/app.vue': '<template><h1>Edited by Nuxi</h1></template>',
@@ -312,7 +319,9 @@ describe('downloading an edited project', () => {
     getSandbox.mockResolvedValueOnce({ status: 'running', runCommand, readFile: async () => failure === 'read' ? null : stream })
     vi.stubGlobal('sendStream', vi.fn().mockRejectedValue(new Error('Connection closed')))
     const download = (await import('../../server/api/templates/preview/[id]/download.get')).default as any
-    await expect(download({})).rejects.toThrow()
+    await expect(download({})).rejects.toMatchObject(failure === 'stream'
+      ? { message: 'Connection closed' }
+      : { statusCode: 500, message: failure === 'archive' ? 'The project could not be zipped. Please try again.' : 'The project ZIP could not be read.' })
     const path = runCommand.mock.calls[0]![0].args[2]
     expect(runCommand).toHaveBeenLastCalledWith({ cmd: 'rm', args: ['-f', path] })
     if (failure !== 'stream') expect(sendStream).not.toHaveBeenCalled()

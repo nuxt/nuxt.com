@@ -79,7 +79,7 @@ describe('admin template check controls', () => {
     expect(setResponseStatus).toHaveBeenCalledWith(event, 202)
   })
 
-  it('reports an unknown template without starting a broader check', async () => {
+  it('reports an unknown template when the selected check queues nothing', async () => {
     start.mockResolvedValue({ runId: null, queued: [], skipped: [] })
     await expect(startCheck(event)).rejects.toMatchObject({ statusCode: 404 })
   })
@@ -92,7 +92,7 @@ describe('admin template check controls', () => {
     expect(where).toHaveBeenLastCalledWith({ field: 'slug', value: 'minimal' })
   })
 
-  it('allows retrying an interrupted or stale workflow instead of leaving the button disabled', async () => {
+  it('returns idle for a running record whose workflow is no longer active', async () => {
     where.mockResolvedValue([{ state: 'running', phase: 'build', status: null, step: null, batchId: 'old-batch' }])
     await expect(readCheck(event)).resolves.toEqual({ state: 'idle', phase: null, status: null, step: null })
   })
