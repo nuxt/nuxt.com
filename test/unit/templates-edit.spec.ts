@@ -1,9 +1,10 @@
 import type { Sandbox } from '@vercel/sandbox'
 import { execFileSync } from 'node:child_process'
-import { mkdtempSync, rmSync, writeFileSync } from 'node:fs'
+import { createReadStream, existsSync, mkdirSync, mkdtempSync, rmSync, symlinkSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { Readable } from 'node:stream'
+import { unzipSync } from 'fflate'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { createError } from 'h3'
 import { checkAppPage, devServerLog, RESTARTING_FILES, resolveAppPath, waitForRestart } from '../../server/utils/templates/edit'
@@ -230,5 +231,90 @@ describe('starting the preview editor', () => {
     } finally {
       log.mockRestore()
     }
+  })
+})
+
+describe('downloading an edited project', () => {
+  beforeEach(() => {
+    vi.stubGlobal('getRateLimitPrincipalId', vi.fn().mockResolvedValue('visitor'))
+    vi.stubGlobal('getRouterParam', vi.fn().mockReturnValue('preview'))
+    vi.stubGlobal('setResponseHeaders', vi.fn())
+  })
+
+  it('refuses missing, stopped or differently owned previews and unidentified visitors', async () => {
+    const download = (await import('../../server/api/templates/preview/[id]/download.get')).default as any
+    for (const value of [null, { status: 'stopped' }]) {
+      getSandbox.mockResolvedValueOnce(value)
+      await expect(download({})).rejects.toMatchObject({ statusCode: 404 })
+    }
+    expect(getSandbox).toHaveBeenCalledWith('preview', 'visitor')
+    getSandbox.mockClear()
+    vi.stubGlobal('getRateLimitPrincipalId', vi.fn().mockResolvedValue(undefined))
+    await expect(download({})).rejects.toMatchObject({ statusCode: 404 })
+    expect(getSandbox).not.toHaveBeenCalled()
+  })
+
+  it('streams edited sources, lockfiles and binary assets, excludes generated files and symlinks, then removes the ZIP', async () => {
+    const directory = mkdtempSync(join(tmpdir(), 'template-zip-'))
+    const files: Record<string, string | Buffer> = {
+      'app/app.vue': '<template><h1>Edited by Nuxi</h1></template>',
+      'nuxt.config.ts': 'export default defineNuxtConfig({})',
+      'package.json': '{"scripts":{"dev":"nuxt dev"}}',
+      'pnpm-lock.yaml': 'lockfileVersion: 9',
+      'public/logo.png': Buffer.from([137, 80, 78, 71, 0, 255]),
+      '.gitignore': 'node_modules',
+      'node_modules/nuxt/index.js': 'dependency',
+      '.output/server/index.mjs': 'build',
+      '.nuxt/tsconfig.json': '{}',
+      '.git/config': 'git',
+      '.vercel/project.json': '{}',
+      '.data/cache': 'cache',
+      'app/plugins/nuxt-com-preview.client.js': 'bridge',
+      'server/plugins/nuxt-com-preview.js': 'guard',
+      'nested/node_modules/dependency.js': 'nested dependency'
+    }
+    let archivePath = ''
+    try {
+      for (const [path, content] of Object.entries(files)) {
+        mkdirSync(join(directory, path, '..'), { recursive: true })
+        writeFileSync(join(directory, path), content)
+      }
+      symlinkSync('/etc/passwd', join(directory, 'outside.txt'))
+      symlinkSync('/etc', join(directory, 'outside-directory'))
+      const runCommand = vi.fn(async ({ cmd, args }) => {
+        if (cmd === 'python3') archivePath = args[2]
+        execFileSync(cmd, args, { cwd: directory })
+        return { exitCode: 0 }
+      })
+      getSandbox.mockResolvedValueOnce({ status: 'running', runCommand, readFile: ({ path }: { path: string }) => createReadStream(path) })
+      vi.stubGlobal('sendStream', async (_event: unknown, stream: AsyncIterable<Buffer>) => {
+        const chunks = []
+        for await (const chunk of stream) chunks.push(chunk)
+        return Buffer.concat(chunks)
+      })
+      const download = (await import('../../server/api/templates/preview/[id]/download.get')).default as any
+      const archive = unzipSync(await download({}))
+      expect(Object.keys(archive).sort()).toEqual(['.gitignore', 'app/app.vue', 'nuxt.config.ts', 'package.json', 'pnpm-lock.yaml', 'public/logo.png'])
+      expect(Buffer.from(archive['app/app.vue']!).toString()).toBe(files['app/app.vue'])
+      expect(Buffer.from(archive['public/logo.png']!)).toEqual(files['public/logo.png'])
+      expect(setResponseHeaders).toHaveBeenCalledWith({}, expect.objectContaining({ 'content-type': 'application/zip', 'cache-control': 'no-store' }))
+      expect(existsSync(archivePath)).toBe(false)
+    } finally {
+      rmSync(directory, { recursive: true, force: true })
+      if (archivePath) rmSync(archivePath, { force: true })
+    }
+  })
+
+  it.each(['archive', 'read', 'stream'])('cleans up and reports a failed %s without returning a broken download', async (failure) => {
+    const runCommand = vi.fn().mockResolvedValue({ exitCode: 0 })
+    if (failure === 'archive') runCommand.mockResolvedValueOnce({ exitCode: 1 })
+    const stream = Readable.from([Buffer.from('zip')])
+    getSandbox.mockResolvedValueOnce({ status: 'running', runCommand, readFile: async () => failure === 'read' ? null : stream })
+    vi.stubGlobal('sendStream', vi.fn().mockRejectedValue(new Error('Connection closed')))
+    const download = (await import('../../server/api/templates/preview/[id]/download.get')).default as any
+    await expect(download({})).rejects.toThrow()
+    const path = runCommand.mock.calls[0]![0].args[2]
+    expect(runCommand).toHaveBeenLastCalledWith({ cmd: 'rm', args: ['-f', path] })
+    if (failure !== 'stream') expect(sendStream).not.toHaveBeenCalled()
   })
 })
