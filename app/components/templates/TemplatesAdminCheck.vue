@@ -11,12 +11,14 @@ const phases: Record<string, string> = {
 const endpoint = computed(() => `/api/admin/templates/${props.slug}/check` as const)
 const { pause, resume } = useIntervalFn(check, 3000, { immediate: false })
 let requestId = 0
+let appliedId = 0
 
 async function check() {
   const id = ++requestId
   try {
     const current = await $fetch(endpoint.value)
-    if (id !== requestId) return
+    if (id <= appliedId) return
+    appliedId = id
     const wasBusy = busy.value
     busy.value = current.state !== 'idle'
     phase.value = current.phase ? phases[current.phase] : 'Check queued'
@@ -33,7 +35,8 @@ async function check() {
       }
     }
   } catch {
-    if (id !== requestId) return
+    if (id <= appliedId) return
+    appliedId = id
     if (busy.value) resume()
     else pause()
     toast.add({ id: 'template-check-status', title: 'Could not read the check status. Try again.', color: 'error' })
@@ -41,7 +44,7 @@ async function check() {
 }
 
 async function start() {
-  ++requestId
+  appliedId = ++requestId
   pause()
   busy.value = true
   try {
