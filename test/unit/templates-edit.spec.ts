@@ -1,7 +1,12 @@
 import type { Sandbox } from '@vercel/sandbox'
+import { execFileSync } from 'node:child_process'
+import { mkdtempSync, rmSync, writeFileSync } from 'node:fs'
+import { tmpdir } from 'node:os'
+import { join } from 'node:path'
+import { Readable } from 'node:stream'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { createError } from 'h3'
-import { checkAppPage, RESTARTING_FILES, resolveAppPath, waitForRestart } from '../../server/utils/templates/edit'
+import { checkAppPage, devServerLog, RESTARTING_FILES, resolveAppPath, waitForRestart } from '../../server/utils/templates/edit'
 
 describe('resolveAppPath', () => {
   it('resolves paths inside the app', () => {
@@ -44,7 +49,7 @@ describe('checking an edited page', () => {
         stdout: async () => args[1].startsWith('curl') ? '200' : log,
         stderr: async () => ''
       })),
-      readFileToBuffer: vi.fn().mockResolvedValue(Buffer.from('<main>Hello from Nuxi</main>'))
+      readFile: vi.fn().mockImplementation(async () => Readable.from([Buffer.from('<main>Hello from Nuxi</main>')]))
     } as unknown as Sandbox
 
     await expect(checkAppPage(sandbox, '/')).resolves.toMatchObject({
@@ -57,6 +62,68 @@ describe('checking an edited page', () => {
     await expect(checkAppPage(sandbox, '/')).resolves.toMatchObject({
       devServerErrors: ['ERROR Failed to resolve import "./missing.vue"', 'TypeError: Invalid value']
     })
+  })
+
+  function pageSandbox(chunks: Buffer[], exitCode = 0) {
+    const stream = Readable.from(chunks)
+    return {
+      stream,
+      sandbox: {
+        runCommand: vi.fn(async ({ args }) => ({ exitCode, stdout: async () => args[1].startsWith('curl') ? '200' : '', stderr: async () => '' })),
+        readFile: vi.fn(async () => stream),
+        readFileToBuffer: vi.fn(async () => Buffer.concat(chunks))
+      }
+    }
+  }
+
+  it('reads visible text without running scripts, retaining comments or exposing nested templates', async () => {
+    const html = '<main title="a > b">Hello &amp; caf\u00E9<!-- hidden --><template>secret<template>nested</template>secret</template><style>.secret{}</style><script>throw new Error("must not execute")</script><p>&#x1F680; world</p></main>'
+    const bytes = Buffer.from(html)
+    const split = bytes.indexOf(Buffer.from('\u00E9')) + 1
+    const { sandbox } = pageSandbox([bytes.subarray(0, split), bytes.subarray(split)])
+    await expect(checkAppPage(sandbox as unknown as Sandbox, '/')).resolves.toMatchObject({ text: 'Hello & caf\u00E9 \uD83D\uDE80 world' })
+  })
+
+  it('handles unfinished raw-text markup without backtracking', async () => {
+    const { sandbox } = pageSandbox([Buffer.from('<p>Visible</p><script>' + '<script>'.repeat(8192))])
+    await expect(checkAppPage(sandbox as unknown as Sandbox, '/')).resolves.toMatchObject({ text: 'Visible' })
+  })
+
+  it.each([
+    [Buffer.alloc(1024 * 1024), Buffer.from('x')],
+    [Buffer.from('\u00E9'.repeat(512 * 1024 + 1))]
+  ])('rejects over-limit bytes while streaming, even after curl reports success', async (...chunks) => {
+    const { sandbox, stream } = pageSandbox(chunks)
+    await expect(checkAppPage(sandbox as unknown as Sandbox, '/')).rejects.toMatchObject({ statusCode: 413 })
+    expect(stream.destroyed).toBe(true)
+    expect(sandbox.readFileToBuffer).not.toHaveBeenCalled()
+  })
+
+  it('allows exactly 1 MiB while retaining only the text excerpt', async () => {
+    const { sandbox } = pageSandbox([Buffer.alloc(1024 * 1024, 'x')])
+    await expect(checkAppPage(sandbox as unknown as Sandbox, '/')).resolves.toMatchObject({ status: 200, text: 'x'.repeat(1500) })
+  })
+
+  it('does not read a response curl rejected as too large', async () => {
+    const { sandbox } = pageSandbox([], 63)
+    await expect(checkAppPage(sandbox as unknown as Sandbox, '/')).rejects.toMatchObject({ statusCode: 413 })
+    expect(sandbox.readFile).not.toHaveBeenCalled()
+  })
+
+  it('bounds log output even when one line is very long', async () => {
+    const directory = mkdtempSync(join(tmpdir(), 'template-log-'))
+    try {
+      const path = join(directory, 'dev.log')
+      writeFileSync(path, 'x'.repeat(100_000) + '\nERROR missing module')
+      const sandbox = { runCommand: async ({ args }) => ({
+        exitCode: 0, stdout: async () => execFileSync('bash', ['-c', args[1].replaceAll('/tmp/nuxt-dev.log', path)], { encoding: 'utf8' }), stderr: async () => ''
+      }) } as unknown as Sandbox
+      const log = await devServerLog(sandbox)
+      expect(Buffer.byteLength(log)).toBeLessThanOrEqual(32768)
+      expect(log).toContain('ERROR missing module')
+    } finally {
+      rmSync(directory, { recursive: true, force: true })
+    }
   })
 })
 
