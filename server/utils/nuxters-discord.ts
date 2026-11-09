@@ -1,6 +1,7 @@
 import type { H3Event } from 'h3'
 import type { NuxterBadges } from '#shared/types'
-import { NUXTERS_HACKATHONS } from '#shared/utils/nuxters'
+import { L10N_LOCALE_CODES } from '#shared/utils/l10n'
+import { NUXTERS_HACKATHONS, nuxterTranslatorRole } from '#shared/utils/nuxters'
 
 const DISCORD_API = 'https://discord.com/api/v10'
 
@@ -26,6 +27,11 @@ export const nuxtersDiscord = {
         ...Object.fromEntries(NUXTERS_HACKATHONS.map(hackathon => [
           hackathon.id,
           configured[hackathon.id] || env[`NUXT_DISCORD_HACKATHON_ROLE_IDS_${hackathon.id.toUpperCase()}`] || ''
+        ])),
+        // `NUXT_DISCORD_TRANSLATOR_ROLE_IDS_FR` for `translatorFr`
+        ...Object.fromEntries(L10N_LOCALE_CODES.map(locale => [
+          nuxterTranslatorRole(locale),
+          configured[nuxterTranslatorRole(locale)] || env[`NUXT_DISCORD_TRANSLATOR_ROLE_IDS_${locale.toUpperCase().replaceAll('-', '_')}`] || ''
         ]))
       } as Record<string, string>
     }
@@ -35,7 +41,7 @@ export const nuxtersDiscord = {
 
   /**
    * Add the user to the Nuxt guild, then give the roles their badges unlock.
-   * Returns the role keys granted (`nuxter`, `moduleAuthor`, hackathon ids).
+   * Returns the role keys granted (`nuxter`, `moduleAuthor`, hackathon ids, `translatorFr`…).
    */
   async grant(event: H3Event, { discordId, accessToken, badges }: { discordId: string, accessToken: string, badges: NuxterBadges }): Promise<string[]> {
     const { guildId, botToken, roles } = nuxtersDiscord.config(event)
@@ -54,7 +60,8 @@ export const nuxtersDiscord = {
     const wanted: string[] = [
       ...(badges.nuxter ? ['nuxter'] : []),
       ...(badges.moduleAuthor ? ['moduleAuthor'] : []),
-      ...badges.hackathons
+      ...badges.hackathons,
+      ...badges.translator.map(nuxterTranslatorRole)
     ]
     const roleIds = roles as Record<string, string | undefined>
 

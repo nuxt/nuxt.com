@@ -1,5 +1,8 @@
+export const DEFAULT_DAILY_LIMIT = 40
+export const ADMIN_DAILY_LIMIT = 200
+
 /** Daily messages shared by all anonymous visitors on one IP (offices and NATs share an address). */
-export const ANONYMOUS_IP_DAILY_LIMIT = 40
+export const ANONYMOUS_IP_DAILY_LIMIT = 80
 
 /** `x-real-ip` is set by Vercel; `x-forwarded-for` covers other proxies and local setups. */
 export function clientIp(getHeader: (name: string) => string | null | undefined): string | undefined {

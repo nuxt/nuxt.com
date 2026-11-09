@@ -1,9 +1,8 @@
 import type { H3Event } from 'h3'
 import { and, eq, sql } from 'drizzle-orm'
+import { DEFAULT_DAILY_LIMIT, ADMIN_DAILY_LIMIT } from '../../shared/utils/rate-limit'
 
 type DbTransaction = Parameters<Parameters<typeof db.transaction>[0]>[0]
-
-const DEFAULT_DAILY_LIMIT = 20
 
 function today(): string {
   return new Date().toISOString().slice(0, 10)
@@ -38,10 +37,10 @@ async function readUsage(userId: string, defaultLimit: number): Promise<{ used: 
 
 export async function checkAgentRateLimit(event: H3Event): Promise<{ used: number, remaining: number, limit: number }> {
   const userId = await ensureRateLimitPrincipalId(event)
-  const usage = await readUsage(userId, DEFAULT_DAILY_LIMIT)
+  const session = await getUserSession(event)
+  const usage = await readUsage(userId, session.user?.role === 'admin' ? ADMIN_DAILY_LIMIT : DEFAULT_DAILY_LIMIT)
 
   // Anonymous visitors also share a per-IP budget (see the agent's rate-limit hook).
-  const session = await getUserSession(event)
   const ip = session.user ? undefined : clientIp(name => getRequestHeader(event, name))
   const ipKey = ip ? await anonymousIpKey(ip) : undefined
   if (!ipKey) return usage
@@ -76,5 +75,6 @@ export async function consumeAgentRateLimitForUser(userId: string, defaultLimit 
 
 export async function consumeAgentRateLimit(event: H3Event): Promise<{ used: number, remaining: number, limit: number }> {
   const userId = await ensureRateLimitPrincipalId(event)
-  return consumeAgentRateLimitForUser(userId)
+  const session = await getUserSession(event)
+  return consumeAgentRateLimitForUser(userId, session.user?.role === 'admin' ? ADMIN_DAILY_LIMIT : DEFAULT_DAILY_LIMIT)
 }
