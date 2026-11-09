@@ -63,7 +63,7 @@ function stop() {
 
 <template>
   <div class="rounded-xl bg-elevated/40 ring ring-default p-1 shadow-xs">
-    <div class="h-9 ps-2.5 pe-1 grid grid-cols-[1fr_minmax(0,auto)_1fr] items-center gap-3">
+    <div class="h-9 ps-2.5 pe-1 grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3">
       <div class="min-w-0 flex items-center gap-2 text-xs">
         <template v-if="live">
           <span class="relative flex size-2 shrink-0">
@@ -90,28 +90,30 @@ function stop() {
         <UTooltip v-if="live && editor === 'on'" text="Running nuxt dev: edits show live">
           <span class="shrink-0 px-1.5 rounded-sm bg-primary/10 text-primary font-mono text-[10px] leading-4 cursor-default">dev</span>
         </UTooltip>
+        <UTooltip v-if="live && status === 'live'" text="Reload">
+          <UButton
+            icon="i-lucide-rotate-cw"
+            aria-label="Reload the preview"
+            color="neutral"
+            variant="ghost"
+            size="xs"
+            class="size-6 justify-center text-dimmed hover:text-muted"
+            :ui="{ leadingIcon: 'size-3' }"
+            @click="reloadRequest++"
+          />
+        </UTooltip>
       </div>
 
       <div class="flex items-center justify-end gap-0.5">
         <template v-if="live">
           <UTooltip v-if="status === 'live'" text="Edit with Nuxi">
             <UButton
-              icon="i-lucide-sparkles"
+              icon="i-custom-nuxi"
               aria-label="Edit with Nuxi"
               color="neutral"
               variant="ghost"
               size="xs"
               @click="editWithNuxi"
-            />
-          </UTooltip>
-          <UTooltip v-if="status === 'live'" text="Reload">
-            <UButton
-              icon="i-lucide-rotate-cw"
-              aria-label="Reload the preview"
-              color="neutral"
-              variant="ghost"
-              size="xs"
-              @click="reloadRequest++"
             />
           </UTooltip>
           <UTooltip v-for="item in ([{ value: 'desktop', icon: 'i-lucide-monitor', label: 'Desktop' }, { value: 'mobile', icon: 'i-lucide-smartphone', label: 'Mobile' }] as const)" :key="item.value" :text="item.label">
