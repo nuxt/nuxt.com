@@ -1,7 +1,7 @@
 import { createError } from 'h3'
 import { markdownField } from 'comark-content/plugins/markdown-fields'
 import type { JsonSchema } from 'comark-content'
-import type { GithubSource } from 'comark-content/sources/github'
+import type { ForgeSource } from 'comark-content/sources/forge'
 import type { FSSourceOptions } from 'comark-content/sources/fs'
 import { CLI_DOCS_REFS, CLI_DOCS_REPO, CLI_DOCS_PREFIX, cliDocsPathPrefix, hasCliDocs, type CliDocVersion } from '../../../shared/utils/cli'
 import { DOCS_REFS, DOCS_REPO, docsPathPrefix, isDocVersion, type DocVersion } from '../../../shared/utils/docs'
@@ -9,7 +9,7 @@ import { MODULE_DOCS, hasModuleDocs, moduleDocsPathPrefix, type ModuleDocsName }
 import { CONTENT_INSTANCE_KEYS, isContentInstanceKey, cliInstanceKey, docsInstanceKey, instanceName, moduleInstanceKey, type ContentInstanceKey } from '../../../shared/utils/content'
 
 /** What comark-content's sources own; a required `prefix` is what the page resolver depends on. */
-type ComarkSourceOptions = Pick<GithubSource & FSSourceOptions, 'exclude' | 'schema'> & {
+type ComarkSourceOptions = Pick<ForgeSource & FSSourceOptions, 'exclude' | 'schema'> & {
   prefix: string
 }
 
