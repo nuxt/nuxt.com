@@ -51,6 +51,12 @@ export default defineAppConfig({
           content: '[&>div>pre]:rounded-r-none'
         }
       },
+      callout: {
+        slots: {
+          // A single paragraph is unwrapped so the inline icon sits next to its text; with several children the first `<p>` stays a block and pushes the icon onto its own line.
+          base: '[&>.iconify+p]:inline'
+        }
+      },
       codeIcon: {
         wat: 'i-lucide-file-braces'
       }
