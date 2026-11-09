@@ -1,6 +1,8 @@
+import { Readable } from 'node:stream'
 import { stripVTControlCharacters } from 'node:util'
 import type { Sandbox } from '@vercel/sandbox'
 import { createError } from 'h3'
+import { SAXParser } from 'parse5-sax-parser'
 import { DEV_LOG, DEV_PORT, DEV_WARMUP_SCRIPT, DISABLE_DEVTOOLS } from './dev-server'
 import { PREVIEW_BOOT_GUARD, PREVIEW_BRIDGE_PLUGIN } from './preview-bridge'
 import { TEMPLATE_WORKDIR as WORKDIR } from './check-scripts'
@@ -103,24 +105,66 @@ export async function waitForContent(sandbox: Sandbox, offset: number) {
 export async function checkAppPage(sandbox: Sandbox, path: string) {
   const route = path.startsWith('/') ? path : `/${path}`
   if (!/^\/[\w\-./~%?=&#[\]@]*$/.test(route)) throw createError({ statusCode: 400, message: `Not a route: ${path}` })
-  const { output } = await run(sandbox, `curl -s -o /tmp/nuxt-com-page.html -w '%{http_code}' --max-time 60 'http://127.0.0.1:${DEV_PORT}${route}'`, 70_000)
-  const [buffer, log] = await Promise.all([
-    sandbox.readFileToBuffer({ path: '/tmp/nuxt-com-page.html' }),
+  const { output, exitCode } = await run(sandbox, `curl -s -o /tmp/nuxt-com-page.html -w '%{http_code}' --max-filesize ${MAX_PAGE_BYTES} --max-time 60 'http://127.0.0.1:${DEV_PORT}${route}'`, 70_000)
+  if (exitCode === 63) throw pageTooLarge()
+  const [html, log] = await Promise.all([
+    readPageHtml(sandbox),
     devServerLog(sandbox)
   ])
-  const html = buffer?.toString('utf8') || ''
-  const text = html
-    .replace(/<(script|style|template)[^>]*>[\s\S]*?<\/\1>/gi, ' ')
-    .replace(/<[^>]+>/g, ' ')
-    .replace(/&[a-z]+;|&#\d+;/gi, ' ')
-    .replace(/\s+/g, ' ')
-    .trim()
+  const text = pageText(html)
   const errors = log.split('\n').filter(line => /\b\w*error\b|\bfailed\b|\bcannot\b|\bnot found\b/i.test(line)).slice(-15)
   return {
     status: Number(output) || 0,
-    text: text.slice(0, 1500) || '(the page rendered no text)',
+    text: text || '(the page rendered no text)',
     devServerErrors: errors.length ? errors : undefined
   }
+}
+
+const MAX_PAGE_BYTES = 1024 * 1024
+const pageTooLarge = () => createError({ statusCode: 413, message: 'The page is too large to check (maximum 1 MiB).' })
+
+/** The sandbox can change the file after curl finishes, so enforce the cap again while reading it. */
+async function readPageHtml(sandbox: Sandbox) {
+  const controller = new AbortController()
+  const stream = await sandbox.readFile({ path: '/tmp/nuxt-com-page.html' }, { signal: AbortSignal.any([controller.signal, AbortSignal.timeout(10_000)]) })
+  if (!stream) return ''
+  const chunks: Buffer[] = []
+  let size = 0
+  try {
+    for await (const chunk of new Readable().wrap(stream)) {
+      size += chunk.length
+      if (size > MAX_PAGE_BYTES) throw pageTooLarge()
+      chunks.push(chunk)
+    }
+    return Buffer.concat(chunks, size).toString('utf8')
+  } finally {
+    controller.abort()
+  }
+}
+
+/** Tokenize without building or executing a DOM, and retain only the tool's short text excerpt. */
+function pageText(html: string) {
+  const parser = new SAXParser()
+  const hidden: string[] = []
+  let text = ''
+  const append = (value: string) => {
+    if (text.length >= 1500) return
+    const normalized = value.replace(/\s+/g, ' ')
+    text += (text.endsWith(' ') || !text ? normalized.trimStart() : normalized).slice(0, 1500 - text.length)
+  }
+  parser.on('startTag', ({ tagName }) => {
+    append(' ')
+    if (tagName === 'script' || tagName === 'style' || tagName === 'template') hidden.push(tagName)
+  })
+  parser.on('endTag', ({ tagName }) => {
+    if (hidden.at(-1) === tagName) hidden.pop()
+    append(' ')
+  })
+  parser.on('text', ({ text }) => {
+    if (!hidden.length) append(text)
+  })
+  parser.end(html)
+  return text.trim()
 }
 
 const DEV_STARTED = '/tmp/nuxt-com-dev-started'
@@ -172,5 +216,5 @@ export async function waitForDevServer(sandbox: Sandbox, onStarted?: () => void)
 }
 
 export async function devServerLog(sandbox: Sandbox) {
-  return stripVTControlCharacters((await run(sandbox, `test -f ${DEV_LOG} && tail -40 ${DEV_LOG}`)).output)
+  return stripVTControlCharacters((await run(sandbox, `test -f ${DEV_LOG} && tail -c 32768 ${DEV_LOG} | tail -40`)).output)
 }
