@@ -1,6 +1,6 @@
 import { mountSuspended, registerEndpoint } from '@nuxt/test-utils/runtime'
 import { afterEach, beforeAll, describe, expect, it, vi } from 'vitest'
-import { h } from 'vue'
+import { h, nextTick } from 'vue'
 import { UApp } from '#components'
 import DocsL10nStatus from '~/components/DocsL10nStatus.vue'
 import type { L10nPageMeta } from '#shared/utils/l10n'
@@ -51,5 +51,48 @@ describe('DocsL10nStatus', () => {
 
     await vi.waitFor(() => expect(document.querySelector('[data-slot="content"]')?.textContent).toContain('Hello'))
     expect(document.activeElement).toBe(input)
+  })
+})
+
+describe('DocsL10nStatus review mode clicks', () => {
+  function renderComponents() {
+    const target = document.createElement('div')
+    target.innerHTML = [
+      `<p data-l10n="machine" data-l10n-hash="${HASH}">Bonjour <a href="/fr/docs/4.x/guide" data-inline>le guide</a></p>`,
+      `<div data-callout><a href="/fr/docs/4.x/guide/concepts/rendering"><span data-overlay></span></a><span data-l10n="machine" data-l10n-hash="${HASH}">Modes de rendu</span></div>`,
+      `<div data-l10n="machine" data-l10n-hash="${HASH}"><button type="button" data-toggle>Afficher</button></div>`
+    ].join('')
+    document.body.append(target)
+    return target
+  }
+
+  async function click(element: Element) {
+    const event = new MouseEvent('click', { bubbles: true, cancelable: true, button: 0 })
+    element.dispatchEvent(event)
+    await nextTick()
+    return event
+  }
+
+  it('should open the editor from a link in a block or the overlay link of a callout, without following it', async () => {
+    const target = renderComponents()
+    await mountStatus(target)
+
+    for (const selector of ['[data-inline]', '[data-overlay]']) {
+      const event = await click(target.querySelector(selector)!)
+      expect(event.defaultPrevented).toBe(true)
+    }
+    await vi.waitFor(() => expect(document.querySelector('[role="dialog"]')).not.toBeNull())
+  })
+
+  it('should keep the action of a control in a block', async () => {
+    const target = renderComponents()
+    await mountStatus(target)
+    const toggle = target.querySelector<HTMLButtonElement>('[data-toggle]')!
+    const clicked = vi.fn()
+    toggle.addEventListener('click', clicked)
+
+    const event = await click(toggle)
+    expect(event.defaultPrevented).toBe(false)
+    expect(clicked).toHaveBeenCalled()
   })
 })

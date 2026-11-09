@@ -25,7 +25,8 @@ const unlocks = computed(() => {
   return [
     { label: 'merged pull requests', value: nuxter?.mergedPullRequests.all ?? 0 },
     { label: 'helpful issues', value: nuxter?.helpfulIssues ?? 0, hint: 'Completed, or 3+ reactions, or 5+ comments' },
-    { label: 'helpful comments', value: nuxter?.helpfulComments ?? 0, hint: '3+ reactions' }
+    { label: 'helpful comments', value: nuxter?.helpfulComments ?? 0, hint: '3+ reactions' },
+    { label: 'translations', value: (nuxter?.translations?.edited ?? 0) + (nuxter?.translations?.verified ?? 0), hint: 'Segments of the docs edited or verified' }
   ]
 })
 
@@ -39,10 +40,13 @@ const badges = computed(() => {
   const badges = me.value?.badges
   if (!badges) return []
   return [
-    ...(badges.nuxter ? ['nuxter'] : []),
-    ...(badges.moduleAuthor ? ['moduleAuthor'] : []),
-    ...badges.hackathons
-  ].map(key => roleLabels[key] ?? key)
+    ...[
+      ...(badges.nuxter ? ['nuxter'] : []),
+      ...(badges.moduleAuthor ? ['moduleAuthor'] : []),
+      ...badges.hackathons
+    ].map(key => roleLabels[key] ?? key),
+    ...(badges.translator.length ? [`Translator (${badges.translator.join(', ')})`] : [])
+  ]
 })
 
 onMounted(() => {
@@ -140,7 +144,7 @@ onMounted(() => {
           />
         </template>
         <p v-else class="text-sm text-muted">
-          One merged PR, helpful issue or helpful comment unlocks the Nuxter badge.
+          One merged PR, helpful issue, helpful comment, or edited or verified translation unlocks the Nuxter badge.
         </p>
       </div>
 
