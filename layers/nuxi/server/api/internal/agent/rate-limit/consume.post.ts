@@ -14,7 +14,7 @@ export default defineEventHandler(async (event) => {
     if (sessionUserId !== claimedUserId) {
       throw createError({ statusCode: 403, statusMessage: 'Forbidden' })
     }
-    return await consumeAgentRateLimitForUser(sessionUserId)
+    return await consumeAgentRateLimit(event)
   }
 
   // Eve authenticated before the browser cookie had an anonymous id (internal fetch

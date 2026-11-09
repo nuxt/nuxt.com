@@ -5,6 +5,7 @@ import {
   nuxterForPeriod,
   nuxterGithubSearchUrl,
   nuxterHackathons,
+  nuxterTranslatorRole,
   nuxterScoreBreakdown,
   nuxtersPeriodFile,
   nuxtersPeriodFromFile,
@@ -38,6 +39,7 @@ function record(overrides: Record<string, unknown> = {}) {
       helpful_issues: 1,
       helpful_comments: 0
     },
+    translations: { edited: 12, verified: 30, rejected: 1 },
     ...overrides
   }
 }
@@ -68,13 +70,34 @@ describe('parseNuxtersFile', () => {
       corePrChore: 0,
       corePrAll: 4,
       coreHelpfulIssues: 1,
-      coreHelpfulComments: 0
+      coreHelpfulComments: 0,
+      translationsEdited: 12,
+      translationsVerified: 30,
+      translationsRejected: 1
     })
   })
 
   it('reads files from before the core bonus as no core contributions', () => {
     const [row] = parseNuxtersFile([record({ core: undefined })])
     expect(row).toMatchObject({ corePrAll: 0, corePrFeat: 0, coreHelpfulIssues: 0, coreHelpfulComments: 0 })
+  })
+
+  it('reads a missing or invalid translations object as no translations', () => {
+    const rows = parseNuxtersFile([
+      record({ githubId: '1', translations: undefined }),
+      record({ githubId: '2', translations: null }),
+      record({ githubId: '3', translations: 7 }),
+      record({ githubId: '4', translations: { edited: -2, verified: 'many' } })
+    ])
+    for (const row of rows) {
+      expect(row).toMatchObject({ translationsEdited: 0, translationsVerified: 0, translationsRejected: 0 })
+    }
+    expect(rowToNuxter(rows[0]!).translations).toEqual({ edited: 0, verified: 0, rejected: 0 })
+  })
+
+  it('ranks a contributor with translations only', () => {
+    const [row] = parseNuxtersFile([{ githubId: '64921289', username: 'D3ller', score: 1, translations: { edited: 1 } }])
+    expect(rowToNuxter(row!)).toMatchObject({ githubId: 64921289, username: 'D3ller', rank: 1, score: 1, mergedPullRequests: { all: 0 }, translations: { edited: 1, verified: 0, rejected: 0 } })
   })
 
   it('ranks by score, then username, whatever the file order', () => {
@@ -222,6 +245,9 @@ describe('nuxter scoring', () => {
       issues: 3,
       comments: 4,
       reactions: 2,
+      translationsEdited: 12,
+      translationsVerified: 15,
+      translationsRejected: 0.5,
       // Core bonus: the core part counts once more. Rows without core contributions are left out.
       coreFeat: 14,
       coreFix: 5,
@@ -238,28 +264,49 @@ describe('nuxter scoring', () => {
     const collectorScore = Math.round(
       quality(n.mergedPullRequests, n.helpfulIssues, n.helpfulComments)
       + n.issues + n.comments * 0.5 + n.reactions * 0.1
+      + n.translations.edited + n.translations.verified * 0.5 + n.translations.rejected * 0.5
       + quality(n.core.mergedPullRequests, n.core.helpfulIssues, n.core.helpfulComments)
     )
     const sum = nuxterScoreBreakdown(n).reduce((total, row) => total + row.total, 0)
     expect(Math.round(sum)).toBe(collectorScore)
   })
 
-  it('lists base rows first, then bonus rows, each sorted by total', () => {
+  it('lists base rows first, then translation rows, then bonus rows, each sorted by total', () => {
     const rows = nuxterScoreBreakdown(nuxter)
-    const firstBonus = rows.findIndex(row => row.bonus)
-    expect(rows.slice(firstBonus).every(row => row.bonus)).toBe(true)
-    for (const group of [rows.slice(0, firstBonus), rows.slice(firstBonus)]) {
+    const groups = rows.map(row => row.bonus ? 'bonus' : row.translation ? 'translation' : 'base')
+    expect([...new Set(groups)]).toEqual(['base', 'translation', 'bonus'])
+    expect(groups).toEqual([...groups].sort((a, b) => ['base', 'translation', 'bonus'].indexOf(a) - ['base', 'translation', 'bonus'].indexOf(b)))
+    for (const group of ['base', 'translation', 'bonus'].map(name => rows.filter((_, index) => groups[index] === name))) {
       const totals = group.map(row => row.total)
       expect(totals).toEqual([...totals].sort((a, b) => b - a))
     }
   })
 
-  it('unlocks the Nuxter role with one merged PR, helpful issue or helpful comment', () => {
-    const none = { ...nuxter, helpfulIssues: 0, helpfulComments: 0, mergedPullRequests: { ...nuxter.mergedPullRequests, all: 0 } }
+  it('lists the translation rows at zero for a contributor without translations', () => {
+    const rows = nuxterScoreBreakdown(rowToNuxter(parseNuxtersFile([record({ translations: undefined })])[0]!))
+    expect(rows.filter(row => row.translation).map(row => [row.key, row.amount, row.total])).toEqual([
+      ['translationsEdited', 0, 0],
+      ['translationsVerified', 0, 0],
+      ['translationsRejected', 0, 0]
+    ])
+  })
+
+  it('unlocks the Nuxter role with one merged PR, helpful issue, helpful comment, or edited or verified translation', () => {
+    const none = { ...nuxter, helpfulIssues: 0, helpfulComments: 0, mergedPullRequests: { ...nuxter.mergedPullRequests, all: 0 }, translations: { edited: 0, verified: 0, rejected: 3 } }
     expect(canUnlockNuxterRole(nuxter)).toBe(true)
     expect(canUnlockNuxterRole(none)).toBe(false)
     expect(canUnlockNuxterRole({ ...none, helpfulComments: 1 })).toBe(true)
+    expect(canUnlockNuxterRole({ ...none, translations: { ...none.translations, edited: 1 } })).toBe(true)
+    expect(canUnlockNuxterRole({ ...none, translations: { ...none.translations, verified: 1 } })).toBe(true)
     expect(canUnlockNuxterRole(null)).toBe(false)
+  })
+})
+
+describe('nuxterTranslatorRole', () => {
+  it('names one role per locale, usable as a runtime config key', () => {
+    expect(nuxterTranslatorRole('fr')).toBe('translatorFr')
+    expect(nuxterTranslatorRole('pt-br')).toBe('translatorPtBr')
+    expect(nuxterTranslatorRole('zh-Hans')).toBe('translatorZhHans')
   })
 })
 

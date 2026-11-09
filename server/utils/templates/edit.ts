@@ -151,6 +151,7 @@ function pageText(html: string) {
     if (text.length >= 1500) return
     const normalized = value.replace(/\s+/g, ' ')
     text += (text.endsWith(' ') || !text ? normalized.trimStart() : normalized).slice(0, 1500 - text.length)
+    if (text.length === 1500) parser.stop()
   }
   parser.on('startTag', ({ tagName }) => {
     append(' ')

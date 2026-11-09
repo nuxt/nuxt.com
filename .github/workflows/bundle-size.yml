@@ -12,153 +12,39 @@ concurrency:
   group: bundle-size-${{ github.event.pull_request.number }}
   cancel-in-progress: true
 
-jobs:
-  analyze-base:
-    name: analyze (base)
-    runs-on: ubuntu-latest
-    timeout-minutes: 60
-    steps:
-      - name: Check out the PR merge
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
-        with:
-          persist-credentials: false
-      - name: Check out the base revision
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
-        with:
-          path: .bundle-base
-          persist-credentials: false
-          ref: ${{ github.event.pull_request.base.sha }}
-      - uses: pnpm/setup@703c52620218391530e48b9e8870d5c0082e1b9b # v2.1.0
-        env:
-          npm_config_manage_package_manager_versions: "false"
-        with:
-          cache: true
-          cache-dependency-path: .bundle-base/pnpm-lock.yaml
-          working-directory: .bundle-base
-      - name: Prepare the base revision
-        working-directory: .bundle-base
-        run: pnpm nuxt prepare
-      - name: Link the base Nuxt metadata
-        run: ln -s .bundle-base/.nuxt .nuxt
-      # Outside the app, so neither revision needs it in its lockfile.
-      - name: Install nuxt-bundle-analyzer
-        run: npm install --prefix "$RUNNER_TEMP/nuxt-bundle-analyzer" --no-save --ignore-scripts --no-audit --no-fund nuxt-bundle-analyzer@0.1.3
-      - name: Analyze the base bundle
-        working-directory: .bundle-base
-        run: >-
-          pnpm --package=@nuxt/cli-nightly@3.38.0-20260726-220626-c3c9e90
-          dlx nuxt analyze
-          --extends=../scripts/bundle-size/nuxt-layer
-          --no-serve
-          --prerender
-          --logLevel=info
-        env:
-          NODE_OPTIONS: --max-old-space-size=8192
-          NUXT_TELEMETRY_DISABLED: 1
-          NUXT_BUNDLE_ANALYZER_MODULE: ${{ runner.temp }}/nuxt-bundle-analyzer/node_modules/nuxt-bundle-analyzer/dist/module.mjs
-          NUXT_BUNDLE_ANALYZER_NAME: base
-      - name: Snapshot the base bundle
-        run: >-
-          node scripts/bundle-size/report.mjs snapshot
-          --root .bundle-base
-          --analyze .bundle-base/.nuxt/analyze/client.json
-          --label base
-          --sha ${{ github.event.pull_request.base.sha }}
-          --output ${{ runner.temp }}/bundle-size/base.json
-      - name: Upload base bundle snapshot
-        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
-        with:
-          name: bundle-size-base
-          path: ${{ runner.temp }}/bundle-size/base.json
-          if-no-files-found: error
-          retention-days: 1
-      - name: Upload base bundle analysis
-        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
-        with:
-          name: bundle-analyzer-base
-          path: .bundle-base/node_modules/.cache/nuxt-bundle-analyzer/base
-          if-no-files-found: error
-          retention-days: 7
+env:
+  NUXT_BUNDLE_ANALYZER_VERSION: 0.1.7
 
-  analyze-pr:
-    name: analyze (PR)
+jobs:
+  # Analyzes the base and the PR side by side, compared and posted by `bundle-size-comment.yml`.
+  analyze:
+    name: analyze (${{ matrix.target }})
     runs-on: ubuntu-latest
     timeout-minutes: 60
+    strategy:
+      matrix:
+        target: [base, pr]
     steps:
-      - name: Check out the PR merge
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           persist-credentials: false
+          # The base commit for `base`, the PR merged into it for `pr`.
+          ref: ${{ matrix.target == 'base' && github.event.pull_request.base.sha || '' }}
       - uses: pnpm/setup@703c52620218391530e48b9e8870d5c0082e1b9b # v2.1.0
         with:
           cache: true
           cache-dependency-path: pnpm-lock.yaml
-      - name: Prepare the PR revision
+      - name: Prepare
         run: pnpm nuxt prepare
-      - name: Install nuxt-bundle-analyzer
-        run: npm install --prefix "$RUNNER_TEMP/nuxt-bundle-analyzer" --no-save --ignore-scripts --no-audit --no-fund nuxt-bundle-analyzer@0.1.3
-      - name: Analyze the PR bundle
-        run: >-
-          pnpm --package=@nuxt/cli-nightly@3.38.0-20260726-220626-c3c9e90
-          dlx nuxt analyze
-          --extends=./scripts/bundle-size/nuxt-layer
-          --no-serve
-          --prerender
-          --logLevel=info
+      # With npx, so the analyzer needs no entry in the lockfile of either revision.
+      - name: Analyze the bundle
+        run: npx --yes "nuxt-bundle-analyzer@$NUXT_BUNDLE_ANALYZER_VERSION" --name ${{ matrix.target }} --no-serve
         env:
           NODE_OPTIONS: --max-old-space-size=8192
           NUXT_TELEMETRY_DISABLED: 1
-          NUXT_BUNDLE_ANALYZER_MODULE: ${{ runner.temp }}/nuxt-bundle-analyzer/node_modules/nuxt-bundle-analyzer/dist/module.mjs
-          NUXT_BUNDLE_ANALYZER_NAME: pr
-      - name: Snapshot the PR bundle
-        run: >-
-          node scripts/bundle-size/report.mjs snapshot
-          --root .
-          --analyze .nuxt/analyze/client.json
-          --label pr
-          --sha ${{ github.event.pull_request.head.sha }}
-          --output ${{ runner.temp }}/bundle-size/pr.json
-      - name: Upload PR bundle snapshot
-        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
-          name: bundle-size-pr
-          path: ${{ runner.temp }}/bundle-size/pr.json
-          if-no-files-found: error
-          retention-days: 1
-      - name: Upload PR bundle analysis
-        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
-        with:
-          name: bundle-analyzer-pr
-          path: node_modules/.cache/nuxt-bundle-analyzer/pr
-          if-no-files-found: error
-          retention-days: 7
-
-  report:
-    name: analyze
-    needs:
-      - analyze-base
-      - analyze-pr
-    runs-on: ubuntu-slim
-    timeout-minutes: 10
-    steps:
-      - name: Download base bundle snapshot
-        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
-        with:
-          name: bundle-size-base
-          path: ${{ runner.temp }}/bundle-size
-      - name: Download PR bundle snapshot
-        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
-        with:
-          name: bundle-size-pr
-          path: ${{ runner.temp }}/bundle-size
-      - name: Write bundle context
-        env:
-          PR_NUMBER: ${{ github.event.pull_request.number }}
-        run: printf '{"prNumber":%s}\n' "$PR_NUMBER" > "$RUNNER_TEMP/bundle-size/context.json"
-      - name: Upload bundle snapshots
-        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
-        with:
-          name: bundle-size-report
-          path: ${{ runner.temp }}/bundle-size
+          name: ${{ matrix.target }}
+          path: node_modules/.cache/nuxt-bundle-analyzer/${{ matrix.target }}
           if-no-files-found: error
           retention-days: 7

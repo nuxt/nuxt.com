@@ -1,7 +1,7 @@
 import { defineHook } from 'eve/hooks'
 import { resolveContext } from '../lib/identity/context.js'
 import { consumeDailyQuota } from '../lib/rate-limit.js'
-import { ANONYMOUS_IP_DAILY_LIMIT } from '../../shared/utils/rate-limit.js'
+import { ADMIN_DAILY_LIMIT, ANONYMOUS_IP_DAILY_LIMIT } from '../../shared/utils/rate-limit.js'
 
 export default defineHook({
   events: {
@@ -16,7 +16,8 @@ export default defineHook({
 
       // Throwing from a hook doesn't stop the turn; `ctx.cancel()` does, before the
       // model runs. The web client refetches its usage after each turn and shows the limit.
-      if (await consumeDailyQuota(auth.principalId) === 'limited') {
+      const limit = auth.principalType === 'user' && auth.attributes?.role === 'admin' ? ADMIN_DAILY_LIMIT : undefined
+      if (await consumeDailyQuota(auth.principalId, limit) === 'limited') {
         ctx.cancel()
         return
       }

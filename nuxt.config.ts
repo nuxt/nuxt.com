@@ -109,6 +109,8 @@ export default defineNuxtConfig({
   site: {
     name: 'Nuxt',
     url: PREVIEW_URL ?? SITE_URL,
+    // Previews are public: keep crawlers out, every page they render reads the preview database.
+    indexable: process.env.VERCEL_ENV !== 'preview',
     description: 'Build fast, production-ready web apps with Vue. File-based routing, auto-imports, and server-side rendering — all configured out of the box.',
     defaultLocale: 'en'
   },
@@ -182,7 +184,10 @@ export default defineNuxtConfig({
           moduleAuthor: '',
           // One key per hackathon id in `NUXTERS_HACKATHONS`
           nuxtathon1: '',
-          nuxtathon2: ''
+          nuxtathon2: '',
+          // One key per locale in `L10N_LOCALES` (`nuxterTranslatorRole`)
+          translatorFr: '',
+          translatorDe: ''
         }
       }
     }
@@ -575,6 +580,8 @@ export default defineNuxtConfig({
   },
   compatibilityDate: '2026-01-14',
   nitro: {
+    // Bundle the HTML tokenizer so unused parser code and package files are omitted.
+    externals: { inline: ['parse5-sax-parser', 'parse5', 'entities'] },
     experimental: {
       // `pnpm nuxters:sync` (server/tasks/nuxters/sync.ts)
       tasks: true

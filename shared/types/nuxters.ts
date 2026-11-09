@@ -1,3 +1,4 @@
+import type { L10nLocale } from '../utils/l10n'
 import type { Module } from './modules'
 
 export interface NuxterMergedPullRequests {
@@ -13,6 +14,13 @@ export interface NuxterCoreContributions {
   mergedPullRequests: NuxterMergedPullRequests
   helpfulIssues: number
   helpfulComments: number
+}
+
+/** Segments of the docs translations (nuxt/translations) a contributor edited, verified or rejected. */
+export interface NuxterTranslations {
+  edited: number
+  verified: number
+  rejected: number
 }
 
 /** `all`, `30d`, `12m`, or a year from 2016 (`'2025'`). */
@@ -34,6 +42,8 @@ export interface Nuxter {
   mergedPullRequests: NuxterMergedPullRequests
   /** The part made in nuxt/nuxt, nuxt/framework and nuxt/docs: it counts double in the score. */
   core: NuxterCoreContributions
+  /** Counted in the score, without the core bonus. */
+  translations: NuxterTranslations
 }
 
 /** A contributor's full stats over one period of their profile. */
@@ -90,11 +100,20 @@ export interface NuxterBlogPost {
   category?: string
 }
 
-/** /api/nuxters/[username]: the profile, its modules and blog posts. */
+/** What a contributor did in one locale of the docs translations, as served now. */
+export interface NuxterLocaleTranslations extends NuxterTranslations {
+  locale: L10nLocale
+  /** Source words of the segments they edited, verified or rejected. */
+  words: number
+}
+
+/** /api/nuxters/[username]: the profile, its modules, blog posts and translations. */
 export interface NuxterProfilePage extends NuxterProfile {
   modules: NuxterModules
   /** Newest first, matched on the `username` of the blog authors. */
   blogPosts: NuxterBlogPost[]
+  /** The locales with a segment attributed to the user's login, in locale order. */
+  translationLocales: NuxterLocaleTranslations[]
 }
 
 /** The light shape of the leaderboard. */
@@ -156,11 +175,13 @@ export interface NuxtersHackathon {
 }
 
 export interface NuxterBadges {
-  /** At least one merged PR, helpful issue or helpful comment. */
+  /** At least one merged PR, helpful issue, helpful comment, or edited or verified translation. */
   nuxter: boolean
   moduleAuthor: boolean
   /** Hackathon ids. */
   hackathons: string[]
+  /** The locales with a segment the user edited or verified. */
+  translator: L10nLocale[]
 }
 
 /** The signed-in user's view of /nuxters. */
