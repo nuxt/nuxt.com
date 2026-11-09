@@ -63,7 +63,8 @@ OUTPUT: The stats of the period, its rank and score, the rank and score of every
         comments: stats.comments,
         helpfulComments: stats.helpfulComments,
         reactionsReceived: stats.reactions,
-        core: stats.core
+        core: stats.core,
+        translations: stats.translations
       },
       firstContributionAt: profile.firstContributionAt,
       hackathons: nuxterHackathons(profile.githubId).map(hackathon => hackathon.name),

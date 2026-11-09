@@ -11,8 +11,7 @@ permissions:
   contents: read
 
 env:
-  # The first release with `upload --branch`.
-  NUXT_BUNDLE_ANALYZER_VERSION: 0.1.4
+  NUXT_BUNDLE_ANALYZER_VERSION: 0.1.7
 
 jobs:
   analyze:
@@ -30,23 +29,12 @@ jobs:
           cache-dependency-path: pnpm-lock.yaml
       - name: Prepare the commit
         run: pnpm nuxt prepare
-      # Outside the app, so it needs no change to the lockfile.
-      - name: Install nuxt-bundle-analyzer
-        run: npm install --prefix "$RUNNER_TEMP/nuxt-bundle-analyzer" --no-save --ignore-scripts --no-audit --no-fund "nuxt-bundle-analyzer@$NUXT_BUNDLE_ANALYZER_VERSION"
-      # Without --prerender, unlike bundle-size.yml: the PR comment reads the prerendered HTML, the
-      # history only the reports, and the build takes about half as long without it.
+      # With npx, so the analyzer needs no entry in the lockfile.
       - name: Analyze the bundle
-        run: >-
-          pnpm --package=@nuxt/cli-nightly@3.38.0-20260726-220626-c3c9e90
-          dlx nuxt analyze
-          --extends=./scripts/bundle-size/nuxt-layer
-          --no-serve
-          --logLevel=info
+        run: npx --yes "nuxt-bundle-analyzer@$NUXT_BUNDLE_ANALYZER_VERSION" --name main --no-serve
         env:
           NODE_OPTIONS: --max-old-space-size=8192
           NUXT_TELEMETRY_DISABLED: 1
-          NUXT_BUNDLE_ANALYZER_MODULE: ${{ runner.temp }}/nuxt-bundle-analyzer/node_modules/nuxt-bundle-analyzer/dist/module.mjs
-          NUXT_BUNDLE_ANALYZER_NAME: main
       - name: Upload the bundle analysis
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
@@ -79,6 +67,10 @@ jobs:
         with:
           name: bundle-history
           path: ${{ runner.temp }}/runs/main
+      # The runner's own Node.js is older than the `devEngines` of package.json, which npx warns about.
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7
+        with:
+          node-version: lts/-1
       - name: Upload to bundle.nuxt.dev
         run: >-
           npx --yes "nuxt-bundle-analyzer@$NUXT_BUNDLE_ANALYZER_VERSION" upload .
