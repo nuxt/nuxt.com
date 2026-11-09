@@ -144,27 +144,32 @@ function flash() {
 
 async function startEditing() {
   if (!preview.value || status.value !== 'live') return
+  const previewId = preview.value.id
   editController?.abort()
-  editController = new AbortController()
+  const controller = new AbortController()
+  editController = controller
+  const isCurrent = () => editController === controller && preview.value?.id === previewId
   shared.editor.value = 'starting'
   shared.editError.value = ''
   shared.editStep.value = 0
 
   try {
-    const response = await fetch(`/api/templates/preview/${preview.value.id}/edit`, { method: 'POST', signal: editController.signal })
+    const response = await fetch(`/api/templates/preview/${previewId}/edit`, { method: 'POST', signal: controller.signal })
     let devUrl: string | undefined
     await readEvents<PreviewEditEvent>(response, (data) => {
+      if (!isCurrent()) return
       if (data.type === 'error') throw new Error(data.message)
       shared.editStep.value = data.type === 'started' ? 1 : 2
       if (data.type === 'ready') devUrl = data.url
     }, 'The dev server could not start.')
+    if (!isCurrent()) return
     if (!devUrl) throw new Error('The dev server could not start.')
     // The visitor asked for it: swap even after they clicked into the frame, and keep them on their page.
     switchingToDev = true
     pendingPath = shared.preview.value?.path ?? null
     load(devUrl)
   } catch (err: any) {
-    if (err?.name === 'AbortError') return
+    if (err?.name === 'AbortError' || !isCurrent()) return
     shared.editor.value = 'failed'
     shared.editError.value = visitorMessage(err, 'The dev server could not start.')
   }
@@ -325,6 +330,7 @@ useEventListener(import.meta.client ? window : undefined, 'message', (event: Mes
   // A path, never a host: it's appended to the sandbox URL in the address bar and the "Open in new tab" link.
   if (event.data.type === 'route' && typeof event.data.message === 'string' && event.data.message.startsWith('/') && shared.preview.value) {
     shared.preview.value = { ...shared.preview.value, path: event.data.message }
+    if (pending.value) pendingPath = event.data.message
   }
   if (event.data.type === 'error') {
     // Once the app is up, a crash only breaks one page: keep it open and expose the error.
