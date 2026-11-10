@@ -224,6 +224,7 @@ export default defineNuxtConfig({
     // Auth-protected client-side area — never SSR'd.
     '/dashboard': { ssr: false },
     '/dashboard/**': { ssr: false },
+    '/mcp/authorize': { ssr: false },
     '/_eve_internal/**': { headers: { 'cache-control': 'no-store' } },
     '/api/internal/**': { headers: { 'cache-control': 'no-store' } },
     // Static image: nothing in it should ever run, even when opened directly
