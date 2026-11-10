@@ -1,6 +1,5 @@
 import { createResolver } from 'nuxt/kit'
 import type { LLMsSection } from 'nuxt-llms'
-import mcp from './mcp.config'
 import { agentHowToCall, agentWhenToUse } from './shared/utils/agents'
 import { ARCHIVED_DOC_VERSIONS, CURRENT_DOCS_VERSION, NEXT_DOC_VERSIONS } from './shared/utils/docs'
 
@@ -790,7 +789,12 @@ export default defineNuxtConfig({
       }
     ] as Array<LLMsSection & { navigation?: string }>
   },
-  mcp,
+  mcp: {
+    servers: {
+      default: {},
+      admin: { dir: 'mcp-admin' }
+    }
+  },
   ogImage: {
     cacheMaxAgeSeconds: 0,
     security: {
