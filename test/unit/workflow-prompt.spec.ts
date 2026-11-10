@@ -1,10 +1,11 @@
 import { readdirSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
-import { describe, expect, it } from 'vitest'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 import {
   skillFirehoseWorkflowMessage,
   skillWorkflowMessage,
-  workflowSkillId
+  workflowSkillId,
+  verifyWorkflowTriggerAuth
 } from '../../layers/nuxi/agent/lib/workflow/shared'
 
 const SKILLS_DIR = fileURLToPath(new URL('../../layers/nuxi/agent/skills', import.meta.url))
@@ -36,5 +37,19 @@ describe('workflowSkillId', () => {
 
   it('ignores prompts that dispatch no skill', () => {
     expect(workflowSkillId('How do I configure Nuxt runtime config?')).toBeUndefined()
+  })
+})
+
+describe('workflow trigger credentials', () => {
+  afterEach(() => vi.unstubAllEnvs())
+
+  it('accepts only the internal service credential', () => {
+    vi.stubEnv('INTERNAL_API_SECRET', 'demo-internal-secret')
+    vi.stubEnv('NUXT_MCP_ADMIN_TOKEN', 'retired-admin-token')
+    const request = (token: string) => new Request('https://nuxt.com/trigger', { headers: { authorization: `Bearer ${token}` } })
+    expect(verifyWorkflowTriggerAuth(request('demo-internal-secret'))).toBe(true)
+    expect(verifyWorkflowTriggerAuth(request('retired-admin-token'))).toBe(false)
+    vi.stubEnv('INTERNAL_API_SECRET', '')
+    expect(verifyWorkflowTriggerAuth(request('demo-internal-secret'))).toBe(false)
   })
 })

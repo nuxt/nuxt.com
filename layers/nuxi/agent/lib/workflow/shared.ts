@@ -107,9 +107,6 @@ export function verifyWorkflowTriggerAuth(req: Request): boolean {
   const internalSecret = process.env.INTERNAL_API_SECRET?.trim()
   if (internalSecret && safeBearerMatch(token, internalSecret)) return true
 
-  const adminToken = process.env.NUXT_MCP_ADMIN_TOKEN?.trim()
-  if (adminToken && safeBearerMatch(token, adminToken)) return true
-
   return false
 }
 

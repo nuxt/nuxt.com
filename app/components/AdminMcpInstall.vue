@@ -87,11 +87,6 @@ const { copy: copyJson, copied: jsonCopied } = useClipboard()
             </div>
 
             <div class="space-y-1.5">
-              <label class="text-xs font-medium text-muted uppercase tracking-wide">Bearer token</label>
-              <UInputCopy :value="data.token" size="lg" :tracked="false" />
-            </div>
-
-            <div class="space-y-1.5">
               <div class="flex items-center justify-between">
                 <label class="text-xs font-medium text-muted uppercase tracking-wide">JSON config</label>
                 <UButton
@@ -108,11 +103,11 @@ const { copy: copyJson, copied: jsonCopied } = useClipboard()
           </div>
 
           <UAlert
-            color="warning"
+            color="info"
             variant="subtle"
-            icon="i-lucide-shield-alert"
-            title="Keep this token private"
-            description="Anyone with this token has full read access to feedback and agent data. Do not share it or commit it to a public repository."
+            icon="i-simple-icons-github"
+            title="Connect with GitHub"
+            description="Your client will open Nuxt.com to sign in with GitHub and approve access. Only Nuxt team members can connect."
           />
         </div>
       </UCard>

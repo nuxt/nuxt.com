@@ -199,7 +199,7 @@ curl -X POST "https://<preview-url>/eve/v1/ops/showcase-check/trigger" \
   -H "Authorization: Bearer $INTERNAL_API_SECRET"
 ```
 
-Requires on the **eve** runtime: `INTERNAL_API_SECRET`, `NUXT_MCP_ADMIN_TOKEN`. Local dev and Vercel preview use Connect client `slack/nuxi-preview` automatically; prod uses `slack/nuxi` (override with `SLACK_CONNECTOR`). `weekly-digest` additionally needs `NUXI_VERCEL_TEAM_ID`, `NUXI_VERCEL_PROJECT_ID` (nuxt.com), and `NUXI_VERCEL_NUXT_UI_PROJECT_ID` (Nuxt UI) plus, for spend/token numbers, `AI_GATEWAY_API_KEY` (optionally `AI_GATEWAY_REPORT_API_KEY_NAME` / `AI_GATEWAY_REPORT_TAGS`) — both connections are admin-gated so only the scheduled/Slack/admin path can reach them.
+Requires on the **eve** runtime: `INTERNAL_API_SECRET`. The admin MCP connection uses `/api/internal/admin-mcp` with that internal secret; human MCP clients use GitHub OAuth on `/mcp/admin`. Local dev and Vercel preview use Connect client `slack/nuxi-preview` automatically; prod uses `slack/nuxi` (override with `SLACK_CONNECTOR`). `weekly-digest` additionally needs `NUXI_VERCEL_TEAM_ID`, `NUXI_VERCEL_PROJECT_ID` (nuxt.com), and `NUXI_VERCEL_NUXT_UI_PROJECT_ID` (Nuxt UI) plus, for spend/token numbers, `AI_GATEWAY_API_KEY` (optionally `AI_GATEWAY_REPORT_API_KEY_NAME` / `AI_GATEWAY_REPORT_TAGS`) — both connections are admin-gated so only the scheduled/Slack/admin path can reach them.
 
 ### Global Config
 

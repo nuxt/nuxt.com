@@ -1,23 +1,13 @@
 export default defineEventHandler(async (event) => {
   const { user } = await requireUserSession(event)
 
-  // The session role was set at sign-in; re-check before handing out the shared token.
-  if (user.role !== 'admin' || !(await isAuthorizedAdmin(event, user.username))) {
-    throw createError({ statusCode: 403, statusMessage: 'Admin access required' })
-  }
-
-  const { mcpAdminToken } = useRuntimeConfig(event)
-  if (!mcpAdminToken) {
-    throw createError({
-      statusCode: 503,
-      statusMessage: 'MCP admin token is not configured (NUXT_MCP_ADMIN_TOKEN env variable).'
-    })
+  if (!await adminMcpOAuth(event).canAuthorize(user.id)) {
+    throw createError({ statusCode: 403, statusMessage: 'Nuxt team access required' })
   }
 
   const name = 'nuxt-admin'
-  const url = `${getRequestURL(event).origin}/mcp/admin`
-  const headers = { Authorization: `Bearer ${mcpAdminToken}` }
-  const json = { type: 'http' as const, url, headers }
+  const url = adminMcpOAuthUrls(event).resource
+  const json = { type: 'http' as const, url }
 
   const cursorConfig = Buffer.from(JSON.stringify(json)).toString('base64')
   const cursorDeeplink = `cursor://anysphere.cursor-deeplink/mcp/install?name=${encodeURIComponent(name)}&config=${encodeURIComponent(cursorConfig)}`
@@ -27,7 +17,6 @@ export default defineEventHandler(async (event) => {
   return {
     name,
     url,
-    token: mcpAdminToken,
     json,
     deeplinks: {
       cursor: cursorDeeplink,

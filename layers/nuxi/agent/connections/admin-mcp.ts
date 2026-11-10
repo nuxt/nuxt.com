@@ -44,15 +44,15 @@ async function adminOnlyToken(ctx: SessionContext) {
   return {
     principalType: 'app' as const,
     async getToken() {
-      const token = process.env.NUXT_MCP_ADMIN_TOKEN?.trim()
-      if (!token) throw new Error('NUXT_MCP_ADMIN_TOKEN is not configured')
+      const token = process.env.INTERNAL_API_SECRET?.trim()
+      if (!token) throw new Error('INTERNAL_API_SECRET is not configured')
       return { token }
     }
   }
 }
 
 export default defineMcpClientConnection({
-  url: `${appOrigin()}/mcp/admin`,
+  url: `${appOrigin()}/api/internal/admin-mcp`,
   description: 'Nuxi admin analytics: docs feedback ratings, shared web chat transcripts, and per-message votes. Admin/Slack/Discord/schedule sessions only.',
   tools: { allow: ALLOWED_TOOLS },
   auth: adminOnlyToken
