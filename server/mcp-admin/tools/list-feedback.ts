@@ -11,9 +11,6 @@ const inputSchema = z.object({
 })
 
 export default defineMcpTool({
-  name: 'list-feedback',
-  title: 'List Feedback',
-  group: 'admin',
   description: `Lists user feedback entries from the docs site, with filters for rating, page path, and date range.
 
 WHEN TO USE: Use this tool to surface what users are saying about specific docs pages, especially negative feedback ("not-helpful" / "confusing"). Combine with \`admin_feedback_stats\` for aggregated trends first, then drill down with this tool.

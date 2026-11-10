@@ -6,9 +6,6 @@ const inputSchema = z.object({
 })
 
 export default defineMcpPrompt({
-  name: 'summarize-feedback',
-  title: 'Summarize Feedback',
-  group: 'admin',
   description: 'Summarize user feedback on the docs over a recent window: rating distribution, worst pages, and recurring themes from negative comments.',
   inputSchema,
   handler({ sinceDays, pathContains }) {

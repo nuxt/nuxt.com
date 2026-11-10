@@ -26,7 +26,10 @@ vi.stubGlobal('cruxFetch', google.cruxFetch)
 
 const analytics = (await import('../../server/mcp-admin/tools/search-console-analytics')).default
 const webVitals = (await import('../../server/mcp-admin/tools/crux-web-vitals')).default
-const client = await createMcpTestClient(createMcpHandler({ tools: [analytics, webVitals] }))
+const client = await createMcpTestClient(createMcpHandler({ tools: [
+  { ...analytics, name: 'search-console-analytics' },
+  { ...webVitals, name: 'crux-web-vitals' }
+] }))
 afterAll(() => client.close())
 
 async function callTool(name: string, args: Record<string, unknown>): Promise<unknown> {

@@ -26,9 +26,6 @@ const inputSchema = z.object({
 })
 
 export default defineMcpTool({
-  name: 'search-console-analytics',
-  title: 'Search Console Analytics',
-  group: 'admin',
   description: `Queries Google Search performance for nuxt.com (Search Console search analytics): clicks, impressions, CTR and average position, grouped by any of query, page, country, device, date, searchAppearance.
 
 WHEN TO USE: Find top queries for a docs page (\`dimensions=["query"]\` + a \`page\` filter), pages losing traffic (compare two windows), high-impression / low-CTR pages, or queries ranking 8-20 worth improving. Use \`dimensions=["date"]\` for trends.

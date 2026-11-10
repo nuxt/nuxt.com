@@ -11,9 +11,6 @@ const inputSchema = z.object({
 })
 
 export default defineMcpTool({
-  name: 'list-agent-chats',
-  title: 'List Agent Chats',
-  group: 'admin',
   description: `Lists persisted **web** chat sessions (signed-in users on nuxt.com) with message counts and vote tallies. Only includes chats shared with admins or made public. Does not include Slack threads or Vercel o11y runs — use Observability → Agent Runs for those.
 
 WHEN TO USE: Find web chats with downvotes or read metadata before opening a full transcript via \`get-agent-chat\`.`,

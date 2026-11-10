@@ -7,9 +7,6 @@ const inputSchema = z.object({
 })
 
 export default defineMcpPrompt({
-  name: 'triage-problematic-pages',
-  title: 'Triage Problematic Pages',
-  group: 'admin',
   description: 'Identify the docs pages with the most negative feedback over a window and suggest concrete improvements based on what users are saying.',
   inputSchema,
   handler({ sinceDays, top, minResponses }) {

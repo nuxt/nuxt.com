@@ -48,9 +48,6 @@ const inputSchema = z.object({
 })
 
 export default defineMcpTool({
-  name: 'crux-web-vitals',
-  title: 'Crux Web Vitals',
-  group: 'admin',
   description: `Field Core Web Vitals for nuxt.com from real Chrome users (Chrome UX Report): p75 of LCP, INP, CLS, FCP and TTFB, their good / needs-improvement / poor rating and distribution, and whether the Core Web Vitals assessment passes. These are the numbers Google Search uses for its page experience signals.
 
 WHEN TO USE: Check whether a page (or the whole site) is slow for real users, compare phone vs desktop, or pass \`weeks\` to see a weekly trend and confirm a performance fix landed.

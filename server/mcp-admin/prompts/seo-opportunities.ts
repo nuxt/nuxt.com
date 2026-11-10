@@ -7,9 +7,6 @@ const inputSchema = z.object({
 })
 
 export default defineMcpPrompt({
-  name: 'seo-opportunities',
-  title: 'Seo Opportunities',
-  group: 'admin',
   description: 'Find the nuxt.com pages with the most to gain from SEO work, from Google Search Console data cross-checked with docs feedback, indexing and field Core Web Vitals, and suggest concrete fixes.',
   inputSchema,
   handler({ days, top, pathContains }) {

@@ -6,9 +6,6 @@ const inputSchema = z.object({
 })
 
 export default defineMcpPrompt({
-  name: 'review-agent-chats',
-  title: 'Review Agent Chats',
-  group: 'admin',
   description: 'Review AI agent quality over a recent window: votes, worst web chats, and patterns — usage/spend via Vercel o11y.',
   inputSchema,
   handler({ sinceDays, worst }) {

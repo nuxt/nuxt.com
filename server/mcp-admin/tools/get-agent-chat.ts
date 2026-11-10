@@ -14,9 +14,6 @@ const inputSchema = z.object({
 })
 
 export default defineMcpTool({
-  name: 'get-agent-chat',
-  title: 'Get Agent Chat',
-  group: 'admin',
   description: `Retrieves a saved **web** chat session: messages (with extracted text), and per-message votes. Only chats shared with admins or made public are available.
 
 WHEN TO USE: After \`list-agent-chats\`, read the transcript. Token/cost data for any channel is in Vercel Observability → Agent Runs; \`agentRunId\` is the run id to look up there (null for chats that never reached the agent).`,

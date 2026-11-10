@@ -15,9 +15,6 @@ const inputSchema = z.object({
 })
 
 export default defineMcpTool({
-  name: 'feedback-stats',
-  title: 'Feedback Stats',
-  group: 'admin',
   description: `Aggregated feedback metrics: global counts per rating, top problematic pages (most negative feedback), and an average satisfaction score.
 
 WHEN TO USE: Start here to get a high-level read on docs satisfaction over a window, then drill down with \`admin_list_feedback\` on the worst-scoring pages.

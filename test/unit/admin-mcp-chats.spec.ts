@@ -24,7 +24,11 @@ vi.stubGlobal('db', db)
 const listChats = (await import('../../server/mcp-admin/tools/list-agent-chats')).default
 const getChat = (await import('../../server/mcp-admin/tools/get-agent-chat')).default
 const listVotes = (await import('../../server/mcp-admin/tools/list-agent-votes')).default
-const client = await createMcpTestClient(createMcpHandler({ tools: [listChats, getChat, listVotes] }))
+const client = await createMcpTestClient(createMcpHandler({ tools: [
+  { ...listChats, name: 'list-agent-chats' },
+  { ...getChat, name: 'get-agent-chat' },
+  { ...listVotes, name: 'list-agent-votes' }
+] }))
 afterAll(() => client.close())
 
 async function callTool(name: string, args: Record<string, unknown>) {
