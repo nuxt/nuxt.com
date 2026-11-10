@@ -253,7 +253,7 @@ describe('admin MCP OAuth HTTP flow', () => {
     expect(JSON.stringify(config)).not.toMatch(/Bearer|Authorization|token/)
   })
 
-  it('resolves the stable GitHub account ID and checks current core-team membership', async () => {
+  it('resolves the stable GitHub account ID and applies the current website admin policy', async () => {
     const { id, cookie, registered, verifier } = await start()
     const approved = await request(consentRequest(id, cookie))
     const result: { redirect: string } = await approved.json()
@@ -263,10 +263,12 @@ describe('admin MCP OAuth HTTP flow', () => {
       redirect_uri: 'http://127.0.0.1:4000/callback', resource: `${origin}/mcp/admin`
     }, { 'content-type': 'application/x-www-form-urlencoded' })
     const github = vi.fn(async () => ({ login: 'RenamedTeamMember' }))
-    const core = vi.fn(async () => true)
+    const admin = vi.fn(async () => true)
+    const core = vi.fn(async () => false)
     vi.stubGlobal('$fetch', github)
     vi.stubGlobal('githubHeaders', () => ({}))
     vi.stubGlobal('isCoreTeamMember', core)
+    vi.stubGlobal('isAuthorizedAdmin', admin)
     const app = h3.createApp()
     app.use(h3.defineEventHandler(async (event) => {
       const provider = oauthUtils.adminMcpOAuth(event)
@@ -276,8 +278,9 @@ describe('admin MCP OAuth HTTP flow', () => {
     const check = h3.toWebHandler(app)
     expect(await (await check(new Request(origin))).json()).toEqual({ authorized: true })
     expect(github).toHaveBeenCalledWith('https://api.github.com/user/42', { headers: {} })
-    expect(core).toHaveBeenCalledWith(expect.anything(), 'renamedteammember')
-    core.mockResolvedValue(false)
+    expect(admin).toHaveBeenCalledWith(expect.anything(), 'renamedteammember')
+    expect(core).not.toHaveBeenCalled()
+    admin.mockResolvedValue(false)
     expect(await (await check(new Request(origin))).json()).toEqual({ authorized: false })
   })
 

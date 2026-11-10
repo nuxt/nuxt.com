@@ -10,7 +10,7 @@ export function adminMcpOAuth(event: H3Event) {
     const githubUser = await $fetch<{ login: string }>(`https://api.github.com/user/${encodeURIComponent(user.providerId)}`, {
       headers: githubHeaders(event)
     })
-    return isCoreTeamMember(event, githubUser.login.toLowerCase())
+    return isAuthorizedAdmin(event, githubUser.login.toLowerCase())
   })
 }
 

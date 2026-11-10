@@ -4,6 +4,18 @@ useSeoMeta({ title: 'Connect Nuxt Admin MCP', robots: 'noindex, nofollow' })
 const route = useRoute()
 const request = computed(() => typeof route.query.request === 'string' ? route.query.request : '')
 const { data, error } = await useFetch('/api/mcp/oauth/consent', { query: { request } })
+const authorizationError = computed(() => {
+  switch (error.value?.statusCode) {
+    case 403:
+      return 'Your GitHub account does not have access to the Nuxt admin area.'
+    case 401:
+      return 'Your session has expired. Sign in again, then reconnect from your MCP client.'
+    case 400:
+      return 'This connection request has expired or is invalid. Connect again from your MCP client.'
+    default:
+      return 'Could not load this connection request. Try connecting again from your MCP client.'
+  }
+})
 const submitting = ref(false)
 const submitError = ref('')
 
@@ -32,7 +44,7 @@ async function decide(allow: boolean) {
           </h1>
         </div>
       </template>
-      <UAlert v-if="error || !data || !('client' in data)" color="error" title="Cannot authorize this connection" description="Nuxt team access and an active connection request are required. Connect again from your MCP client." />
+      <UAlert v-if="error || !data || !('client' in data)" color="error" title="Cannot authorize this connection" :description="authorizationError" />
       <div v-else class="space-y-5">
         <p><strong class="break-all">{{ data.client.name }}</strong> is asking to connect as <strong>@{{ data.username }}</strong>.</p>
         <p class="text-muted">

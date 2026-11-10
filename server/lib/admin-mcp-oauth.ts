@@ -197,7 +197,7 @@ export function createAdminMcpOAuth<TSchema extends Record<string, unknown>>(
     async authorize(input: AdminMcpAuthorization, userId: string, allowed: boolean) {
       const { request } = await this.validateAuthorization(input)
       const user = await authorizedUser(userId)
-      if (!user) throw new OAuth2Server.AccessDeniedError('Nuxt team access required')
+      if (!user) throw new OAuth2Server.AccessDeniedError('Nuxt admin access required')
       const redirect = new URL(request.redirect_uri)
       if (request.state) redirect.searchParams.set('state', request.state)
       if (!allowed) {
