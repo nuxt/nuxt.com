@@ -61,7 +61,10 @@ describe('admin MCP OAuth', () => {
     const { tokens, registered } = await connected()
     expect(tokens).toMatchObject({ token_type: 'Bearer', scope: 'nuxt:admin' })
     expect(tokens.expires_in).toBeGreaterThan(890)
+    authorized.mockClear()
     expect(await oauth.verify(tokens.access_token)).toEqual({ sub: 'team', scope: 'nuxt:admin', client_id: registered.client_id })
+    expect(authorized).not.toHaveBeenCalled()
+    expect(await oauth.canAuthorize('team')).toEqual({ id: 'team' })
     expect(authorized).toHaveBeenCalledWith(expect.objectContaining({ id: 'team', providerId: '42' }))
     const otherResource = createAdminMcpOAuth(database, 'https://preview.nuxt.com', authorized)
     expect(await otherResource.verify(tokens.access_token)).toBe(false)
@@ -144,14 +147,27 @@ describe('admin MCP OAuth', () => {
     expect(await oauth.token(refresh, headers)).toHaveProperty('access_token')
   })
 
-  it('fails closed when team access is removed or the user is deleted', async () => {
-    const { tokens, refresh } = await connected()
+  it('authenticates an existing token after membership loss while policy and refresh deny access', async () => {
+    const { tokens, refresh, registered } = await connected()
     authorized.mockResolvedValue(false)
-    expect(await oauth.verify(tokens.access_token)).toBe(false)
+    authorized.mockClear()
+    const identity = { sub: 'team', scope: 'nuxt:admin', client_id: registered.client_id }
+    expect(await oauth.verify(tokens.access_token)).toEqual(identity)
+    expect(authorized).not.toHaveBeenCalled()
+    expect(await oauth.canAuthorize(identity.sub)).toBe(false)
     await expect(oauth.token(refresh, headers)).rejects.toThrow()
-    authorized.mockResolvedValue(true)
+    expect(await oauth.verify(tokens.access_token)).toEqual(identity)
+  })
+
+  it('rejects credentials and policy after deleting the user cascades to grants and tokens', async () => {
+    const { tokens, refresh } = await connected()
     await database.delete(users).where(eq(users.id, 'team'))
+    authorized.mockClear()
     expect(await oauth.verify(tokens.access_token)).toBe(false)
+    expect(await oauth.canAuthorize('team')).toBe(false)
+    expect(authorized).not.toHaveBeenCalled()
+    await expect(oauth.token(refresh, headers)).rejects.toThrow()
+    expect(await database.select().from(mcpOAuthGrants)).toHaveLength(0)
     expect(await database.select().from(mcpOAuthTokens)).toHaveLength(0)
   })
 
@@ -162,7 +178,9 @@ describe('admin MCP OAuth', () => {
     const { tokens, refresh } = await connected()
     await database.update(mcpOAuthTokens).set({ accessExpiresAt: new Date(0) })
     expect(await oauth.verify(tokens.access_token)).toBe(false)
+    await database.update(mcpOAuthTokens).set({ accessExpiresAt: new Date(Date.now() + 900_000) })
     await database.update(mcpOAuthGrants).set({ expiresAt: new Date(0) })
+    expect(await oauth.verify(tokens.access_token)).toBe(false)
     await expect(oauth.token(refresh, headers)).rejects.toThrow()
     await oauth.cleanup()
     expect(await database.select().from(mcpOAuthTokens)).toHaveLength(0)

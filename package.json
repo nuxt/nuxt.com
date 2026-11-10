@@ -55,7 +55,7 @@
     "@nuxt/ui": "^4.12.0",
     "@nuxthub/core": "^0.10.11",
     "@nuxtjs/html-validator": "^2.1.0",
-    "@nuxtjs/mcp-toolkit": "https://pkg.pr.new/@nuxtjs/mcp-toolkit@2fa99b1",
+    "@nuxtjs/mcp-toolkit": "https://pkg.pr.new/@nuxtjs/mcp-toolkit@53774c0",
     "@octokit/webhooks-methods": "^6.0.0",
     "@opentelemetry/api": "^1.10.0",
     "@opentelemetry/instrumentation-undici": "^0.34.0",

@@ -1,5 +1,6 @@
 import { readFileSync } from 'node:fs'
 import { createHash } from 'node:crypto'
+import { AsyncLocalStorage } from 'node:async_hooks'
 import { createClient } from '@libsql/client'
 import { drizzle } from 'drizzle-orm/libsql'
 import * as h3 from 'h3'
@@ -21,6 +22,16 @@ let signedIn: boolean
 const member = vi.fn(async () => true)
 const user = { id: 'team', username: 'team' }
 const pending = new Map<string, unknown>()
+const events = new AsyncLocalStorage<h3.H3Event>()
+
+vi.mock('nitropack/runtime', () => ({
+  useRuntimeConfig: () => ({ mcpOauthIssuer: origin }),
+  useEvent: () => {
+    const event = events.getStore()
+    if (!event) throw new Error('Missing MCP request event')
+    return event
+  }
+}))
 
 beforeEach(async () => {
   client = createClient({ url: ':memory:' })
@@ -62,10 +73,24 @@ beforeEach(async () => {
     ['/api/mcp/oauth/consent', 'post', await import('../../server/api/mcp/oauth/consent.post')],
     ['/api/mcp/oauth/token', 'post', await import('../../server/api/mcp/oauth/token.post')],
     ['/api/mcp/oauth/revoke', 'post', await import('../../server/api/mcp/oauth/revoke.post')],
-    ['/.well-known/oauth-authorization-server', 'get', await import('../../server/routes/.well-known/oauth-authorization-server.get')],
-    ['/.well-known/oauth-protected-resource/mcp/admin', 'get', await import('../../server/routes/.well-known/oauth-protected-resource/mcp/admin.get')]
+    ['/.well-known/oauth-authorization-server', 'get', await import('../../server/routes/.well-known/oauth-authorization-server.get')]
   ] as const
   for (const [path, method, route] of routes) router[method](path, route.default)
+  const config = (await import('../../server/mcp-admin/index')).default
+  const metadata = config.oauth?.metadata
+  if (!metadata) throw new Error('Missing admin MCP OAuth configuration')
+  const handler = createMcpHandler({
+    ...config,
+    tools: [defineMcpTool({
+      name: 'identity',
+      scopes: ['nuxt:admin'],
+      handler: event => `Sanitized team-only result for ${event.context.oauth?.sub}`
+    })]
+  })
+  router.post('/mcp/admin', h3.defineEventHandler(event =>
+    events.run(event, () => handler.fetch(h3.toWebRequest(event), event.context))
+  ))
+  router.get('/.well-known/oauth-protected-resource/mcp/admin', h3.defineEventHandler(() => metadata))
   app.use((await import('../../server/middleware/mcp-oauth')).default)
   app.use(router)
   request = h3.toWebHandler(app)
@@ -97,6 +122,51 @@ const consentRequest = (id: string, cookie: string, requestOrigin = origin) => n
 })
 
 describe('admin MCP OAuth HTTP flow', () => {
+  it.each(['2025-11-25', '2026-07-28'])('rechecks database-backed membership on each %s MCP request', async (revision) => {
+    const { id, cookie, registered, verifier } = await start()
+    const approved = await request(consentRequest(id, cookie))
+    const result: { redirect: string } = await approved.json()
+    const tokens = await oauth.token({
+      grant_type: 'authorization_code', client_id: registered.client_id,
+      code: new URL(result.redirect).searchParams.get('code')!, code_verifier: verifier,
+      redirect_uri: 'http://127.0.0.1:4000/callback', resource: `${origin}/mcp/admin`
+    }, { 'content-type': 'application/x-www-form-urlencoded' })
+    const call = (token: string) => request(new Request(`${origin}/mcp/admin`, {
+      method: 'POST',
+      headers: {
+        'content-type': 'application/json', 'accept': 'application/json, text/event-stream',
+        'mcp-protocol-version': revision,
+        ...(revision === '2026-07-28' ? { 'mcp-method': 'tools/call', 'mcp-name': 'identity' } : {}),
+        'authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify({ jsonrpc: '2.0', id: 1, method: 'tools/call', params: {
+        name: 'identity',
+        ...(revision === '2026-07-28'
+          ? { _meta: {
+              'io.modelcontextprotocol/protocolVersion': revision,
+              'io.modelcontextprotocol/clientCapabilities': {}
+            } }
+          : {})
+      } })
+    }))
+    const allowed = await call(tokens.access_token)
+    expect(allowed.status).toBe(200)
+    expect(await allowed.text()).toContain('Sanitized team-only result for team')
+    member.mockResolvedValue(false)
+    const denied = await call(tokens.access_token)
+    expect(denied.status).toBe(403)
+    expect(denied.headers.has('www-authenticate')).toBe(false)
+    await denied.body?.cancel()
+    member.mockResolvedValue(true)
+    const restored = await call(tokens.access_token)
+    expect(restored.status).toBe(200)
+    await restored.body?.cancel()
+    const invalid = await call('old-shared-token')
+    expect(invalid.status).toBe(401)
+    expect(invalid.headers.get('www-authenticate')).toContain(`resource_metadata="${oauth.urls.metadata}"`)
+    await invalid.body?.cancel()
+  })
+
   it('publishes discovery and completes approval, PKCE, an authenticated MCP tool call, refresh and revocation', async () => {
     const discovery = await request(new Request(`${origin}/.well-known/oauth-authorization-server`))
     expect(discovery.headers.get('access-control-allow-origin')).toBe('*')
@@ -116,21 +186,16 @@ describe('admin MCP OAuth HTTP flow', () => {
     expect(exchange.status).toBe(200)
     expect(exchange.headers.get('cache-control')).toBe('no-store')
     const tokens: { access_token: string, refresh_token: string } = await exchange.json()
-    const handler = createMcpHandler({
-      name: 'test-admin',
-      auth: { schemes: ['bearer'], resourceMetadataUrl: oauth.urls.metadata, validate: async ({ token }) => Boolean(await oauth.verify(token)) },
-      tools: [defineMcpTool({ name: 'identity', handler: () => 'Sanitized team-only result' })]
-    })
-    const call = (token: string) => handler.fetch(new Request(`${origin}/mcp/admin`, {
+    const call = (token: string) => request(new Request(`${origin}/mcp/admin`, {
       method: 'POST', headers: { 'content-type': 'application/json', 'accept': 'application/json, text/event-stream', 'mcp-protocol-version': '2026-07-28', 'mcp-method': 'tools/call', 'mcp-name': 'identity', 'authorization': `Bearer ${token}` },
       body: JSON.stringify({ jsonrpc: '2.0', id: 1, method: 'tools/call', params: { name: 'identity', _meta: { 'io.modelcontextprotocol/protocolVersion': '2026-07-28', 'io.modelcontextprotocol/clientCapabilities': {} } } })
     }))
-    const legacy = await handler.fetch(new Request(`${origin}/mcp/admin`, {
+    const legacy = await request(new Request(`${origin}/mcp/admin`, {
       method: 'POST', headers: { 'content-type': 'application/json', 'accept': 'application/json, text/event-stream', 'authorization': `Bearer ${tokens.access_token}` },
       body: JSON.stringify({ jsonrpc: '2.0', id: 2, method: 'initialize', params: { protocolVersion: '2025-11-25', capabilities: {}, clientInfo: { name: 'legacy-fixture', version: '1' } } })
     }))
     expect(legacy.status).toBe(200)
-    expect(await legacy.text()).toContain('test-admin')
+    expect(await legacy.text()).toContain('admin')
     const called = await call(tokens.access_token)
     expect(called.status, await called.clone().text()).toBe(200)
     expect(await called.text()).toContain('Sanitized team-only result')
@@ -204,8 +269,9 @@ describe('admin MCP OAuth HTTP flow', () => {
     vi.stubGlobal('isCoreTeamMember', core)
     const app = h3.createApp()
     app.use(h3.defineEventHandler(async (event) => {
-      const verified = await oauthUtils.adminMcpOAuth(event).verify(tokens.access_token)
-      return { authorized: Boolean(verified) }
+      const provider = oauthUtils.adminMcpOAuth(event)
+      const verified = await provider.verify(tokens.access_token)
+      return { authorized: Boolean(verified && await provider.canAuthorize(verified.sub)) }
     }))
     const check = h3.toWebHandler(app)
     expect(await (await check(new Request(origin))).json()).toEqual({ authorized: true })

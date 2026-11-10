@@ -226,8 +226,7 @@ export function createAdminMcpOAuth<TSchema extends Record<string, unknown>>(
       if (!token) return false
       const grant = await activeGrant(token.grantId)
       if (!grant || grant.resource !== urls.resource) return false
-      const user = await authorizedUser(grant.userId)
-      return user && { sub: user.id, scope: SCOPE, client_id: token.clientId }
+      return { sub: grant.userId, scope: SCOPE, client_id: token.clientId }
     },
     async revoke(token: string, clientId: string) {
       const [row] = await database.select().from(mcpOAuthTokens).where(and(

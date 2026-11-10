@@ -1,6 +1,8 @@
-import { defineMcpServer } from '@nuxtjs/mcp-toolkit/server'
+import { createMcpOAuth, defineMcpServer } from '@nuxtjs/mcp-toolkit/server'
 import { useEvent, useRuntimeConfig } from 'nitropack/runtime'
 import { CURRENT_DOCS_VERSION } from '../../shared/utils/docs'
+
+const issuer = useRuntimeConfig().mcpOauthIssuer
 
 export default defineMcpServer({
   name: 'admin',
@@ -22,16 +24,16 @@ Tools:
 For recurring tasks, prefer the prompts (\`summarize-feedback\`, \`triage-problematic-pages\`, \`review-agent-chats\`, \`weekly-digest\`, \`seo-opportunities\`) which already chain the right tool calls.
 
 Default to recent data (last 7-30 days) unless the user asks for a longer window. Always include direct links (path / chat id) so the team can drill down on the website.`,
-  auth: {
-    schemes: ['bearer'],
-    get resourceMetadataUrl() {
-      return `${useRuntimeConfig().mcpOauthIssuer}/.well-known/oauth-protected-resource/mcp/admin`
-    },
-    validate: async ({ token }, event) => {
+  oauth: createMcpOAuth({
+    resource: `${issuer}/mcp/admin`,
+    authorizationServers: [issuer],
+    scopesSupported: ['nuxt:admin'],
+    verify: async (token, event) => {
       const claims = await adminMcpOAuth(useEvent()).verify(token)
       if (!claims) return false
       event.context.oauth = claims
       return true
     }
-  }
+  }),
+  authorize: async identity => Boolean(await adminMcpOAuth(useEvent()).canAuthorize(identity.sub))
 })

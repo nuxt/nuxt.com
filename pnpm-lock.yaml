@@ -239,8 +239,8 @@ importers:
         specifier: ^2.1.0
         version: 2.1.0(magicast@0.5.5)(vitest@5.0.5(@opentelemetry/api@1.10.0)(@types/node@26.6.3)(happy-dom@20.14.6)(vite@8.3.5(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1)))
       '@nuxtjs/mcp-toolkit':
-        specifier: https://pkg.pr.new/@nuxtjs/mcp-toolkit@2fa99b1
-        version: https://pkg.pr.new/@nuxtjs/mcp-toolkit@2fa99b1(@modelcontextprotocol/client@2.1.0)(@nuxt/schema@4.6.3)(confbox@0.3.1)(crossws@0.4.12(srvx@1.0.5))(dotenv@17.4.2)(giget@3.3.1)(jiti@2.7.0)(magic-string@1.4.3)(mlly@1.8.2)(nitropack@2.13.5(@libsql/client@0.18.0)(@vercel/functions@3.10.3(@aws-sdk/credential-provider-web-identity@3.972.49)(ws@8.22.0))(drizzle-orm@0.45.4(@cloudflare/workers-types@4.20260702.1)(@libsql/client@0.18.0)(@opentelemetry/api@1.10.0))(oxc-parser@0.153.0)(rolldown@1.2.14)(srvx@1.0.5)(supports-color@8.1.1)(vite@8.3.5(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1)))(ocache@0.3.0)(oxc-parser@0.153.0)(rolldown@1.2.14)(unplugin@3.4.0(esbuild@0.28.2)(rolldown@1.2.14)(rollup@4.65.1)(vite@8.3.5(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1)))(vue@3.5.44(typescript@6.0.3))
+        specifier: https://pkg.pr.new/@nuxtjs/mcp-toolkit@53774c0
+        version: https://pkg.pr.new/@nuxtjs/mcp-toolkit@53774c0(@modelcontextprotocol/client@2.1.0)(@nuxt/schema@4.6.3)(confbox@0.3.1)(crossws@0.4.12(srvx@1.0.5))(dotenv@17.4.2)(giget@3.3.1)(jiti@2.7.0)(magic-string@1.4.3)(mlly@1.8.2)(nitropack@2.13.5(@libsql/client@0.18.0)(@vercel/functions@3.10.3(@aws-sdk/credential-provider-web-identity@3.972.49)(ws@8.22.0))(drizzle-orm@0.45.4(@cloudflare/workers-types@4.20260702.1)(@libsql/client@0.18.0)(@opentelemetry/api@1.10.0))(oxc-parser@0.153.0)(rolldown@1.2.14)(srvx@1.0.5)(supports-color@8.1.1)(vite@8.3.5(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1)))(ocache@0.3.0)(oxc-parser@0.153.0)(rolldown@1.2.14)(unplugin@3.4.0(esbuild@0.28.2)(rolldown@1.2.14)(rollup@4.65.1)(vite@8.3.5(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1)))(vue@3.5.44(typescript@6.0.3))
       '@octokit/webhooks-methods':
         specifier: ^6.0.0
         version: 6.0.0
@@ -439,7 +439,7 @@ importers:
         version: 0.7.11
       nuxt-agent-discovery:
         specifier: ^0.8.1
-        version: 0.8.1(b431dc57506f7b745dbf8b3d5a348655)
+        version: 0.8.1(802bfd2c44b9b370f7bc44ff1c7c77d7)
       nuxtseo-layer-devtools:
         specifier: ^6.0.2
         version: 6.0.2(0f3c99d76c7e63523c45c226c60dd0e0)
@@ -2626,8 +2626,8 @@ packages:
   '@nuxtjs/html-validator@2.1.0':
     resolution: {integrity: sha512-ldo8ioSsH3OEumtgwDMokTxlhjgO9FxjJWViAxisq5l/wjvaVX8SYTQ02wjtQcQQPSvS6BwgypAp400RlyFHng==}
 
-  '@nuxtjs/mcp-toolkit@https://pkg.pr.new/@nuxtjs/mcp-toolkit@2fa99b1':
-    resolution: {integrity: sha512-5IzDcDGvbsDkkGAIK7BxfImr5r2rfk5hCybaTP9bhkPkbEakPz4wCxaQJwGoCqzwuncWnm0yHY+W1HN7yjrClA==, tarball: https://pkg.pr.new/@nuxtjs/mcp-toolkit@2fa99b1}
+  '@nuxtjs/mcp-toolkit@https://pkg.pr.new/@nuxtjs/mcp-toolkit@53774c0':
+    resolution: {integrity: sha512-Ay2At8CC1QevTgVQ9pBvXa0uRFjC0x+ipm0FpUnnc7I2oYaRJacVwTxCjDlXOPE1WSBbmGZrBzqfmQuTBLa8bg==, tarball: https://pkg.pr.new/@nuxtjs/mcp-toolkit@53774c0}
     version: 0.24.3
     peerDependencies:
       vue: ^3.5.41
@@ -8920,16 +8920,19 @@ packages:
   nf3@0.3.24:
     resolution: {integrity: sha512-HxLK4bo+5jNsEETZp4w3tJblHOA9MCBY14IN9nZJJV8JDxt9yNIYxuBuLMjTAR5GFa3HL61+8VQDUrXv3/C8fw==}
 
-  nitro-mcp-toolkit@https://pkg.pr.new/nuxt-modules/mcp-toolkit/nitro-mcp-toolkit@2fa99b1:
-    resolution: {integrity: sha512-Ec3L2n0UaYV1ywftQssymzqgUhJ11GLfJ3izm2Aw5MhoHbGyc89lT87iW+LMp4Vf1et3xBitzRamf160EvYoYQ==, tarball: https://pkg.pr.new/nuxt-modules/mcp-toolkit/nitro-mcp-toolkit@2fa99b1}
+  nitro-mcp-toolkit@https://pkg.pr.new/nuxt-modules/mcp-toolkit/nitro-mcp-toolkit@53774c0:
+    resolution: {integrity: sha512-TyjVq1jk/zs4ErUOfF+5CnKf0S9zWugq7MuxJsP8DGGyVfojniBkG8raRZi0xnhuNPo4WQkYotFHWENRC6C4cQ==, tarball: https://pkg.pr.new/nuxt-modules/mcp-toolkit/nitro-mcp-toolkit@53774c0}
     version: 0.4.0
     engines: {node: '>=20.19'}
     peerDependencies:
       '@modelcontextprotocol/client': ^2.0.0
+      better-auth: ^1.7.16
       nitro: 3.0.260610-beta || ^3.0.0
       nitropack: ^2.13.4
     peerDependenciesMeta:
       '@modelcontextprotocol/client':
+        optional: true
+      better-auth:
         optional: true
       nitro:
         optional: true
@@ -14519,16 +14522,17 @@ snapshots:
       - magicast
       - vitest
 
-  '@nuxtjs/mcp-toolkit@https://pkg.pr.new/@nuxtjs/mcp-toolkit@2fa99b1(@modelcontextprotocol/client@2.1.0)(@nuxt/schema@4.6.3)(confbox@0.3.1)(crossws@0.4.12(srvx@1.0.5))(dotenv@17.4.2)(giget@3.3.1)(jiti@2.7.0)(magic-string@1.4.3)(mlly@1.8.2)(nitropack@2.13.5(@libsql/client@0.18.0)(@vercel/functions@3.10.3(@aws-sdk/credential-provider-web-identity@3.972.49)(ws@8.22.0))(drizzle-orm@0.45.4(@cloudflare/workers-types@4.20260702.1)(@libsql/client@0.18.0)(@opentelemetry/api@1.10.0))(oxc-parser@0.153.0)(rolldown@1.2.14)(srvx@1.0.5)(supports-color@8.1.1)(vite@8.3.5(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1)))(ocache@0.3.0)(oxc-parser@0.153.0)(rolldown@1.2.14)(unplugin@3.4.0(esbuild@0.28.2)(rolldown@1.2.14)(rollup@4.65.1)(vite@8.3.5(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1)))(vue@3.5.44(typescript@6.0.3))':
+  '@nuxtjs/mcp-toolkit@https://pkg.pr.new/@nuxtjs/mcp-toolkit@53774c0(@modelcontextprotocol/client@2.1.0)(@nuxt/schema@4.6.3)(confbox@0.3.1)(crossws@0.4.12(srvx@1.0.5))(dotenv@17.4.2)(giget@3.3.1)(jiti@2.7.0)(magic-string@1.4.3)(mlly@1.8.2)(nitropack@2.13.5(@libsql/client@0.18.0)(@vercel/functions@3.10.3(@aws-sdk/credential-provider-web-identity@3.972.49)(ws@8.22.0))(drizzle-orm@0.45.4(@cloudflare/workers-types@4.20260702.1)(@libsql/client@0.18.0)(@opentelemetry/api@1.10.0))(oxc-parser@0.153.0)(rolldown@1.2.14)(srvx@1.0.5)(supports-color@8.1.1)(vite@8.3.5(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1)))(ocache@0.3.0)(oxc-parser@0.153.0)(rolldown@1.2.14)(unplugin@3.4.0(esbuild@0.28.2)(rolldown@1.2.14)(rollup@4.65.1)(vite@8.3.5(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1)))(vue@3.5.44(typescript@6.0.3))':
     dependencies:
       '@nuxt/kit': 4.6.3(@nuxt/schema@4.6.3)(confbox@0.3.1)(dotenv@17.4.2)(giget@3.3.1)(jiti@2.7.0)(magic-string@1.4.3)(mlly@1.8.2)(oxc-parser@0.153.0)(rolldown@1.2.14)(unplugin@3.4.0(esbuild@0.28.2)(rolldown@1.2.14)(rollup@4.65.1)(vite@8.3.5(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1)))
-      nitro-mcp-toolkit: https://pkg.pr.new/nuxt-modules/mcp-toolkit/nitro-mcp-toolkit@2fa99b1(@modelcontextprotocol/client@2.1.0)(crossws@0.4.12(srvx@1.0.5))(nitropack@2.13.5(@libsql/client@0.18.0)(@vercel/functions@3.10.3(@aws-sdk/credential-provider-web-identity@3.972.49)(ws@8.22.0))(drizzle-orm@0.45.4(@cloudflare/workers-types@4.20260702.1)(@libsql/client@0.18.0)(@opentelemetry/api@1.10.0))(oxc-parser@0.153.0)(rolldown@1.2.14)(srvx@1.0.5)(supports-color@8.1.1)(vite@8.3.5(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1)))(ocache@0.3.0)
+      nitro-mcp-toolkit: https://pkg.pr.new/nuxt-modules/mcp-toolkit/nitro-mcp-toolkit@53774c0(@modelcontextprotocol/client@2.1.0)(crossws@0.4.12(srvx@1.0.5))(nitropack@2.13.5(@libsql/client@0.18.0)(@vercel/functions@3.10.3(@aws-sdk/credential-provider-web-identity@3.972.49)(ws@8.22.0))(drizzle-orm@0.45.4(@cloudflare/workers-types@4.20260702.1)(@libsql/client@0.18.0)(@opentelemetry/api@1.10.0))(oxc-parser@0.153.0)(rolldown@1.2.14)(srvx@1.0.5)(supports-color@8.1.1)(vite@8.3.5(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1)))(ocache@0.3.0)
       pathe: 2.0.3
     optionalDependencies:
       vue: 3.5.44(typescript@6.0.3)
     transitivePeerDependencies:
       - '@modelcontextprotocol/client'
       - '@nuxt/schema'
+      - better-auth
       - confbox
       - crossws
       - dotenv
@@ -21132,7 +21136,7 @@ snapshots:
 
   nf3@0.3.24: {}
 
-  nitro-mcp-toolkit@https://pkg.pr.new/nuxt-modules/mcp-toolkit/nitro-mcp-toolkit@2fa99b1(@modelcontextprotocol/client@2.1.0)(crossws@0.4.12(srvx@1.0.5))(nitropack@2.13.5(@libsql/client@0.18.0)(@vercel/functions@3.10.3(@aws-sdk/credential-provider-web-identity@3.972.49)(ws@8.22.0))(drizzle-orm@0.45.4(@cloudflare/workers-types@4.20260702.1)(@libsql/client@0.18.0)(@opentelemetry/api@1.10.0))(oxc-parser@0.153.0)(rolldown@1.2.14)(srvx@1.0.5)(supports-color@8.1.1)(vite@8.3.5(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1)))(ocache@0.3.0):
+  nitro-mcp-toolkit@https://pkg.pr.new/nuxt-modules/mcp-toolkit/nitro-mcp-toolkit@53774c0(@modelcontextprotocol/client@2.1.0)(crossws@0.4.12(srvx@1.0.5))(nitropack@2.13.5(@libsql/client@0.18.0)(@vercel/functions@3.10.3(@aws-sdk/credential-provider-web-identity@3.972.49)(ws@8.22.0))(drizzle-orm@0.45.4(@cloudflare/workers-types@4.20260702.1)(@libsql/client@0.18.0)(@opentelemetry/api@1.10.0))(oxc-parser@0.153.0)(rolldown@1.2.14)(srvx@1.0.5)(supports-color@8.1.1)(vite@8.3.5(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1)))(ocache@0.3.0):
     dependencies:
       h3: 2.0.8(crossws@0.4.12(srvx@1.0.5))(ocache@0.3.0)
       h3-mcp: 0.2.0(h3@2.0.8(crossws@0.4.12(srvx@1.0.5))(ocache@0.3.0))
@@ -21333,7 +21337,7 @@ snapshots:
     dependencies:
       boolbase: 1.0.0
 
-  nuxt-agent-discovery@0.8.1(b431dc57506f7b745dbf8b3d5a348655):
+  nuxt-agent-discovery@0.8.1(802bfd2c44b9b370f7bc44ff1c7c77d7):
     dependencies:
       '@nuxt/kit': 4.6.3(@nuxt/schema@4.6.3)(confbox@0.3.1)(dotenv@17.4.2)(giget@3.3.1)(jiti@2.7.0)(magic-string@1.4.3)(mlly@1.8.2)(oxc-parser@0.153.0)(rolldown@1.2.14)(unplugin@3.4.0(esbuild@0.28.2)(rolldown@1.2.14)(rollup@4.65.1)(vite@8.3.5(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1)))
       defu: 6.1.7
@@ -21342,7 +21346,7 @@ snapshots:
       yaml: 2.9.1
     optionalDependencies:
       '@nuxt/content': 3.16.1(@libsql/client@0.18.0)(@nuxt/schema@4.6.3)(@oxc-project/types@0.154.0)(confbox@0.3.1)(dotenv@17.4.2)(esbuild@0.28.2)(giget@3.3.1)(magic-string@1.4.3)(magicast@0.5.5)(mlly@1.8.2)(oxc-parser@0.153.0)(rolldown@1.2.14)(rollup@4.65.1)(supports-color@8.1.1)(valibot@1.5.0(typescript@6.0.3))(vite@8.3.5(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))
-      '@nuxtjs/mcp-toolkit': https://pkg.pr.new/@nuxtjs/mcp-toolkit@2fa99b1(@modelcontextprotocol/client@2.1.0)(@nuxt/schema@4.6.3)(confbox@0.3.1)(crossws@0.4.12(srvx@1.0.5))(dotenv@17.4.2)(giget@3.3.1)(jiti@2.7.0)(magic-string@1.4.3)(mlly@1.8.2)(nitropack@2.13.5(@libsql/client@0.18.0)(@vercel/functions@3.10.3(@aws-sdk/credential-provider-web-identity@3.972.49)(ws@8.22.0))(drizzle-orm@0.45.4(@cloudflare/workers-types@4.20260702.1)(@libsql/client@0.18.0)(@opentelemetry/api@1.10.0))(oxc-parser@0.153.0)(rolldown@1.2.14)(srvx@1.0.5)(supports-color@8.1.1)(vite@8.3.5(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1)))(ocache@0.3.0)(oxc-parser@0.153.0)(rolldown@1.2.14)(unplugin@3.4.0(esbuild@0.28.2)(rolldown@1.2.14)(rollup@4.65.1)(vite@8.3.5(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1)))(vue@3.5.44(typescript@6.0.3))
+      '@nuxtjs/mcp-toolkit': https://pkg.pr.new/@nuxtjs/mcp-toolkit@53774c0(@modelcontextprotocol/client@2.1.0)(@nuxt/schema@4.6.3)(confbox@0.3.1)(crossws@0.4.12(srvx@1.0.5))(dotenv@17.4.2)(giget@3.3.1)(jiti@2.7.0)(magic-string@1.4.3)(mlly@1.8.2)(nitropack@2.13.5(@libsql/client@0.18.0)(@vercel/functions@3.10.3(@aws-sdk/credential-provider-web-identity@3.972.49)(ws@8.22.0))(drizzle-orm@0.45.4(@cloudflare/workers-types@4.20260702.1)(@libsql/client@0.18.0)(@opentelemetry/api@1.10.0))(oxc-parser@0.153.0)(rolldown@1.2.14)(srvx@1.0.5)(supports-color@8.1.1)(vite@8.3.5(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1)))(ocache@0.3.0)(oxc-parser@0.153.0)(rolldown@1.2.14)(unplugin@3.4.0(esbuild@0.28.2)(rolldown@1.2.14)(rollup@4.65.1)(vite@8.3.5(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1)))(vue@3.5.44(typescript@6.0.3))
       '@nuxtjs/robots': 7.0.2(@nuxt/schema@4.6.3)(confbox@0.3.1)(dotenv@17.4.2)(giget@3.3.1)(jiti@2.7.0)(magic-string@1.4.3)(mlly@1.8.2)(nuxt@4.6.3(b41645b565ee26d64267ee01cde2ab71))(oxc-parser@0.153.0)(rolldown@1.2.14)(unplugin@3.4.0(esbuild@0.28.2)(rolldown@1.2.14)(rollup@4.65.1)(vite@8.3.5(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1)))(vue@3.5.44(typescript@6.0.3))(zod@4.6.7)
       '@nuxtjs/sitemap': 9.1.0(@nuxt/schema@4.6.3)(@oxc-project/types@0.154.0)(confbox@0.3.1)(dotenv@17.4.2)(giget@3.3.1)(jiti@2.7.0)(magic-string@1.4.3)(mlly@1.8.2)(nuxt@4.6.3(b41645b565ee26d64267ee01cde2ab71))(rolldown@1.2.14)(unplugin@3.4.0(esbuild@0.28.2)(rolldown@1.2.14)(rollup@4.65.1)(vite@8.3.5(@types/node@26.6.3)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1)))(vue@3.5.44(typescript@6.0.3))(zod@4.6.7)
       comark: 0.8.1(rangi@2.2.0)(shiki@4.5.0)
