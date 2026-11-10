@@ -1,5 +1,5 @@
 import { defineMcpServer } from '@nuxtjs/mcp-toolkit/server'
-import { useRuntimeConfig } from 'nitropack/runtime'
+import { useEvent, useRuntimeConfig } from 'nitropack/runtime'
 import { CURRENT_DOCS_VERSION } from '../../shared/utils/docs'
 
 export default defineMcpServer({
@@ -24,9 +24,14 @@ For recurring tasks, prefer the prompts (\`summarize-feedback\`, \`triage-proble
 Default to recent data (last 7-30 days) unless the user asks for a longer window. Always include direct links (path / chat id) so the team can drill down on the website.`,
   auth: {
     schemes: ['bearer'],
-    validate: ({ token }) => {
-      const { mcpAdminToken } = useRuntimeConfig()
-      return Boolean(mcpAdminToken) && token === mcpAdminToken
+    get resourceMetadataUrl() {
+      return `${useRuntimeConfig().mcpOauthIssuer}/.well-known/oauth-protected-resource/mcp/admin`
+    },
+    validate: async ({ token }, event) => {
+      const claims = await adminMcpOAuth(useEvent()).verify(token)
+      if (!claims) return false
+      event.context.oauth = claims
+      return true
     }
   }
 })

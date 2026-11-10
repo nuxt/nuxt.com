@@ -102,3 +102,37 @@ export const nuxtersSyncs = sqliteTable('nuxters_syncs', {
   count: integer('count').notNull(),
   syncedAt: integer('synced_at', { mode: 'timestamp' }).notNull()
 })
+
+export const mcpOAuthClients = sqliteTable('mcp_oauth_clients', {
+  registrationKey: text('registration_key').notNull(),
+  id: text('id').primaryKey(),
+  name: text('name').notNull(),
+  redirectUris: text('redirect_uris', { mode: 'json' }).$type<string[]>().notNull(),
+  grants: text('grants', { mode: 'json' }).$type<string[]>().notNull(),
+  ...timestamps
+})
+
+export const mcpOAuthGrants = sqliteTable('mcp_oauth_grants', {
+  id: text('id').primaryKey(),
+  clientId: text('client_id').notNull().references(() => mcpOAuthClients.id, { onDelete: 'cascade' }),
+  userId: text('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+  resource: text('resource').notNull(),
+  codeHash: text('code_hash').notNull().unique(),
+  codeExpiresAt: integer('code_expires_at', { mode: 'timestamp_ms' }).notNull(),
+  codeUsedAt: integer('code_used_at', { mode: 'timestamp_ms' }),
+  redirectUri: text('redirect_uri').notNull(),
+  challenge: text('challenge').notNull(),
+  expiresAt: integer('expires_at', { mode: 'timestamp_ms' }).notNull(),
+  revokedAt: integer('revoked_at', { mode: 'timestamp_ms' })
+}, table => [index('mcp_oauth_grants_user_idx').on(table.userId)])
+
+export const mcpOAuthTokens = sqliteTable('mcp_oauth_tokens', {
+  id: integer('id').primaryKey({ autoIncrement: true }),
+  grantId: text('grant_id').notNull().references(() => mcpOAuthGrants.id, { onDelete: 'cascade' }),
+  clientId: text('client_id').notNull().references(() => mcpOAuthClients.id, { onDelete: 'cascade' }),
+  accessHash: text('access_hash').notNull().unique(),
+  accessExpiresAt: integer('access_expires_at', { mode: 'timestamp_ms' }).notNull(),
+  refreshHash: text('refresh_hash').notNull().unique(),
+  refreshExpiresAt: integer('refresh_expires_at', { mode: 'timestamp_ms' }).notNull(),
+  refreshUsedAt: integer('refresh_used_at', { mode: 'timestamp_ms' })
+}, table => [index('mcp_oauth_tokens_grant_idx').on(table.grantId)])

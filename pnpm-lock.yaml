@@ -214,6 +214,9 @@ importers:
       '@libsql/client':
         specifier: ^0.18.0
         version: 0.18.0
+      '@node-oauth/oauth2-server':
+        specifier: 5.3.1
+        version: 5.3.1
       '@npm/types':
         specifier: ^2.1.0
         version: 2.1.0
@@ -2199,6 +2202,13 @@ packages:
 
   '@nodable/entities@3.1.0':
     resolution: {integrity: sha512-LsS/DjHr+uDM647Gru/cA8+J3a3HfhttwCKLyuoyN7yXTFCxKBtSgMQBvrW9yNPa2/zDRUNuGPaH5QUFoa4arQ==}
+
+  '@node-oauth/formats@1.0.0':
+    resolution: {integrity: sha512-DwSbLtdC8zC5B5gTJkFzJj5s9vr9SGzOgQvV9nH7tUVuMSScg0EswAczhjIapOmH3Y8AyP7C4Jv7b8+QJObWZA==}
+
+  '@node-oauth/oauth2-server@5.3.1':
+    resolution: {integrity: sha512-zT822tqX/Y7VWTcxN02uzeYn8RirKpRAuX56JARb0Bl5RIL+LBMjkW5GAPAl0yZps3ReqNT5J+Mn58Oyljy3Lw==}
+    engines: {node: '>=16.0.0'}
 
   '@nodelib/fs.scandir@2.1.5':
     resolution: {integrity: sha512-vq24Bq3ym5HEQm2NKCr3yXDwjc7vTsEThRDnkp2DK9p1uqLR+DHurm/NOTo0KG7HYHU7eppKZj3MyqYuMBf62g==}
@@ -5689,6 +5699,10 @@ packages:
     resolution: {integrity: sha512-GLQdD3y6UF8iVuMJl5fHgE4jdn/ua7n+toKfLgNlg3BqQtOZjpy68T8Tup8/wGWZCDlm7KMg7tPb4MPn7oN0TQ==}
     engines: {node: '>=6.0.0'}
     hasBin: true
+
+  basic-auth@2.0.1:
+    resolution: {integrity: sha512-NF+epuEdnUYVlGuhaxbbq+dvJttwLnGY+YixlXlME5KpQ5W3CnXA5cVTneY3SPbPDRkcjMbifrwmFYcClgOZeg==}
+    engines: {node: '>= 0.8'}
 
   basic-ftp@5.3.1:
     resolution: {integrity: sha512-bopVNp6ugyA150DDuZfPFdt1KZ5a94ZDiwX4hMgZDzF+GttD80lEy8kj98kbyhLXnPvhtIo93mdnLIjpCAeeOw==}
@@ -13219,6 +13233,14 @@ snapshots:
 
   '@nodable/entities@3.1.0': {}
 
+  '@node-oauth/formats@1.0.0': {}
+
+  '@node-oauth/oauth2-server@5.3.1':
+    dependencies:
+      '@node-oauth/formats': 1.0.0
+      basic-auth: 2.0.1
+      type-is: 2.1.0
+
   '@nodelib/fs.scandir@2.1.5':
     dependencies:
       '@nodelib/fs.stat': 2.0.5
@@ -17561,6 +17583,10 @@ snapshots:
 
   baseline-browser-mapping@2.11.26: {}
 
+  basic-auth@2.0.1:
+    dependencies:
+      safe-buffer: 5.1.2
+
   basic-ftp@5.3.1: {}
 
   binary-version-check@6.1.0:
@@ -17984,8 +18010,7 @@ snapshots:
   content-type@1.0.5:
     optional: true
 
-  content-type@2.1.0:
-    optional: true
+  content-type@2.1.0: {}
 
   convert-hrtime@5.0.0: {}
 
@@ -20762,8 +20787,7 @@ snapshots:
 
   mdurl@2.1.0: {}
 
-  media-typer@1.1.1:
-    optional: true
+  media-typer@1.1.1: {}
 
   merge-descriptors@2.0.0:
     optional: true
@@ -23688,7 +23712,6 @@ snapshots:
       content-type: 2.1.0
       media-typer: 1.1.1
       mime-types: 3.0.2
-    optional: true
 
   type-level-regexp@0.1.17: {}
 

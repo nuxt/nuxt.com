@@ -76,9 +76,27 @@ pnpm install --frozen-lockfile
 pnpm dev
 ```
 
-The public server card at `/.well-known/mcp/server-card.json` contains only the public catalog. Admin tools and prompts live separately in `server/mcp-admin` and are discovered by the `admin` server configured in `nuxt.config.ts`. Each server keeps its metadata and instructions in its own `index.ts`. The admin index also defines authentication, which reads `NUXT_MCP_ADMIN_TOKEN` at request time. An unset token refuses access.
+The public server card at `/.well-known/mcp/server-card.json` contains only the public catalog. Admin tools and prompts live separately in `server/mcp-admin` and are discovered by the `admin` server configured in `nuxt.config.ts`. Each server keeps its metadata and instructions in its own `index.ts`. The admin index requires OAuth access tokens issued by this app after GitHub sign-in and explicit client approval. The old shared `NUXT_MCP_ADMIN_TOKEN` is no longer accepted.
 
 Public tools and resources use native Nitro cached functions with their existing 10-minute, 30-minute or 1-hour lifetimes. Cache keys include the request origin and parsed arguments. No MCP client credentials are needed for the public endpoint.
+
+### Admin MCP GitHub OAuth
+
+Install the admin server from the admin MCP dialog, or configure your client with:
+
+```json
+{
+  "mcpServers": {
+    "nuxt-admin": { "type": "http", "url": "https://nuxt.com/mcp/admin" }
+  }
+}
+```
+
+The client discovers OAuth metadata, registers its callback, and opens the existing GitHub login. Approve the client on Nuxt.com to connect. MCP access is restricted to the Nuxt `core` team; the site's extra admin-login allowlist does not grant MCP access. GitHub account IDs are resolved to current logins before the uncached team check, including on token refresh and every MCP request. GitHub provider tokens are never issued to MCP clients. Nuxi keeps its existing admin-session checks and uses `/api/internal/admin-mcp` with `INTERNAL_API_SECRET` for its six analytics tools; that credential is not accepted by `/mcp/admin`. Workflow triggers also use `INTERNAL_API_SECRET`.
+
+Deployment needs the existing GitHub login configuration (`NUXT_OAUTH_GITHUB_CLIENT_ID`, `NUXT_OAUTH_GITHUB_CLIENT_SECRET`, `NUXT_SESSION_PASSWORD`), `NUXT_GITHUB_TOKEN` with permission to read the Nuxt core team's membership, the existing database and KV, and the `0011_mcp_oauth` migration. The GitHub callback stays `/api/auth/github`. Set `NUXT_MCP_OAUTH_ISSUER` to the deployment's canonical HTTPS origin, without a trailing slash; its default is `https://nuxt.com`. For local development, HTTP loopback origins are accepted, for example `http://localhost:3000`. Request Host headers never select the issuer.
+
+The app uses `@node-oauth/oauth2-server` for authorization-code and refresh grants. Clients must use public-client registration (`token_endpoint_auth_method: "none"`), exact HTTPS or loopback redirect URIs, PKCE S256, and `resource=<issuer>/mcp/admin` on authorization and token requests. Access tokens last 15 minutes; approvals and rotating refresh tokens expire after 30 days. Reusing an exchanged code or refresh token revokes that connection. Token revocation is available at `/api/mcp/oauth/revoke`; reconnecting requires a new approval. Only token/code hashes are stored. The existing daily data-retention job removes expired grants and unused registrations older than 90 days.
 
 ### Running Evals for the MCP Server
 
