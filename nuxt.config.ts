@@ -132,7 +132,7 @@ export default defineNuxtConfig({
         }
       }
     },
-    mcpOauthIssuer: 'https://nuxt.com',
+    mcpOauthIssuer: PREVIEW_URL ?? SITE_URL,
     // Service account added as a user of the Search Console property (admin MCP `search-console-*` tools)
     googleSearchConsole: {
       clientEmail: '',
