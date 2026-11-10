@@ -26,7 +26,7 @@ WHEN TO USE: Use this tool to read what users actually disliked. Default sort is
   inputSchema: inputSchema.meta({ examples: [
     { onlyDownvotes: true, sinceDays: 7 },
     { sinceDays: 30, limit: 100 }
-  ] satisfies z.input<typeof inputSchema>[] }),
+  ] }),
   annotations: {
     readOnlyHint: true,
     openWorldHint: false

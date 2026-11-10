@@ -35,7 +35,7 @@ WHEN NOT TO USE: For a specific page outside the introduction, prefer get-docume
   inputSchema: inputSchema.meta({ examples: [
     { version: '4.x' },
     { version: '3.x', sections: ['Quick Start'] }
-  ] satisfies z.input<typeof inputSchema>[] }),
+  ] }),
   annotations: {
     readOnlyHint: true,
     openWorldHint: false

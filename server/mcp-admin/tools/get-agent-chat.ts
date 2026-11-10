@@ -23,7 +23,7 @@ WHEN TO USE: After \`list-agent-chats\`, read the transcript. Token/cost data fo
   inputSchema: inputSchema.meta({ examples: [
     { chatId: 'chat-abc123' },
     { chatId: 'chat-abc123', includeRawParts: true }
-  ] satisfies z.input<typeof inputSchema>[] }),
+  ] }),
   annotations: {
     readOnlyHint: true,
     openWorldHint: false

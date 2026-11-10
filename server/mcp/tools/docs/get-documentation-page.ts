@@ -75,7 +75,7 @@ Common Issues:
   inputSchema: inputSchema.meta({ examples: [
     { path: '/docs/4.x/getting-started/introduction' },
     { path: '/docs/4.x/guide/directory-structure/components', sections: ['Usage'] }
-  ] satisfies z.input<typeof inputSchema>[] }),
+  ] }),
   annotations: {
     readOnlyHint: true,
     openWorldHint: false

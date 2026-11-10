@@ -73,7 +73,7 @@ EXAMPLES:
   inputSchema: inputSchema.meta({ examples: [
     { slug: '@nuxt/ui' },
     { slug: '@nuxtjs/i18n' }
-  ] satisfies z.input<typeof inputSchema>[] }),
+  ] }),
   annotations: {
     readOnlyHint: true,
     openWorldHint: true

@@ -48,7 +48,7 @@ OUTPUT: Returns releases with title, repo, tag, date, and raw markdown body. Opt
   inputSchema: inputSchema.meta({ examples: [
     { limit: 5 },
     { repo: 'nuxt/ui', limit: 3 }
-  ] satisfies z.input<typeof inputSchema>[] }),
+  ] }),
   annotations: {
     readOnlyHint: true,
     openWorldHint: true

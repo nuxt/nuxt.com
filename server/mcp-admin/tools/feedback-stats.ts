@@ -26,7 +26,7 @@ OUTPUT: Returns global stats, breakdown by rating, and a list of pages sorted by
   inputSchema: inputSchema.meta({ examples: [
     { sinceDays: 7 },
     { sinceDays: 30, topPages: 20, minResponses: 5 }
-  ] satisfies z.input<typeof inputSchema>[] }),
+  ] }),
   annotations: {
     readOnlyHint: true,
     openWorldHint: false

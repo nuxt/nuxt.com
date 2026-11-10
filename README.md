@@ -69,14 +69,14 @@ pnpm build
 
 ### MCP Toolkit preview
 
-The toolkit dependency is pinned to [the 1.0 preview from `a582ad1`](https://github.com/nuxt-modules/mcp-toolkit/pull/406). Its matching Nitro runtime preview is pinned by the package itself. This branch tests that preview before switching to a published beta.
+The toolkit dependency is pinned to [the 1.0 preview from `4fa74cc`](https://github.com/nuxt-modules/mcp-toolkit/pull/406). Its matching Nitro runtime preview is pinned by the package itself. This branch tests that preview before switching to a published beta.
 
 ```bash
 pnpm install --frozen-lockfile
 pnpm dev
 ```
 
-The public server card at `/.well-known/mcp/server-card.json` contains only the public catalog. Admin tools and prompts live separately in `server/mcp-admin` and are composed by `server/routes/mcp/admin.ts`.
+The public server card at `/.well-known/mcp/server-card.json` contains only the public catalog. Admin tools and prompts live separately in `server/mcp-admin` and are discovered by the `admin` server in `mcp.servers`. Its `auth` option points to `server/mcp-admin/auth.ts`, which reads `NUXT_MCP_ADMIN_TOKEN` at request time. An unset token refuses access.
 
 Public tools and resources use native Nitro cached functions with their existing 10-minute, 30-minute or 1-hour lifetimes. Cache keys include the request origin and parsed arguments. No MCP client credentials are needed for the public endpoint.
 

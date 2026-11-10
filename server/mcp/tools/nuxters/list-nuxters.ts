@@ -79,7 +79,7 @@ OUTPUT: Ranked entries (username, rank, score, profile URL), the contributor and
     { period: '2024', limit: 20 },
     { country: 'FR' },
     { search: 'dan' }
-  ] satisfies z.input<typeof inputSchema>[] }),
+  ] }),
   annotations: {
     readOnlyHint: true,
     openWorldHint: false

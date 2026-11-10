@@ -22,7 +22,7 @@ OUTPUT: Returns feedback rows (id, rating, comment, path, title, country, dates)
   inputSchema: inputSchema.meta({ examples: [
     { ratings: ['not-helpful', 'confusing'], sinceDays: 7 },
     { pathContains: '/docs/4.x/getting-started', limit: 20 }
-  ] satisfies z.input<typeof inputSchema>[] }),
+  ] }),
   annotations: {
     readOnlyHint: true,
     openWorldHint: false

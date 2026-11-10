@@ -143,7 +143,7 @@ OUTPUT: Returns list of modules with name, description, category, and either dow
     { category: 'UI Frameworks', sort: 'downloads' },
     { search: 'image', sort: 'stars', order: 'desc' },
     { search: 'plausible' }
-  ] satisfies z.input<typeof inputSchema>[] }),
+  ] }),
   annotations: {
     readOnlyHint: true,
     openWorldHint: true

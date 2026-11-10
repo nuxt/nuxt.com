@@ -20,7 +20,7 @@ WHEN TO USE: Find web chats with downvotes or read metadata before opening a ful
   inputSchema: inputSchema.meta({ examples: [
     { sinceDays: 7, hasDownvotes: true },
     { sinceDays: 30, sortBy: 'createdAt', limit: 10 }
-  ] satisfies z.input<typeof inputSchema>[] }),
+  ] }),
   annotations: {
     readOnlyHint: true,
     openWorldHint: false

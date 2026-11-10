@@ -60,7 +60,7 @@ NOTES: Each value aggregates the previous 28 days, with a ~2 day lag; weekly his
     { formFactor: 'PHONE' },
     { url: '/docs/4.x/getting-started/introduction' },
     { url: '/modules', formFactor: 'PHONE', weeks: 12 }
-  ] satisfies z.input<typeof inputSchema>[] }),
+  ] }),
   annotations: {
     readOnlyHint: true,
     openWorldHint: true

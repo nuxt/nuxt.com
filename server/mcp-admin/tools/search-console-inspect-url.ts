@@ -15,7 +15,7 @@ WHEN TO USE: Check why a page is missing from search or has no impressions in \`
 NOTES: Quota is ~2000 inspections per day, so inspect specific pages rather than looping over the whole site. Reflects Google's indexed version, not a live test.`,
   inputSchema: inputSchema.meta({ examples: [
     { url: '/docs/4.x/getting-started/introduction' }
-  ] satisfies z.input<typeof inputSchema>[] }),
+  ] }),
   annotations: {
     readOnlyHint: true,
     openWorldHint: true

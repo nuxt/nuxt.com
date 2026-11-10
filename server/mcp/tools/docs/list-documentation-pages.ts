@@ -60,7 +60,7 @@ TIPS: Always pass a search term to narrow results — avoids dumping the entire 
     { search: 'data fetching', version: '4.x' },
     { search: 'middleware' },
     { version: '3.x' }
-  ] satisfies z.input<typeof inputSchema>[] }),
+  ] }),
   annotations: {
     readOnlyHint: true,
     openWorldHint: false

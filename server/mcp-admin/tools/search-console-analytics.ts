@@ -38,7 +38,7 @@ NOTES: Data lags ~2-3 days and goes back 16 months. Rows are sorted by clicks (d
     { dimensions: ['page'], rowLimit: 50 },
     { dimensions: ['query'], filters: [{ dimension: 'page', operator: 'contains', expression: '/docs/4.x/getting-started/data-fetching' }] },
     { dimensions: ['date'], startDate: '2026-01-01', endDate: '2026-03-31' }
-  ] satisfies z.input<typeof inputSchema>[] }),
+  ] }),
   annotations: {
     readOnlyHint: true,
     openWorldHint: true

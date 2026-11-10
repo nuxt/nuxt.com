@@ -37,7 +37,7 @@ EXAMPLES: "/blog/v4", "/blog/nuxt3", "/blog/nuxt-on-the-edge"`,
   inputSchema: inputSchema.meta({ examples: [
     { path: '/blog/v4' },
     { path: '/blog/nuxt-on-the-edge' }
-  ] satisfies z.input<typeof inputSchema>[] }),
+  ] }),
   annotations: {
     readOnlyHint: true,
     openWorldHint: false

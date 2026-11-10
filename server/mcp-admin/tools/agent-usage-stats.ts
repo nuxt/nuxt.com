@@ -17,7 +17,7 @@ WHEN TO USE: Quality and product signals (votes, saved web chats). For traffic/s
   inputSchema: inputSchema.meta({ examples: [
     { sinceDays: 7 },
     { sinceDays: 30 }
-  ] satisfies z.input<typeof inputSchema>[] }),
+  ] }),
   annotations: {
     readOnlyHint: true,
     openWorldHint: false

@@ -87,7 +87,7 @@ OUTPUT: The stats of the period, its rank and score, the rank and score of every
   inputSchema: inputSchema.meta({ examples: [
     { username: 'danielroe' },
     { username: 'atinux', period: '2024' }
-  ] satisfies z.input<typeof inputSchema>[] }),
+  ] }),
   annotations: {
     readOnlyHint: true,
     openWorldHint: false

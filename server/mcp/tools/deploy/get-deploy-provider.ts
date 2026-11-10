@@ -38,7 +38,7 @@ EXAMPLES: "/deploy/vercel", "/deploy/cloudflare", "/deploy/netlify", "/deploy/aw
   inputSchema: inputSchema.meta({ examples: [
     { path: '/deploy/vercel' },
     { path: '/deploy/cloudflare', sections: ['Setup'] }
-  ] satisfies z.input<typeof inputSchema>[] }),
+  ] }),
   annotations: {
     readOnlyHint: true,
     openWorldHint: false
