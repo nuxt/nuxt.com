@@ -22,7 +22,6 @@
     "lint": "eslint . --cache",
     "typecheck": "nuxt typecheck",
     "test": "pnpm lint && pnpm test:types && pnpm vitest run && pnpm test:browser",
-    "test:mcp": "node scripts/test-mcp.mjs",
     "test:types": "vue-tsc -b --noEmit",
     "test:unit": "vitest --project unit",
     "test:nuxt": "vitest --project nuxt",
