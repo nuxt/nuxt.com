@@ -10,8 +10,11 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 400, statusMessage: 'Username does not match' })
   }
 
+  const chats = await db.query.chats.findMany({ where: () => eq(schema.chats.userId, user.id), columns: { state: true } })
+
   await db.delete(schema.users).where(eq(schema.users.id, user.id))
   await clearUserSession(event)
+  await endEveSessions(event, chats.map(chat => chat.state?.sessionId))
 
   return sendNoContent(event)
 })
