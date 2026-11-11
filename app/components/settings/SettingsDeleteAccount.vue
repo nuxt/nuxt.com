@@ -2,8 +2,8 @@
 import { AnimatePresence, motion } from 'motion-v'
 
 const props = defineProps<{
-  chats: number
-  messages: number
+  chats?: number
+  messages?: number
 }>()
 
 const open = defineModel<boolean>('open', { default: false })
@@ -36,21 +36,24 @@ const losses = computed(() => [
 const content = useTemplateRef<HTMLElement>('content')
 const { height } = useElementSize(content)
 
-watch(open, (value) => {
-  if (!value || busy.value) return
-  step.value = 'review'
-  confirmation.value = ''
+let frame: number | undefined
+let last = 0
+
+// Closing mid-hold (Escape while Enter is held) cancels the hold, so it can never finish behind a closed modal
+watch(open, () => {
+  if (frame !== undefined) cancelAnimationFrame(frame)
+  frame = undefined
   holding.value = false
   progress.value = 0
+  if (busy.value) return
+  step.value = 'review'
+  confirmation.value = ''
 })
 
 // The confirm step mounts after the previous step's exit animation: focus its input once it exists
 watch(() => input.value?.inputRef, el => el?.focus())
 
 // Press and hold: fills while held, drains three times faster when released early
-let frame: number | undefined
-let last = 0
-
 function tick(now: number) {
   const delta = now - last
   last = now
@@ -61,7 +64,7 @@ function tick(now: number) {
   if (holding.value && progress.value >= 1) {
     frame = undefined
     holding.value = false
-    deleteAccount()
+    if (open.value && step.value === 'confirm') deleteAccount()
     return
   }
   frame = progress.value > 0 || holding.value ? requestAnimationFrame(tick) : undefined
@@ -149,6 +152,8 @@ const resize = { type: 'spring', bounce: 0, duration: 0.3 } as const
 <template>
   <UModal
     v-model:open="open"
+    :title="headings[step].title"
+    :description="headings[step].description"
     :dismissible="!busy"
     :close="false"
     :ui="{ content: 'sm:max-w-[26rem] overflow-hidden' }"
@@ -230,6 +235,7 @@ const resize = { type: 'spring', bounce: 0, duration: 0.3 } as const
                       :ui="{ base: 'font-mono' }"
                       @keydown.enter.prevent="startHold"
                       @keyup.enter="stopHold"
+                      @blur="stopHold"
                     >
                       <template #trailing>
                         <AnimatePresence>

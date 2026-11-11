@@ -21,8 +21,8 @@ const memberSince = computed(() => account.value?.createdAt
   : undefined)
 
 const stats = computed(() => [
-  { label: 'Chats with Nuxi', value: account.value?.chats ?? 0 },
-  { label: 'Messages', value: account.value?.messages ?? 0 }
+  { label: 'Chats with Nuxi', value: account.value?.chats },
+  { label: 'Messages', value: account.value?.messages }
 ])
 
 const themes = [
@@ -75,7 +75,10 @@ const themes = [
                   {{ stat.label }}
                 </dt>
                 <dd class="text-lg font-medium text-highlighted mt-0.5">
-                  <SettingsNumber :value="stat.value" />
+                  <SettingsNumber v-if="stat.value !== undefined" :value="stat.value" />
+                  <template v-else>
+                    —
+                  </template>
                 </dd>
               </div>
               <div>
@@ -197,8 +200,8 @@ const themes = [
 
       <SettingsDeleteAccount
         v-model:open="deleteOpen"
-        :chats="account?.chats ?? 0"
-        :messages="account?.messages ?? 0"
+        :chats="account?.chats"
+        :messages="account?.messages"
       />
     </template>
   </UDashboardPanel>
