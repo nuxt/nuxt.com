@@ -95,6 +95,7 @@ function onHoldKeydown(event: KeyboardEvent) {
 }
 
 let redirect: ReturnType<typeof setTimeout> | undefined
+let unmounted = false
 
 function forgetAccount() {
   clearNuxtData(['chats', 'account'])
@@ -102,6 +103,7 @@ function forgetAccount() {
 }
 
 onBeforeUnmount(() => {
+  unmounted = true
   if (frame !== undefined) cancelAnimationFrame(frame)
   // Leaving before the redirect (browser back) must still drop the deleted account's client state
   if (redirect) {
@@ -129,6 +131,9 @@ async function deleteAccount() {
     step.value = 'confirm'
     return
   }
+
+  // Left the page while the request was running: drop the account's client state, but don't navigate away from the new page
+  if (unmounted) return forgetAccount()
 
   step.value = 'done'
   redirect = setTimeout(leave, 2400)
