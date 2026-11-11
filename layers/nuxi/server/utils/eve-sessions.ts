@@ -14,7 +14,12 @@ export async function endEveSessions(event: H3Event, sessionIds: (string | undef
   const results = await Promise.allSettled(ids.map(async (id) => {
     const response = await fetch(`${origin}/eve/v1/session/${encodeURIComponent(id)}/end`, {
       method: 'POST',
-      headers: { authorization: `Bearer ${secret}` },
+      headers: {
+        authorization: `Bearer ${secret}`,
+        // Previews sit behind Vercel Authentication, which would redirect this call to a login page
+        ...(process.env.VERCEL_AUTOMATION_BYPASS_SECRET ? { 'x-vercel-protection-bypass': process.env.VERCEL_AUTOMATION_BYPASS_SECRET } : {})
+      },
+      redirect: 'manual',
       signal: AbortSignal.timeout(10_000)
     })
     if (!response.ok) throw new Error(`HTTP ${response.status}`)
