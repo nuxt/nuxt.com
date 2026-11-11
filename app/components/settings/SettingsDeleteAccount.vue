@@ -70,13 +70,18 @@ function tick(now: number) {
   frame = progress.value > 0 || holding.value ? requestAnimationFrame(tick) : undefined
 }
 
-function startHold() {
-  if (!confirmed.value || busy.value) return
+// Where the current hold started: only a hold from the input ends when the input loses focus,
+// since pressing the button moves focus away from the input
+let holdSource: 'input' | 'button' | undefined
+
+function startHold(source: 'input' | 'button') {
+  if (!confirmed.value || busy.value || holding.value) return
+  holdSource = source
   holding.value = true
-  if (frame === undefined) {
-    last = performance.now()
-    frame = requestAnimationFrame(tick)
-  }
+  // Every hold starts from zero, so deleting takes one uninterrupted hold rather than several short ones
+  progress.value = 0
+  last = performance.now()
+  frame ??= requestAnimationFrame(tick)
 }
 
 function stopHold() {
@@ -86,14 +91,23 @@ function stopHold() {
 function onHoldKeydown(event: KeyboardEvent) {
   if (event.repeat || (event.key !== ' ' && event.key !== 'Enter')) return
   event.preventDefault()
-  startHold()
+  startHold('button')
 }
 
 let redirect: ReturnType<typeof setTimeout> | undefined
 
+function forgetAccount() {
+  clearNuxtData(['chats', 'account'])
+  return refreshSession()
+}
+
 onBeforeUnmount(() => {
   if (frame !== undefined) cancelAnimationFrame(frame)
-  if (redirect) clearTimeout(redirect)
+  // Leaving before the redirect (browser back) must still drop the deleted account's client state
+  if (redirect) {
+    clearTimeout(redirect)
+    forgetAccount()
+  }
 })
 
 async function deleteAccount() {
@@ -121,11 +135,11 @@ async function deleteAccount() {
 }
 
 async function leave() {
+  redirect = undefined
   // Keep the confirmation on screen until the home page replaces it
   await navigateTo('/')
   open.value = false
-  clearNuxtData(['chats', 'account'])
-  await refreshSession()
+  await forgetAccount()
 }
 
 // One gentle face for the whole flow, and a warm one once it's done
@@ -233,9 +247,9 @@ const resize = { type: 'spring', bounce: 0, duration: 0.3 } as const
                       spellcheck="false"
                       class="w-full"
                       :ui="{ base: 'font-mono' }"
-                      @keydown.enter.prevent="startHold"
+                      @keydown.enter.prevent="startHold('input')"
                       @keyup.enter="stopHold"
-                      @blur="stopHold"
+                      @blur="holdSource === 'input' && stopHold()"
                     >
                       <template #trailing>
                         <AnimatePresence>
@@ -268,7 +282,7 @@ const resize = { type: 'spring', bounce: 0, duration: 0.3 } as const
                     :disabled="!confirmed"
                     :aria-label="`Press and hold to delete @${username}`"
                     class="relative h-8 px-3 overflow-hidden rounded-md text-sm font-medium select-none touch-none ring ring-error/40 text-error bg-default transition-[opacity,transform] duration-150 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-error disabled:opacity-40 disabled:cursor-not-allowed enabled:active:scale-[0.98]"
-                    @pointerdown="startHold"
+                    @pointerdown="startHold('button')"
                     @pointerup="stopHold"
                     @pointerleave="stopHold"
                     @pointercancel="stopHold"

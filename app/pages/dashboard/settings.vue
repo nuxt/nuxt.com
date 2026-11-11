@@ -128,13 +128,12 @@ const themes = [
           </p>
 
           <ClientOnly>
-            <div role="radiogroup" aria-label="Theme" class="grid grid-cols-3 gap-3 mt-5 max-w-lg">
+            <div role="group" aria-label="Theme" class="grid grid-cols-3 gap-3 mt-5 max-w-lg">
               <button
                 v-for="theme in themes"
                 :key="theme.value"
                 type="button"
-                role="radio"
-                :aria-checked="colorMode.preference === theme.value"
+                :aria-pressed="colorMode.preference === theme.value"
                 class="group flex flex-col gap-2 text-start focus-visible:outline-none"
                 @click="colorMode.preference = theme.value"
               >
