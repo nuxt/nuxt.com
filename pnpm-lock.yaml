@@ -314,8 +314,8 @@ importers:
         specifier: 2.0.1
         version: 2.0.1(patch_hash=2b377974f1a55a236275fd7de9361973b6acbfeea119d879ad64f3a9264ee1c7)
       comark-content:
-        specifier: ^0.5.1
-        version: 0.5.1(forges@0.3.2)(rangi@2.2.0)(shiki@4.6.0)(unstorage@1.17.6(@vercel/functions@3.11.1(@aws-sdk/credential-provider-web-identity@3.972.49)(ws@8.22.2))(db0@0.3.4(@libsql/client@0.18.0)(drizzle-orm@0.45.4(@cloudflare/workers-types@4.20260702.1)(@libsql/client@0.18.0)(@opentelemetry/api@1.10.0)))(ioredis@5.11.1(supports-color@8.1.1)))
+        specifier: ^0.6.0
+        version: 0.6.0(forges@0.3.2)(rangi@2.2.0)(shiki@4.6.0)(unstorage@1.17.6(@vercel/functions@3.11.1(@aws-sdk/credential-provider-web-identity@3.972.49)(ws@8.22.2))(db0@0.3.4(@libsql/client@0.18.0)(drizzle-orm@0.45.4(@cloudflare/workers-types@4.20260702.1)(@libsql/client@0.18.0)(@opentelemetry/api@1.10.0)))(ioredis@5.11.1(supports-color@8.1.1)))
       date-fns:
         specifier: ^4.4.0
         version: 4.4.0
@@ -5843,8 +5843,8 @@ packages:
   colortranslator@5.0.0:
     resolution: {integrity: sha512-Z3UPUKasUVDFCDYAjP2fmlVRf1jFHJv1izAmPjiOa0OCIw1W7iC8PZ2GsoDa8uZv+mKyWopxxStT9q05+27h7w==}
 
-  comark-content@0.5.1:
-    resolution: {integrity: sha512-82XwzlkAwzfhOzTBlK7gtFi6am/N6rAjfe2wDtSzeR1zuOxxnjwKy4kFn7cnZ3J8uWZ4uGRO8vtnu+bSHXlbtg==}
+  comark-content@0.6.0:
+    resolution: {integrity: sha512-3W5TwelX17/20uuYYA1moHkUCUBS97d5Z+qrFyv4UwRPKtjapmN9kth49NuhItVp0RH6sV3Do+QhP5k4R6XtVg==}
     hasBin: true
     peerDependencies:
       forges: ^0.3.0
@@ -16821,13 +16821,12 @@ snapshots:
 
   colortranslator@5.0.0: {}
 
-  comark-content@0.5.1(forges@0.3.2)(rangi@2.2.0)(shiki@4.6.0)(unstorage@1.17.6(@vercel/functions@3.11.1(@aws-sdk/credential-provider-web-identity@3.972.49)(ws@8.22.2))(db0@0.3.4(@libsql/client@0.18.0)(drizzle-orm@0.45.4(@cloudflare/workers-types@4.20260702.1)(@libsql/client@0.18.0)(@opentelemetry/api@1.10.0)))(ioredis@5.11.1(supports-color@8.1.1))):
+  comark-content@0.6.0(forges@0.3.2)(rangi@2.2.0)(shiki@4.6.0)(unstorage@1.17.6(@vercel/functions@3.11.1(@aws-sdk/credential-provider-web-identity@3.972.49)(ws@8.22.2))(db0@0.3.4(@libsql/client@0.18.0)(drizzle-orm@0.45.4(@cloudflare/workers-types@4.20260702.1)(@libsql/client@0.18.0)(@opentelemetry/api@1.10.0)))(ioredis@5.11.1(supports-color@8.1.1))):
     dependencies:
       comark: 0.9.0(rangi@2.2.0)(shiki@4.6.0)
       hookable: 6.1.2
       pathe: 2.0.3
       picomatch: 4.0.7
-      slugify: 1.6.9
       ufo: 1.6.4
     optionalDependencies:
       forges: 0.3.2
