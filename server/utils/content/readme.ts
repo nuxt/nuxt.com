@@ -44,6 +44,11 @@ export function resolveReadmeUrls(tree: MarkdownDocument, repo: string, branch?:
   const base = `https://readme.invalid/${dir ? `${dir}/` : ''}`
 
   function resolve(url: string, kind: 'raw' | 'blob'): string {
+    // GitHub serves an image linked to its file page (`github.com/o/r/blob/ref/a.png`) raw; other sites get the HTML page.
+    if (kind === 'raw') {
+      const blob = url.match(/^https:\/\/github\.com\/([^/]+\/[^/]+)\/blob\/([^?#]+)/)
+      if (blob) return `https://raw.githubusercontent.com/${blob[1]}/${blob[2]}`
+    }
     if (isAbsolute(url)) return url
     // `URL` does the `./`, `../` and root-relative work, and stops `..` at the repository root.
     let parsed: URL

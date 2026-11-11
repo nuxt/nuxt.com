@@ -80,6 +80,18 @@ describe('resolveReadmeUrls', () => {
     ])
   })
 
+  it('serves images linked to their github.com file page raw, and keeps such links', async () => {
+    const markdown = [
+      '<img src="https://github.com/comarkdown/comark/blob/main/assets/banner.jpg?raw=true">',
+      '[Banner](https://github.com/comarkdown/comark/blob/main/assets/banner.jpg)'
+    ].join('\n\n')
+
+    expect(await urls(markdown, 'comarkdown/comark#main/packages/comark-nuxt')).toEqual([
+      ['img', 'src', 'https://raw.githubusercontent.com/comarkdown/comark/main/assets/banner.jpg'],
+      ['a', 'href', 'https://github.com/comarkdown/comark/blob/main/assets/banner.jpg']
+    ])
+  })
+
   it('keeps the descriptors of every srcset candidate', async () => {
     const markdown = '<img srcset="./a.png 1x, ./b.png 2x" src="./a.png">'
 
