@@ -81,7 +81,7 @@
     "botid": "^1.5.12",
     "chat": "^4.44.0",
     "cobe": "2.0.1",
-    "comark-content": "^0.5.1",
+    "comark-content": "^0.6.0",
     "date-fns": "^4.4.0",
     "drizzle-orm": "^0.45.4",
     "eve": "^0.91.0",
