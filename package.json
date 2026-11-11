@@ -39,7 +39,7 @@
     "@chat-adapter/discord": "^4.44.0",
     "@chat-adapter/state-memory": "^4.44.0",
     "@chat-adapter/state-redis": "^4.44.0",
-    "@comark/nuxt": "^0.9.0",
+    "@comark/vue": "^0.9.1",
     "@diglot/comark": "^0.2.1",
     "@diglot/core": "^0.2.1",
     "@diglot/store": "^0.2.1",
