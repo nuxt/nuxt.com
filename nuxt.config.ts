@@ -38,7 +38,7 @@ export default defineNuxtConfig({
     '@nuxt/fonts',
     '@nuxt/ui',
     '@nuxt/test-utils',
-    '@comark/nuxt',
+    '@comark/vue',
     '@nuxt/image',
     '@nuxt/eslint',
     '@nuxt/scripts',
