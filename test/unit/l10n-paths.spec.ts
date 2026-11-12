@@ -17,6 +17,7 @@ describe('parseLocalePath', () => {
     expect(parseLocalePath('/fr/docs/4.x/guide?x=1#y')).toEqual({ locale: 'fr', path: '/docs/4.x/guide?x=1#y' })
     expect(parseLocalePath('/fr')).toEqual({ locale: 'fr', path: '/' })
     expect(parseLocalePath('/de/docs/4.x/guide')).toEqual({ locale: 'de', path: '/docs/4.x/guide' })
+    expect(parseLocalePath('/ru/docs/4.x/guide')).toEqual({ locale: 'ru', path: '/docs/4.x/guide' })
   })
 
   it('should resolve the version of a localised page from its English path', () => {
@@ -106,6 +107,7 @@ describe('localeRedirect', () => {
     expect(redirect('/fr/docs/4.x/getting-started/introduction')).toBeUndefined()
     expect(redirect('/fr/docs/3.x/api/composables/use-fetch?x=1')).toBeUndefined()
     expect(redirect('/de/docs/4.x/getting-started/introduction')).toBeUndefined()
+    expect(redirect('/ru/docs/4.x/getting-started/introduction')).toBeUndefined()
     expect(redirect('/docs/4.x/getting-started/introduction')).toBeUndefined()
     expect(redirect('/es/modules')).toBeUndefined()
   })
@@ -115,7 +117,8 @@ describe('localeLinks', () => {
   it('should link an English docs page to its twin in every locale, flagged as machine translated', () => {
     expect(localeLinks('/docs/4.x/getting-started/introduction')).toEqual([
       { locale: 'fr', label: 'Français', description: 'Traduction automatique', to: '/fr/docs/4.x/getting-started/introduction' },
-      { locale: 'de', label: 'Deutsch', description: 'Maschinelle Übersetzung', to: '/de/docs/4.x/getting-started/introduction' }
+      { locale: 'de', label: 'Deutsch', description: 'Maschinelle Übersetzung', to: '/de/docs/4.x/getting-started/introduction' },
+      { locale: 'ru', label: 'Русский', description: 'Машинный перевод', to: '/ru/docs/4.x/getting-started/introduction' }
     ])
   })
 
@@ -167,7 +170,7 @@ describe('l10nHead', () => {
   })
 
   it('should keep a translation that is not indexable out of the alternates and noindex it', () => {
-    const indexable = { fr: [path], de: [] }
+    const indexable = { fr: [path], de: [], ru: [] }
     const alternates = [
       { hreflang: 'en', href: 'https://nuxt.com/docs/4.x/getting-started/introduction' },
       { hreflang: 'fr', href: 'https://nuxt.com/fr/docs/4.x/getting-started/introduction' },
@@ -175,15 +178,17 @@ describe('l10nHead', () => {
     ]
     expect(l10nHead({ siteUrl, path, indexable })).toEqual({ url: 'https://nuxt.com/docs/4.x/getting-started/introduction', alternates })
     expect(l10nHead({ siteUrl, path, locale: 'de', indexable })).toEqual({ url: 'https://nuxt.com/de/docs/4.x/getting-started/introduction', alternates, robots: 'noindex, follow' })
+    expect(l10nHead({ siteUrl, path, locale: 'ru', indexable })).toEqual({ url: 'https://nuxt.com/ru/docs/4.x/getting-started/introduction', alternates, robots: 'noindex, follow' })
   })
 
   it('should list every indexable translation, in locale order', () => {
-    expect(l10nHead({ siteUrl, path, locale: 'de', indexable: { fr: [path], de: [path] } })).toEqual({
-      url: 'https://nuxt.com/de/docs/4.x/getting-started/introduction',
+    expect(l10nHead({ siteUrl, path, locale: 'ru', indexable: { fr: [path], de: [path], ru: [path] } })).toEqual({
+      url: 'https://nuxt.com/ru/docs/4.x/getting-started/introduction',
       alternates: [
         { hreflang: 'en', href: 'https://nuxt.com/docs/4.x/getting-started/introduction' },
         { hreflang: 'fr', href: 'https://nuxt.com/fr/docs/4.x/getting-started/introduction' },
         { hreflang: 'de', href: 'https://nuxt.com/de/docs/4.x/getting-started/introduction' },
+        { hreflang: 'ru', href: 'https://nuxt.com/ru/docs/4.x/getting-started/introduction' },
         { hreflang: 'x-default', href: 'https://nuxt.com/docs/4.x/getting-started/introduction' }
       ]
     })

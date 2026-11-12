@@ -21,6 +21,7 @@ describe('l10n middleware', () => {
     expect(middleware({ path: '/fr/docs/4.x/getting-started/introduction' })).toBeUndefined()
     expect(middleware({ path: '/fr/docs/3.x/guide?x=1' })).toBeUndefined()
     expect(middleware({ path: '/de/docs/4.x/getting-started/introduction' })).toBeUndefined()
+    expect(middleware({ path: '/ru/docs/4.x/getting-started/introduction' })).toBeUndefined()
   })
 
   it('should send the locale and docs roots to the localised index', () => {
