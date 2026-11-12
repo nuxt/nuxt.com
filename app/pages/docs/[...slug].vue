@@ -3,7 +3,8 @@ import { kebabCase } from 'scule'
 import type { NavigationItem } from 'comark-content'
 import { DocsProseImg, Browser, CodeExplorer, Important, LinkExample, ReadMore, VideoAccordion } from '#components'
 import { CLI_DOCS_REFS, CLI_DOCS_REPO, cliDocsPathPrefix, hasCliDocs } from '#shared/utils/cli'
-import { cliInstanceKey } from '#shared/utils/content'
+import { cliInstanceKey, moduleBuilderInstanceKey } from '#shared/utils/content'
+import { MODULE_BUILDER_DOCS_REFS, MODULE_BUILDER_DOCS_REPO, hasModuleBuilderDocs, moduleBuilderDocsPathPrefix } from '#shared/utils/module-builder'
 import { DOCS_REFS, DOCS_REPO, docsStatus, getVersionByPath, isArchivedDocVersion, isCanonicalDocsPath } from '#shared/utils/docs'
 import { isLocalisedPage, l10nHead, l10nPagePath, type L10nPageMeta } from '#shared/utils/l10n'
 
@@ -74,8 +75,18 @@ const cliVersion = computed(() => {
   return path.value === prefix || path.value.startsWith(`${prefix}/`) ? version : undefined
 })
 
+/** The version's Module Builder docs, when this page belongs to them. */
+const moduleBuilderVersion = computed(() => {
+  const version = docsVersion.value
+  if (!hasModuleBuilderDocs(version)) return undefined
+
+  const prefix = moduleBuilderDocsPathPrefix(version)
+  return path.value === prefix || path.value.startsWith(`${prefix}/`) ? version : undefined
+})
+
 const instanceKey = computed(() => {
   if (!versioned.value) return 'examples' as const
+  if (moduleBuilderVersion.value) return moduleBuilderInstanceKey(moduleBuilderVersion.value)
   return cliVersion.value ? cliInstanceKey(cliVersion.value) : docsInstanceKey.value
 })
 
@@ -177,6 +188,11 @@ const editLink = computed(() => {
   if (cliVersion.value) {
     const ref = CLI_DOCS_REFS[cliVersion.value].branch
     return `https://github.com/${CLI_DOCS_REPO}/edit/${ref}/docs/${meta.stem}${meta.extension}`
+  }
+
+  if (moduleBuilderVersion.value) {
+    const ref = MODULE_BUILDER_DOCS_REFS[moduleBuilderVersion.value].branch
+    return `https://github.com/${MODULE_BUILDER_DOCS_REPO}/edit/${ref}/docs/${meta.stem}${meta.extension}`
   }
 
   const ref = DOCS_REFS[docsVersion.value].branch

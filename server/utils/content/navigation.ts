@@ -1,7 +1,8 @@
 import type { ComarkContent, NavigationItem } from 'comark-content'
 import { docsPathPrefix, EXAMPLES_PATH_PREFIX, hasExamples, type DocVersion } from '#shared/utils/docs'
-import { cliInstanceKey, docsInstanceKey, moduleInstanceKey, type ContentInstanceKey } from '#shared/utils/content'
+import { cliInstanceKey, docsInstanceKey, moduleBuilderInstanceKey, moduleInstanceKey, type ContentInstanceKey } from '#shared/utils/content'
 import { cliDocsPathPrefix, hasCliDocs } from '#shared/utils/cli'
+import { hasModuleBuilderDocs, moduleAuthorGuidePath, moduleBuilderDocsPathPrefix } from '#shared/utils/module-builder'
 import { MODULE_DOCS_NAMES, moduleDocsPathPrefix } from '#shared/utils/module-docs'
 
 /**
@@ -15,6 +16,21 @@ export async function cliTree(version: DocVersion): Promise<NavigationItem[]> {
 
   const nav = await content.navigation()
   const root = findByPath(nav, cliDocsPathPrefix(version))
+
+  return root ? [root] : []
+}
+
+/**
+ * The Module Builder subtree for `version`. A failure to read it leaves it out rather than failing the tree.
+ */
+export async function moduleBuilderTree(version: DocVersion): Promise<NavigationItem[]> {
+  if (!hasModuleBuilderDocs(version)) return []
+
+  const nav = await getInstanceAtHead(moduleBuilderInstanceKey(version)).then(content => content.navigation()).catch((error) => {
+    console.error(`[content] could not read the ${version} Module Builder navigation, serving the tree without it`, error)
+    return null
+  })
+  const root = nav && findByPath(nav, moduleBuilderDocsPathPrefix(version))
 
   return root ? [root] : []
 }
@@ -64,13 +80,14 @@ export async function moduleDocsTrees(getInstance: (key: ContentInstanceKey) => 
 }
 
 /**
- * One doc version's tree, with the shared examples and the command reference grafted in.
+ * One doc version's tree, with the shared examples, the command reference and the Module Builder docs grafted in.
  * `withExamples: false` leaves the examples out, for callers that list them once on their own.
  */
 export async function docTree(version: DocVersion, { withExamples = hasExamples(version) } = {}): Promise<NavigationItem[]> {
-  const [content, commands, examples] = await Promise.all([
+  const [content, commands, moduleBuilder, examples] = await Promise.all([
     getInstanceAtHead(docsInstanceKey(version)),
     cliTree(version),
+    moduleBuilderTree(version),
     withExamples ? examplesTree() : []
   ])
   const nav = await content.navigation()
@@ -97,7 +114,7 @@ export async function docTree(version: DocVersion, { withExamples = hasExamples(
 
   return [{
     ...(root ?? { title: 'Docs', path: docsPathPrefix(version) }),
-    children
+    children: appendChildren(children, moduleAuthorGuidePath(version), moduleBuilder)
   }]
 }
 
@@ -109,6 +126,18 @@ export async function blogTree(): Promise<NavigationItem[]> {
   const blog = findByPath(await site.navigation(), '/blog')
 
   return blog ? [blog] : []
+}
+
+/** `items` with `nodes` appended to the children of the item at `path`, however deeply it is nested. */
+export function appendChildren(items: NavigationItem[], path: string, nodes: NavigationItem[]): NavigationItem[] {
+  if (!nodes.length) return items
+
+  return items.map((item) => {
+    if (item.path === path) return { ...item, children: [...(item.children ?? []), ...nodes] }
+    if (!item.children || !path.startsWith(`${item.path}/`)) return item
+
+    return { ...item, children: appendChildren(item.children, path, nodes) }
+  })
 }
 
 export function findByPath(items: NavigationItem[] | undefined, path: string): NavigationItem | undefined {

@@ -1,4 +1,4 @@
-import { cliInstanceKey, docsInstanceKey } from '#shared/utils/content'
+import { cliInstanceKey, docsInstanceKey, moduleBuilderInstanceKey } from '#shared/utils/content'
 import { AGENT_DOC_VERSIONS } from '#shared/utils/docs'
 
 export default defineMcpResource({
@@ -7,12 +7,13 @@ export default defineMcpResource({
   cache: '1h',
   async handler(uri: URL) {
     const results = await Promise.all(AGENT_DOC_VERSIONS.map(async (version) => {
-      const [docs, cli] = await Promise.all([
+      const [docs, cli, moduleBuilder] = await Promise.all([
         listInstancePages(docsInstanceKey(version)),
-        listInstancePages(cliInstanceKey(version)).catch(() => [])
+        listInstancePages(cliInstanceKey(version)).catch(() => []),
+        listInstancePages(moduleBuilderInstanceKey(version)).catch(() => [])
       ])
 
-      return [...docs, ...cli].map(doc => ({
+      return [...docs, ...cli, ...moduleBuilder].map(doc => ({
         title: doc.title,
         path: doc.path,
         description: doc.description,

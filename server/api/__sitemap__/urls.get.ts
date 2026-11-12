@@ -1,4 +1,4 @@
-import { cliInstanceKey, docsInstanceKey, moduleInstanceKey } from '#shared/utils/content'
+import { cliInstanceKey, docsInstanceKey, moduleBuilderInstanceKey, moduleInstanceKey } from '#shared/utils/content'
 import { CURRENT_DOCS_VERSION } from '#shared/utils/docs'
 import { supportsNuxt3OrLater } from '#shared/utils/modules'
 import { MODULE_DOCS_NAMES, moduleDocsPathPrefix } from '#shared/utils/module-docs'
@@ -6,9 +6,10 @@ import { localisePath, type L10nLocale } from '#shared/utils/l10n'
 
 // Sitemap source for @nuxtjs/sitemap (see `sitemap.sources` in nuxt.config).
 export default defineEventHandler(async (event) => {
-  const [docs, cli, examples, siteContent, modules, moduleDocs, localised] = await Promise.all([
+  const [docs, cli, moduleBuilder, examples, siteContent, modules, moduleDocs, localised] = await Promise.all([
     listInstancePages(docsInstanceKey(CURRENT_DOCS_VERSION)),
     listInstancePages(cliInstanceKey(CURRENT_DOCS_VERSION)).catch(() => []),
+    listInstancePages(moduleBuilderInstanceKey(CURRENT_DOCS_VERSION)).catch(() => []),
     listInstancePages('examples').catch(() => []),
     getInstanceAtHead('site'),
     fetchModules(event).then(list => list ?? []).catch(() => []),
@@ -36,6 +37,7 @@ export default defineEventHandler(async (event) => {
   return [
     ...docs.map(page => ({ loc: page.path })),
     ...cli.map(page => ({ loc: page.path })),
+    ...moduleBuilder.map(page => ({ loc: page.path })),
     ...examples.map(page => ({ loc: page.path })),
     ...moduleDocs.flat().map(page => ({ loc: page.path })),
     ...Object.entries(localised).flatMap(([locale, paths]) => (paths ?? []).map(path => ({ loc: localisePath(locale as L10nLocale, path) }))),

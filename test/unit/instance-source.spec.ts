@@ -1,5 +1,6 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import { CONTENT_INSTANCE_KEYS } from '../../shared/utils/content'
+import { CONTENT_INSTANCE_KEYS, moduleBuilderInstanceKey } from '../../shared/utils/content'
+import { MODULE_BUILDER_DOC_VERSIONS } from '../../shared/utils/module-builder'
 import { instanceSource } from '../../server/utils/content/instances'
 
 /**
@@ -40,6 +41,37 @@ describe('instanceSource', () => {
 
   it('rejects an unknown instance key', () => {
     expect(() => instanceSource('docs:9.x' as never)).toThrow()
+  })
+
+  describe('module builder', () => {
+    afterEach(() => vi.unstubAllEnvs())
+
+    it('reads the `nuxt/module-builder` docs into each version\'s Module Author Guide', () => {
+      expect(MODULE_BUILDER_DOC_VERSIONS).toEqual(['3.x', '4.x', '5.x'])
+      for (const version of MODULE_BUILDER_DOC_VERSIONS) {
+        expect(instanceSource(moduleBuilderInstanceKey(version))).toEqual({
+          name: 'module_builder',
+          source: {
+            repo: 'nuxt/module-builder',
+            branch: 'main',
+            contentDir: 'docs',
+            prefix: `/docs/${version}/guide/modules/module-builder`,
+            listingFields: ['title', 'description', 'navigation', 'titleTemplate', 'icon'],
+            exclude: ['README.md', '**/*.json'],
+            envOverride: 'NUXT_MODULE_BUILDER_PATH'
+          }
+        })
+      }
+    })
+
+    it('lets NUXT_MODULE_BUILDER_BRANCH override the branch', () => {
+      vi.stubEnv('NUXT_MODULE_BUILDER_BRANCH', 'feat/docs')
+      expect(instanceSource(moduleBuilderInstanceKey('4.x')).source.branch).toBe('feat/docs')
+    })
+
+    it('rejects a version without a Module Author Guide', () => {
+      expect(() => instanceSource('module-builder:2.x' as never)).toThrow()
+    })
   })
 
   describe('site ref', () => {
