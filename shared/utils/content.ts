@@ -1,5 +1,6 @@
 import { CLI_DOC_VERSIONS, hasCliDocs, type CliDocVersion } from './cli'
 import { DOC_VERSIONS, hasExamples, isArchivedDocVersion, isDocVersion, type DocVersion } from './docs'
+import { MODULE_BUILDER_DOC_VERSIONS, hasModuleBuilderDocs, type ModuleBuilderDocVersion } from './module-builder'
 import { MODULE_DOCS_NAMES, hasModuleDocs, type ModuleDocsName } from './module-docs'
 
 /**
@@ -9,10 +10,12 @@ import { MODULE_DOCS_NAMES, hasModuleDocs, type ModuleDocsName } from './module-
  * - `docs:<version>` a version of the Nuxt docs, from `nuxt/nuxt`
  * - `cli:<version>` the command reference backing that version, from `nuxt/cli` — mounted
  *   under the docs URL tree (`/docs/<version>/api/commands`) but its own repo, so its own instance
+ * - `module-builder:<version>` the Module Builder docs, from `nuxt/module-builder`, mounted inside
+ *   that version's Module Author Guide (`/docs/<version>/guide/modules/module-builder`)
  * - `examples` the `nuxt/examples` showcase
  * - `module:<name>` a module's docs, from its own repo — mounted under its module page (`/modules/<name>`)
  */
-export type ContentInstanceKey = 'site' | 'examples' | `docs:${DocVersion}` | `cli:${CliDocVersion}` | `module:${ModuleDocsName}`
+export type ContentInstanceKey = 'site' | 'examples' | `docs:${DocVersion}` | `cli:${CliDocVersion}` | `module-builder:${ModuleBuilderDocVersion}` | `module:${ModuleDocsName}`
 
 /** The docs instance serving `version`, e.g. `docsInstanceKey('4.x') === 'docs:4.x'`. */
 export function docsInstanceKey(version: DocVersion): ContentInstanceKey {
@@ -22,6 +25,11 @@ export function docsInstanceKey(version: DocVersion): ContentInstanceKey {
 /** The cli instance backing `version`'s command reference, e.g. `cliInstanceKey('4.x') === 'cli:4.x'`. */
 export function cliInstanceKey(version: CliDocVersion): ContentInstanceKey {
   return `cli:${version}`
+}
+
+/** The instance backing `version`'s Module Builder docs, e.g. `moduleBuilderInstanceKey('4.x') === 'module-builder:4.x'`. */
+export function moduleBuilderInstanceKey(version: ModuleBuilderDocVersion): ContentInstanceKey {
+  return `module-builder:${version}`
 }
 
 /** The instance serving a module's docs, e.g. `moduleInstanceKey('icon') === 'module:icon'`. */
@@ -35,16 +43,25 @@ export const CONTENT_INSTANCE_KEYS: ContentInstanceKey[] = [
   'examples',
   ...DOC_VERSIONS.map(docsInstanceKey),
   ...CLI_DOC_VERSIONS.map(cliInstanceKey),
+  ...MODULE_BUILDER_DOC_VERSIONS.map(moduleBuilderInstanceKey),
   ...MODULE_DOCS_NAMES.map(moduleInstanceKey)
 ]
+
+/** The instances serving a version's `/docs/<version>` pages: its docs, and the references grafted into them. */
+export function docsVersionInstanceKeys(version: DocVersion): ContentInstanceKey[] {
+  return [
+    docsInstanceKey(version),
+    ...(hasCliDocs(version) ? [cliInstanceKey(version)] : []),
+    ...(hasModuleBuilderDocs(version) ? [moduleBuilderInstanceKey(version)] : [])
+  ]
+}
 
 /**
  * Instances indexed for search.
  */
 export function searchInstanceKeys(version: DocVersion): ContentInstanceKey[] {
   return [
-    docsInstanceKey(version),
-    ...(hasCliDocs(version) ? [cliInstanceKey(version)] : []),
+    ...docsVersionInstanceKeys(version),
     ...(hasExamples(version) ? ['examples' as const] : []),
     ...(hasModuleDocsSearch(version) ? MODULE_DOCS_NAMES.map(moduleInstanceKey) : [])
   ]
@@ -68,6 +85,7 @@ export function isContentInstanceKey(value: string): value is ContentInstanceKey
   if (value === 'site' || value === 'examples') return true
   if (value.startsWith('docs:')) return isDocVersion(value.slice('docs:'.length))
   if (value.startsWith('module:')) return hasModuleDocs(value.slice('module:'.length))
+  if (value.startsWith('module-builder:')) return hasModuleBuilderDocs(value.slice('module-builder:'.length))
 
   return value.startsWith('cli:') && hasCliDocs(value.slice('cli:'.length))
 }
@@ -87,13 +105,14 @@ export function instanceBlobPath(key: ContentInstanceKey, sha: string): string {
 }
 
 /**
- * The comark instance name behind `key` — `docs:4.x` → `docs`, `cli:4.x` → `cli`, `module:color-mode` → `module_color_mode`.
+ * The comark instance name behind `key` — `docs:4.x` → `docs`, `cli:4.x` → `cli`, `module-builder:4.x` → `module_builder`,
+ * `module:color-mode` → `module_color_mode`.
  *
  * Versions share a name (search composes one version at a time), but every module's docs are searched
  * together, and `contentHub()` rejects duplicate names. Comark names are identifiers: `-` becomes `_`.
  */
 export function instanceName(key: ContentInstanceKey): string {
-  return key.startsWith('module:') ? key.replace(/[:-]/g, '_') : key.split(':')[0]!
+  return (key.startsWith('module:') ? key : key.split(':')[0]!).replace(/[:-]/g, '_')
 }
 
 /** Directory configuration (`.navigation.yml`), which contributes to the tree rather than a page. */

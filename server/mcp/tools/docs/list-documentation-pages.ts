@@ -1,6 +1,6 @@
 import { z } from 'zod'
 import { getAgentSiteUrl } from '#agent-discovery'
-import { cliInstanceKey, docsInstanceKey } from '#shared/utils/content'
+import { cliInstanceKey, docsInstanceKey, moduleBuilderInstanceKey } from '#shared/utils/content'
 import type { CliDocVersion } from '#shared/utils/cli'
 import { AGENT_DOC_VERSIONS } from '#shared/utils/docs'
 
@@ -38,6 +38,7 @@ TIPS: Always pass a search term to narrow results; every word must match.`,
       }
       allDocs.push(...docs)
       allDocs.push(...await listInstancePages(cliInstanceKey(docsVersion)).catch(() => []))
+      allDocs.push(...await listInstancePages(moduleBuilderInstanceKey(docsVersion)).catch(() => []))
     }
 
     allDocs.push(...await listInstancePages('examples'))

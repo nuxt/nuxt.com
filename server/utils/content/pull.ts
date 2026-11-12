@@ -3,8 +3,9 @@ import type { H3Event } from 'h3'
 import type { ComarkContent, NavigationItem } from 'comark-content'
 import type { PullPreviewSummary } from '#shared/types'
 import { cliDocsPathPrefix, hasCliDocs } from '#shared/utils/cli'
-import { CONTENT_INSTANCE_KEYS, cliInstanceKey, docsInstanceKey, hasModuleDocsSearch, isNavigationConfig, type ContentInstanceKey } from '#shared/utils/content'
-import { docsPathPrefix, EXAMPLES_PATH_PREFIX, hasExamples, type DocVersion } from '#shared/utils/docs'
+import { CONTENT_INSTANCE_KEYS, cliInstanceKey, docsInstanceKey, hasModuleDocsSearch, isNavigationConfig, moduleBuilderInstanceKey, type ContentInstanceKey } from '#shared/utils/content'
+import { CURRENT_DOCS_VERSION, docsPathPrefix, EXAMPLES_PATH_PREFIX, hasExamples, type DocVersion } from '#shared/utils/docs'
+import { hasModuleBuilderDocs, moduleAuthorGuidePath, moduleBuilderDocsPathPrefix } from '#shared/utils/module-builder'
 import { isPullContentPage, parsePullTarget, pullRepoName, type PullTarget } from '#shared/utils/pull'
 import { createRuntimeInstance } from '../../../utils/factory'
 
@@ -82,13 +83,16 @@ function githubHeaders(): Record<string, string> {
 
 /**
  * The instance reading `repo`'s `branch`.
- * When several versions read it, the oldest wins: `nuxt/cli` `main` backs 4.x (current) and 5.x.
+ * When several versions read it, the current one wins, else the oldest: `nuxt/cli` `main` backs 4.x and 5.x,
+ * `nuxt/module-builder` `main` backs 3.x, 4.x and 5.x, and both preview as 4.x.
  */
 export function pullInstanceKey(repo: string, branch: string): ContentInstanceKey | undefined {
-  return CONTENT_INSTANCE_KEYS.find((key) => {
+  const keys = CONTENT_INSTANCE_KEYS.filter((key) => {
     const { source } = instanceSource(key)
     return source.repo === repo && source.branch === branch
   })
+
+  return keys.find(key => key.endsWith(`:${CURRENT_DOCS_VERSION}`)) ?? keys[0]
 }
 
 /** Lists every open PR, but keeps only the ones nuxt.com may preview. */
@@ -345,19 +349,20 @@ export async function pullNavigation(version: DocVersion, preview: PullPreview):
   }
 
   const prefix = docsPathPrefix(version)
-  const [[docs], commands, examples, blog, modules] = await Promise.all([
+  const [[docs], commands, moduleBuilder, examples, blog, modules] = await Promise.all([
     subtree(docsInstanceKey(version), prefix),
     // Optional grafts, as in production: losing one keeps the rest of the tree.
     hasCliDocs(version) ? subtree(cliInstanceKey(version), cliDocsPathPrefix(version)).catch(() => []) : [],
+    hasModuleBuilderDocs(version) ? subtree(moduleBuilderInstanceKey(version), moduleBuilderDocsPathPrefix(version)).catch(() => []) : [],
     hasExamples(version) ? subtree('examples', EXAMPLES_PATH_PREFIX).catch(() => []) : [],
     subtree('site', '/blog').catch(() => []),
     hasModuleDocsSearch(version) ? moduleDocsTrees(key => getInstanceForPull(preview, key)) : []
   ])
 
-  // Examples after the API section, commands after its utils.
+  // Examples after the API section, commands after its utils, the Module Builder after the Module Author Guide's own pages.
   const children = insertAfter(docs?.children ?? [], `${prefix}/api`, examples).map(item => item.path === `${prefix}/api`
     ? { ...item, children: insertAfter(item.children ?? [], `${prefix}/api/utils`, commands) }
     : item)
 
-  return [{ ...(docs ?? { title: 'Docs', path: prefix }), children }, ...blog, ...modules]
+  return [{ ...(docs ?? { title: 'Docs', path: prefix }), children: appendChildren(children, moduleAuthorGuidePath(version), moduleBuilder) }, ...blog, ...modules]
 }

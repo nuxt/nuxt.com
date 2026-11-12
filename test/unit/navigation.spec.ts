@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import type { NavigationItem } from 'comark-content'
 import type { ContentInstanceKey } from '../../shared/utils/content'
-import { cliInstanceKey, docsInstanceKey, moduleInstanceKey } from '../../shared/utils/content'
+import { cliInstanceKey, docsInstanceKey, moduleBuilderInstanceKey, moduleInstanceKey } from '../../shared/utils/content'
 import { docsPathPrefix, EXAMPLES_PATH_PREFIX } from '../../shared/utils/docs'
 
 const VERSION = '4.x'
@@ -21,7 +21,7 @@ vi.stubGlobal('getInstanceAtHead', async (key: ContentInstanceKey) => {
 })
 
 const navigationUtils = await import('../../server/utils/content/navigation')
-const { blogTree, cliTree, docTree, examplesTree, findByPath, moduleDocsTrees } = navigationUtils
+const { blogTree, cliTree, docTree, examplesTree, findByPath, moduleBuilderTree, moduleDocsTrees } = navigationUtils
 
 vi.stubGlobal('docTree', docTree)
 vi.stubGlobal('findByPath', findByPath)
@@ -55,6 +55,52 @@ const iconNav = [{
     title: 'Nuxt Icon',
     path: '/modules/icon',
     children: [{ title: 'Quick Start', path: '/modules/icon' }, { title: 'Usage', path: '/modules/icon/usage' }]
+  }]
+}] as unknown as NavigationItem[]
+
+const guideNav = [{
+  title: 'Docs',
+  path: docsPathPrefix(VERSION),
+  children: [{
+    title: 'Guide',
+    path: `${docsPathPrefix(VERSION)}/guide`,
+    children: [{
+      title: 'Module Author Guide',
+      path: `${docsPathPrefix(VERSION)}/guide/modules`,
+      children: [
+        { title: 'Create Your First Module', path: `${docsPathPrefix(VERSION)}/guide/modules/getting-started` },
+        { title: 'Testing', path: `${docsPathPrefix(VERSION)}/guide/modules/testing` }
+      ]
+    }]
+  }]
+}] as unknown as NavigationItem[]
+
+/** The Module Builder instance wraps its docs in its prefix, with its `index.md` under its own root. */
+const moduleBuilderRoot = `${docsPathPrefix(VERSION)}/guide/modules/module-builder`
+const moduleBuilderNav = [{
+  title: 'Docs',
+  path: '/docs',
+  children: [{
+    title: VERSION,
+    path: docsPathPrefix(VERSION),
+    children: [{
+      title: 'Guide',
+      path: `${docsPathPrefix(VERSION)}/guide`,
+      children: [{
+        title: 'Modules',
+        path: `${docsPathPrefix(VERSION)}/guide/modules`,
+        children: [{
+          title: 'Module Builder',
+          path: moduleBuilderRoot,
+          icon: 'i-lucide-package',
+          children: [
+            { title: 'Getting Started', path: moduleBuilderRoot },
+            { title: 'Commands', path: `${moduleBuilderRoot}/commands` },
+            { title: 'Upgrading to v2', path: `${moduleBuilderRoot}/upgrade-v2` }
+          ]
+        }]
+      }]
+    }]
   }]
 }] as unknown as NavigationItem[]
 
@@ -116,6 +162,57 @@ describe('docTree', () => {
 
     await expect(cliTree(VERSION)).resolves.toEqual([])
     await expect(docTree(VERSION)).resolves.toHaveLength(1)
+  })
+
+  it('grafts the Module Builder docs after the Module Author Guide\'s own pages', async () => {
+    navigations.set(docsInstanceKey(VERSION), guideNav)
+    navigations.set(moduleBuilderInstanceKey(VERSION), moduleBuilderNav)
+
+    const tree = await docTree(VERSION)
+
+    expect(findByPath(tree, `${docsPathPrefix(VERSION)}/guide/modules`)?.children?.map(child => child.path)).toEqual([
+      `${docsPathPrefix(VERSION)}/guide/modules/getting-started`,
+      `${docsPathPrefix(VERSION)}/guide/modules/testing`,
+      moduleBuilderRoot
+    ])
+    expect(findByPath(tree, moduleBuilderRoot)).toMatchObject({
+      title: 'Module Builder',
+      icon: 'i-lucide-package',
+      children: [
+        { title: 'Getting Started', path: moduleBuilderRoot },
+        { title: 'Commands', path: `${moduleBuilderRoot}/commands` },
+        { title: 'Upgrading to v2', path: `${moduleBuilderRoot}/upgrade-v2` }
+      ]
+    })
+  })
+
+  it('degrades to nothing when the Module Builder instance fails', async () => {
+    navigations.set(docsInstanceKey(VERSION), guideNav)
+    navigations.set(moduleBuilderInstanceKey(VERSION), new Error('github is down'))
+
+    await expect(moduleBuilderTree(VERSION)).resolves.toEqual([])
+    expect(findByPath(await docTree(VERSION), `${docsPathPrefix(VERSION)}/guide/modules`)?.children).toHaveLength(2)
+  })
+
+  it('degrades to nothing when the Module Builder navigation fails', async () => {
+    navigations.set(docsInstanceKey(VERSION), guideNav)
+    const getInstanceAtHead = globalThis.getInstanceAtHead
+    vi.stubGlobal('getInstanceAtHead', async (key: ContentInstanceKey) => key === moduleBuilderInstanceKey(VERSION)
+      ? { navigation: async () => { throw new Error('docs/ not found') } }
+      : getInstanceAtHead(key))
+
+    try {
+      await expect(moduleBuilderTree(VERSION)).resolves.toEqual([])
+      expect(findByPath(await docTree(VERSION), `${docsPathPrefix(VERSION)}/guide/modules`)?.children).toHaveLength(2)
+    } finally {
+      vi.stubGlobal('getInstanceAtHead', getInstanceAtHead)
+    }
+  })
+
+  it('grafts no Module Builder docs into an archived version', async () => {
+    navigations.set('module-builder:2.x' as ContentInstanceKey, [{ title: 'Module Builder', path: '/docs/2.x/guide/modules/module-builder' }] as unknown as NavigationItem[])
+
+    await expect(moduleBuilderTree('2.x')).resolves.toEqual([])
   })
 })
 

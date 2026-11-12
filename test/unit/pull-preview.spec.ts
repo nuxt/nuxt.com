@@ -3,7 +3,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import memoryDriver from 'unstorage/drivers/memory'
 import type { NavigationItem } from 'comark-content'
 import { instanceSource } from '../../server/utils/content/instances'
-import { findByPath, moduleDocsTrees } from '../../server/utils/content/navigation'
+import { appendChildren, findByPath, moduleDocsTrees } from '../../server/utils/content/navigation'
 import type { ContentInstanceKey } from '../../shared/utils/content'
 
 const SHA = 'a'.repeat(40)
@@ -35,6 +35,7 @@ vi.stubGlobal('contentCacheDriver', () => undefined)
 vi.stubGlobal('recordDuration', () => 0)
 vi.stubGlobal('getInstanceAtHead', async (key: ContentInstanceKey) => ({ stat: headStat, navigation: async () => headNavs.get(key) ?? [] }))
 vi.stubGlobal('findByPath', findByPath)
+vi.stubGlobal('appendChildren', appendChildren)
 vi.stubGlobal('moduleDocsTrees', moduleDocsTrees)
 
 type PullModule = typeof import('../../server/utils/content/pull')
@@ -98,6 +99,7 @@ describe('pullInstanceKey', () => {
 
   it('picks the current version when several read the branch', () => {
     expect(pullInstanceKey('nuxt/cli', 'main')).toBe('cli:4.x')
+    expect(pullInstanceKey('nuxt/module-builder', 'main')).toBe('module-builder:4.x')
   })
 })
 
@@ -348,6 +350,33 @@ describe('pullNavigation', () => {
       '/docs/4.x/api/utils',
       '/docs/4.x/api/commands',
       '/docs/4.x/api/kit'
+    ])
+  })
+
+  it('grafts the PR\'s Module Builder docs after the Module Author Guide\'s own pages', async () => {
+    headNavs.set('docs:4.x', [nav('/docs/4.x', [
+      nav('/docs/4.x/guide', [nav('/docs/4.x/guide/modules', [nav('/docs/4.x/guide/modules/getting-started'), nav('/docs/4.x/guide/modules/testing')])])
+    ])])
+    pullNav.mockReturnValue([nav('/docs', [nav('/docs/4.x', [nav('/docs/4.x/guide', [nav('/docs/4.x/guide/modules', [
+      nav('/docs/4.x/guide/modules/module-builder', [nav('/docs/4.x/guide/modules/module-builder/commands')])
+    ])])])])])
+
+    const tree = await pullNavigation('4.x', {
+      target: { repo: 'module-builder', number: 1 },
+      title: '',
+      url: '',
+      sha: SHA,
+      instanceKey: 'module-builder:4.x',
+      files: []
+    })
+
+    expect(findByPath(tree, '/docs/4.x/guide/modules')!.children!.map(item => item.path)).toEqual([
+      '/docs/4.x/guide/modules/getting-started',
+      '/docs/4.x/guide/modules/testing',
+      '/docs/4.x/guide/modules/module-builder'
+    ])
+    expect(findByPath(tree, '/docs/4.x/guide/modules/module-builder')!.children!.map(item => item.path)).toEqual([
+      '/docs/4.x/guide/modules/module-builder/commands'
     ])
   })
 })
