@@ -1,8 +1,8 @@
 import type { ComarkContent, NavigationItem } from 'comark-content'
 import { docsPathPrefix, EXAMPLES_PATH_PREFIX, hasExamples, type DocVersion } from '#shared/utils/docs'
-import { cliInstanceKey, docsInstanceKey, moduleBuilderInstanceKey, moduleInstanceKey, type ContentInstanceKey } from '#shared/utils/content'
+import { buildModuleInstanceKey, cliInstanceKey, docsInstanceKey, moduleBuilderInstanceKey, moduleInstanceKey, type ContentInstanceKey } from '#shared/utils/content'
 import { cliDocsPathPrefix, hasCliDocs } from '#shared/utils/cli'
-import { hasModuleBuilderDocs, moduleAuthorGuidePath, moduleBuilderDocsPathPrefix } from '#shared/utils/module-builder'
+import { buildModuleDocsPathPrefix, hasModuleBuilderDocs, moduleAuthorGuidePath, moduleBuilderDocsPathPrefix } from '#shared/utils/module-builder'
 import { MODULE_DOCS_NAMES, moduleDocsPathPrefix } from '#shared/utils/module-docs'
 
 /**
@@ -33,6 +33,47 @@ export async function moduleBuilderTree(version: DocVersion): Promise<Navigation
   const root = nav && findByPath(nav, moduleBuilderDocsPathPrefix(version))
 
   return root ? [root] : []
+}
+
+/**
+ * The `nuxt build-module` page for `version`, as an entry of its command reference.
+ * A failure to read it leaves it out rather than failing the tree.
+ */
+export async function buildModuleTree(version: DocVersion): Promise<NavigationItem[]> {
+  if (!hasModuleBuilderDocs(version)) return []
+
+  const nav = await getInstanceAtHead(buildModuleInstanceKey(version)).then(content => content.navigation()).catch((error) => {
+    console.error(`[content] could not read the ${version} build-module navigation, serving the tree without it`, error)
+    return null
+  })
+
+  return commandEntry(nav ?? [], buildModuleDocsPathPrefix(version))
+}
+
+/** The page at `path`, its source's root `index.md`, as a single command entry named like a command file. */
+export function commandEntry(nav: NavigationItem[], path: string): NavigationItem[] {
+  const root = findByPath(nav, path)
+  if (!root) return []
+
+  const { children: _children, ...page } = root
+  return [{ ...page, stem: path.split('/').pop()! }]
+}
+
+/** `commands` with `entries` in place: where comark-content would sort their file names, replacing any page at the same path. */
+export function withCommandEntries(commands: NavigationItem[], entries: NavigationItem[]): NavigationItem[] {
+  if (!entries.length) return commands
+
+  const stem = (item: NavigationItem) => item.stem?.split('/').pop() ?? ''
+
+  return commands.map((root) => {
+    let children = root.children ?? []
+    for (const entry of entries) {
+      children = children.filter(item => item.path !== entry.path)
+      const at = children.findIndex(item => stem(item).localeCompare(stem(entry), undefined, { numeric: true }) > 0)
+      children = at === -1 ? [...children, entry] : [...children.slice(0, at), entry, ...children.slice(at)]
+    }
+    return { ...root, children }
+  })
 }
 
 /**
@@ -84,13 +125,15 @@ export async function moduleDocsTrees(getInstance: (key: ContentInstanceKey) => 
  * `withExamples: false` leaves the examples out, for callers that list them once on their own.
  */
 export async function docTree(version: DocVersion, { withExamples = hasExamples(version) } = {}): Promise<NavigationItem[]> {
-  const [content, commands, moduleBuilder, examples] = await Promise.all([
+  const [content, cli, buildModule, moduleBuilder, examples] = await Promise.all([
     getInstanceAtHead(docsInstanceKey(version)),
     cliTree(version),
+    buildModuleTree(version),
     moduleBuilderTree(version),
     withExamples ? examplesTree() : []
   ])
   const nav = await content.navigation()
+  const commands = withCommandEntries(cli, buildModule)
 
   // A prefixed source is wrapped in nodes for its prefix, so unwrap to the version root.
   const root = findByPath(nav, docsPathPrefix(version))

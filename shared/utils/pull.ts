@@ -85,7 +85,7 @@ export function instanceRepo(key: ContentInstanceKey): PullRepo {
     return MODULE_DOCS[key.slice('module:'.length) as ModuleDocsName].repo.slice('nuxt/'.length) as PullRepo
   }
 
-  if (key.startsWith('module-builder:')) return 'module-builder'
+  if (key.startsWith('module-builder:') || key.startsWith('build-module:')) return 'module-builder'
 
   return key.startsWith('cli:') ? 'cli' : 'nuxt'
 }

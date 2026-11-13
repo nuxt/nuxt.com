@@ -33,6 +33,13 @@ describe('instanceFromPagePath', () => {
     expect(instanceFromPagePath('/docs/5.x/guide/modules/module-builder/output')).toBe('module-builder:5.x')
   })
 
+  it('resolves the `nuxt build-module` page to `nuxt/module-builder`, ahead of the cli instance it is nested in', () => {
+    expect(instanceFromPagePath('/docs/4.x/api/commands/build-module')).toBe('build-module:4.x')
+    expect(instanceFromPagePath('/docs/3.x/api/commands/build-module')).toBe('build-module:3.x')
+    expect(instanceFromPagePath('/docs/4.x/api/commands/build')).toBe('cli:4.x')
+    expect(instanceFromPagePath('/docs/4.x/api/commands/build-module-x')).toBe('cli:4.x')
+  })
+
   it('resolves the rest of the Module Author Guide to docs', () => {
     expect(instanceFromPagePath('/docs/4.x/guide/modules')).toBe('docs:4.x')
     expect(instanceFromPagePath('/docs/4.x/guide/modules/getting-started')).toBe('docs:4.x')
@@ -59,6 +66,7 @@ describe('instanceKeyFromSegments', () => {
     expect(instanceKeyFromSegments(['docs', '4.x', 'getting-started'])).toBe('docs:4.x')
     expect(instanceKeyFromSegments(['cli', '4.x', 'dev'])).toBe('cli:4.x')
     expect(instanceKeyFromSegments(['module-builder', '4.x', 'commands'])).toBe('module-builder:4.x')
+    expect(instanceKeyFromSegments(['build-module', '4.x', 'manifest.json'])).toBe('build-module:4.x')
   })
 
   it('resolves site and examples, both one-segment prefixes', () => {
@@ -73,5 +81,6 @@ describe('instanceKeyFromSegments', () => {
     expect(() => instanceKeyFromSegments(['cli', '9.x'])).toThrow('Unknown content instance')
     expect(() => instanceKeyFromSegments(['module-builder', '2.x'])).toThrow('Unknown content instance')
     expect(() => instanceKeyFromSegments(['module-builder'])).toThrow('Unknown content instance')
+    expect(() => instanceKeyFromSegments(['build-module', '2.x'])).toThrow('Unknown content instance')
   })
 })

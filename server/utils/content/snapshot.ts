@@ -21,6 +21,7 @@ export const SNAPSHOT_ASSET_BASE = 'comark-content'
  * - `docs:<version>` (search index)
  * - `cli:<version>` (search index)
  * - `module-builder:<version>` (search index)
+ * - `build-module:<version>` (search index)
  * - `module:<name>` (search index)
  */
 export const SNAPSHOT_INSTANCE_KEYS: ContentInstanceKey[] = [

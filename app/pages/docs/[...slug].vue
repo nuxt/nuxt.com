@@ -3,8 +3,8 @@ import { kebabCase } from 'scule'
 import type { NavigationItem } from 'comark-content'
 import { DocsProseImg, Browser, CodeExplorer, Important, LinkExample, ReadMore, VideoAccordion } from '#components'
 import { CLI_DOCS_REFS, CLI_DOCS_REPO, cliDocsPathPrefix, hasCliDocs } from '#shared/utils/cli'
-import { cliInstanceKey, moduleBuilderInstanceKey } from '#shared/utils/content'
-import { MODULE_BUILDER_DOCS_REFS, MODULE_BUILDER_DOCS_REPO, hasModuleBuilderDocs, moduleBuilderDocsPathPrefix } from '#shared/utils/module-builder'
+import { buildModuleInstanceKey, cliInstanceKey, moduleBuilderInstanceKey } from '#shared/utils/content'
+import { BUILD_MODULE_DOCS_DIR, MODULE_BUILDER_DOCS_REFS, MODULE_BUILDER_DOCS_REPO, buildModuleDocsPathPrefix, hasModuleBuilderDocs, moduleBuilderDocsPathPrefix } from '#shared/utils/module-builder'
 import { DOCS_REFS, DOCS_REPO, docsStatus, getVersionByPath, isArchivedDocVersion, isCanonicalDocsPath } from '#shared/utils/docs'
 import { isLocalisedPage, l10nHead, l10nPagePath, type L10nPageMeta } from '#shared/utils/l10n'
 
@@ -84,8 +84,15 @@ const moduleBuilderVersion = computed(() => {
   return path.value === prefix || path.value.startsWith(`${prefix}/`) ? version : undefined
 })
 
+/** The version's `nuxt build-module` page, from `nuxt/module-builder`, when this is it. */
+const buildModuleVersion = computed(() => {
+  const version = docsVersion.value
+  return hasModuleBuilderDocs(version) && path.value === buildModuleDocsPathPrefix(version) ? version : undefined
+})
+
 const instanceKey = computed(() => {
   if (!versioned.value) return 'examples' as const
+  if (buildModuleVersion.value) return buildModuleInstanceKey(buildModuleVersion.value)
   if (moduleBuilderVersion.value) return moduleBuilderInstanceKey(moduleBuilderVersion.value)
   return cliVersion.value ? cliInstanceKey(cliVersion.value) : docsInstanceKey.value
 })
@@ -183,6 +190,11 @@ const editLink = computed(() => {
   if (!meta) return ''
   if (instanceKey.value === 'examples') {
     return `https://github.com/nuxt/examples/edit/main/.docs/${meta.stem}${meta.extension}`
+  }
+
+  if (buildModuleVersion.value) {
+    const ref = MODULE_BUILDER_DOCS_REFS[buildModuleVersion.value].branch
+    return `https://github.com/${MODULE_BUILDER_DOCS_REPO}/edit/${ref}/docs/${BUILD_MODULE_DOCS_DIR}/${meta.stem}${meta.extension}`
   }
 
   if (cliVersion.value) {

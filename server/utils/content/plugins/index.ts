@@ -52,8 +52,8 @@ export function instancePlugins(key: ContentInstanceKey): ContentPlugin<Record<s
     // Command pages are written with the same unversioned `/docs/*` links as the docs.
     return [dottedFrontmatter(), docsLinks(version), repoImages(CLI_DOCS_REPO, CLI_DOCS_REFS[version].branch)]
   }
-  if (key.startsWith('module-builder:')) {
-    const version = key.slice('module-builder:'.length) as ModuleBuilderDocVersion
+  if (key.startsWith('module-builder:') || key.startsWith('build-module:')) {
+    const version = key.slice(key.indexOf(':') + 1) as ModuleBuilderDocVersion
     return [dottedFrontmatter(), docsLinks(version), repoImages(MODULE_BUILDER_DOCS_REPO, MODULE_BUILDER_DOCS_REFS[version].branch)]
   }
   if (key.startsWith('module:')) {

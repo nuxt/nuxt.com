@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import { CONTENT_INSTANCE_KEYS, moduleBuilderInstanceKey } from '../../shared/utils/content'
+import { CONTENT_INSTANCE_KEYS, buildModuleInstanceKey, cliInstanceKey, moduleBuilderInstanceKey } from '../../shared/utils/content'
 import { MODULE_BUILDER_DOC_VERSIONS } from '../../shared/utils/module-builder'
 import { instanceSource } from '../../server/utils/content/instances'
 
@@ -57,20 +57,40 @@ describe('instanceSource', () => {
             contentDir: 'docs',
             prefix: `/docs/${version}/guide/modules/module-builder`,
             listingFields: ['title', 'description', 'navigation', 'titleTemplate', 'icon'],
-            exclude: ['README.md', '**/*.json'],
+            exclude: ['README.md', '**/*.json', 'cli/**'],
             envOverride: 'NUXT_MODULE_BUILDER_PATH'
           }
         })
       }
     })
 
+    it('reads its `nuxt build-module` page into each version\'s command reference', () => {
+      for (const version of MODULE_BUILDER_DOC_VERSIONS) {
+        expect(instanceSource(buildModuleInstanceKey(version))).toEqual({
+          name: 'build_module',
+          source: {
+            repo: 'nuxt/module-builder',
+            branch: 'main',
+            contentDir: 'docs/cli/build-module',
+            prefix: `/docs/${version}/api/commands/build-module`,
+            listingFields: ['title', 'description', 'navigation', 'titleTemplate', 'icon'],
+            exclude: ['README.md', '**/*.json'],
+            envOverride: 'NUXT_MODULE_BUILDER_PATH'
+          }
+        })
+        expect(instanceSource(cliInstanceKey(version)).source.exclude).toContain('build-module.md')
+      }
+    })
+
     it('lets NUXT_MODULE_BUILDER_BRANCH override the branch', () => {
       vi.stubEnv('NUXT_MODULE_BUILDER_BRANCH', 'feat/docs')
       expect(instanceSource(moduleBuilderInstanceKey('4.x')).source.branch).toBe('feat/docs')
+      expect(instanceSource(buildModuleInstanceKey('4.x')).source.branch).toBe('feat/docs')
     })
 
     it('rejects a version without a Module Author Guide', () => {
       expect(() => instanceSource('module-builder:2.x' as never)).toThrow()
+      expect(() => instanceSource('build-module:2.x' as never)).toThrow()
     })
   })
 

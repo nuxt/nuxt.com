@@ -3,9 +3,9 @@ import type { H3Event } from 'h3'
 import type { ComarkContent, NavigationItem } from 'comark-content'
 import type { PullPreviewSummary } from '#shared/types'
 import { cliDocsPathPrefix, hasCliDocs } from '#shared/utils/cli'
-import { CONTENT_INSTANCE_KEYS, cliInstanceKey, docsInstanceKey, hasModuleDocsSearch, isNavigationConfig, moduleBuilderInstanceKey, type ContentInstanceKey } from '#shared/utils/content'
+import { CONTENT_INSTANCE_KEYS, buildModuleInstanceKey, cliInstanceKey, docsInstanceKey, hasModuleDocsSearch, isNavigationConfig, moduleBuilderInstanceKey, type ContentInstanceKey } from '#shared/utils/content'
 import { CURRENT_DOCS_VERSION, docsPathPrefix, EXAMPLES_PATH_PREFIX, hasExamples, type DocVersion } from '#shared/utils/docs'
-import { hasModuleBuilderDocs, moduleAuthorGuidePath, moduleBuilderDocsPathPrefix } from '#shared/utils/module-builder'
+import { buildModuleDocsPathPrefix, hasModuleBuilderDocs, moduleAuthorGuidePath, moduleBuilderDocsPathPrefix } from '#shared/utils/module-builder'
 import { isPullContentPage, parsePullTarget, pullRepoName, type PullTarget } from '#shared/utils/pull'
 import { createRuntimeInstance } from '../../../utils/factory'
 
@@ -93,6 +93,24 @@ export function pullInstanceKey(repo: string, branch: string): ContentInstanceKe
   })
 
   return keys.find(key => key.endsWith(`:${CURRENT_DOCS_VERSION}`)) ?? keys[0]
+}
+
+/**
+ * Every instance a preview pins to the PR's commit: the one it replaces, then the others reading the same
+ * repo and branch for the same version (`module-builder:4.x` brings `build-module:4.x`).
+ */
+export function pullInstanceKeys(instanceKey: ContentInstanceKey): ContentInstanceKey[] {
+  const { repo, branch } = instanceSource(instanceKey).source
+  const version = instanceKey.split(':')[1]
+  const siblings = version
+    ? CONTENT_INSTANCE_KEYS.filter((key) => {
+        if (key === instanceKey || key.split(':')[1] !== version) return false
+        const { source } = instanceSource(key)
+        return source.repo === repo && source.branch === branch
+      })
+    : []
+
+  return [instanceKey, ...siblings]
 }
 
 /** Lists every open PR, but keeps only the ones nuxt.com may preview. */
@@ -194,8 +212,8 @@ export async function resolvePullPreview(target: PullTarget): Promise<PullPrevie
   if (!pull) throw notFound()
 
   const files = await getPullFiles(repo, target.number, pull)
-  const dir = instanceContentDir(pull.instanceKey)
-  if (!files.some(file => file.path.startsWith(dir))) throw notFound()
+  const dirs = pullInstanceKeys(pull.instanceKey).map(instanceContentDir)
+  if (!files.some(file => dirs.some(dir => file.path.startsWith(dir)))) throw notFound()
 
   return {
     target,
@@ -261,9 +279,9 @@ export function getInstanceAtPull(key: ContentInstanceKey, sha: string): Promise
   return instance
 }
 
-/** The instance serving `key` in this preview: the PR's head commit if it replaces `key`, production otherwise. */
+/** The instance serving `key` in this preview: the PR's head commit if it pins `key`, production otherwise. */
 export function getInstanceForPull(preview: PullPreview, key: ContentInstanceKey): Promise<ComarkContent> {
-  return key === preview.instanceKey ? getInstanceAtPull(key, preview.sha) : getInstanceAtHead(key)
+  return pullInstanceKeys(preview.instanceKey).includes(key) ? getInstanceAtPull(key, preview.sha) : getInstanceAtHead(key)
 }
 
 /** The `:repo` and `:number` route params, validated. */
@@ -290,16 +308,28 @@ function previewedPage(path: string): string | undefined {
 
 /** The pages the PR adds, changes or removes; a removed page is read from production, the PR's commit no longer has it. */
 export async function pullPages(preview: PullPreview): Promise<PullPreviewSummary['pages']> {
-  const dir = instanceContentDir(preview.instanceKey)
+  const keys = pullInstanceKeys(preview.instanceKey)
   // comark-content gives `.navigation.yml` a path but it's no page
-  const files = preview.files.filter(file => file.path.startsWith(dir) && !isNavigationConfig(file.path))
-  const [content, production] = await Promise.all([
-    getInstanceAtPull(preview.instanceKey, preview.sha),
-    files.some(file => file.removed) ? getInstanceAtHead(preview.instanceKey) : undefined
-  ])
+  const files = preview.files.filter(file => keys.some(key => file.path.startsWith(instanceContentDir(key))) && !isNavigationConfig(file.path))
+  const removed = files.some(file => file.removed)
+
+  const read = async (key: ContentInstanceKey) => {
+    const [content, production] = await Promise.all([
+      getInstanceAtPull(key, preview.sha),
+      removed ? getInstanceAtHead(key) : undefined
+    ])
+    return { dir: instanceContentDir(key), content, production }
+  }
+  // Only the replaced instance is required; a sibling that cannot be read just lists no pages.
+  const [primary, ...siblings] = await Promise.all([read(keys[0]!), ...keys.slice(1).map(key => read(key).catch(() => undefined))])
+  // A sibling may read a directory nested in the PR's (`docs/cli/build-module/` in `docs/`): it owns those files.
+  const instances = [primary!, ...siblings.filter(sibling => !!sibling)].sort((a, b) => b.dir.length - a.dir.length)
 
   return files.flatMap((file) => {
-    const entry = (file.removed ? production : content)?.stat(file.path.slice(dir.length))
+    const entry = instances
+      .filter(({ dir }) => file.path.startsWith(dir))
+      .map(({ dir, content, production }) => (file.removed ? production : content)?.stat(file.path.slice(dir.length)))
+      .find(entry => entry?.path)
     if (!entry?.path) return []
 
     // A data entry links to the listing showing it
@@ -349,10 +379,13 @@ export async function pullNavigation(version: DocVersion, preview: PullPreview):
   }
 
   const prefix = docsPathPrefix(version)
-  const [[docs], commands, moduleBuilder, examples, blog, modules] = await Promise.all([
+  const [[docs], cli, buildModule, moduleBuilder, examples, blog, modules] = await Promise.all([
     subtree(docsInstanceKey(version), prefix),
     // Optional grafts, as in production: losing one keeps the rest of the tree.
     hasCliDocs(version) ? subtree(cliInstanceKey(version), cliDocsPathPrefix(version)).catch(() => []) : [],
+    hasModuleBuilderDocs(version)
+      ? getInstanceForPull(preview, buildModuleInstanceKey(version)).then(async content => commandEntry(await content.navigation(), buildModuleDocsPathPrefix(version))).catch(() => [])
+      : [],
     hasModuleBuilderDocs(version) ? subtree(moduleBuilderInstanceKey(version), moduleBuilderDocsPathPrefix(version)).catch(() => []) : [],
     hasExamples(version) ? subtree('examples', EXAMPLES_PATH_PREFIX).catch(() => []) : [],
     subtree('site', '/blog').catch(() => []),
@@ -361,7 +394,7 @@ export async function pullNavigation(version: DocVersion, preview: PullPreview):
 
   // Examples after the API section, commands after its utils, the Module Builder after the Module Author Guide's own pages.
   const children = insertAfter(docs?.children ?? [], `${prefix}/api`, examples).map(item => item.path === `${prefix}/api`
-    ? { ...item, children: insertAfter(item.children ?? [], `${prefix}/api/utils`, commands) }
+    ? { ...item, children: insertAfter(item.children ?? [], `${prefix}/api/utils`, withCommandEntries(cli, buildModule)) }
     : item)
 
   return [{ ...(docs ?? { title: 'Docs', path: prefix }), children: appendChildren(children, moduleAuthorGuidePath(version), moduleBuilder) }, ...blog, ...modules]
