@@ -2,7 +2,7 @@ import type { ComarkContent, NavigationItem } from 'comark-content'
 import { docsPathPrefix, EXAMPLES_PATH_PREFIX, hasExamples, type DocVersion } from '#shared/utils/docs'
 import { buildModuleInstanceKey, cliInstanceKey, docsInstanceKey, moduleBuilderInstanceKey, moduleInstanceKey, type ContentInstanceKey } from '#shared/utils/content'
 import { cliDocsPathPrefix, hasCliDocs } from '#shared/utils/cli'
-import { buildModuleDocsPathPrefix, hasModuleBuilderDocs, moduleAuthorGuidePath, moduleBuilderDocsPathPrefix } from '#shared/utils/module-builder'
+import { buildModuleDocsPathPrefix, hasModuleBuilderDocs, moduleBuilderDocsPathPrefix } from '#shared/utils/module-builder'
 import { MODULE_DOCS_NAMES, moduleDocsPathPrefix } from '#shared/utils/module-docs'
 
 /**
@@ -144,20 +144,15 @@ export async function docTree(version: DocVersion, { withExamples = hasExamples(
   const afterApi = children.findIndex(item => item.path === `${docsPathPrefix(version)}/api`) + 1
   children.splice(afterApi || children.length, 0, ...examples)
 
-  // Locate CLI docs after the API docs.
-  if (commands.length) {
-    const api = findByPath(children, `${docsPathPrefix(version)}/api`)
-    if (api) {
-      const apiChildren = [...(api.children ?? [])]
-      const afterUtils = apiChildren.findIndex(item => item.path === `${docsPathPrefix(version)}/api/utils`) + 1
-      apiChildren.splice(afterUtils || apiChildren.length, 0, ...commands)
-      api.children = apiChildren
-    }
-  }
+  // The CLI docs after the API utils, the Module Builder after Nuxt Kit.
+  const api = `${docsPathPrefix(version)}/api`
+  const grafted = commands.length || moduleBuilder.length
 
   return [{
     ...(root ?? { title: 'Docs', path: docsPathPrefix(version) }),
-    children: appendChildren(children, moduleAuthorGuidePath(version), moduleBuilder)
+    children: children.map(item => grafted && item.path === api
+      ? { ...item, children: insertAfter(insertAfter(item.children ?? [], `${api}/utils`, commands), `${api}/kit`, moduleBuilder) }
+      : item)
   }]
 }
 
@@ -171,16 +166,11 @@ export async function blogTree(): Promise<NavigationItem[]> {
   return blog ? [blog] : []
 }
 
-/** `items` with `nodes` appended to the children of the item at `path`, however deeply it is nested. */
-export function appendChildren(items: NavigationItem[], path: string, nodes: NavigationItem[]): NavigationItem[] {
-  if (!nodes.length) return items
+/** `items` with `nodes` inserted after the item at `path`, or at the end. */
+export function insertAfter(items: NavigationItem[], path: string, nodes: NavigationItem[]): NavigationItem[] {
+  const at = (items.findIndex(item => item.path === path) + 1) || items.length
 
-  return items.map((item) => {
-    if (item.path === path) return { ...item, children: [...(item.children ?? []), ...nodes] }
-    if (!item.children || !path.startsWith(`${item.path}/`)) return item
-
-    return { ...item, children: appendChildren(item.children, path, nodes) }
-  })
+  return [...items.slice(0, at), ...nodes, ...items.slice(at)]
 }
 
 export function findByPath(items: NavigationItem[] | undefined, path: string): NavigationItem | undefined {

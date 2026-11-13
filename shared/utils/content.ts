@@ -10,8 +10,8 @@ import { MODULE_DOCS_NAMES, hasModuleDocs, type ModuleDocsName } from './module-
  * - `docs:<version>` a version of the Nuxt docs, from `nuxt/nuxt`
  * - `cli:<version>` the command reference backing that version, from `nuxt/cli` — mounted
  *   under the docs URL tree (`/docs/<version>/api/commands`) but its own repo, so its own instance
- * - `module-builder:<version>` the Module Builder docs, from `nuxt/module-builder`, mounted inside
- *   that version's Module Author Guide (`/docs/<version>/guide/modules/module-builder`)
+ * - `module-builder:<version>` the Module Builder docs, from `nuxt/module-builder`, mounted in
+ *   that version's API docs (`/docs/<version>/api/module-builder`)
  * - `build-module:<version>` the `nuxt build-module` page, from `nuxt/module-builder`, mounted in that
  *   version's command reference (`/docs/<version>/api/commands/build-module`) in place of `nuxt/cli`'s
  * - `examples` the `nuxt/examples` showcase

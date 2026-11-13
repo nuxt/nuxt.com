@@ -26,11 +26,11 @@ describe('instanceFromPagePath', () => {
     expect(instanceFromPagePath('/docs/4.x/api/utils')).toBe('docs:4.x')
   })
 
-  it('resolves a Module Builder page to its own instance, not the Module Author Guide it is nested in', () => {
-    expect(instanceFromPagePath('/docs/4.x/guide/modules/module-builder')).toBe('module-builder:4.x')
-    expect(instanceFromPagePath('/docs/4.x/guide/modules/module-builder/commands')).toBe('module-builder:4.x')
-    expect(instanceFromPagePath('/docs/3.x/guide/modules/module-builder/upgrade-v2')).toBe('module-builder:3.x')
-    expect(instanceFromPagePath('/docs/5.x/guide/modules/module-builder/output')).toBe('module-builder:5.x')
+  it('resolves a Module Builder page to its own instance, not the API docs it is nested in', () => {
+    expect(instanceFromPagePath('/docs/4.x/api/module-builder')).toBe('module-builder:4.x')
+    expect(instanceFromPagePath('/docs/4.x/api/module-builder/commands')).toBe('module-builder:4.x')
+    expect(instanceFromPagePath('/docs/3.x/api/module-builder/upgrade-v2')).toBe('module-builder:3.x')
+    expect(instanceFromPagePath('/docs/5.x/api/module-builder/output')).toBe('module-builder:5.x')
   })
 
   it('resolves the `nuxt build-module` page to `nuxt/module-builder`, ahead of the cli instance it is nested in', () => {
@@ -40,14 +40,13 @@ describe('instanceFromPagePath', () => {
     expect(instanceFromPagePath('/docs/4.x/api/commands/build-module-x')).toBe('cli:4.x')
   })
 
-  it('resolves the rest of the Module Author Guide to docs', () => {
-    expect(instanceFromPagePath('/docs/4.x/guide/modules')).toBe('docs:4.x')
-    expect(instanceFromPagePath('/docs/4.x/guide/modules/getting-started')).toBe('docs:4.x')
-    expect(instanceFromPagePath('/docs/4.x/guide/modules/module-builder-x')).toBe('docs:4.x')
+  it('resolves the rest of the API docs to docs', () => {
+    expect(instanceFromPagePath('/docs/4.x/api/kit')).toBe('docs:4.x')
+    expect(instanceFromPagePath('/docs/4.x/api/module-builder-x')).toBe('docs:4.x')
   })
 
   it('leaves an archived version\'s pages to its docs', () => {
-    expect(instanceFromPagePath('/docs/2.x/guide/modules/module-builder')).toBe('docs:2.x')
+    expect(instanceFromPagePath('/docs/2.x/api/module-builder')).toBe('docs:2.x')
   })
 
   it('resolves examples, which are not version-scoped', () => {

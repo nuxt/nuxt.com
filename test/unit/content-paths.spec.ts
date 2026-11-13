@@ -113,7 +113,7 @@ describe('isContentInstanceKey', () => {
     }
   })
 
-  it('gives an archived version no Module Builder docs, as it has no Module Author Guide', () => {
+  it('gives an archived version no Module Builder docs, as it predates the module builder', () => {
     expect(isContentInstanceKey('module-builder:2.x')).toBe(false)
     expect(isContentInstanceKey('build-module:2.x')).toBe(false)
     expect(CONTENT_INSTANCE_KEYS).not.toContain('module-builder:2.x')

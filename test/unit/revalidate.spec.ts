@@ -29,7 +29,7 @@ const instanceSource = (key: string) => {
     const version = key.slice('module-builder:'.length)
     return {
       name: 'module_builder',
-      source: { repo: 'nuxt/module-builder', branch: 'main', contentDir: 'docs', prefix: `/docs/${version}/guide/modules/module-builder` }
+      source: { repo: 'nuxt/module-builder', branch: 'main', contentDir: 'docs', prefix: `/docs/${version}/api/module-builder` }
     }
   }
   if (key.startsWith('build-module:')) {
@@ -71,7 +71,7 @@ describe('impactedInstances', () => {
     expect(impactedInstances('nuxt/cli', 'main')).toEqual(['cli:5.x'])
   })
 
-  it('fans a `nuxt/module-builder` push out to every version\'s Module Author Guide', () => {
+  it('fans a `nuxt/module-builder` push out to every version that mounts it', () => {
     expect(impactedInstances('nuxt/module-builder', 'main')).toEqual([
       'module-builder:3.x',
       'module-builder:4.x',

@@ -3,7 +3,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import memoryDriver from 'unstorage/drivers/memory'
 import type { NavigationItem } from 'comark-content'
 import { instanceSource } from '../../server/utils/content/instances'
-import { appendChildren, commandEntry, findByPath, moduleDocsTrees, withCommandEntries } from '../../server/utils/content/navigation'
+import { commandEntry, findByPath, insertAfter, moduleDocsTrees, withCommandEntries } from '../../server/utils/content/navigation'
 import type { ContentInstanceKey } from '../../shared/utils/content'
 
 const SHA = 'a'.repeat(40)
@@ -35,7 +35,7 @@ vi.stubGlobal('contentCacheDriver', () => undefined)
 vi.stubGlobal('recordDuration', () => 0)
 vi.stubGlobal('getInstanceAtHead', async (key: ContentInstanceKey) => ({ stat: headStat, navigation: async () => headNavs.get(key) ?? [] }))
 vi.stubGlobal('findByPath', findByPath)
-vi.stubGlobal('appendChildren', appendChildren)
+vi.stubGlobal('insertAfter', insertAfter)
 vi.stubGlobal('commandEntry', commandEntry)
 vi.stubGlobal('withCommandEntries', withCommandEntries)
 vi.stubGlobal('moduleDocsTrees', moduleDocsTrees)
@@ -253,7 +253,7 @@ describe('pullPages', () => {
 
   it('maps a file in a nested directory to the pinned instance reading it', async () => {
     pageStat.mockImplementation((key: string) => ({
-      '2.commands.md': { path: '/docs/4.x/guide/modules/module-builder/commands', data: { title: 'Commands' } },
+      '2.commands.md': { path: '/docs/4.x/api/module-builder/commands', data: { title: 'Commands' } },
       'index.md': { path: '/docs/4.x/api/commands/build-module', data: { title: 'nuxt build-module' } }
     })[key])
 
@@ -267,7 +267,7 @@ describe('pullPages', () => {
     })
 
     expect(pages).toEqual([
-      { title: 'Commands', path: '/docs/4.x/guide/modules/module-builder/commands', removed: false },
+      { title: 'Commands', path: '/docs/4.x/api/module-builder/commands', removed: false },
       { title: 'nuxt build-module', path: '/docs/4.x/api/commands/build-module', removed: false }
     ])
   })
@@ -389,13 +389,13 @@ describe('pullNavigation', () => {
     ])
   })
 
-  it('grafts the PR\'s Module Builder docs after the Module Author Guide\'s own pages', async () => {
+  it('grafts the PR\'s Module Builder docs after Nuxt Kit', async () => {
     headNavs.set('docs:4.x', [nav('/docs/4.x', [
-      nav('/docs/4.x/guide', [nav('/docs/4.x/guide/modules', [nav('/docs/4.x/guide/modules/getting-started'), nav('/docs/4.x/guide/modules/testing')])])
+      nav('/docs/4.x/api', [nav('/docs/4.x/api/utils'), nav('/docs/4.x/api/kit'), nav('/docs/4.x/api/advanced')])
     ])])
-    pullNav.mockReturnValue([nav('/docs', [nav('/docs/4.x', [nav('/docs/4.x/guide', [nav('/docs/4.x/guide/modules', [
-      nav('/docs/4.x/guide/modules/module-builder', [nav('/docs/4.x/guide/modules/module-builder/commands')])
-    ])])])])])
+    pullNav.mockReturnValue([nav('/docs', [nav('/docs/4.x', [nav('/docs/4.x/api', [
+      nav('/docs/4.x/api/module-builder', [nav('/docs/4.x/api/module-builder/commands')])
+    ])])])])
 
     const tree = await pullNavigation('4.x', {
       target: { repo: 'module-builder', number: 1 },
@@ -406,13 +406,14 @@ describe('pullNavigation', () => {
       files: []
     })
 
-    expect(findByPath(tree, '/docs/4.x/guide/modules')!.children!.map(item => item.path)).toEqual([
-      '/docs/4.x/guide/modules/getting-started',
-      '/docs/4.x/guide/modules/testing',
-      '/docs/4.x/guide/modules/module-builder'
+    expect(findByPath(tree, '/docs/4.x/api')!.children!.map(item => item.path)).toEqual([
+      '/docs/4.x/api/utils',
+      '/docs/4.x/api/kit',
+      '/docs/4.x/api/module-builder',
+      '/docs/4.x/api/advanced'
     ])
-    expect(findByPath(tree, '/docs/4.x/guide/modules/module-builder')!.children!.map(item => item.path)).toEqual([
-      '/docs/4.x/guide/modules/module-builder/commands'
+    expect(findByPath(tree, '/docs/4.x/api/module-builder')!.children!.map(item => item.path)).toEqual([
+      '/docs/4.x/api/module-builder/commands'
     ])
   })
 
