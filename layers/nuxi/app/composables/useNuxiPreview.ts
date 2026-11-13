@@ -9,12 +9,16 @@ export function useNuxiPreview(chat: Pick<AgentChatHandle, 'messages' | 'status'
   const followed = new Set<string>()
   let followedMessage: string | undefined
   let needsReload = false
+  /** An edit landed after `nuxt dev` exited, so reloading its page is not enough: it has to run again first. */
+  let needsRestart = false
 
   // A restart drops HMR. Reload after the changes are checked, or when the turn ends.
   function reload() {
     if (!needsReload) return
-    needsReload = false
-    preview.reloadRequest.value++
+    // Starting the editor again restarts `nuxt dev` if it is still down, then swaps to its page.
+    if (needsRestart) preview.editRequest.value++
+    else preview.reloadRequest.value++
+    needsReload = needsRestart = false
   }
 
   const tools = computed(() => preview.preview.value
@@ -32,7 +36,7 @@ export function useNuxiPreview(chat: Pick<AgentChatHandle, 'messages' | 'status'
   ], ([status, , id], [previousStatus, , previousId]) => {
     if (id !== previousId) {
       followed.clear()
-      needsReload = false
+      needsReload = needsRestart = false
     }
     if (!id || (!isBusy(status) && !isBusy(previousStatus))) return
     const messageId = chat.messages.at(-1)?.id
@@ -63,6 +67,7 @@ export function useNuxiPreview(chat: Pick<AgentChatHandle, 'messages' | 'status'
       preview.activity.value = { id: tool.toolCallId, label: `${{ running, done, failed: error }[state]} ${target}`, next: `${next} ${target}`, state }
       if (state !== 'done') continue
       if (name === 'add_app_module' || output?.restarted === true) needsReload = true
+      if (output?.devServerStopped === true) needsReload = needsRestart = true
       if (name === 'check_app_page') {
         if (!target.startsWith('/')) reload()
         else if (needsReload) {

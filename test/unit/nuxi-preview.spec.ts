@@ -11,6 +11,7 @@ let preview: {
   preview: ReturnType<typeof ref<LivePreview | null>>
   activity: ReturnType<typeof ref<LivePreviewActivity | null>>
   reloadRequest: ReturnType<typeof ref<number>>
+  editRequest: ReturnType<typeof ref<number>>
   startEditing: ReturnType<typeof vi.fn>
   navigate: ReturnType<typeof vi.fn>
 }
@@ -19,7 +20,7 @@ beforeEach(() => {
   chat = reactive({ status: 'streaming', messages: [{ id: 'reply', role: 'assistant', parts: [] }] })
   preview = {
     preview: ref({ id: 'sandbox', url: 'https://example.vercel.run', template: { slug: 'minimal', name: 'Minimal' }, error: 'Previous error' }),
-    activity: ref(null), reloadRequest: ref(0), startEditing: vi.fn(), navigate: vi.fn()
+    activity: ref(null), reloadRequest: ref(0), editRequest: ref(0), startEditing: vi.fn(), navigate: vi.fn()
   }
   vi.stubGlobal('computed', computed)
   vi.stubGlobal('watch', watch)
@@ -85,6 +86,26 @@ describe('Nuxi preview updates', () => {
     chat.status = 'ready'
     await nextTick()
     expect(preview.reloadRequest.value).toBe(1)
+  })
+
+  it('starts the dev server again once a check follows an edit it missed', async () => {
+    await done('edit_app_file', { path: 'nuxt.config.ts', devServerStopped: true })
+    expect(preview.editRequest.value).toBe(0)
+    await done('check_app_page', { status: 200 }, { sandboxId: 'sandbox', path: '/about' })
+    expect(preview.preview.value?.path).toBe('/about')
+    expect(preview.editRequest.value).toBe(1)
+    chat.status = 'ready'
+    await nextTick()
+    expect(preview.editRequest.value).toBe(1)
+    expect(preview.reloadRequest.value).toBe(0)
+  })
+
+  it('starts the dev server again when the turn ends without a check', async () => {
+    await done('edit_app_file', { path: 'nuxt.config.ts', devServerStopped: true })
+    chat.status = 'ready'
+    await nextTick()
+    expect(preview.editRequest.value).toBe(1)
+    expect(preview.reloadRequest.value).toBe(0)
   })
 
   it('handles a final tool result arriving with turn completion', async () => {
