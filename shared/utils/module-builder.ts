@@ -3,11 +3,14 @@ import { docsPathPrefix, type ArchivedDocVersion, type DocVersion, type RepoRefs
 
 export const MODULE_BUILDER_DOCS_REPO = 'nuxt/module-builder'
 
+// TODO: read `main` once nuxt/module-builder#818 (the docs) is merged.
+const MODULE_BUILDER_DOCS_BRANCH = 'docs-source-of-truth'
+
 // Archived versions have no Module Author Guide to mount it in.
 export const MODULE_BUILDER_DOCS_REFS = {
-  '3.x': { branch: 'main', envOverride: 'NUXT_MODULE_BUILDER_PATH' },
-  '4.x': { branch: 'main', envOverride: 'NUXT_MODULE_BUILDER_PATH' },
-  '5.x': { branch: 'main', envOverride: 'NUXT_MODULE_BUILDER_PATH' }
+  '3.x': { branch: MODULE_BUILDER_DOCS_BRANCH, envOverride: 'NUXT_MODULE_BUILDER_PATH' },
+  '4.x': { branch: MODULE_BUILDER_DOCS_BRANCH, envOverride: 'NUXT_MODULE_BUILDER_PATH' },
+  '5.x': { branch: MODULE_BUILDER_DOCS_BRANCH, envOverride: 'NUXT_MODULE_BUILDER_PATH' }
 } as const satisfies Record<Exclude<DocVersion, ArchivedDocVersion>, RepoRefs>
 
 /** Versions with the Module Builder docs. */
