@@ -91,7 +91,7 @@
     "forges": "^0.3.2",
     "h3": "^1.15.11",
     "motion-v": "^2.11.1",
-    "nuxt": "^4.6.4",
+    "nuxt": "npm:nuxt-nightly@4x",
     "nuxt-auth-utils": "^0.6.2",
     "nuxt-llms": "^0.3.1",
     "nuxt-og-image": "^7.0.7",
