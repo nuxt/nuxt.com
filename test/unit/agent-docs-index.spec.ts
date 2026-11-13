@@ -66,6 +66,7 @@ describe('docs index', () => {
       '/docs/4.x/getting-started/state-management',
       '/docs/4.x/api/composables/use-nuxt-app',
       '/deploy/cloudflare',
+      '/blog/v4',
       '/modules/icon/configuration'
     ])
   })

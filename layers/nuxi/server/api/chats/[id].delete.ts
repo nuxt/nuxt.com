@@ -26,5 +26,7 @@ export default defineEventHandler(async (event) => {
     throw createError({ message: 'Chat not found', status: 404 })
   }
 
+  await endEveSessions(event, deleted.map(chat => chat.state?.sessionId))
+
   return deleted
 })

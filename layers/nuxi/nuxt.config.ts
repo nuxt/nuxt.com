@@ -1,6 +1,6 @@
 export default defineNuxtConfig({
   modules: [
-    '@comark/nuxt'
+    '@comark/vue'
   ],
 
   $meta: {

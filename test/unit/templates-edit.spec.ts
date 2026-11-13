@@ -6,19 +6,46 @@ import { join } from 'node:path'
 import { Readable } from 'node:stream'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { createError } from 'h3'
-import { checkAppPage, devServerLog, RESTARTING_FILES, resolveAppPath, waitForRestart } from '../../server/utils/templates/edit'
+import { checkAppPage, devServerLog, readAppFile, RESTARTING_FILES, resolveAppPath, waitForRestart } from '../../server/utils/templates/edit'
 
 describe('resolveAppPath', () => {
   it('resolves paths inside the app', () => {
     expect(resolveAppPath('app/pages/index.vue')).toEqual({ path: 'app/pages/index.vue', absolute: '/vercel/app/app/pages/index.vue' })
     expect(resolveAppPath('./nuxt.config.ts').path).toBe('nuxt.config.ts')
     expect(resolveAppPath('/content/[slug].md').path).toBe('content/[slug].md')
+    expect(resolveAppPath('././nuxt.config.ts').path).toBe('nuxt.config.ts')
+    expect(resolveAppPath('app/./pages//index.vue').path).toBe('app/pages/index.vue')
   })
 
   it('rejects paths outside the app, dependencies, build output and shell syntax', () => {
-    for (const path of ['', '../etc/passwd', 'app/../../etc', 'node_modules/nuxt/index.js', '.nuxt/app.js', '.output/server/index.mjs', '.git/config', '.vercel/project.json', 'app/$(id).vue', 'a\'; rm -rf /; \'.vue', 'app/page`id`.vue']) {
+    for (const path of ['', '.', '../etc/passwd', 'app/../../etc', 'node_modules/nuxt/index.js', '././node_modules/nuxt/package.json', 'app/./../../etc', '.nuxt/app.js', '.output/server/index.mjs', '.git/config', '.vercel/project.json', 'app/$(id).vue', 'a\'; rm -rf /; \'.vue', 'app/page`id`.vue']) {
       expect(() => resolveAppPath(path), path).toThrow('Not an editable path')
     }
+  })
+})
+
+describe('reading an app file', () => {
+  function fileSandbox(chunks: Iterable<Buffer>) {
+    const stream = Readable.from(chunks)
+    return { stream, sandbox: { readFile: vi.fn(async () => stream) } as unknown as Sandbox }
+  }
+
+  it('stops streaming a large file once the excerpt is known to be truncated', async () => {
+    let pulled = 0
+    const { sandbox } = fileSandbox((function* () {
+      for (; pulled < 1600; pulled++) yield Buffer.alloc(64 * 1024, 'a') // 100 MiB
+    })())
+    const file = await readAppFile(sandbox, 'public/data.json')
+    expect(file).toMatchObject({ truncated: true })
+    expect(file!.content).toHaveLength(40_000)
+    expect(pulled).toBeLessThan(10)
+  })
+
+  it('returns a multibyte file whole when it fits, and rejects binary files', async () => {
+    const text = '\u00E9'.repeat(40_000)
+    const bytes = Buffer.from(text)
+    await expect(readAppFile(fileSandbox([bytes.subarray(0, 3), bytes.subarray(3)]).sandbox, 'app/app.vue')).resolves.toEqual({ path: 'app/app.vue', content: text, truncated: false })
+    await expect(readAppFile(fileSandbox([Buffer.from([0x89, 0x50, 0, 1])]).sandbox, 'public/logo.png')).rejects.toMatchObject({ statusCode: 400 })
   })
 })
 
@@ -104,9 +131,9 @@ describe('checking an edited page', () => {
     await expect(checkAppPage(sandbox as unknown as Sandbox, '/')).resolves.toMatchObject({ status: 200, text: 'x'.repeat(1500) })
   })
 
-  it('does not read a response curl rejected as too large', async () => {
-    const { sandbox } = pageSandbox([], 63)
-    await expect(checkAppPage(sandbox as unknown as Sandbox, '/')).rejects.toMatchObject({ statusCode: 413 })
+  it.each([[63, 413], [28, 502], [56, 502]])('does not read the response when curl exits with %i', async (exitCode, statusCode) => {
+    const { sandbox } = pageSandbox([Buffer.from('<main>partial</main>')], exitCode)
+    await expect(checkAppPage(sandbox as unknown as Sandbox, '/')).rejects.toMatchObject({ statusCode })
     expect(sandbox.readFile).not.toHaveBeenCalled()
   })
 
@@ -202,6 +229,19 @@ describe('editing a template preview', () => {
   it('waits for config changes to restart before reporting success', async () => {
     await expect(request({ path: 'nuxt.config.ts', content: 'export default defineNuxtConfig({})' })).resolves.toEqual({ path: 'nuxt.config.ts', restarted: true })
     expect(restart).toHaveBeenCalledWith(sandbox, 42)
+  })
+
+  it('still writes a fix when the dev server has exited, without waiting for a restart', async () => {
+    vi.stubGlobal('waitForDevServer', vi.fn().mockRejectedValue(createError({ statusCode: 504, data: { stopped: true } })))
+    await expect(request({ path: 'nuxt.config.ts', content: 'export default defineNuxtConfig({})' })).resolves.toEqual({ path: 'nuxt.config.ts', devServerStopped: true })
+    expect(writeFile).toHaveBeenCalledWith(sandbox, 'nuxt.config.ts', 'export default defineNuxtConfig({})')
+    expect(restart).not.toHaveBeenCalled()
+  })
+
+  it('fails without writing while the dev server is still starting', async () => {
+    vi.stubGlobal('waitForDevServer', vi.fn().mockRejectedValue(createError({ statusCode: 504, data: { stopped: false } })))
+    await expect(request({ content: 'Hello' })).rejects.toMatchObject({ statusCode: 504 })
+    expect(writeFile).not.toHaveBeenCalled()
   })
 })
 
