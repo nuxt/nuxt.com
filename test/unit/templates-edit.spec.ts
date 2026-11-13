@@ -1,9 +1,10 @@
 import type { Sandbox } from '@vercel/sandbox'
 import { execFileSync } from 'node:child_process'
-import { mkdtempSync, rmSync, writeFileSync } from 'node:fs'
+import { createReadStream, existsSync, mkdirSync, mkdtempSync, rmSync, symlinkSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { Readable } from 'node:stream'
+import { unzipSync } from 'fflate'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { createError } from 'h3'
 import { checkAppPage, devServerLog, readAppFile, RESTARTING_FILES, resolveAppPath, waitForRestart } from '../../server/utils/templates/edit'
@@ -97,8 +98,7 @@ describe('checking an edited page', () => {
       stream,
       sandbox: {
         runCommand: vi.fn(async ({ args }) => ({ exitCode, stdout: async () => args[1].startsWith('curl') ? '200' : '', stderr: async () => '' })),
-        readFile: vi.fn(async () => stream),
-        readFileToBuffer: vi.fn(async () => Buffer.concat(chunks))
+        readFile: vi.fn(async () => stream)
       }
     }
   }
@@ -111,7 +111,7 @@ describe('checking an edited page', () => {
     await expect(checkAppPage(sandbox as unknown as Sandbox, '/')).resolves.toMatchObject({ text: 'Hello & caf\u00E9 \uD83D\uDE80 world' })
   })
 
-  it('handles unfinished raw-text markup without backtracking', async () => {
+  it('keeps unfinished script content out of the text excerpt', async () => {
     const { sandbox } = pageSandbox([Buffer.from('<p>Visible</p><script>' + '<script>'.repeat(8192))])
     await expect(checkAppPage(sandbox as unknown as Sandbox, '/')).resolves.toMatchObject({ text: 'Visible' })
   })
@@ -123,7 +123,6 @@ describe('checking an edited page', () => {
     const { sandbox, stream } = pageSandbox(chunks)
     await expect(checkAppPage(sandbox as unknown as Sandbox, '/')).rejects.toMatchObject({ statusCode: 413 })
     expect(stream.destroyed).toBe(true)
-    expect(sandbox.readFileToBuffer).not.toHaveBeenCalled()
   })
 
   it('allows exactly 1 MiB while retaining only the text excerpt', async () => {
@@ -198,7 +197,7 @@ describe('editing a template preview', () => {
     expect(getSandbox).not.toHaveBeenCalled()
   })
 
-  it('refuses missing, stopped or differently owned previews', async () => {
+  it('looks up the caller’s preview and refuses missing or stopped previews', async () => {
     for (const value of [null, { status: 'stopped' }]) {
       getSandbox.mockResolvedValueOnce(value)
       await expect(request({ content: 'Hello' })).rejects.toMatchObject({ statusCode: 404 })
@@ -250,8 +249,13 @@ describe('starting the preview editor', () => {
     vi.stubGlobal('getRateLimitPrincipalId', vi.fn().mockResolvedValue('visitor'))
     vi.stubGlobal('getRouterParam', vi.fn().mockReturnValue('preview'))
     vi.stubGlobal('setResponseHeaders', vi.fn())
+    let finish!: () => void
+    const pending = new Promise<void>((resolve) => {
+      finish = resolve
+    })
     const start = vi.fn(async (_sandbox, onStarted: () => void) => {
       onStarted()
+      await pending
       if (failed) throw new Error('Startup failed')
       return 'https://preview.vercel.run'
     })
@@ -259,16 +263,169 @@ describe('starting the preview editor', () => {
     const log = vi.spyOn(console, 'error').mockImplementation(() => {})
     try {
       const edit = (await import('../../server/api/templates/preview/[id]/edit.post')).default as any
-      const stream = await edit({})
-      const events = (await new Response(stream).text()).trim().split('\n').map(line => JSON.parse(line))
-      expect(events).toEqual([
-        { type: 'started' },
-        failed ? { type: 'error', message: 'The dev server could not start.' } : { type: 'ready', url: 'https://preview.vercel.run' }
-      ])
+      const reader = (await edit({})).getReader()
+      const next = async () => {
+        const { value } = await reader.read()
+        return value && JSON.parse(new TextDecoder().decode(value))
+      }
+      expect(await next()).toEqual({ type: 'started' })
+      finish()
+      expect(await next()).toEqual(failed ? { type: 'error', message: 'The dev server could not start.' } : { type: 'ready', url: 'https://preview.vercel.run' })
+      expect(await reader.read()).toMatchObject({ done: true })
       expect(start).toHaveBeenCalledTimes(1)
       expect(getSandbox).toHaveBeenCalledWith('preview', 'visitor')
     } finally {
+      finish()
       log.mockRestore()
+    }
+  })
+})
+
+describe('downloading an edited project', () => {
+  beforeEach(() => {
+    vi.stubGlobal('getRateLimitPrincipalId', vi.fn().mockResolvedValue('visitor'))
+    vi.stubGlobal('getRouterParam', vi.fn().mockReturnValue('preview'))
+    vi.stubGlobal('setResponseHeaders', vi.fn())
+  })
+
+  it('requires an identified visitor and looks up their running preview', async () => {
+    const download = (await import('../../server/api/templates/preview/[id]/download.get')).default as any
+    for (const value of [null, { status: 'stopped' }]) {
+      getSandbox.mockResolvedValueOnce(value)
+      await expect(download({})).rejects.toMatchObject({ statusCode: 404 })
+    }
+    expect(getSandbox).toHaveBeenCalledWith('preview', 'visitor')
+    getSandbox.mockClear()
+    vi.stubGlobal('getRateLimitPrincipalId', vi.fn().mockResolvedValue(undefined))
+    await expect(download({})).rejects.toMatchObject({ statusCode: 404 })
+    expect(getSandbox).not.toHaveBeenCalled()
+  })
+
+  it('archives edited sources, lockfiles and binary assets, excludes generated files and symlinks, then removes the ZIP', async () => {
+    const directory = mkdtempSync(join(tmpdir(), 'template-zip-'))
+    const files: Record<string, string | Buffer> = {
+      'app/app.vue': '<template><h1>Edited by Nuxi</h1></template>',
+      'nuxt.config.ts': 'export default defineNuxtConfig({})',
+      'package.json': '{"scripts":{"dev":"nuxt dev"}}',
+      'pnpm-lock.yaml': 'lockfileVersion: 9',
+      'public/logo.png': Buffer.from([137, 80, 78, 71, 0, 255]),
+      'public/dist/brand.svg': '<svg>edited asset</svg>',
+      'public/nuxt-com-preview.client.js': 'edited public asset',
+      'public/nuxt-com-preview.js': 'another public asset',
+      '.gitignore': 'node_modules',
+      'node_modules/nuxt/index.js': 'dependency',
+      '.output/server/index.mjs': 'build',
+      '.nuxt/tsconfig.json': '{}',
+      '.git/config': 'git',
+      '.vercel/project.json': '{}',
+      '.data/cache': 'cache',
+      'dist/index.html': 'build',
+      'app/plugins/nuxt-com-preview.client.js': 'bridge',
+      'plugins/nuxt-com-preview.client.js': 'legacy bridge',
+      'server/plugins/nuxt-com-preview.js': 'guard',
+      'nested/node_modules/dependency.js': 'nested dependency'
+    }
+    let archivePath = ''
+    try {
+      for (const [path, content] of Object.entries(files)) {
+        mkdirSync(join(directory, path, '..'), { recursive: true })
+        writeFileSync(join(directory, path), content)
+      }
+      symlinkSync('/etc/passwd', join(directory, 'outside.txt'))
+      symlinkSync('/etc', join(directory, 'outside-directory'))
+      const runCommand = vi.fn(async ({ cmd, args }) => {
+        if (cmd === 'python3') archivePath = args[2]
+        execFileSync(cmd, args, { cwd: directory })
+        return { exitCode: 0 }
+      })
+      getSandbox.mockResolvedValueOnce({ status: 'running', runCommand, readFile: ({ path }: { path: string }) => createReadStream(path) })
+      vi.stubGlobal('sendStream', async (_event: unknown, stream: AsyncIterable<Buffer>) => {
+        const chunks = []
+        for await (const chunk of stream) chunks.push(chunk)
+        return Buffer.concat(chunks)
+      })
+      const download = (await import('../../server/api/templates/preview/[id]/download.get')).default as any
+      const archive = unzipSync(await download({}))
+      expect(Object.keys(archive).sort()).toEqual(['.gitignore', 'app/app.vue', 'nuxt.config.ts', 'package.json', 'pnpm-lock.yaml', 'public/dist/brand.svg', 'public/logo.png', 'public/nuxt-com-preview.client.js', 'public/nuxt-com-preview.js'])
+      expect(Buffer.from(archive['app/app.vue']!).toString()).toBe(files['app/app.vue'])
+      expect(Buffer.from(archive['public/logo.png']!)).toEqual(files['public/logo.png'])
+      expect(setResponseHeaders).toHaveBeenCalledWith({}, expect.objectContaining({ 'content-type': 'application/zip', 'cache-control': 'no-store' }))
+      expect(existsSync(archivePath)).toBe(false)
+    } finally {
+      rmSync(directory, { recursive: true, force: true })
+      if (archivePath) rmSync(archivePath, { force: true })
+    }
+  })
+
+  it.each(['archive', 'read', 'stream'])('cleans up and reports a failed %s without returning a broken download', async (failure) => {
+    const runCommand = vi.fn().mockResolvedValue({ exitCode: 0 })
+    if (failure === 'archive') runCommand.mockResolvedValueOnce({ exitCode: 1 })
+    const stream = Readable.from([Buffer.from('zip')])
+    getSandbox.mockResolvedValueOnce({ status: 'running', runCommand, readFile: async () => failure === 'read' ? null : stream })
+    vi.stubGlobal('sendStream', vi.fn().mockRejectedValue(new Error('Connection closed')))
+    const download = (await import('../../server/api/templates/preview/[id]/download.get')).default as any
+    await expect(download({})).rejects.toMatchObject(failure === 'stream'
+      ? { message: 'Connection closed' }
+      : { statusCode: 500, message: failure === 'archive' ? 'The project could not be zipped. Please try again.' : 'The project ZIP could not be read.' })
+    const path = runCommand.mock.calls[0]![0].args[2]
+    expect(runCommand).toHaveBeenLastCalledWith({ cmd: 'rm', args: ['-f', path], signal: expect.any(AbortSignal) })
+    if (failure !== 'stream') expect(sendStream).not.toHaveBeenCalled()
+  })
+
+  it.each(['open', 'stream'])('aborts a stalled ZIP %s and cleans up', async (stage) => {
+    vi.useFakeTimers()
+    const stream = new Readable({ read() {} })
+    const runCommand = vi.fn().mockResolvedValue({ exitCode: 0 })
+    const readFile = vi.fn(async (_file, { signal }: { signal: AbortSignal } = { signal: new AbortController().signal }) => {
+      if (stage === 'stream') return stream
+      return new Promise<never>((_resolve, reject) => signal.addEventListener('abort', () => reject(new Error('Read aborted')), { once: true }))
+    })
+    getSandbox.mockResolvedValueOnce({ status: 'running', runCommand, readFile })
+    vi.stubGlobal('sendStream', async (_event: unknown, input: AsyncIterable<Buffer>) => {
+      for await (const _chunk of input) { /* consume the download */ }
+    })
+    try {
+      const download = (await import('../../server/api/templates/preview/[id]/download.get')).default as any
+      let failure: Error | undefined
+      const result = download({}).catch((error: Error) => {
+        failure = error
+      })
+      await vi.advanceTimersByTimeAsync(30_000)
+      expect(failure).toBeInstanceOf(Error)
+      await result
+      expect(readFile.mock.calls[0]![1].signal.aborted).toBe(true)
+      if (stage === 'stream') expect(stream.destroyed).toBe(true)
+      expect(runCommand).toHaveBeenLastCalledWith({ cmd: 'rm', args: ['-f', expect.any(String)], signal: expect.any(AbortSignal) })
+    } finally {
+      stream.destroy()
+      vi.useRealTimers()
+    }
+  })
+
+  it('lets an active ZIP download outlast the inactivity timeout', async () => {
+    vi.useFakeTimers()
+    const stream = new Readable({ read() {} })
+    const chunks: Buffer[] = []
+    const readFile = vi.fn(async () => stream)
+    getSandbox.mockResolvedValueOnce({ status: 'running', runCommand: vi.fn().mockResolvedValue({ exitCode: 0 }), readFile })
+    vi.stubGlobal('sendStream', async (_event: unknown, input: AsyncIterable<Buffer>) => {
+      for await (const chunk of input) chunks.push(chunk)
+    })
+    try {
+      const download = (await import('../../server/api/templates/preview/[id]/download.get')).default as any
+      const result = download({})
+      for (let i = 0; i < 3; i++) {
+        await vi.advanceTimersByTimeAsync(20_000)
+        stream.push(Buffer.from('zip'))
+        await vi.advanceTimersByTimeAsync(0)
+      }
+      stream.push(null)
+      await result
+      expect(Buffer.concat(chunks).toString()).toBe('zipzipzip')
+      expect(vi.getTimerCount()).toBe(0)
+    } finally {
+      stream.destroy()
+      vi.useRealTimers()
     }
   })
 })
