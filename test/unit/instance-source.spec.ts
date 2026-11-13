@@ -2,6 +2,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest'
 import { CONTENT_INSTANCE_KEYS, buildModuleInstanceKey, cliInstanceKey, moduleBuilderInstanceKey } from '../../shared/utils/content'
 import { MODULE_BUILDER_DOC_VERSIONS } from '../../shared/utils/module-builder'
 import { instanceSource } from '../../server/utils/content/instances'
+import { instancePlugins } from '../../server/utils/content/plugins'
 
 /**
  * comark-content validates the instance name it is given positionally, and throws at construction
@@ -79,6 +80,15 @@ describe('instanceSource', () => {
           }
         })
         expect(instanceSource(cliInstanceKey(version)).source.exclude).toContain('build-module.md')
+      }
+    })
+
+    it('parses both with the command reference\'s plugins, versioning their `/docs/*` links', () => {
+      const names = (key: Parameters<typeof instancePlugins>[0]) => instancePlugins(key).map(plugin => plugin.name)
+      for (const version of MODULE_BUILDER_DOC_VERSIONS) {
+        expect(names(moduleBuilderInstanceKey(version))).toEqual(names(cliInstanceKey(version)))
+        expect(names(buildModuleInstanceKey(version))).toEqual(names(cliInstanceKey(version)))
+        expect(names(buildModuleInstanceKey(version))).toContain('nuxt-docs-links')
       }
     })
 
