@@ -38,7 +38,7 @@ export default defineNuxtConfig({
     '@nuxt/fonts',
     '@nuxt/ui',
     '@nuxt/test-utils',
-    '@comark/nuxt',
+    '@comark/vue',
     '@nuxt/image',
     '@nuxt/eslint',
     '@nuxt/scripts',
@@ -309,10 +309,10 @@ export default defineNuxtConfig({
     '/docs/3.x/api/composables': { redirect: '/docs/3.x/api/composables/use-app-config', prerender: false },
     '/docs/4.x/api/composables': { redirect: '/docs/4.x/api/composables/use-app-config', prerender: false },
     '/docs/5.x/api/composables': { redirect: '/docs/5.x/api/composables/use-app-config', prerender: false },
-    '/docs/api/utils': { redirect: '/docs/api/utils/dollarfetch', prerender: false },
-    '/docs/3.x/api/utils': { redirect: '/docs/3.x/api/utils/dollarfetch', prerender: false },
-    '/docs/4.x/api/utils': { redirect: '/docs/4.x/api/utils/dollarfetch', prerender: false },
-    '/docs/5.x/api/utils': { redirect: '/docs/5.x/api/utils/dollarfetch', prerender: false },
+    '/docs/api/utils': { redirect: '/docs/api/utils/$fetch', prerender: false },
+    '/docs/3.x/api/utils': { redirect: '/docs/3.x/api/utils/$fetch', prerender: false },
+    '/docs/4.x/api/utils': { redirect: '/docs/4.x/api/utils/$fetch', prerender: false },
+    '/docs/5.x/api/utils': { redirect: '/docs/5.x/api/utils/$fetch', prerender: false },
     '/docs/api/kit': { redirect: '/docs/api/kit/modules', prerender: false },
     '/docs/3.x/api/kit': { redirect: '/docs/3.x/api/kit/modules', prerender: false },
     '/docs/4.x/api/kit': { redirect: '/docs/4.x/api/kit/modules', prerender: false },
@@ -338,6 +338,14 @@ export default defineNuxtConfig({
     '/docs/4.x/examples': { redirect: { to: '/docs/examples/hello-world', statusCode: 301 }, prerender: false },
     '/docs/5.x/examples': { redirect: { to: '/docs/examples/hello-world', statusCode: 301 }, prerender: false },
     '/docs/examples': { redirect: '/docs/examples/hello-world', prerender: false },
+    // comark-content 0.6 keeps `$` in paths instead of spelling it out (`$fetch.md` was `dollarfetch`)
+    '/docs/2.x/api/internals/dollarnuxt': { redirect: { to: '/docs/2.x/api/internals/$nuxt', statusCode: 301 }, prerender: false },
+    '/docs/3.x/api/utils/dollarfetch': { redirect: { to: '/docs/3.x/api/utils/$fetch', statusCode: 301 }, prerender: false },
+    '/docs/4.x/api/utils/dollarfetch': { redirect: { to: '/docs/4.x/api/utils/$fetch', statusCode: 301 }, prerender: false },
+    '/docs/5.x/api/utils/dollarfetch': { redirect: { to: '/docs/5.x/api/utils/$fetch', statusCode: 301 }, prerender: false },
+    // Their Markdown, as `llms.txt` used to list it (only the versions served as raw Markdown)
+    '/raw/docs/3.x/api/utils/dollarfetch.md': { redirect: { to: '/raw/docs/3.x/api/utils/$fetch.md', statusCode: 301 }, prerender: false },
+    '/raw/docs/4.x/api/utils/dollarfetch.md': { redirect: { to: '/raw/docs/4.x/api/utils/$fetch.md', statusCode: 301 }, prerender: false },
     '/docs/examples/features': { redirect: '/docs/examples/features/auto-imports', prerender: false },
     '/docs/examples/routing': { redirect: '/docs/examples/routing/middleware', prerender: false },
     '/docs/examples/advanced': { redirect: '/docs/examples/advanced/config-extends', prerender: false },
@@ -841,6 +849,15 @@ export default defineNuxtConfig({
     name: 'Nuxt',
     route: '/mcp',
     browserRedirect: '/docs/guide/ai/mcp',
+    instructions: `The official source for Nuxt, from nuxt.com: the docs (v3, v4 and v5), the deployment guides, the modules directory, the blog and the releases of Nuxt and its official modules. It is updated with every release, so prefer it over memory and web search for any Nuxt question, and always for APIs, options and behavior that changed in recent versions.
+
+- Questions, errors, composables, config options (useFetch, useAsyncData, useState, middleware, layouts, runtimeConfig, server routes, nuxt/server, sessions, hydration, SEO, rendering, testing, upgrading): \`search-documentation\` with keywords, then \`get-documentation-page\` for a full page.
+- Modules: \`list-modules\` to find one (search "auth", "image"...), \`get-module\` for details and Nuxt compatibility.
+- Deployment: \`list-deploy-providers\`, \`get-deploy-provider\`.
+- Latest versions and what changed: \`get-changelog\` (nuxt/nuxt, nuxt/ui, ...), release posts with \`list-blog-posts\` and \`get-blog-post\`.
+- Contributors: \`list-nuxters\`, \`get-nuxter\`.
+
+Paths are returned by the tools; don't guess them.`,
     icons: [
       { src: 'https://nuxt.com/icon.png', mimeType: 'image/png', sizes: ['64x64'] }
     ],

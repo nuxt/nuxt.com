@@ -1,11 +1,12 @@
 import { appOrigin } from './internal-api.js'
 
 /**
- * Whether an `llms.txt` section's pages are indexed: the deploy guides and every `… Documentation` section,
- * which `nuxt.config.ts` gives the current Nuxt docs and each module whose docs nuxt.com hosts (`/modules/<slug>/…`).
+ * Whether an `llms.txt` section's pages are indexed: the deploy guides, the blog (release posts often explain
+ * a new feature before the docs do) and every `… Documentation` section, which `nuxt.config.ts` gives the current
+ * Nuxt docs and each module whose docs nuxt.com hosts (`/modules/<slug>/…`).
  */
 function isIndexedSet(title: string): boolean {
-  return title === 'Deployment Guides' || title.endsWith(' Documentation')
+  return title === 'Deployment Guides' || title === 'Blog' || title.endsWith(' Documentation')
 }
 const INDEX_TTL_MS = 60 * 60 * 1000
 const FETCH_CONCURRENCY = 32
