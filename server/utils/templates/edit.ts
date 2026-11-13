@@ -11,8 +11,10 @@ import { TEMPLATE_WORKDIR as WORKDIR } from './check-scripts'
 const BLOCKED_DIRS = /^(?:node_modules|\.output|\.nuxt|\.data|\.git|\.vercel)(?:\/|$)/
 
 export function resolveAppPath(path: string) {
-  const clean = path.trim().replace(/^\.?\/+/, '')
-  if (!clean || clean.split('/').includes('..') || BLOCKED_DIRS.test(clean) || !/^[\w@.\-/[\]() ]+$/.test(clean)) {
+  // Drop empty and `.` segments first, so `././node_modules/…` cannot slip past the guards below and in the callers.
+  const segments = path.trim().split('/').filter(segment => segment && segment !== '.')
+  const clean = segments.join('/')
+  if (!clean || segments.includes('..') || BLOCKED_DIRS.test(clean) || !/^[\w@.\-/[\]() ]+$/.test(clean)) {
     throw createError({ statusCode: 400, message: `Not an editable path: ${path}` })
   }
   return { path: clean, absolute: `${WORKDIR}/${clean}` }
@@ -33,7 +35,8 @@ const MAX_READ_CHARS = 40_000
 
 export async function readAppFile(sandbox: Sandbox, path: string) {
   const file = resolveAppPath(path)
-  const buffer = await sandbox.readFileToBuffer({ path: file.absolute })
+  // A UTF-8 character takes at most 4 bytes, so a file over this many bytes always has more than MAX_READ_CHARS characters.
+  const buffer = await readBounded(sandbox, file.absolute, MAX_READ_CHARS * 4)
   if (!buffer) return null
   if (buffer.includes(0)) throw createError({ statusCode: 400, message: `${file.path} is a binary file.` })
   const content = buffer.toString('utf8')
@@ -79,7 +82,7 @@ export async function addAppModule(sandbox: Sandbox, name: string) {
   if (!NPM_NAME.test(name)) throw createError({ statusCode: 400, message: `Not a module name: ${name}` })
   const offset = await devLogSize(sandbox)
   // The template's own CLI skips downloading `nuxi@latest`, and the check installed with the same pnpm settings.
-  const result = await run(sandbox, `export pnpm_config_strict_dep_builds=false pnpm_config_dangerously_allow_all_builds=true npm_config_audit=false npm_config_fund=false npm_config_prefer_offline=true NUXT_TELEMETRY_DISABLED=1; { ./node_modules/.bin/nuxt module add ${name} || npx --yes nuxi@latest module add ${name}; } 2>&1 | tail -40; exit \${PIPESTATUS[0]}`, 180_000)
+  const result = await run(sandbox, `export pnpm_config_strict_dep_builds=false pnpm_config_dangerously_allow_all_builds=true npm_config_audit=false npm_config_fund=false npm_config_prefer_offline=true NUXT_TELEMETRY_DISABLED=1; { ./node_modules/.bin/nuxt module add '${name}' || npx --yes nuxi@latest module add '${name}'; } 2>&1 | tail -40; exit \${PIPESTATUS[0]}`, 180_000)
   if (result.exitCode === 0) await waitForRestart(sandbox, offset)
   return { ...result, output: stripVTControlCharacters(result.output) }
 }
@@ -107,17 +110,24 @@ export async function checkAppPage(sandbox: Sandbox, path: string) {
   if (!/^\/[\w\-./~%?=&#[\]@]*$/.test(route)) throw createError({ statusCode: 400, message: `Not a route: ${path}` })
   const { output, exitCode } = await run(sandbox, `curl -s -o /tmp/nuxt-com-page.html -w '%{http_code}' --max-filesize ${MAX_PAGE_BYTES} --max-time 60 'http://127.0.0.1:${DEV_PORT}${route}'`, 70_000)
   if (exitCode === 63) throw pageTooLarge()
-  const [html, log] = await Promise.all([
+  // curl still prints the status of a response that timed out or broke off mid-body, so its partial page is not a result.
+  if (exitCode !== 0) {
+    throw createError({ statusCode: 502, message: `The page did not load (curl exit code ${exitCode}).`, data: { devServerErrors: await devServerErrors(sandbox) } })
+  }
+  const [html, errors] = await Promise.all([
     readPageHtml(sandbox),
-    devServerLog(sandbox)
+    devServerErrors(sandbox)
   ])
-  const text = pageText(html)
-  const errors = log.split('\n').filter(line => /\b\w*error\b|\bfailed\b|\bcannot\b|\bnot found\b/i.test(line)).slice(-15)
   return {
     status: Number(output) || 0,
-    text: text || '(the page rendered no text)',
-    devServerErrors: errors.length ? errors : undefined
+    text: pageText(html) || '(the page rendered no text)',
+    devServerErrors: errors
   }
+}
+
+async function devServerErrors(sandbox: Sandbox) {
+  const errors = (await devServerLog(sandbox)).split('\n').filter(line => /\b\w*error\b|\bfailed\b|\bcannot\b|\bnot found\b/i.test(line)).slice(-15)
+  return errors.length ? errors : undefined
 }
 
 const MAX_PAGE_BYTES = 1024 * 1024
@@ -125,18 +135,25 @@ const pageTooLarge = () => createError({ statusCode: 413, message: 'The page is 
 
 /** The sandbox can change the file after curl finishes, so enforce the cap again while reading it. */
 async function readPageHtml(sandbox: Sandbox) {
+  const html = await readBounded(sandbox, '/tmp/nuxt-com-page.html', MAX_PAGE_BYTES)
+  if (html && html.length > MAX_PAGE_BYTES) throw pageTooLarge()
+  return html?.toString('utf8') ?? ''
+}
+
+/** Streams a sandbox file and stops once it passes `limit` bytes, so callers can tell it was cut off; null when it does not exist. */
+async function readBounded(sandbox: Sandbox, path: string, limit: number) {
   const controller = new AbortController()
-  const stream = await sandbox.readFile({ path: '/tmp/nuxt-com-page.html' }, { signal: AbortSignal.any([controller.signal, AbortSignal.timeout(10_000)]) })
-  if (!stream) return ''
+  const stream = await sandbox.readFile({ path }, { signal: AbortSignal.any([controller.signal, AbortSignal.timeout(10_000)]) })
+  if (!stream) return null
   const chunks: Buffer[] = []
   let size = 0
   try {
     for await (const chunk of new Readable().wrap(stream)) {
-      size += chunk.length
-      if (size > MAX_PAGE_BYTES) throw pageTooLarge()
       chunks.push(chunk)
+      size += chunk.length
+      if (size > limit) break
     }
-    return Buffer.concat(chunks, size).toString('utf8')
+    return Buffer.concat(chunks, size)
   } finally {
     controller.abort()
   }
@@ -211,7 +228,8 @@ export async function waitForDevServer(sandbox: Sandbox, onStarted?: () => void)
   const ready = await run(sandbox, `for i in $(seq 1 240); do test ! -d ${DEV_STARTED} && exit 2; test -f ${DEV_PID} && ! kill -0 "$(cat ${DEV_PID})" 2>/dev/null && exit 2; test -f ${DEV_READY} && exit 0; sleep 0.5; done; exit 1`, 130_000)
   if (ready.exitCode !== 0) {
     console.error('[templates] dev server did not start', await devServerLog(sandbox))
-    throw createError({ statusCode: 504, message: 'The dev server did not start.' })
+    // `stopped`: `nuxt dev` exited instead of still starting, so nothing is left to wait for.
+    throw createError({ statusCode: 504, message: 'The dev server did not start.', data: { stopped: ready.exitCode === 2 } })
   }
   return sandbox.domain(DEV_PORT)
 }
