@@ -5,7 +5,6 @@ const { loggedIn, user, clear } = useUserSession()
 const route = useRoute()
 const loginHref = computed(() => `/login?redirect=${encodeURIComponent(route.fullPath)}`)
 const colorMode = useColorMode()
-const deleteAccount = useDeleteAccount()
 const { renameChat, deleteChat, groups, refresh: refreshChats } = useChats()
 
 const sidebarOpen = ref(false)
@@ -73,6 +72,11 @@ const userMenuItems = computed<DropdownMenuItem[][]>(() => {
       label: 'Docs',
       icon: 'i-lucide-book-open',
       to: '/docs'
+    },
+    {
+      label: 'Settings',
+      icon: 'i-lucide-settings',
+      to: '/dashboard/settings'
     }
   ])
 
@@ -102,11 +106,6 @@ const userMenuItems = computed<DropdownMenuItem[][]>(() => {
       await clear()
       await navigateTo('/')
     }
-  }, {
-    label: 'Delete account',
-    icon: 'i-lucide-user-x',
-    color: 'error',
-    onSelect: deleteAccount
   }])
 
   return groups

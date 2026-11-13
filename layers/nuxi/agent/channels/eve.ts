@@ -1,3 +1,4 @@
+import { timingSafeEqual } from 'node:crypto'
 import type { AuthFn } from 'eve/channels/auth'
 import { localDev, vercelOidc } from 'eve/channels/auth'
 import { defaultEveAuth, eveChannel } from 'eve/channels/eve'
@@ -58,9 +59,30 @@ function nuxtSessionAuth(): AuthFn<Request> {
   }
 }
 
+/**
+ * The Nuxt server calling with the shared internal secret, such as ending a
+ * deleted chat's session. It has no user cookie, and a server fetch can't pass BotID.
+ */
+function nuxtServerAuth(): AuthFn<Request> {
+  return async (request) => {
+    const secret = process.env.INTERNAL_API_SECRET?.trim()
+    const expected = Buffer.from(`Bearer ${secret}`)
+    const provided = Buffer.from(request.headers.get('authorization') ?? '')
+    if (!secret || provided.length !== expected.length || !timingSafeEqual(provided, expected)) return null
+
+    return {
+      authenticator: 'internal',
+      issuer: 'nuxt.com',
+      principalId: 'nuxt.com',
+      principalType: 'service'
+    }
+  }
+}
+
 export default eveChannel({
   auth: [
     nuxtSessionAuth(),
+    nuxtServerAuth(),
     localDev(),
     vercelOidc()
   ],
