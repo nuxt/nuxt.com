@@ -2,7 +2,7 @@ import { useAnimate } from 'motion-v'
 
 type LookDir = 'center' | 'left' | 'right' | 'up'
 
-type MouthShape = 'default' | 'O' | 'wavy' | 'flat' | 'wobble'
+type MouthShape = 'default' | 'O' | 'wavy' | 'flat' | 'wobble' | 'frown'
 
 interface MoodVisual {
   showSmile: boolean
@@ -48,7 +48,8 @@ const MOUTH_PATHS: Record<MouthShape, string> = {
   O: 'M132 178 a 17 13 0 1 0 34 0 a 17 13 0 1 0 -34 0 Z',
   wavy: 'M128 181 Q 139 169 150 179 T 172 176',
   flat: 'M134 178 Q 150 176 166 178',
-  wobble: 'M139 179 Q 144.5 172 150 178 Q 155.5 184 161 177'
+  wobble: 'M139 179 Q 144.5 172 150 178 Q 155.5 184 161 177',
+  frown: 'M135 184 Q 150 172 165 184'
 }
 
 // Stroked mouths are drawn as a line instead of a filled shape.
@@ -57,7 +58,8 @@ const MOUTH_STROKED: Record<MouthShape, boolean> = {
   O: false,
   wavy: true,
   flat: true,
-  wobble: true
+  wobble: true,
+  frown: true
 }
 
 /* eslint-disable @stylistic/key-spacing, @stylistic/no-multi-spaces -- table layout for legibility */
@@ -69,6 +71,8 @@ const MOOD_VISUALS: Record<NuxiMood, MoodVisual> = {
   sleeping:  { showSmile: false, eyeLeftScaleY: 0.15, eyeLeftScaleX: 1,    eyeRightScaleY: 0.15, eyeRightScaleX: 1,    eyeTranslateY: 0,  mouthShape: 'default', mouthScale: 0,    mouthTY: 0, mouthOpacity: 1, blinkEnabled: false },
   surprised: { showSmile: false, eyeLeftScaleY: 1.08, eyeLeftScaleX: 1.03, eyeRightScaleY: 1.08, eyeRightScaleX: 1.03, eyeTranslateY: 0,  mouthShape: 'O',       mouthScale: 1,    mouthTY: 0, mouthOpacity: 1, blinkEnabled: false },
   sad:       { showSmile: false, showSquint: true, eyeLeftScaleY: 0.02, eyeLeftScaleX: 0.5, eyeRightScaleY: 0.02, eyeRightScaleX: 0.5, eyeTranslateY: 0, mouthShape: 'wobble', mouthScale: 1.1, mouthTY: 0, mouthOpacity: 1, blinkEnabled: false },
+  // Gently sad: round eyes looking down and a soft frown. For goodbyes that shouldn't guilt anyone.
+  wistful:   { showSmile: false, eyeLeftScaleY: 0.92, eyeLeftScaleX: 0.92, eyeRightScaleY: 0.92, eyeRightScaleX: 0.92, eyeTranslateY: 5,  mouthShape: 'frown',   mouthScale: 1,    mouthTY: 0, mouthOpacity: 1, blinkEnabled: true  },
   confused:  { showSmile: false, eyeLeftScaleY: 1.05, eyeLeftScaleX: 1,    eyeRightScaleY: 0.45, eyeRightScaleX: 0.95, eyeTranslateY: 2,  eyeRightRotate: -10, mouthShape: 'wavy', mouthScale: 0.9, mouthTY: 2, mouthOpacity: 1, blinkEnabled: false }
 }
 /* eslint-enable @stylistic/key-spacing, @stylistic/no-multi-spaces */
@@ -121,6 +125,7 @@ export function useNuxiIcon(props: NuxiIconProps, emit?: EmitFn) {
     if (mood === 'surprised') return { x: 0, y: -8 }
     if (mood === 'excited') return { x: 0, y: -11 }
     if (mood === 'sad') return { x: 0, y: 1 }
+    if (mood === 'wistful') return { x: 0, y: 3 }
     if (mood === 'confused') return { x: 5, y: -3 }
     const baseY = mood === 'happy' ? -4 : 0
     if (isInProximity.value) return { x: rawOffset.x, y: baseY + rawOffset.y }
