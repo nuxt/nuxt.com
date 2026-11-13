@@ -3,7 +3,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import memoryDriver from 'unstorage/drivers/memory'
 import type { NavigationItem } from 'comark-content'
 import { instanceSource } from '../../server/utils/content/instances'
-import { findByPath, moduleDocsTrees } from '../../server/utils/content/navigation'
+import { commandEntry, findByPath, insertAfter, moduleDocsTrees, withCommandEntries } from '../../server/utils/content/navigation'
 import type { ContentInstanceKey } from '../../shared/utils/content'
 
 const SHA = 'a'.repeat(40)
@@ -35,10 +35,13 @@ vi.stubGlobal('contentCacheDriver', () => undefined)
 vi.stubGlobal('recordDuration', () => 0)
 vi.stubGlobal('getInstanceAtHead', async (key: ContentInstanceKey) => ({ stat: headStat, navigation: async () => headNavs.get(key) ?? [] }))
 vi.stubGlobal('findByPath', findByPath)
+vi.stubGlobal('insertAfter', insertAfter)
+vi.stubGlobal('commandEntry', commandEntry)
+vi.stubGlobal('withCommandEntries', withCommandEntries)
 vi.stubGlobal('moduleDocsTrees', moduleDocsTrees)
 
 type PullModule = typeof import('../../server/utils/content/pull')
-let { pullInstanceKey, pullLandingPath, pullNavigation, pullPages, resolvePullPreview } = {} as PullModule
+let { pullInstanceKey, pullInstanceKeys, pullLandingPath, pullNavigation, pullPages, resolvePullPreview } = {} as PullModule
 
 /** Files a PR modifies or adds. */
 const changed = (...paths: string[]) => paths.map(path => ({ path, removed: false }))
@@ -80,7 +83,7 @@ beforeEach(async () => {
 
   // The open PR list is module state: start each test from an empty cache.
   vi.resetModules()
-  ;({ pullInstanceKey, pullLandingPath, pullNavigation, pullPages, resolvePullPreview } = await import('../../server/utils/content/pull'))
+  ;({ pullInstanceKey, pullInstanceKeys, pullLandingPath, pullNavigation, pullPages, resolvePullPreview } = await import('../../server/utils/content/pull'))
 })
 
 afterEach(() => {
@@ -98,6 +101,20 @@ describe('pullInstanceKey', () => {
 
   it('picks the current version when several read the branch', () => {
     expect(pullInstanceKey('nuxt/cli', 'main')).toBe('cli:4.x')
+    expect(pullInstanceKey('nuxt/module-builder', 'docs-source-of-truth')).toBe('module-builder:4.x')
+  })
+})
+
+describe('pullInstanceKeys', () => {
+  it('pins the instances reading the same repo and branch for the same version', () => {
+    expect(pullInstanceKeys('module-builder:4.x')).toEqual(['module-builder:4.x', 'build-module:4.x'])
+  })
+
+  it('pins only the replaced instance when no other reads its source for that version', () => {
+    expect(pullInstanceKeys('docs:5.x')).toEqual(['docs:5.x'])
+    expect(pullInstanceKeys('cli:4.x')).toEqual(['cli:4.x'])
+    expect(pullInstanceKeys('site')).toEqual(['site'])
+    expect(pullInstanceKeys('module:icon')).toEqual(['module:icon'])
   })
 })
 
@@ -234,6 +251,27 @@ describe('pullPages', () => {
     expect(pages).toEqual([{ title: 'Installation', path: '/docs/5.x/getting-started/installation', removed: false }])
   })
 
+  it('maps a file in a nested directory to the pinned instance reading it', async () => {
+    pageStat.mockImplementation((key: string) => ({
+      '2.commands.md': { path: '/docs/4.x/api/module-builder/commands', data: { title: 'Commands' } },
+      'index.md': { path: '/docs/4.x/api/commands/build-module', data: { title: 'nuxt build-module' } }
+    })[key])
+
+    const pages = await pullPages({
+      target: { repo: 'module-builder', number: 1 },
+      title: '',
+      url: '',
+      sha: SHA,
+      instanceKey: 'module-builder:4.x',
+      files: changed('docs/2.commands.md', 'docs/cli/build-module/index.md')
+    })
+
+    expect(pages).toEqual([
+      { title: 'Commands', path: '/docs/4.x/api/module-builder/commands', removed: false },
+      { title: 'nuxt build-module', path: '/docs/4.x/api/commands/build-module', removed: false }
+    ])
+  })
+
   it('reads a removed page from production, flagged as removed', async () => {
     headStat.mockImplementation((key: string) => key === '1.getting-started/9.old.md'
       ? { path: '/docs/5.x/getting-started/old', data: { title: 'Old page' } }
@@ -348,6 +386,60 @@ describe('pullNavigation', () => {
       '/docs/4.x/api/utils',
       '/docs/4.x/api/commands',
       '/docs/4.x/api/kit'
+    ])
+  })
+
+  it('grafts the PR\'s Module Builder docs after Nuxt Kit', async () => {
+    headNavs.set('docs:4.x', [nav('/docs/4.x', [
+      nav('/docs/4.x/api', [nav('/docs/4.x/api/utils'), nav('/docs/4.x/api/kit'), nav('/docs/4.x/api/advanced')])
+    ])])
+    pullNav.mockReturnValue([nav('/docs', [nav('/docs/4.x', [nav('/docs/4.x/api', [
+      nav('/docs/4.x/api/module-builder', [nav('/docs/4.x/api/module-builder/commands')])
+    ])])])])
+
+    const tree = await pullNavigation('4.x', {
+      target: { repo: 'module-builder', number: 1 },
+      title: '',
+      url: '',
+      sha: SHA,
+      instanceKey: 'module-builder:4.x',
+      files: []
+    })
+
+    expect(findByPath(tree, '/docs/4.x/api')!.children!.map(item => item.path)).toEqual([
+      '/docs/4.x/api/utils',
+      '/docs/4.x/api/kit',
+      '/docs/4.x/api/module-builder',
+      '/docs/4.x/api/advanced'
+    ])
+    expect(findByPath(tree, '/docs/4.x/api/module-builder')!.children!.map(item => item.path)).toEqual([
+      '/docs/4.x/api/module-builder/commands'
+    ])
+  })
+
+  it('lists the PR\'s `nuxt build-module` page among the production commands', async () => {
+    headNavs.set('docs:4.x', [nav('/docs/4.x', [nav('/docs/4.x/api', [nav('/docs/4.x/api/utils')])])])
+    headNavs.set('cli:4.x', [nav('/docs/4.x/api/commands', [
+      { ...nav('/docs/4.x/api/commands/build'), stem: 'build' },
+      { ...nav('/docs/4.x/api/commands/cleanup'), stem: 'cleanup' }
+    ])])
+    pullNav.mockReturnValue([nav('/docs', [nav('/docs/4.x', [nav('/docs/4.x/api', [nav('/docs/4.x/api/commands', [
+      { ...nav('/docs/4.x/api/commands/build-module', [nav('/docs/4.x/api/commands/build-module')]), title: 'nuxt build-module' }
+    ])])])])])
+
+    const tree = await pullNavigation('4.x', {
+      target: { repo: 'module-builder', number: 1 },
+      title: '',
+      url: '',
+      sha: SHA,
+      instanceKey: 'module-builder:4.x',
+      files: []
+    })
+
+    expect(findByPath(tree, '/docs/4.x/api/commands')!.children).toEqual([
+      { title: '/docs/4.x/api/commands/build', path: '/docs/4.x/api/commands/build', stem: 'build' },
+      { title: 'nuxt build-module', path: '/docs/4.x/api/commands/build-module', stem: 'build-module' },
+      { title: '/docs/4.x/api/commands/cleanup', path: '/docs/4.x/api/commands/cleanup', stem: 'cleanup' }
     ])
   })
 })

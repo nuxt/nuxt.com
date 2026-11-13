@@ -5,8 +5,9 @@ import type { ForgeSource } from 'comark-content/sources/forge'
 import type { FSSourceOptions } from 'comark-content/sources/fs'
 import { CLI_DOCS_REFS, CLI_DOCS_REPO, CLI_DOCS_PREFIX, cliDocsPathPrefix, hasCliDocs, type CliDocVersion } from '../../../shared/utils/cli'
 import { DOCS_REFS, DOCS_REPO, docsPathPrefix, isDocVersion, type DocVersion } from '../../../shared/utils/docs'
+import { BUILD_MODULE_DOCS_DIR, CLI_BUILD_MODULE_FILE, MODULE_BUILDER_DOCS_REFS, MODULE_BUILDER_DOCS_REPO, buildModuleDocsPathPrefix, hasModuleBuilderDocs, moduleBuilderDocsPathPrefix, type ModuleBuilderDocVersion } from '../../../shared/utils/module-builder'
 import { MODULE_DOCS, hasModuleDocs, moduleDocsPathPrefix, type ModuleDocsName } from '../../../shared/utils/module-docs'
-import { CONTENT_INSTANCE_KEYS, isContentInstanceKey, cliInstanceKey, docsInstanceKey, instanceName, moduleInstanceKey, type ContentInstanceKey } from '../../../shared/utils/content'
+import { CONTENT_INSTANCE_KEYS, isContentInstanceKey, buildModuleInstanceKey, cliInstanceKey, docsInstanceKey, instanceName, moduleBuilderInstanceKey, moduleInstanceKey, type ContentInstanceKey } from '../../../shared/utils/content'
 
 /** What comark-content's sources own; a required `prefix` is what the page resolver depends on. */
 type ComarkSourceOptions = Pick<ForgeSource & FSSourceOptions, 'exclude' | 'schema'> & {
@@ -55,7 +56,13 @@ const BRANCH_ENV: Record<Exclude<ContentInstanceKey, `module:${string}`>, string
   'docs:5.x': 'NUXT_V5_BRANCH',
   'cli:3.x': 'NUXT_CLI_BRANCH',
   'cli:4.x': 'NUXT_CLI_BRANCH',
-  'cli:5.x': 'NUXT_CLI_BRANCH'
+  'cli:5.x': 'NUXT_CLI_BRANCH',
+  'module-builder:3.x': 'NUXT_MODULE_BUILDER_BRANCH',
+  'module-builder:4.x': 'NUXT_MODULE_BUILDER_BRANCH',
+  'module-builder:5.x': 'NUXT_MODULE_BUILDER_BRANCH',
+  'build-module:3.x': 'NUXT_MODULE_BUILDER_BRANCH',
+  'build-module:4.x': 'NUXT_MODULE_BUILDER_BRANCH',
+  'build-module:5.x': 'NUXT_MODULE_BUILDER_BRANCH'
 }
 
 /** Resolve a branch, honouring env var overrides; log a warning if one is active in production. */
@@ -135,8 +142,46 @@ export function instanceSource(key: ContentInstanceKey): { name: string, source:
         contentDir: 'docs',
         prefix: cliDocsPathPrefix(version),
         listingFields: DOCS_LISTING_FIELDS,
-        exclude: DOCS_EXCLUDE,
+        // Served by `build-module:<version>` instead.
+        exclude: hasModuleBuilderDocs(version) ? [...DOCS_EXCLUDE, CLI_BUILD_MODULE_FILE] : DOCS_EXCLUDE,
         envOverride: CLI_DOCS_REFS[version].envOverride
+      }
+    }
+  }
+  if (key.startsWith('module-builder:')) {
+    const version = key.slice('module-builder:'.length)
+    if (!hasModuleBuilderDocs(version)) {
+      throw createError({ statusCode: 404, statusMessage: `Unknown content instance: ${key}` })
+    }
+    return {
+      name: instanceName(key),
+      source: {
+        repo: MODULE_BUILDER_DOCS_REPO,
+        branch: branchFor(key as `module-builder:${ModuleBuilderDocVersion}`, MODULE_BUILDER_DOCS_REFS[version].branch),
+        contentDir: 'docs',
+        prefix: moduleBuilderDocsPathPrefix(version),
+        listingFields: DOCS_LISTING_FIELDS,
+        // Served by `build-module:<version>` instead.
+        exclude: [...DOCS_EXCLUDE, 'cli/**'],
+        envOverride: MODULE_BUILDER_DOCS_REFS[version].envOverride
+      }
+    }
+  }
+  if (key.startsWith('build-module:')) {
+    const version = key.slice('build-module:'.length)
+    if (!hasModuleBuilderDocs(version)) {
+      throw createError({ statusCode: 404, statusMessage: `Unknown content instance: ${key}` })
+    }
+    return {
+      name: instanceName(key),
+      source: {
+        repo: MODULE_BUILDER_DOCS_REPO,
+        branch: branchFor(key as `build-module:${ModuleBuilderDocVersion}`, MODULE_BUILDER_DOCS_REFS[version].branch),
+        contentDir: `docs/${BUILD_MODULE_DOCS_DIR}`,
+        prefix: buildModuleDocsPathPrefix(version),
+        listingFields: DOCS_LISTING_FIELDS,
+        exclude: DOCS_EXCLUDE,
+        envOverride: MODULE_BUILDER_DOCS_REFS[version].envOverride
       }
     }
   }
@@ -209,6 +254,8 @@ export function instanceFromPagePath(path: string): ContentInstanceKey {
  * - `examples/…` (the examples instance, code examples)
  * - `docs/<version>/…` (one instance per docs version)
  * - `cli/<version>/…` (one instance per docs version's command reference)
+ * - `module-builder/<version>/…` (one instance per docs version's Module Builder docs)
+ * - `build-module/<version>/…` (one instance per docs version's `nuxt build-module` page)
  * - `module/<name>/…` (one instance per module with hosted docs)
  *
  * Shared by the live, `head/` and `blob/<sha>/` routes, which must agree on where an instance's
@@ -222,6 +269,8 @@ export function instanceKeyFromSegments(segments: string[]): ContentInstanceKey 
   let key: string
   if (first === 'docs') key = docsInstanceKey(version)
   else if (first === 'cli') key = cliInstanceKey(version as CliDocVersion)
+  else if (first === 'module-builder') key = moduleBuilderInstanceKey(version as ModuleBuilderDocVersion)
+  else if (first === 'build-module') key = buildModuleInstanceKey(version as ModuleBuilderDocVersion)
   else if (first === 'module') key = moduleInstanceKey(second as ModuleDocsName)
   else key = first ?? ''
 

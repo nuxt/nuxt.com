@@ -25,6 +25,20 @@ const instanceSource = (key: string) => {
       }
     }
   }
+  if (key.startsWith('module-builder:')) {
+    const version = key.slice('module-builder:'.length)
+    return {
+      name: 'module_builder',
+      source: { repo: 'nuxt/module-builder', branch: 'main', contentDir: 'docs', prefix: `/docs/${version}/api/module-builder` }
+    }
+  }
+  if (key.startsWith('build-module:')) {
+    const version = key.slice('build-module:'.length)
+    return {
+      name: 'build_module',
+      source: { repo: 'nuxt/module-builder', branch: 'main', contentDir: 'docs/cli/build-module', prefix: `/docs/${version}/api/commands/build-module` }
+    }
+  }
 
   const version = key.slice('docs:'.length)
   return {
@@ -57,6 +71,17 @@ describe('impactedInstances', () => {
     expect(impactedInstances('nuxt/cli', 'main')).toEqual(['cli:5.x'])
   })
 
+  it('fans a `nuxt/module-builder` push out to every version that mounts it', () => {
+    expect(impactedInstances('nuxt/module-builder', 'main')).toEqual([
+      'module-builder:3.x',
+      'module-builder:4.x',
+      'module-builder:5.x',
+      'build-module:3.x',
+      'build-module:4.x',
+      'build-module:5.x'
+    ])
+  })
+
   it('ignores refs no source reads', () => {
     expect(impactedInstances('nuxt/nuxt', 'some-feature-branch')).toEqual([])
     expect(impactedInstances('nuxt/ui', 'main')).toEqual([])
@@ -80,6 +105,8 @@ describe('changesForSource', () => {
   it('keys a cli push under the `cli` source, not the repo directory', () => {
     // Both sources read a directory called `docs`; only the source name disambiguates them.
     expect(changesForSource('cli', 'docs', [{ modified: ['docs/dev.md'] }]).upserted).toEqual(['cli/dev.md'])
+    expect(changesForSource('module_builder', 'docs', [{ modified: ['docs/2.commands.md', 'src/cli.ts'] }]).upserted).toEqual(['module_builder/2.commands.md'])
+    expect(changesForSource('build_module', 'docs/cli/build-module', [{ modified: ['docs/2.commands.md', 'docs/cli/build-module/index.md'] }]).upserted).toEqual(['build_module/index.md'])
   })
 
   it('ignores files outside the content directory and non-content extensions', () => {

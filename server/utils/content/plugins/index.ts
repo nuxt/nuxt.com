@@ -13,6 +13,7 @@ import { docsMedia } from './docs-media'
 import { configDocs } from './config-docs'
 import { sanitizeData } from './sanitize-data'
 import { CLI_DOCS_REFS, CLI_DOCS_REPO, type CliDocVersion } from '../../../../shared/utils/cli'
+import { MODULE_BUILDER_DOCS_REFS, MODULE_BUILDER_DOCS_REPO, type ModuleBuilderDocVersion } from '../../../../shared/utils/module-builder'
 import { MODULE_DOCS, moduleDocsPathPrefix, type ModuleDocsName } from '../../../../shared/utils/module-docs'
 import type { DocVersion } from '../../../../shared/utils/docs'
 import type { ContentInstanceKey } from '../../../../shared/utils/content'
@@ -50,6 +51,10 @@ export function instancePlugins(key: ContentInstanceKey): ContentPlugin<Record<s
     const version = key.slice('cli:'.length) as CliDocVersion
     // Command pages are written with the same unversioned `/docs/*` links as the docs.
     return [dottedFrontmatter(), docsLinks(version), repoImages(CLI_DOCS_REPO, CLI_DOCS_REFS[version].branch)]
+  }
+  if (key.startsWith('module-builder:') || key.startsWith('build-module:')) {
+    const version = key.slice(key.indexOf(':') + 1) as ModuleBuilderDocVersion
+    return [dottedFrontmatter(), docsLinks(version), repoImages(MODULE_BUILDER_DOCS_REPO, MODULE_BUILDER_DOCS_REFS[version].branch)]
   }
   if (key.startsWith('module:')) {
     const name = key.slice('module:'.length) as ModuleDocsName

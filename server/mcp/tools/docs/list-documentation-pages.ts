@@ -1,6 +1,6 @@
 import { z } from 'zod'
 import { getAgentSiteUrl } from '#agent-discovery'
-import { cliInstanceKey, docsInstanceKey } from '#shared/utils/content'
+import { docsInstanceKey, graftedInstanceKeys } from '#shared/utils/content'
 import type { CliDocVersion } from '#shared/utils/cli'
 import { AGENT_DOC_VERSIONS } from '#shared/utils/docs'
 
@@ -37,7 +37,9 @@ TIPS: Always pass a search term to narrow results; every word must match.`,
         throw createError({ statusCode: 404, message: 'Documentation pages collection not found' })
       }
       allDocs.push(...docs)
-      allDocs.push(...await listInstancePages(cliInstanceKey(docsVersion)).catch(() => []))
+      for (const key of graftedInstanceKeys(docsVersion)) {
+        allDocs.push(...await listInstancePages(key).catch(() => []))
+      }
     }
 
     allDocs.push(...await listInstancePages('examples'))

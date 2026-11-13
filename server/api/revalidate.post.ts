@@ -10,7 +10,7 @@ import type { ContentChanges } from '../utils/content/webhook'
 /**
  * Content push webhook: purge exactly the URLs a commit changed.
  *
- * Registered on every repo (`nuxt/nuxt.com`, `nuxt/nuxt`, `nuxt/examples`, `nuxt/cli`).
+ * Registered on every repo (`nuxt/nuxt.com`, `nuxt/nuxt`, `nuxt/examples`, `nuxt/cli`, `nuxt/module-builder`).
  */
 
 /** Each purge re-enters this deployment, so the ceiling is about not stampeding ourselves. */

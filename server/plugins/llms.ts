@@ -1,6 +1,6 @@
 import { getAgentDocument } from '#agent-discovery'
 import { AGENT_DOC_VERSIONS, CURRENT_DOCS_VERSION } from '#shared/utils/docs'
-import { cliInstanceKey, docsInstanceKey } from '#shared/utils/content'
+import { docsVersionInstanceKeys } from '#shared/utils/content'
 import type { ContentPage } from '../utils/content/pages'
 
 /**
@@ -22,7 +22,7 @@ export default defineNitroPlugin((nitroApp) => {
 
   nitroApp.hooks.hook('llms:generate:full', async (event, _options, contents) => {
     for (const version of UNLISTED_VERSIONS) {
-      for (const key of [docsInstanceKey(version), cliInstanceKey(version)]) {
+      for (const key of docsVersionInstanceKeys(version)) {
         const pages = await listInstancePages(key).catch(() => [] as ContentPage[])
         for (const page of pages) {
           const document = await getAgentDocument(event, page.path, { includeExcluded: true })

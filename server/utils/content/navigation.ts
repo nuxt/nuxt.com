@@ -1,7 +1,8 @@
 import type { ComarkContent, NavigationItem } from 'comark-content'
 import { docsPathPrefix, EXAMPLES_PATH_PREFIX, hasExamples, type DocVersion } from '#shared/utils/docs'
-import { cliInstanceKey, docsInstanceKey, moduleInstanceKey, type ContentInstanceKey } from '#shared/utils/content'
+import { buildModuleInstanceKey, cliInstanceKey, docsInstanceKey, moduleBuilderInstanceKey, moduleInstanceKey, type ContentInstanceKey } from '#shared/utils/content'
 import { cliDocsPathPrefix, hasCliDocs } from '#shared/utils/cli'
+import { buildModuleDocsPathPrefix, hasModuleBuilderDocs, moduleBuilderDocsPathPrefix } from '#shared/utils/module-builder'
 import { MODULE_DOCS_NAMES, moduleDocsPathPrefix } from '#shared/utils/module-docs'
 
 /**
@@ -17,6 +18,62 @@ export async function cliTree(version: DocVersion): Promise<NavigationItem[]> {
   const root = findByPath(nav, cliDocsPathPrefix(version))
 
   return root ? [root] : []
+}
+
+/**
+ * The Module Builder subtree for `version`. A failure to read it leaves it out rather than failing the tree.
+ */
+export async function moduleBuilderTree(version: DocVersion): Promise<NavigationItem[]> {
+  if (!hasModuleBuilderDocs(version)) return []
+
+  const nav = await getInstanceAtHead(moduleBuilderInstanceKey(version)).then(content => content.navigation()).catch((error) => {
+    console.error(`[content] could not read the ${version} Module Builder navigation, serving the tree without it`, error)
+    return null
+  })
+  const root = nav && findByPath(nav, moduleBuilderDocsPathPrefix(version))
+
+  return root ? [root] : []
+}
+
+/**
+ * The `nuxt build-module` page for `version`, as an entry of its command reference.
+ * A failure to read it leaves it out rather than failing the tree.
+ */
+export async function buildModuleTree(version: DocVersion): Promise<NavigationItem[]> {
+  if (!hasModuleBuilderDocs(version)) return []
+
+  const nav = await getInstanceAtHead(buildModuleInstanceKey(version)).then(content => content.navigation()).catch((error) => {
+    console.error(`[content] could not read the ${version} build-module navigation, serving the tree without it`, error)
+    return null
+  })
+
+  return commandEntry(nav ?? [], buildModuleDocsPathPrefix(version))
+}
+
+/** The page at `path`, its source's root `index.md`, as a single command entry named like a command file. */
+export function commandEntry(nav: NavigationItem[], path: string): NavigationItem[] {
+  const root = findByPath(nav, path)
+  if (!root) return []
+
+  const { children: _children, ...page } = root
+  return [{ ...page, stem: path.split('/').pop()! }]
+}
+
+/** `commands` with `entries` in place: where comark-content would sort their file names, replacing any page at the same path. */
+export function withCommandEntries(commands: NavigationItem[], entries: NavigationItem[]): NavigationItem[] {
+  if (!entries.length) return commands
+
+  const stem = (item: NavigationItem) => item.stem?.split('/').pop() ?? ''
+
+  return commands.map((root) => {
+    let children = root.children ?? []
+    for (const entry of entries) {
+      children = children.filter(item => item.path !== entry.path)
+      const at = children.findIndex(item => stem(item).localeCompare(stem(entry), undefined, { numeric: true }) > 0)
+      children = at === -1 ? [...children, entry] : [...children.slice(0, at), entry, ...children.slice(at)]
+    }
+    return { ...root, children }
+  })
 }
 
 /**
@@ -64,16 +121,19 @@ export async function moduleDocsTrees(getInstance: (key: ContentInstanceKey) => 
 }
 
 /**
- * One doc version's tree, with the shared examples and the command reference grafted in.
+ * One doc version's tree, with the shared examples, the command reference and the Module Builder docs grafted in.
  * `withExamples: false` leaves the examples out, for callers that list them once on their own.
  */
 export async function docTree(version: DocVersion, { withExamples = hasExamples(version) } = {}): Promise<NavigationItem[]> {
-  const [content, commands, examples] = await Promise.all([
+  const [content, cli, buildModule, moduleBuilder, examples] = await Promise.all([
     getInstanceAtHead(docsInstanceKey(version)),
     cliTree(version),
+    buildModuleTree(version),
+    moduleBuilderTree(version),
     withExamples ? examplesTree() : []
   ])
   const nav = await content.navigation()
+  const commands = withCommandEntries(cli, buildModule)
 
   // A prefixed source is wrapped in nodes for its prefix, so unwrap to the version root.
   const root = findByPath(nav, docsPathPrefix(version))
@@ -84,20 +144,15 @@ export async function docTree(version: DocVersion, { withExamples = hasExamples(
   const afterApi = children.findIndex(item => item.path === `${docsPathPrefix(version)}/api`) + 1
   children.splice(afterApi || children.length, 0, ...examples)
 
-  // Locate CLI docs after the API docs.
-  if (commands.length) {
-    const api = findByPath(children, `${docsPathPrefix(version)}/api`)
-    if (api) {
-      const apiChildren = [...(api.children ?? [])]
-      const afterUtils = apiChildren.findIndex(item => item.path === `${docsPathPrefix(version)}/api/utils`) + 1
-      apiChildren.splice(afterUtils || apiChildren.length, 0, ...commands)
-      api.children = apiChildren
-    }
-  }
+  // The CLI docs after the API utils, the Module Builder after Nuxt Kit.
+  const api = `${docsPathPrefix(version)}/api`
+  const grafted = commands.length || moduleBuilder.length
 
   return [{
     ...(root ?? { title: 'Docs', path: docsPathPrefix(version) }),
-    children
+    children: children.map(item => grafted && item.path === api
+      ? { ...item, children: insertAfter(insertAfter(item.children ?? [], `${api}/utils`, commands), `${api}/kit`, moduleBuilder) }
+      : item)
   }]
 }
 
@@ -109,6 +164,13 @@ export async function blogTree(): Promise<NavigationItem[]> {
   const blog = findByPath(await site.navigation(), '/blog')
 
   return blog ? [blog] : []
+}
+
+/** `items` with `nodes` inserted after the item at `path`, or at the end. */
+export function insertAfter(items: NavigationItem[], path: string, nodes: NavigationItem[]): NavigationItem[] {
+  const at = (items.findIndex(item => item.path === path) + 1) || items.length
+
+  return [...items.slice(0, at), ...nodes, ...items.slice(at)]
 }
 
 export function findByPath(items: NavigationItem[] | undefined, path: string): NavigationItem | undefined {

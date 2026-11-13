@@ -1,6 +1,8 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import { CONTENT_INSTANCE_KEYS } from '../../shared/utils/content'
+import { CONTENT_INSTANCE_KEYS, buildModuleInstanceKey, cliInstanceKey, moduleBuilderInstanceKey } from '../../shared/utils/content'
+import { MODULE_BUILDER_DOC_VERSIONS } from '../../shared/utils/module-builder'
 import { instanceSource } from '../../server/utils/content/instances'
+import { instancePlugins } from '../../server/utils/content/plugins'
 
 /**
  * comark-content validates the instance name it is given positionally, and throws at construction
@@ -40,6 +42,66 @@ describe('instanceSource', () => {
 
   it('rejects an unknown instance key', () => {
     expect(() => instanceSource('docs:9.x' as never)).toThrow()
+  })
+
+  describe('module builder', () => {
+    afterEach(() => vi.unstubAllEnvs())
+
+    it('reads the `nuxt/module-builder` docs into each version\'s API docs', () => {
+      expect(MODULE_BUILDER_DOC_VERSIONS).toEqual(['3.x', '4.x', '5.x'])
+      for (const version of MODULE_BUILDER_DOC_VERSIONS) {
+        expect(instanceSource(moduleBuilderInstanceKey(version))).toEqual({
+          name: 'module_builder',
+          source: {
+            repo: 'nuxt/module-builder',
+            branch: 'docs-source-of-truth',
+            contentDir: 'docs',
+            prefix: `/docs/${version}/api/module-builder`,
+            listingFields: ['title', 'description', 'navigation', 'titleTemplate', 'icon'],
+            exclude: ['README.md', '**/*.json', 'cli/**'],
+            envOverride: 'NUXT_MODULE_BUILDER_PATH'
+          }
+        })
+      }
+    })
+
+    it('reads its `nuxt build-module` page into each version\'s command reference', () => {
+      for (const version of MODULE_BUILDER_DOC_VERSIONS) {
+        expect(instanceSource(buildModuleInstanceKey(version))).toEqual({
+          name: 'build_module',
+          source: {
+            repo: 'nuxt/module-builder',
+            branch: 'docs-source-of-truth',
+            contentDir: 'docs/cli/build-module',
+            prefix: `/docs/${version}/api/commands/build-module`,
+            listingFields: ['title', 'description', 'navigation', 'titleTemplate', 'icon'],
+            exclude: ['README.md', '**/*.json'],
+            envOverride: 'NUXT_MODULE_BUILDER_PATH'
+          }
+        })
+        expect(instanceSource(cliInstanceKey(version)).source.exclude).toContain('build-module.md')
+      }
+    })
+
+    it('parses both with the command reference\'s plugins, versioning their `/docs/*` links', () => {
+      const names = (key: Parameters<typeof instancePlugins>[0]) => instancePlugins(key).map(plugin => plugin.name)
+      for (const version of MODULE_BUILDER_DOC_VERSIONS) {
+        expect(names(moduleBuilderInstanceKey(version))).toEqual(names(cliInstanceKey(version)))
+        expect(names(buildModuleInstanceKey(version))).toEqual(names(cliInstanceKey(version)))
+        expect(names(buildModuleInstanceKey(version))).toContain('nuxt-docs-links')
+      }
+    })
+
+    it('lets NUXT_MODULE_BUILDER_BRANCH override the branch', () => {
+      vi.stubEnv('NUXT_MODULE_BUILDER_BRANCH', 'feat/docs')
+      expect(instanceSource(moduleBuilderInstanceKey('4.x')).source.branch).toBe('feat/docs')
+      expect(instanceSource(buildModuleInstanceKey('4.x')).source.branch).toBe('feat/docs')
+    })
+
+    it('rejects an archived version', () => {
+      expect(() => instanceSource('module-builder:2.x' as never)).toThrow()
+      expect(() => instanceSource('build-module:2.x' as never)).toThrow()
+    })
   })
 
   describe('site ref', () => {

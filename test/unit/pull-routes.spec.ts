@@ -21,6 +21,11 @@ const preview = {
   files: []
 }
 
+/** The instances each preview pins, as `pullInstanceKeys()` resolves them. */
+const PINNED: Partial<Record<ContentInstanceKey, ContentInstanceKey[]>> = {
+  'module-builder:4.x': ['module-builder:4.x', 'build-module:4.x']
+}
+
 /** The request each instance's `handler()` receives, by key. */
 const handled: Array<{ key: ContentInstanceKey, pathname: string }> = []
 const instanceFor = (key: ContentInstanceKey) => ({
@@ -39,6 +44,7 @@ vi.stubGlobal('pullTargetFromEvent', () => preview.target)
 vi.stubGlobal('resolvePullPreview', async () => preview)
 vi.stubGlobal('instanceKeyFromSegments', instanceKeyFromSegments)
 vi.stubGlobal('getInstanceAtPull', async (key: ContentInstanceKey) => instanceFor(key))
+vi.stubGlobal('pullInstanceKeys', (key: ContentInstanceKey) => PINNED[key] ?? [key])
 
 type Handler = (event: FakeEvent) => Promise<unknown>
 const headRoute = (await import('../../server/api/content/pull/[repo]/[number]/head.get')).default as unknown as Handler
@@ -46,11 +52,22 @@ const blobRoute = (await import('../../server/api/content/pull/[repo]/[number]/b
 
 beforeEach(() => {
   handled.length = 0
+  preview.instanceKey = 'docs:5.x'
 })
 
 describe('GET /api/content/pull/:repo/:number/head', () => {
   it('names the instance the PR replaces and its commit', async () => {
-    expect(await headRoute({ params: {} })).toEqual({ instanceKey: 'docs:5.x', sha: PR_SHA })
+    expect(await headRoute({ params: {} })).toEqual({ instanceKey: 'docs:5.x', instanceKeys: ['docs:5.x'], sha: PR_SHA })
+  })
+
+  it('names every instance pinned to that commit, for search to read them all at it', async () => {
+    preview.instanceKey = 'module-builder:4.x'
+
+    expect(await headRoute({ params: {} })).toEqual({
+      instanceKey: 'module-builder:4.x',
+      instanceKeys: ['module-builder:4.x', 'build-module:4.x'],
+      sha: PR_SHA
+    })
   })
 })
 
@@ -64,6 +81,13 @@ describe('GET /api/content/pull/:repo/:number/blob/:sha/...', () => {
     await blob(PR_SHA, 'docs/5.x/manifest.json')
 
     expect(handled).toEqual([{ key: 'docs:5.x', pathname: '/api/content/docs/5.x/manifest.json' }])
+  })
+
+  it('serves an instance pinned alongside the one the PR replaces', async () => {
+    preview.instanceKey = 'module-builder:4.x'
+    await blob(PR_SHA, 'build-module/4.x/manifest.json')
+
+    expect(handled).toEqual([{ key: 'build-module:4.x', pathname: '/api/content/build-module/4.x/manifest.json' }])
   })
 
   it('404s another commit or another instance, which would otherwise be cached forever', async () => {
