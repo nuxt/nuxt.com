@@ -1,5 +1,6 @@
 import { z } from 'zod'
 import { checkBotId } from 'botid/server'
+import { waitUntil } from '@vercel/functions'
 import type { Sandbox } from '@vercel/sandbox'
 import type { PreviewEvent, Template } from '#shared/types'
 
@@ -47,6 +48,9 @@ export default defineEventHandler(async (event) => {
         started = sandbox
         if (left) return stop(sandbox)
         send({ type: 'ready', ...preview })
+        // Bundling for `nuxt dev` takes over half a minute on large apps (Docus): starting it now, on CPU the idle preview leaves free,
+        // usually has it ready before the visitor asks Nuxi for an edit. It costs CPU time only, the sandbox runs either way.
+        waitUntil(startDevServer(sandbox).catch(error => console.error('[templates] dev server start failed', error)))
         await useNitroApp().hooks.callHook('templates:preview', { template, owner, sandbox, send })
       } catch (error) {
         // Only errors `startPreview` raises on purpose reach visitors: upstream ones can carry request or account details.
