@@ -53,7 +53,7 @@ describe('instanceSource', () => {
           name: 'module_builder',
           source: {
             repo: 'nuxt/module-builder',
-            branch: 'main',
+            branch: 'docs-source-of-truth',
             contentDir: 'docs',
             prefix: `/docs/${version}/guide/modules/module-builder`,
             listingFields: ['title', 'description', 'navigation', 'titleTemplate', 'icon'],
@@ -70,7 +70,7 @@ describe('instanceSource', () => {
           name: 'build_module',
           source: {
             repo: 'nuxt/module-builder',
-            branch: 'main',
+            branch: 'docs-source-of-truth',
             contentDir: 'docs/cli/build-module',
             prefix: `/docs/${version}/api/commands/build-module`,
             listingFields: ['title', 'description', 'navigation', 'titleTemplate', 'icon'],

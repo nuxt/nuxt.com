@@ -101,7 +101,7 @@ describe('pullInstanceKey', () => {
 
   it('picks the current version when several read the branch', () => {
     expect(pullInstanceKey('nuxt/cli', 'main')).toBe('cli:4.x')
-    expect(pullInstanceKey('nuxt/module-builder', 'main')).toBe('module-builder:4.x')
+    expect(pullInstanceKey('nuxt/module-builder', 'docs-source-of-truth')).toBe('module-builder:4.x')
   })
 })
 
