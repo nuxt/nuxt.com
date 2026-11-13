@@ -13,7 +13,10 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  NUXT_BUNDLE_ANALYZER_VERSION: 0.1.7
+  NUXT_BUNDLE_ANALYZER_VERSION: 0.2.0
+  # The pages `--urls` renders and measures, the same in `bundle-size.yml` and `bundle-size-history.yml`:
+  # the landing page and one page of each main section.
+  NUXT_BUNDLE_ANALYZER_URLS: /,/modules,/docs/4.x/getting-started/introduction,/templates,/nuxters,/updates
 
 jobs:
   # Analyzes the base and the PR side by side, compared and posted by `bundle-size-comment.yml`.
@@ -38,7 +41,7 @@ jobs:
         run: pnpm nuxt prepare
       # With npx, so the analyzer needs no entry in the lockfile of either revision.
       - name: Analyze the bundle
-        run: npx --yes "nuxt-bundle-analyzer@$NUXT_BUNDLE_ANALYZER_VERSION" --name ${{ matrix.target }} --no-serve
+        run: npx --yes "nuxt-bundle-analyzer@$NUXT_BUNDLE_ANALYZER_VERSION" --urls "$NUXT_BUNDLE_ANALYZER_URLS" --name ${{ matrix.target }} --no-serve
         env:
           NODE_OPTIONS: --max-old-space-size=8192
           NUXT_TELEMETRY_DISABLED: 1
