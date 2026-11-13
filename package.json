@@ -39,7 +39,7 @@
     "@chat-adapter/discord": "^4.44.0",
     "@chat-adapter/state-memory": "^4.44.0",
     "@chat-adapter/state-redis": "^4.44.0",
-    "@comark/nuxt": "^0.9.0",
+    "@comark/vue": "^0.9.1",
     "@diglot/comark": "^0.2.1",
     "@diglot/core": "^0.2.1",
     "@diglot/store": "^0.2.1",
@@ -81,7 +81,7 @@
     "botid": "^1.5.12",
     "chat": "^4.44.0",
     "cobe": "2.0.1",
-    "comark-content": "^0.5.1",
+    "comark-content": "^0.6.0",
     "date-fns": "^4.4.0",
     "drizzle-orm": "^0.45.4",
     "eve": "^0.91.0",
@@ -136,7 +136,7 @@
     "typescript": "^6.0.3",
     "vitest": "^5.1.0",
     "vue": "^3.5.45",
-    "vue-tsc": "^3.3.11"
+    "vue-tsc": "3.3.11"
   },
   "optionalDependencies": {
     "zlib-sync": "^0.1.10"

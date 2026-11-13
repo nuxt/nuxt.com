@@ -47,10 +47,17 @@ export default defineEventHandler(async (event) => {
 
     case 'edit': {
       // Edits only show once the page runs `nuxt dev`: the page starts it too, and both wait for the same server.
-      await waitForDevServer(sandbox)
+      // When `nuxt dev` exited, the edit may be the fix for what stopped it: write it anyway, and the next request starts the server again.
+      let running = true
+      try {
+        await waitForDevServer(sandbox)
+      } catch (error) {
+        if (!(error as { data?: { stopped?: boolean } })?.data?.stopped) throw error
+        running = false
+      }
       const file = resolveAppPath(body.path).path
-      const restarts = RESTARTING_FILES.test(file)
-      const content = file.startsWith('content/')
+      const restarts = running && RESTARTING_FILES.test(file)
+      const content = running && file.startsWith('content/')
       const offset = restarts || content ? await devLogSize(sandbox) : 0
       let path: string
       if (body.delete) {
@@ -68,7 +75,7 @@ export default defineEventHandler(async (event) => {
       }
       if (restarts) await waitForRestart(sandbox, offset)
       else if (content) await waitForContent(sandbox, offset)
-      return { path, ...(body.delete && { deleted: true }), ...(restarts && { restarted: true }) }
+      return { path, ...(body.delete && { deleted: true }), ...(restarts && { restarted: true }), ...(!running && { devServerStopped: true }) }
     }
 
     case 'add_module': {
