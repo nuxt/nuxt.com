@@ -5,7 +5,7 @@ import type { PullPreviewSummary } from '#shared/types'
 import { cliDocsPathPrefix, hasCliDocs } from '#shared/utils/cli'
 import { CONTENT_INSTANCE_KEYS, buildModuleInstanceKey, cliInstanceKey, docsInstanceKey, hasModuleDocsSearch, isNavigationConfig, moduleBuilderInstanceKey, type ContentInstanceKey } from '#shared/utils/content'
 import { CURRENT_DOCS_VERSION, docsPathPrefix, EXAMPLES_PATH_PREFIX, hasExamples, type DocVersion } from '#shared/utils/docs'
-import { buildModuleDocsPathPrefix, hasModuleBuilderDocs, moduleAuthorGuidePath, moduleBuilderDocsPathPrefix } from '#shared/utils/module-builder'
+import { buildModuleDocsPathPrefix, hasModuleBuilderDocs, moduleBuilderDocsPathPrefix } from '#shared/utils/module-builder'
 import { isPullContentPage, parsePullTarget, pullRepoName, type PullTarget } from '#shared/utils/pull'
 import { createRuntimeInstance } from '../../../utils/factory'
 
@@ -361,13 +361,6 @@ export async function pullLandingPath(preview: PullPreview): Promise<string> {
   return firstPagePath(findByPath(await content.navigation(), prefix)?.children) ?? prefix
 }
 
-/** `items` with `nodes` inserted after the item at `path`, or at the end. */
-function insertAfter(items: NavigationItem[], path: string, nodes: NavigationItem[]): NavigationItem[] {
-  const at = (items.findIndex(item => item.path === path) + 1) || items.length
-
-  return [...items.slice(0, at), ...nodes, ...items.slice(at)]
-}
-
 /**
  * `/api/navigation/:version`'s tree, read through the preview's instances.
  * Mirrors production's `docTree()` grafts, so `navigation.ts` stays preview-free.
@@ -392,10 +385,10 @@ export async function pullNavigation(version: DocVersion, preview: PullPreview):
     hasModuleDocsSearch(version) ? moduleDocsTrees(key => getInstanceForPull(preview, key)) : []
   ])
 
-  // Examples after the API section, commands after its utils, the Module Builder after the Module Author Guide's own pages.
+  // Examples after the API section, commands after its utils, the Module Builder after Nuxt Kit.
   const children = insertAfter(docs?.children ?? [], `${prefix}/api`, examples).map(item => item.path === `${prefix}/api`
-    ? { ...item, children: insertAfter(item.children ?? [], `${prefix}/api/utils`, withCommandEntries(cli, buildModule)) }
+    ? { ...item, children: insertAfter(insertAfter(item.children ?? [], `${prefix}/api/utils`, withCommandEntries(cli, buildModule)), `${prefix}/api/kit`, moduleBuilder) }
     : item)
 
-  return [{ ...(docs ?? { title: 'Docs', path: prefix }), children: appendChildren(children, moduleAuthorGuidePath(version), moduleBuilder) }, ...blog, ...modules]
+  return [{ ...(docs ?? { title: 'Docs', path: prefix }), children }, ...blog, ...modules]
 }

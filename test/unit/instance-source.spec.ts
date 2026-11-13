@@ -47,7 +47,7 @@ describe('instanceSource', () => {
   describe('module builder', () => {
     afterEach(() => vi.unstubAllEnvs())
 
-    it('reads the `nuxt/module-builder` docs into each version\'s Module Author Guide', () => {
+    it('reads the `nuxt/module-builder` docs into each version\'s API docs', () => {
       expect(MODULE_BUILDER_DOC_VERSIONS).toEqual(['3.x', '4.x', '5.x'])
       for (const version of MODULE_BUILDER_DOC_VERSIONS) {
         expect(instanceSource(moduleBuilderInstanceKey(version))).toEqual({
@@ -56,7 +56,7 @@ describe('instanceSource', () => {
             repo: 'nuxt/module-builder',
             branch: 'docs-source-of-truth',
             contentDir: 'docs',
-            prefix: `/docs/${version}/guide/modules/module-builder`,
+            prefix: `/docs/${version}/api/module-builder`,
             listingFields: ['title', 'description', 'navigation', 'titleTemplate', 'icon'],
             exclude: ['README.md', '**/*.json', 'cli/**'],
             envOverride: 'NUXT_MODULE_BUILDER_PATH'
@@ -98,7 +98,7 @@ describe('instanceSource', () => {
       expect(instanceSource(buildModuleInstanceKey('4.x')).source.branch).toBe('feat/docs')
     })
 
-    it('rejects a version without a Module Author Guide', () => {
+    it('rejects an archived version', () => {
       expect(() => instanceSource('module-builder:2.x' as never)).toThrow()
       expect(() => instanceSource('build-module:2.x' as never)).toThrow()
     })
