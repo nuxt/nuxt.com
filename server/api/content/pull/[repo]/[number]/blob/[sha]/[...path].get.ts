@@ -19,7 +19,7 @@ export default defineEventHandler(async (event) => {
   const preview = await resolvePullPreview(target)
 
   // Anything but the PR's current commit would be cached forever under a stale URL.
-  if (key !== preview.instanceKey || sha !== preview.sha) {
+  if (!pullInstanceKeys(preview.instanceKey).includes(key) || sha !== preview.sha) {
     throw createError({ status: 404, statusText: 'Stale content commit' })
   }
 

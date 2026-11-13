@@ -1,3 +1,4 @@
+import { cliDocsPathPrefix } from './cli'
 import { docsPathPrefix, type ArchivedDocVersion, type DocVersion, type RepoRefs } from './docs'
 
 export const MODULE_BUILDER_DOCS_REPO = 'nuxt/module-builder'
@@ -27,4 +28,15 @@ export function moduleAuthorGuidePath(version: DocVersion): string {
 /** Where a version's Module Builder docs are mounted: shared by the server's source prefix and the client's page check. */
 export function moduleBuilderDocsPathPrefix(version: DocVersion): string {
   return `${moduleAuthorGuidePath(version)}/module-builder`
+}
+
+/** The directory of `docs/` holding the `nuxt build-module` page, served apart from the Module Builder docs. */
+export const BUILD_MODULE_DOCS_DIR = 'cli/build-module'
+
+/** The `nuxt/cli` page the `nuxt build-module` page replaces. */
+export const CLI_BUILD_MODULE_FILE = 'build-module.md'
+
+/** Where a version's `nuxt build-module` page is mounted, in its command reference. */
+export function buildModuleDocsPathPrefix(version: DocVersion): string {
+  return `${cliDocsPathPrefix(version)}/build-module`
 }

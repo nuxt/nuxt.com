@@ -16,12 +16,13 @@ const contentFetch: ContentFetch = <T>(url: string, options?: Record<string, any
  * - `docs:<version>` (one instance per docs version)
  * - `cli:<version>` (one instance per CLI version)
  * - `module-builder:<version>` (one instance per docs version's Module Builder docs)
+ * - `build-module:<version>` (one instance per docs version's `nuxt build-module` page)
  *
  * Under a locale, the docs and the references grafted into them are read localised.
  */
 export function useContent(key: ContentInstanceKey): ContentClient {
   const locale = useDocsLocale().value
-  if (locale && (key.startsWith('docs:') || key.startsWith('cli:') || key.startsWith('module-builder:'))) {
+  if (locale && (key.startsWith('docs:') || key.startsWith('cli:') || key.startsWith('module-builder:') || key.startsWith('build-module:'))) {
     return createContentClient({ basePath: l10nContentBasePath(locale), fetch: contentFetch })
   }
 

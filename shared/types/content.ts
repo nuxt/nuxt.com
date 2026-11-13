@@ -10,6 +10,8 @@ export type ContentShas = Partial<Record<ContentInstanceKey, string | null>>
 /** The instance a pull request preview replaces, at the PR's head commit (`GET /api/content/pull/:repo/:number/head`). */
 export interface PullHead {
   instanceKey: ContentInstanceKey
+  /** Every instance pinned to `sha`: `instanceKey` first, then those reading the same repo and branch for the same version. */
+  instanceKeys: ContentInstanceKey[]
   sha: string
 }
 

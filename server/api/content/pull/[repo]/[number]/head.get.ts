@@ -6,5 +6,5 @@ import type { PullHead } from '#shared/types'
 export default defineEventHandler(async (event): Promise<PullHead> => {
   const { instanceKey, sha } = await resolvePullPreview(pullTargetFromEvent(event))
 
-  return { instanceKey, sha }
+  return { instanceKey, instanceKeys: pullInstanceKeys(instanceKey), sha }
 })

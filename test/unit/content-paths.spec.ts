@@ -2,7 +2,7 @@ import { readdirSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import { createRouter } from 'radix3'
 import { describe, expect, it } from 'vitest'
-import { CONTENT_INSTANCE_KEYS, cliInstanceKey, docsInstanceKey, instanceBasePath, instanceBlobPath, instanceName, isContentInstanceKey, moduleBuilderInstanceKey, navPathsForInstance, navigationPath, type ContentInstanceKey } from '../../shared/utils/content'
+import { CONTENT_INSTANCE_KEYS, buildModuleInstanceKey, cliInstanceKey, docsInstanceKey, instanceBasePath, instanceBlobPath, instanceName, isContentInstanceKey, moduleBuilderInstanceKey, navPathsForInstance, navigationPath, type ContentInstanceKey } from '../../shared/utils/content'
 import { DOC_VERSIONS, EXAMPLES_PATH_PREFIX, isArchivedDocVersion, isCanonicalDocsPath } from '../../shared/utils/docs'
 import { instanceSource } from '../../server/utils/content/instances'
 
@@ -13,6 +13,7 @@ describe('content instance paths', () => {
     expect(instanceBasePath(docsInstanceKey('4.x'))).toBe('/api/content/docs/4.x')
     expect(instanceBasePath(cliInstanceKey('4.x'))).toBe('/api/content/cli/4.x')
     expect(instanceBasePath(moduleBuilderInstanceKey('4.x'))).toBe('/api/content/module-builder/4.x')
+    expect(instanceBasePath(buildModuleInstanceKey('4.x'))).toBe('/api/content/build-module/4.x')
   })
 
   it('puts the qualifier before the instance path', () => {
@@ -43,6 +44,7 @@ describe('instanceName', () => {
   it('names the Module Builder docs as a comark identifier, shared across versions', () => {
     expect(instanceName(moduleBuilderInstanceKey('4.x'))).toBe('module_builder')
     expect(instanceName(moduleBuilderInstanceKey('5.x'))).toBe('module_builder')
+    expect(instanceName(buildModuleInstanceKey('4.x'))).toBe('build_module')
   })
 })
 
@@ -51,6 +53,7 @@ describe('navPathsForInstance', () => {
     expect(navPathsForInstance(docsInstanceKey('4.x'))).toEqual([navigationPath('4.x')])
     expect(navPathsForInstance(cliInstanceKey('4.x'))).toEqual([navigationPath('4.x')])
     expect(navPathsForInstance(moduleBuilderInstanceKey('4.x'))).toEqual([navigationPath('4.x')])
+    expect(navPathsForInstance(buildModuleInstanceKey('4.x'))).toEqual([navigationPath('4.x')])
   })
 
   it('fans `site` and `examples` out to every version — both are grafted onto every tree', () => {
@@ -106,11 +109,13 @@ describe('isContentInstanceKey', () => {
       expect(isContentInstanceKey(`docs:${version}`)).toBe(true)
       expect(isContentInstanceKey(`cli:${version}`)).toBe(true)
       expect(isContentInstanceKey(`module-builder:${version}`)).toBe(true)
+      expect(isContentInstanceKey(`build-module:${version}`)).toBe(true)
     }
   })
 
   it('gives an archived version no Module Builder docs, as it has no Module Author Guide', () => {
     expect(isContentInstanceKey('module-builder:2.x')).toBe(false)
+    expect(isContentInstanceKey('build-module:2.x')).toBe(false)
     expect(CONTENT_INSTANCE_KEYS).not.toContain('module-builder:2.x')
   })
 

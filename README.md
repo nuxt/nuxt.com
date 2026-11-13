@@ -39,7 +39,7 @@ In this default mode (`--ui-only`):
 
 ### Working on the docs
 
-The docs live in the [nuxt/nuxt](https://github.com/nuxt/nuxt) repository. To edit them locally, clone/fork the repo somewhere outside this project and point the `NUXT_V2_PATH` / `NUXT_V3_PATH` / `NUXT_V4_PATH` / `NUXT_V5_PATH` variables in your `.env` to your local checkout (use `pwd` — or `echo %cd%` on Windows — inside the clone to get the path). Same goes for `NUXT_EXAMPLES_PATH` with [nuxt/examples](https://github.com/nuxt/examples), `NUXT_CLI_PATH` with [nuxt/cli](https://github.com/nuxt/cli) (the command reference) and `NUXT_MODULE_BUILDER_PATH` with [nuxt/module-builder](https://github.com/nuxt/module-builder) (the Module Builder pages of the Module Author Guide).
+The docs live in the [nuxt/nuxt](https://github.com/nuxt/nuxt) repository. To edit them locally, clone/fork the repo somewhere outside this project and point the `NUXT_V2_PATH` / `NUXT_V3_PATH` / `NUXT_V4_PATH` / `NUXT_V5_PATH` variables in your `.env` to your local checkout (use `pwd` — or `echo %cd%` on Windows — inside the clone to get the path). Same goes for `NUXT_EXAMPLES_PATH` with [nuxt/examples](https://github.com/nuxt/examples), `NUXT_CLI_PATH` with [nuxt/cli](https://github.com/nuxt/cli) (the command reference) and `NUXT_MODULE_BUILDER_PATH` with [nuxt/module-builder](https://github.com/nuxt/module-builder) (the Module Builder pages of the Module Author Guide, and the `nuxt build-module` command).
 
 ### Previewing a pull request
 
