@@ -150,16 +150,30 @@ export async function extendPreview(owner: string, sandbox: Sandbox, maxLifetime
   }
   const extendedTo = expiresAt + duration
   // The slot is moved first, and only forward: of two requests that read the same expiry, one moves it and the other stops here,
-  // since `extendTimeout` adds to the running session. If the extension then fails, the slot is only held longer than needed.
+  // since `extendTimeout` adds to the running session.
+  const slot = and(eq(schema.templatePreviews.owner, owner), eq(schema.templatePreviews.id, sandbox.name))
+  const claim = new Date(extendedTo + 60_000)
   const claimed = await db.update(schema.templatePreviews)
-    .set({ expiresAt: new Date(extendedTo + 60_000) })
-    .where(and(eq(schema.templatePreviews.owner, owner), eq(schema.templatePreviews.id, sandbox.name), lt(schema.templatePreviews.expiresAt, new Date(extendedTo + 60_000))))
+    .set({ expiresAt: claim })
+    .where(and(slot, lt(schema.templatePreviews.expiresAt, claim)))
     .returning({ id: schema.templatePreviews.id })
   if (!claimed.length) {
-    throw createError({ statusCode: 409, message: 'This preview is already being extended.' })
+    throw createError({ statusCode: 423, message: 'This preview is already being extended.' })
   }
-  await sandbox.extendTimeout(duration)
-  return { expiresAt: extendedTo, canExtend: limit - extendedTo >= 60_000 }
+  const result = { expiresAt: extendedTo, canExtend: limit - extendedTo >= 60_000 }
+  try {
+    await sandbox.extendTimeout(duration)
+  } catch (error) {
+    // The extension may still have reached the sandbox. If it didn't, the claim goes back, so a retry can extend.
+    const current = await Sandbox.get({ name: sandbox.name }).catch(() => null)
+    if (current && previewExpiresAt(current) >= extendedTo) return result
+    await db.update(schema.templatePreviews)
+      .set({ expiresAt: new Date(expiresAt + 60_000) })
+      .where(and(slot, eq(schema.templatePreviews.expiresAt, claim)))
+      .returning({ id: schema.templatePreviews.id })
+    throw error
+  }
+  return result
 }
 
 /** Stops a preview's sandbox, then frees its slot. A sandbox that fails to stop keeps its slot until it expires, so it still counts toward `MAX_RUNNING_PREVIEWS`. */
