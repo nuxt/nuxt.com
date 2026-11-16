@@ -1,10 +1,7 @@
 import { z } from 'zod'
 
 export default defineEventHandler(async (event) => {
-  const { user } = await requireUserSession(event)
-  if (user.role !== 'admin' || !await isAuthorizedAdmin(event, user.username)) {
-    throw createError({ statusCode: 403, statusMessage: 'Admin access required' })
-  }
+  await requireAdminUserSession(event)
   const { slug } = await getValidatedRouterParams(event, z.object({ slug: z.string().regex(/^[a-z0-9-]+$/) }).parse)
   setResponseHeader(event, 'cache-control', 'no-store')
   const [row] = await db.select({
