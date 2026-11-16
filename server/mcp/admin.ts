@@ -12,6 +12,7 @@ Tools:
 - Feedback: \`feedback-stats\`, \`list-feedback\`
 - Agent quality: \`agent-usage-stats\` (web chats + votes only), \`list-agent-chats\`, \`get-agent-chat\`, \`list-agent-votes\`
 - Google Search: \`search-console-analytics\` (clicks, impressions, CTR, position), \`search-console-inspect-url\` (indexing of one URL), \`search-console-sitemaps\`
+- Live pages: \`page-head\` (redirects, status, title, meta description, canonical and robots of one page on nuxt.com or a subdomain)
 - Performance: \`crux-web-vitals\` (field LCP, INP, CLS from real Chrome users, per page or site, with weekly trend)
 - Templates: \`template-check-status\` (which templates pass the daily check, and why they fail), \`start-template-checks\` (re-check some of them on Vercel Sandbox: pass \`slugs\` or \`failing\`, each one runs a sandbox for up to 15 minutes)
 
