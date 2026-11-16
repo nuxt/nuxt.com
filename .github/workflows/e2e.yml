@@ -12,18 +12,37 @@ on:
 permissions: {}
 
 jobs:
+  # On `deployment_status`, only run for production deploys and for deploys of a commit at the head of a branch in this
+  # repo, never for a fork PR's. Vercel sets `deployment.ref` to the commit SHA for every deploy, so it can't tell them apart.
+  trusted:
+    if: github.event_name == 'workflow_dispatch' || github.event.deployment_status.state == 'success'
+    runs-on: ubuntu-slim
+    permissions:
+      contents: read
+    outputs:
+      trusted: ${{ steps.check.outputs.trusted }}
+    steps:
+      - id: check
+        run: |
+          if [ "$EVENT_NAME" = workflow_dispatch ] || [ "$ENVIRONMENT" = Production ] ||
+            [ "$(gh api "repos/$GITHUB_REPOSITORY/commits/$SHA/branches-where-head" --jq length)" != 0 ]; then
+            echo trusted=true >> "$GITHUB_OUTPUT"
+          fi
+        env:
+          GH_TOKEN: ${{ github.token }}
+          EVENT_NAME: ${{ github.event_name }}
+          ENVIRONMENT: ${{ github.event.deployment.environment }}
+          SHA: ${{ github.event.deployment.sha }}
+
   e2e:
+    needs: trusted
+    if: needs.trusted.outputs.trusted == 'true'
     environment:
       name: ${{ github.event.deployment.environment || 'Production' }}
       url: ${{ github.event.inputs.url || github.event.deployment_status.environment_url }}
-    # On `deployment_status`, only run for deploys of a branch in this repo. Vercel sets
-    # `deployment.ref` to the branch name for same-repo deploys and to the bare SHA for
-    # fork-PR deploys, so `ref == sha` indicates an untrusted source.
-    if: |
-      github.event_name == 'workflow_dispatch' ||
-      (github.event.deployment_status.state == 'success' &&
-       github.event.deployment.ref != github.event.deployment.sha)
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
@@ -32,24 +51,40 @@ jobs:
         with:
           cache: true
       - run: pnpm exec playwright install
+      # Vercel lets this workflow through Deployment Protection with its OIDC token (Settings > Deployment Protection >
+      # Trusted Sources). The token expires after about 5 minutes, so each job fetches it right before using it.
+      - name: Get the OIDC token
+        id: oidc
+        run: |
+          token=$(curl -sSf -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" "$ACTIONS_ID_TOKEN_REQUEST_URL" | jq -r .value)
+          echo "::add-mask::$token"
+          echo "token=$token" >> "$GITHUB_OUTPUT"
       - name: Run Playwright E2E tests
         run: pnpm test:browser
         env:
           BASE_URL: ${{ github.event.inputs.url || github.event.deployment_status.environment_url }}
+          VERCEL_TRUSTED_OIDC_TOKEN: ${{ steps.oidc.outputs.token }}
 
   lighthouse:
+    needs: trusted
+    if: needs.trusted.outputs.trusted == 'true'
     environment:
       name: ${{ github.event.deployment.environment || 'Production' }}
       url: ${{ github.event.inputs.url || github.event.deployment_status.environment_url }}
-    if: |
-      github.event_name == 'workflow_dispatch' ||
-      (github.event.deployment_status.state == 'success' &&
-       github.event.deployment.ref != github.event.deployment.sha)
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           persist-credentials: false
+      - name: Get the OIDC token
+        id: oidc
+        run: |
+          token=$(curl -sSf -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" "$ACTIONS_ID_TOKEN_REQUEST_URL" | jq -r .value)
+          echo "::add-mask::$token"
+          echo "token=$token" >> "$GITHUB_OUTPUT"
+      # Lighthouse copies its settings, the header included, into the public report: the token has expired by then.
       - name: Audit URLs using Lighthouse
         uses: treosh/lighthouse-ci-action@3e7e23fb74242897f95c0ba9cabad3d0227b9b18 # v12
         with:
@@ -58,22 +93,30 @@ jobs:
           temporaryPublicStorage: true
         env:
           LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
+          LHCI_COLLECT__SETTINGS__EXTRA_HEADERS: '{"x-vercel-trusted-oidc-idp-token":"${{ steps.oidc.outputs.token }}"}'
 
   warmup:
+    needs: trusted
+    if: needs.trusted.outputs.trusted == 'true'
     environment:
       name: ${{ github.event.deployment.environment || 'Production' }}
       url: ${{ github.event.inputs.url || github.event.deployment_status.environment_url }}
-    if: |
-      github.event_name == 'workflow_dispatch' ||
-      (github.event.deployment_status.state == 'success' &&
-       github.event.deployment.ref != github.event.deployment.sha)
     runs-on: ubuntu-slim
+    permissions:
+      id-token: write
 
     steps:
+      - name: Get the OIDC token
+        id: oidc
+        run: |
+          token=$(curl -sSf -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" "$ACTIONS_ID_TOKEN_REQUEST_URL" | jq -r .value)
+          echo "::add-mask::$token"
+          echo "token=$token" >> "$GITHUB_OUTPUT"
       - name: warmup jobs, sponsors and modules
         run: |
-          curl -sS "$BASE_URL/api/jobs"
-          curl -sS "$BASE_URL/api/sponsors"
-          curl -sS "$BASE_URL/api/v1/modules"
+          curl -sS -H "x-vercel-trusted-oidc-idp-token: $TOKEN" "$BASE_URL/api/jobs"
+          curl -sS -H "x-vercel-trusted-oidc-idp-token: $TOKEN" "$BASE_URL/api/sponsors"
+          curl -sS -H "x-vercel-trusted-oidc-idp-token: $TOKEN" "$BASE_URL/api/v1/modules"
         env:
           BASE_URL: ${{ github.event.inputs.url || github.event.deployment_status.environment_url }}
+          TOKEN: ${{ steps.oidc.outputs.token }}
