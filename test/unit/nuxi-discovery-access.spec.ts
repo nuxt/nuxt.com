@@ -19,25 +19,20 @@ afterEach(() => {
 })
 
 describe('Nuxi internal preview requests', () => {
-  it('authenticates with deployment protection as well as the internal API', async () => {
+  it('sends both deployment identity and internal API credentials', async () => {
     const { internalFetch: request } = await vi.importActual<typeof import('../../layers/nuxi/agent/lib/internal-api')>('../../layers/nuxi/agent/lib/internal-api')
     const token = `test.${Buffer.from(JSON.stringify({ exp: Math.floor(Date.now() / 1000) + 3600 })).toString('base64url')}.test`
     vi.stubEnv('INTERNAL_API_SECRET', 'test-internal-secret')
     vi.stubEnv('VERCEL_OIDC_TOKEN', token)
     vi.stubEnv('VERCEL_OIDC_TOKEN_FILE', undefined)
-    vi.stubGlobal('fetch', vi.fn(async (_url, init) => {
-      const headers = new Headers(init.headers)
-      if (headers.get('x-vercel-trusted-oidc-idp-token') !== token) {
-        return new Response('Protected by Vercel Authentication', { status: 401 })
-      }
-      if (headers.get('authorization') !== 'Bearer test-internal-secret') {
-        return new Response('Unauthorized', { status: 401 })
-      }
-      return Response.json({ files: ['app.vue'] })
-    }))
+    vi.stubGlobal('fetch', vi.fn(async () => Response.json({ files: ['app.vue'] })))
 
     await expect(request('/api/internal/templates/preview', { method: 'POST', body: JSON.stringify({ action: 'list', sandboxId: 'preview', principalId: 'visitor' }) }))
       .resolves.toEqual({ files: ['app.vue'] })
+    expect(fetch).toHaveBeenCalledWith(expect.any(String), expect.objectContaining({ headers: expect.objectContaining({
+      'Authorization': 'Bearer test-internal-secret',
+      'x-vercel-trusted-oidc-idp-token': token
+    }) }))
   })
 
   it('keeps local requests working without a deployment protection secret', async () => {
@@ -56,6 +51,7 @@ describe('Nuxi internal preview requests', () => {
   it('preserves app authentication when a Vercel identity is unavailable', async () => {
     vi.stubEnv('INTERNAL_API_SECRET', 'test-internal-secret')
     vi.stubEnv('VERCEL', '1')
+    vi.stubEnv('VERCEL_OIDC_TOKEN', undefined)
     vi.stubEnv('VERCEL_OIDC_TOKEN_FILE', new URL('./missing-oidc-token', import.meta.url).pathname)
     const { internalHeaders } = await vi.importActual<typeof import('../../layers/nuxi/agent/lib/internal-api')>('../../layers/nuxi/agent/lib/internal-api')
     await expect(internalHeaders()).resolves.toEqual({
@@ -115,7 +111,7 @@ describe('Nuxi live preview access', () => {
     }
   })
 
-  it('keeps an edit connected while the server starts and then restarts after a config change', async () => {
+  it('allows the edit request budget to cover startup followed by a config restart', async () => {
     vi.useFakeTimers()
     const timeout = vi.spyOn(AbortSignal, 'timeout').mockImplementation((ms) => {
       const controller = new AbortController()

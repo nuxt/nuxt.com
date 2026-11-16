@@ -12,10 +12,33 @@ const liveUrl = ref<string>()
 const status = ref<LivePreviewStatus>()
 const readyIn = ref<number>()
 const device = ref<'desktop' | 'mobile'>('desktop')
+const downloading = ref(false)
 
 const { preview: livePreview, editor, reloadRequest, startEditing } = useLivePreview()
 const { open: openNuxi } = useNuxtAgent()
 const { track } = useAnalytics()
+const toast = useToast()
+
+async function downloadProject() {
+  if (!livePreview.value || downloading.value) return
+  downloading.value = true
+  try {
+    const zip = await $fetch<Blob>(`/api/templates/preview/${livePreview.value.id}/download`, { responseType: 'blob' })
+    const url = URL.createObjectURL(zip)
+    const link = document.createElement('a')
+    link.href = url
+    link.download = `${props.template.slug}.zip`
+    document.body.appendChild(link)
+    link.click()
+    link.remove()
+    setTimeout(() => URL.revokeObjectURL(url), 1000)
+    track('Template Action', { template: props.template.name, action: 'Download ZIP' })
+  } catch {
+    toast.add({ title: 'Download failed', description: 'Please try again while the preview is running.', color: 'error' })
+  } finally {
+    downloading.value = false
+  }
+}
 
 function editWithNuxi() {
   track('Template Action', { template: props.template.name, action: 'Edit with Nuxi' })
@@ -106,6 +129,17 @@ function stop() {
 
       <div class="flex items-center justify-end gap-0.5">
         <template v-if="live">
+          <UTooltip v-if="status === 'live'" text="Download ZIP">
+            <UButton
+              icon="i-lucide-download"
+              aria-label="Download project as ZIP"
+              color="neutral"
+              variant="ghost"
+              size="xs"
+              :loading="downloading"
+              @click="downloadProject"
+            />
+          </UTooltip>
           <UTooltip v-if="status === 'live'" text="Edit with Nuxi">
             <UButton
               icon="i-custom-nuxi"
