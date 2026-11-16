@@ -21,18 +21,7 @@ export async function recordTemplateCheck(report: CheckReport) {
     .where(and(eq(schema.templateChecks.slug, report.slug), owner))
     .returning({ slug: schema.templateChecks.slug })
   if (!updated.length) return { stopped: true }
-  if (report.kind === 'finish' && report.status) {
-    // The result is saved: a failure here must not fail the report, or its retry is refused and the workflow deletes the snapshot the row now points to.
-    await clearHealthCache().catch(error => console.error('[templates] health cache clear failed', error))
-  }
   return { stopped: false, previousSnapshotId }
-}
-
-/** `/api/templates/health` caches for 10 minutes: a new result shows right away instead. Otherwise it shows once the cache expires. */
-async function clearHealthCache() {
-  const storage = useStorage('cache')
-  const keys = await storage.getKeys('nitro:handlers:template-health')
-  await Promise.all(keys.map(key => storage.removeItem(key)))
 }
 
 /** Called by the run itself: its Chromium sandbox once created, then its end. Templates it didn't get to are no longer queued. */
@@ -75,7 +64,7 @@ async function listCheckableTemplates() {
 }
 
 /** Runs still going. Runs can overlap: a template is only ever checked by one of them. */
-async function getActiveRuns() {
+export async function getActiveTemplateCheckRuns() {
   return db.select().from(schema.templateCheckRuns)
     .where(and(eq(schema.templateCheckRuns.state, 'running'), sql`${schema.templateCheckRuns.startedAt} > ${Math.floor((Date.now() - STALE_AFTER_MS) / 1000)}`))
     .orderBy(desc(schema.templateCheckRuns.startedAt))
@@ -87,8 +76,8 @@ export function templateCheckBaseURL(event: H3Event) {
   return process.env.VERCEL_ENV === 'production' ? SITE_URL : getRequestURL(event, { xForwardedHost: true }).origin
 }
 
-export async function startTemplateChecks(baseURL: string, options: { slugs?: string[], failing?: boolean, trigger: 'cron' | 'task' | 'mcp', startedBy?: string }) {
-  const [templates, rows, activeRuns] = await Promise.all([listCheckableTemplates(), listTemplateChecks(), getActiveRuns()])
+export async function startTemplateChecks(baseURL: string, options: { slugs?: string[], failing?: boolean, trigger: 'cron' | 'task' | 'mcp' | 'admin', startedBy?: string }) {
+  const [templates, rows, activeRuns] = await Promise.all([listCheckableTemplates(), listTemplateChecks(), getActiveTemplateCheckRuns()])
   const bySlug = new Map(rows.map(row => [row.slug, row]))
   const activeIds = new Set(activeRuns.map(run => run.id))
   const busy = (slug: string) => {

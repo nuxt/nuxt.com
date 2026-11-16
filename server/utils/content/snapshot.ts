@@ -1,9 +1,10 @@
-import { CURRENT_DOCS_VERSION } from '../../../shared/utils/docs'
-import { cliInstanceKey, docsInstanceKey, moduleInstanceKey, type ContentInstanceKey } from '../../../shared/utils/content'
-import { MODULE_DOCS_NAMES } from '../../../shared/utils/module-docs'
+import type { ContentInstanceKey } from '../../../shared/utils/content'
 
 /**
  * Where the build snapshots live, shared by the writer and the reader.
+ *
+ * Every instance ships one (`modules/snapshot/` writes them for `CONTENT_INSTANCE_KEYS`):
+ * an instance without one downloads every file of its content directory whenever its cache is cold.
  *
  * `modules/snapshot/` imports this file, so it stays free of nitro auto-imports.
  * The readers that use them are in `index.ts`.
@@ -11,29 +12,6 @@ import { MODULE_DOCS_NAMES } from '../../../shared/utils/module-docs'
 
 /** Server-asset namespace the snapshots are written into and read back through. */
 export const SNAPSHOT_ASSET_BASE = 'comark-content'
-
-/**
- * Instances shipped with a build-time snapshot.
- *
- * Not every instance earns one:
- * - `site` (most visible content)
- * - `examples` (search index)
- * - `docs:<version>` (search index)
- * - `cli:<version>` (search index)
- * - `module:<name>` (search index)
- */
-export const SNAPSHOT_INSTANCE_KEYS: ContentInstanceKey[] = [
-  'site',
-  'examples',
-  docsInstanceKey(CURRENT_DOCS_VERSION),
-  cliInstanceKey(CURRENT_DOCS_VERSION),
-  ...MODULE_DOCS_NAMES.map(moduleInstanceKey)
-]
-
-/** Whether `key` ships a build-time snapshot. */
-export function hasBuildSnapshot(key: ContentInstanceKey): boolean {
-  return SNAPSHOT_INSTANCE_KEYS.includes(key)
-}
 
 /**
  * Directory an instance's artifacts live under, relative to `SNAPSHOT_ASSET_BASE`.
