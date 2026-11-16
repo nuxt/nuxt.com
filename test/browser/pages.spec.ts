@@ -1,4 +1,4 @@
-import { expect, test } from '@nuxt/test-utils/playwright'
+import { expect, test } from './fixtures'
 
 test.describe('Homepage', () => {
   test('has a visible hero description', async ({ page, goto }) => {

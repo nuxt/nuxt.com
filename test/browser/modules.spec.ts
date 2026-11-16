@@ -1,4 +1,4 @@
-import { expect, test } from '@nuxt/test-utils/playwright'
+import { expect, test } from './fixtures'
 
 test.describe('Modules Page', () => {
   test('loads successfully with module listing', async ({ page, goto }) => {
