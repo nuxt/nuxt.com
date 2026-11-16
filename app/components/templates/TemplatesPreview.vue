@@ -68,9 +68,11 @@ const EXPIRY_WARNING_MS = 2 * 60_000
 const EXPIRY_TOAST = 'live-preview-expiry'
 /** The stop time the visitor was last warned about: an extension moves it, so they are warned again before the new one. */
 let warnedFor = 0
-watch(remaining, (value) => {
+// An extension in flight at zero may have reached the server: its response decides, and a failed one stops the preview then.
+watch([remaining, extending], ([value]) => {
   if (!live.value || status.value !== 'live') return
   if (value === 0) {
+    if (extending.value) return
     stop()
     toast.add({ title: 'Your live preview stopped', description: 'Its time ran out. Start it again to keep trying the template.', icon: 'i-lucide-timer-off', color: 'neutral' })
   } else if (value <= EXPIRY_WARNING_MS && warnedFor !== expiresAt.value) {
@@ -110,20 +112,28 @@ function onStatus(value: LivePreviewStatus, ms?: number) {
 
 async function extend() {
   if (!livePreview.value || extending.value) return
+  const id = livePreview.value.id
+  // A response for a preview that stopped, or was replaced, must not move the current one's deadline.
+  const current = () => live.value && livePreview.value?.id === id
   extending.value = true
   try {
-    const result = await $fetch<{ expiresAt: number, canExtend: boolean }>(`/api/templates/preview/${livePreview.value.id}/extend`, { method: 'POST' })
+    const result = await $fetch<{ expiresAt: number, canExtend: boolean }>(`/api/templates/preview/${id}/extend`, { method: 'POST' })
+    if (!current()) return
     expiresAt.value = result.expiresAt
     canExtend.value = result.canExtend
     toast.remove(EXPIRY_TOAST)
     track('Template Action', { template: props.template.name, action: 'Extend Live Preview' })
   } catch (error: any) {
+    if (!current()) return
     if (error?.statusCode === 409) canExtend.value = false
     toast.add({ title: 'Could not extend the preview', description: error?.data?.message || 'Please try again.', color: 'error' })
   } finally {
     extending.value = false
   }
 }
+
+// The warning stays open until dismissed: leaving the page stops the preview, so it goes too.
+onBeforeUnmount(() => toast.remove(EXPIRY_TOAST))
 
 function stop() {
   toast.remove(EXPIRY_TOAST)

@@ -138,6 +138,7 @@ function previewExpiresAt(sandbox: Sandbox) {
 
 /**
  * Gives a running preview `PREVIEW_TIMEOUT_MS` more, up to `maxLifetimeMs` after it was created, and keeps its slot for as long.
+ * Concurrent requests for one preview extend it once.
  * Returns when it now stops, and whether it can be extended again.
  */
 export async function extendPreview(owner: string, sandbox: Sandbox, maxLifetimeMs: number) {
@@ -147,11 +148,17 @@ export async function extendPreview(owner: string, sandbox: Sandbox, maxLifetime
   if (duration < 60_000) {
     throw createError({ statusCode: 409, message: 'This preview can\'t run any longer.' })
   }
-  await sandbox.extendTimeout(duration)
   const extendedTo = expiresAt + duration
-  await db.update(schema.templatePreviews)
+  // The slot is moved first, and only forward: of two requests that read the same expiry, one moves it and the other stops here,
+  // since `extendTimeout` adds to the running session. If the extension then fails, the slot is only held longer than needed.
+  const claimed = await db.update(schema.templatePreviews)
     .set({ expiresAt: new Date(extendedTo + 60_000) })
-    .where(and(eq(schema.templatePreviews.owner, owner), eq(schema.templatePreviews.id, sandbox.name)))
+    .where(and(eq(schema.templatePreviews.owner, owner), eq(schema.templatePreviews.id, sandbox.name), lt(schema.templatePreviews.expiresAt, new Date(extendedTo + 60_000))))
+    .returning({ id: schema.templatePreviews.id })
+  if (!claimed.length) {
+    throw createError({ statusCode: 409, message: 'This preview is already being extended.' })
+  }
+  await sandbox.extendTimeout(duration)
   return { expiresAt: extendedTo, canExtend: limit - extendedTo >= 60_000 }
 }
 

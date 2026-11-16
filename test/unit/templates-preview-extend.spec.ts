@@ -11,10 +11,21 @@ function runningFor(minutes: number) {
 }
 
 describe('extending a live preview', () => {
+  /** The reserved slot's expiry: the update only moves it forward, like the `lt` condition in the query. */
+  let slot = 0
   const set = vi.fn()
 
   beforeEach(() => {
-    set.mockReset().mockReturnValue({ where: vi.fn() })
+    slot = 0
+    set.mockReset().mockImplementation(({ expiresAt }: { expiresAt: Date }) => ({
+      where: () => ({
+        returning: async () => {
+          if (slot >= expiresAt.getTime()) return []
+          slot = expiresAt.getTime()
+          return [{ id: 'templates-preview-x' }]
+        }
+      })
+    }))
     vi.stubGlobal('createError', createError)
     vi.stubGlobal('PREVIEW_TIMEOUT_MS', PREVIEW_TIMEOUT_MS)
     vi.stubGlobal('schema', { templatePreviews: { owner: 'owner', id: 'id', expiresAt: 'expires_at' } })
@@ -33,6 +44,17 @@ describe('extending a live preview', () => {
     const late = runningFor(25)
     expect(await extendPreview('owner', late, PREVIEW_MAX_LIFETIME_MS)).toEqual({ expiresAt: created + 30 * MINUTE, canExtend: false })
     expect(late.extendTimeout).toHaveBeenCalledWith(5 * MINUTE)
+  })
+
+  it('extends once when two requests read the same expiry', async () => {
+    const { extendPreview } = await import('../../server/utils/templates/sandbox')
+
+    const sandbox = runningFor(20)
+    const results = await Promise.allSettled([extendPreview('owner', sandbox, PREVIEW_MAX_LIFETIME_MS), extendPreview('owner', sandbox, PREVIEW_MAX_LIFETIME_MS)])
+    expect(results.map(result => result.status).sort()).toEqual(['fulfilled', 'rejected'])
+    expect(results.find(result => result.status === 'rejected')).toMatchObject({ reason: { statusCode: 409 } })
+    expect(sandbox.extendTimeout).toHaveBeenCalledTimes(1)
+    expect(slot).toBe(created + 31 * MINUTE)
   })
 
   it('refuses past the cap, which admins reach later', async () => {
