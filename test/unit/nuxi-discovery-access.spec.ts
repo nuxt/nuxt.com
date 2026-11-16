@@ -71,7 +71,7 @@ describe('Nuxi discovery and SEO access', () => {
 
   it('preserves Google and template tools but refuses public calls before returning a token', async () => {
     expect(connection.tools.allow).toEqual(expect.arrayContaining([
-      'search-console-analytics', 'search-console-inspect-url', 'search-console-sitemaps', 'crux-web-vitals',
+      'search-console-analytics', 'search-console-inspect-url', 'search-console-sitemaps', 'page-head', 'crux-web-vitals',
       'start-template-checks', 'template-check-status'
     ]))
     const denied = await connection.auth(context(publicAuth))

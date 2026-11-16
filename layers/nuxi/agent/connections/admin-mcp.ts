@@ -14,6 +14,7 @@ const ALLOWED_TOOLS = [
   'search-console-analytics',
   'search-console-inspect-url',
   'search-console-sitemaps',
+  'page-head',
   'crux-web-vitals',
   'start-template-checks',
   'template-check-status'
@@ -29,6 +30,7 @@ export const ADMIN_MCP_INSTRUCTIONS = `**Admin MCP connection (\`admin-mcp__*\`,
 - \`admin-mcp__list-agent-votes\` — message upvotes/downvotes on those same chats
 - \`admin-mcp__search-console-analytics\` — Google Search clicks, impressions, CTR (percentage), and average position; data lags 2–3 days. Pass explicit inclusive dates for equal-length comparisons. Ungrouped queries (\`dimensions=[]\`) give totals; grouped rows are partial, never sum them into site totals.
 - \`admin-mcp__search-console-inspect-url\` / \`admin-mcp__search-console-sitemaps\` — indexing, canonical and sitemap diagnostics
+- \`admin-mcp__page-head\` — the live redirects, status, title, meta description, canonical and robots of one page on nuxt.com or a subdomain; no page content
 - \`admin-mcp__crux-web-vitals\` — field performance over rolling 28-day periods; origin fallback is not page-level evidence
 - For search performance and concrete SEO recommendations, load the \`seo-opportunities\` skill. For new showcase candidates from nuxt.fyi, load \`showcase-discovery\`.
 - \`admin-mcp__template-check-status\` — which templates pass or fail the daily check, at which step and why (\`includeLog\`)
@@ -68,7 +70,7 @@ async function adminOnlyToken(ctx: SessionContext) {
 
 export default defineMcpClientConnection({
   url: `${appOrigin()}/mcp/admin`,
-  description: 'Nuxi admin analytics: docs feedback, shared web chats and votes, Google Search Console performance/indexing/sitemaps, CrUX Core Web Vitals, and template checks. Requires admin mode, including opted-in local CLI sessions.',
+  description: 'Nuxi admin analytics: docs feedback, shared web chats and votes, Google Search Console performance/indexing/sitemaps, live page redirects and metadata, CrUX Core Web Vitals, and template checks. Requires admin mode, including opted-in local CLI sessions.',
   tools: { allow: ALLOWED_TOOLS },
   auth: adminOnlyToken,
   headers: selfAccessHeaders
