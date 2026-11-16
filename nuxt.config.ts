@@ -374,6 +374,10 @@ export default defineNuxtConfig({
     '/docs/3.x/guide/going-further/custom-routing': { redirect: '/docs/3.x/guide/recipes/custom-routing', prerender: false },
     '/docs/4.x/guide/going-further/custom-routing': { redirect: '/docs/4.x/guide/recipes/custom-routing', prerender: false },
     '/docs/5.x/guide/going-further/custom-routing': { redirect: '/docs/5.x/guide/recipes/custom-routing', prerender: false },
+    '/docs/api/components/teleport': { redirect: { to: '/docs/api/components/teleports', statusCode: 301 }, prerender: false },
+    '/docs/3.x/api/components/teleport': { redirect: { to: '/docs/3.x/api/components/teleports', statusCode: 301 }, prerender: false },
+    '/docs/4.x/api/components/teleport': { redirect: { to: '/docs/4.x/api/components/teleports', statusCode: 301 }, prerender: false },
+    '/docs/5.x/api/components/teleport': { redirect: { to: '/docs/5.x/api/components/teleports', statusCode: 301 }, prerender: false },
     // new directory structure
     '/docs/3.x/directory-structure/app/assets': { redirect: '/docs/3.x/directory-structure/assets', prerender: false },
     '/docs/3.x/directory-structure/app/components': { redirect: '/docs/3.x/directory-structure/components', prerender: false },
