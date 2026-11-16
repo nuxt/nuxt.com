@@ -42,11 +42,11 @@ describe('admin page-head tool', () => {
       // A relative `Location` resolves against the URL that sent it
       'https://nuxt.com/modules/devtools/features': () => redirect('/modules/devtools/features/', 308),
       'https://nuxt.com/modules/devtools/features/': () => html(`<!DOCTYPE html><html><head>
-        <!-- <title>Commented out</title> -->
-        <script type="application/ld+json">{"description":"<meta name=\\"description\\" content=\\"From JSON-LD\\">"}</script>
+        <!-- <title>Commented out</title> </head> -->
+        <script type="application/ld+json">{"description":"<meta name=\\"description\\" content=\\"From JSON-LD\\"></head>"}</script>
         <title>Features · @nuxt&#x2F;devtools &amp; Nuxt
           Modules</title>
-        <meta content='Inspect pages, components &amp; payload.' name="description">
+        <meta content='Inspect pages > components &amp; payload.' name="description">
         <meta name="description" content="A duplicate that crawlers ignore">
         <meta property="og:description" content="Open Graph copy">
         <meta name=robots content="index, follow">
@@ -64,7 +64,7 @@ describe('admin page-head tool', () => {
       finalUrl: 'https://nuxt.com/modules/devtools/features/',
       status: 200,
       title: 'Features · @nuxt/devtools & Nuxt Modules',
-      description: 'Inspect pages, components & payload.',
+      description: 'Inspect pages > components & payload.',
       canonical: 'https://nuxt.com/modules/devtools/features',
       robots: 'index, follow',
       xRobotsTag: null
@@ -97,6 +97,22 @@ describe('admin page-head tool', () => {
     expect(result.redirects).toHaveLength(5)
     expect(result.status).toBeNull()
     expect(fetchMock).toHaveBeenCalledTimes(5)
+  })
+
+  it('keeps reading when a chunk ends inside a comment that quotes the end of the head', async () => {
+    const chunks = ['<html><head><!-- old markup: </head>', ' --><title>Live title</title></head>', '<body><title>Never read</title></body></html>']
+    let sent = 0
+    const body = new ReadableStream<Uint8Array>({
+      pull(controller) {
+        if (sent === chunks.length) return controller.close()
+        controller.enqueue(new TextEncoder().encode(chunks[sent++]))
+      }
+    }, { highWaterMark: 0 })
+    serve({ 'https://nuxt.com/changelog': () => new Response(body, { headers: { 'content-type': 'text/html' } }) })
+
+    await expect(pageHead.handler({ url: '/changelog' })).resolves.toMatchObject({ status: 200, title: 'Live title' })
+    // The body is left unread once the head has closed
+    expect(sent).toBe(2)
   })
 
   it('returns the status without tags when the page does not exist', async () => {

@@ -7,7 +7,14 @@ const MAX_HEAD_BYTES = 1024 * 1024
 const FETCH_TIMEOUT_MS = 10_000
 const USER_AGENT = 'Mozilla/5.0 (compatible; NuxtAdminMCP/1.0; +https://nuxt.com)'
 
-const HEAD_END = /<\/head\s*>/i
+/** The rest of an opening tag. A `>` inside a quoted attribute value does not end it. */
+const TAG_REST = String.raw`(?:[^>"']|"[^"]*"|'[^']*')*>`
+/**
+ * One token of the document head: a comment or a script/style block (running to the end of the input
+ * when unterminated), a `<meta>` or `<link>` tag (group 2), a `<title>` with its text (group 3), or
+ * `</head>` (group 4).
+ */
+const HEAD_TOKEN = new RegExp(String.raw`<!--[\s\S]*?(?:-->|$)|<(script|style)\b[\s\S]*?(?:<\/\1\s*>|$)|<(meta|link)\b${TAG_REST}|<title\b${TAG_REST}([\s\S]*?)<\/title\s*>|(<\/head\s*>)`, 'gi')
 const NAMED_ENTITIES: Record<string, string> = { amp: '&', lt: '<', gt: '>', quot: '"', apos: '\'', nbsp: ' ' }
 
 type Redirect = { from: string, status: number, to: string }
@@ -36,48 +43,66 @@ function attributes(tag: string): Record<string, string> {
   return result
 }
 
-/** The tags search engines build a result from. The first of each wins, as it does for a crawler. */
-function parseHead(html: string) {
-  const headEnd = html.search(HEAD_END)
-  // Inline scripts and comments can quote tags that are not part of the document.
-  const head = (headEnd === -1 ? html : html.slice(0, headEnd)).replace(/<(script|style)\b[\s\S]*?<\/\1\s*>|<!--[\s\S]*?-->/gi, '')
-
+/**
+ * The tags search engines build a result from, and whether `</head>` was reached. The first of each
+ * tag wins, as it does for a crawler.
+ *
+ * One pass in document order: comments, scripts and styles are matched as whole tokens and skipped,
+ * so nothing they quote (a `<meta>` inside JSON-LD, a commented-out `<title>` or `</head>`) is read.
+ */
+function scanHead(html: string) {
+  let title: string | undefined
+  let canonical: string | undefined
+  let closed = false
   const meta: Record<string, string> = {}
-  for (const [tag] of head.matchAll(/<meta\b[^>]*>/gi)) {
-    const { name, property, content } = attributes(tag)
-    const key = (name ?? property)?.toLowerCase()
-    if (key && content !== undefined) meta[key] ??= content
+
+  for (const [token, , tag, titleText, headEnd] of html.matchAll(HEAD_TOKEN)) {
+    if (headEnd) {
+      closed = true
+      break
+    }
+    if (titleText !== undefined) {
+      title ??= decodeEntities(titleText).replace(/\s+/g, ' ').trim()
+    } else if (tag?.toLowerCase() === 'meta') {
+      const { name, property, content } = attributes(token)
+      const key = (name ?? property)?.toLowerCase()
+      if (key && content !== undefined) meta[key] ??= content
+    } else if (tag) {
+      const { rel, href } = attributes(token)
+      if (rel?.toLowerCase().split(/\s+/).includes('canonical')) canonical ??= href
+    }
   }
 
-  const canonical = [...head.matchAll(/<link\b[^>]*>/gi)]
-    .map(([tag]) => attributes(tag))
-    .find(link => link.rel?.toLowerCase().split(/\s+/).includes('canonical'))
-
-  const title = head.match(/<title\b[^>]*>([\s\S]*?)<\/title\s*>/i)?.[1]
-
   return {
-    title: title === undefined ? null : decodeEntities(title).replace(/\s+/g, ' ').trim(),
-    description: meta.description ?? null,
-    canonical: canonical?.href ?? null,
-    robots: meta.robots ?? null
+    closed,
+    tags: {
+      title: title ?? null,
+      description: meta.description ?? null,
+      canonical: canonical ?? null,
+      robots: meta.robots ?? null
+    }
   }
 }
 
-/** Reads the response until `</head>`, so a page's megabyte of body and payload is never downloaded. */
-async function readHead(response: Response): Promise<string> {
-  if (!response.body) return ''
+/** Reads the response until its head closes, so a page's megabyte of body and payload is never downloaded. */
+async function readHeadTags(response: Response) {
+  if (!response.body) return scanHead('').tags
   const reader = response.body.getReader()
   const decoder = new TextDecoder()
   let html = ''
   let bytes = 0
-  while (bytes < MAX_HEAD_BYTES && !HEAD_END.test(html)) {
+  while (true) {
     const { done, value } = await reader.read()
-    if (done) return html + decoder.decode()
-    bytes += value.byteLength
-    html += decoder.decode(value, { stream: true })
+    if (value) {
+      bytes += value.byteLength
+      html += decoder.decode(value, { stream: true })
+    }
+    const head = scanHead(html)
+    if (done || head.closed || bytes >= MAX_HEAD_BYTES) {
+      if (!done) await reader.cancel()
+      return head.tags
+    }
   }
-  await reader.cancel()
-  return html
 }
 
 async function fetchPage(url: URL): Promise<Response> {
@@ -127,7 +152,7 @@ NOTES: This is the live page; \`search-console-inspect-url\` gives Google's inde
 
       if (!target) {
         const isHtmlPage = response.ok && /^\s*(?:text\/html|application\/xhtml\+xml)\b/i.test(response.headers.get('content-type') ?? '')
-        const head = isHtmlPage ? parseHead(await readHead(response)) : { title: null, description: null, canonical: null, robots: null }
+        const head = isHtmlPage ? await readHeadTags(response) : scanHead('').tags
         if (!isHtmlPage) await response.body?.cancel()
         return {
           url: start.href,
