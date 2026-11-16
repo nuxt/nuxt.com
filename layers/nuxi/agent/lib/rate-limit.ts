@@ -12,7 +12,7 @@ export async function consumeDailyQuota(principalId: string, defaultLimit?: numb
     // consume route accepts the bearer secret alone for these callers.
     const response = await fetch(`${appOrigin()}/api/internal/agent/rate-limit/consume`, {
       method: 'POST',
-      headers: internalHeaders(),
+      headers: await internalHeaders(),
       body: JSON.stringify({ userId: principalId, defaultLimit })
     })
 

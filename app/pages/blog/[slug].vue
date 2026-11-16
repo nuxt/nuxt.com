@@ -106,6 +106,20 @@ const authorHandles: { twitter?: string, bluesky?: string } = {
   bluesky: authors.value[0]?.bluesky
 }
 
+if (import.meta.server) {
+  useSchemaOrg([
+    defineArticle({
+      '@type': 'BlogPosting',
+      'headline': articleData.value.title,
+      description,
+      'datePublished': articleData.value.date,
+      'image': articleData.value.image,
+      // Without authors the article falls back to the site identity (the Nuxt organization).
+      'author': authors.value.length ? authors.value.map(author => ({ name: author.name, url: author.to })) : undefined
+    })
+  ])
+}
+
 const socialLinks = computed<DropdownMenuItem[]>(() =>
   !articleData.value
     ? []

@@ -1,7 +1,6 @@
 import { describe, expect, it } from 'vitest'
-import { CONTENT_INSTANCE_KEYS, isContentInstanceKey, searchInstanceKeys } from '../../shared/utils/content'
-import { CURRENT_DOCS_VERSION } from '../../shared/utils/docs'
-import { hasBuildSnapshot, instanceSnapshotDir, SNAPSHOT_INSTANCE_KEYS } from '../../server/utils/content/snapshot'
+import { CONTENT_INSTANCE_KEYS } from '../../shared/utils/content'
+import { instanceSnapshotDir } from '../../server/utils/content/snapshot'
 import { instanceSource } from '../../server/utils/content/instances'
 
 /** Where an instance's artifacts land, the way the build writes them and the runtime reads them. */
@@ -22,34 +21,6 @@ describe('snapshot asset layout', () => {
       const dir = instanceSnapshotDir(key)
       expect(dir, key).not.toMatch(/^\/|\.\./)
       expect(dir, key).toBe(key.replace(':', '/'))
-    }
-  })
-})
-
-describe('SNAPSHOT_INSTANCE_KEYS', () => {
-  it('names only instances the site actually serves', () => {
-    expect(SNAPSHOT_INSTANCE_KEYS.length).toBeGreaterThan(0)
-    for (const key of SNAPSHOT_INSTANCE_KEYS) {
-      expect(isContentInstanceKey(key), key).toBe(true)
-      expect(CONTENT_INSTANCE_KEYS, key).toContain(key)
-    }
-  })
-
-  it('agrees with `hasBuildSnapshot`', () => {
-    for (const key of CONTENT_INSTANCE_KEYS) {
-      expect(hasBuildSnapshot(key), key).toBe(SNAPSHOT_INSTANCE_KEYS.includes(key))
-    }
-  })
-
-  it('ships the local site instance, whose content the build already holds', () => {
-    expect(SNAPSHOT_INSTANCE_KEYS).toContain('site')
-    expect(instanceSource('site').source.local).toBe(true)
-  })
-
-  it('ships every instance the current version\'s search palette hydrates from', () => {
-    // The browser worker's first hydration should not have to walk GitHub for any of them.
-    for (const key of searchInstanceKeys(CURRENT_DOCS_VERSION)) {
-      expect(SNAPSHOT_INSTANCE_KEYS, key).toContain(key)
     }
   })
 })

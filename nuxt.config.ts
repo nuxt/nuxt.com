@@ -588,6 +588,9 @@ export default defineNuxtConfig({
   },
   compatibilityDate: '2026-01-14',
   nitro: {
+    // Bundle the HTML tokenizer so unused parser code and package files are omitted.
+    // Entries match by prefix, so `parse5` also covers `parse5-sax-parser`.
+    externals: { inline: ['parse5', 'entities'] },
     experimental: {
       // `pnpm nuxters:sync` (server/tasks/nuxters/sync.ts)
       tasks: true

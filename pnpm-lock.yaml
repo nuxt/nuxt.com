@@ -314,8 +314,8 @@ importers:
         specifier: 2.0.1
         version: 2.0.1(patch_hash=2b377974f1a55a236275fd7de9361973b6acbfeea119d879ad64f3a9264ee1c7)
       comark-content:
-        specifier: ^0.6.0
-        version: 0.6.0(forges@0.3.2)(rangi@2.2.0)(shiki@4.6.0)(unstorage@1.17.6(@vercel/functions@3.11.1(@aws-sdk/credential-provider-web-identity@3.972.49)(ws@8.22.2))(db0@0.3.4(@libsql/client@0.18.0)(drizzle-orm@0.45.4(@cloudflare/workers-types@4.20260702.1)(@libsql/client@0.18.0)(@opentelemetry/api@1.10.0)))(ioredis@5.11.1(supports-color@8.1.1)))
+        specifier: ^0.6.2
+        version: 0.6.2(forges@0.3.2)(rangi@2.2.0)(shiki@4.6.0)(unstorage@1.17.6(@vercel/functions@3.11.1(@aws-sdk/credential-provider-web-identity@3.972.49)(ws@8.22.2))(db0@0.3.4(@libsql/client@0.18.0)(drizzle-orm@0.45.4(@cloudflare/workers-types@4.20260702.1)(@libsql/client@0.18.0)(@opentelemetry/api@1.10.0)))(ioredis@5.11.1(supports-color@8.1.1)))
       date-fns:
         specifier: ^4.4.0
         version: 4.4.0
@@ -364,6 +364,9 @@ importers:
       ofetch:
         specifier: ^1.5.1
         version: 1.5.1
+      parse5-sax-parser:
+        specifier: ^8.0.1
+        version: 8.0.1
       rangi:
         specifier: ^2.2.0
         version: 2.2.0
@@ -5843,8 +5846,8 @@ packages:
   colortranslator@5.0.0:
     resolution: {integrity: sha512-Z3UPUKasUVDFCDYAjP2fmlVRf1jFHJv1izAmPjiOa0OCIw1W7iC8PZ2GsoDa8uZv+mKyWopxxStT9q05+27h7w==}
 
-  comark-content@0.6.0:
-    resolution: {integrity: sha512-3W5TwelX17/20uuYYA1moHkUCUBS97d5Z+qrFyv4UwRPKtjapmN9kth49NuhItVp0RH6sV3Do+QhP5k4R6XtVg==}
+  comark-content@0.6.2:
+    resolution: {integrity: sha512-LqWmTQYHCHwlWolCVad0ErzBWNiJxQdWRC8m5+z/htOB6YrVpuIScCicoMh3Yk9tPnNWQyVQd5JL+sm9acqUFA==}
     hasBin: true
     peerDependencies:
       forges: ^0.3.0
@@ -6539,6 +6542,10 @@ packages:
   entities@7.0.1:
     resolution: {integrity: sha512-TWrgLOFUQTH994YUyl1yT4uyavY5nNB5muff+RtWaqNVCAK408b5ZnnbNAUEWLTCpum9w6arT70i1XdQ4UeOPA==}
     engines: {node: '>=0.12'}
+
+  entities@9.0.0:
+    resolution: {integrity: sha512-oJFNDJg3kTPwAD1cNn2+WmUq4wFoo09npc3Ydf1D7ED4smRiWrsKnaLxykrTWgyGEcusc87P5dxlAleol9kpkg==}
+    engines: {node: '>=20.19.0'}
 
   env-paths@2.2.1:
     resolution: {integrity: sha512-+h1lkLKhZMTYjog1VEpJNG7NZJWcuc2DDk/qsqSTRRCOXiLjeQ1d1/udrUGhqMxUgAlwKNZ0cf2uqan5GLuS2A==}
@@ -8936,6 +8943,12 @@ packages:
 
   parse-statements@1.0.11:
     resolution: {integrity: sha512-HlsyYdMBnbPQ9Jr/VgJ1YF4scnldvJpJxCVx6KgqPL4dxppsWrJHCIIxQXMJrqGnsRkNPATbeMJ8Yxu7JMsYcA==}
+
+  parse5-sax-parser@8.0.1:
+    resolution: {integrity: sha512-6eHc4FeWwv8uBX1yMZ8Vl5zcT61k8EpK/rgRwNl/BLY4pOkUqXI1RIwGSIvxyBXzl5TGj4TvIQBJGwTU4P+ddg==}
+
+  parse5@8.1.1:
+    resolution: {integrity: sha512-EcR/6WDcU7b2N3vQSxKALCk9lXGtUMQxXio008OEMBE0kavu/7JLfBEeFPzi43nMqVDSbEn3QCK+BMCc9zO//w==}
 
   parseurl@1.3.3:
     resolution: {integrity: sha512-CiyeOxFT/JZyN5m0z9PfXw4SCBJ6Sygz1Dpl0wqjlhDEGGBP1GnsUVEL0p63hoG1fcj3fHynXi9NYO4nWOL+qQ==}
@@ -16821,7 +16834,7 @@ snapshots:
 
   colortranslator@5.0.0: {}
 
-  comark-content@0.6.0(forges@0.3.2)(rangi@2.2.0)(shiki@4.6.0)(unstorage@1.17.6(@vercel/functions@3.11.1(@aws-sdk/credential-provider-web-identity@3.972.49)(ws@8.22.2))(db0@0.3.4(@libsql/client@0.18.0)(drizzle-orm@0.45.4(@cloudflare/workers-types@4.20260702.1)(@libsql/client@0.18.0)(@opentelemetry/api@1.10.0)))(ioredis@5.11.1(supports-color@8.1.1))):
+  comark-content@0.6.2(forges@0.3.2)(rangi@2.2.0)(shiki@4.6.0)(unstorage@1.17.6(@vercel/functions@3.11.1(@aws-sdk/credential-provider-web-identity@3.972.49)(ws@8.22.2))(db0@0.3.4(@libsql/client@0.18.0)(drizzle-orm@0.45.4(@cloudflare/workers-types@4.20260702.1)(@libsql/client@0.18.0)(@opentelemetry/api@1.10.0)))(ioredis@5.11.1(supports-color@8.1.1))):
     dependencies:
       comark: 0.9.0(rangi@2.2.0)(shiki@4.6.0)
       hookable: 6.1.2
@@ -17364,6 +17377,8 @@ snapshots:
   entities@4.5.0: {}
 
   entities@7.0.1: {}
+
+  entities@9.0.0: {}
 
   env-paths@2.2.1: {}
 
@@ -20565,6 +20580,14 @@ snapshots:
   parse-ms@4.0.0: {}
 
   parse-statements@1.0.11: {}
+
+  parse5-sax-parser@8.0.1:
+    dependencies:
+      parse5: 8.1.1
+
+  parse5@8.1.1:
+    dependencies:
+      entities: 9.0.0
 
   parseurl@1.3.3: {}
 

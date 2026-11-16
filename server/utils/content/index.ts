@@ -1,7 +1,7 @@
 import type { ComarkContent, ParsedSource, Source } from 'comark-content'
 import { withSnapshot } from 'comark-content/sources/snapshot'
 import { createInstanceSource, createRuntimeInstance } from '../../../utils/factory'
-import { hasBuildSnapshot, instanceSnapshotDir, SNAPSHOT_ASSET_BASE } from './snapshot'
+import { instanceSnapshotDir, SNAPSHOT_ASSET_BASE } from './snapshot'
 import type { ContentInstanceKey } from '#shared/utils/content'
 
 const assets = () => useStorage(`assets:${SNAPSHOT_ASSET_BASE}`)
@@ -10,7 +10,7 @@ const assets = () => useStorage(`assets:${SNAPSHOT_ASSET_BASE}`)
  * Read one artifact `modules/snapshot/` wrote into the function bundle.
  *
  * Untyped: unstorage runs every value through `destr`, so this arrives already parsed.
- * A deployment that shipped no snapshot has no asset, and `null` sends comark to the origin.
+ * An instance whose snapshot the build could not write has no asset, and `null` sends comark to the origin.
  * A read that *fails* is a bug, but not one worth failing the instance over.
  */
 async function readArtifact(key: ContentInstanceKey, name: string, file: string): Promise<unknown> {
@@ -29,7 +29,7 @@ async function readArtifact(key: ContentInstanceKey, name: string, file: string)
 }
 
 /**
- * The source `key` reads, wrapped with the build snapshot when this deployment ships one.
+ * The source `key` reads, wrapped with the build snapshot this deployment ships for it.
  * Unpinned: `withRef(sha)` on the instance built from it pins the commit.
  *
  * The raw source stays the authority: per-file reads, `refresh()` and `watch()` all go to it.
@@ -45,7 +45,7 @@ export function instanceSourceFor(key: ContentInstanceKey, { remote = false } = 
   })
 
   // Dev reads the working tree, which `watch()` follows: no snapshot exists, and none would help.
-  if (import.meta.dev || !hasBuildSnapshot(key)) return raw
+  if (import.meta.dev) return raw
 
   // Full snapshot first, then the body-free index that lets a cold start skip downloading bodies.
   return withSnapshot(

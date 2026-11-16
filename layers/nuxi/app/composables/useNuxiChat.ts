@@ -18,6 +18,7 @@ import { hasVisibleParts } from './eve/adapter'
 import { useEveChat } from './eve/useEveChat'
 import type { EveChatFinish } from './eve/useEveChat'
 import { usePasteAttachment } from './usePasteAttachment'
+import { useNuxiPreview } from './useNuxiPreview'
 
 export type NuxiChatSendInput = string | { parts: UIMessage['parts'], persist?: boolean }
 
@@ -354,13 +355,16 @@ export function useNuxiChat(options: UseNuxiChatOptions) {
     return rows
   })
 
+  const livePreview = useLivePreview()
+
   const eveChat = useEveChat({
     initialMessages: seedMessages,
     sessionCursor: options.data?.value?.sessionCursor ?? options.sessionCursor ?? null,
     headers: buildEveHeaders(options.chatId),
-    clientContext: () => useContext.value && agent.currentPage.value
-      ? `Current page: ${agent.currentPage.value}`
-      : undefined,
+    clientContext: () => [
+      useContext.value && agent.currentPage.value ? `Current page: ${agent.currentPage.value}` : undefined,
+      livePreview.clientContext()
+    ].filter(Boolean).join('\n') || undefined,
     onFinish: createChatSyncHandler({
       chatId: () => chatId.value,
       loggedIn: () => loggedIn.value,
@@ -371,6 +375,8 @@ export function useNuxiChat(options: UseNuxiChatOptions) {
       onFinish: options.onFinish
     })
   })
+
+  useNuxiPreview(eveChat)
 
   // The server can stop a turn at the daily limit; resync so the limit banner shows.
   watch(() => eveChat.status, (status, previous) => {

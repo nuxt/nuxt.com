@@ -77,6 +77,13 @@ export type PreviewEvent
     | { type: 'url', url: string }
     | { type: 'error', message: string }
 
+/** One line of the `POST /api/templates/preview/:id/edit` NDJSON stream, while `nuxt dev` starts next to the preview's production build. */
+export type PreviewEditEvent
+  = | { type: 'started' }
+    /** `nuxt dev` serves and has bundled the app's pages, so the page can swap over. */
+    | { type: 'ready', url: string }
+    | { type: 'error', message: string }
+
 /** What nuxt.com reads from a template's repository and its nightly preview build, so listings stay current without manual edits. */
 export interface TemplateHealth {
   /** The `nuxt` range in `package.json`, e.g. `^4.2.0`. */
