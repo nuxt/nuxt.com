@@ -72,7 +72,8 @@ export type PreviewStep = 'restored' | 'serving'
 /** One line of the `POST /api/templates/preview` NDJSON stream. */
 export type PreviewEvent
   = | { type: 'step', step: PreviewStep }
-    | { type: 'ready', id: string, url: string }
+    /** `expiresAt` is when the sandbox stops, in milliseconds since the epoch. */
+    | { type: 'ready', id: string, url: string, expiresAt: number }
     /** The app moved to another server of the same sandbox. The page loads it out of sight and swaps over once it mounts. */
     | { type: 'url', url: string }
     | { type: 'error', message: string }

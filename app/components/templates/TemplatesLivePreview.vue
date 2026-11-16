@@ -10,6 +10,7 @@ const props = defineProps<{
 const emit = defineEmits<{
   url: [url: string | undefined]
   status: [status: LivePreviewStatus, readyIn?: number]
+  expires: [expiresAt: number]
 }>()
 
 const STEPS: Array<{ key: PreviewStep | 'mounted', pending: string, done: string }> = [
@@ -81,6 +82,7 @@ function handle(data: PreviewEvent) {
   shown.value = { id: ++frameIds, url: data.url, src: data.url }
   status.value = 'mounting'
   emit('url', data.url)
+  emit('expires', data.expiresAt)
 }
 
 async function start() {

@@ -53,26 +53,50 @@ const livePage = computed(() => liveUrl.value && `${liveUrl.value}${livePreview.
 const address = computed(() => (live.value ? livePage.value || 'Starting the preview…' : props.template.demo || templateRepoUrl(props.template))?.replace(/^https?:\/\//, '').replace(/\/$/, ''))
 const openUrl = computed(() => live.value ? livePage.value : props.template.demo)
 
-const startedAt = ref(0)
+/** When the sandbox stops: an estimate until the server reports it, then moved by each extension. */
+const expiresAt = ref(0)
+const canExtend = ref(true)
+const extending = ref(false)
 const now = useNow({ interval: 1000 })
-const remaining = computed(() => Math.max(0, PREVIEW_TIMEOUT_MS - (now.value.getTime() - startedAt.value)))
+const remaining = computed(() => Math.max(0, expiresAt.value - now.value.getTime()))
 const countdown = computed(() => {
   const seconds = Math.ceil(remaining.value / 1000)
   return `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, '0')}`
 })
 watch(remaining, value => live.value && value === 0 && stop())
 
+function resetTimer() {
+  expiresAt.value = Date.now() + PREVIEW_TIMEOUT_MS
+  canExtend.value = true
+}
+
 function start() {
   track('Template Action', { template: props.template.name, action: 'Try Live Preview' })
-  startedAt.value = Date.now()
+  resetTimer()
   live.value = true
 }
 
 function onStatus(value: LivePreviewStatus, ms?: number) {
   // "Try Again" boots a new sandbox, with a new timeout.
-  if (value === 'booting') startedAt.value = Date.now()
+  if (value === 'booting') resetTimer()
   status.value = value
   if (ms) readyIn.value = ms
+}
+
+async function extend() {
+  if (!livePreview.value || extending.value) return
+  extending.value = true
+  try {
+    const result = await $fetch<{ expiresAt: number, canExtend: boolean }>(`/api/templates/preview/${livePreview.value.id}/extend`, { method: 'POST' })
+    expiresAt.value = result.expiresAt
+    canExtend.value = result.canExtend
+    track('Template Action', { template: props.template.name, action: 'Extend Live Preview' })
+  } catch (error: any) {
+    if (error?.statusCode === 409) canExtend.value = false
+    toast.add({ title: 'Could not extend the preview', description: error?.data?.message || 'Please try again.', color: 'error' })
+  } finally {
+    extending.value = false
+  }
 }
 
 function stop() {
@@ -99,10 +123,24 @@ function stop() {
           <span class="font-medium text-highlighted">{{ status === 'live' ? 'Live' : status === 'failed' ? 'Stopped' : 'Starting' }}</span>
           <UTooltip
             v-if="status === 'live'"
-            :text="`${readyIn ? `Ready in ${(readyIn / 1000).toFixed(1)}s. ` : ''}This preview closes on its own after ${PREVIEW_TIMEOUT_MS / 60_000} minutes.`"
+            :text="`${readyIn ? `Ready in ${(readyIn / 1000).toFixed(1)}s. ` : ''}This preview closes on its own when the timer runs out.`"
             :ui="{ content: 'max-w-xs h-auto py-1.5', text: 'whitespace-normal text-pretty' }"
           >
             <span class="hidden sm:inline font-mono text-muted tabular-nums cursor-default" :class="remaining < 60_000 && 'text-warning'">{{ countdown }} left</span>
+          </UTooltip>
+          <UTooltip v-if="status === 'live' && canExtend" :text="`Add ${PREVIEW_TIMEOUT_MS / 60_000} minutes`">
+            <UButton
+              icon="i-lucide-clock-plus"
+              :aria-label="`Keep the preview running ${PREVIEW_TIMEOUT_MS / 60_000} minutes longer`"
+              color="neutral"
+              variant="ghost"
+              size="xs"
+              class="hidden sm:inline-flex size-6 justify-center text-dimmed hover:text-muted"
+              :class="remaining < 60_000 && 'text-warning hover:text-warning'"
+              :ui="{ leadingIcon: 'size-3.5' }"
+              :loading="extending"
+              @click="extend"
+            />
           </UTooltip>
         </template>
       </div>
@@ -216,7 +254,7 @@ function stop() {
           :class="device === 'mobile' ? 'w-[390px] max-w-full border-x border-default' : 'w-full'"
         >
           <NuxtErrorBoundary @error="onStatus('failed')">
-            <LazyTemplatesLivePreview :template="template" @url="liveUrl = $event" @status="onStatus" />
+            <LazyTemplatesLivePreview :template="template" @url="liveUrl = $event" @status="onStatus" @expires="expiresAt = $event" />
             <template #error>
               <div class="absolute inset-0 flex flex-col items-center justify-center gap-3 p-6" role="alert">
                 <p class="text-sm text-highlighted">

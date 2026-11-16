@@ -26,8 +26,15 @@ export const CURRENT_NUXT_MAJOR = 4
 
 export const SITE_URL = 'https://nuxt.com'
 
-/** How long a live preview sandbox runs before Vercel stops it. */
+/** How long a live preview sandbox runs before Vercel stops it, and how much each extension adds. */
 export const PREVIEW_TIMEOUT_MS = 10 * 60 * 1000
+
+/** The longest a live preview can run with extensions, from when it started. */
+export const PREVIEW_MAX_LIFETIME_MS = 30 * 60 * 1000
+
+/** Admins work on templates: their previews start with longer and can run longer. */
+export const PREVIEW_ADMIN_TIMEOUT_MS = 30 * 60 * 1000
+export const PREVIEW_ADMIN_MAX_LIFETIME_MS = 2 * 60 * 60 * 1000
 
 export function isStarter(template: Pick<Template, 'kind'>): boolean {
   return template.kind === 'starter'
