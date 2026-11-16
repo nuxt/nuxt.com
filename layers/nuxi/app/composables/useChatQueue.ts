@@ -16,16 +16,20 @@ export function useChatQueue(options: {
   status: () => AgentChatStatus
   /** Whether a message can be sent at all, e.g. not at the daily limit. */
   canSend: () => boolean
-  send: (item: ChatQueueItem) => void
+  /** May save the message before the chat starts answering; nothing else is sent until it settles. */
+  send: (item: ChatQueueItem) => void | Promise<void>
   stop: () => void
   input: Ref<string>
   attachments: Ref<TextPasteAttachment[]>
 }) {
   const queue = ref<ChatQueueItem[]>([])
   const sent = new WeakSet<ChatQueueItem>()
-  const isBusy = () => options.status() === 'submitted' || options.status() === 'streaming'
+  let sending = false
+  /** The answer ended while its message was still being sent, so the next one waits for that send to settle. */
+  let readyWhileSending = false
+  const isAnswering = () => options.status() === 'submitted' || options.status() === 'streaming'
 
-  watch(queue, (next, previous) => {
+  watch([queue, options.input], ([next, input], [previous, previousInput]) => {
     for (const item of next) {
       if (previous.includes(item) || item.attachments) continue
       item.attachments = options.attachments.value
@@ -33,24 +37,36 @@ export function useChatQueue(options: {
     }
     for (const item of previous) {
       if (next.includes(item) || sent.has(toRaw(item)) || !item.attachments?.length) continue
-      // Moved into the prompt to edit it: the prompt now holds its text.
-      if (options.input.value.includes(item.text)) options.attachments.value = [...item.attachments, ...options.attachments.value]
+      // `UChatPrompt` edits a message by taking it out of the queue and putting its text before the draft, in one go.
+      const edited = input === [item.text, previousInput].filter(Boolean).join('\n')
+      if (edited) options.attachments.value = [...item.attachments, ...options.attachments.value]
     }
   })
 
   function sendNext() {
     const [item, ...rest] = queue.value
-    if (!item || isBusy() || options.status() === 'error' || !options.canSend()) return
+    if (!item || sending || isAnswering() || options.status() === 'error' || !options.canSend()) return
     sent.add(toRaw(item))
     queue.value = rest
-    options.send(item)
+    sending = true
+    void Promise.resolve(options.send(item)).finally(() => {
+      sending = false
+      if (readyWhileSending) sendNext()
+      readyWhileSending = false
+    })
   }
 
-  watch(options.status, status => status === 'ready' && sendNext())
+  watch(options.status, (status) => {
+    if (status !== 'ready') return
+    if (sending) readyWhileSending = true
+    else sendNext()
+  })
 
   /** "Send now" moved the message to the front. */
   function onSend() {
-    if (isBusy()) options.stop()
+    // The message being sent goes first anyway; the picked one is next.
+    if (sending) return
+    if (isAnswering()) options.stop()
     else sendNext()
   }
 

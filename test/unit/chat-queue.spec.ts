@@ -13,10 +13,15 @@ function setup(initial: AgentChatStatus = 'streaming') {
   const attachments = ref<TextPasteAttachment[]>([])
   const sent: ChatQueueItem[] = []
   const stop = vi.fn()
+  // Set to make each send wait, like a logged-in send that saves the message before the chat answers.
+  let saving: Promise<void> | undefined
   const chat = effectScope().run(() => useChatQueue({
     status: () => status.value,
     canSend: () => canSend.value,
-    send: item => sent.push(item),
+    send: (item) => {
+      sent.push(item)
+      return saving
+    },
     stop,
     input,
     attachments
@@ -31,7 +36,16 @@ function setup(initial: AgentChatStatus = 'streaming') {
     status.value = value
     await nextTick()
   }
-  return { ...chat, status, canSend, input, attachments, sent, stop, submit, setStatus }
+  const holdSends = () => {
+    let release!: () => void
+    saving = new Promise(resolve => release = resolve)
+    return async () => {
+      saving = undefined
+      release()
+      await new Promise(resolve => setTimeout(resolve))
+    }
+  }
+  return { ...chat, status, canSend, input, attachments, sent, stop, submit, setStatus, holdSends }
 }
 
 describe('chat queue', () => {
@@ -117,9 +131,47 @@ describe('chat queue', () => {
     await nextTick()
     expect(chat.attachments.value).toEqual([snippet])
 
+    // Remove, while the draft happens to hold its text: the attachment doesn't come back.
     chat.attachments.value = []
+    chat.input.value = 'remove me, and more'
+    await nextTick()
     chat.queue.value = []
     await nextTick()
     expect(chat.attachments.value).toEqual([])
+  })
+
+  it('sends nothing else while a message is still being saved', async () => {
+    const chat = setup('ready')
+    await chat.submit('first')
+    await chat.submit('second')
+    const release = chat.holdSends()
+
+    chat.onSend()
+    expect(chat.sent.map(item => item.text)).toEqual(['first'])
+    // The chat is still `ready` while the first message saves: "send now" must not send the second one too.
+    chat.onSend()
+    expect(chat.sent).toHaveLength(1)
+    expect(chat.stop).not.toHaveBeenCalled()
+
+    // Saved: the chat answers, and the second one goes once that answer ends.
+    await release()
+    expect(chat.sent).toHaveLength(1)
+    await chat.setStatus('streaming')
+    await chat.setStatus('ready')
+    expect(chat.sent.map(item => item.text)).toEqual(['first', 'second'])
+  })
+
+  it('sends the next message when the answer ends before its send settles', async () => {
+    const chat = setup('ready')
+    await chat.submit('first')
+    await chat.submit('second')
+    const release = chat.holdSends()
+    chat.onSend()
+
+    await chat.setStatus('streaming')
+    await chat.setStatus('ready')
+    expect(chat.sent).toHaveLength(1)
+    await release()
+    expect(chat.sent.map(item => item.text)).toEqual(['first', 'second'])
   })
 })
