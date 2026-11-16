@@ -9,12 +9,16 @@ const USER_AGENT = 'Mozilla/5.0 (compatible; NuxtAdminMCP/1.0; +https://nuxt.com
 
 /** The rest of an opening tag. A `>` inside a quoted attribute value does not end it. */
 const TAG_REST = String.raw`(?:[^>"']|"[^"]*"|'[^']*')*>`
+/** A comment or a script/style block (running to the end of the input when unterminated), a `<meta>` or `<link>` tag (group 2), or a `<title>` with its text (group 3). */
+const HEAD_CONTENT = String.raw`<!--[\s\S]*?(?:-->|$)|<(script|style)\b[\s\S]*?(?:<\/\1\s*>|$)|<(meta|link)\b${TAG_REST}|<title\b${TAG_REST}([\s\S]*?)<\/title\s*>`
+/** One token of the document head: its content, or `</head>` (group 4). */
+const HEAD_TOKEN = new RegExp(String.raw`${HEAD_CONTENT}|(<\/head\s*>)`, 'gi')
 /**
- * One token of the document head: a comment or a script/style block (running to the end of the input
- * when unterminated), a `<meta>` or `<link>` tag (group 2), a `<title>` with its text (group 3), or
- * `</head>` (group 4).
+ * The same, for a document that is still arriving. A `<meta>`, `<link>` or `<title>` cut off by the end
+ * of the input takes the rest of it, so a `</head>` quoted in its unfinished attribute or text is not
+ * read as the end of the head.
  */
-const HEAD_TOKEN = new RegExp(String.raw`<!--[\s\S]*?(?:-->|$)|<(script|style)\b[\s\S]*?(?:<\/\1\s*>|$)|<(meta|link)\b${TAG_REST}|<title\b${TAG_REST}([\s\S]*?)<\/title\s*>|(<\/head\s*>)`, 'gi')
+const PARTIAL_HEAD_TOKEN = new RegExp(String.raw`${HEAD_CONTENT}|<(?:meta|link|title)\b[\s\S]*$|(<\/head\s*>)`, 'gi')
 const NAMED_ENTITIES: Record<string, string> = { amp: '&', lt: '<', gt: '>', quot: '"', apos: '\'', nbsp: ' ' }
 
 type Redirect = { from: string, status: number, to: string }
@@ -50,13 +54,13 @@ function attributes(tag: string): Record<string, string> {
  * One pass in document order: comments, scripts and styles are matched as whole tokens and skipped,
  * so nothing they quote (a `<meta>` inside JSON-LD, a commented-out `<title>` or `</head>`) is read.
  */
-function scanHead(html: string) {
+function scanHead(html: string, partial = false) {
   let title: string | undefined
   let canonical: string | undefined
   let closed = false
   const meta: Record<string, string> = {}
 
-  for (const [token, , tag, titleText, headEnd] of html.matchAll(HEAD_TOKEN)) {
+  for (const [token, , tag, titleText, headEnd] of html.matchAll(partial ? PARTIAL_HEAD_TOKEN : HEAD_TOKEN)) {
     if (headEnd) {
       closed = true
       break
@@ -97,8 +101,10 @@ async function readHeadTags(response: Response) {
       bytes += value.byteLength
       html += decoder.decode(value, { stream: true })
     }
-    const head = scanHead(html)
-    if (done || head.closed || bytes >= MAX_HEAD_BYTES) {
+    // At the end of what will be read, a tag that never closes is skipped instead of waited for.
+    const complete = done || bytes >= MAX_HEAD_BYTES
+    const head = scanHead(html, !complete)
+    if (complete || head.closed) {
       if (!done) await reader.cancel()
       return head.tags
     }

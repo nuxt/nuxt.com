@@ -99,8 +99,12 @@ describe('admin page-head tool', () => {
     expect(fetchMock).toHaveBeenCalledTimes(5)
   })
 
-  it('keeps reading when a chunk ends inside a comment that quotes the end of the head', async () => {
-    const chunks = ['<html><head><!-- old markup: </head>', ' --><title>Live title</title></head>', '<body><title>Never read</title></body></html>']
+  it.each([
+    ['a comment', ['<html><head><!-- old markup: </head>', ' --><title>Live title</title></head>'], { title: 'Live title' }],
+    ['an attribute value', ['<html><head><meta name="description" content="What does </head>', ' do?"><title>Live title</title></head>'], { title: 'Live title', description: 'What does </head> do?' }],
+    ['a title', ['<html><head><title>Closing </head>', ' tags</title><meta name="robots" content="noindex"></head>'], { title: 'Closing </head> tags', robots: 'noindex' }]
+  ])('keeps reading when a chunk ends inside %s that quotes the end of the head', async (_where, head, tags) => {
+    const chunks = [...head, '<body><title>Never read</title></body></html>']
     let sent = 0
     const body = new ReadableStream<Uint8Array>({
       pull(controller) {
@@ -110,9 +114,16 @@ describe('admin page-head tool', () => {
     }, { highWaterMark: 0 })
     serve({ 'https://nuxt.com/changelog': () => new Response(body, { headers: { 'content-type': 'text/html' } }) })
 
-    await expect(pageHead.handler({ url: '/changelog' })).resolves.toMatchObject({ status: 200, title: 'Live title' })
+    await expect(pageHead.handler({ url: '/changelog' })).resolves.toMatchObject({ status: 200, ...tags })
     // The body is left unread once the head has closed
     expect(sent).toBe(2)
+  })
+
+  it('still reads the tags after a tag that never closes', async () => {
+    const html = '<html><head><meta name="generator" content=it\'s><title>Live title</title></head><body></body></html>'
+    serve({ 'https://nuxt.com/changelog': () => new Response(html, { headers: { 'content-type': 'text/html' } }) })
+
+    await expect(pageHead.handler({ url: '/changelog' })).resolves.toMatchObject({ status: 200, title: 'Live title' })
   })
 
   it('returns the status without tags when the page does not exist', async () => {
