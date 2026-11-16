@@ -84,16 +84,31 @@ jobs:
           token=$(curl -sSf -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" "$ACTIONS_ID_TOKEN_REQUEST_URL" | jq -r .value)
           echo "::add-mask::$token"
           echo "token=$token" >> "$GITHUB_OUTPUT"
-      # Lighthouse copies its settings, the header included, into the public report: the token has expired by then.
-      - name: Audit URLs using Lighthouse
-        uses: treosh/lighthouse-ci-action@3e7e23fb74242897f95c0ba9cabad3d0227b9b18 # v12
-        with:
-          urls: ${{ github.event.inputs.url || github.event.deployment_status.environment_url }}
-          uploadArtifacts: true
-          temporaryPublicStorage: true
+      - name: Audit the URL with Lighthouse
+        run: npx --yes @lhci/cli@0.15.1 collect --url="$URL" --numberOfRuns=1
+        env:
+          URL: ${{ github.event.inputs.url || github.event.deployment_status.environment_url }}
+          LHCI_COLLECT__SETTINGS__EXTRA_HEADERS: '{"x-vercel-trusted-oidc-idp-token":"${{ steps.oidc.outputs.token }}"}'
+      # Lighthouse copies its settings, the header included, into the report, and the token is still valid for a few
+      # minutes: drop it before the report goes public. The upload regenerates the HTML report from the JSON.
+      - name: Remove the OIDC token from the report
+        run: |
+          for lhr in .lighthouseci/lhr-*.json; do
+            jq 'del(.configSettings.extraHeaders)' "$lhr" > "$lhr.tmp" && mv "$lhr.tmp" "$lhr"
+          done
+          rm .lighthouseci/lhr-*.html
+          ! grep -rqF "$TOKEN" .lighthouseci
+        env:
+          TOKEN: ${{ steps.oidc.outputs.token }}
+      - name: Upload the report
+        run: npx --yes @lhci/cli@0.15.1 upload --target=temporary-public-storage
         env:
           LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
-          LHCI_COLLECT__SETTINGS__EXTRA_HEADERS: '{"x-vercel-trusted-oidc-idp-token":"${{ steps.oidc.outputs.token }}"}'
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: lighthouse-results
+          path: .lighthouseci
+          include-hidden-files: true
 
   warmup:
     needs: trusted
