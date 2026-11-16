@@ -2,7 +2,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest'
 
 vi.mock('eve/tools', () => ({ defineDynamic: (value: unknown) => value, defineTool: (value: unknown) => value }))
 vi.mock('eve/connections', () => ({ defineMcpClientConnection: (value: unknown) => value }))
-vi.mock('../../layers/nuxi/agent/lib/internal-api', () => ({ internalFetch: vi.fn(), appOrigin: () => 'https://nuxt.com' }))
+vi.mock('../../layers/nuxi/agent/lib/internal-api', () => ({ internalFetch: vi.fn(), appOrigin: () => 'https://nuxt.com', selfAccessHeaders: () => ({}) }))
 
 const { internalFetch } = await import('../../layers/nuxi/agent/lib/internal-api')
 const discovery = (await import('../../layers/nuxi/agent/tools/discover_showcase_candidates')).default as any

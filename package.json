@@ -70,6 +70,7 @@
     "@vercel/connect": "^2.9.0",
     "@vercel/functions": "^3.11.0",
     "@vercel/global-config": "^1.5.1",
+    "@vercel/oidc": "^4.0.8",
     "@vercel/otel": "^2.3.0",
     "@vercel/sandbox": "^3.9.1",
     "@vercel/speed-insights": "^2.1.0",
