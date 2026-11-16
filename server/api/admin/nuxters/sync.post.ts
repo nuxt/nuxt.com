@@ -11,10 +11,7 @@ import { syncNuxtersWorkflow } from '../../../workflows/sync-nuxters'
  *   await $fetch('/api/admin/nuxters/sync', { method: 'POST', body: { force: true } })
  */
 export default defineEventHandler(async (event) => {
-  const { user } = await requireUserSession(event)
-  if (user.role !== 'admin') {
-    throw createError({ statusCode: 403, statusMessage: 'Admin access required' })
-  }
+  const { user } = await requireAdminUserSession(event)
 
   const { sha, force } = await readValidatedBody(event, z.object({
     sha: z.string().regex(/^[0-9a-f]{40}$/i).optional(),

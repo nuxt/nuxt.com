@@ -38,7 +38,13 @@ describe('admin template check controls', () => {
     vi.stubGlobal('defineEventHandler', (handler: unknown) => handler)
     vi.stubGlobal('createError', createError)
     vi.stubGlobal('requireUserSession', session)
-    vi.stubGlobal('isAuthorizedAdmin', authorized)
+    vi.stubGlobal('requireAdminUserSession', async (event: unknown) => {
+      const result = await session(event)
+      if (result.user.role !== 'admin' || !(await authorized(event, result.user.username))) {
+        throw createError({ statusCode: 403 })
+      }
+      return result
+    })
     vi.stubGlobal('getValidatedRouterParams', (_event: unknown, parse: (value: unknown) => unknown) => parse({ slug: 'minimal' }))
     vi.stubGlobal('startTemplateChecks', start)
     vi.stubGlobal('getActiveTemplateCheckRuns', activeRuns)
