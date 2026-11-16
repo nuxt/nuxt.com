@@ -47,7 +47,10 @@ export default defineCachedEventHandler(async (event) => {
 }, {
   // Bumped when the payload changes: `modules:v6` entries carry README images linked to github.com `blob/` pages.
   name: 'modules:v7',
-  getKey: event => event.context.params!.name!,
+  // Nitro strips non-word characters from the key: `sitemap.` would read the `sitemap` entry, and `colormode`
+  // the `color-mode` one. Registry names are `[a-z0-9-]`: anything else skips the cache (and 404s), and `-` is kept as `_`.
+  shouldBypassCache: event => !/^[a-z0-9-]+$/.test(event.context.params!.name!),
+  getKey: event => event.context.params!.name!.replaceAll('-', '_'),
   swr: true,
   maxAge: 60 * 60 // 1 hour
 })
