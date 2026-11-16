@@ -25,7 +25,7 @@ jobs:
       - id: check
         run: |
           if [ "$EVENT_NAME" = workflow_dispatch ] || [ "$ENVIRONMENT" = Production ] ||
-            [ "$(gh api "repos/$GITHUB_REPOSITORY/commits/$SHA/branches-where-head" --jq length)" != 0 ]; then
+            [ "$(gh api "repos/$GITHUB_REPOSITORY/commits/$SHA/branches-where-head" --jq length)" -gt 0 ]; then
             echo trusted=true >> "$GITHUB_OUTPUT"
           fi
         env:
@@ -56,7 +56,8 @@ jobs:
       - name: Get the OIDC token
         id: oidc
         run: |
-          token=$(curl -sSf -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" "$ACTIONS_ID_TOKEN_REQUEST_URL" | jq -r .value)
+          token=$(curl -sSf -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" "$ACTIONS_ID_TOKEN_REQUEST_URL" | jq -er .value)
+          test -n "$token"
           echo "::add-mask::$token"
           echo "token=$token" >> "$GITHUB_OUTPUT"
       - name: Run Playwright E2E tests
@@ -81,7 +82,8 @@ jobs:
       - name: Get the OIDC token
         id: oidc
         run: |
-          token=$(curl -sSf -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" "$ACTIONS_ID_TOKEN_REQUEST_URL" | jq -r .value)
+          token=$(curl -sSf -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" "$ACTIONS_ID_TOKEN_REQUEST_URL" | jq -er .value)
+          test -n "$token"
           echo "::add-mask::$token"
           echo "token=$token" >> "$GITHUB_OUTPUT"
       - name: Audit the URL with Lighthouse
@@ -124,7 +126,8 @@ jobs:
       - name: Get the OIDC token
         id: oidc
         run: |
-          token=$(curl -sSf -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" "$ACTIONS_ID_TOKEN_REQUEST_URL" | jq -r .value)
+          token=$(curl -sSf -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" "$ACTIONS_ID_TOKEN_REQUEST_URL" | jq -er .value)
+          test -n "$token"
           echo "::add-mask::$token"
           echo "token=$token" >> "$GITHUB_OUTPUT"
       - name: warmup jobs, sponsors and modules

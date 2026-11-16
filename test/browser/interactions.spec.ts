@@ -1,4 +1,4 @@
-import { expect, test } from '@nuxt/test-utils/playwright'
+import { expect, test } from './fixtures'
 
 test.describe('User Interactions', () => {
   test('CTA buttons on homepage navigate correctly', async ({ page, goto }) => {
