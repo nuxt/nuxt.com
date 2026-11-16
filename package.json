@@ -98,6 +98,7 @@
     "nuxt-schema-org": "^7.0.1",
     "nuxt-workers": "^0.1.0",
     "ofetch": "^1.5.1",
+    "parse5-sax-parser": "^8.0.1",
     "rangi": "^2.2.0",
     "resend": "^6.37.0",
     "scule": "^1.3.0",
