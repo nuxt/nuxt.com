@@ -28,7 +28,7 @@ export interface Decision {
 export const Review = z.object({
   category: z.enum(CATEGORIES),
   priority: z.enum(PRIORITIES),
-  summary: z.string().min(1).max(240),
+  summary: z.string().min(1).max(240)
 })
 export type Review = z.infer<typeof Review>
 

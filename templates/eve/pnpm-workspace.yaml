@@ -1,0 +1,10 @@
+minimumReleaseAgeExclude:
+  - eve@1.0.0
+  - just-bash@3.6.1
+overrides:
+  # just-bash's optional zstd and xz codecs: native builds the eve dev sandbox doesn't need
+  "just-bash>@mongodb-js/zstd": "-"
+  "just-bash>node-liblzma": "-"
+
+allowBuilds:
+  esbuild: false

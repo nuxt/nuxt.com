@@ -17,7 +17,7 @@ export default defineWorkflowTool({
       number: issue.number,
       title: issue.title,
       ...decisions[index]!,
-      status: decisions[index]!.confidence >= CONFIDENCE_THRESHOLD ? 'decided' : 'reviewing',
+      status: decisions[index]!.confidence >= CONFIDENCE_THRESHOLD ? 'decided' : 'reviewing'
     }))
     yield { issues: rows }
 
@@ -26,7 +26,7 @@ export default defineWorkflowTool({
     const reviews = await Promise.all(unsure.map(async (issue) => {
       const turn = await ctx.agent('reviewer').send(JSON.stringify(issue), {
         outputSchema: Review,
-        signal: ctx.abortSignal,
+        signal: ctx.abortSignal
       })
       const parsed = Review.safeParse((await turn.result()).data)
       return { number: issue.number, review: parsed.success ? parsed.data : undefined }
@@ -40,5 +40,5 @@ export default defineWorkflowTool({
         : { ...row, status: 'failed' }
     })
     return { issues: rows }
-  },
+  }
 })

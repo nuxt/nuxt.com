@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { sampleIssues } from './agent/lib/sample-issues'
+import { sampleIssues } from '~~/agent/lib/sample-issues'
 </script>
 
 <template>

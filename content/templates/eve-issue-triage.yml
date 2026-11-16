@@ -1,0 +1,12 @@
+name: 'eve Issue Triage'
+slug: 'eve-issue-triage'
+description: 'Issue triage agent built with eve: a decision model sorts every issue, a reviewer subagent checks the unsure ones.'
+repo: 'nuxt/nuxt.com'
+source: 'gh:nuxt/nuxt.com/templates/eve'
+category: 'ai'
+deploy:
+  env:
+    - 'AI_GATEWAY_API_KEY'
+  # The eve runtime deploys as its own Vercel service next to the app.
+  providers:
+    - 'vercel'

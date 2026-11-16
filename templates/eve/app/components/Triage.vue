@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { activeTurn } from 'eve/events'
-import { CONFIDENCE_THRESHOLD, type Issue, type Row, type TriageOutput } from '../agent/lib/triage'
+import { CONFIDENCE_THRESHOLD, type Issue, type Row, type TriageOutput } from '~~/agent/lib/triage'
 
 const props = defineProps<{
   issues: Issue[]
@@ -15,7 +15,7 @@ type TileState = Row['status'] | 'deciding' | 'idle'
 const PIPELINE = [
   { label: 'Load issues', kind: 'code', detail: 'step' },
   { label: 'Decision model', kind: 'model', detail: 'every issue' },
-  { label: 'Reviewer subagent', kind: 'model', detail: 'only if unsure' },
+  { label: 'Reviewer subagent', kind: 'model', detail: 'only if unsure' }
 ] as const
 
 const agent = useEveAgent({ prewarm: true })
@@ -267,7 +267,7 @@ const entryIndex = (index: number) => String(index).padStart(2, '0')
               :class="$style.confidenceFill"
               :style="{
                 transform: `scaleX(${rows.get(issue.number)!.confidence})`,
-                background: isEscalated(rows.get(issue.number)) ? 'var(--amber)' : 'var(--white)',
+                background: isEscalated(rows.get(issue.number)) ? 'var(--amber)' : 'var(--white)'
               }"
             />
             <span

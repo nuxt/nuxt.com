@@ -6,5 +6,5 @@ export default defineAgent({
   // Triage runs only through the triage_issues workflow tool.
   tool: false,
   // No shell, files, or web access.
-  defaultTools: false,
+  defaultTools: false
 })

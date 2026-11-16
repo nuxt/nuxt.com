@@ -23,8 +23,8 @@ export async function decideIssues(issues: Issue[], signal?: AbortSignal): Promi
             bug: 'Something is broken or behaves incorrectly',
             feature: 'A request for new capability',
             docs: 'Documentation is missing or wrong',
-            maintenance: 'Tests, refactors, dependencies, or chores',
-          },
+            maintenance: 'Tests, refactors, dependencies, or chores'
+          }
         },
         priority: {
           type: 'choice',
@@ -32,15 +32,15 @@ export async function decideIssues(issues: Issue[], signal?: AbortSignal): Promi
           criteria: {
             high: 'Breaks users or blocks work now',
             normal: 'Should be fixed in the normal course of work',
-            low: 'Minor or nice to have',
-          },
-        },
-      },
+            low: 'Minor or nice to have'
+          }
+        }
+      }
     })
     return {
       category: answers.category.choice,
       priority: answers.priority.choice,
-      confidence: Math.min(top(answers.category.probabilities), top(answers.priority.probabilities)),
+      confidence: Math.min(top(answers.category.probabilities), top(answers.priority.probabilities))
     }
   }))
 }

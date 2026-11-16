@@ -63,12 +63,15 @@ export default defineNuxtModule(async (_options, nuxt) => {
 
   const templates = await readYamlDir('templates')
   for (const template of templates) {
+    const filename = join(process.cwd(), 'public/assets/templates', `${template.slug}.webp`)
+    // Templates without a hosted demo commit their screenshot instead.
+    if (existsSync(filename)) continue
     const url = template.screenshotUrl || template.demo
     if (!url) {
       console.error(`Template ${template.slug} has no "demo" or "screenshotUrl" to take a screenshot from`)
       continue
     }
-    await capture(url, join(process.cwd(), 'public/assets/templates', `${template.slug}.webp`), `Template ${template.slug}`, template.screenshotOptions)
+    await capture(url, filename, `Template ${template.slug}`, template.screenshotOptions)
   }
 
   const videoCourses = await readYamlDir('video-courses')
