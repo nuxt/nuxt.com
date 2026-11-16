@@ -1,7 +1,7 @@
 import { defineTool } from 'eve/tools'
 import { z } from 'zod'
 import { splitSections, stripFrontmatter } from '../lib/docs-index.js'
-import { appOrigin } from '../lib/internal-api.js'
+import { appFetch } from '../lib/internal-api.js'
 
 const MAX_CHARS = 12_000
 
@@ -30,7 +30,7 @@ async function fetchModuleReadme(slug: string): Promise<string | null> {
 }
 
 async function fetchPageMarkdown(pagePath: string): Promise<string | null> {
-  const response = await fetch(`${appOrigin()}/raw${pagePath}.md`, { signal: AbortSignal.timeout(10_000) })
+  const response = await appFetch(`/raw${pagePath}.md`, { signal: AbortSignal.timeout(10_000) })
   // A module page is only served as Markdown when nuxt.com hosts the module's docs: else its README.
   const moduleSlug = pagePath.match(/^\/modules\/([^/]+)$/)?.[1]
   if (moduleSlug && response.status === 404) return await fetchModuleReadme(moduleSlug)

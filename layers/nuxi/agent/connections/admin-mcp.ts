@@ -1,7 +1,7 @@
 import { defineMcpClientConnection } from 'eve/connections'
 import type { SessionContext } from 'eve/context'
 import { isAdminMode } from '../lib/identity/admin-mode.js'
-import { appOrigin } from '../lib/internal-api.js'
+import { appOrigin, selfAccessHeaders } from '../lib/internal-api.js'
 
 /** Admin tools available to Nuxi; keep the surface explicit. */
 const ALLOWED_TOOLS = [
@@ -70,5 +70,6 @@ export default defineMcpClientConnection({
   url: `${appOrigin()}/mcp/admin`,
   description: 'Nuxi admin analytics: docs feedback, shared web chats and votes, Google Search Console performance/indexing/sitemaps, CrUX Core Web Vitals, and template checks. Requires admin mode, including opted-in local CLI sessions.',
   tools: { allow: ALLOWED_TOOLS },
-  auth: adminOnlyToken
+  auth: adminOnlyToken,
+  headers: selfAccessHeaders
 })

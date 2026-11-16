@@ -3,7 +3,7 @@ import type { AuthFn } from 'eve/channels/auth'
 import { localDev, vercelOidc } from 'eve/channels/auth'
 import { defaultEveAuth, eveChannel } from 'eve/channels/eve'
 import { checkBotId } from 'botid/server'
-import { appOrigin, internalHeaders } from '../lib/internal-api.js'
+import { appFetch, internalHeaders } from '../lib/internal-api.js'
 import { anonymousIpKey, clientIp } from '../../shared/utils/rate-limit.js'
 
 interface SessionPrincipal {
@@ -30,7 +30,7 @@ function nuxtSessionAuth(): AuthFn<Request> {
         if (verification.isBot) return null
       }
 
-      const response = await fetch(`${appOrigin()}/api/internal/session`, {
+      const response = await appFetch('/api/internal/session', {
         headers: await internalHeaders({ cookie })
       })
 
@@ -97,7 +97,7 @@ export default eveChannel({
     if (isNewSession && chatId) {
       try {
         const cookie = ctx.eve.request.headers.get('cookie') ?? ''
-        const response = await fetch(`${appOrigin()}/api/internal/chats/${encodeURIComponent(chatId)}/context`, {
+        const response = await appFetch(`/api/internal/chats/${encodeURIComponent(chatId)}/context`, {
           headers: await internalHeaders(cookie ? { cookie } : undefined)
         })
 

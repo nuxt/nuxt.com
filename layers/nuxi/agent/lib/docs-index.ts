@@ -1,4 +1,4 @@
-import { appOrigin } from './internal-api.js'
+import { appFetch } from './internal-api.js'
 
 /**
  * Whether an `llms.txt` section's pages are indexed: the deploy guides, the blog (release posts often explain
@@ -158,9 +158,9 @@ export function splitSections(markdown: string): { headings: string[], text: str
   return sections
 }
 
-async function fetchText(url: string): Promise<string | null> {
+async function fetchText(path: string): Promise<string | null> {
   try {
-    const response = await fetch(url, { signal: AbortSignal.timeout(FETCH_TIMEOUT_MS) })
+    const response = await appFetch(path, { signal: AbortSignal.timeout(FETCH_TIMEOUT_MS) })
     return response.ok ? await response.text() : null
   } catch {
     return null
@@ -230,11 +230,10 @@ let indexPromise: Promise<DocsIndex> | null = null
 let refreshing: Promise<void> | null = null
 
 async function loadIndex(): Promise<DocsIndex> {
-  const origin = appOrigin()
-  const llms = await fetchText(`${origin}/llms.txt`)
+  const llms = await fetchText('/llms.txt')
   if (!llms) throw new Error('Could not load the documentation index')
   const pages = parseLlmsIndex(llms)
-  const bodies = await mapConcurrent(pages, FETCH_CONCURRENCY, page => fetchText(`${origin}/raw${page.path}.md`))
+  const bodies = await mapConcurrent(pages, FETCH_CONCURRENCY, page => fetchText(`/raw${page.path}.md`))
   return buildIndex(pages, bodies)
 }
 
