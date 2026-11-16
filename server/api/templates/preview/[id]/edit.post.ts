@@ -22,8 +22,11 @@ export default defineEventHandler(async (event) => {
       try {
         const url = await waitForDevServer(sandbox, () => send({ type: 'started' }))
         send({ type: 'ready', url })
+        // The page asks again after a reload or a failure: count each preview once.
+        trackTemplateEvent(event, 'Template Editor Started', claimPreviewStep(sandbox, 'editor').then(first => first ? { template: sandbox.tags?.template } : null))
       } catch (error) {
         console.error('[templates] dev server failed', error)
+        trackTemplateEvent(event, 'Template Preview Failed', { template: sandbox.tags?.template, reason: 'The dev server could not start.' })
         send({ type: 'error', message: 'The dev server could not start.' })
       } finally {
         if (!cancelled) controller.close()

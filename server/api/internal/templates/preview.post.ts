@@ -73,6 +73,7 @@ export default defineEventHandler(async (event) => {
         if (text === undefined) throw createError({ statusCode: 400, message: 'Pass either content or edits.' })
         path = await writeAppFile(sandbox, body.path, text)
       }
+      trackPreviewChange(event, sandbox)
       if (restarts) await waitForRestart(sandbox, offset)
       else if (content) await waitForContent(sandbox, offset)
       return { path, ...(body.delete && { deleted: true }), ...(restarts && { restarted: true }), ...(!running && { devServerStopped: true }) }
@@ -81,6 +82,10 @@ export default defineEventHandler(async (event) => {
     case 'add_module': {
       await waitForDevServer(sandbox)
       const result = await addAppModule(sandbox, body.name)
+      if (result.exitCode === 0) {
+        trackPreviewChange(event, sandbox)
+        trackTemplateEvent(event, 'Template Module Added', { template: sandbox.tags?.template, module: body.name })
+      }
       return { ok: result.exitCode === 0, output: result.output }
     }
 

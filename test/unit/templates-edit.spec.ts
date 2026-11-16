@@ -1,5 +1,5 @@
 import type { Sandbox } from '@vercel/sandbox'
-import { execFileSync } from 'node:child_process'
+import { execFileSync, spawn } from 'node:child_process'
 import { createReadStream, existsSync, mkdirSync, mkdtempSync, rmSync, symlinkSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
@@ -154,13 +154,15 @@ describe('checking an edited page', () => {
 })
 
 let handler: (event: unknown) => Promise<unknown>
-const sandbox = { status: 'running' }
+const sandbox = { status: 'running', tags: { template: 'docus' } }
 const body = { action: 'edit', principalId: 'visitor', sandboxId: 'preview', path: 'app/pages/index.vue' }
 const readFile = vi.fn()
 const writeFile = vi.fn().mockImplementation((_sandbox, path) => path)
 const getSandbox = vi.fn()
 const restart = vi.fn()
 const requireInternal = vi.fn()
+const trackEvent = vi.fn()
+const trackChange = vi.fn()
 
 beforeEach(async () => {
   vi.stubGlobal('defineEventHandler', (value: unknown) => value)
@@ -173,8 +175,11 @@ beforeEach(async () => {
   vi.stubGlobal('RESTARTING_FILES', RESTARTING_FILES)
   vi.stubGlobal('readAppFile', readFile)
   vi.stubGlobal('writeAppFile', writeFile)
+  vi.stubGlobal('deleteAppFile', vi.fn().mockImplementation((_sandbox, path) => path))
   vi.stubGlobal('devLogSize', vi.fn().mockResolvedValue(42))
   vi.stubGlobal('waitForRestart', restart)
+  vi.stubGlobal('trackTemplateEvent', trackEvent)
+  vi.stubGlobal('trackPreviewChange', trackChange)
   handler = (await import('../../server/api/internal/templates/preview.post')).default as any
 })
 
@@ -225,6 +230,23 @@ describe('editing a template preview', () => {
     expect(writeFile).not.toHaveBeenCalled()
   })
 
+  it('counts successful changes and module installs, not failed attempts', async () => {
+    await request({ content: 'Hello' })
+    await request({ delete: true })
+    expect(trackChange).toHaveBeenCalledTimes(2)
+    trackChange.mockClear()
+
+    readFile.mockResolvedValue({ path: body.path, content: 'Something else', truncated: false })
+    await expect(request({ edits: [{ find: 'Welcome', replace: 'Hello' }] })).rejects.toMatchObject({ statusCode: 422 })
+    vi.stubGlobal('addAppModule', vi.fn().mockResolvedValueOnce({ exitCode: 1, output: 'Not found' }).mockResolvedValueOnce({ exitCode: 0, output: '' }))
+    await request({ action: 'add_module', name: 'nuxt-nope' })
+    expect(trackChange).not.toHaveBeenCalled()
+    expect(trackEvent).not.toHaveBeenCalled()
+    await request({ action: 'add_module', name: '@nuxt/image' })
+    expect(trackChange).toHaveBeenCalledTimes(1)
+    expect(trackEvent).toHaveBeenCalledWith({}, 'Template Module Added', { template: 'docus', module: '@nuxt/image' })
+  })
+
   it('waits for config changes to restart before reporting success', async () => {
     await expect(request({ path: 'nuxt.config.ts', content: 'export default defineNuxtConfig({})' })).resolves.toEqual({ path: 'nuxt.config.ts', restarted: true })
     expect(restart).toHaveBeenCalledWith(sandbox, 42)
@@ -260,6 +282,7 @@ describe('starting the preview editor', () => {
       return 'https://preview.vercel.run'
     })
     vi.stubGlobal('waitForDevServer', start)
+    vi.stubGlobal('claimPreviewStep', vi.fn().mockResolvedValue(true))
     const log = vi.spyOn(console, 'error').mockImplementation(() => {})
     try {
       const edit = (await import('../../server/api/templates/preview/[id]/edit.post')).default as any
@@ -274,6 +297,7 @@ describe('starting the preview editor', () => {
       expect(await reader.read()).toMatchObject({ done: true })
       expect(start).toHaveBeenCalledTimes(1)
       expect(getSandbox).toHaveBeenCalledWith('preview', 'visitor')
+      expect(trackEvent).toHaveBeenCalledWith({}, failed ? 'Template Preview Failed' : 'Template Editor Started', failed ? expect.objectContaining({ reason: 'The dev server could not start.' }) : expect.any(Promise))
     } finally {
       finish()
       log.mockRestore()
@@ -286,6 +310,8 @@ describe('downloading an edited project', () => {
     vi.stubGlobal('getRateLimitPrincipalId', vi.fn().mockResolvedValue('visitor'))
     vi.stubGlobal('getRouterParam', vi.fn().mockReturnValue('preview'))
     vi.stubGlobal('setResponseHeaders', vi.fn())
+    vi.stubGlobal('previewChanges', vi.fn().mockResolvedValue('5+'))
+    vi.stubGlobal('claimPreviewStep', vi.fn().mockResolvedValueOnce(true).mockResolvedValue(false))
   })
 
   it('requires an identified visitor and looks up their running preview', async () => {
@@ -346,6 +372,11 @@ describe('downloading an edited project', () => {
       })
       const download = (await import('../../server/api/templates/preview/[id]/download.get')).default as any
       const archive = unzipSync(await download({}))
+      expect(trackTemplateEvent).toHaveBeenCalledWith({}, 'Template Downloaded', expect.any(Promise))
+      await expect(vi.mocked(trackTemplateEvent).mock.calls[0]![2]).resolves.toEqual({ template: undefined, changes: '5+' })
+      expect(claimPreviewStep).toHaveBeenCalledWith(expect.anything(), 'download')
+      // The depth comes from before the ZIP, so an edit landing while the event is claimed can't change it.
+      expect(previewChanges).toHaveBeenCalledBefore(runCommand)
       expect(Object.keys(archive).sort()).toEqual(['.gitignore', 'app/app.vue', 'nuxt.config.ts', 'package.json', 'pnpm-lock.yaml', 'public/dist/brand.svg', 'public/logo.png', 'public/nuxt-com-preview.client.js', 'public/nuxt-com-preview.js'])
       expect(Buffer.from(archive['app/app.vue']!).toString()).toBe(files['app/app.vue'])
       expect(Buffer.from(archive['public/logo.png']!)).toEqual(files['public/logo.png'])
@@ -370,6 +401,8 @@ describe('downloading an edited project', () => {
     const path = runCommand.mock.calls[0]![0].args[2]
     expect(runCommand).toHaveBeenLastCalledWith({ cmd: 'rm', args: ['-f', path], signal: expect.any(AbortSignal) })
     if (failure !== 'stream') expect(sendStream).not.toHaveBeenCalled()
+    // A failed download must not use up the preview's download event: its retry sends it.
+    expect(trackTemplateEvent).not.toHaveBeenCalled()
   })
 
   it.each(['open', 'stream'])('aborts a stalled ZIP %s and cleans up', async (stage) => {
@@ -426,6 +459,56 @@ describe('downloading an edited project', () => {
     } finally {
       stream.destroy()
       vi.useRealTimers()
+    }
+  })
+})
+
+describe('template preview analytics', () => {
+  /** Runs the sandbox's shell commands for real, with the state directory moved into a temporary one. */
+  function bashSandbox(directory: string) {
+    return { tags: { template: 'docus' }, runCommand: async ({ args }: { args: string[] }) => {
+      // Asynchronous, so parallel changes really compete for the counter and the level claims.
+      const child = spawn('bash', ['-c', args[1]!.replaceAll('/tmp/nuxt-com-analytics', directory)])
+      let stdout = ''
+      child.stdout.on('data', (chunk) => {
+        stdout += chunk
+      })
+      const exitCode = await new Promise(resolve => child.on('close', resolve))
+      return { exitCode, stdout: async () => stdout }
+    } } as unknown as Sandbox
+  }
+
+  it('reports each edit level once per preview, even for parallel changes, and the level at download', async () => {
+    const tracked: unknown[] = []
+    vi.stubGlobal('getRequestHeaders', () => ({}))
+    vi.doMock('@vercel/functions', () => ({ waitUntil: (promise: Promise<unknown>) => tracked.push(promise) }))
+    const track = vi.fn()
+    vi.doMock('@vercel/analytics/server', () => ({ track }))
+    const directory = mkdtempSync(join(tmpdir(), 'template-analytics-'))
+    try {
+      vi.resetModules()
+      const { trackPreviewChange, previewChanges, claimPreviewStep } = await import('../../server/utils/templates/analytics')
+      const sandbox = bashSandbox(join(directory, 'state'))
+      expect(await previewChanges(sandbox)).toBe('0')
+      // 1, 4, 13 then 21 changes in total, each batch in parallel.
+      for (const [batch, level] of [[1, '1+'], [3, '1+'], [9, '5+'], [8, '20+']] as const) {
+        for (let i = 0; i < batch; i++) trackPreviewChange({} as any, sandbox)
+        await Promise.all(tracked)
+        expect(await previewChanges(sandbox)).toBe(level)
+      }
+      expect(track.mock.calls.map(([name, data]) => [name, data])).toEqual(expect.arrayContaining([
+        ['Template Edited', { template: 'docus', changes: '1+' }],
+        ['Template Edited', { template: 'docus', changes: '5+' }],
+        ['Template Edited', { template: 'docus', changes: '20+' }]
+      ]))
+      expect(track).toHaveBeenCalledTimes(3)
+      const claims = await Promise.all([claimPreviewStep(sandbox, 'editor'), claimPreviewStep(sandbox, 'editor')])
+      expect(claims.filter(Boolean)).toHaveLength(1)
+      expect(await claimPreviewStep(sandbox, 'editor')).toBe(false)
+    } finally {
+      rmSync(directory, { recursive: true, force: true })
+      vi.doUnmock('@vercel/functions')
+      vi.doUnmock('@vercel/analytics/server')
     }
   })
 })
