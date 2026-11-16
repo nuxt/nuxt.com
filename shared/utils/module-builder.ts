@@ -3,8 +3,8 @@ import { docsPathPrefix, type ArchivedDocVersion, type DocVersion, type RepoRefs
 
 export const MODULE_BUILDER_DOCS_REPO = 'nuxt/module-builder'
 
-// TODO: read `main` once nuxt/module-builder#818 (the docs) is merged.
-const MODULE_BUILDER_DOCS_BRANCH = 'docs-source-of-truth'
+// One branch holds the docs every version reads.
+const MODULE_BUILDER_DOCS_BRANCH = 'main'
 
 // Archived versions predate the module builder.
 export const MODULE_BUILDER_DOCS_REFS = {
