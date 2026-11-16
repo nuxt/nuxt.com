@@ -63,7 +63,32 @@ const countdown = computed(() => {
   const seconds = Math.ceil(remaining.value / 1000)
   return `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, '0')}`
 })
-watch(remaining, value => live.value && value === 0 && stop())
+/** Warns before the sandbox stops, so a visitor editing it can keep it running or download their changes first. */
+const EXPIRY_WARNING_MS = 2 * 60_000
+const EXPIRY_TOAST = 'live-preview-expiry'
+/** The stop time the visitor was last warned about: an extension moves it, so they are warned again before the new one. */
+let warnedFor = 0
+watch(remaining, (value) => {
+  if (!live.value || status.value !== 'live') return
+  if (value === 0) {
+    stop()
+    toast.add({ title: 'Your live preview stopped', description: 'Its time ran out. Start it again to keep trying the template.', icon: 'i-lucide-timer-off', color: 'neutral' })
+  } else if (value <= EXPIRY_WARNING_MS && warnedFor !== expiresAt.value) {
+    warnedFor = expiresAt.value
+    toast.add({
+      id: EXPIRY_TOAST,
+      title: 'Your live preview is about to stop',
+      description: canExtend.value ? 'Keep it running to continue, or download the project.' : 'It can\'t run any longer: download the project to keep your changes.',
+      icon: 'i-lucide-timer',
+      color: 'warning',
+      duration: 0,
+      actions: [
+        ...(canExtend.value ? [{ label: `Add ${PREVIEW_TIMEOUT_MS / 60_000} minutes`, icon: 'i-lucide-clock-plus', onClick: extend }] : []),
+        { label: 'Download ZIP', icon: 'i-lucide-download', color: 'neutral' as const, variant: 'outline' as const, closeOnClick: false, onClick: downloadProject }
+      ]
+    })
+  }
+})
 
 function resetTimer() {
   expiresAt.value = Date.now() + PREVIEW_TIMEOUT_MS
@@ -90,6 +115,7 @@ async function extend() {
     const result = await $fetch<{ expiresAt: number, canExtend: boolean }>(`/api/templates/preview/${livePreview.value.id}/extend`, { method: 'POST' })
     expiresAt.value = result.expiresAt
     canExtend.value = result.canExtend
+    toast.remove(EXPIRY_TOAST)
     track('Template Action', { template: props.template.name, action: 'Extend Live Preview' })
   } catch (error: any) {
     if (error?.statusCode === 409) canExtend.value = false
@@ -100,6 +126,7 @@ async function extend() {
 }
 
 function stop() {
+  toast.remove(EXPIRY_TOAST)
   live.value = false
   liveUrl.value = undefined
   status.value = undefined
