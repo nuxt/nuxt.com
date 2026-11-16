@@ -154,7 +154,9 @@ export async function extendPreview(owner: string, sandbox: Sandbox, maxLifetime
   const slot = and(eq(schema.templatePreviews.owner, owner), eq(schema.templatePreviews.id, sandbox.name))
   const [reserved] = await db.select({ expiresAt: schema.templatePreviews.expiresAt }).from(schema.templatePreviews).where(slot)
   const claim = new Date(extendedTo + 60_000)
-  const claimed = reserved && reserved.expiresAt < claim && await db.update(schema.templatePreviews)
+  // A slot reserved past the sandbox's expiry is another extension's claim the sandbox hasn't caught up with yet: it decides.
+  const pending = !reserved || reserved.expiresAt.getTime() > expiresAt + 60_000
+  const claimed = !pending && reserved.expiresAt < claim && await db.update(schema.templatePreviews)
     .set({ expiresAt: claim })
     .where(and(slot, eq(schema.templatePreviews.expiresAt, reserved.expiresAt)))
     .returning({ id: schema.templatePreviews.id })

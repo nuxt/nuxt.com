@@ -73,6 +73,24 @@ describe('extending a live preview', () => {
     expect(await slot()).toBe(created + 25 * MINUTE + duration + MINUTE)
   })
 
+  it('extends once when a request reads the slot after another claimed it', async () => {
+    const { extendPreview } = await import('../../server/utils/templates/sandbox')
+
+    // The visitor request claims the slot and is still extending when the admin request reads it, 25 minutes in.
+    let finish!: () => void
+    const visitor = runningFor(25)
+    visitor.extendTimeout.mockReturnValue(new Promise<void>(resolve => finish = resolve))
+    const first = extendPreview('owner', visitor, PREVIEW_MAX_LIFETIME_MS)
+    await vi.waitFor(() => expect(visitor.extendTimeout).toHaveBeenCalled())
+
+    const admin = runningFor(25)
+    await expect(extendPreview('owner', admin, PREVIEW_ADMIN_MAX_LIFETIME_MS)).rejects.toMatchObject({ statusCode: 423 })
+    expect(admin.extendTimeout).not.toHaveBeenCalled()
+    finish()
+    expect(await first).toEqual({ expiresAt: created + 30 * MINUTE, canExtend: false })
+    expect(await slot()).toBe(created + 31 * MINUTE)
+  })
+
   it('releases the claim when the extension fails, so a retry extends', async () => {
     const { extendPreview } = await import('../../server/utils/templates/sandbox')
 
