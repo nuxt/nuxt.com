@@ -35,7 +35,7 @@ jobs:
           SHA: ${{ github.event.deployment.sha }}
 
   e2e:
-    needs: trusted
+    needs: [trusted, warmup]
     if: needs.trusted.outputs.trusted == 'true'
     environment:
       name: ${{ github.event.deployment.environment || 'Production' }}
@@ -67,7 +67,7 @@ jobs:
           VERCEL_TRUSTED_OIDC_TOKEN: ${{ steps.oidc.outputs.token }}
 
   lighthouse:
-    needs: trusted
+    needs: [trusted, warmup]
     if: needs.trusted.outputs.trusted == 'true'
     environment:
       name: ${{ github.event.deployment.environment || 'Production' }}
@@ -112,6 +112,8 @@ jobs:
           path: .lighthouseci
           include-hidden-files: true
 
+  # Runs before `e2e` and `lighthouse`: a fresh deployment has an empty ISR cache and cold functions, and its first
+  # renders took up to 4.7 s, enough to time out Playwright assertions and to skew Lighthouse.
   warmup:
     needs: trusted
     if: needs.trusted.outputs.trusted == 'true'
@@ -130,11 +132,15 @@ jobs:
           test -n "$token"
           echo "::add-mask::$token"
           echo "token=$token" >> "$GITHUB_OUTPUT"
-      - name: warmup jobs, sponsors and modules
+      # The jobs, sponsors and modules APIs, then the pages `test/browser` visits, and the payload of the docs page the
+      # homepage "Get started" link opens client-side.
+      - name: warmup APIs and tested pages
         run: |
-          curl -sS -H "x-vercel-trusted-oidc-idp-token: $TOKEN" "$BASE_URL/api/jobs"
-          curl -sS -H "x-vercel-trusted-oidc-idp-token: $TOKEN" "$BASE_URL/api/sponsors"
-          curl -sS -H "x-vercel-trusted-oidc-idp-token: $TOKEN" "$BASE_URL/api/v1/modules"
+          for path in /api/jobs /api/sponsors /api/v1/modules \
+            / /templates /updates /showcase /team /blog /enterprise /enterprise/agencies /sponsors /modules \
+            /docs/4.x/getting-started/installation /docs/4.x/getting-started/installation/_payload.json; do
+            curl -sS -o /dev/null -w "%{http_code} %{time_total}s $path\n" -H "x-vercel-trusted-oidc-idp-token: $TOKEN" "$BASE_URL$path"
+          done
         env:
           BASE_URL: ${{ github.event.inputs.url || github.event.deployment_status.environment_url }}
           TOKEN: ${{ steps.oidc.outputs.token }}
