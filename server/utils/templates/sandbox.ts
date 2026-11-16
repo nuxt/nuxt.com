@@ -149,15 +149,16 @@ export async function extendPreview(owner: string, sandbox: Sandbox, maxLifetime
     throw createError({ statusCode: 409, message: 'This preview can\'t run any longer.' })
   }
   const extendedTo = expiresAt + duration
-  // The slot is moved first, and only forward: of two requests that read the same expiry, one moves it and the other stops here,
-  // since `extendTimeout` adds to the running session.
+  // The slot is moved first, and only from the value read here: of concurrent requests, whatever limit each got, one moves it
+  // and the others stop here, since `extendTimeout` adds to the running session.
   const slot = and(eq(schema.templatePreviews.owner, owner), eq(schema.templatePreviews.id, sandbox.name))
+  const [reserved] = await db.select({ expiresAt: schema.templatePreviews.expiresAt }).from(schema.templatePreviews).where(slot)
   const claim = new Date(extendedTo + 60_000)
-  const claimed = await db.update(schema.templatePreviews)
+  const claimed = reserved && reserved.expiresAt < claim && await db.update(schema.templatePreviews)
     .set({ expiresAt: claim })
-    .where(and(slot, lt(schema.templatePreviews.expiresAt, claim)))
+    .where(and(slot, eq(schema.templatePreviews.expiresAt, reserved.expiresAt)))
     .returning({ id: schema.templatePreviews.id })
-  if (!claimed.length) {
+  if (!claimed || !claimed.length) {
     throw createError({ statusCode: 423, message: 'This preview is already being extended.' })
   }
   const result = { expiresAt: extendedTo, canExtend: limit - extendedTo >= 60_000 }
@@ -165,10 +166,12 @@ export async function extendPreview(owner: string, sandbox: Sandbox, maxLifetime
     await sandbox.extendTimeout(duration)
   } catch (error) {
     // The extension may still have reached the sandbox. If it didn't, the claim goes back, so a retry can extend.
+    // When the sandbox can't be read either, the outcome is unknown: the claim stays, so the slot never runs out before the sandbox.
     const current = await Sandbox.get({ name: sandbox.name }).catch(() => null)
-    if (current && previewExpiresAt(current) >= extendedTo) return result
+    if (!current) throw error
+    if (previewExpiresAt(current) >= extendedTo) return result
     await db.update(schema.templatePreviews)
-      .set({ expiresAt: new Date(expiresAt + 60_000) })
+      .set({ expiresAt: reserved.expiresAt })
       .where(and(slot, eq(schema.templatePreviews.expiresAt, claim)))
       .returning({ id: schema.templatePreviews.id })
     throw error
