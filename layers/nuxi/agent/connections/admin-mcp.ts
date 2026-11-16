@@ -33,6 +33,7 @@ export const ADMIN_MCP_INSTRUCTIONS = `**Admin MCP connection (\`admin-mcp__*\`,
 - \`admin-mcp__page-head\` — the live redirects, status, title, meta description, canonical and robots of one page on nuxt.com or a subdomain; no page content
 - \`admin-mcp__crux-web-vitals\` — field performance over rolling 28-day periods; origin fallback is not page-level evidence
 - For search performance and concrete SEO recommendations, load the \`seo-opportunities\` skill. For new showcase candidates from nuxt.fyi, load \`showcase-discovery\`.
+- When a team member says something on nuxt.com is broken or not working (a template, page, API route, feature or Nuxi answer), load the \`debug-nuxt-com\` skill before answering or asking them for details.
 - \`admin-mcp__template-check-status\` — which templates pass or fail the daily check, at which step and why (\`includeLog\`)
 - \`admin-mcp__start-template-checks\` — re-check templates on Vercel Sandbox (\`slugs\` or \`failing\`). Each one costs a sandbox for up to 15 minutes: never check every template unless asked. It returns right away; follow it with \`template-check-status\`
 - An empty \`template-check-status\` result means there is no recorded check history for that query. It does not mean the template is missing or that starting a check is unavailable.
