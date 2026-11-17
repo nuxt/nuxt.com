@@ -25,6 +25,8 @@ export function useChatQueue(options: {
   const queue = ref<ChatQueueItem[]>([])
   const sent = new WeakSet<ChatQueueItem>()
   let pending = 0
+  /** Bumped by `clear()`, so sends still waiting in line from before are dropped. */
+  let generation = 0
   let sends: Promise<unknown> = Promise.resolve()
   /** The answer ended while messages were still being sent, so the next one goes once they settle. */
   let readyWhileSending = false
@@ -49,8 +51,19 @@ export function useChatQueue(options: {
     sent.add(toRaw(item))
     queue.value = queue.value.filter(other => other !== item)
     pending++
+    const queuedIn = generation
     // Failures surface through the chat's own error state, which holds the queue.
-    sends = sends.then(() => options.send(item)).catch(() => {}).finally(() => {
+    sends = sends.then(() => {
+      if (queuedIn !== generation) return
+      // Lined up behind an earlier send: the chat may have failed or hit the limit since. Wait at the front of the queue
+      // instead, for the status or limit watcher to send it.
+      if (!canDispatch()) {
+        sent.delete(toRaw(item))
+        queue.value = [item, ...queue.value]
+        return
+      }
+      return options.send(item)
+    }).catch(() => {}).finally(() => {
       if (--pending > 0 || !readyWhileSending) return
       readyWhileSending = false
       sendNext()
@@ -77,5 +90,11 @@ export function useChatQueue(options: {
     if (item && canDispatch()) dispatch(item)
   }
 
-  return { queue, onSend }
+  /** Empties the queue, including sends still waiting behind one in progress, e.g. when the visitor opens another chat. */
+  function clear() {
+    generation++
+    queue.value = []
+  }
+
+  return { queue, onSend, clear }
 }

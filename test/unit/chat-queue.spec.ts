@@ -180,4 +180,40 @@ describe('chat queue', () => {
     await nextTick()
     expect(chat.attachments.value).toEqual([])
   })
+
+  it('keeps a message waiting behind a send if the chat fails before its turn', async () => {
+    const chat = setup()
+    await chat.submit('first')
+    await chat.submit('second')
+    const release = chat.holdSends()
+    await chat.sendNow(0)
+    await chat.sendNow(0)
+    expect(chat.queue.value).toEqual([])
+
+    // The chat fails while "first" is still saving: "second" must not go out after the error.
+    await chat.setStatus('error')
+    await release()
+    expect(chat.texts()).toEqual(['first'])
+    expect(chat.queue.value.map(item => item.text)).toEqual(['second'])
+
+    // The visitor retries, the chat recovers: it goes then.
+    await chat.setStatus('streaming')
+    await chat.setStatus('ready')
+    expect(chat.texts()).toEqual(['first', 'second'])
+  })
+
+  it('drops sends still waiting in line when the queue is cleared for another chat', async () => {
+    const chat = setup()
+    await chat.submit('first')
+    await chat.submit('second')
+    await chat.submit('kept out')
+    const release = chat.holdSends()
+    await chat.sendNow(0)
+    await chat.sendNow(0)
+
+    chat.clear()
+    await release()
+    expect(chat.texts()).toEqual(['first'])
+    expect(chat.queue.value).toEqual([])
+  })
 })
