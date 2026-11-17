@@ -51,6 +51,9 @@ const pageData = computed(() => page.value?.data)
 const { health } = useModuleHealth()
 // The health map loads on the client only: merge it once the modules section hydrated, or its server
 // HTML (without the health badges) would not match.
+// The features fade in once their section hydrates, which happens as it scrolls into view. CSS, not
+// `<Motion>`: motion-v would be the homepage's largest preloaded dependency for this one effect.
+const featuresRevealed = ref(false)
 const modulesHydrated = ref(false)
 const officialModulesWithHealth = computed(() =>
   (officialModules.value || []).map(m => ({ ...m, health: (modulesHydrated.value && health.value[m.name]) || m.health || null }))
@@ -257,29 +260,24 @@ useNuxtBirthday()
         root: 'bg-linear-to-b border-t border-default from-muted dark:from-muted/40 to-default',
         features: 'xl:grid-cols-4 lg:gap-10'
       }"
+      @hydrated="featuresRevealed = true"
     >
       <template #features>
-        <Motion
+        <li
           v-for="(feature, index) in (pageData.features.features as any[])"
           :key="feature.title"
-          as="li"
-          :initial="{ opacity: 0, transform: 'translateY(10px)' }"
-          :while-in-view="{ opacity: 1, transform: 'translateY(0)' }"
-          :transition="{ delay: 0.1 * index }"
-          :in-view-options="{ once: true }"
+          :class="featuresRevealed && 'feature-reveal'"
+          :style="{ animationDelay: `${index * 100}ms` }"
         >
           <UPageFeature
             v-bind="pickFeature(feature)"
             orientation="vertical"
           />
-        </Motion>
-        <Motion
-          as="li"
-          :initial="{ opacity: 0, transform: 'translateY(10px)' }"
-          :while-in-view="{ opacity: 1, transform: 'translateY(0)' }"
-          :transition="{ delay: 0.1 * pageData.features.features.length }"
-          :in-view-options="{ once: true }"
+        </li>
+        <li
           class="flex flex-col justify-center gap-4 p-4 bg-muted/50 h-full"
+          :class="featuresRevealed && 'feature-reveal'"
+          :style="{ animationDelay: `${pageData.features.features.length * 100}ms` }"
         >
           <span class="text-lg font-semibold">
             {{ pageData.features.cta.title }}
@@ -287,7 +285,7 @@ useNuxtBirthday()
           <div>
             <UButton :to="pageData.features.cta.to" :label="pageData.features.cta.label" trailing :icon="pageData.features.cta.icon" />
           </div>
-        </Motion>
+        </li>
       </template>
     </LazyUPageSection>
 
@@ -623,3 +621,22 @@ useNuxtBirthday()
     </LazyUPageSection>
   </div>
 </template>
+
+<style scoped>
+.feature-reveal {
+  animation: feature-reveal 0.5s var(--ease-snappy) backwards;
+}
+
+@keyframes feature-reveal {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .feature-reveal {
+    animation: none;
+  }
+}
+</style>

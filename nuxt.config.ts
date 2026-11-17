@@ -652,6 +652,20 @@ export default defineNuxtConfig({
           component.global = false
         }
       }
+    },
+    'build:manifest': (manifest) => {
+      // `nuxt-workers` starts workers with `new Worker(new URL(…))`, which Vite lists as a script asset of
+      // the chunk that does it. The renderer then preloads it on every page: the 270 KB search worker,
+      // only needed once the palette opens, at a priority Lighthouse counts as render-blocking.
+      for (const chunk of Object.values(manifest)) {
+        for (const asset of chunk.assets ?? []) {
+          const resource = manifest[asset]
+          if (resource?.resourceType === 'script') {
+            resource.preload = false
+            resource.prefetch = false
+          }
+        }
+      }
     }
   },
   agentDiscovery: {
