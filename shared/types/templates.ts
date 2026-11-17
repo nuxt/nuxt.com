@@ -85,6 +85,14 @@ export type PreviewEditEvent
     | { type: 'ready', url: string }
     | { type: 'error', message: string }
 
+/** One line of the `POST /api/templates/preview/:id/deploy` NDJSON stream, while Vercel CLI builds and deploys the edited app. */
+export type PreviewDeployEvent
+  /** The preview now stops at `stopsAt` (ms), after the deploy ends. */
+  = | { type: 'started', stopsAt: number }
+    /** A temporary deployment, live until `expiresAt` (ms) unless the visitor claims it. The claim link hands over the project: only its owner gets it. */
+    | { type: 'ready', url: string, claimUrl: string, expiresAt: number }
+    | { type: 'error', message: string }
+
 /** What nuxt.com reads from a template's repository and its nightly preview build, so listings stay current without manual edits. */
 export interface TemplateHealth {
   /** The `nuxt` range in `package.json`, e.g. `^4.2.0`. */

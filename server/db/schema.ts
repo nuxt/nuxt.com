@@ -165,6 +165,14 @@ export const templatePreviews = sqliteTable('template_previews', {
   index('template_previews_expires_at_idx').on(table.expiresAt)
 ])
 
+/** The last deploy each visitor started from a live preview, for its cooldown. */
+export const templateDeploys = sqliteTable('template_deploys', {
+  owner: text('owner').primaryKey(),
+  deployedAt: integer('deployed_at', { mode: 'timestamp_ms' }).notNull()
+}, table => [
+  index('template_deploys_deployed_at_idx').on(table.deployedAt)
+])
+
 /** Translation saves and the segments they changed, per user per hour (hours since the epoch). */
 export const l10nSaves = sqliteTable('l10n_saves', {
   userId: text('user_id').notNull(),

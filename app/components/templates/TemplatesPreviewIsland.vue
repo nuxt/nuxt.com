@@ -3,7 +3,7 @@ const props = defineProps<{
   active: boolean
 }>()
 
-const { editor, editStep, editError, activity, startEditing } = useLivePreview()
+const { preview, editor, editStep, editError, activity, deployment, deploying, deployError, deployPanelOpen, startEditing } = useLivePreview()
 
 const handedOver = ref(false)
 let handedOverTimer: ReturnType<typeof setTimeout> | undefined
@@ -14,15 +14,19 @@ watch(editor, (value, previous) => {
 })
 onBeforeUnmount(() => clearTimeout(handedOverTimer))
 
+/** Counts down the deployment's expiry; Vercel removes it unless the visitor claims it. */
+const clock = useNow({ interval: 30_000 })
+
 type IslandState = 'running' | 'queued' | 'done' | 'failed'
-interface IslandRow { slot: 'dev' | 'nuxi', key: string, state: IslandState, text: string, step?: number, retry?: boolean, timed?: string }
+interface IslandAction { label: string, to?: string, run?: () => void }
+interface IslandRow { slot: 'dev' | 'nuxi' | 'deploy', key: string, state: IslandState, text: string, step?: number, actions?: IslandAction[], timed?: string }
 
 /** The dev server and Nuxi's change each get a row, so a change waiting on the server says so instead of looking stuck. */
 const rows = computed<IslandRow[]>(() => {
   if (!props.active) return []
   const list: IslandRow[] = []
   if (editor.value === 'starting') list.push({ slot: 'dev', key: `dev:${editStep.value}`, state: 'running', text: LIVE_PREVIEW_EDIT_STEPS[Math.min(editStep.value, LIVE_PREVIEW_EDIT_STEPS.length - 1)]!, step: editStep.value, timed: 'dev' })
-  else if (editor.value === 'failed') list.push({ slot: 'dev', key: 'dev:failed', state: 'failed', text: editError.value || 'The dev server could not start.', retry: true })
+  else if (editor.value === 'failed') list.push({ slot: 'dev', key: 'dev:failed', state: 'failed', text: editError.value || 'The dev server could not start.', actions: [{ label: 'Retry', run: startEditing }] })
   else if (handedOver.value) list.push({ slot: 'dev', key: 'dev:on', state: 'done', text: 'Live editing on' })
   const change = activity.value
   if (change) {
@@ -31,6 +35,12 @@ const rows = computed<IslandRow[]>(() => {
       ? { slot: 'nuxi', key: `${change.id}:queued`, state: 'queued', text: `Then ${change.next}` }
       : { slot: 'nuxi', key: `${change.id}:${change.state}`, state: change.state, text: change.label, timed: change.state === 'running' ? change.id : undefined })
   }
+  // A deploy ships the source files, so its row is independent of the dev server and Nuxi's change. The claim link stays in the browser.
+  const deployed = deployment.value?.slug === preview.value?.template.slug && deployment.value.expiresAt > clock.value.getTime() ? deployment.value : null
+  if (deploying.value) {
+    if (!deployPanelOpen.value) list.push({ slot: 'deploy', key: 'deploy:running', state: 'running', text: 'Deploying to Vercel', timed: 'deploy' })
+  } else if (deployError.value) list.push({ slot: 'deploy', key: 'deploy:failed', state: 'failed', text: deployError.value })
+  else if (deployed) list.push({ slot: 'deploy', key: `deploy:${deployed.url}`, state: 'done', text: `Live on Vercel · ${Math.max(1, Math.ceil((deployed.expiresAt - clock.value.getTime()) / 60_000))} min left`, actions: [{ label: 'Open', to: deployed.url }, { label: 'Claim', to: deployed.claimUrl }] })
   return list
 })
 
@@ -91,14 +101,19 @@ const { width, height } = useElementSize(content, undefined, { box: 'border-box'
                     />
                   </span>
                   <span v-if="row.timed && elapsed(row.timed) >= 2" class="font-mono text-[11px] text-white/45 tabular-nums">{{ elapsed(row.timed) }}s</span>
-                  <button
-                    v-if="row.retry"
-                    type="button"
+                  <component
+                    :is="action.to ? 'a' : 'button'"
+                    v-for="action in row.actions"
+                    :key="action.label"
+                    :type="action.to ? undefined : 'button'"
+                    :href="action.to"
+                    :target="action.to ? '_blank' : undefined"
+                    :rel="action.to ? 'noopener' : undefined"
                     class="ms-0.5 font-medium text-white underline decoration-white/30 underline-offset-2 transition-colors hover:decoration-white focus-visible:outline-2 focus-visible:outline-primary rounded-xs"
-                    @click="startEditing"
+                    @click="action.run?.()"
                   >
-                    Retry
-                  </button>
+                    {{ action.label }}
+                  </component>
                 </div>
               </Transition>
             </div>
