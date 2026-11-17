@@ -14,6 +14,7 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 403, statusMessage: 'Forbidden' })
   }
   const owner = await ensureRateLimitPrincipalId(event)
+  const { timeoutMs } = await getPreviewLimits(event)
 
   const { slug } = await readValidatedBody(event, z.object({ slug: z.string().regex(/^[a-z0-9-]+$/) }).parse)
   const template = (await listByDir<Template>('/templates')).find(template => template.slug === slug)
@@ -23,7 +24,7 @@ export default defineEventHandler(async (event) => {
 
   setResponseHeaders(event, { 'content-type': 'application/x-ndjson', 'cache-control': 'no-store' })
   const encoder = new TextEncoder()
-  // A visitor who leaves before the stream ends never gets the preview: its sandbox stops instead of running for 10 minutes.
+  // A visitor who leaves before the stream ends never gets the preview: its sandbox stops instead of running until it times out.
   let left = false
   let started: Sandbox | undefined
   const stop = (sandbox: Sandbox) => {
@@ -44,7 +45,7 @@ export default defineEventHandler(async (event) => {
         if (!left) controller.enqueue(encoder.encode(`${JSON.stringify(data)}\n`))
       }
       try {
-        const { sandbox, ...preview } = await startPreview(template, owner, step => send({ type: 'step', step }))
+        const { sandbox, ...preview } = await startPreview(template, owner, timeoutMs, step => send({ type: 'step', step }))
         started = sandbox
         if (left) return stop(sandbox)
         send({ type: 'ready', ...preview })

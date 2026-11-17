@@ -53,29 +53,90 @@ const livePage = computed(() => liveUrl.value && `${liveUrl.value}${livePreview.
 const address = computed(() => (live.value ? livePage.value || 'Starting the preview…' : props.template.demo || templateRepoUrl(props.template))?.replace(/^https?:\/\//, '').replace(/\/$/, ''))
 const openUrl = computed(() => live.value ? livePage.value : props.template.demo)
 
-const startedAt = ref(0)
+/** When the sandbox stops: an estimate until the server reports it, then moved by each extension. */
+const expiresAt = ref(0)
+const canExtend = ref(true)
+const extending = ref(false)
 const now = useNow({ interval: 1000 })
-const remaining = computed(() => Math.max(0, PREVIEW_TIMEOUT_MS - (now.value.getTime() - startedAt.value)))
+const remaining = computed(() => Math.max(0, expiresAt.value - now.value.getTime()))
 const countdown = computed(() => {
   const seconds = Math.ceil(remaining.value / 1000)
   return `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, '0')}`
 })
-watch(remaining, value => live.value && value === 0 && stop())
+/** Warns before the sandbox stops, so a visitor editing it can keep it running or download their changes first. */
+const EXPIRY_WARNING_MS = 2 * 60_000
+const EXPIRY_TOAST = 'live-preview-expiry'
+/** The stop time the visitor was last warned about: an extension moves it, so they are warned again before the new one. */
+let warnedFor = 0
+// An extension in flight at zero may have reached the server: its response decides, and a failed one stops the preview then.
+watch([remaining, extending], ([value]) => {
+  if (!live.value || status.value !== 'live') return
+  if (value === 0) {
+    if (extending.value) return
+    stop()
+    toast.add({ title: 'Your live preview stopped', description: 'Its time ran out. Start it again to keep trying the template.', icon: 'i-lucide-timer-off', color: 'neutral' })
+  } else if (value <= EXPIRY_WARNING_MS && warnedFor !== expiresAt.value) {
+    warnedFor = expiresAt.value
+    toast.add({
+      id: EXPIRY_TOAST,
+      title: 'Your live preview is about to stop',
+      description: canExtend.value ? 'Keep it running to continue, or download the project.' : 'It can\'t run any longer: download the project to keep your changes.',
+      icon: 'i-lucide-timer',
+      color: 'warning',
+      duration: 0,
+      actions: [
+        ...(canExtend.value ? [{ label: `Add ${PREVIEW_TIMEOUT_MS / 60_000} minutes`, icon: 'i-lucide-clock-plus', onClick: extend }] : []),
+        { label: 'Download ZIP', icon: 'i-lucide-download', color: 'neutral' as const, variant: 'outline' as const, closeOnClick: false, onClick: downloadProject }
+      ]
+    })
+  }
+})
+
+function resetTimer() {
+  expiresAt.value = Date.now() + PREVIEW_TIMEOUT_MS
+  canExtend.value = true
+}
 
 function start() {
   track('Template Action', { template: props.template.name, action: 'Try Live Preview' })
-  startedAt.value = Date.now()
+  resetTimer()
   live.value = true
 }
 
 function onStatus(value: LivePreviewStatus, ms?: number) {
   // "Try Again" boots a new sandbox, with a new timeout.
-  if (value === 'booting') startedAt.value = Date.now()
+  if (value === 'booting') resetTimer()
   status.value = value
   if (ms) readyIn.value = ms
 }
 
+async function extend() {
+  if (!livePreview.value || extending.value) return
+  const id = livePreview.value.id
+  // A response for a preview that stopped, or was replaced, must not move the current one's deadline.
+  const current = () => live.value && livePreview.value?.id === id
+  extending.value = true
+  try {
+    const result = await $fetch<{ expiresAt: number, canExtend: boolean }>(`/api/templates/preview/${id}/extend`, { method: 'POST' })
+    if (!current()) return
+    expiresAt.value = result.expiresAt
+    canExtend.value = result.canExtend
+    toast.remove(EXPIRY_TOAST)
+    track('Template Action', { template: props.template.name, action: 'Extend Live Preview' })
+  } catch (error: any) {
+    if (!current()) return
+    if (error?.statusCode === 409) canExtend.value = false
+    toast.add({ title: 'Could not extend the preview', description: error?.data?.message || 'Please try again.', color: 'error' })
+  } finally {
+    extending.value = false
+  }
+}
+
+// The warning stays open until dismissed: leaving the page stops the preview, so it goes too.
+onBeforeUnmount(() => toast.remove(EXPIRY_TOAST))
+
 function stop() {
+  toast.remove(EXPIRY_TOAST)
   live.value = false
   liveUrl.value = undefined
   status.value = undefined
@@ -99,10 +160,24 @@ function stop() {
           <span class="font-medium text-highlighted">{{ status === 'live' ? 'Live' : status === 'failed' ? 'Stopped' : 'Starting' }}</span>
           <UTooltip
             v-if="status === 'live'"
-            :text="`${readyIn ? `Ready in ${(readyIn / 1000).toFixed(1)}s. ` : ''}This preview closes on its own after ${PREVIEW_TIMEOUT_MS / 60_000} minutes.`"
+            :text="`${readyIn ? `Ready in ${(readyIn / 1000).toFixed(1)}s. ` : ''}This preview closes on its own when the timer runs out.`"
             :ui="{ content: 'max-w-xs h-auto py-1.5', text: 'whitespace-normal text-pretty' }"
           >
             <span class="hidden sm:inline font-mono text-muted tabular-nums cursor-default" :class="remaining < 60_000 && 'text-warning'">{{ countdown }} left</span>
+          </UTooltip>
+          <UTooltip v-if="status === 'live' && canExtend" :text="`Add ${PREVIEW_TIMEOUT_MS / 60_000} minutes`">
+            <UButton
+              icon="i-lucide-clock-plus"
+              :aria-label="`Keep the preview running ${PREVIEW_TIMEOUT_MS / 60_000} minutes longer`"
+              color="neutral"
+              variant="ghost"
+              size="xs"
+              class="hidden sm:inline-flex size-6 justify-center text-dimmed hover:text-muted"
+              :class="remaining < 60_000 && 'text-warning hover:text-warning'"
+              :ui="{ leadingIcon: 'size-3.5' }"
+              :loading="extending"
+              @click="extend"
+            />
           </UTooltip>
         </template>
       </div>
@@ -216,7 +291,7 @@ function stop() {
           :class="device === 'mobile' ? 'w-[390px] max-w-full border-x border-default' : 'w-full'"
         >
           <NuxtErrorBoundary @error="onStatus('failed')">
-            <LazyTemplatesLivePreview :template="template" @url="liveUrl = $event" @status="onStatus" />
+            <LazyTemplatesLivePreview :template="template" @url="liveUrl = $event" @status="onStatus" @expires="expiresAt = $event" />
             <template #error>
               <div class="absolute inset-0 flex flex-col items-center justify-center gap-3 p-6" role="alert">
                 <p class="text-sm text-highlighted">
