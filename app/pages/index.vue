@@ -11,11 +11,20 @@ const [{ data: page }, { data: officialModules }, { data: showcase }, { data: sp
   useAsyncData('index', () => useContent('site').get('/')),
   useFetch('/api/v1/modules', {
     key: 'official-modules',
+    // Only what `ModuleItem` reads: the payload carries every module object otherwise.
     transform: (res: { modules: Module[], stats: Stats }) => res.modules
       .filter(module => module.type === 'official')
-      .sort((a, b) => b.stats.stars - a.stats.stars)
+      .sort((a, b) => b.stats!.stars - a.stats!.stars)
+      .map(({ name, npm, description, icon, category, type, sponsor, repo, website, health, stats }) => ({
+        name, npm, description, icon, category, type, sponsor, repo, website, health,
+        stats: { version: stats!.version, downloads: stats!.downloads, stars: stats!.stars, publishedAt: stats!.publishedAt, createdAt: stats!.createdAt }
+      }) as Module)
   }),
-  useAsyncData('showcase', () => useContent('site').get('/showcase')),
+  useAsyncData('showcase-home', async () => {
+    const doc = await useContent('site').get('/showcase')
+    // The carousel shows the first 10 websites.
+    return { websites: (doc?.data.websites as any[]).slice(0, 10).map(({ name, url }) => ({ name, url })) }
+  }),
   useFetch('/api/sponsors', {
     key: 'sponsors-home',
     transform(sponsors: SponsorsByTier) {
@@ -36,13 +45,15 @@ const [{ data: page }, { data: officialModules }, { data: showcase }, { data: sp
 ])
 
 const pageData = computed(() => page.value?.data)
-const showcaseData = computed(() => showcase.value?.data)
 
 // Merge via computed, not mutation: useFetch `data` is a shallowRef (Nuxt 4
 // default), so writing module.health in place would not trigger a re-render.
 const { health } = useModuleHealth()
+// The health map loads on the client only: merge it once the modules section hydrated, or its server
+// HTML (without the health badges) would not match.
+const modulesHydrated = ref(false)
 const officialModulesWithHealth = computed(() =>
-  (officialModules.value || []).map(m => ({ ...m, health: health.value[m.name] ?? m.health ?? null }))
+  (officialModules.value || []).map(m => ({ ...m, health: (modulesHydrated.value && health.value[m.name]) || m.health || null }))
 )
 
 const stats = useStats()
@@ -234,7 +245,10 @@ useNuxtBirthday()
         <HomeLogoCarousel :companies="pageData.logos.companies" />
       </div>
     </UPageSection>
-    <UPageSection
+    <!-- Sections below the hero hydrate when they scroll into view: hydrating the whole page at once
+         is one long main-thread task, most of it in components nobody sees on load. -->
+    <LazyUPageSection
+      hydrate-on-visible
       :title="pageData?.features.title"
       :description="pageData?.features.description"
       :ui="{
@@ -275,9 +289,10 @@ useNuxtBirthday()
           </div>
         </Motion>
       </template>
-    </UPageSection>
+    </LazyUPageSection>
 
-    <UPageCTA
+    <LazyUPageCTA
+      hydrate-on-visible
       :description="pageData.testimonial.quote"
       variant="subtle"
       class="rounded-none"
@@ -291,9 +306,10 @@ useNuxtBirthday()
         size="xl"
         class="justify-center"
       />
-    </UPageCTA>
+    </LazyUPageCTA>
 
-    <UPageSection
+    <LazyUPageSection
+      hydrate-on-visible
       :ui="{
         root: 'bg-linear-to-b border-t border-default from-muted dark:from-muted/40 to-default'
       }"
@@ -362,9 +378,10 @@ useNuxtBirthday()
           </UPageCard>
         </template>
       </div>
-    </UPageSection>
+    </LazyUPageSection>
 
-    <UPageSection
+    <LazyUPageSection
+      hydrate-on-visible
       :title="pageData.stats.title"
       :description="pageData.stats.description"
       class="relative"
@@ -451,9 +468,10 @@ useNuxtBirthday()
           </UPageCard>
         </div>
       </div>
-    </UPageSection>
+    </LazyUPageSection>
 
-    <UPageSection
+    <LazyUPageSection
+      hydrate-on-visible
       :description="pageData.modules.description"
       :links="pickLinks(pageData.modules.links)"
       :ui="{
@@ -462,6 +480,7 @@ useNuxtBirthday()
         description: 'text-left',
         links: 'justify-start'
       }"
+      @hydrated="modulesHydrated = true"
     >
       <template #title>
         <LazyMarkdown :value="pageData.modules.title" unwrap="p" hydrate-never />
@@ -482,9 +501,10 @@ useNuxtBirthday()
       >
         <ModuleItem :module="item" :show-badge="false" :is-added="false" :show-add-button="false" class="min-h-full" />
       </UCarousel>
-    </UPageSection>
+    </LazyUPageSection>
 
-    <UPageSection
+    <LazyUPageSection
+      hydrate-on-visible
       :title="pageData.deploy.title"
       :description="pageData.deploy.description"
       :links="pickLinks(pageData.deploy.links)"
@@ -501,9 +521,10 @@ useNuxtBirthday()
         class="mx-auto max-w-lg sm:w-full w-full"
         loading="lazy"
       />
-    </UPageSection>
+    </LazyUPageSection>
 
-    <UPageSection
+    <LazyUPageSection
+      hydrate-on-visible
       :title="pageData.contributors.title"
       :description="pageData.contributors.description"
       :links="pickLinks(pageData.contributors.links)"
@@ -514,10 +535,11 @@ useNuxtBirthday()
       }"
     >
       <HomeSectionContributors />
-    </UPageSection>
+    </LazyUPageSection>
 
-    <UPageSection
+    <LazyUPageSection
       id="showcaseData"
+      hydrate-on-visible
       headline="Showcase"
       title="Real-world Web Applications built with Nuxt"
       :links="[{
@@ -540,7 +562,7 @@ useNuxtBirthday()
         wheel-gestures
         arrows
         :autoplay="{ delay: 3000 }"
-        :items="(showcaseData.websites as any[]).slice(0, 10)"
+        :items="showcase?.websites ?? []"
         :active="isMounted"
         class="min-w-0"
         :ui="{
@@ -577,9 +599,10 @@ useNuxtBirthday()
           />
         </UPageCard>
       </UCarousel>
-    </UPageSection>
+    </LazyUPageSection>
 
-    <UPageSection
+    <LazyUPageSection
+      hydrate-on-visible
       :title="pageData.sponsors.title"
       :description="pageData.sponsors.description"
       :links="pickLinks(pageData.sponsors.links)"
@@ -597,6 +620,6 @@ useNuxtBirthday()
           <SponsorsGrid :sponsors="sponsors" :featured="tier === 'diamond'" :columns="tier === 'diamond' ? 2 : 3" />
         </div>
       </div>
-    </UPageSection>
+    </LazyUPageSection>
   </div>
 </template>
