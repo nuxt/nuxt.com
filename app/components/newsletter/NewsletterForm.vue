@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import * as v from 'valibot'
-import type { FormSubmitEvent } from '#ui/types'
+import type { FormError, FormSubmitEvent } from '#ui/types'
 
 const {
   label = 'Subscribe to our newsletter',
@@ -17,17 +16,16 @@ const { track } = useAnalytics()
 
 const loading = ref(false)
 
-const schema = v.object({
-  email: v.pipe(v.string(), v.email('Please enter a valid email'))
-})
-
-type Schema = v.InferOutput<typeof schema>
-
 const state = reactive({
   email: ''
 })
 
-async function onSubmit(event: FormSubmitEvent<Schema>) {
+// The server validates the address too; this only catches typos before the request.
+function validate(data: Partial<typeof state>): FormError[] {
+  return /^[^\s@]+@[^\s@][^\s.@]*\.[^\s@]+$/.test(data.email ?? '') ? [] : [{ name: 'email', message: 'Please enter a valid email' }]
+}
+
+async function onSubmit(event: FormSubmitEvent<typeof state>) {
   loading.value = true
 
   await $fetch('/api/newsletter/subscribe', {
@@ -49,7 +47,7 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
 </script>
 
 <template>
-  <UForm :schema="schema" :state="state" :validate-on="[]" class="block" @submit="onSubmit">
+  <UForm :validate="validate" :state="state" :validate-on="[]" class="block" @submit="onSubmit">
     <UFormField name="email" :label="label" :size="size" :description="description" :ui="{ label: 'font-semibold', container: label ? 'mt-3' : '' }">
       <UFieldGroup :size="size" class="max-w-sm w-full">
         <UInput

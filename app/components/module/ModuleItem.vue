@@ -156,7 +156,7 @@ const items = computed(() => [
       </template>
 
       <UBadge
-        v-show="showBadge && module.type === 'official'"
+        v-if="showBadge && module.type === 'official'"
         class="shine absolute top-4 right-4 sm:top-6 sm:right-6"
         variant="subtle"
         color="primary"
@@ -164,7 +164,7 @@ const items = computed(() => [
       />
 
       <UBadge
-        v-show="showBadge && module.sponsor"
+        v-if="showBadge && module.sponsor"
         class="shine absolute top-4 right-4 sm:top-6 sm:right-6"
         variant="subtle"
         color="important"
