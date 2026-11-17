@@ -1,15 +1,14 @@
 <script setup lang="ts">
 import type { UIMessage } from 'ai'
 import type { AgentChatHandle } from '../../composables/eve/types'
-import type { ChatQueueItem } from '../../composables/useChatQueue'
 
 const input = defineModel<string>('input', { required: true })
-const queue = defineModel<ChatQueueItem[]>('queue')
 
 const props = withDefaults(defineProps<{
   chat: AgentChatHandle
   chatId: string
-  prompt: { pasteAttachments: TextPasteAttachment[], canSubmit: boolean }
+  /** Spread on `AgentChatPrompt`. */
+  prompt: { pasteAttachments: TextPasteAttachment[], canSubmit: boolean } & Record<string, unknown>
   usage?: { used: number, remaining: number, limit: number }
   rateLimitReached?: boolean
   compact?: boolean
@@ -42,7 +41,6 @@ const emit = defineEmits<{
   submit: []
   paste: [event: ClipboardEvent]
   removeAttachment: [index: number]
-  send: []
   vote: [message: UIMessage, isUpvoted: boolean]
   askQuestion: [question: string]
 }>()
@@ -86,7 +84,6 @@ defineExpose({
     <AgentChatPrompt
       ref="promptRef"
       v-model="input"
-      v-model:queue="queue"
       v-bind="prompt"
       :chat="chat"
       :usage="usage"
@@ -98,7 +95,6 @@ defineExpose({
       @submit="emit('submit')"
       @paste="emit('paste', $event)"
       @remove-attachment="emit('removeAttachment', $event)"
-      @send="emit('send')"
     >
       <template v-if="$slots['prompt-footer-left']" #footer-left>
         <slot name="prompt-footer-left" />

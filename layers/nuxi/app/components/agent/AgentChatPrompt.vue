@@ -92,6 +92,53 @@ function submitAttachmentsOnly(event?: KeyboardEvent) {
       </div>
     </template>
 
+    <template #queue="{ queue: items, send, edit, remove }">
+      <p class="px-1.5 pt-1.5 pb-1 text-xs font-medium text-muted">
+        Queued messages <span class="text-dimmed tabular-nums">{{ items.length }}</span>
+      </p>
+      <ul class="flex flex-col max-h-60 overflow-y-auto pb-1">
+        <li
+          v-for="(item, index) in items"
+          :key="index"
+          class="group/queue flex items-center gap-2 h-7 ps-2 pe-0.5 rounded-sm hover:bg-elevated"
+        >
+          <span class="flex-1 min-w-0 truncate text-sm text-default">{{ item.text }}</span>
+          <div class="flex items-center shrink-0 [@media(hover:hover)]:opacity-0 group-hover/queue:opacity-100 group-focus-within/queue:opacity-100 transition-opacity">
+            <UTooltip :text="promptStatus === 'ready' ? 'Send now' : 'Send now, Nuxi takes it into the current answer'">
+              <UButton
+                icon="i-lucide-arrow-up"
+                color="neutral"
+                variant="link"
+                size="xs"
+                aria-label="Send now"
+                @click="send(index)"
+              />
+            </UTooltip>
+            <UTooltip text="Edit in the prompt">
+              <UButton
+                icon="i-lucide-pencil"
+                color="neutral"
+                variant="link"
+                size="xs"
+                aria-label="Edit"
+                @click="edit(index)"
+              />
+            </UTooltip>
+            <UTooltip text="Remove">
+              <UButton
+                icon="i-lucide-trash"
+                color="neutral"
+                variant="link"
+                size="xs"
+                aria-label="Remove"
+                @click="remove(index)"
+              />
+            </UTooltip>
+          </div>
+        </li>
+      </ul>
+    </template>
+
     <template #footer>
       <slot name="footer-left">
         <ClientOnly>

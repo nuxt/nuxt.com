@@ -55,8 +55,6 @@ const {
   getVote,
   vote,
   onSubmit,
-  queue,
-  onSendQueued,
   handlePaste,
   removeAttachment
 } = useNuxiChat({
@@ -132,7 +130,6 @@ useNuxiChatSeo({
         <AgentChatBody
           v-if="showPromptBody"
           v-model:input="input"
-          v-model:queue="queue"
           :chat="chat"
           :chat-id="chatId"
           :prompt="prompt"
@@ -151,7 +148,6 @@ useNuxiChatSeo({
             header: 'px-1.5 pt-1.5 pb-0 gap-1.5 flex flex-wrap items-start'
           }"
           @submit="onSubmit"
-          @send="onSendQueued"
           @paste="handlePaste"
           @remove-attachment="removeAttachment"
           @vote="vote"

@@ -1,4 +1,4 @@
-import { and, eq } from 'drizzle-orm'
+import { and, desc, eq } from 'drizzle-orm'
 import { z } from 'zod'
 import type { UIMessage } from 'ai'
 
@@ -29,11 +29,20 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 404, statusMessage: 'Chat not found' })
   }
 
+  // A message sent during an answer follows the reply saved just before it. `createdAt` drives read order and is
+  // stored with second precision, so keep it at least a second after the latest message.
+  const latest = await db.query.messages.findFirst({
+    where: () => eq(schema.messages.chatId, id),
+    orderBy: () => desc(schema.messages.createdAt),
+    columns: { createdAt: true }
+  })
+
   await insertChatMessages(id, [{
     id: message.id,
     role: 'user',
     parts: message.parts as UIMessage['parts'],
-    metadata: message.metadata ?? null
+    metadata: message.metadata ?? null,
+    createdAt: new Date(Math.max(Date.now(), (latest?.createdAt?.getTime() ?? 0) + 1000))
   }])
 
   return { ok: true }

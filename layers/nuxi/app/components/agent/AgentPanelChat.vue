@@ -39,8 +39,6 @@ const {
   vote,
   askQuestion,
   onSubmit,
-  queue,
-  onSendQueued,
   handlePaste,
   removeAttachment
 } = useNuxiChat({
@@ -155,7 +153,6 @@ watch(isOpen, (value) => {
           ref="promptRef"
           v-model="input"
           v-bind="prompt"
-          v-model:queue="queue"
           :chat="chat"
           :usage="usage"
           variant="naked"
@@ -170,7 +167,6 @@ watch(isOpen, (value) => {
             queue: 'inset-x-0 px-2.5 py-1 rounded-none border-0 border-b border-default bg-default backdrop-blur-none'
           }"
           @submit="onSubmit"
-          @send="onSendQueued"
           @paste="handlePaste"
           @remove-attachment="removeAttachment"
         >

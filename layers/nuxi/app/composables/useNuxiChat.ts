@@ -18,7 +18,7 @@ import { hasVisibleParts } from './eve/adapter'
 import { useEveChat } from './eve/useEveChat'
 import type { EveChatFinish } from './eve/useEveChat'
 import { usePasteAttachment } from './usePasteAttachment'
-import { useChatQueue } from './useChatQueue'
+import { useChatQueue, type ChatQueueItem } from './useChatQueue'
 import { useNuxiPreview } from './useNuxiPreview'
 
 export type NuxiChatSendInput = string | { parts: UIMessage['parts'], persist?: boolean }
@@ -433,6 +433,12 @@ export function useNuxiChat(options: UseNuxiChatOptions) {
 
     if (loggedIn.value && persist) {
       try {
+        // Sent during an answer, the message steers it and splits the reply around it. Save the reply so far first, so
+        // the message reads after it once the chat is reloaded.
+        if (eveChat.status === 'submitted' || eveChat.status === 'streaming') {
+          const answering = eveChat.messages.filter(message => (message.metadata as { status?: string } | undefined)?.status === 'streaming')
+          await syncChatToDb(chatId.value, answering)
+        }
         await persistUserMessage(parts)
       } catch {
         toast.add({
@@ -459,7 +465,6 @@ export function useNuxiChat(options: UseNuxiChatOptions) {
     status: () => eveChat.status,
     canSend: () => !agent.rateLimitReached.value,
     send: item => send({ parts: buildMessageParts(item.text, item.attachments ?? []) }),
-    stop: eveChat.stop,
     input,
     attachments: paste.attachments
   })
@@ -510,13 +515,17 @@ export function useNuxiChat(options: UseNuxiChatOptions) {
   return {
     chat,
     input,
-    prompt: paste.prompt,
+    // Spread on `AgentChatPrompt`, so the queue reaches it wherever the prompt is.
+    prompt: computed(() => ({
+      ...paste.prompt.value,
+      'queue': queue.value,
+      'onUpdate:queue': (value: ChatQueueItem[]) => queue.value = value,
+      'onSend': onSendQueued
+    })),
     getVote,
     vote,
     send,
     onSubmit,
-    queue,
-    onSendQueued,
     askQuestion,
     handlePaste: paste.handlePaste,
     removeAttachment: paste.removeAttachment,

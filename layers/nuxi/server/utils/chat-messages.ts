@@ -6,6 +6,7 @@ export interface ChatMessageInsert {
   role: 'user' | 'assistant' | 'system'
   parts: UIMessage['parts']
   metadata?: Record<string, unknown> | null
+  createdAt?: Date
 }
 
 export async function insertChatMessages(
@@ -20,7 +21,8 @@ export async function insertChatMessages(
     chatId,
     role: message.role,
     parts: message.parts,
-    metadata: message.metadata ?? null
+    metadata: message.metadata ?? null,
+    ...(message.createdAt ? { createdAt: message.createdAt } : {})
   }))).onConflictDoNothing({ target: [schema.messages.chatId, schema.messages.id] })
 
   if (options?.touchUpdatedAt !== false) {

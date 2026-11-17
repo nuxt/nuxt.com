@@ -7,7 +7,8 @@ export type ChatQueueItem = ChatPromptQueueItem & { attachments?: TextPasteAttac
 
 /**
  * Messages submitted while the chat answers, for `UChatPrompt`'s `v-model:queue`. The first one is sent once the chat is
- * `ready` again; after an error the queue waits until the visitor retries. "Send now" stops the answer, which sends it.
+ * `ready` again; after an error the queue waits until the visitor retries. "Send now" sends right away: during an answer,
+ * Eve steers the running turn with it instead of starting another.
  *
  * `UChatPrompt` queues the text only, so each message takes the pasted attachments that were in the prompt, and gives
  * them back if the visitor moves it into the prompt to edit it.
@@ -16,18 +17,17 @@ export function useChatQueue(options: {
   status: () => AgentChatStatus
   /** Whether a message can be sent at all, e.g. not at the daily limit. */
   canSend: () => boolean
-  /** May save the message before the chat starts answering; nothing else is sent until it settles. */
+  /** May save the message before the chat gets it; sends run one at a time, in order. */
   send: (item: ChatQueueItem) => void | Promise<void>
-  stop: () => void
   input: Ref<string>
   attachments: Ref<TextPasteAttachment[]>
 }) {
   const queue = ref<ChatQueueItem[]>([])
   const sent = new WeakSet<ChatQueueItem>()
-  let sending = false
-  /** The answer ended while its message was still being sent, so the next one waits for that send to settle. */
+  let pending = 0
+  let sends: Promise<unknown> = Promise.resolve()
+  /** The answer ended while messages were still being sent, so the next one goes once they settle. */
   let readyWhileSending = false
-  const isAnswering = () => options.status() === 'submitted' || options.status() === 'streaming'
 
   watch([queue, options.input], ([next, input], [previous, previousInput]) => {
     for (const item of next) {
@@ -43,31 +43,36 @@ export function useChatQueue(options: {
     }
   })
 
-  function sendNext() {
-    const [item, ...rest] = queue.value
-    if (!item || sending || isAnswering() || options.status() === 'error' || !options.canSend()) return
+  const canDispatch = () => options.status() !== 'error' && options.canSend()
+
+  function dispatch(item: ChatQueueItem) {
     sent.add(toRaw(item))
-    queue.value = rest
-    sending = true
-    void Promise.resolve(options.send(item)).finally(() => {
-      sending = false
-      if (readyWhileSending) sendNext()
+    queue.value = queue.value.filter(other => other !== item)
+    pending++
+    // Failures surface through the chat's own error state, which holds the queue.
+    sends = sends.then(() => options.send(item)).catch(() => {}).finally(() => {
+      if (--pending > 0 || !readyWhileSending) return
       readyWhileSending = false
+      sendNext()
     })
+  }
+
+  function sendNext() {
+    const [item] = queue.value
+    const answering = options.status() === 'submitted' || options.status() === 'streaming'
+    if (item && !answering && canDispatch()) dispatch(item)
   }
 
   watch(options.status, (status) => {
     if (status !== 'ready') return
-    if (sending) readyWhileSending = true
+    if (pending) readyWhileSending = true
     else sendNext()
   })
 
   /** "Send now" moved the message to the front. */
   function onSend() {
-    // The message being sent goes first anyway; the picked one is next.
-    if (sending) return
-    if (isAnswering()) options.stop()
-    else sendNext()
+    const [item] = queue.value
+    if (item && canDispatch()) dispatch(item)
   }
 
   return { queue, onSend }
