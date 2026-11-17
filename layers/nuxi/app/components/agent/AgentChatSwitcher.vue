@@ -1,7 +1,5 @@
 <script setup lang="ts">
-import { motion } from 'motion-v'
-
-const { isOpen, nuxiMood } = useNuxtAgent()
+const { isOpen } = useNuxtAgent()
 const { chatList } = useChats()
 
 const panel = inject<{
@@ -44,14 +42,6 @@ watch(popoverOpen, (open) => {
     v-if="!hasChatHistory"
     class="inline-flex items-center gap-2 min-w-0"
   >
-    <motion.span
-      :initial="{ opacity: 0, scale: 0.5, filter: 'blur(4px)' }"
-      :animate="{ opacity: 1, scale: 1, filter: 'blur(0px)' }"
-      :transition="{ duration: 0.3, ease: 'easeOut', delay: 0.1 }"
-      class="inline-flex"
-    >
-      <AgentNuxiIcon class="size-5 shrink-0" :mood="nuxiMood" />
-    </motion.span>
     <span class="truncate">Nuxi</span>
     <UBadge variant="subtle" size="sm" class="shrink-0">
       Beta
@@ -71,18 +61,7 @@ watch(popoverOpen, (open) => {
       variant="ghost"
       class="font-medium max-w-44"
       :ui="{ label: 'truncate min-w-0' }"
-    >
-      <template #leading>
-        <motion.span
-          :initial="{ opacity: 0, scale: 0.5, filter: 'blur(4px)' }"
-          :animate="{ opacity: 1, scale: 1, filter: 'blur(0px)' }"
-          :transition="{ duration: 0.3, ease: 'easeOut', delay: 0.1 }"
-          class="inline-flex"
-        >
-          <AgentNuxiIcon class="size-5 shrink-0" :mood="nuxiMood" />
-        </motion.span>
-      </template>
-    </UButton>
+    />
 
     <template #content>
       <div class="p-1.5 border-b border-default">

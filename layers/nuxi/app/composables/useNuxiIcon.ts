@@ -134,9 +134,10 @@ export function useNuxiIcon(props: NuxiIconProps, emit?: EmitFn) {
     lerpedOffset.y += (t.y - lerpedOffset.y) * LERP_FACTOR
   }, { immediate: false })
 
-  const faceTransform = computed(() =>
-    `translate(${lerpedOffset.x}px, ${BASE_Y + lerpedOffset.y}px)`
-  )
+  const faceTransform = computed(() => {
+    const offset = props.interactive === false ? targetOffset.value : lerpedOffset
+    return `translate(${offset.x}px, ${BASE_Y + offset.y}px)`
+  })
 
   const visual = computed(() => MOOD_VISUALS[effectiveMood.value])
 
@@ -443,10 +444,9 @@ export function useNuxiIcon(props: NuxiIconProps, emit?: EmitFn) {
   }
 
   onMounted(() => {
-    if (props.interactive !== false) {
-      useEventListener(window, 'mousemove', handleMouseMove, { passive: true })
-      useEventListener(window, 'keydown', handleKeyDown)
-    }
+    if (props.interactive === false) return
+    useEventListener(window, 'mousemove', handleMouseMove, { passive: true })
+    useEventListener(window, 'keydown', handleKeyDown)
     scheduleLook()
     scheduleBlink()
     scheduleWink()

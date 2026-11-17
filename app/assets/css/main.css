@@ -39,6 +39,21 @@
   animation: none;
 }
 
+::view-transition-group(nuxi-avatar),
+::view-transition-group(nuxi-panel-avatar),
+::view-transition-group(chat-prompt) {
+  animation-duration: 420ms;
+  animation-timing-function: var(--ease-snappy);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(nuxi-avatar),
+  ::view-transition-group(nuxi-panel-avatar),
+  ::view-transition-group(chat-prompt) {
+    animation-duration: 0s;
+  }
+}
+
 .dark {
   --ui-bg: var(--ui-color-neutral-950);
   --ui-bg-muted: var(--ui-color-neutral-900);

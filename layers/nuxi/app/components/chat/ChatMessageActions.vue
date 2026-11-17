@@ -82,65 +82,70 @@ const moreItems = computed<DropdownMenuItem[][]>(() => {
 </script>
 
 <template>
-  <div v-if="!streaming" class="flex items-center gap-0.5">
-    <UTooltip :text="copied ? 'Copied' : 'Copy'">
-      <UButton
-        :icon="copied ? 'i-lucide-check' : 'i-lucide-copy'"
-        :aria-label="copied ? 'Copied' : 'Copy response'"
-        color="neutral"
-        variant="ghost"
-        size="xs"
-        @click="copy(textContent)"
-      />
-    </UTooltip>
+  <Transition
+    enter-from-class="opacity-0 translate-y-0.5 motion-reduce:translate-y-0"
+    enter-active-class="transition-[opacity,transform] duration-150 ease-out motion-reduce:transition-none"
+  >
+    <div v-if="!streaming" class="flex items-center gap-0.5">
+      <UTooltip :text="copied ? 'Copied' : 'Copy'">
+        <UButton
+          :icon="copied ? 'i-lucide-check' : 'i-lucide-copy'"
+          :aria-label="copied ? 'Copied' : 'Copy response'"
+          color="neutral"
+          variant="ghost"
+          size="xs"
+          @click="copy(textContent)"
+        />
+      </UTooltip>
 
-    <UTooltip text="Good response">
-      <UButton
-        icon="i-lucide-thumbs-up"
-        aria-label="Mark response as helpful"
-        :aria-pressed="vote === true ? 'true' : 'false'"
-        :color="vote === true ? 'success' : 'neutral'"
-        variant="ghost"
-        size="xs"
-        @click="emit('vote', message, true)"
-      />
-    </UTooltip>
+      <UTooltip text="Good response">
+        <UButton
+          icon="i-lucide-thumbs-up"
+          aria-label="Mark response as helpful"
+          :aria-pressed="vote === true ? 'true' : 'false'"
+          :color="vote === true ? 'success' : 'neutral'"
+          variant="ghost"
+          size="xs"
+          @click="emit('vote', message, true)"
+        />
+      </UTooltip>
 
-    <UTooltip text="Bad response">
-      <UButton
-        icon="i-lucide-thumbs-down"
-        aria-label="Mark response as not helpful"
-        :aria-pressed="vote === false ? 'true' : 'false'"
-        :color="vote === false ? 'error' : 'neutral'"
-        variant="ghost"
-        size="xs"
-        @click="emit('vote', message, false)"
-      />
-    </UTooltip>
+      <UTooltip text="Bad response">
+        <UButton
+          icon="i-lucide-thumbs-down"
+          aria-label="Mark response as not helpful"
+          :aria-pressed="vote === false ? 'true' : 'false'"
+          :color="vote === false ? 'error' : 'neutral'"
+          variant="ghost"
+          size="xs"
+          @click="emit('vote', message, false)"
+        />
+      </UTooltip>
 
-    <UTooltip v-if="canRegenerate" text="Regenerate">
-      <UButton
-        icon="i-lucide-rotate-ccw"
-        aria-label="Regenerate response"
-        color="neutral"
-        variant="ghost"
-        size="xs"
-        @click="emit('regenerate')"
-      />
-    </UTooltip>
+      <UTooltip v-if="canRegenerate" text="Regenerate">
+        <UButton
+          icon="i-lucide-rotate-ccw"
+          aria-label="Regenerate response"
+          color="neutral"
+          variant="ghost"
+          size="xs"
+          @click="emit('regenerate')"
+        />
+      </UTooltip>
 
-    <UDropdownMenu
-      v-if="moreItems[0]?.length"
-      :items="moreItems"
-      :content="{ align: 'start', side: 'top' }"
-    >
-      <UButton
-        icon="i-lucide-ellipsis"
-        aria-label="More options"
-        color="neutral"
-        variant="ghost"
-        size="xs"
-      />
-    </UDropdownMenu>
-  </div>
+      <UDropdownMenu
+        v-if="moreItems[0]?.length"
+        :items="moreItems"
+        :content="{ align: 'start', side: 'top' }"
+      >
+        <UButton
+          icon="i-lucide-ellipsis"
+          aria-label="More options"
+          color="neutral"
+          variant="ghost"
+          size="xs"
+        />
+      </UDropdownMenu>
+    </div>
+  </Transition>
 </template>

@@ -1,6 +1,6 @@
 import type { ToolUIPart, DynamicToolUIPart } from 'ai'
 import { getToolName } from 'ai'
-import { isToolStreaming } from '@nuxt/ui/utils/ai'
+import { getSearchQuery, getSources } from '../utils/tool'
 import { parsePromptCardOutput } from '../../shared/utils/ide-deeplinks'
 
 export type ToolPart = ToolUIPart | DynamicToolUIPart
@@ -18,7 +18,10 @@ const VERBS: Record<string, [string, string]> = {
   show: ['Finding', 'Found'],
   open: ['Opening', 'Opened'],
   generate: ['Generating', 'Generated'],
-  create: ['Creating', 'Created']
+  create: ['Creating', 'Created'],
+  edit: ['Editing', 'Edited'],
+  add: ['Adding', 'Added'],
+  check: ['Checking', 'Checked']
 }
 
 /**
@@ -53,10 +56,6 @@ function unwrapConnectionSearchResults(output: unknown): Array<Record<string, un
   return undefined
 }
 
-export function getConnectionSearchToolText(part: ToolPart): string {
-  return isToolStreaming(part) ? 'Discovering connection tools...' : 'Discovered connection tools'
-}
-
 export function getConnectionSearchSuffix(part: ToolPart): string | undefined {
   const input = (part.input || {}) as Record<string, unknown>
   const keywords = typeof input.keywords === 'string' ? input.keywords.trim() : ''
@@ -66,9 +65,7 @@ export function getConnectionSearchSuffix(part: ToolPart): string | undefined {
   const toolNames = items?.map(item => item.tool).filter((name): name is string => typeof name === 'string' && name.length > 0) ?? []
 
   if (toolNames.length > 0) {
-    const preview = toolNames.slice(0, 3).join(', ')
-    const extra = toolNames.length > 3 ? ` +${toolNames.length - 3}` : ''
-    return keywords ? `${keywords} → ${preview}${extra}` : `${preview}${extra}`
+    return `${keywords ? `${keywords} · ` : ''}${toolNames.length} tools available`
   }
 
   return keywords || undefined
@@ -76,12 +73,14 @@ export function getConnectionSearchSuffix(part: ToolPart): string | undefined {
 
 const SUFFIX_KEYS = [
   'search',
+  'objective',
   'keywords',
   'query',
   'q',
   'term',
   'path',
   'slug',
+  'title',
   'templateName',
   'componentName',
   'composableName',
@@ -107,19 +106,26 @@ function parseToolName(toolName: string): { verb?: [string, string], label: stri
 type RichToolName = 'show_module' | 'show_template' | 'show_blog_post' | 'show_hosting' | 'show_nuxter' | 'open_playground' | 'report_issue' | 'show_prompt'
 
 const RICH_TOOL_HEADERS = {
-  show_module: { loading: 'Loading module...', success: 'Found module', error: 'Module not found', icon: 'i-lucide-box' },
-  show_template: { loading: 'Loading templates...', success: 'Found templates', error: 'Templates not found', icon: 'i-lucide-layout-template' },
-  show_blog_post: { loading: 'Finding blog post...', success: 'Found blog post', error: 'Blog post not found', icon: 'i-lucide-newspaper' },
-  show_hosting: { loading: 'Loading provider...', success: 'Found provider', error: 'Provider not found', icon: 'i-lucide-server' },
-  show_nuxter: { loading: 'Finding Nuxter...', success: 'Found Nuxter', error: 'Nuxter not found', icon: 'i-lucide-users' },
-  open_playground: { loading: 'Generating playground...', success: 'Playground ready', error: 'Playground ready', icon: 'i-simple-icons-stackblitz' },
-  report_issue: { loading: 'Preparing feedback form...', success: 'Help us improve', error: 'Help us improve', icon: 'i-lucide-message-circle-warning' },
-  show_prompt: { loading: 'Preparing prompt...', success: 'Ready to apply', error: 'Prompt unavailable', icon: 'i-lucide-sparkles' }
-} as const satisfies Record<RichToolName, { loading: string, success: string, error: string, icon: string }>
+  show_module: { loading: 'Loading module', success: 'Found module', error: 'Module unavailable' },
+  show_template: { loading: 'Loading templates', success: 'Found templates', error: 'Templates unavailable' },
+  show_blog_post: { loading: 'Finding blog post', success: 'Found blog post', error: 'Blog post unavailable' },
+  show_hosting: { loading: 'Loading provider', success: 'Found provider', error: 'Provider unavailable' },
+  show_nuxter: { loading: 'Finding Nuxter', success: 'Found Nuxter', error: 'Nuxter unavailable' },
+  open_playground: { loading: 'Generating playground', success: 'Playground ready', error: 'Playground unavailable' },
+  report_issue: { loading: 'Preparing feedback form', success: 'Help us improve', error: 'Feedback form unavailable' },
+  show_prompt: { loading: 'Preparing prompt', success: 'Ready to apply', error: 'Prompt unavailable' }
+} as const satisfies Record<RichToolName, { loading: string, success: string, error: string }>
+
+const LOOKUP_HEADERS = {
+  search_docs: { loading: 'Searching Nuxt documentation', success: 'Searched Nuxt documentation', error: 'Documentation search unavailable' },
+  read_page: { loading: 'Reading a page', success: 'Read page', error: 'Page unavailable' },
+  search_modules: { loading: 'Searching Nuxt modules', success: 'Searched Nuxt modules', error: 'Module search unavailable' }
+} as const
 
 export function hasToolError(output: unknown): boolean {
   if (!output || typeof output !== 'object') return false
-  return !!(output as Record<string, unknown>).error
+  const value = output as Record<string, unknown>
+  return !!value.error || value.isError === true
 }
 
 /** Cards only receive explicitly picked, type-checked fields from tool outputs. */
@@ -292,11 +298,53 @@ export function getPromptOutput(output: unknown): PromptCardData | null {
   }
 }
 
-/** Tool output is ready to render (terminal state or output already present). */
+/** Only settled results are rendered; preliminary output is still work in progress. */
 export function hasToolOutput(part: ToolPart): boolean {
-  if (part.state === 'output-error' || part.state === 'output-denied') return false
-  if (part.state === 'output-available') return part.output != null
-  return part.output != null
+  return part.state === 'output-available' && !part.preliminary && part.output != null
+}
+
+export function getToolState(part: ToolPart, active = true) {
+  if (part.state === 'output-denied' || (part.state === 'approval-responded' && !part.approval.approved)) return 'denied'
+  if (part.state === 'output-error') return /cancelled|canceled/i.test(part.errorText) ? 'stopped' : 'error'
+  if (part.state === 'output-available' && !part.preliminary) return hasToolError(part.output) ? 'error' : 'complete'
+  if (part.state === 'approval-requested') return 'approval'
+  return active ? 'running' : 'stopped'
+}
+
+export interface ToolReference {
+  title: string
+  url: string
+  section?: string
+  content?: string
+}
+
+export function getToolReferences(part: ToolPart): ToolReference[] {
+  if (!hasToolOutput(part) || hasToolError(part.output)) return []
+  const name = normalizeToolName(getToolName(part))
+  const output = asRecord(part.output)
+  const items = name === 'read_page'
+    ? [output]
+    : name === 'search_modules'
+      ? output.modules
+      : name === 'search_docs'
+        ? output.results
+        : name === 'web_search'
+          ? (Array.isArray(part.output) ? part.output : Array.isArray(output.sources) && output.sources.length ? output.sources : output.results)
+          : []
+  if (!Array.isArray(items)) return []
+
+  return items.flatMap((item): ToolReference[] => {
+    const value = asRecord(item)
+    const slug = name === 'search_modules' ? slugLike(value.slug) : undefined
+    const url = urlOrPath(value.url ?? value.path) ?? (slug ? `/modules/${slug}` : undefined)
+    if (!url) return []
+    return [{
+      title: str(value.title) ?? str(value.npm) ?? str(value.name) ?? url,
+      url,
+      section: str(value.section),
+      content: str(value.content) ?? str(value.description)
+    }]
+  })
 }
 
 function hasRichToolSuccess(part: ToolPart, toolName: RichToolName): boolean {
@@ -308,12 +356,13 @@ function hasRichToolSuccess(part: ToolPart, toolName: RichToolName): boolean {
     case 'show_template':
       return !!part.output && !hasToolError(part.output) && hasTemplatesOutput(part.output)
     case 'show_blog_post':
+      return !!blogCardProps(part.output)
     case 'show_hosting':
-      return !!part.output && !hasToolError(part.output)
+      return !!hostingCardProps(part.output)
     case 'show_nuxter':
       return !!nuxterCardProps(part.output)
     case 'open_playground':
-      return !!part.output
+      return !!playgroundCardProps(part.output)
     case 'report_issue':
       return !!getFeedbackOutput(part.output)
     case 'show_prompt':
@@ -321,19 +370,57 @@ function hasRichToolSuccess(part: ToolPart, toolName: RichToolName): boolean {
   }
 }
 
-export function getRichToolHeader(part: ToolPart, toolName: RichToolName) {
-  const config = RICH_TOOL_HEADERS[toolName]
-  const streaming = isToolStreaming(part)
+export function getToolPresentation(part: ToolPart, active: boolean) {
+  const name = normalizeToolName(getToolName(part))
+  const rich = Object.hasOwn(RICH_TOOL_HEADERS, name) ? RICH_TOOL_HEADERS[name as RichToolName] : undefined
+  const config = rich ?? (Object.hasOwn(LOOKUP_HEADERS, name) ? LOOKUP_HEADERS[name as keyof typeof LOOKUP_HEADERS] : undefined)
+  let state = getToolState(part, active)
+  if (state === 'complete' && rich && !hasRichToolSuccess(part, name as RichToolName)) state = 'error'
+
+  const sourceCount = name === 'web_search' && state === 'complete' ? getSources(part).length : 0
+  let text = config
+    ? (state === 'complete' ? config.success : config.loading)
+    : name === 'web_search'
+      ? (state === 'complete' ? 'Searched the web' : 'Searching the web')
+      : name === 'connection_search'
+        ? (state === 'complete' ? 'Found available tools' : 'Finding available tools')
+        : getToolText(part)
+
+  if (state === 'complete' && (name === 'search_docs' || name === 'search_modules')) {
+    const matches = asRecord(part.output)[name === 'search_docs' ? 'results' : 'modules']
+    const label = name === 'search_docs' ? 'documentation section' : 'module'
+    if (Array.isArray(matches)) text = matches.length ? `Found ${matches.length} ${label}${matches.length === 1 ? '' : 's'}` : `No matching ${label}s`
+  }
+
+  if (name === 'read_page' && (state === 'running' || state === 'complete')) {
+    const path = asRecord(part.input).path
+    if (typeof path === 'string') {
+      const slug = path.split(/[?#]/)[0]?.split('/').filter(Boolean).at(-1)?.replace(/[-_]/g, ' ')
+      if (slug) text = `${state === 'complete' ? 'Read' : 'Reading'} ${slug === 'upgrade' ? 'the upgrade guide' : slug}`
+    }
+  }
+
+  if (state === 'stopped') text = `Stopped ${text.charAt(0).toLowerCase()}${text.slice(1)}`
+  else if (state === 'denied') text = `Not approved: ${text}`
+  else if (state === 'approval') text = 'Waiting for approval'
+  else if (state === 'error') text = config?.error ?? (name === 'web_search' ? 'Web search failed' : name === 'connection_search' ? 'Could not find available tools' : `Could not ${name.replace(/[-_]+/g, ' ')}`)
 
   return {
-    text: streaming ? config.loading : (hasRichToolSuccess(part, toolName) ? config.success : config.error),
-    icon: config.icon,
-    streaming
+    text,
+    state,
+    streaming: state === 'running',
+    suffix: part.state === 'input-streaming'
+      ? undefined
+      : name === 'connection_search'
+        ? getConnectionSearchSuffix(part)
+        : name === 'web_search'
+          ? [getSearchQuery(part), sourceCount ? `${sourceCount} sources` : undefined].filter(Boolean).join(' · ') || undefined
+          : getToolSuffix(part)
   }
 }
 
 export function showModuleCard(part: ToolPart): boolean {
-  return hasToolOutput(part) && isValidModuleCardData(part.output)
+  return showCardOutput(part) && isValidModuleCardData(part.output)
 }
 
 export function showTemplateCards(part: ToolPart): boolean {
@@ -344,16 +431,12 @@ export function showCardOutput(part: ToolPart): boolean {
   return hasToolOutput(part) && !!part.output && !hasToolError(part.output)
 }
 
-export function showPlaygroundCard(part: ToolPart): boolean {
-  return hasToolOutput(part) && !!part.output
-}
-
 export function showFeedbackCard(part: ToolPart): boolean {
-  return hasToolOutput(part) && !!getFeedbackOutput(part.output)
+  return showCardOutput(part) && !!getFeedbackOutput(part.output)
 }
 
 export function showPromptCard(part: ToolPart): boolean {
-  return hasToolOutput(part) && !!getPromptOutput(part.output)
+  return showCardOutput(part) && !!getPromptOutput(part.output)
 }
 
 export function isModuleListTool(part: ToolPart): boolean {
@@ -385,7 +468,7 @@ export function moduleCardProps(data: ModuleCardData): Omit<ModuleCardData, 'nam
 }
 
 export function getToolText(part: ToolPart) {
-  const done = part.state === 'output-available'
+  const done = part.state === 'output-available' && !part.preliminary
   const { verb, label } = parseToolName(getToolName(part))
 
   if (verb) return `${done ? verb[1] : verb[0]} ${label}`
@@ -428,7 +511,7 @@ export function getToolIcon(part: ToolPart): string {
 }
 
 export function getModuleCards(part: ToolPart): ModuleCardData[] {
-  if (!hasToolOutput(part) || !part.output) return []
+  if (!showCardOutput(part)) return []
 
   const toolName = normalizeToolName(getToolName(part))
   const output = part.output as Record<string, unknown>
