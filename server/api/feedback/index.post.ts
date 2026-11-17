@@ -1,6 +1,15 @@
 import type { H3Event } from 'h3'
+import { z } from 'zod'
 import { checkBotId } from 'botid/server'
 import { deriveSecret } from 'nuxt/server'
+
+const feedbackSchema = z.object({
+  rating: z.enum(FEEDBACK_RATINGS),
+  feedback: z.string().optional(),
+  path: z.string(),
+  title: z.string(),
+  stem: z.string()
+})
 
 let warnedMissingSecret = false
 
@@ -31,7 +40,7 @@ export default defineEventHandler(async (event: H3Event) => {
     throw createError({ statusCode: 403, statusMessage: 'Forbidden' })
   }
 
-  const data: FeedbackInput = await readValidatedBody(event, feedbackSchema.parse)
+  const data = await readValidatedBody(event, feedbackSchema.parse)
 
   const country = getHeader(event, 'x-vercel-ip-country') || 'unknown'
   const fingerprint = await getFingerprint(event)
