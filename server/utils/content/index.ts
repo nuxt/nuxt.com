@@ -1,3 +1,4 @@
+import { resolveContent } from '@nuxt/content/content'
 import type { ComarkContent, ParsedSource, Source } from 'comark-content'
 import { withSnapshot } from 'comark-content/sources/snapshot'
 import { createInstanceSource, createRuntimeInstance } from '../../../utils/factory'
@@ -56,6 +57,8 @@ export function instanceSourceFor(key: ContentInstanceKey, { remote = false } = 
 }
 
 /**
+ * Not `site`'s, which `@nuxt/content` owns (`server/content.ts`).
+ *
  * Unpinned base per instance: owns its source, plugin chain and cache driver.
  * Every commit-pinned instance derives from it with `withRef(sha)`, sharing its driver.
  */
@@ -77,6 +80,7 @@ function getBaseInstance(key: ContentInstanceKey): ComarkContent {
  * The instance for `key`, pinned to `sha`. Holds no state of its own beyond the base it derives from.
  */
 export function contentInstanceAt(key: ContentInstanceKey, sha: string): ComarkContent {
+  if (key === 'site') return (content as unknown as ComarkContent).withRef(sha)
   return getBaseInstance(key).withRef(sha)
 }
 
@@ -91,6 +95,8 @@ const instances = new Map<ContentInstanceKey, { sha: string, instance: Promise<C
  * Each call resolves that instance's latest commit.
  */
 export async function getInstanceAtHead(key: ContentInstanceKey): Promise<ComarkContent> {
+  if (key === 'site') return siteInstance()
+
   const sha = await resolveInstanceSha(key)
   const current = instances.get(key)
 
@@ -112,6 +118,20 @@ export async function getInstanceAtHead(key: ContentInstanceKey): Promise<Comark
   instances.set(key, { sha, instance })
 
   return instance
+}
+
+let siteWatch: Promise<unknown> | undefined
+
+/**
+ * nuxt.com's own content, defined in `server/content.ts` and owned by `@nuxt/content`: pinned to the commit
+ * its `live.ref` resolves, the one the app reads through `/__nuxt_content`.
+ * Dev reads the checkout. The module watches its own copy, for the browser: this one is the copy server code reads.
+ */
+async function siteInstance(): Promise<ComarkContent> {
+  const site = content as unknown as ComarkContent
+  if (!import.meta.dev) return resolveContent(site)
+  await (siteWatch ??= site.watch())
+  return site
 }
 
 /** Dev serves the unpinned base directly: its source is the working tree, which `watch()` follows. */

@@ -11,7 +11,7 @@ const contentFetch: ContentFetch = <T>(url: string, options?: Record<string, any
 
 /**
  * Client for one content instance — the app-side mirror of the server's `getInstanceAtHead()`:
- * - `site` (nuxt.com's own content: blog, deploy, landing pages…)
+ * - `site` (nuxt.com's own content: blog, deploy, landing pages…), served by `@nuxt/content`
  * - `examples` (code examples)
  * - `docs:<version>` (one instance per docs version)
  * - `cli:<version>` (one instance per CLI version)
@@ -28,6 +28,9 @@ export function useContent(key: ContentInstanceKey): ContentClient {
   if (pull && instanceRepo(key) === pull.repo) {
     return createContentClient({ basePath: instancePullPath(key, pull), fetch: contentFetch })
   }
+
+  // nuxt.com's own content: the `@nuxt/content` client, reading `server/content.ts`.
+  if (key === 'site') return content
 
   let client = clients.get(key)
   if (!client) {
