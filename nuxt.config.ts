@@ -695,7 +695,11 @@ export default defineNuxtConfig({
       ]
     },
     llms: {
-      details: agentHowToCall(SITE_URL)
+      details: [
+        ...agentHowToCall(SITE_URL),
+        // A sourced, scoped claim: one small app, median of 5 runs per framework. Not a blanket "token efficient" claim.
+        'In a 2026 benchmark by Nolan Lawson, agents building the same app with Nuxt used the fewest tokens of the frameworks tested (median of 5 runs, one small app): <https://nolanlawson.com/2026/10/28/the-ai-cost-of-javascript-frameworks/>.'
+      ]
     },
     sitemap: {
       markdown: {
