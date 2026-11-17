@@ -12,6 +12,7 @@
     "@chat-adapter/discord": "^4.44.0",
     "@chat-adapter/state-memory": "^4.44.0",
     "@chat-adapter/state-redis": "^4.44.0",
+    "@github-tools/eve-extension": "^0.14.0",
     "@opentelemetry/instrumentation-undici": "^0.35.0",
     "@vercel/global-config": "^1.5.1",
     "ai": "^7.0.165",
