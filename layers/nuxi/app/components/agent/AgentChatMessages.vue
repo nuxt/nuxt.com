@@ -27,6 +27,9 @@ const emit = defineEmits<{
   vote: [message: UIMessage, isUpvoted: boolean]
 }>()
 
+// `ToolsFeedbackCard` sends it with the report so the server can attach this chat's transcript.
+provide('chat-id', toRef(props, 'chatId'))
+
 const display = computed(() =>
   resolveChatDisplayState(props.chat.messages, props.chat.status)
 )
