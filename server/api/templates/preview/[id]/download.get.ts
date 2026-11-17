@@ -12,6 +12,9 @@ export default defineEventHandler(async (event) => {
   const path = `/tmp/nuxt-project-${crypto.randomUUID()}.zip`
   const controller = new AbortController()
   let readTimer: ReturnType<typeof setTimeout> | undefined
+  // Read before an edit can land behind the ZIP. Unused when zipping fails, so its failure must not go unhandled.
+  const changes = previewChanges(sandbox)
+  changes.catch(() => {})
   try {
     const result = await sandbox.runCommand({
       cmd: 'python3', args: ['-c', PROJECT_ARCHIVE_SCRIPT, path], cwd: TEMPLATE_WORKDIR,
@@ -30,13 +33,17 @@ export default defineEventHandler(async (event) => {
       'content-disposition': 'attachment; filename="nuxt-project.zip"',
       'cache-control': 'no-store'
     })
-    return await sendStream(event, Readable.from((async function* () {
+    const sent = await sendStream(event, Readable.from((async function* () {
       for await (const chunk of input) {
         clearTimeout(readTimer)
         yield chunk
         readTimer = startReadTimer()
       }
     })()))
+    // Once per preview and only once the ZIP was sent, so a failed download leaves the step to its retry.
+    // `changes` is the depth this ZIP was made at, read alongside it.
+    trackTemplateEvent(event, 'Template Downloaded', claimPreviewStep(sandbox, 'download').then(async first => first ? { template: sandbox.tags?.template, changes: await changes } : null))
+    return sent
   } finally {
     clearTimeout(readTimer)
     controller.abort()

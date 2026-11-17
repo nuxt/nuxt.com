@@ -49,6 +49,7 @@ export default defineEventHandler(async (event) => {
         started = sandbox
         if (left) return stop(sandbox)
         send({ type: 'ready', ...preview })
+        trackTemplateEvent(event, 'Template Preview Started', { template: template.slug })
         // Bundling for `nuxt dev` takes over half a minute on large apps (Docus): starting it now, on CPU the idle preview leaves free,
         // usually has it ready before the visitor asks Nuxi for an edit. It costs CPU time only, the sandbox runs either way.
         waitUntil(startDevServer(sandbox).catch(error => console.error('[templates] dev server start failed', error)))
@@ -56,7 +57,10 @@ export default defineEventHandler(async (event) => {
       } catch (error) {
         // Only errors `startPreview` raises on purpose reach visitors: upstream ones can carry request or account details.
         if (!isError(error)) console.error('[templates] preview failed', error)
-        send({ type: 'error', message: isError(error) && error.message ? error.message : 'The preview could not start.' })
+        const message = isError(error) && error.message ? error.message : 'The preview could not start.'
+        // `reason` is the message the visitor saw, so the dashboard groups failures by cause (busy, no snapshot, server timeout…).
+        if (!left) trackTemplateEvent(event, 'Template Preview Failed', { template: template.slug, reason: message })
+        send({ type: 'error', message })
       } finally {
         if (!left) controller.close()
       }
