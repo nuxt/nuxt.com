@@ -736,7 +736,9 @@ export default defineNuxtConfig({
   },
   fonts: {
     families: [
-      { name: 'Inter', weights: [400, 500, 600, 700], global: true },
+      // Latin only, like Outfit: each other subset (Cyrillic, Greek, Vietnamese…) adds 8 inline `@font-face`
+      // rules to every page, and text in those scripts falls back to the system font.
+      { name: 'Inter', weights: [400, 500, 600, 700], subsets: ['latin', 'latin-ext'], global: true },
       { name: 'Outfit', weights: [400, 500, 600, 700], global: true }
     ]
   },
