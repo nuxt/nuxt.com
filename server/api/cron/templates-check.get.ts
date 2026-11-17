@@ -12,7 +12,7 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 401, statusMessage: 'Unauthorized' })
   }
 
-  const result = await startTemplateChecks(templateCheckBaseURL(event), { trigger: 'cron' })
+  const result = await startTemplateChecks({ trigger: 'cron' })
   console.log(`[templates] cron queued ${result.queued.length} checks${result.runId ? ` (run ${result.runId})` : ''}`)
   return result
 })

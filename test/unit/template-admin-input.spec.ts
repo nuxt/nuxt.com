@@ -48,7 +48,6 @@ describe('admin template check controls', () => {
     vi.stubGlobal('getValidatedRouterParams', (_event: unknown, parse: (value: unknown) => unknown) => parse({ slug: 'minimal' }))
     vi.stubGlobal('startTemplateChecks', start)
     vi.stubGlobal('getActiveTemplateCheckRuns', activeRuns)
-    vi.stubGlobal('templateCheckBaseURL', () => 'https://preview.example')
     vi.stubGlobal('setResponseStatus', vi.fn())
     vi.stubGlobal('setResponseHeader', vi.fn())
     vi.stubGlobal('db', { select })
@@ -81,7 +80,7 @@ describe('admin template check controls', () => {
 
   it('checks only the selected template on the current deployment', async () => {
     await expect(startCheck(event)).resolves.toMatchObject({ queued: ['minimal'] })
-    expect(start).toHaveBeenCalledWith('https://preview.example', { slugs: ['minimal'], trigger: 'admin', startedBy: user.username })
+    expect(start).toHaveBeenCalledWith({ slugs: ['minimal'], trigger: 'admin', startedBy: user.username })
     expect(setResponseStatus).toHaveBeenCalledWith(event, 202)
   })
 

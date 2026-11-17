@@ -1,9 +1,12 @@
+import { createClient } from '@libsql/client/web'
 import { Sandbox, Snapshot } from '@vercel/sandbox'
+import { drizzle } from 'drizzle-orm/libsql/web'
 import { FatalError, defineHook, getWorkflowMetadata, sleep } from 'workflow'
 import { start } from 'workflow/api'
 import { z } from 'zod'
 import type { TemplateCheckStep } from '../../shared/types/templates'
 import { TEMPLATE_SNAPSHOT_TTL_MS, type CheckReport, type TemplateCheckPhase, type TemplateToCheck } from '../utils/templates/check-report'
+import { recordTemplateCheck, recordTemplateCheckRun } from '../utils/templates/check-store'
 import { BROWSER_SETUP_SCRIPT, CHECK_BROWSER_DIR, CHECK_STATE_DIR, INSTALL_SCRIPT, TEMPLATE_WORKDIR, VISIT_SCRIPT, WARM_DEV_SCRIPT, buildScript, serveScript } from '../utils/templates/check-scripts'
 import { DEV_WARMUP_SCRIPT } from '../utils/templates/dev-server'
 import { PREVIEW_BRIDGE_PLUGIN } from '../utils/templates/preview-bridge'
@@ -12,14 +15,14 @@ import { SERVE_SCRIPT_PATH, STATIC_SERVER, STATIC_SERVER_PATH } from '../utils/t
 
 /**
  * Installs, builds and starts templates in a clean Vercel Sandbox, the way `create nuxt` gets them, then opens them in Chromium.
- * Results go to the `template_checks` table through `/api/internal/templates/checks`. Templates that run without secrets are
+ * Results go straight to the `template_checks` table. Templates that run without secrets are
  * snapshotted once they pass, live previews restore that snapshot, and only the latest passing snapshot is kept.
  *
  * Started daily by the cron (`/api/cron/templates-check`) and by `pnpm templates:check`. Each template is a child run, so it has
  * its own log, retries and failure scope in the Vercel dashboard (Observability → Workflows).
  *
  * On Nitro v2 (Nuxt 4), Vercel builds workflows outside the Nitro bundle: steps have no `db` or auto-imports, so they import
- * everything explicitly and call internal routes for the database.
+ * everything explicitly and open the app's database themselves. Calling back into the app would hit Vercel Authentication on previews.
  */
 
 const PORT = 3000
@@ -38,45 +41,45 @@ function completionToken(batchId: string, slug: string) {
   return `template-check:${batchId}:${slug}`
 }
 
-export async function checkTemplatesWorkflow(input: { baseURL: string, batchId: string, templates: TemplateToCheck[] }) {
+export async function checkTemplatesWorkflow(input: { batchId: string, templates: TemplateToCheck[] }) {
   'use workflow'
 
-  const { baseURL, batchId, templates } = input
+  const { batchId, templates } = input
   const queue = [...templates]
   const results: Array<CheckResult | { slug: string, error: string }> = []
   let browser: string | undefined
   try {
     if (templates.some(template => template.live)) {
       browser = await createBrowser()
-      await recordRun(baseURL, { id: batchId, browser })
+      await recordRun({ id: batchId, browser })
     }
     await Promise.all(Array.from({ length: Math.min(LANES, queue.length) }, async () => {
       while (queue.length) {
         const template = queue.shift()!
-        const completion = await startAndWait(completionToken(batchId, template.slug), token => start(checkTemplateWorkflow, [{ baseURL, batchId, template, browser, token }]).then(() => undefined))
+        const completion = await startAndWait(completionToken(batchId, template.slug), token => start(checkTemplateWorkflow, [{ batchId, template, browser, token }]).then(() => undefined))
         results.push(completion.status === 'completed' ? completion.value : { slug: template.slug, error: completion.error })
       }
     }))
   } finally {
     if (browser) await stopSandbox(browser)
-    await recordRun(baseURL, { id: batchId, finished: true })
+    await recordRun({ id: batchId, finished: true })
   }
   return results
 }
 
 /** Checks one template. Started by `checkTemplatesWorkflow`, which it wakes up once it finishes. */
-export async function checkTemplateWorkflow(input: { baseURL: string, batchId: string, template: TemplateToCheck, browser?: string, token: string }) {
+export async function checkTemplateWorkflow(input: { batchId: string, template: TemplateToCheck, browser?: string, token: string }) {
   'use workflow'
 
   let completion: Completion | undefined
   const { workflowRunId } = getWorkflowMetadata()
-  const report = createReporter(input.baseURL, input.template.slug, workflowRunId)
+  const report = createReporter(input.template.slug, workflowRunId)
   try {
     completion = { status: 'completed', value: await checkTemplate(report, input.batchId, input.template, input.browser) }
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error)
     completion = { status: 'failed', error: message }
-    await recordCheck(input.baseURL, { kind: 'finish', slug: input.template.slug, runId: workflowRunId, log: `The check stopped before a result: ${message}` }).catch(() => {})
+    await recordCheck({ kind: 'finish', slug: input.template.slug, runId: workflowRunId, log: `The check stopped before a result: ${message}` }).catch(() => {})
   } finally {
     if (completion) await resumeParent(input.token, completion)
   }
@@ -85,16 +88,15 @@ export async function checkTemplateWorkflow(input: { baseURL: string, batchId: s
 type Reporter = ReturnType<typeof createReporter>
 
 /** Reports the check of one template to its row. Starting a phase throws `CheckStopped` once the row belongs to another run. */
-function createReporter(baseURL: string, slug: string, runId: string) {
+function createReporter(slug: string, runId: string) {
   return {
-    baseURL,
     slug,
     runId,
-    start: (batchId: string) => recordCheck(baseURL, { kind: 'start', slug, runId, batchId }),
+    start: (batchId: string) => recordCheck({ kind: 'start', slug, runId, batchId }),
     phase: async (phase: TemplateCheckPhase, sandbox?: string) => {
-      if ((await recordCheck(baseURL, { kind: 'progress', slug, runId, phase, sandbox })).stopped) throw new CheckStopped()
+      if ((await recordCheck({ kind: 'progress', slug, runId, phase, sandbox })).stopped) throw new CheckStopped()
     },
-    finish: (result: { status: 'passed' | 'failed', step?: TemplateCheckStep, nuxt?: string, snapshotId?: string, log?: string }) => recordCheck(baseURL, { kind: 'finish', slug, runId, ...result })
+    finish: (result: { status: 'passed' | 'failed', step?: TemplateCheckStep, nuxt?: string, snapshotId?: string, log?: string }) => recordCheck({ kind: 'finish', slug, runId, ...result })
   }
 }
 
@@ -154,7 +156,7 @@ async function checkTemplate(report: Reporter, batchId: string, template: Templa
  */
 async function runDetached(sandbox: string, id: string, script: string, progress?: { report: Reporter, phase: TemplateCheckPhase, log: string }, cwd = TEMPLATE_WORKDIR) {
   await startScript(sandbox, id, script, cwd)
-  const target = progress && { baseURL: progress.report.baseURL, slug: progress.report.slug, runId: progress.report.runId, phase: progress.phase, log: progress.log }
+  const target = progress && { slug: progress.report.slug, runId: progress.report.runId, phase: progress.phase, log: progress.log }
   for (let poll = 0; poll < MAX_POLLS; poll++) {
     await sleep(POLL_INTERVAL)
     const result = await readScript(sandbox, id, target)
@@ -255,7 +257,7 @@ async function startScript(name: string, id: string, script: string, cwd: string
  * `null` while the script runs, then its exit and the end of its output.
  * With `progress`, a running script also sends the end of its log, and `stopped` comes back once the check no longer owns the row.
  */
-async function readScript(name: string, id: string, progress?: { baseURL: string, slug: string, runId: string, phase: TemplateCheckPhase, log: string }) {
+async function readScript(name: string, id: string, progress?: { slug: string, runId: string, phase: TemplateCheckPhase, log: string }) {
   'use step'
   const sandbox = await Sandbox.get({ name })
   if (sandbox.status !== 'running') return { ok: false, stopped: false, output: 'The sandbox ran out of time.' }
@@ -267,7 +269,7 @@ async function readScript(name: string, id: string, progress?: { baseURL: string
   if (!progress) return null
 
   const tail = await sandbox.runCommand({ cmd: 'bash', args: ['-c', `tail -c 8000 ${progress.log} 2>/dev/null | sed -E 's/\\x1b\\[[0-9;]*[A-Za-z]//g'`] })
-  const { stopped } = await internalPost<{ stopped: boolean }>(progress.baseURL, '/api/internal/templates/checks', {
+  const { stopped } = await recordTemplateCheck(await database(), {
     kind: 'progress', slug: progress.slug, runId: progress.runId, phase: progress.phase, log: await tail.stdout()
   })
   return stopped ? { ok: false, stopped: true, output: '' } : null
@@ -315,35 +317,36 @@ async function stopSandbox(name: string) {
  * Writes to `template_checks`. `stopped` means the row no longer belongs to this check (another run queued the template), so the check ends.
  * A passing finish returns the snapshot it replaced, to delete it.
  */
-async function recordCheck(baseURL: string, body: CheckReport) {
+async function recordCheck(report: CheckReport) {
   'use step'
-  return internalPost<{ stopped: boolean, previousSnapshotId?: string }>(baseURL, '/api/internal/templates/checks', body)
+  const result = await recordTemplateCheck(await database(), report)
+  if (report.kind === 'finish' && report.status && !result.stopped) {
+    console.log(`[templates] ${report.slug} ${report.status}${report.step ? ` at ${report.step}` : ''} (run ${report.runId})`)
+  }
+  return result
 }
 
 /** Records the run's browser sandbox, so stopping the run stops it too, and closes the run once every template finished. */
-async function recordRun(baseURL: string, body: { id: string, browser?: string, finished?: boolean }) {
+async function recordRun(update: { id: string, browser?: string, finished?: boolean }) {
   'use step'
-  return internalPost(baseURL, '/api/internal/templates/runs', body)
+  await recordTemplateCheckRun(await database(), update)
 }
 
-async function internalPost<T>(baseURL: string, path: string, body: Record<string, unknown>): Promise<T> {
-  const secret = process.env.INTERNAL_API_SECRET?.trim()
-  if (!secret) throw new FatalError('INTERNAL_API_SECRET is not configured')
+let db: Awaited<ReturnType<typeof openDatabase>> | undefined
 
-  const response = await fetch(new URL(path, baseURL), {
-    method: 'POST',
-    headers: {
-      'Authorization': `Bearer ${secret}`,
-      'content-type': 'application/json',
-      // Lets the deployment call itself while Vercel Authentication is on (preview deploys).
-      ...(process.env.VERCEL_AUTOMATION_BYPASS_SECRET ? { 'x-vercel-protection-bypass': process.env.VERCEL_AUTOMATION_BYPASS_SECRET } : {})
-    },
-    body: JSON.stringify(body)
-  })
-  if (!response.ok) {
-    const message = `${path} failed (${response.status}): ${await response.text()}`
-    if (response.status >= 400 && response.status < 500 && response.status !== 429) throw new FatalError(message)
-    throw new Error(message)
-  }
-  return await response.json() as T
+/** The database the app uses: Turso once deployed, the SQLite file of `pnpm dev` locally. */
+async function database() {
+  db ??= await openDatabase()
+  return db
+}
+
+async function openDatabase() {
+  // The same rule as NuxtHub's `sqlite` database: Turso only when both are set.
+  const url = process.env.TURSO_DATABASE_URL
+  const authToken = process.env.TURSO_AUTH_TOKEN
+  if (url && authToken) return drizzle({ client: createClient({ url, authToken }) })
+  // A variable, so the Vercel build doesn't bundle the native SQLite client that only local files need.
+  const nodeClient = '@libsql/client'
+  const { createClient: createLocalClient } = await import(/* @vite-ignore */ nodeClient) as typeof import('@libsql/client')
+  return drizzle({ client: createLocalClient({ url: 'file:.data/db/sqlite.db' }) })
 }
