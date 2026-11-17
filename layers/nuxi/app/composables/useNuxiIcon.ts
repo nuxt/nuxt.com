@@ -294,6 +294,7 @@ export function useNuxiIcon(props: NuxiIconProps, emit?: EmitFn) {
   }
 
   function scheduleAttention() {
+    if (!mounted) return
     clearTimeout(attentionTimer)
     attentionTimer = setTimeout(async () => {
       if (effectiveMood.value === 'idle' && !isEasterEggPlaying.value && !props.mood) {
