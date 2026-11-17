@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { AnimatePresence, motion } from 'motion-v'
-
 const { toggle, isOpen } = useNuxtAgent()
 const { track } = useAnalytics()
 
@@ -11,13 +9,13 @@ function handleToggle() {
 </script>
 
 <template>
-  <AnimatePresence :initial="false">
-    <motion.div
+  <Transition
+    enter-active-class="transition-[opacity,scale,filter] duration-250 ease-out motion-reduce:transition-none"
+    enter-from-class="opacity-0 scale-80 blur-xs"
+  >
+    <div
       v-if="!isOpen"
       class="inline-flex items-center"
-      :initial="{ opacity: 0, scale: 0.8, filter: 'blur(4px)' }"
-      :animate="{ opacity: 1, scale: 1, filter: 'blur(0px)' }"
-      :transition="{ duration: 0.25, ease: 'easeOut' }"
     >
       <UButton
         color="neutral"
@@ -37,6 +35,6 @@ function handleToggle() {
           </span>
         </template>
       </UButton>
-    </motion.div>
-  </AnimatePresence>
+    </div>
+  </Transition>
 </template>
