@@ -21,7 +21,7 @@ import { usePasteAttachment } from './usePasteAttachment'
 import { useChatQueue, type ChatQueueItem } from './useChatQueue'
 import { useNuxiPreview } from './useNuxiPreview'
 
-export type NuxiChatSendInput = string | { parts: UIMessage['parts'], persist?: boolean, interrupt?: boolean }
+export type NuxiChatSendInput = string | { parts: UIMessage['parts'], persist?: boolean }
 
 export interface UseNuxiChatOptions {
   chatId: MaybeRefOrGetter<string>
@@ -399,21 +399,21 @@ export function useNuxiChat(options: UseNuxiChatOptions) {
     regenerate: eveChat.regenerate
   }
 
-  async function persistUserMessage(id: string, exists: boolean, parts: UIMessage['parts']) {
+  async function persistUserMessage(parts: UIMessage['parts']) {
     const metadata = {
       createdAt: new Date().toISOString(),
       ...(useContext.value && agent.currentPage.value ? { pagePath: agent.currentPage.value } : {})
     }
 
-    if (!exists) {
-      const detail = await createChatWithMessage(id, parts, metadata)
-      seedChatDetailCache(id, detail)
-      if (chatId.value === id) chatExistsInDb.value = true
+    if (!chatExistsInDb.value) {
+      const detail = await createChatWithMessage(chatId.value, parts, metadata)
+      seedChatDetailCache(chatId.value, detail)
+      chatExistsInDb.value = true
       return
     }
 
-    const message = await appendUserMessageToChat(id, parts, metadata)
-    patchChatDetailCache(id, { messages: uiMessagesToRows([message]) })
+    const message = await appendUserMessageToChat(chatId.value, parts, metadata)
+    patchChatDetailCache(chatId.value, { messages: uiMessagesToRows([message]) })
   }
 
   async function send(inputValue: NuxiChatSendInput) {
@@ -431,19 +431,9 @@ export function useNuxiChat(options: UseNuxiChatOptions) {
       queryLength: getMessageTextLength(parts)
     })
 
-    // A queued message can still be saving when the visitor opens another chat: it belongs to the chat it was sent in.
-    const id = chatId.value
-    const exists = chatExistsInDb.value
-
     if (loggedIn.value && persist) {
-      // Sent during an answer, the message lands after the reply so far. Save that first, so the message reads after it
-      // once the chat is reloaded; the rest of the reply is saved when the answer ends anyway.
-      if (eveChat.status === 'submitted' || eveChat.status === 'streaming') {
-        const answering = eveChat.messages.filter(message => (message.metadata as { status?: string } | undefined)?.status === 'streaming')
-        await syncChatToDb(id, answering).catch(() => {})
-      }
       try {
-        await persistUserMessage(id, exists, parts)
+        await persistUserMessage(parts)
       } catch {
         toast.add({
           description: 'Failed to save message',
@@ -453,10 +443,7 @@ export function useNuxiChat(options: UseNuxiChatOptions) {
       }
     }
 
-    // Saved to its chat, but not sent into the one now open.
-    if (chatId.value !== id) return
-
-    await eveChat.send(typeof inputValue === 'string' ? inputValue : { parts }, { interrupt: typeof inputValue !== 'string' && inputValue.interrupt })
+    await eveChat.send(typeof inputValue === 'string' ? inputValue : { parts })
     agent.onMessageSent()
   }
 
@@ -468,14 +455,15 @@ export function useNuxiChat(options: UseNuxiChatOptions) {
     await send({ parts })
   }
 
-  const { queue, onSend: onSendQueued, clear: clearQueue } = useChatQueue({
+  const { queue, onSend: onSendQueued } = useChatQueue({
     status: () => eveChat.status,
     canSend: () => !agent.rateLimitReached.value,
-    send: item => send({ parts: buildMessageParts(item.text, item.attachments ?? []), interrupt: true }),
+    send: item => send({ parts: buildMessageParts(item.text, item.attachments ?? []) }),
+    stop: eveChat.stop,
     input,
     attachments: paste.attachments
   })
-  watch(chatId, clearQueue)
+  watch(chatId, () => queue.value = [])
 
   function askQuestion(question: string) {
     track('Nuxi FAQ Clicked', { question, source: options.source })

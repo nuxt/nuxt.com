@@ -41,17 +41,19 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 404, statusMessage: 'Chat not found' })
   }
 
+  const now = Date.now()
+
   await db.transaction(async (tx: Tx) => {
-    for (const message of body.messages) {
+    for (const [index, message] of body.messages.entries()) {
       await tx.insert(schema.messages).values({
         id: message.id,
         chatId: id,
         role: 'assistant',
         parts: message.parts,
         metadata: message.metadata ?? null,
-        // After every message already in the chat, including a user message placed ahead of the clock. Rows are
-        // inserted in order, so each follows the one before. Conflicts keep their original value.
-        createdAt: appendedMessageCreatedAt(id)
+        // Spread batch rows by one second: createdAt drives read order and is
+        // stored with second precision. Conflicts keep their original value.
+        createdAt: new Date(now + index * 1000)
       }).onConflictDoUpdate({
         target: [schema.messages.chatId, schema.messages.id],
         set: {

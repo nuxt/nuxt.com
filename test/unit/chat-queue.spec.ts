@@ -14,15 +14,12 @@ function setup(initial: AgentChatStatus = 'streaming') {
   const input = ref('')
   const attachments = ref<TextPasteAttachment[]>([])
   const sent: ChatQueueItem[] = []
-  // Set to make each send wait, like a logged-in send that saves the message before the chat gets it.
-  let saving: Promise<void> | undefined
+  let stops = 0
   const chat = effectScope().run(() => useChatQueue({
     status: () => status.value,
     canSend: () => canSend.value,
-    send: (item) => {
-      sent.push(item)
-      return saving
-    },
+    send: item => sent.push(item),
+    stop: () => stops++,
     input,
     attachments
   }))!
@@ -44,17 +41,8 @@ function setup(initial: AgentChatStatus = 'streaming') {
     chat.onSend()
     await flush()
   }
-  const holdSends = () => {
-    let release!: () => void
-    saving = new Promise(resolve => release = resolve)
-    return async () => {
-      saving = undefined
-      release()
-      await flush()
-    }
-  }
   const texts = () => sent.map(item => item.text)
-  return { ...chat, status, canSend, input, attachments, sent, texts, submit, setStatus, sendNow, holdSends }
+  return { ...chat, status, canSend, input, attachments, sent, texts, submit, setStatus, sendNow, stops: () => stops }
 }
 
 describe('chat queue', () => {
@@ -97,51 +85,20 @@ describe('chat queue', () => {
     expect(chat.texts()).toEqual(['after the error'])
   })
 
-  it('sends a message now during an answer, to steer it, and keeps the rest queued', async () => {
+  it('stops the answer to send a message now, then keeps the rest in order', async () => {
     const chat = setup()
     await chat.submit('later')
     await chat.submit('now')
     await chat.sendNow(1)
-    // Sent while the chat is still answering: no waiting for the answer to end.
+    expect(chat.stops()).toBe(1)
+    expect(chat.sent).toEqual([])
+
+    await chat.setStatus('ready')
     expect(chat.texts()).toEqual(['now'])
     expect(chat.queue.value.map(item => item.text)).toEqual(['later'])
-
+    await chat.setStatus('streaming')
     await chat.setStatus('ready')
     expect(chat.texts()).toEqual(['now', 'later'])
-  })
-
-  it('sends in the order picked while earlier messages are still being saved', async () => {
-    const chat = setup()
-    await chat.submit('a')
-    await chat.submit('b')
-    await chat.submit('c')
-    const release = chat.holdSends()
-
-    await chat.sendNow(2)
-    await chat.sendNow(0)
-    // "c" is still saving: "a" waits for it, so the chat gets them in the order they were picked.
-    expect(chat.texts()).toEqual(['c'])
-    expect(chat.queue.value.map(item => item.text)).toEqual(['b'])
-
-    await release()
-    expect(chat.texts()).toEqual(['c', 'a'])
-    // The answer ending during the save doesn't send "b" too early, nor lose it.
-    expect(chat.queue.value.map(item => item.text)).toEqual(['b'])
-    await chat.setStatus('ready')
-    expect(chat.texts()).toEqual(['c', 'a', 'b'])
-  })
-
-  it('sends the next message when the answer ends before the last send settles', async () => {
-    const chat = setup()
-    await chat.submit('first')
-    await chat.submit('second')
-    const release = chat.holdSends()
-    await chat.sendNow(0)
-
-    await chat.setStatus('ready')
-    expect(chat.texts()).toEqual(['first'])
-    await release()
-    expect(chat.texts()).toEqual(['first', 'second'])
   })
 
   it('keeps pasted attachments with the message they were queued with', async () => {
@@ -179,41 +136,5 @@ describe('chat queue', () => {
     chat.queue.value = []
     await nextTick()
     expect(chat.attachments.value).toEqual([])
-  })
-
-  it('keeps a message waiting behind a send if the chat fails before its turn', async () => {
-    const chat = setup()
-    await chat.submit('first')
-    await chat.submit('second')
-    const release = chat.holdSends()
-    await chat.sendNow(0)
-    await chat.sendNow(0)
-    expect(chat.queue.value).toEqual([])
-
-    // The chat fails while "first" is still saving: "second" must not go out after the error.
-    await chat.setStatus('error')
-    await release()
-    expect(chat.texts()).toEqual(['first'])
-    expect(chat.queue.value.map(item => item.text)).toEqual(['second'])
-
-    // The visitor retries, the chat recovers: it goes then.
-    await chat.setStatus('streaming')
-    await chat.setStatus('ready')
-    expect(chat.texts()).toEqual(['first', 'second'])
-  })
-
-  it('drops sends still waiting in line when the queue is cleared for another chat', async () => {
-    const chat = setup()
-    await chat.submit('first')
-    await chat.submit('second')
-    await chat.submit('kept out')
-    const release = chat.holdSends()
-    await chat.sendNow(0)
-    await chat.sendNow(0)
-
-    chat.clear()
-    await release()
-    expect(chat.texts()).toEqual(['first'])
-    expect(chat.queue.value).toEqual([])
   })
 })

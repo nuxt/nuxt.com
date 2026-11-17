@@ -33,8 +33,7 @@ export default defineEventHandler(async (event) => {
     id: message.id,
     role: 'user',
     parts: message.parts as UIMessage['parts'],
-    metadata: message.metadata ?? null,
-    createdAt: appendedMessageCreatedAt(id)
+    metadata: message.metadata ?? null
   }])
 
   return { ok: true }

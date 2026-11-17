@@ -39,15 +39,6 @@ defineExpose({
   focus: () => chatPromptRef.value?.textareaRef?.focus()
 })
 
-// Queue items have no id; key rows by identity so an action button's hover and focus stay on its own row.
-const queueKeys = new WeakMap<object, number>()
-let queueKeyCount = 0
-function queueKey(item: object) {
-  const raw = toRaw(item)
-  if (!queueKeys.has(raw)) queueKeys.set(raw, queueKeyCount++)
-  return queueKeys.get(raw)
-}
-
 const promptStatus = computed(() => props.status ?? props.chat?.status ?? 'ready')
 const promptError = computed(() => props.error ?? props.chat?.error)
 const isSubmitDisabled = computed(() => {
@@ -99,53 +90,6 @@ function submitAttachmentsOnly(event?: KeyboardEvent) {
           @remove="emit('removeAttachment', index)"
         />
       </div>
-    </template>
-
-    <template #queue="{ queue: items, send, edit, remove }">
-      <p class="px-1.5 pt-1.5 pb-1 text-xs font-medium text-muted">
-        Queued messages <span class="text-dimmed tabular-nums">{{ items.length }}</span>
-      </p>
-      <ul class="flex flex-col max-h-60 overflow-y-auto pb-1">
-        <li
-          v-for="(item, index) in items"
-          :key="queueKey(item)"
-          class="group/queue flex items-center gap-2 h-7 ps-2 pe-0.5 rounded-sm hover:bg-elevated"
-        >
-          <span class="flex-1 min-w-0 truncate text-sm text-default">{{ item.text }}</span>
-          <div class="flex items-center shrink-0 [@media(hover:hover)]:opacity-0 group-hover/queue:opacity-100 group-focus-within/queue:opacity-100 transition-opacity">
-            <UTooltip :text="promptStatus === 'ready' ? 'Send now' : 'Send now, Nuxi switches to it'">
-              <UButton
-                icon="i-lucide-arrow-up"
-                color="neutral"
-                variant="link"
-                size="xs"
-                aria-label="Send now"
-                @click="send(index)"
-              />
-            </UTooltip>
-            <UTooltip text="Edit in the prompt">
-              <UButton
-                icon="i-lucide-pencil"
-                color="neutral"
-                variant="link"
-                size="xs"
-                aria-label="Edit"
-                @click="edit(index)"
-              />
-            </UTooltip>
-            <UTooltip text="Remove">
-              <UButton
-                icon="i-lucide-trash"
-                color="neutral"
-                variant="link"
-                size="xs"
-                aria-label="Remove"
-                @click="remove(index)"
-              />
-            </UTooltip>
-          </div>
-        </li>
-      </ul>
     </template>
 
     <template #footer>

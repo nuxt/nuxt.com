@@ -31,15 +31,14 @@ function toChatStatus(status: UseEveAgentStatus, error: Error | undefined): Agen
 
 async function sendUserParts(
   agent: ReturnType<typeof useEveAgent>,
-  parts: UIMessage['parts'],
-  turnPolicy?: 'steer' | 'queue'
+  parts: UIMessage['parts']
 ) {
   const content = toEveUserContent(parts)
-  if (content) await agent.send(content, turnPolicy ? { turnPolicy } : undefined)
+  if (content) await agent.send(content)
 }
 
 export function useEveChat(options: UseEveChatOptions): AgentChatHandle & {
-  send: (input: string | { parts: UIMessage['parts'] }, options?: { interrupt?: boolean }) => Promise<void>
+  send: (input: string | { parts: UIMessage['parts'] }) => Promise<void>
   hasAgentMessage: (role: UIMessage['role']) => boolean
 } {
   const agent = useEveAgent({
@@ -100,28 +99,11 @@ export function useEveChat(options: UseEveChatOptions): AgentChatHandle & {
     return [...seedMessages.value.filter(message => !liveIds.has(message.id)), ...live]
   })
 
-  /** Whether the running turn has started writing its answer, as opposed to searching or thinking. */
-  function isWriting() {
-    const last = agent.messages.value.at(-1)
-    return last?.role === 'assistant' && last.metadata?.status === 'streaming'
-      && last.parts.some(part => part.type === 'text' && part.text.trim())
-  }
-
-  /**
-   * `interrupt` sends a message that can't wait for the answer: Eve steers it into the running turn only until the answer
-   * starts writing, then holds it until the whole answer is written. So once it writes, stop the answer where it is and
-   * queue the message behind it, so it's answered right away.
-   */
-  async function send(input: string | { parts: UIMessage['parts'] }, options?: { interrupt?: boolean }) {
+  async function send(input: string | { parts: UIMessage['parts'] }) {
     const parts = typeof input === 'string'
       ? [{ type: 'text' as const, text: input }]
       : input.parts
 
-    if (options?.interrupt && isWriting()) {
-      stop()
-      await sendUserParts(agent, parts, 'queue')
-      return
-    }
     await sendUserParts(agent, parts)
   }
 
