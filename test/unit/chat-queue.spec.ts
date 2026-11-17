@@ -89,6 +89,12 @@ describe('chat queue', () => {
     await chat.sendNow(0)
     expect(chat.sent).toEqual([])
     expect(chat.queue.value).toHaveLength(1)
+
+    // The limit resets while the chat is idle: the held message goes.
+    chat.canSend.value = true
+    await nextTick()
+    await flush()
+    expect(chat.texts()).toEqual(['after the error'])
   })
 
   it('sends a message now during an answer, to steer it, and keeps the rest queued', async () => {

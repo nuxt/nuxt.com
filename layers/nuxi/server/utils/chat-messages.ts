@@ -1,4 +1,4 @@
-import { eq } from 'drizzle-orm'
+import { eq, type SQL } from 'drizzle-orm'
 import type { UIMessage } from 'ai'
 
 export interface ChatMessageInsert {
@@ -6,7 +6,7 @@ export interface ChatMessageInsert {
   role: 'user' | 'assistant' | 'system'
   parts: UIMessage['parts']
   metadata?: Record<string, unknown> | null
-  createdAt?: Date
+  createdAt?: Date | SQL
 }
 
 export async function insertChatMessages(

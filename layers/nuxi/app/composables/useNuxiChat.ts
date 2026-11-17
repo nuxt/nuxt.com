@@ -21,7 +21,7 @@ import { usePasteAttachment } from './usePasteAttachment'
 import { useChatQueue, type ChatQueueItem } from './useChatQueue'
 import { useNuxiPreview } from './useNuxiPreview'
 
-export type NuxiChatSendInput = string | { parts: UIMessage['parts'], persist?: boolean }
+export type NuxiChatSendInput = string | { parts: UIMessage['parts'], persist?: boolean, interrupt?: boolean }
 
 export interface UseNuxiChatOptions {
   chatId: MaybeRefOrGetter<string>
@@ -432,13 +432,13 @@ export function useNuxiChat(options: UseNuxiChatOptions) {
     })
 
     if (loggedIn.value && persist) {
+      // Sent during an answer, the message lands after the reply so far. Save that first, so the message reads after it
+      // once the chat is reloaded; the rest of the reply is saved when the answer ends anyway.
+      if (eveChat.status === 'submitted' || eveChat.status === 'streaming') {
+        const answering = eveChat.messages.filter(message => (message.metadata as { status?: string } | undefined)?.status === 'streaming')
+        await syncChatToDb(chatId.value, answering).catch(() => {})
+      }
       try {
-        // Sent during an answer, the message steers it and splits the reply around it. Save the reply so far first, so
-        // the message reads after it once the chat is reloaded.
-        if (eveChat.status === 'submitted' || eveChat.status === 'streaming') {
-          const answering = eveChat.messages.filter(message => (message.metadata as { status?: string } | undefined)?.status === 'streaming')
-          await syncChatToDb(chatId.value, answering)
-        }
         await persistUserMessage(parts)
       } catch {
         toast.add({
@@ -449,7 +449,7 @@ export function useNuxiChat(options: UseNuxiChatOptions) {
       }
     }
 
-    await eveChat.send(typeof inputValue === 'string' ? inputValue : { parts })
+    await eveChat.send(typeof inputValue === 'string' ? inputValue : { parts }, { interrupt: typeof inputValue !== 'string' && inputValue.interrupt })
     agent.onMessageSent()
   }
 
@@ -464,7 +464,7 @@ export function useNuxiChat(options: UseNuxiChatOptions) {
   const { queue, onSend: onSendQueued } = useChatQueue({
     status: () => eveChat.status,
     canSend: () => !agent.rateLimitReached.value,
-    send: item => send({ parts: buildMessageParts(item.text, item.attachments ?? []) }),
+    send: item => send({ parts: buildMessageParts(item.text, item.attachments ?? []), interrupt: true }),
     input,
     attachments: paste.attachments
   })

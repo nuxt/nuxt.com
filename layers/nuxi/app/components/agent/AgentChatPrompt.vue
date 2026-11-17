@@ -39,6 +39,15 @@ defineExpose({
   focus: () => chatPromptRef.value?.textareaRef?.focus()
 })
 
+// Queue items have no id; key rows by identity so an action button's hover and focus stay on its own row.
+const queueKeys = new WeakMap<object, number>()
+let queueKeyCount = 0
+function queueKey(item: object) {
+  const raw = toRaw(item)
+  if (!queueKeys.has(raw)) queueKeys.set(raw, queueKeyCount++)
+  return queueKeys.get(raw)
+}
+
 const promptStatus = computed(() => props.status ?? props.chat?.status ?? 'ready')
 const promptError = computed(() => props.error ?? props.chat?.error)
 const isSubmitDisabled = computed(() => {
@@ -99,12 +108,12 @@ function submitAttachmentsOnly(event?: KeyboardEvent) {
       <ul class="flex flex-col max-h-60 overflow-y-auto pb-1">
         <li
           v-for="(item, index) in items"
-          :key="index"
+          :key="queueKey(item)"
           class="group/queue flex items-center gap-2 h-7 ps-2 pe-0.5 rounded-sm hover:bg-elevated"
         >
           <span class="flex-1 min-w-0 truncate text-sm text-default">{{ item.text }}</span>
           <div class="flex items-center shrink-0 [@media(hover:hover)]:opacity-0 group-hover/queue:opacity-100 group-focus-within/queue:opacity-100 transition-opacity">
-            <UTooltip :text="promptStatus === 'ready' ? 'Send now' : 'Send now, Nuxi takes it into the current answer'">
+            <UTooltip :text="promptStatus === 'ready' ? 'Send now' : 'Send now, Nuxi switches to it'">
               <UButton
                 icon="i-lucide-arrow-up"
                 color="neutral"

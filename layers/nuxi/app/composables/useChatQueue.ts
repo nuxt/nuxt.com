@@ -7,8 +7,8 @@ export type ChatQueueItem = ChatPromptQueueItem & { attachments?: TextPasteAttac
 
 /**
  * Messages submitted while the chat answers, for `UChatPrompt`'s `v-model:queue`. The first one is sent once the chat is
- * `ready` again; after an error the queue waits until the visitor retries. "Send now" sends right away: during an answer,
- * Eve steers the running turn with it instead of starting another.
+ * `ready` again; after an error the queue waits until the visitor retries. "Send now" sends right away, and the chat decides
+ * how the running answer takes it.
  *
  * `UChatPrompt` queues the text only, so each message takes the pasted attachments that were in the prompt, and gives
  * them back if the visitor moves it into the prompt to edit it.
@@ -68,6 +68,8 @@ export function useChatQueue(options: {
     if (pending) readyWhileSending = true
     else sendNext()
   })
+  // The daily limit can reset while the chat is idle.
+  watch(options.canSend, canSend => canSend && !pending && options.status() === 'ready' && sendNext())
 
   /** "Send now" moved the message to the front. */
   function onSend() {
