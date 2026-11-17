@@ -33,10 +33,22 @@ watch(() => colorMode.preference, (newMode, oldMode) => {
 const pull = usePullPreview()
 const locale = useDocsLocale()
 
-const { data: navigation } = await useFetch<NavigationItem[]>(() => {
+const { data: navigation, execute: fetchNavigation } = useFetch<NavigationItem[]>(() => {
   if (pull.value) return pullNavigationPath(docsVersion.value, pull.value)
   return locale.value ? l10nNavigationPath(locale.value, docsVersion.value) : navigationPath(docsVersion.value)
-}, { key: () => `navigation:${docsVersion.value}` })
+}, { key: () => `navigation:${docsVersion.value}`, immediate: false })
+
+// Docs pages render from the navigation (aside, breadcrumb, surround); elsewhere only the search
+// palette uses it, so it stays out of their HTML payload (about 80 KB) and loads once the page is idle.
+const isDocsRoute = computed(() => route.path === '/docs' || route.path.startsWith('/docs/'))
+if (isDocsRoute.value) {
+  await fetchNavigation()
+} else if (import.meta.client) {
+  onNuxtReady(() => fetchNavigation())
+}
+watch(isDocsRoute, (value) => {
+  if (value && !navigation.value) fetchNavigation()
+})
 
 const searchKeys = computed(() => searchInstanceKeys(docsVersion.value))
 // Client-only: an SSR value gets baked into the page's ISR entry and would pin search to a stale commit.
