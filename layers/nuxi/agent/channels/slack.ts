@@ -55,6 +55,9 @@ const sessionFailure = defineSlackRenderer({
 export default slackChannel({
   credentials: connectSlackCredentials(slackConnectorId()),
   botName: 'Nuxi',
+  // A code channel is one session for one task, and every message in it reaches Nuxi without a
+  // mention. `tools/open_code_channel.ts` moves coding requests into one.
+  codeChannels: true,
   threadContext: { since: 'last-agent-reply' },
   onAppMention: dispatchSlackMessage,
   onDirectMessage: dispatchSlackMessage,
