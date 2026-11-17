@@ -81,7 +81,7 @@ To run the evals for the MCP server, follow these steps:
    Go to https://vercel.com/ai-gateway and create an API key.
    Add the following variable to your `.env` file (replace `sk-...` with your actual key):
    ```
-   AI_GATEWAY_API_KEY=<you-api-key>
+   AI_GATEWAY_API_KEY=<your-api-key>
    ```
 
 3. **Run the evals**  
