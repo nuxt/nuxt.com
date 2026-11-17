@@ -1,8 +1,8 @@
 import { defaultPolicy, parseRecord, type Policy, type TranslationRecord } from '@diglot/core'
-import type { L10nLocale } from '../../../shared/utils/l10n'
+import { L10N_TRANSLATIONS_REPO, type L10nLocale } from '../../../shared/utils/l10n'
 
 /** The translations repository: records and source manifests. */
-export const TRANSLATIONS_REPO = 'nuxt/translations'
+export const TRANSLATIONS_REPO = L10N_TRANSLATIONS_REPO
 export const TRANSLATIONS_BRANCH = 'main'
 
 /** One locale's translation records at one commit of the translations repository. */

@@ -3,10 +3,10 @@ import { z } from 'zod'
 import { getDocsIndex, searchIndex } from '../lib/docs-index.js'
 
 export default defineTool({
-  description: 'Full-text search over the Nuxt v4 documentation, the deployment guides and the docs of the official modules nuxt.com hosts (`/modules/<slug>/…`). Returns the best-matching sections with their content, page path and anchor link, in one call — usually enough to answer without fetching the page. Use keywords and API names, not full sentences (e.g. "useState pinia shared state", "nuxt instance unavailable", "cloudflare workers preset"). For several topics, call it once per topic in parallel.',
+  description: 'Full-text search over the Nuxt v4 documentation, the deployment guides, the docs of the official modules nuxt.com hosts (`/modules/<slug>/…`) and the Nuxt blog, whose release posts explain recently added features. Returns the best-matching sections with their content, page path and anchor link, in one call — usually enough to answer without fetching the page. Use keywords and API names, not full sentences (e.g. "useState pinia shared state", "nuxt instance unavailable", "cloudflare workers preset"). For several topics, call it once per topic in parallel.',
   inputSchema: z.object({
     query: z.string().min(2).describe('Keywords, API names, config keys or an error message excerpt'),
-    scope: z.enum(['all', 'docs', 'deploy', 'modules']).default('all').describe('Restrict to the docs (`/docs/4.x`), the deployment guides (`/deploy`) or the hosted module docs (`/modules`)')
+    scope: z.enum(['all', 'docs', 'deploy', 'modules', 'blog']).default('all').describe('Restrict to the docs (`/docs/4.x`), the deployment guides (`/deploy`), the hosted module docs (`/modules`) or the blog (`/blog`)')
   }),
   async execute({ query, scope }) {
     const index = await getDocsIndex()

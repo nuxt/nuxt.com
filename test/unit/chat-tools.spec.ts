@@ -3,6 +3,9 @@ import { describe, expect, it } from 'vitest'
 import {
   getModuleCards,
   getToolIcon,
+  getToolState,
+  getToolReferences,
+  hasToolOutput,
   getToolSuffix,
   getToolText,
   isConnectionSearchTool,
@@ -178,5 +181,31 @@ describe('nuxterCardProps', () => {
   it('treats missing or invalid counts as zero', () => {
     const card = nuxterCardProps({ ...output, name: null, periodPhrase: null, issues: 'many', hackathons: 'x' })
     expect(card).toMatchObject({ name: undefined, periodPhrase: undefined, issues: 0, hackathons: [] })
+  })
+})
+
+describe('tool activity', () => {
+  it('does not expose preliminary output as a completed result', () => {
+    const part = { ...dynamicTool('search_docs', { results: [] }), preliminary: true } as ToolPart
+    expect(getToolState(part)).toBe('running')
+    expect(hasToolOutput(part)).toBe(false)
+    expect(getToolReferences(part)).toEqual([])
+  })
+
+  it('distinguishes a stopped call from a failed or denied call', () => {
+    const part = { ...dynamicTool('search_docs'), state: 'output-error', errorText: 'Tool call cancelled' } as ToolPart
+    expect(getToolState(part)).toBe('stopped')
+    expect(getToolState({ ...part, errorText: 'Search failed' } as ToolPart)).toBe('error')
+    expect(getToolState({ ...part, state: 'output-denied', approval: { id: 'approval', approved: false } } as ToolPart)).toBe('denied')
+  })
+
+  it('preserves source excerpts and omits unsafe source links', () => {
+    const part = dynamicTool('search_docs', { results: [
+      { title: 'Data Fetching', path: '/docs/4.x/getting-started/data-fetching', section: 'useFetch', content: 'Use useFetch for SSR data.' },
+      { title: 'Unsafe', url: 'javascript:alert(1)' }
+    ] })
+    expect(getToolReferences(part)).toEqual([{
+      title: 'Data Fetching', url: '/docs/4.x/getting-started/data-fetching', section: 'useFetch', content: 'Use useFetch for SSR data.'
+    }])
   })
 })

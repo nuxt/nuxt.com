@@ -1,16 +1,19 @@
 <script setup lang="ts">
 import { getLocalTimeZone, CalendarDate, today } from '@internationalized/date'
-import { formatDateRange } from 'little-date'
 
 const { dateRange, setDateRange, setPresetRange } = useDateRange()
 
 const formattedDateRange = computed(() => {
-  if (dateRange.value.start && dateRange.value.end) {
-    return formatDateRange(dateRange.value.start, dateRange.value.end, {
-      includeTime: false
-    })
-  }
-  return null
+  const { start, end } = dateRange.value
+  if (!start || !end) return null
+
+  const currentYear = new Date().getFullYear()
+  const inCurrentYear = start.getFullYear() === currentYear && end.getFullYear() === currentYear
+  return new Intl.DateTimeFormat('en-US', {
+    month: 'short',
+    day: 'numeric',
+    year: inCurrentYear ? undefined : 'numeric'
+  }).formatRange(start, end)
 })
 
 const ranges = [

@@ -1,7 +1,7 @@
 import { defineMcpClientConnection } from 'eve/connections'
 import type { SessionContext } from 'eve/context'
 import { isAdminMode } from '../lib/identity/admin-mode.js'
-import { appOrigin } from '../lib/internal-api.js'
+import { appOrigin, selfAccessHeaders } from '../lib/internal-api.js'
 
 /** Admin tools available to Nuxi; keep the surface explicit. */
 const ALLOWED_TOOLS = [
@@ -14,6 +14,7 @@ const ALLOWED_TOOLS = [
   'search-console-analytics',
   'search-console-inspect-url',
   'search-console-sitemaps',
+  'page-head',
   'crux-web-vitals',
   'start-template-checks',
   'template-check-status'
@@ -29,8 +30,10 @@ export const ADMIN_MCP_INSTRUCTIONS = `**Admin MCP connection (\`admin-mcp__*\`,
 - \`admin-mcp__list-agent-votes\` — message upvotes/downvotes on those same chats
 - \`admin-mcp__search-console-analytics\` — Google Search clicks, impressions, CTR (percentage), and average position; data lags 2–3 days. Pass explicit inclusive dates for equal-length comparisons. Ungrouped queries (\`dimensions=[]\`) give totals; grouped rows are partial, never sum them into site totals.
 - \`admin-mcp__search-console-inspect-url\` / \`admin-mcp__search-console-sitemaps\` — indexing, canonical and sitemap diagnostics
+- \`admin-mcp__page-head\` — the live redirects, status, title, meta description, canonical and robots of one page on nuxt.com or a subdomain; no page content
 - \`admin-mcp__crux-web-vitals\` — field performance over rolling 28-day periods; origin fallback is not page-level evidence
 - For search performance and concrete SEO recommendations, load the \`seo-opportunities\` skill. For new showcase candidates from nuxt.fyi, load \`showcase-discovery\`.
+- When a team member says something on nuxt.com is broken or not working (a template, page, API route, feature or Nuxi answer), load the \`debug-nuxt-com\` skill before answering or asking them for details.
 - \`admin-mcp__template-check-status\` — which templates pass or fail the daily check, at which step and why (\`includeLog\`)
 - \`admin-mcp__start-template-checks\` — re-check templates on Vercel Sandbox (\`slugs\` or \`failing\`). Each one costs a sandbox for up to 15 minutes: never check every template unless asked. It returns right away; follow it with \`template-check-status\`
 - An empty \`template-check-status\` result means there is no recorded check history for that query. It does not mean the template is missing or that starting a check is unavailable.
@@ -68,7 +71,8 @@ async function adminOnlyToken(ctx: SessionContext) {
 
 export default defineMcpClientConnection({
   url: `${appOrigin()}/mcp/admin`,
-  description: 'Nuxi admin analytics: docs feedback, shared web chats and votes, Google Search Console performance/indexing/sitemaps, CrUX Core Web Vitals, and template checks. Requires admin mode, including opted-in local CLI sessions.',
+  description: 'Nuxi admin analytics: docs feedback, shared web chats and votes, Google Search Console performance/indexing/sitemaps, live page redirects and metadata, CrUX Core Web Vitals, and template checks. Requires admin mode, including opted-in local CLI sessions.',
   tools: { allow: ALLOWED_TOOLS },
-  auth: adminOnlyToken
+  auth: adminOnlyToken,
+  headers: selfAccessHeaders
 })

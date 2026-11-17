@@ -9,9 +9,9 @@ WHEN TO USE: Use this tool when you need to DISCOVER or COMPARE deployment optio
 - "Show me platforms with free tiers" - search for specific features
 - "What are my deployment options?" - general exploration
 
-WHEN NOT TO USE: If you know the exact provider (e.g., "Vercel", "Cloudflare"), you can use get_deploy_provider directly with the path.
+WHEN NOT TO USE: If you know the exact provider (e.g., "Vercel", "Cloudflare"), you can use get-deploy-provider directly with the path.
 
-OUTPUT: Returns list of providers with titles, descriptions, and paths. Use get_deploy_provider for detailed deployment instructions.`,
+OUTPUT: Returns list of providers with titles, descriptions, and paths. Use get-deploy-provider for detailed deployment instructions.`,
   annotations: {
     readOnlyHint: true,
     openWorldHint: false

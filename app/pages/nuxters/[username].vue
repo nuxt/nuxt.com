@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import type { Module, Nuxter, NuxterPeriodStats, NuxterProfilePage, NuxtersPeriod } from '#shared/types'
+import type { Module, Nuxter, NuxterLocaleTranslations, NuxterPeriodStats, NuxterProfilePage, NuxterTranslations, NuxtersPeriod } from '#shared/types'
 import { isNuxtersPeriod, nuxterForPeriod, nuxterGithubSearchUrl, nuxterHackathons, nuxtersPeriodPhrase } from '#shared/utils/nuxters'
 import { countryName } from '#shared/utils/nuxters-countries'
+import { L10N_STRINGS, localisePath } from '#shared/utils/l10n'
 
 definePageMeta({
   heroBackground: 'opacity-30 -z-10'
@@ -88,6 +89,15 @@ const yearly = computed(() => (nuxter.value?.periods ?? []).filter(row => /^\d{4
 const maintained = computed(() => nuxter.value?.modules.maintained ?? [])
 const contributed = computed(() => nuxter.value?.modules.contributed ?? [])
 const blogPosts = computed(() => nuxter.value?.blogPosts ?? [])
+const translationLocales = computed(() => nuxter.value?.translationLocales ?? [])
+const translator = computed(() => translationLocales.value.filter(locale => locale.edited + locale.verified > 0).map(locale => locale.locale))
+const segments = (translations?: NuxterTranslations) => translations ? translations.edited + translations.verified + translations.rejected : 0
+// On every period of a translator, so switching period keeps the layout.
+const showTranslations = computed(() => translationLocales.value.length > 0 || segments(nuxter.value!.translations) > 0)
+const translationSummary = (locale: NuxterLocaleTranslations) => [
+  ...(['edited', 'verified', 'rejected'] as const).filter(action => locale[action] > 0).map(action => `${format(locale[action])} ${action}`),
+  `${format(locale.words)} ${locale.words === 1 ? 'word' : 'words'}`
+].join(' · ')
 // Long lists show their first rows, "Show all" expands them.
 function usePreview<T>(items: Ref<T[]>, size: number) {
   const expanded = ref(false)
@@ -118,6 +128,17 @@ const capitalize = (text: string) => text.charAt(0).toUpperCase() + text.slice(1
 const metricLabel = (metric: Metric, value: number) => value === 1 ? METRICS[metric].one : METRICS[metric].many
 const metricValue = (stats: Nuxter | NuxterPeriodStats, metric: Metric) => metric === 'mergedPullRequests' ? stats.mergedPullRequests.all : stats[metric]
 
+interface StatCard {
+  icon: string
+  tint: string
+  text: string
+  label: string
+  value: number
+  detail: string
+  class: string
+  link?: { url: string, external: boolean, hover?: string, label: string }
+}
+
 // The day of the server render, in the payload: the page is cached for an hour and must hydrate with the same links.
 const today = useState('nuxters-today', () => new Date().toISOString().slice(0, 10))
 const stats = computed(() => {
@@ -128,16 +149,18 @@ const stats = computed(() => {
     comments: `${format(n.helpfulComments)} helpful`,
     reactions: 'received'
   }
-  return (Object.keys(METRICS) as Metric[]).map(metric => ({
+  const cards: StatCard[] = (Object.keys(METRICS) as Metric[]).map(metric => ({
     ...METRICS[metric],
     label: capitalize(metricLabel(metric, metricValue(n, metric))),
     value: metricValue(n, metric),
     detail: details[metric],
+    class: '',
     // Reactions are received: GitHub cannot search them.
-    github: metric === 'reactions'
+    link: metric === 'reactions'
       ? undefined
       : {
           url: nuxterGithubSearchUrl(username, metric, period.value, new Date(today.value)),
+          external: true,
           hover: METRICS[metric].hover,
           // The link covers the card: its name also says the count.
           label: metric === 'comments'
@@ -145,6 +168,31 @@ const stats = computed(() => {
             : `${format(metricValue(n, metric))} ${metricLabel(metric, metricValue(n, metric))} of ${username} ${periodPhrase(period.value)}, on GitHub`
         }
   }))
+  if (!showTranslations.value) return cards
+
+  const translations = n.translations ?? { edited: 0, verified: 0, rejected: 0 }
+  const total = segments(translations)
+  const label = total === 1 ? 'translated segment' : 'translated segments'
+  // Three cards on the first row, two wider ones on the second; translations last on mobile.
+  cards.forEach((card, index) => {
+    card.class = index < 2 ? 'sm:col-span-2' : 'sm:col-span-3'
+  })
+  cards.splice(2, 0, {
+    icon: 'i-lucide-languages',
+    tint: 'ring-rose-400 bg-rose-400/5',
+    text: 'text-rose-600 dark:text-rose-400',
+    label: capitalize(label),
+    value: total,
+    detail: (['edited', 'verified', 'rejected'] as const).map(action => `${format(translations[action])} ${action}`).join(' · '),
+    class: 'col-span-2 order-last sm:order-none',
+    link: {
+      url: '/translations',
+      external: false,
+      hover: 'hover:ring-rose-400 hover:bg-rose-400/10',
+      label: `${format(total)} ${label} of ${username} ${periodPhrase(period.value)}, on the translations page`
+    }
+  })
+  return cards
 })
 
 // Shared links show the period on screen: title, description, `og:url` and card.
@@ -273,7 +321,7 @@ defineOgImage('Nuxter.takumi', { username, period: () => period.value === 'all' 
             </p>
           </div>
 
-          <div v-if="hackathons.length || maintained.length" class="flex flex-wrap gap-2">
+          <div v-if="hackathons.length || maintained.length || translator.length" class="flex flex-wrap gap-2">
             <UBadge
               v-for="hackathon in hackathons"
               :key="hackathon.id"
@@ -286,6 +334,14 @@ defineOgImage('Nuxter.takumi', { username, period: () => period.value === 'all' 
               v-if="maintained.length"
               label="Module author"
               icon="i-lucide-puzzle"
+              color="neutral"
+              variant="subtle"
+              class="lg:text-sm"
+            />
+            <UBadge
+              v-if="translator.length"
+              :label="`Translator (${translator.join(', ')})`"
+              icon="i-lucide-languages"
               color="neutral"
               variant="subtle"
               class="lg:text-sm"
@@ -314,20 +370,20 @@ defineOgImage('Nuxter.takumi', { username, period: () => period.value === 'all' 
             />
           </div>
 
-          <ul class="grid grid-cols-2 gap-4" :aria-label="`Contributions ${periodPhrase(period)}`">
-            <li v-for="stat in stats" :key="stat.icon">
+          <ul class="grid grid-cols-2 gap-4" :class="showTranslations && 'sm:grid-cols-6'" :aria-label="`Contributions ${periodPhrase(period)}`">
+            <li v-for="stat in stats" :key="stat.icon" :class="stat.class">
               <UPageCard
                 :icon="stat.icon"
                 variant="subtle"
-                :to="stat.github?.url"
-                :target="stat.github && '_blank'"
-                :aria-label="stat.github?.label"
-                :class="['h-full group', stat.tint, stat.github?.hover]"
+                :to="stat.link?.url"
+                :target="stat.link?.external ? '_blank' : undefined"
+                :aria-label="stat.link?.label"
+                :class="['h-full group', stat.tint, stat.link?.hover]"
                 :ui="{ leadingIcon: stat.text }"
               >
                 <UIcon
-                  v-if="stat.github"
-                  name="i-lucide-arrow-up-right"
+                  v-if="stat.link"
+                  :name="stat.link.external ? 'i-lucide-arrow-up-right' : 'i-lucide-arrow-right'"
                   class="absolute top-4 right-4 sm:top-6 sm:right-6 size-5 text-muted group-hover:text-highlighted transition-colors"
                 />
                 <div class="flex flex-col gap-1">
@@ -452,6 +508,31 @@ defineOgImage('Nuxter.takumi', { username, period: () => period.value === 'all' 
               class="mt-4"
               @click="blogPostsPreview.expanded = !blogPostsPreview.expanded"
             />
+          </section>
+
+          <section v-if="translationLocales.length" aria-labelledby="translations">
+            <h2 id="translations" class="text-2xl font-bold text-highlighted mb-1">
+              Translations
+            </h2>
+            <p class="text-muted mb-6">
+              Segments of the Nuxt docs {{ nuxter.username }} edited, verified or rejected, in <ULink to="/translations" class="text-highlighted hover:underline">Nuxt's current translations</ULink>.
+            </p>
+            <!-- Localised docs are served under their own base: a full page load -->
+            <ul class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+              <li v-for="locale in translationLocales" :key="locale.locale">
+                <ULink
+                  :to="localisePath(locale.locale, '/docs')"
+                  external
+                  class="flex items-center gap-3 rounded-lg px-3 py-2 ring ring-default hover:bg-elevated/50 transition-colors"
+                >
+                  <span class="flex items-center justify-center size-8 shrink-0 rounded-md bg-elevated font-mono text-xs uppercase text-highlighted">{{ locale.locale }}</span>
+                  <span class="min-w-0">
+                    <span class="block font-medium text-sm text-highlighted truncate" :lang="locale.locale">{{ L10N_STRINGS[locale.locale].language }}</span>
+                    <span class="block text-xs text-muted truncate tabular-nums">{{ translationSummary(locale) }}</span>
+                  </span>
+                </ULink>
+              </li>
+            </ul>
           </section>
         </div>
       </UContainer>

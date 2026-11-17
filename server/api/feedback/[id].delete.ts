@@ -6,11 +6,7 @@ const deleteParamsSchema = z.object({
 })
 
 export default defineEventHandler(async (event) => {
-  const { user } = await requireUserSession(event)
-
-  if (user.role !== 'admin') {
-    throw createError({ statusCode: 403, statusMessage: 'Admin access required' })
-  }
+  await requireAdminUserSession(event)
 
   const { id } = await getValidatedRouterParams(event, deleteParamsSchema.parse)
 

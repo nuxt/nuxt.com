@@ -7,6 +7,7 @@ const moods: { mood: NuxiMood, label: string }[] = [
   { mood: 'surprised', label: 'surprised' },
   { mood: 'sleeping', label: 'sleeping' },
   { mood: 'sad', label: 'sad' },
+  { mood: 'wistful', label: 'wistful' },
   { mood: 'confused', label: 'confused' }
 ]
 </script>

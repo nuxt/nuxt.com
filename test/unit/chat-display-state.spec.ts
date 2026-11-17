@@ -46,6 +46,11 @@ describe('isBetweenSteps', () => {
     expect(isBetweenSteps([user, assistant([{ ...searched, state: 'input-available', output: undefined }])], 'streaming')).toBe(false)
   })
 
+  it('keeps preliminary tool output active until the final result arrives', () => {
+    const reply = assistant([{ ...searched, preliminary: true }])
+    expect(isBetweenSteps([user, reply], 'streaming')).toBe(false)
+  })
+
   it('is false while a tool waits for approval, and once the turn is over', () => {
     expect(isBetweenSteps([user, assistant([{ ...searched, state: 'approval-requested', output: undefined, approval: { id: 'a' } }])], 'streaming')).toBe(false)
     expect(isBetweenSteps([user, assistant([searched])], 'ready')).toBe(false)

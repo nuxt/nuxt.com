@@ -4,7 +4,7 @@ import type { NavigationItem } from 'comark-content'
 import { DocsProseImg, Browser, CodeExplorer, Important, LinkExample, ReadMore, VideoAccordion } from '#components'
 import { CLI_DOCS_REFS, CLI_DOCS_REPO, cliDocsPathPrefix, hasCliDocs } from '#shared/utils/cli'
 import { cliInstanceKey } from '#shared/utils/content'
-import { DOCS_REFS, DOCS_REPO, getVersionByPath, isArchivedDocVersion, isCanonicalDocsPath } from '#shared/utils/docs'
+import { DOCS_REFS, DOCS_REPO, docsStatus, getVersionByPath, isArchivedDocVersion, isCanonicalDocsPath } from '#shared/utils/docs'
 import { isLocalisedPage, l10nHead, l10nPagePath, type L10nPageMeta } from '#shared/utils/l10n'
 
 definePageMeta({
@@ -23,7 +23,9 @@ const markdownComponents = {
   VideoAccordion
 }
 
-const navigation = inject<Ref<NavigationItem[]>>('navigation', ref([]))
+// Awaited with the page below, so docs pages server-render their aside, breadcrumb and surround links.
+const navigationFetch = useDocsNavigation()
+const navigation = computed(() => navigationFetch.data.value ?? [])
 const menuDrawerOpen = ref(false)
 const onThisPageDrawerOpen = ref(false)
 
@@ -81,11 +83,14 @@ const instanceKey = computed(() => {
 
 const { data: indexable } = useL10nIndexable(path)
 
-const { data: page, status, refresh: refreshPage } = await useAsyncData(pageKey, () => {
-  const pagePath = path.value
-  const client = useContent(instanceKey.value)
-  return paintResponse().then(() => client.get(pagePath))
-})
+const [{ data: page, status, refresh: refreshPage }] = await Promise.all([
+  useAsyncData(pageKey, () => {
+    const pagePath = path.value
+    const client = useContent(instanceKey.value)
+    return paintResponse().then(() => client.get(pagePath))
+  }),
+  navigationFetch
+])
 
 const locale = useDocsLocale()
 
@@ -182,6 +187,9 @@ const editLink = computed(() => {
   const ref = DOCS_REFS[docsVersion.value].branch
   return `https://github.com/${DOCS_REPO}/edit/${ref}/docs/${meta.stem}${meta.extension}`
 })
+
+// Only live versions in English are served as raw Markdown.
+const markdown = computed(() => docsStatus(docsVersion.value) === 'live' && !locale.value)
 
 const communityLinks = [{
   icon: 'i-lucide-heart',
@@ -345,7 +353,11 @@ const noRightAside = computed(() => route.path.includes('/examples/'))
               trailingIcon: 'hidden',
               bottom: 'flex flex-col'
             }"
-          />
+          >
+            <template #aside>
+              <DocsPageAsideLinks :path="path" :edit-link="editLink" :markdown="markdown" />
+            </template>
+          </ContentToc>
         </template>
       </UDrawer>
     </div>
@@ -404,7 +416,8 @@ const noRightAside = computed(() => route.path.includes('/examples/'))
             </template>
           </UButton>
 
-          <PageHeaderLinks v-if="!isArchivedDocVersion(docsVersion) && !locale" :key="page.path" />
+          <!-- Examples have no aside to hold the page links. -->
+          <PageHeaderLinks v-if="noRightAside" :key="page.path" />
         </template>
       </UPageHeader>
 
@@ -457,7 +470,11 @@ const noRightAside = computed(() => route.path.includes('/examples/'))
             container: 'lg:max-h-[inherit]',
             content: 'lg:min-h-[min(var(--list-height,8rem),16rem)]'
           }"
-        />
+        >
+          <template #aside>
+            <DocsPageAsideLinks :path="path" :edit-link="editLink" :markdown="markdown" />
+          </template>
+        </ContentToc>
       </template>
     </UPage>
   </UContainer>

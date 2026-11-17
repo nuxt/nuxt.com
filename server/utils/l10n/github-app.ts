@@ -209,6 +209,9 @@ export function githubTranslationsGit(app: GitHubApp, repo: string, base = 'main
         body: { title, body, head: branch, base }
       }))
     },
+    async comment(number, body) {
+      await app.request(`/repos/${repo}/issues/${number}/comments`, { method: 'POST', body: { body } })
+    },
     async listPulls() {
       const open: GitOpenPull[] = []
       for (let page = 1; page <= MAX_PULL_PAGES; page++) {

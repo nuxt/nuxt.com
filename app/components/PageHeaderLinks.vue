@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { localeLinks } from '#shared/utils/l10n'
-
 const route = useRoute()
 const toast = useToast()
 const { copy, copied } = useClipboard()
@@ -43,36 +41,8 @@ const items = [
     target: '_blank',
     to: `https://claude.ai/new?q=${encodeURIComponent(`Read ${mdPath.value} so I can ask questions about it.`)}`,
     onSelect: () => track('Page Action', { action: 'Open in Claude' })
-  }], [
-    {
-      label: 'Copy MCP URL',
-      icon: 'i-lucide-link',
-      onSelect() {
-        track('Page Action', { action: 'Copy MCP URL' })
-        copy(`https://nuxt.com/mcp`)
-        toast.add({
-          title: 'Copied to clipboard',
-          icon: 'i-lucide-check-circle'
-        })
-      }
-    },
-    {
-      label: 'Add MCP Server',
-      icon: 'i-simple-icons:cursor',
-      target: '_blank',
-      to: `/mcp/deeplink`,
-      onSelect: () => track('Page Action', { action: 'Add MCP Server' })
-    }
-  ],
-  localeLinks(route.path).map(link => ({
-    ...link,
-    slot: 'locale' as const,
-    icon: 'i-lucide-languages',
-    external: true,
-    externalIcon: false,
-    onSelect: () => track('Page Action', { action: 'View Translation', locale: link.locale })
-  }))
-].filter(group => group.length)
+  }]
+]
 
 async function copyPage() {
   track('Page Action', { action: 'Copy Page' })
@@ -108,12 +78,6 @@ async function copyPage() {
         content: 'w-48'
       }"
     >
-      <template #locale-label="{ item }">
-        <span :lang="item.locale">{{ item.label }}</span>
-      </template>
-      <template #locale-description="{ item }">
-        <span :lang="item.locale">{{ item.description }}</span>
-      </template>
       <UButton
         icon="i-lucide-chevron-down"
         size="sm"

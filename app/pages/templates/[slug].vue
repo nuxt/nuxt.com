@@ -5,12 +5,14 @@ definePageMeta({
 
 const route = useRoute()
 const { all, templates, health } = await useTemplates()
+const { user } = useUserSession()
 
 const template = computed(() => all.value.find(item => item.slug === route.params.slug))
 if (!template.value) {
   throw createError({ statusCode: 404, statusMessage: 'Template not found', fatal: true })
 }
 const templateHealth = computed(() => health.value[template.value!.slug])
+const canRecheck = computed(() => user.value?.role === 'admin' && template.value?.repo && template.value.template !== 'module')
 const hasWorkingAlternative = computed(() => templates.value.some(item => item.slug !== template.value?.slug && item.category === template.value?.category && isWorking(health.value[item.slug])))
 
 const { track } = useAnalytics()
@@ -29,7 +31,16 @@ useSeoMeta({
   ogDescription: template.value.description
 })
 useCanonical()
-defineOgImage('Docs.takumi', { title, description: template.value.description })
+defineOgImage('Templates.takumi', {
+  detail: true,
+  title: template.value.name,
+  description: template.value.description,
+  image: templateImage(template.value),
+  starter: isStarter(template.value),
+  category: isStarter(template.value) ? 'Starter' : TEMPLATE_CATEGORIES.find(item => item.value === template.value!.category)?.label || 'Template',
+  label: template.value.official ? 'Official' : template.value.purchase ? 'Paid' : undefined,
+  credit: template.value.repo || (template.value.demo ? new URL(template.value.demo).hostname : 'Community template')
+}, { width: 1200, height: 630 })
 </script>
 
 <template>
@@ -57,7 +68,7 @@ defineOgImage('Docs.takumi', { title, description: template.value.description })
             {{ template.description }}
           </p>
         </div>
-        <div v-if="links.length" class="flex gap-2 shrink-0">
+        <div v-if="links.length || canRecheck" class="flex flex-wrap items-start gap-2 shrink-0">
           <UButton
             v-for="link in links"
             :key="link.label"
@@ -68,6 +79,12 @@ defineOgImage('Docs.takumi', { title, description: template.value.description })
             color="neutral"
             variant="ghost"
             @click="track('Template Action', { template: template.name, action: link.action })"
+          />
+          <LazyTemplatesAdminCheck
+            v-if="canRecheck"
+            :key="template.slug"
+            :slug="template.slug"
+            @checked="refreshNuxtData('templates-health')"
           />
         </div>
       </div>

@@ -1,5 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { isAdminMode } from '../../layers/nuxi/agent/lib/identity/admin-mode'
+import { githubToolsApproval } from '../../layers/nuxi/agent/lib/github'
 
 vi.mock('@vercel/global-config', () => ({
   getAll: vi.fn(async () => ({ discord: { channels: { admin: ['C_ADMIN'], public: ['C_PUBLIC'] } } }))
@@ -113,5 +114,45 @@ describe('isAdminMode', () => {
     vi.stubEnv('NUXI_CLI_ADMIN', '1')
     vi.stubEnv('VERCEL_ENV', 'production')
     expect(await isAdminMode(localDevAuth)).toBe(false)
+  })
+})
+
+describe('githubToolsApproval', () => {
+  beforeEach(() => {
+    vi.stubEnv('GLOBAL_CONFIG', 'https://edge-config.vercel.com/ecfg_test?token=test')
+  })
+
+  afterEach(() => {
+    vi.unstubAllEnvs()
+  })
+
+  const slackUser = { issuer: 'slack:T123', principalId: 'slack:T123:U1', principalType: 'user', attributes: { user_id: 'U1', author_type: 'user' } }
+  const denied = { type: 'denied', reason: 'GitHub tools are only available to the Nuxt team on Slack and in admin Discord channels.' }
+
+  function decide(toolName: string, auth: Record<string, unknown> | null) {
+    return githubToolsApproval({ toolName, session: { auth: { current: auth } } } as unknown as Parameters<typeof githubToolsApproval>[0])
+  }
+
+  it('leaves GitHub tools to their own policy for a human on Slack and in an admin Discord channel', async () => {
+    expect(await decide('github__createPullRequest', slackUser)).toBeUndefined()
+    expect(await decide('github__createPullRequest', { issuer: 'discord', principalId: 'discord:U1', principalType: 'user', attributes: { channel_id: 'C_ADMIN' } })).toBeUndefined()
+  })
+
+  it('denies GitHub tools in a public Discord channel', async () => {
+    expect(await decide('github__getFileContent', { issuer: 'discord', principalId: 'discord:U1', principalType: 'user', attributes: { channel_id: 'C_PUBLIC' } })).toEqual(denied)
+  })
+
+  it('denies GitHub tools to web admins and schedules', async () => {
+    expect(await decide('github__getFileContent', { principalId: 'eve:app', principalType: 'runtime' })).toEqual(denied)
+    expect(await decide('github__getFileContent', { issuer: 'nuxt.com', principalId: 'u1', principalType: 'user', attributes: { role: 'admin' } })).toEqual(denied)
+  })
+
+  it('denies GitHub tools to a Slack bot and to anonymous web visitors', async () => {
+    expect(await decide('github__editFiles', { ...slackUser, principalType: 'service', attributes: { user_id: 'B1', author_type: 'bot' } })).toEqual(denied)
+    expect(await decide('github__editFiles', { issuer: 'nuxt.com', principalId: 'anon', principalType: 'anonymous' })).toEqual(denied)
+  })
+
+  it('leaves other tools alone in public sessions', async () => {
+    expect(await decide('search_docs', { issuer: 'nuxt.com', principalId: 'anon', principalType: 'anonymous' })).toBeUndefined()
   })
 })

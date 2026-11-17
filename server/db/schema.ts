@@ -66,6 +66,10 @@ export const nuxters = sqliteTable('nuxters', {
   corePrAll: integer('core_pr_all').notNull().default(0),
   coreHelpfulIssues: integer('core_helpful_issues').notNull().default(0),
   coreHelpfulComments: integer('core_helpful_comments').notNull().default(0),
+  // Segments of the docs translations (nuxt/translations), not part of the core bonus
+  translationsEdited: integer('translations_edited').notNull().default(0),
+  translationsVerified: integer('translations_verified').notNull().default(0),
+  translationsRejected: integer('translations_rejected').notNull().default(0),
   // Earliest counted contribution, across all periods
   firstContributionAt: integer('first_contribution_at', { mode: 'timestamp' }),
   syncedAt: integer('synced_at', { mode: 'timestamp' }).notNull()
@@ -140,7 +144,7 @@ export const templateCheckRuns = sqliteTable('template_check_runs', {
   // Workflow run, set once it started
   runId: text('run_id'),
   state: text('state', { enum: ['running', 'finished'] }).notNull(),
-  trigger: text('trigger', { enum: ['cron', 'task', 'mcp'] }).notNull(),
+  trigger: text('trigger', { enum: ['cron', 'task', 'mcp', 'admin'] }).notNull(),
   startedBy: text('started_by'),
   total: integer('total').notNull(),
   browser: text('browser'),

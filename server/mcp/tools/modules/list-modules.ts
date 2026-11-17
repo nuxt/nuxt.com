@@ -18,9 +18,9 @@ PARAMETERS:
 - order: asc or desc
 - includeStats: Include full per-module stats (downloads, stars, publishedAt, createdAt, etc.). Defaults to true when sort is publishedAt or createdAt.
 
-WHEN NOT TO USE: If you already know the exact module slug (e.g., "@nuxt/ui"), use get_module directly.
+WHEN NOT TO USE: If you already know the exact module slug (e.g., "@nuxt/ui"), use get-module directly.
 
-OUTPUT: Returns list of modules with name, description, category, and either downloads/stars or full stats. When the search matched a module's providers, matchedProviders lists them. Use get_module for complete details including README and compatibility.`,
+OUTPUT: Returns list of modules with name, description, category, and either downloads/stars or full stats. When the search matched a module's providers, matchedProviders lists them. Use get-module for complete details including README and compatibility.`,
   inputSchema: {
     search: z.string().optional().describe('Search term to filter modules by name, description, npm package name, or supported provider (e.g. "cloudinary" finds @nuxt/image)'),
     category: z.string().optional().describe('Filter by category name, case-insensitive (e.g., "Authentication", "UI Frameworks", "UI Components", "Backend & Database", "CMS & Content", "SEO"). Prefer search for keyword discovery.'),

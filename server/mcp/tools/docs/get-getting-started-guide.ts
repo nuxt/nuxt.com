@@ -5,7 +5,7 @@ export default defineMcpTool({
   description: `Retrieves the official "Getting Started" introduction page for a given Nuxt major version.
 
 WHEN TO USE: When the user wants a high-level overview / setup guide for Nuxt without specifying a precise documentation page.
-WHEN NOT TO USE: For a specific page outside the introduction, prefer get_documentation_page.`,
+WHEN NOT TO USE: For a specific page outside the introduction, prefer get-documentation-page.`,
   inputSchema: {
     version: z.enum(['3.x', '4.x', '5.x']).optional().default('4.x').describe('Nuxt major version'),
     sections: z.array(z.string()).optional().describe('Specific h2 section titles to return. If omitted, returns full guide.')

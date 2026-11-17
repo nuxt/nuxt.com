@@ -18,7 +18,7 @@ import { NUXTERS_ME_CARD_CLASS } from '~/utils/nuxters-me-card'
         </div>
       </div>
       <div class="flex flex-col gap-2">
-        <USkeleton v-for="row in 3" :key="row" class="h-6 w-56" />
+        <USkeleton v-for="row in 4" :key="row" class="h-6 w-56" />
       </div>
       <USkeleton class="h-6 w-32" />
       <div class="flex gap-2 pt-4 border-t border-default">

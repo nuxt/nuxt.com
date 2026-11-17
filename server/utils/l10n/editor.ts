@@ -28,6 +28,11 @@ export async function editorSegments(file: Pick<ContentFile, 'data' | 'nodes'>, 
       skeleton: segment.skeleton,
       words: segment.words,
       placeholders: segment.placeholders,
+      context: {
+        headingTrail: segment.context.headingTrail,
+        containers: segment.context.containers,
+        ...(segment.context.detail ? { detail: segment.context.detail } : {})
+      },
       status,
       ...(record
         ? {

@@ -54,6 +54,8 @@ export async function localise<T extends Pick<ContentFile, 'path' | 'data' | 'no
     }
   )
 
+  markComponents(doc.nodes, events)
+
   const byStatus = wordsByStatus(events)
   const coverage: L10nCoverage = { words: Object.values(byStatus).reduce((sum, words) => sum + (words ?? 0), 0), byStatus }
 
@@ -104,6 +106,37 @@ export function localiseNavigation(items: NavigationItem[], bundle: L10nBundle):
       ...(children ? { children } : {})
     }
   })
+}
+
+/**
+ * Mark each component whose props were translated (`read-more`, `card`…) like a block, with the
+ * status and hash of its first translated prop, so the editor can be opened from it.
+ */
+function markComponents(nodes: Node[], events: ApplySegmentEvent[]): void {
+  const pending = new Map<string, ApplySegmentEvent[]>()
+  for (const event of events) {
+    if (event.segment.kind !== 'prop' || !event.status || event.outcome === 'skipped') continue
+    const key = `${event.segment.context.containers.at(-1)}:${event.segment.context.detail}`
+    pending.set(key, [...pending.get(key) ?? [], event])
+  }
+  if (!pending.size) return
+
+  const visit = (node: Node) => {
+    if (!Array.isArray(node) || typeof node[0] !== 'string') return
+    const attrs = node[1] as Record<string, unknown> | undefined
+    for (const [name, value] of Object.entries(attrs ?? {})) {
+      const queue = pending.get(`${node[0]}:${name}`)
+      const event = queue?.[0]
+      if (!event || (value !== event.segment.text && value !== event.record?.text)) continue
+      queue!.shift()
+      if (attrs!['data-l10n-hash']) continue
+      attrs!['data-l10n'] = event.status
+      attrs!['data-l10n-hash'] = event.segment.hash
+      if (ENGLISH_STATUSES.has(event.status!)) attrs!.lang = 'en'
+    }
+    for (let i = 2; i < node.length; i++) visit(node[i] as Node)
+  }
+  nodes.forEach(visit)
 }
 
 /** Text of the headings the table of contents links to, by id. */

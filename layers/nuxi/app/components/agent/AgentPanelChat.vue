@@ -23,6 +23,13 @@ const { loggedIn } = useUserSession()
 const { refresh: refreshChats } = useChats()
 
 const contextPathLabel = computed(() => currentPage.value?.replace(/^\//, '') ?? '')
+const { preview: livePreview, editor: livePreviewEditor } = useLivePreview()
+const livePreviewHint = computed(() => ({
+  starting: 'Starting its dev server, so edits show live',
+  on: 'Edits show live in the preview',
+  failed: 'Its dev server could not start',
+  off: 'Ask for a change and Nuxi edits it live'
+})[livePreviewEditor.value])
 
 const {
   chat,
@@ -117,6 +124,27 @@ watch(isOpen, (value) => {
           </div>
         </Transition>
 
+        <Transition
+          enter-active-class="transition duration-200 ease-out"
+          leave-active-class="transition duration-150 ease-in"
+          enter-from-class="opacity-0"
+          leave-to-class="opacity-0"
+        >
+          <div v-if="livePreview" class="flex items-center gap-2 border-b border-default px-4 py-2.5">
+            <UTooltip :text="livePreviewHint">
+              <div class="min-w-0 flex-1 flex items-center gap-1.5 text-xs cursor-default">
+                <span class="shrink-0 text-dimmed">Live preview</span>
+                <span
+                  class="size-1.5 shrink-0 rounded-full transition-colors duration-300"
+                  :class="livePreviewEditor === 'on' ? 'bg-success' : livePreviewEditor === 'starting' ? 'bg-warning motion-safe:animate-pulse' : livePreviewEditor === 'failed' ? 'bg-error' : 'bg-success/50'"
+                />
+                <span class="shrink-0 font-medium text-highlighted">{{ livePreview.template.name }}</span>
+                <span class="min-w-0 truncate font-mono text-dimmed">{{ livePreview.path || '/' }}</span>
+              </div>
+            </UTooltip>
+          </div>
+        </Transition>
+
         <AgentDisabledHint bar />
 
         <AgentLoginHint v-if="!loggedIn" bar />
@@ -135,7 +163,8 @@ watch(isOpen, (value) => {
             body: 'px-0',
             base: 'px-0 rounded-none',
             header: 'px-0 pt-2 pb-0 gap-1.5 flex flex-wrap items-start',
-            footer: 'px-0 items-baseline'
+            footer: 'px-0 items-baseline',
+            queue: 'inset-x-0 px-2.5 py-1 rounded-none border-0 border-b border-default bg-default backdrop-blur-none'
           }"
           @submit="onSubmit"
           @paste="handlePaste"

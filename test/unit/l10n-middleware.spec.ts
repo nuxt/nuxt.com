@@ -20,6 +20,7 @@ describe('l10n middleware', () => {
   it('should serve localised pages', () => {
     expect(middleware({ path: '/fr/docs/4.x/getting-started/introduction' })).toBeUndefined()
     expect(middleware({ path: '/fr/docs/3.x/guide?x=1' })).toBeUndefined()
+    expect(middleware({ path: '/de/docs/4.x/getting-started/introduction' })).toBeUndefined()
   })
 
   it('should send the locale and docs roots to the localised index', () => {
@@ -41,7 +42,7 @@ describe('l10n middleware', () => {
   })
 
   it('should send docs under an unknown locale to English', () => {
-    expect(middleware({ path: '/de/docs/4.x/guide' })).toEqual({ location: '/docs/4.x/guide', status: 302 })
+    expect(middleware({ path: '/es/docs/4.x/guide' })).toEqual({ location: '/docs/4.x/guide', status: 302 })
   })
 
   it('should refuse a path browsers read as another host', () => {

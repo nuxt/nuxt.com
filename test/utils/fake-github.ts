@@ -21,6 +21,7 @@ export async function createFakeGitHub({ repo = 'nuxt/translations', files = {} 
   const { privateKey, publicKey } = generateKeyPairSync('rsa', { modulusLength: 2048 })
   const pem = privateKey.export({ type: 'pkcs1', format: 'pem' }).toString()
   const pulls: FakePull[] = []
+  const comments: Array<{ number: number, body: string }> = []
   const requests: Array<{ method: string, path: string, authorization?: string, body?: unknown }> = []
   let queryErrors: Array<{ message: string }> | undefined
 
@@ -184,6 +185,13 @@ export async function createFakeGitHub({ repo = 'nuxt/translations', files = {} 
       return send(201, { number: pull.number, html_url: `https://github.com/${repo}/pull/${pull.number}` })
     }
 
+    const comment = /^\/issues\/(\d+)\/comments$/.exec(route)
+    if (req.method === 'POST' && comment) {
+      if (!pulls.some(pull => pull.number === Number(comment[1]))) return fail(404, 'Not Found')
+      comments.push({ number: Number(comment[1]), body: body.body })
+      return send(201, { id: comments.length })
+    }
+
     return fail(404, `No fake for ${req.method} ${path}`)
   }
 
@@ -200,6 +208,7 @@ export async function createFakeGitHub({ repo = 'nuxt/translations', files = {} 
     baseURL: `http://127.0.0.1:${port}`,
     privateKey: pem,
     pulls,
+    comments,
     requests,
     git,
     /** Reply to the next GraphQL query with null fields and `message` as an error, as a partial failure does. */

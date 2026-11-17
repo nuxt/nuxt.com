@@ -81,7 +81,7 @@ const fetchLatestNuxt = cachedFunction(async () => {
 }, { name: 'nuxt-latest-version', getKey: () => 'latest', maxAge: 60 * 60 })
 
 /** The last result of `checkTemplatesWorkflow` for each template. */
-async function fetchTemplateChecks(): Promise<Record<string, TemplateCheck>> {
+export async function fetchTemplateChecks(): Promise<Record<string, TemplateCheck>> {
   const [rows, latest] = await Promise.all([listTemplateChecks(), fetchLatestNuxt().catch(() => undefined)])
   return Object.fromEntries(rows.flatMap((row) => {
     if (!row.status || !row.checkedAt || !isTemplateCheckFresh({ checkedAt: row.checkedAt.toISOString() })) return []

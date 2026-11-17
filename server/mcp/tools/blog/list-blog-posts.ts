@@ -10,9 +10,9 @@ WHEN TO USE: Use this tool when you need to DISCOVER or SEARCH for blog posts. C
 - "Show me performance improvements" - find relevant posts by topic
 - "What's new in Nuxt?" - explore recent updates
 
-WHEN NOT TO USE: If you already know the exact blog post path (e.g., "/blog/v4"), use get_blog_post directly.
+WHEN NOT TO USE: If you already know the exact blog post path (e.g., "/blog/v4"), use get-blog-post directly.
 
-OUTPUT: Returns list of posts with title, description, date, path. Use get_blog_post to retrieve full content of specific posts.`,
+OUTPUT: Returns list of posts with title, description, date, path. Use get-blog-post to retrieve full content of specific posts.`,
   annotations: {
     readOnlyHint: true,
     openWorldHint: false

@@ -1,4 +1,4 @@
-import rangi from '@comark/nuxt/plugins/rangi'
+import rangi from '@comark/vue/plugins/rangi'
 import security from 'comark/plugins/security'
 import type { ElementNode } from 'comark'
 import SourceLink from '#layers/nuxi/app/components/tools/SourceLink.vue'

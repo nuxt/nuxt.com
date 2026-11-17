@@ -1,5 +1,3 @@
-import { z } from 'zod'
-
 export const FEEDBACK_RATINGS = [
   'very-helpful',
   'helpful',
@@ -50,23 +48,3 @@ export type PageAnalytic = {
   createdAt: Date
   updatedAt: Date
 }
-
-export const feedbackSchema = z.object({
-  rating: z.enum(FEEDBACK_RATINGS),
-  feedback: z.string().optional(),
-  path: z.string(),
-  title: z.string(),
-  stem: z.string()
-})
-
-export const feedbackFormSchema = z.object({
-  rating: z.enum(FEEDBACK_RATINGS).nullable(),
-  feedback: z.string().refine((val) => {
-    const trimmed = val.trim()
-    return trimmed === '' || trimmed.length >= 10
-  }, {
-    message: 'Please provide at least 10 characters or leave the field empty'
-  })
-})
-
-export type FeedbackInput = z.infer<typeof feedbackSchema>

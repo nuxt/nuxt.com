@@ -34,6 +34,19 @@
   --ui-container: 90rem;
 }
 
+/* The page never pans sideways: clip makes the viewport not horizontally scrollable, so Chrome on macOS stops shifting the page on a horizontal trackpad swipe while the swipe still navigates back and forward. Unlike hidden, clip keeps position: sticky working. */
+html,
+body {
+  overflow-x: clip;
+}
+
+/* No vertical rubber-band bounce on mouse- and trackpad-only devices; any touchscreen keeps pull-to-refresh. */
+@media (pointer: fine) and (not (any-pointer: coarse)) {
+  html {
+    overscroll-behavior-y: none;
+  }
+}
+
 ::view-transition-old(root),
 ::view-transition-new(root) {
   animation: none;

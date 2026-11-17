@@ -39,9 +39,24 @@ const open = ref(false)
 const sources = new Map<string, Promise<L10nSegmentSource | null>>()
 const source = ref<L10nSegmentSource | null>()
 
+/** The block under the pointer, or the first block of a callout or card whose overlay link was hit. */
+function blockAt(event: Event): HTMLElement | undefined {
+  const direct = (event.target as HTMLElement | null)?.closest<HTMLElement>('[data-l10n-hash]')
+  if (direct || !(event instanceof MouseEvent)) return direct ?? undefined
+  let overlay: HTMLAnchorElement | null = null
+  for (const under of [event.target as Element, ...document.elementsFromPoint?.(event.clientX, event.clientY) ?? []]) {
+    if (!under || !props.target?.contains(under)) continue
+    const block = under.closest<HTMLElement>('[data-l10n-hash]')
+    if (block) return block
+    const link = under.closest('a')
+    if (!overlay && link && !link.textContent?.trim()) overlay = link
+  }
+  return overlay?.parentElement?.querySelector<HTMLElement>('[data-l10n-hash]') ?? undefined
+}
+
 function inspect(event: Event) {
   if (!show.value || editorOpen.value) return
-  const block = (event.target as HTMLElement | null)?.closest<HTMLElement>('[data-l10n-hash]')
+  const block = blockAt(event)
   if (!block || block === reference.value) return
 
   block.setAttribute('aria-describedby', descriptionId(block.dataset.l10n))
@@ -73,13 +88,17 @@ function edit(hash: string | undefined) {
   editorOpen.value = true
 }
 
+/** Controls that keep their own action in review mode. */
+const CONTROLS = 'button, summary, [role="tab"], input, select, textarea'
+
 useEventListener(() => props.target, 'click', (event: MouseEvent) => {
   if (!show.value || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return
-  const element = event.target as HTMLElement | null
-  const block = element?.closest<HTMLElement>('[data-l10n-hash]')
-  if (!block || element?.closest('a, button')) return
+  const block = blockAt(event)
+  if (!block || (event.target as HTMLElement | null)?.closest(CONTROLS)) return
+  event.preventDefault()
+  event.stopPropagation()
   edit(block.dataset.l10nHash)
-})
+}, { capture: true })
 
 useEventListener(() => props.target, 'keydown', (event: KeyboardEvent) => {
   const block = event.target as HTMLElement
@@ -126,19 +145,8 @@ const status = computed(() => (source.value?.status ?? reference.value?.dataset.
     <div class="flex items-center gap-2">
       <p class="flex-1 min-w-0 flex flex-wrap gap-x-1">
         <span class="whitespace-nowrap">{{ machine ? strings.machine : strings.reviewedTranslation }} ·</span>
-        <span class="whitespace-nowrap">{{ strings.reviewed(reviewedShare(coverage)) }}<template v-if="pending"> · <span class="text-highlighted">{{ strings.toReview }}</span><span class="sr-only"> : {{ strings.pending }}</span></template></span>
+        <span class="whitespace-nowrap">{{ strings.reviewed(reviewedShare(coverage)) }}<template v-if="pending"> · <span class="text-highlighted">{{ strings.toReview }}</span><span class="sr-only">{{ strings.colon }}{{ strings.pending }}</span></template></span>
       </p>
-      <UButton
-        :to="path"
-        external
-        hreflang="en"
-        lang="en"
-        label="English"
-        icon="i-lucide-languages"
-        size="xs"
-        color="neutral"
-        variant="ghost"
-      />
       <UTooltip :text="strings.reviewHint">
         <UButton
           :label="strings.review"
@@ -172,9 +180,14 @@ const status = computed(() => (source.value?.status ?? reference.value?.dataset.
             <p v-if="status" class="font-medium text-highlighted">
               {{ strings.status[status] }}
             </p>
-            <p v-if="source" lang="en" class="text-toned whitespace-pre-wrap">
-              <span class="sr-only" :lang="meta.locale">{{ strings.source }} : </span>{{ source.source }}
-            </p>
+            <div v-if="source" class="space-y-0.5" data-l10n-source>
+              <p class="font-medium uppercase text-muted">
+                {{ strings.source }}
+              </p>
+              <p lang="en" class="text-toned whitespace-pre-wrap">
+                {{ source.source }}
+              </p>
+            </div>
             <p v-else-if="source === undefined" class="text-muted">
               {{ strings.loading }}
             </p>

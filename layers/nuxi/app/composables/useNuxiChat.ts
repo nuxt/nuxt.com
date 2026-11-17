@@ -1,5 +1,5 @@
 import type { UIMessage } from 'ai'
-import { getMessageTextLength } from '../../shared/utils/paste-attachment'
+import { buildMessageParts, getMessageTextLength } from '../../shared/utils/paste-attachment'
 import {
   appendUserMessageToChat,
   createChatWithMessage,
@@ -18,6 +18,8 @@ import { hasVisibleParts } from './eve/adapter'
 import { useEveChat } from './eve/useEveChat'
 import type { EveChatFinish } from './eve/useEveChat'
 import { usePasteAttachment } from './usePasteAttachment'
+import { useChatQueue, type ChatQueueItem } from './useChatQueue'
+import { useNuxiPreview } from './useNuxiPreview'
 
 export type NuxiChatSendInput = string | { parts: UIMessage['parts'], persist?: boolean }
 
@@ -354,13 +356,16 @@ export function useNuxiChat(options: UseNuxiChatOptions) {
     return rows
   })
 
+  const livePreview = useLivePreview()
+
   const eveChat = useEveChat({
     initialMessages: seedMessages,
     sessionCursor: options.data?.value?.sessionCursor ?? options.sessionCursor ?? null,
     headers: buildEveHeaders(options.chatId),
-    clientContext: () => useContext.value && agent.currentPage.value
-      ? `Current page: ${agent.currentPage.value}`
-      : undefined,
+    clientContext: () => [
+      useContext.value && agent.currentPage.value ? `Current page: ${agent.currentPage.value}` : undefined,
+      livePreview.clientContext()
+    ].filter(Boolean).join('\n') || undefined,
     onFinish: createChatSyncHandler({
       chatId: () => chatId.value,
       loggedIn: () => loggedIn.value,
@@ -371,6 +376,8 @@ export function useNuxiChat(options: UseNuxiChatOptions) {
       onFinish: options.onFinish
     })
   })
+
+  useNuxiPreview(eveChat)
 
   // The server can stop a turn at the daily limit; resync so the limit banner shows.
   watch(() => eveChat.status, (status, previous) => {
@@ -448,6 +455,16 @@ export function useNuxiChat(options: UseNuxiChatOptions) {
     await send({ parts })
   }
 
+  const { queue, onSend: onSendQueued } = useChatQueue({
+    status: () => eveChat.status,
+    canSend: () => !agent.rateLimitReached.value,
+    send: item => send({ parts: buildMessageParts(item.text, item.attachments ?? []) }),
+    stop: eveChat.stop,
+    input,
+    attachments: paste.attachments
+  })
+  watch(chatId, () => queue.value = [])
+
   function askQuestion(question: string) {
     track('Nuxi FAQ Clicked', { question, source: options.source })
     send(question)
@@ -493,7 +510,13 @@ export function useNuxiChat(options: UseNuxiChatOptions) {
   return {
     chat,
     input,
-    prompt: paste.prompt,
+    // Spread on `AgentChatPrompt`, so the queue reaches it wherever the prompt is.
+    prompt: computed(() => ({
+      ...paste.prompt.value,
+      'queue': queue.value,
+      'onUpdate:queue': (value: ChatQueueItem[]) => queue.value = value,
+      'onSend': onSendQueued
+    })),
     getVote,
     vote,
     send,

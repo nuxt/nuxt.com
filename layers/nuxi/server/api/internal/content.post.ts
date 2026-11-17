@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import type { BlogAuthorFrontmatter } from '#shared/types'
+import type { BlogAuthorFrontmatter, TemplateCheck } from '#shared/types'
 import { blogAuthors } from '#shared/utils/blog'
 
 const blogBodySchema = z.object({
@@ -99,16 +99,19 @@ export default defineEventHandler(async (event) => {
     }
   }
 
-  const allTemplates = await listByDir('/templates')
+  const [allTemplates, checks] = await Promise.all([
+    listByDir('/templates'),
+    fetchTemplateChecks().catch((error): Record<string, TemplateCheck> | null => {
+      console.error('[nuxi] template checks failed', error)
+      return null
+    })
+  ])
 
   const results = body.names.map((rawName) => {
     const name = rawName.trim().toLowerCase()
-    const template = allTemplates.find(t =>
-      t.slug.toLowerCase() === name
-      || t.name.toLowerCase() === name
-      || t.slug.toLowerCase().includes(name)
-      || t.name.toLowerCase().includes(name)
-    )
+    // Exact matches first: `ui` is the Nuxt UI starter, not the first name containing "UI".
+    const template = allTemplates.find(t => t.slug.toLowerCase() === name || t.name.toLowerCase() === name)
+      ?? allTemplates.find(t => t.slug.toLowerCase().includes(name) || t.name.toLowerCase().includes(name))
 
     if (!template) return null
 
@@ -119,7 +122,10 @@ export default defineEventHandler(async (event) => {
       repo: template.repo,
       demo: template.demo,
       badge: template.badge,
-      purchase: template.purchase
+      purchase: template.purchase,
+      env: template.deploy?.env,
+      // `null` is "no recent check"; `undefined` drops the field when the checks couldn't be read.
+      check: checks ? checks[template.slug] ?? null : undefined
     }
   }).filter(Boolean)
 
@@ -127,5 +133,5 @@ export default defineEventHandler(async (event) => {
     return { error: `No templates found matching: ${body.names.join(', ')}` }
   }
 
-  return { templates: results }
+  return checks ? { templates: results } : { templates: results, checksUnavailable: true }
 })

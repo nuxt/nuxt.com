@@ -1,4 +1,4 @@
-import type { Nuxter, NuxterLinks, NuxterMergedPullRequests, NuxterProfile, NuxterSocialAccount, NuxtersHackathon, NuxtersPeriod } from '../types/nuxters'
+import type { Nuxter, NuxterLinks, NuxterMergedPullRequests, NuxterProfile, NuxterSocialAccount, NuxterTranslations, NuxtersHackathon, NuxtersPeriod } from '../types/nuxters'
 import { COUNTRIES } from './nuxters-countries'
 
 /**
@@ -160,7 +160,7 @@ export function nuxtersPushSha(payload: PushPayload): { sha: string } | { skippe
 }
 
 /** A row of the `nuxters` table, without the period and the sync timestamp. */
-export type NuxterRow = Omit<Nuxter, 'mergedPullRequests' | 'core'> & {
+export type NuxterRow = Omit<Nuxter, 'mergedPullRequests' | 'core' | 'translations'> & {
   usernameLower: string
   prFeat: number
   prFix: number
@@ -174,6 +174,9 @@ export type NuxterRow = Omit<Nuxter, 'mergedPullRequests' | 'core'> & {
   corePrAll: number
   coreHelpfulIssues: number
   coreHelpfulComments: number
+  translationsEdited: number
+  translationsVerified: number
+  translationsRejected: number
 }
 
 function count(value: unknown): number {
@@ -216,6 +219,7 @@ export function parseNuxtersFile(data: unknown): NuxterRow[] {
       helpful_comments?: unknown
     }
     const coreMerged = core.merged_pull_requests ?? {}
+    const translations = (typeof record.translations === 'object' && record.translations ? record.translations : {}) as Partial<Record<keyof NuxterTranslations, unknown>>
 
     rows.push({
       githubId,
@@ -240,7 +244,10 @@ export function parseNuxtersFile(data: unknown): NuxterRow[] {
       corePrChore: count(coreMerged.chore),
       corePrAll: count(coreMerged.all),
       coreHelpfulIssues: count(core.helpful_issues),
-      coreHelpfulComments: count(core.helpful_comments)
+      coreHelpfulComments: count(core.helpful_comments),
+      translationsEdited: count(translations.edited),
+      translationsVerified: count(translations.verified),
+      translationsRejected: count(translations.rejected)
     })
   }
 
@@ -354,6 +361,11 @@ export function rowToNuxter(row: Omit<NuxterRow, 'usernameLower' | 'firstContrib
       },
       helpfulIssues: row.coreHelpfulIssues,
       helpfulComments: row.coreHelpfulComments
+    },
+    translations: {
+      edited: row.translationsEdited,
+      verified: row.translationsVerified,
+      rejected: row.translationsRejected
     }
   }
 }
@@ -367,18 +379,22 @@ export interface NuxterScoreRow {
   total: number
   /** Extra points for the core repositories, on top of the base rows. */
   bonus: boolean
+  /** Segments of the docs translations, listed in their own group. */
+  translation: boolean
 }
 
 /**
  * How the collector weighs each contribution type (see nuxt/nuxters `computeScore`).
- * Base rows first, then the core bonus rows; each group sorted by total. The totals add up to the score
- * (the collector rounds the sum once).
+ * Base rows first, then the translation rows, then the core bonus rows with contributions; each group
+ * sorted by total. The totals add up to the score (the collector rounds the sum once).
  */
 export function nuxterScoreBreakdown(nuxter: Nuxter): NuxterScoreRow[] {
   const prs = nuxter.mergedPullRequests
   const core = nuxter.core
+  const translations = nuxter.translations ?? { edited: 0, verified: 0, rejected: 0 }
   const extra = NUXTERS_CORE_MULTIPLIER - 1
-  const base: Array<Omit<NuxterScoreRow, 'total' | 'bonus'>> = [
+  type Row = Omit<NuxterScoreRow, 'total' | 'bonus' | 'translation'>
+  const base: Row[] = [
     { key: 'feat', label: 'Feature PRs', icon: 'i-lucide-rocket', multiplier: 7, amount: prs.feat },
     { key: 'fix', label: 'Fix PRs', icon: 'i-lucide-wrench', multiplier: 5, amount: prs.fix },
     { key: 'docs', label: 'Docs PRs', icon: 'i-lucide-book-open', multiplier: 4, amount: prs.docs },
@@ -389,7 +405,12 @@ export function nuxterScoreBreakdown(nuxter: Nuxter): NuxterScoreRow[] {
     { key: 'comments', label: 'Comments', icon: 'i-lucide-message-circle', multiplier: 0.5, amount: nuxter.comments },
     { key: 'reactions', label: 'Reactions', icon: 'i-lucide-smile-plus', multiplier: 0.1, amount: nuxter.reactions }
   ]
-  const bonus: Array<Omit<NuxterScoreRow, 'total' | 'bonus'>> = [
+  const translated: Row[] = [
+    { key: 'translationsEdited', label: 'Translations edited', icon: 'i-lucide-pen-line', multiplier: 1, amount: translations.edited },
+    { key: 'translationsVerified', label: 'Translations verified', icon: 'i-lucide-badge-check', multiplier: 0.5, amount: translations.verified },
+    { key: 'translationsRejected', label: 'Translations rejected', icon: 'i-lucide-badge-x', multiplier: 0.5, amount: translations.rejected }
+  ]
+  const bonus: Row[] = [
     { key: 'coreFeat', label: 'Core feature PRs', icon: 'i-lucide-rocket', multiplier: 7 * extra, amount: core.mergedPullRequests.feat },
     { key: 'coreFix', label: 'Core fix PRs', icon: 'i-lucide-wrench', multiplier: 5 * extra, amount: core.mergedPullRequests.fix },
     { key: 'coreDocs', label: 'Core docs PRs', icon: 'i-lucide-book-open', multiplier: 4 * extra, amount: core.mergedPullRequests.docs },
@@ -398,17 +419,29 @@ export function nuxterScoreBreakdown(nuxter: Nuxter): NuxterScoreRow[] {
     { key: 'coreHelpfulComments', label: 'Core helpful comments', icon: 'i-lucide-message-circle-heart', multiplier: 2 * extra, amount: core.helpfulComments }
   ]
 
-  const withTotals = (rows: typeof base, isBonus: boolean) => rows
-    .map(row => ({ ...row, bonus: isBonus, total: Math.round(row.amount * row.multiplier * 10) / 10 }))
+  const withTotals = (rows: Row[], group: 'base' | 'translation' | 'bonus') => rows
+    .map(row => ({ ...row, bonus: group === 'bonus', translation: group === 'translation', total: Math.round(row.amount * row.multiplier * 10) / 10 }))
     .sort((a, b) => b.total - a.total)
 
-  return [...withTotals(base, false), ...withTotals(bonus, true).filter(row => row.amount > 0)]
+  return [
+    ...withTotals(base, 'base'),
+    ...withTotals(translated, 'translation'),
+    ...withTotals(bonus, 'bonus').filter(row => row.amount > 0)
+  ]
 }
 
-/** The Discord `nuxter` role needs one merged PR, one helpful issue or one helpful comment. */
+/** The Discord `nuxter` role needs one merged PR, helpful issue, helpful comment, or edited or verified translation. */
 export function canUnlockNuxterRole(nuxter: Nuxter | null | undefined): boolean {
   if (!nuxter) return false
-  return nuxter.mergedPullRequests.all + nuxter.helpfulIssues + nuxter.helpfulComments > 0
+  return nuxter.mergedPullRequests.all + nuxter.helpfulIssues + nuxter.helpfulComments + nuxter.translations.edited + nuxter.translations.verified > 0
+}
+
+/**
+ * The Discord role of the translators of a locale (`fr` → `translatorFr`, `pt-br` → `translatorPtBr`),
+ * also its key in `runtimeConfig.nuxters.discord.roles`.
+ */
+export function nuxterTranslatorRole(locale: string): string {
+  return `translator${locale.split('-').map(part => part.charAt(0).toUpperCase() + part.slice(1).toLowerCase()).join('')}`
 }
 
 export const NUXTERS_HACKATHONS: NuxtersHackathon[] = [

@@ -16,6 +16,7 @@ describe('parseLocalePath', () => {
   it('should split a localised URL into its locale and English page', () => {
     expect(parseLocalePath('/fr/docs/4.x/guide?x=1#y')).toEqual({ locale: 'fr', path: '/docs/4.x/guide?x=1#y' })
     expect(parseLocalePath('/fr')).toEqual({ locale: 'fr', path: '/' })
+    expect(parseLocalePath('/de/docs/4.x/guide')).toEqual({ locale: 'de', path: '/docs/4.x/guide' })
   })
 
   it('should resolve the version of a localised page from its English path', () => {
@@ -24,7 +25,7 @@ describe('parseLocalePath', () => {
   })
 
   it('should flag a prefix that is not a served locale', () => {
-    expect(parseLocalePath('/de/docs/4.x')?.locale).toBeUndefined()
+    expect(parseLocalePath('/es/docs/4.x')?.locale).toBeUndefined()
   })
 
   it('should leave English URLs alone', () => {
@@ -92,8 +93,8 @@ describe('localeRedirect', () => {
   })
 
   it('should send docs under an unknown locale to English', () => {
-    expect(redirect('/de/docs/4.x/guide')).toBe('/docs/4.x/guide')
-    expect(redirect('/de/docs')).toBe('/docs')
+    expect(redirect('/es/docs/4.x/guide')).toBe('/docs/4.x/guide')
+    expect(redirect('/es/docs')).toBe('/docs')
   })
 
   it('should send a localised page reached through a non-canonical prefix to its URL', () => {
@@ -104,15 +105,17 @@ describe('localeRedirect', () => {
   it('should serve localised pages as they are', () => {
     expect(redirect('/fr/docs/4.x/getting-started/introduction')).toBeUndefined()
     expect(redirect('/fr/docs/3.x/api/composables/use-fetch?x=1')).toBeUndefined()
+    expect(redirect('/de/docs/4.x/getting-started/introduction')).toBeUndefined()
     expect(redirect('/docs/4.x/getting-started/introduction')).toBeUndefined()
-    expect(redirect('/de/modules')).toBeUndefined()
+    expect(redirect('/es/modules')).toBeUndefined()
   })
 })
 
 describe('localeLinks', () => {
-  it('should link an English docs page to its French twin, flagged as machine translated', () => {
+  it('should link an English docs page to its twin in every locale, flagged as machine translated', () => {
     expect(localeLinks('/docs/4.x/getting-started/introduction')).toEqual([
-      { locale: 'fr', label: 'Français', description: 'Traduction automatique', to: '/fr/docs/4.x/getting-started/introduction' }
+      { locale: 'fr', label: 'Français', description: 'Traduction automatique', to: '/fr/docs/4.x/getting-started/introduction' },
+      { locale: 'de', label: 'Deutsch', description: 'Maschinelle Übersetzung', to: '/de/docs/4.x/getting-started/introduction' }
     ])
   })
 
@@ -161,5 +164,28 @@ describe('l10nHead', () => {
     ]
     expect(l10nHead({ siteUrl, path, indexable })).toEqual({ url: 'https://nuxt.com/docs/4.x/getting-started/introduction', alternates })
     expect(l10nHead({ siteUrl: 'https://nuxt.com/', path, locale: 'fr', indexable })).toEqual({ url: 'https://nuxt.com/fr/docs/4.x/getting-started/introduction', alternates })
+  })
+
+  it('should keep a translation that is not indexable out of the alternates and noindex it', () => {
+    const indexable = { fr: [path], de: [] }
+    const alternates = [
+      { hreflang: 'en', href: 'https://nuxt.com/docs/4.x/getting-started/introduction' },
+      { hreflang: 'fr', href: 'https://nuxt.com/fr/docs/4.x/getting-started/introduction' },
+      { hreflang: 'x-default', href: 'https://nuxt.com/docs/4.x/getting-started/introduction' }
+    ]
+    expect(l10nHead({ siteUrl, path, indexable })).toEqual({ url: 'https://nuxt.com/docs/4.x/getting-started/introduction', alternates })
+    expect(l10nHead({ siteUrl, path, locale: 'de', indexable })).toEqual({ url: 'https://nuxt.com/de/docs/4.x/getting-started/introduction', alternates, robots: 'noindex, follow' })
+  })
+
+  it('should list every indexable translation, in locale order', () => {
+    expect(l10nHead({ siteUrl, path, locale: 'de', indexable: { fr: [path], de: [path] } })).toEqual({
+      url: 'https://nuxt.com/de/docs/4.x/getting-started/introduction',
+      alternates: [
+        { hreflang: 'en', href: 'https://nuxt.com/docs/4.x/getting-started/introduction' },
+        { hreflang: 'fr', href: 'https://nuxt.com/fr/docs/4.x/getting-started/introduction' },
+        { hreflang: 'de', href: 'https://nuxt.com/de/docs/4.x/getting-started/introduction' },
+        { hreflang: 'x-default', href: 'https://nuxt.com/docs/4.x/getting-started/introduction' }
+      ]
+    })
   })
 })

@@ -1,5 +1,5 @@
 import { defineHook } from 'eve/hooks'
-import { appOrigin, chatIdFromContinuationToken, internalHeaders } from '../lib/internal-api.js'
+import { appFetch, chatIdFromContinuationToken, internalHeaders } from '../lib/internal-api.js'
 
 export default defineHook({
   events: {
@@ -12,9 +12,9 @@ export default defineHook({
       if (!message.trim()) return
 
       try {
-        const response = await fetch(`${appOrigin()}/api/internal/chats/${encodeURIComponent(chatId)}/title`, {
+        const response = await appFetch(`/api/internal/chats/${encodeURIComponent(chatId)}/title`, {
           method: 'POST',
-          headers: internalHeaders(),
+          headers: await internalHeaders(),
           body: JSON.stringify({
             userId: auth.principalId,
             message: {

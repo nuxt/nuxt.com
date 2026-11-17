@@ -72,9 +72,17 @@ export type PreviewStep = 'restored' | 'serving'
 /** One line of the `POST /api/templates/preview` NDJSON stream. */
 export type PreviewEvent
   = | { type: 'step', step: PreviewStep }
-    | { type: 'ready', id: string, url: string }
+    /** `expiresAt` is when the sandbox stops, in milliseconds since the epoch. */
+    | { type: 'ready', id: string, url: string, expiresAt: number }
     /** The app moved to another server of the same sandbox. The page loads it out of sight and swaps over once it mounts. */
     | { type: 'url', url: string }
+    | { type: 'error', message: string }
+
+/** One line of the `POST /api/templates/preview/:id/edit` NDJSON stream, while `nuxt dev` starts next to the preview's production build. */
+export type PreviewEditEvent
+  = | { type: 'started' }
+    /** `nuxt dev` serves and has bundled the app's pages, so the page can swap over. */
+    | { type: 'ready', url: string }
     | { type: 'error', message: string }
 
 /** What nuxt.com reads from a template's repository and its nightly preview build, so listings stay current without manual edits. */

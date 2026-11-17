@@ -24,7 +24,14 @@ Pass the configured Nuxt `projectId` and `teamId` to every Web Analytics tool ca
 3. Same aggregate with `by=['route'], limit=10` current + previous window → top sections with per-route deltas.
 4. Same aggregate with `by=['referrerHostname'], limit=8` + `by=['country'], limit=5` + `by=['deviceType']` → audience snapshot.
 
-Agent-facing usage (Vercel Observability — use the read-only `create_observability_query` tool):
+Templates (live previews — Web Analytics custom events, same \`projectId\` / \`teamId\`):
+- \`aggregate_events\` with \`by=['eventName']\`, \`filter="startswith(eventName, 'Template ')"\`, current and previous window → funnel totals. Each event fires at most once per step and preview: \`Template Preview Started\` → \`Template Editor Started\` → \`Template Edited\` (\`changes\` = \`1+\`, \`5+\`, \`20+\`: one event per depth reached) → \`Template Downloaded\` (first ZIP only, \`changes\` = depth at download, \`0\` = untouched).
+- \`by=['eventData/template']\` on \`eventName eq 'Template Preview Started'\` (limit 5) → top templates; on \`Template Edited\` with \`eventData/changes eq '1+'\` → most-edited.
+- \`by=['eventData/changes']\` on \`Template Downloaded\` → edited vs untouched downloads.
+- \`by=['eventData/reason']\` on \`Template Preview Failed\` (limit 5) and \`by=['eventData/module']\` on \`Template Module Added\` (limit 5).
+- Only \`Template Edited\` with \`changes eq '1+'\` counts edited previews; never sum the \`changes\` levels. Edit events come from Nuxi's server, not the visitor's browser: ignore their country/device.
+
+ — use the read-only `create_observability_query` tool):
 - Complete every required query below. A tool-call concurrency limit is not a total-query limit: continue with additional calls until all required results are collected. Never omit a metric because the first batch is full.
 - Required totals:
   1. Nuxt `/mcp`, current and previous equal-length windows.
@@ -108,6 +115,11 @@ AI agent:
 • Search Console (delayed dates): clicks / impressions and changes vs the previous equal-length window, CTR and position — <https://search.google.com/search-console|Search Console>
 • <https://nuxt.com/docs/…|Page> — query evidence, current metrics and one concrete recommendation (or an explicit unavailable-data reason).
 
+:rocket: **Templates**
+• *Funnel* — 420 previews (+12%) → 96 opened the editor → 61 edited (18 reached 5+) → 23 downloads (17 edited)
+• *Top* — `docus` 140 previews / 28 edited · `saas` 90 / 15 · `landing` 60 / 9
+• *Friction* — 14 failures (9 "Live previews are busy") · top modules: `@nuxt/image` 6, `@nuxt/content` 3
+
 :satellite: **Agent-facing usage**
 *Nuxt*
 • *MCP* — `<current>` HTTP requests (`<delta>` vs `<previous>`)
@@ -145,6 +157,7 @@ _HTTP requests, not tool calls, sessions, or unique agents._
 Rules:
 - If a section has zero data, say so in one bullet. Give a cause only when a tool result establishes it; otherwise say no data was returned.
 - **Fix this week** must have exactly 3 items when there is anything to improve; if truly quiet, 1–2 items with ":large_green_circle: *all clear*" is fine.
+- In **Templates**, give rates only as plain counts along the funnel; flag a failure reason or a template whose previews rarely get edited when it is large enough to act on. Without events in the window, write one bullet saying none were returned.
 - Rank **Fix this week** by traffic × bad feedback, evidenced SEO opportunities, and agent quality issues — a bad score on a high-traffic page outranks the same score on a rarely-visited one. Include a search recommendation when its evidence warrants a top-3 priority.
 - Never list a page or chat without its `<url|label>` link.
 - Never invent traffic, run, or cost numbers — if a tool call fails or returns nothing attributable, say so instead of guessing.

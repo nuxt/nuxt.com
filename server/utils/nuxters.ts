@@ -20,7 +20,7 @@ import {
   sortNuxtersPeriods
 } from '#shared/utils/nuxters'
 
-/** 18 columns per row: stays well under SQLite's 32,766 bound-variable limit. */
+/** 28 columns per row: stays well under SQLite's 32,766 bound-variable limit. */
 const INSERT_CHUNK_SIZE = 500
 /** The `nuxters_syncs` key of `profiles.json`: never a period. */
 const PROFILES_SYNC_KEY = 'profiles'
@@ -256,13 +256,19 @@ export const nuxters = {
   /** Badges are earned on all-time stats. */
   async badges(event: H3Event, user: { username: string, providerId: string }, nuxter: NuxterProfile | null): Promise<NuxterBadges> {
     const login = user.username.toLowerCase()
-    const modules = await fetchModules(event).catch(() => undefined) ?? []
+    const [modules, translations] = await Promise.all([
+      fetchModules(event).catch(() => undefined).then(modules => modules ?? []),
+      nuxterTranslations(event, user.username)
+    ])
     const moduleAuthor = modules.some(module => module.maintainers?.some(maintainer => maintainer.github?.toLowerCase() === login))
 
+    const translator = translations.filter(locale => locale.edited + locale.verified > 0).map(locale => locale.locale)
+
     return {
-      nuxter: moduleAuthor || canUnlockNuxterRole(nuxter),
+      nuxter: moduleAuthor || translator.length > 0 || canUnlockNuxterRole(nuxter),
       moduleAuthor,
-      hackathons: nuxterHackathons(user.providerId).map(hackathon => hackathon.id)
+      hackathons: nuxterHackathons(user.providerId).map(hackathon => hackathon.id),
+      translator
     }
   }
 }

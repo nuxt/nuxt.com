@@ -3,34 +3,22 @@ import { getAgentDocument } from '#agent-discovery'
 import { getVersionByPath, isArchivedDocVersion } from '#shared/utils/docs'
 
 export default defineMcpTool({
-  description: `Retrieves the full content and details of a specific Nuxt documentation page.
+  description: `Retrieves the full content of a Nuxt docs page by its path.
 
-WHEN TO USE: Use this tool when you know the EXACT path to a documentation page. Common use cases:
-- User asks for a specific page: "Show me the introduction page" → /docs/4.x/getting-started/introduction
-- User asks about a known topic with a dedicated page
-- You found a relevant path from list_documentation_pages and want the full content
+WHEN TO USE: When you know the EXACT path of a documentation page, for example one returned by search-documentation or list-documentation-pages, or one of the common pages below.
+WHEN NOT TO USE: For a question or topic, use search-documentation first: it searches page content and returns the matching sections. Don't guess paths.
 
-WHEN NOT TO USE: If you don't know the exact path and need to search/explore, use list_documentation_pages first.
+PATHS: Composables are /docs/4.x/api/composables/<kebab-name> (useFetch → use-fetch), utils /docs/4.x/api/utils/<kebab-name>, and the app/ directory /docs/4.x/directory-structure/app/<name>.
 
 COMMON PAGES (Nuxt 4.x):
-Getting Started:
-- "/docs/4.x/getting-started/introduction" - main intro
-- "/docs/4.x/getting-started/installation" - setup
-- "/docs/4.x/getting-started/upgrade" - migration from v3
-
-Core Concepts:
-- "/docs/4.x/guide/concepts/rendering" - SSR/CSR/SSG modes
-- "/docs/4.x/guide/concepts/auto-imports" - auto-imports
-- "/docs/4.x/guide/concepts/server-engine" - server features
-
-Directory Structure:
-- "/docs/4.x/guide/directory-structure/composables" - composables
-- "/docs/4.x/guide/directory-structure/components" - components
-- "/docs/4.x/guide/directory-structure/pages" - routing
-
-Common Issues:
-- "/docs/4.x/guide/going-further/debugging" - debugging
-- "/docs/4.x/guide/going-further/error-handling" - errors`,
+- "/docs/4.x/getting-started/introduction", "/docs/4.x/getting-started/installation"
+- "/docs/4.x/getting-started/upgrade" - upgrade from Nuxt 3
+- "/docs/4.x/getting-started/data-fetching", "/docs/4.x/api/composables/use-fetch", "/docs/4.x/api/composables/use-async-data"
+- "/docs/4.x/getting-started/state-management", "/docs/4.x/getting-started/error-handling", "/docs/4.x/getting-started/seo-meta"
+- "/docs/4.x/guide/concepts/rendering" - SSR, SSG, hybrid rendering and route rules
+- "/docs/4.x/guide/going-further/runtime-config" - runtimeConfig and environment variables
+- "/docs/4.x/guide/best-practices/hydration" - hydration mismatches
+- "/docs/4.x/directory-structure/app/pages", "/docs/4.x/directory-structure/app/components", "/docs/4.x/directory-structure/app/composables", "/docs/4.x/directory-structure/app/middleware", "/docs/4.x/directory-structure/server"`,
   inputSchema: {
     path: z.string().describe('The path to the documentation page (e.g., /docs/4.x/getting-started/introduction)'),
     sections: z.array(z.string()).optional().describe('Specific h2 section titles to return (e.g., ["Usage", "API"]). If omitted, returns full documentation.')
@@ -62,11 +50,12 @@ Common Issues:
     const isArchived = version && isArchivedDocVersion(version)
 
     if (!document || 'redirect' in document || isArchived) {
-      throw createError({ statusCode: 404, message: `Documentation page not found: ${path}` })
+      throw createError({ statusCode: 404, message: `Documentation page not found: ${path}. Use search-documentation to find pages by topic.` })
     }
 
     let content = document.markdown
-    const MAX_CHARS = 12_000
+    // Covers every API page (use-fetch is ~27k characters); only a few long guides go over
+    const MAX_CHARS = 30_000
     if (content.length > MAX_CHARS) {
       content = content.slice(0, MAX_CHARS) + '\n\n[Content truncated. Use the sections parameter to request specific h2 sections.]'
     }

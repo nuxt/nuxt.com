@@ -12,9 +12,39 @@ const liveUrl = ref<string>()
 const status = ref<LivePreviewStatus>()
 const readyIn = ref<number>()
 const device = ref<'desktop' | 'mobile'>('desktop')
+const downloading = ref(false)
 
-const { preview: livePreview, reloadRequest } = useLivePreview()
+const { preview: livePreview, editor, reloadRequest, startEditing } = useLivePreview()
+const { open: openNuxi } = useNuxtAgent()
 const { track } = useAnalytics()
+const toast = useToast()
+
+async function downloadProject() {
+  if (!livePreview.value || downloading.value) return
+  downloading.value = true
+  try {
+    const zip = await $fetch<Blob>(`/api/templates/preview/${livePreview.value.id}/download`, { responseType: 'blob' })
+    const url = URL.createObjectURL(zip)
+    const link = document.createElement('a')
+    link.href = url
+    link.download = `${props.template.slug}.zip`
+    document.body.appendChild(link)
+    link.click()
+    link.remove()
+    setTimeout(() => URL.revokeObjectURL(url), 1000)
+    track('Template Action', { template: props.template.name, action: 'Download ZIP' })
+  } catch {
+    toast.add({ title: 'Download failed', description: 'Please try again while the preview is running.', color: 'error' })
+  } finally {
+    downloading.value = false
+  }
+}
+
+function editWithNuxi() {
+  track('Template Action', { template: props.template.name, action: 'Edit with Nuxi' })
+  startEditing()
+  openNuxi()
+}
 
 const image = computed(() => templateImage(props.template))
 const canGoLive = computed(() => canLivePreview(props.template) && !!props.health?.check?.live)
@@ -23,29 +53,90 @@ const livePage = computed(() => liveUrl.value && `${liveUrl.value}${livePreview.
 const address = computed(() => (live.value ? livePage.value || 'Starting the preview…' : props.template.demo || templateRepoUrl(props.template))?.replace(/^https?:\/\//, '').replace(/\/$/, ''))
 const openUrl = computed(() => live.value ? livePage.value : props.template.demo)
 
-const startedAt = ref(0)
+/** When the sandbox stops: an estimate until the server reports it, then moved by each extension. */
+const expiresAt = ref(0)
+const canExtend = ref(true)
+const extending = ref(false)
 const now = useNow({ interval: 1000 })
-const remaining = computed(() => Math.max(0, PREVIEW_TIMEOUT_MS - (now.value.getTime() - startedAt.value)))
+const remaining = computed(() => Math.max(0, expiresAt.value - now.value.getTime()))
 const countdown = computed(() => {
   const seconds = Math.ceil(remaining.value / 1000)
   return `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, '0')}`
 })
-watch(remaining, value => live.value && value === 0 && stop())
+/** Warns before the sandbox stops, so a visitor editing it can keep it running or download their changes first. */
+const EXPIRY_WARNING_MS = 2 * 60_000
+const EXPIRY_TOAST = 'live-preview-expiry'
+/** The stop time the visitor was last warned about: an extension moves it, so they are warned again before the new one. */
+let warnedFor = 0
+// An extension in flight at zero may have reached the server: its response decides, and a failed one stops the preview then.
+watch([remaining, extending], ([value]) => {
+  if (!live.value || status.value !== 'live') return
+  if (value === 0) {
+    if (extending.value) return
+    stop()
+    toast.add({ title: 'Your live preview stopped', description: 'Its time ran out. Start it again to keep trying the template.', icon: 'i-lucide-timer-off', color: 'neutral' })
+  } else if (value <= EXPIRY_WARNING_MS && warnedFor !== expiresAt.value) {
+    warnedFor = expiresAt.value
+    toast.add({
+      id: EXPIRY_TOAST,
+      title: 'Your live preview is about to stop',
+      description: canExtend.value ? 'Keep it running to continue, or download the project.' : 'It can\'t run any longer: download the project to keep your changes.',
+      icon: 'i-lucide-timer',
+      color: 'warning',
+      duration: 0,
+      actions: [
+        ...(canExtend.value ? [{ label: `Add ${PREVIEW_TIMEOUT_MS / 60_000} minutes`, icon: 'i-lucide-clock-plus', onClick: extend }] : []),
+        { label: 'Download ZIP', icon: 'i-lucide-download', color: 'neutral' as const, variant: 'outline' as const, closeOnClick: false, onClick: downloadProject }
+      ]
+    })
+  }
+})
+
+function resetTimer() {
+  expiresAt.value = Date.now() + PREVIEW_TIMEOUT_MS
+  canExtend.value = true
+}
 
 function start() {
   track('Template Action', { template: props.template.name, action: 'Try Live Preview' })
-  startedAt.value = Date.now()
+  resetTimer()
   live.value = true
 }
 
 function onStatus(value: LivePreviewStatus, ms?: number) {
   // "Try Again" boots a new sandbox, with a new timeout.
-  if (value === 'booting') startedAt.value = Date.now()
+  if (value === 'booting') resetTimer()
   status.value = value
   if (ms) readyIn.value = ms
 }
 
+async function extend() {
+  if (!livePreview.value || extending.value) return
+  const id = livePreview.value.id
+  // A response for a preview that stopped, or was replaced, must not move the current one's deadline.
+  const current = () => live.value && livePreview.value?.id === id
+  extending.value = true
+  try {
+    const result = await $fetch<{ expiresAt: number, canExtend: boolean }>(`/api/templates/preview/${id}/extend`, { method: 'POST' })
+    if (!current()) return
+    expiresAt.value = result.expiresAt
+    canExtend.value = result.canExtend
+    toast.remove(EXPIRY_TOAST)
+    track('Template Action', { template: props.template.name, action: 'Extend Live Preview' })
+  } catch (error: any) {
+    if (!current()) return
+    if (error?.statusCode === 409) canExtend.value = false
+    toast.add({ title: 'Could not extend the preview', description: error?.data?.message || 'Please try again.', color: 'error' })
+  } finally {
+    extending.value = false
+  }
+}
+
+// The warning stays open until dismissed: leaving the page stops the preview, so it goes too.
+onBeforeUnmount(() => toast.remove(EXPIRY_TOAST))
+
 function stop() {
+  toast.remove(EXPIRY_TOAST)
   live.value = false
   liveUrl.value = undefined
   status.value = undefined
@@ -56,7 +147,7 @@ function stop() {
 
 <template>
   <div class="rounded-xl bg-elevated/40 ring ring-default p-1 shadow-xs">
-    <div class="h-9 ps-2.5 pe-1 grid grid-cols-[1fr_minmax(0,auto)_1fr] items-center gap-3">
+    <div class="h-9 ps-2.5 pe-1 grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3">
       <div class="min-w-0 flex items-center gap-2 text-xs">
         <template v-if="live">
           <span class="relative flex size-2 shrink-0">
@@ -69,10 +160,24 @@ function stop() {
           <span class="font-medium text-highlighted">{{ status === 'live' ? 'Live' : status === 'failed' ? 'Stopped' : 'Starting' }}</span>
           <UTooltip
             v-if="status === 'live'"
-            :text="`${readyIn ? `Ready in ${(readyIn / 1000).toFixed(1)}s. ` : ''}This preview closes on its own after ${PREVIEW_TIMEOUT_MS / 60_000} minutes.`"
+            :text="`${readyIn ? `Ready in ${(readyIn / 1000).toFixed(1)}s. ` : ''}This preview closes on its own when the timer runs out.`"
             :ui="{ content: 'max-w-xs h-auto py-1.5', text: 'whitespace-normal text-pretty' }"
           >
             <span class="hidden sm:inline font-mono text-muted tabular-nums cursor-default" :class="remaining < 60_000 && 'text-warning'">{{ countdown }} left</span>
+          </UTooltip>
+          <UTooltip v-if="status === 'live' && canExtend" :text="`Add ${PREVIEW_TIMEOUT_MS / 60_000} minutes`">
+            <UButton
+              icon="i-lucide-clock-plus"
+              :aria-label="`Keep the preview running ${PREVIEW_TIMEOUT_MS / 60_000} minutes longer`"
+              color="neutral"
+              variant="ghost"
+              size="xs"
+              class="hidden sm:inline-flex size-6 justify-center text-dimmed hover:text-muted"
+              :class="remaining < 60_000 && 'text-warning hover:text-warning'"
+              :ui="{ leadingIcon: 'size-3.5' }"
+              :loading="extending"
+              @click="extend"
+            />
           </UTooltip>
         </template>
       </div>
@@ -80,18 +185,44 @@ function stop() {
       <div class="min-w-0 flex items-center justify-center gap-1.5 text-xs text-muted">
         <UIcon v-if="!live" name="i-lucide-lock" class="size-3 shrink-0 text-dimmed" />
         <span class="truncate font-mono">{{ address }}</span>
+        <UTooltip v-if="live && editor === 'on'" text="Running nuxt dev: edits show live">
+          <span class="shrink-0 px-1.5 rounded-sm bg-primary/10 text-primary font-mono text-[10px] leading-4 cursor-default">dev</span>
+        </UTooltip>
+        <UTooltip v-if="live && status === 'live'" text="Reload">
+          <UButton
+            icon="i-lucide-rotate-cw"
+            aria-label="Reload the preview"
+            color="neutral"
+            variant="ghost"
+            size="xs"
+            class="size-6 justify-center text-dimmed hover:text-muted"
+            :ui="{ leadingIcon: 'size-3' }"
+            @click="reloadRequest++"
+          />
+        </UTooltip>
       </div>
 
       <div class="flex items-center justify-end gap-0.5">
         <template v-if="live">
-          <UTooltip v-if="status === 'live'" text="Reload">
+          <UTooltip v-if="status === 'live'" text="Download ZIP">
             <UButton
-              icon="i-lucide-rotate-cw"
-              aria-label="Reload the preview"
+              icon="i-lucide-download"
+              aria-label="Download project as ZIP"
               color="neutral"
               variant="ghost"
               size="xs"
-              @click="reloadRequest++"
+              :loading="downloading"
+              @click="downloadProject"
+            />
+          </UTooltip>
+          <UTooltip v-if="status === 'live'" text="Edit with Nuxi">
+            <UButton
+              icon="i-custom-nuxi"
+              aria-label="Edit with Nuxi"
+              color="neutral"
+              variant="ghost"
+              size="xs"
+              @click="editWithNuxi"
             />
           </UTooltip>
           <UTooltip v-for="item in ([{ value: 'desktop', icon: 'i-lucide-monitor', label: 'Desktop' }, { value: 'mobile', icon: 'i-lucide-smartphone', label: 'Mobile' }] as const)" :key="item.value" :text="item.label">
@@ -159,9 +290,21 @@ function stop() {
           class="absolute inset-y-0 left-1/2 -translate-x-1/2 transition-[width] duration-300 ease-snappy"
           :class="device === 'mobile' ? 'w-[390px] max-w-full border-x border-default' : 'w-full'"
         >
-          <TemplatesLivePreview :template="template" @url="liveUrl = $event" @status="onStatus" />
+          <NuxtErrorBoundary @error="onStatus('failed')">
+            <LazyTemplatesLivePreview :template="template" @url="liveUrl = $event" @status="onStatus" @expires="expiresAt = $event" />
+            <template #error>
+              <div class="absolute inset-0 flex flex-col items-center justify-center gap-3 p-6" role="alert">
+                <p class="text-sm text-highlighted">
+                  The preview could not load.
+                </p>
+                <UButton label="Reload page" color="neutral" variant="subtle" icon="i-lucide-rotate-ccw" @click="reloadNuxtApp()" />
+              </div>
+            </template>
+          </NuxtErrorBoundary>
         </div>
       </Transition>
+
+      <TemplatesPreviewIsland :active="live && status === 'live'" />
 
       <Transition
         enter-from-class="opacity-0 translate-y-2"

@@ -12,6 +12,7 @@ export default defineMcpPrompt({
 Steps to follow (run them in parallel where possible):
 1. Traffic via Vercel Web Analytics for nuxt.com: use \`count_pageviews\` and \`aggregate_pageviews\` for visitors/pageviews + WoW delta, daily trend, top routes with deltas, referrers/geo/device.
    Pass the configured Nuxt \`projectId\` and \`teamId\`; do not pass \`slug\`. For aggregates, only use buckets inside the requested half-open \`[start, end)\` window; ignore buckets introduced by API boundary rounding.
+   Template live previews (same project): \`aggregate_events\` with \`by=['eventName']\` and \`filter="startswith(eventName, 'Template ')"\` for the funnel (current + previous window), then \`by=['eventData/template']\`, \`by=['eventData/changes']\` on \`Template Downloaded\`, and \`by=['eventData/reason']\` on \`Template Preview Failed\`. Each event fires once per step and preview; \`Template Edited\` fires once per depth reached (\`changes\` = \`1+\`, \`5+\`, \`20+\`), so count edited previews with \`eventData/changes eq '1+'\` only.
 2. \`feedback-stats\` with \`sinceDays=${sinceDays}\`, \`topPages=5\`.
 3. \`list-feedback\` with \`ratings=["not-helpful", "confusing"]\`, \`sinceDays=${sinceDays}\`, \`limit=30\`.
 4. For worst feedback pages, weigh by real visit counts from step 1.
@@ -35,6 +36,10 @@ Then write a digest in Markdown with these sections (be concise — each section
 
 ## Referrers & audience
 - Top referrers, countries, device mix (short).
+
+## Templates
+- Funnel: previews started → editor started → edited (1+, 5+) → downloaded (edited vs untouched), with WoW %.
+- Top templates by previews and edits; top failure reasons and installed modules.
 
 ## Search & SEO
 - First verify both date series with \`dimensions=["date"]\`, \`rowLimit=500\` and the same host filters: all expected dates including boundaries must be present. Search Console retains only 16 months and data may lag more than 3 days. Missing dates are unverified, never zero-filled. If either window is incomplete or unavailable, show separately labelled partial totals with actual returned dates; omit deltas and win/loss claims and state the specific coverage limitation. Other sections continue.
