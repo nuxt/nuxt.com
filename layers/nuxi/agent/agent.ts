@@ -2,6 +2,7 @@ import type { ModelMessage } from 'ai'
 import { defineAgent, defineDynamic } from 'eve'
 import { resolveContext, type AuthContext } from './lib/identity/context.js'
 import { nuxiGatewayOptions } from './lib/gateway-attribution.js'
+import { githubToolsApproval } from './lib/github.js'
 
 const MODEL = 'anthropic/claude-haiku-5.5'
 
@@ -45,6 +46,8 @@ export default defineAgent({
   model: defineDynamic(ctx => ctx.memo(ctx.turn?.id ?? null, async () =>
     selectModel(ctx.session.auth.current, await ctx.messages())
   )),
+  // Runs next to every tool's own policy, and eve keeps the stricter result.
+  approval: githubToolsApproval,
   // Eve's default is 40M new input tokens per window, which caps nothing in
   // practice. Kept generous on purpose: schedules and other task-mode sessions
   // cannot ask a human to continue, they fail with SESSION_USAGE_LIMIT_REACHED.
