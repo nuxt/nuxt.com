@@ -8,6 +8,7 @@ defineProps<{
 const { t } = useLocale()
 
 // Each line turns around its own center; the overshoot approximates the spring the toggle used to have.
+// `starting:` animates the toggle UHeader mounts already open in its menu overlay, from the closed lines.
 const line = 'outline-none origin-center [transform-box:fill-box] transition-[translate,rotate,opacity] duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] motion-reduce:transition-none'
 </script>
 
@@ -36,21 +37,21 @@ const line = 'outline-none origin-center [transform-box:fill-box] transition-[tr
         y1="6"
         x2="20"
         y2="6"
-        :class="[line, open && 'translate-y-[6px] rotate-45']"
+        :class="[line, open && 'translate-y-[6px] rotate-45 starting:translate-y-0 starting:rotate-0']"
       />
       <line
         x1="4"
         y1="12"
         x2="20"
         y2="12"
-        :class="[line, open && 'opacity-0']"
+        :class="[line, open && 'opacity-0 starting:opacity-100']"
       />
       <line
         x1="4"
         y1="18"
         x2="20"
         y2="18"
-        :class="[line, open && '-translate-y-[6px] -rotate-45']"
+        :class="[line, open && '-translate-y-[6px] -rotate-45 starting:translate-y-0 starting:rotate-0']"
       />
     </svg>
   </UButton>
