@@ -38,6 +38,7 @@ export default defineNuxtConfig({
     '@nuxt/fonts',
     '@nuxt/ui',
     '@nuxt/test-utils',
+    '@nuxt/content',
     '@comark/vue',
     '@nuxt/image',
     '@nuxt/eslint',
@@ -116,6 +117,13 @@ export default defineNuxtConfig({
   },
   colorMode: {
     preference: 'dark'
+  },
+  // nuxt.com's own content (`site`), defined in `server/content.ts`.
+  content: {
+    // Pages are ISR: the browser asks the server instead of downloading the snapshot.
+    mode: 'server-only',
+    // Native `content` API only, without `queryCollection*()`, `<MDC>` or their SQLite.
+    compatibilityVersion: 4
   },
   ui: {
     theme: {

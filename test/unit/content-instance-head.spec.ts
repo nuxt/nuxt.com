@@ -29,6 +29,9 @@ vi.mock('../../utils/factory', () => ({
   createRuntimeInstance: () => ({ withRef: (sha: string) => createFake(sha) })
 }))
 
+// `site` is `@nuxt/content`'s: its runtime needs Nitro's virtual modules, and these tests only cover the other instances.
+vi.mock('@nuxt/content/content', () => ({ resolveContent: async (surface: unknown) => surface }))
+
 /** `index.ts` reaches for these through Nitro's auto-imports. */
 const resolveInstanceSha = vi.fn(async () => SHA_A)
 vi.stubGlobal('resolveInstanceSha', resolveInstanceSha)

@@ -38,6 +38,8 @@ export default defineNuxtModule({
 
       // Sequential: parallel parses compete for the same CPU and make the timings below meaningless.
       for (const key of CONTENT_INSTANCE_KEYS) {
+        // `@nuxt/content` owns `site` (`server/content.ts`) and ships its snapshot, stamped with the commit it resolved.
+        if (key === 'site') continue
         await writeInstanceSnapshot(key, { dir, rootDir: nuxt.options.rootDir, token })
       }
     })
