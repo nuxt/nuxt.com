@@ -23,7 +23,9 @@ const markdownComponents = {
   VideoAccordion
 }
 
-const navigation = inject<Ref<NavigationItem[]>>('navigation', ref([]))
+// Awaited with the page below, so docs pages server-render their aside, breadcrumb and surround links.
+const navigationFetch = useDocsNavigation()
+const navigation = computed(() => navigationFetch.data.value ?? [])
 const menuDrawerOpen = ref(false)
 const onThisPageDrawerOpen = ref(false)
 
@@ -81,11 +83,14 @@ const instanceKey = computed(() => {
 
 const { data: indexable } = useL10nIndexable(path)
 
-const { data: page, status, refresh: refreshPage } = await useAsyncData(pageKey, () => {
-  const pagePath = path.value
-  const client = useContent(instanceKey.value)
-  return paintResponse().then(() => client.get(pagePath))
-})
+const [{ data: page, status, refresh: refreshPage }] = await Promise.all([
+  useAsyncData(pageKey, () => {
+    const pagePath = path.value
+    const client = useContent(instanceKey.value)
+    return paintResponse().then(() => client.get(pagePath))
+  }),
+  navigationFetch
+])
 
 const locale = useDocsLocale()
 
