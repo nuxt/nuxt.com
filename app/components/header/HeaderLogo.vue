@@ -8,6 +8,13 @@ const colorMode = useColorMode()
 
 const logoLink = useTemplateRef('logoLink')
 const logoMenuOpen = ref(false)
+// The menu only opens on right-click: mount it then, not during the page's hydration.
+const logoMenuMounted = ref(false)
+
+function openLogoMenu() {
+  logoMenuMounted.value = true
+  logoMenuOpen.value = true
+}
 
 const { copy } = useClipboard()
 const { track } = useAnalytics()
@@ -56,12 +63,13 @@ const logoMenuItems = computed(() => [
     ref="logoLink"
     to="/"
     aria-label="Back to home"
-    @contextmenu.prevent="logoMenuOpen = true"
+    @contextmenu.prevent="openLogoMenu"
   >
     <NuxtLogo class="block w-auto h-6" />
   </NuxtLink>
 
   <UDropdownMenu
+    v-if="logoMenuMounted"
     v-model:open="logoMenuOpen"
     :items="logoMenuItems"
     :modal="false"
