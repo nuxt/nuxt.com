@@ -30,7 +30,7 @@ watch(() => colorMode.preference, (newMode, oldMode) => {
 const locale = useDocsLocale()
 
 // Docs pages await their own call, which server-renders it for them.
-const { data: navigation } = useDocsNavigation({ lazy: true, server: false })
+const { data: navigation } = useDocsNavigation({ deferred: true })
 
 const searchKeys = computed(() => searchInstanceKeys(docsVersion.value))
 // Client-only: an SSR value gets baked into the page's ISR entry and would pin search to a stale commit.

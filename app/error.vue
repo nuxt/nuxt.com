@@ -14,7 +14,7 @@ const route = useRoute()
 const { version: docsVersion } = useDocsVersion()
 
 // Only the client-only search palette uses it.
-const { data: navigation } = useDocsNavigation({ lazy: true, server: false })
+const { data: navigation } = useDocsNavigation({ deferred: true })
 
 const searchKeys = computed(() => searchInstanceKeys(docsVersion.value))
 // Client-only: an SSR value gets baked into the page's ISR entry and would pin search to a stale commit.
