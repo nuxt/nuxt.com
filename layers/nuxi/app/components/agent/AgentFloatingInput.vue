@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { AnimatePresence, motion } from 'motion-v'
-
 const route = useRoute()
 const { open, isOpen } = useNuxtAgent()
 const { track } = useAnalytics()
@@ -50,14 +48,15 @@ function onEscape() {
 </script>
 
 <template>
-  <AnimatePresence>
-    <motion.div
+  <Transition
+    appear
+    enter-active-class="transition-[translate,opacity] duration-200 ease-out motion-reduce:transition-none"
+    enter-from-class="translate-y-5 opacity-0"
+    leave-active-class="transition-[translate,opacity] duration-200 ease-out motion-reduce:transition-none"
+    leave-to-class="translate-y-25 opacity-0"
+  >
+    <div
       v-if="isDocsRoute && isVisible && !isOpen"
-      key="floating-input"
-      :initial="{ y: 20, opacity: 0 }"
-      :animate="{ y: 0, opacity: 1 }"
-      :exit="{ y: 100, opacity: 0 }"
-      :transition="{ duration: 0.2, ease: 'easeOut' }"
       class="pointer-events-none fixed inset-x-0 z-10 bottom-[max(1.5rem,env(safe-area-inset-bottom))] px-4 lg:px-80"
       style="will-change: transform"
     >
@@ -99,6 +98,6 @@ function onEscape() {
           </UInput>
         </div>
       </form>
-    </motion.div>
-  </AnimatePresence>
+    </div>
+  </Transition>
 </template>

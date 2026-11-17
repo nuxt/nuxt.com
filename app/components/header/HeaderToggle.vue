@@ -1,36 +1,14 @@
 <script setup lang="ts">
-import { motion } from 'motion-v'
-import type { VariantType } from 'motion-v'
 import { useLocale } from '@nuxt/ui/composables/useLocale'
 
-const props = defineProps<{
+defineProps<{
   open: boolean
 }>()
 
 const { t } = useLocale()
 
-const variants: { [k: string]: VariantType | ((custom: unknown) => VariantType) } = {
-  normal: {
-    rotate: 0,
-    y: 0,
-    opacity: 1
-  },
-  close: (custom: unknown) => {
-    const c = custom as number
-    return {
-      rotate: c === 1 ? 45 : c === 3 ? -45 : 0,
-      y: c === 1 ? 6 : c === 3 ? -6 : 0,
-      opacity: c === 2 ? 0 : 1,
-      transition: {
-        type: 'spring',
-        stiffness: 260,
-        damping: 20
-      }
-    }
-  }
-}
-
-const state = computed(() => props.open ? 'close' : 'normal')
+// Each line turns around its own center; the overshoot approximates the spring the toggle used to have.
+const line = 'outline-none origin-center [transform-box:fill-box] transition-[translate,rotate,opacity] duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] motion-reduce:transition-none'
 </script>
 
 <template>
@@ -53,35 +31,26 @@ const state = computed(() => props.open ? 'close' : 'normal')
       stroke-linecap="round"
       stroke-linejoin="round"
     >
-      <motion.line
+      <line
         x1="4"
         y1="6"
         x2="20"
         y2="6"
-        :variants="variants"
-        :animate="state"
-        :custom="1"
-        class="outline-none"
+        :class="[line, open && 'translate-y-[6px] rotate-45']"
       />
-      <motion.line
+      <line
         x1="4"
         y1="12"
         x2="20"
         y2="12"
-        :variants="variants"
-        :animate="state"
-        :custom="2"
-        class="outline-none"
+        :class="[line, open && 'opacity-0']"
       />
-      <motion.line
+      <line
         x1="4"
         y1="18"
         x2="20"
         y2="18"
-        :variants="variants"
-        :animate="state"
-        :custom="3"
-        class="outline-none"
+        :class="[line, open && '-translate-y-[6px] -rotate-45']"
       />
     </svg>
   </UButton>

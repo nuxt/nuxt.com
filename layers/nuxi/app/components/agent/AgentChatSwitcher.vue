@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { motion } from 'motion-v'
-
 const { isOpen, nuxiMood } = useNuxtAgent()
 const { chatList } = useChats()
 
@@ -44,14 +42,11 @@ watch(popoverOpen, (open) => {
     v-if="!hasChatHistory"
     class="inline-flex items-center gap-2 min-w-0"
   >
-    <motion.span
-      :initial="{ opacity: 0, scale: 0.5, filter: 'blur(4px)' }"
-      :animate="{ opacity: 1, scale: 1, filter: 'blur(0px)' }"
-      :transition="{ duration: 0.3, ease: 'easeOut', delay: 0.1 }"
-      class="inline-flex"
-    >
-      <AgentNuxiIcon class="size-5 shrink-0" :mood="nuxiMood" />
-    </motion.span>
+    <Transition appear enter-from-class="opacity-0 scale-50 blur-xs" enter-active-class="transition-[opacity,scale,filter] duration-300 delay-100 ease-out motion-reduce:transition-none">
+      <span class="inline-flex">
+        <AgentNuxiIcon class="size-5 shrink-0" :mood="nuxiMood" />
+      </span>
+    </Transition>
     <span class="truncate">Nuxi</span>
     <UBadge variant="subtle" size="sm" class="shrink-0">
       Beta
@@ -73,14 +68,11 @@ watch(popoverOpen, (open) => {
       :ui="{ label: 'truncate min-w-0' }"
     >
       <template #leading>
-        <motion.span
-          :initial="{ opacity: 0, scale: 0.5, filter: 'blur(4px)' }"
-          :animate="{ opacity: 1, scale: 1, filter: 'blur(0px)' }"
-          :transition="{ duration: 0.3, ease: 'easeOut', delay: 0.1 }"
-          class="inline-flex"
-        >
-          <AgentNuxiIcon class="size-5 shrink-0" :mood="nuxiMood" />
-        </motion.span>
+        <Transition appear enter-from-class="opacity-0 scale-50 blur-xs" enter-active-class="transition-[opacity,scale,filter] duration-300 delay-100 ease-out motion-reduce:transition-none">
+          <span class="inline-flex">
+            <AgentNuxiIcon class="size-5 shrink-0" :mood="nuxiMood" />
+          </span>
+        </Transition>
       </template>
     </UButton>
 
