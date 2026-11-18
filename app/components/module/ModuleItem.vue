@@ -285,18 +285,3 @@ const items = computed(() => [
     </UPageCard>
   </UContextMenu>
 </template>
-
-<style lang="postcss" scoped>
-.shine {
-  text-decoration: none;
-  display: inline-block;
-  mask-image: linear-gradient(-75deg, rgba(255,255,255,.8) 30%, #fff 50%, rgba(255,255,255,.8) 70%);
-  mask-size: 200%;
-  animation: shine 2s linear infinite;
-}
-
-@keyframes shine {
-  from { -webkit-mask-position: 150%; }
-  to { -webkit-mask-position: -50%; }
-}
-</style>
