@@ -56,7 +56,7 @@ function onWidthTransitionEnd(event: TransitionEvent) {
 
     <UNavigationMenu
       :items="headerLinks.map((link) => {
-        if (link.to.startsWith('/docs')) {
+        if (link.to?.startsWith('/docs')) {
           return { ...link, children: [] }
         }
         return link

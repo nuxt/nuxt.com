@@ -94,7 +94,6 @@ function _useHeaderLinks() {
     }, {
       label: 'More',
       icon: 'i-lucide-library',
-      to: '/video-courses',
       search: false,
       active: ['/video-courses', '/enterprise', '/sponsors'].some(path => route.path.startsWith(path)),
       children: [{
