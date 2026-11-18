@@ -75,7 +75,7 @@ function partKey(part: UIMessage['parts'][number], index: number) {
   </div>
 
   <template v-else>
-    <ChatToolActivity v-if="activity.length" :parts="activity" :active="!!streaming" :responding="parts.some(part => isTextUIPart(part) && part.text.length > 0)" />
+    <ChatToolActivity v-if="activity.length" :parts="activity" :active="!!streaming" :preparing="preparing" :responding="parts.some(part => isTextUIPart(part) && part.text.length > 0)" />
     <AgentIndicator v-else-if="preparing" />
 
     <template v-for="(part, partIndex) in parts" :key="partKey(part, partIndex)">

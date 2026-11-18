@@ -1,6 +1,6 @@
 import type { ToolUIPart, DynamicToolUIPart } from 'ai'
 import { getToolName } from 'ai'
-import { getSearchQuery, getSources } from '../utils/tool'
+import { getSearchQuery } from '../utils/tool'
 import { parsePromptCardOutput } from '../../shared/utils/ide-deeplinks'
 
 export type ToolPart = ToolUIPart | DynamicToolUIPart
@@ -305,7 +305,7 @@ export function hasToolOutput(part: ToolPart): boolean {
 
 export function getToolState(part: ToolPart, active = true) {
   if (part.state === 'output-denied' || (part.state === 'approval-responded' && !part.approval.approved)) return 'denied'
-  if (part.state === 'output-error') return /cancelled|canceled/i.test(part.errorText) ? 'stopped' : 'error'
+  if (part.state === 'output-error') return part.errorText === 'Tool call cancelled' ? 'stopped' : 'error'
   if (part.state === 'output-available' && !part.preliminary) return hasToolError(part.output) ? 'error' : 'complete'
   if (part.state === 'approval-requested') return 'approval'
   return active ? 'running' : 'stopped'
@@ -377,7 +377,7 @@ export function getToolPresentation(part: ToolPart, active: boolean) {
   let state = getToolState(part, active)
   if (state === 'complete' && rich && !hasRichToolSuccess(part, name as RichToolName)) state = 'error'
 
-  const sourceCount = name === 'web_search' && state === 'complete' ? getSources(part).length : 0
+  const sourceCount = name === 'web_search' && state === 'complete' ? getToolReferences(part).length : 0
   let text = config
     ? (state === 'complete' ? config.success : config.loading)
     : name === 'web_search'
@@ -414,7 +414,7 @@ export function getToolPresentation(part: ToolPart, active: boolean) {
       : name === 'connection_search'
         ? getConnectionSearchSuffix(part)
         : name === 'web_search'
-          ? [getSearchQuery(part), sourceCount ? `${sourceCount} sources` : undefined].filter(Boolean).join(' · ') || undefined
+          ? [getSearchQuery(part), sourceCount ? `${sourceCount} source${sourceCount === 1 ? '' : 's'}` : undefined].filter(Boolean).join(' · ') || undefined
           : getToolSuffix(part)
   }
 }

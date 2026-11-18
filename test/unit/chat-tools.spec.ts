@@ -5,6 +5,7 @@ import {
   getToolIcon,
   getToolState,
   getToolReferences,
+  getToolPresentation,
   hasToolOutput,
   getToolSuffix,
   getToolText,
@@ -196,6 +197,7 @@ describe('tool activity', () => {
     const part = { ...dynamicTool('search_docs'), state: 'output-error', errorText: 'Tool call cancelled' } as ToolPart
     expect(getToolState(part)).toBe('stopped')
     expect(getToolState({ ...part, errorText: 'Search failed' } as ToolPart)).toBe('error')
+    expect(getToolState({ ...part, errorText: 'The provider cancelled the request' } as ToolPart)).toBe('error')
     expect(getToolState({ ...part, state: 'output-denied', approval: { id: 'approval', approved: false } } as ToolPart)).toBe('denied')
   })
 
@@ -207,5 +209,14 @@ describe('tool activity', () => {
     expect(getToolReferences(part)).toEqual([{
       title: 'Data Fetching', url: '/docs/4.x/getting-started/data-fetching', section: 'useFetch', content: 'Use useFetch for SSR data.'
     }])
+  })
+
+  it('counts only web sources available in the reader', () => {
+    const part = dynamicTool('web_search', { sources: [
+      { title: 'Nuxt', url: 'https://nuxt.com' },
+      { title: 'Email', url: 'mailto:hello@nuxt.com' }
+    ] })
+    expect(getToolPresentation(part, false).suffix).toBe('1 source')
+    expect(getToolReferences(part)).toHaveLength(1)
   })
 })

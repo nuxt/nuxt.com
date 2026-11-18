@@ -4,7 +4,7 @@ import { isPartStreaming } from '@nuxt/ui/utils/ai'
 import { getToolPresentation, normalizeToolName, type ToolPart } from '../../composables/useChatTools'
 import ChatToolDetails from './ChatToolDetails.vue'
 
-const props = defineProps<{ parts: (ToolPart | ReasoningUIPart)[], active: boolean, responding?: boolean }>()
+const props = defineProps<{ parts: (ToolPart | ReasoningUIPart)[], active: boolean, responding?: boolean, preparing?: boolean }>()
 const sourceNames: Record<string, string> = {
   search_docs: 'Nuxt docs', read_page: 'Nuxt docs', search_modules: 'Modules', show_module: 'Modules',
   show_blog_post: 'Blog', web_search: 'Web', connection_search: 'Connections', show_template: 'Templates',
@@ -33,13 +33,15 @@ const mounted = ref(false)
 watch(expanded, (open) => {
   if (open) mounted.value = true
 })
-const details = computed(() => entries.value.filter(entry => !entry.streaming && (entry.reasoning === undefined || entry.reasoning.trim())))
+const details = computed(() => entries.value.filter(entry => entry.reasoning !== undefined ? entry.reasoning.trim() : !entry.streaming))
 const current = computed(() => entries.value.findLast(entry => entry.streaming && entry.reasoning === undefined))
-const busy = computed(() => props.active && (!props.responding || !!current.value))
+const reasoning = computed(() => entries.value.some(entry => entry.streaming && entry.reasoning !== undefined))
+const busy = computed(() => props.active && (!props.responding || !!current.value || reasoning.value || props.preparing))
 const failures = computed(() => entries.value.filter(entry => entry.state === 'error' || entry.state === 'denied').length)
 const tools = computed(() => entries.value.filter(entry => isToolUIPart(entry.part)))
 const summary = computed(() => {
   if (current.value) return current.value.text
+  if (reasoning.value) return 'Thinking'
   if (busy.value) return tools.value.length ? 'Preparing answer' : 'Thinking'
   if (!tools.value.length) return 'Reasoning'
   if (tools.value.length === 1) return tools.value[0]!.state === 'complete' ? tools.value[0]!.source : tools.value[0]!.text
@@ -83,7 +85,7 @@ const summary = computed(() => {
             <UButton color="neutral" variant="link" size="xs" label="Read reasoning" class="px-0 text-muted" />
             <template #body>
               <Suspense>
-                <AgentComark :value="item.reasoning" class="text-sm text-muted" />
+                <AgentComark :value="item.reasoning" :streaming="item.streaming" class="text-sm text-muted" />
                 <template #fallback>
                   <USkeleton class="h-24 w-full" />
                 </template>

@@ -135,7 +135,7 @@ defineShortcuts({
       v-bind="$attrs"
       should-auto-scroll
       :messages="display.displayMessages"
-      :status="revealingMessages.size ? 'streaming' : display.displayStatus"
+      :status="chat.status === 'ready' && revealingMessages.size ? 'streaming' : display.displayStatus"
       :compact="compact"
       :spacing-offset="spacingOffset"
       :class="compact ? 'gap-2 px-0' : 'flex-1 pt-4 pb-4 sm:pb-6'"

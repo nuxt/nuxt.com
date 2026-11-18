@@ -20,8 +20,9 @@ let loadToken = 0
 const reducedMotion = usePreferredReducedMotion()
 
 function startNewChat() {
-  loadToken++
+  const token = ++loadToken
   const reset = async () => {
+    if (token !== loadToken) return
     active.value = { id: crypto.randomUUID(), messages: [] }
     await nextTick()
   }

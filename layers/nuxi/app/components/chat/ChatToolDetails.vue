@@ -14,9 +14,16 @@ const payload = computed(() => JSON.stringify({
   ...('output' in props.part && { output: props.part.output })
 }, null, 2))
 
-function inspect(index: number) {
+let opener: HTMLElement | undefined
+function inspect(index: number, event: MouseEvent) {
+  opener = event.currentTarget as HTMLElement
   selected.value = index
   open.value = true
+}
+
+function restoreFocus(event: Event) {
+  event.preventDefault()
+  if (opener?.isConnected) opener.focus({ preventScroll: true })
 }
 </script>
 
@@ -30,7 +37,7 @@ function inspect(index: number) {
       class="group w-full min-w-0 justify-start gap-2.5 px-2 py-1.5 text-left font-normal"
       :title="[item.title, item.section].filter(Boolean).join(' › ')"
       :aria-label="`Read ${item.title}${item.section ? `: ${item.section}` : ''}`"
-      @click="inspect(index)"
+      @click="inspect(index, $event)"
     >
       <span class="min-w-0 flex-1 truncate text-xs text-default">{{ item.section?.split(' › ').at(-1) || item.title }}</span>
       <span v-if="item.section && item.section !== item.title" class="max-w-1/3 truncate text-[11px] text-dimmed" :title="item.title">{{ item.title }}</span>
@@ -43,11 +50,12 @@ function inspect(index: number) {
     size="xs"
     class="mt-1 px-2 py-1 font-normal text-dimmed"
     label="Request & response"
-    @click="inspect(-1)"
+    @click="inspect(-1, $event)"
   />
 
   <UModal
     v-model:open="open"
+    :content="{ onCloseAutoFocus: restoreFocus }"
     :title="reference?.title || 'Request & response'"
     :description="reference ? reference.section || 'Source used for this answer' : getToolName(part)"
     :ui="{
