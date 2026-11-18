@@ -1,6 +1,5 @@
 import { verify } from '@octokit/webhooks-methods'
 import { waitUntil } from '@vercel/functions'
-import { revalidateContent } from '@nuxt/content/content'
 import type { ComarkContent } from 'comark-content'
 import { instanceBlobPath, navPathsForInstance, SEARCH_INDEXED_KEYS } from '#shared/utils/content'
 import { DOC_VERSIONS, isDocVersion } from '#shared/utils/docs'
@@ -121,12 +120,7 @@ export default defineEventHandler(async (event) => {
       const outdatedItems = { ...(await outdatedInstance.manifest()).items }
 
       const headSha = await resolveInstanceSha(instanceKey, { refresh: true })
-      // `site` is `@nuxt/content`'s live surface: pin this process to the pushed commit right away. Other processes
-      // read the pointer moved above on their next request.
-      if (instanceKey === 'site') await revalidateContent(content as unknown as ComarkContent, headSha)
-      const newInstance = instanceKey === 'site'
-        ? await getInstanceAtHead('site')
-        : contentInstanceAt(instanceKey, headSha)
+      const newInstance = contentInstanceAt(instanceKey, headSha)
       await newInstance.init()
       const newItems = (await newInstance.manifest()).items
 

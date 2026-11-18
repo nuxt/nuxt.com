@@ -18,8 +18,8 @@ const tracer = contentTracer()
 const keepExternalLinks = defineComarkPlugin(() => ({ name: 'external-links' }))
 
 /**
- * Nitro replaces `import.meta.dev`. The module also imports this file, to generate types and serve the browser
- * in dev, where it isn't defined: that copy reads the checkout.
+ * Nitro replaces `import.meta.dev`. The module also imports this file, to serve the browser in dev, where it
+ * isn't defined: that copy reads the checkout.
  */
 const inNitro = import.meta.dev !== undefined
 const local = !inNitro || import.meta.dev
@@ -45,16 +45,13 @@ export const content = createNuxtContent({
   source: createInstanceSource(source, { useLocalDir: local, rootDir: import.meta.rootDir, token: process.env.NUXT_GITHUB_TOKEN || process.env.GITHUB_TOKEN }),
   live: import.meta.dev
     ? undefined
-    : !inNitro
-        // The module's copy: live, so it keeps every component a later push may use, typed from the checkout.
-        ? true
-        : {
-            // Dynamic: the ref pointers use nitro auto-imports.
-            ref: async () => (await import('./utils/content/refs')).resolveInstanceSha('site'),
-            // The pointer is in Vercel Runtime Cache, which the webhook expires in every region: read it on each
-            // request, as `getInstanceAtHead()` does for the other instances.
-            ttl: 0
-          },
+    : {
+        // Called on each request, as `getInstanceAtHead()` does for the other instances: the pointer is in Vercel
+        // Runtime Cache, which the webhook expires in every region. Only the server calls it, never the module's
+        // copy, which is live too so it keeps every component a later push may use.
+        // Dynamic: the ref pointers use nitro auto-imports.
+        ref: async () => (await import('./utils/content/refs')).resolveInstanceSha('site')
+      },
   // Options of the markdown plugin the module installs, which appends its own defaults.
   markdown: { plugins: [...comarkPlugins, keepExternalLinks()] },
   plugins: [
