@@ -44,7 +44,8 @@ function getUserTextParts(message: UIMessage) {
 
 function partKey(part: UIMessage['parts'][number], index: number) {
   if (isToolUIPart(part)) return part.toolCallId
-  return 'id' in part && typeof part.id === 'string' ? part.id : `${part.type}-${index}`
+  // Finalized text can carry a different id from its streamed preview.
+  return `${part.type}-${index}`
 }
 </script>
 

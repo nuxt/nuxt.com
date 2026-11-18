@@ -17,10 +17,22 @@ const active = shallowRef<ActiveChat>({ id: crypto.randomUUID(), messages: [] })
 const chatId = computed(() => active.value.id)
 const initialMessages = computed(() => active.value.messages)
 let loadToken = 0
+const reducedMotion = usePreferredReducedMotion()
 
 function startNewChat() {
   loadToken++
-  active.value = { id: crypto.randomUUID(), messages: [] }
+  const reset = async () => {
+    active.value = { id: crypto.randomUUID(), messages: [] }
+    await nextTick()
+  }
+
+  // The keyed chat is replaced on reset, so capture its avatar before unmounting it.
+  if (import.meta.client && isOpen.value && !pendingPrompt.value && reducedMotion.value !== 'reduce' && document.startViewTransition) {
+    const transition = document.startViewTransition(reset)
+    void transition.ready.catch(() => {})
+  } else {
+    void reset()
+  }
 }
 
 async function setActiveChat(id: string) {
