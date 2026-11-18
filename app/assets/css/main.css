@@ -34,6 +34,11 @@
   --ui-container: 90rem;
 }
 
+/* Native UI (scrollbars, form controls, the canvas) follows the color mode class, not the OS preference */
+.dark {
+  color-scheme: dark;
+}
+
 /* The page never pans sideways: clip makes the viewport not horizontally scrollable, so Chrome on macOS stops shifting the page on a horizontal trackpad swipe while the swipe still navigates back and forward. Unlike hidden, clip keeps position: sticky working. */
 html,
 body {
@@ -45,6 +50,22 @@ body {
   html {
     overscroll-behavior-y: none;
   }
+}
+
+/* Shimmer on the Official and Sponsor badges of module and deploy cards */
+.shine {
+  display: inline-block;
+  mask-image: linear-gradient(-75deg, rgba(255,255,255,.8) 30%, #fff 50%, rgba(255,255,255,.8) 70%);
+  mask-size: 200%;
+
+  @media (prefers-reduced-motion: no-preference) {
+    animation: shine 2s linear infinite;
+  }
+}
+
+@keyframes shine {
+  from { mask-position: 150%; }
+  to { mask-position: -50%; }
 }
 
 ::view-transition-old(root),
