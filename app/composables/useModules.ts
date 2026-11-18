@@ -40,10 +40,8 @@ export const moduleImage = function (icon: string = '', _size: number = 80) {
 
   if (/^https?:\/\//.test(icon)) return icon
 
-  return `https://raw.githubusercontent.com/nuxt/modules/main/icons/${icon}`
-  // if (/\.svg$/.test(icon)) return `https://raw.githubusercontent.com/nuxt/modules/main/icons/${icon}`
-
-  // return `https://ipx.nuxt.com/s_${size},f_auto/gh/nuxt/modules/main/icons/${icon}`
+  // Through IPX rather than raw.githubusercontent.com, which caches for only 5 minutes.
+  return `https://ipx.nuxt.com/_/gh/nuxt/modules/main/icons/${icon}`
 }
 
 export const moduleIcon = function (category: string) {
