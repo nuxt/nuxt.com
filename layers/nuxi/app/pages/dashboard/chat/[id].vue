@@ -54,6 +54,7 @@ const {
   prompt,
   getVote,
   vote,
+  askQuestion,
   onSubmit,
   handlePaste,
   removeAttachment
@@ -148,6 +149,7 @@ useNuxiChatSeo({
             header: 'px-1.5 pt-1.5 pb-0 gap-1.5 flex flex-wrap items-start'
           }"
           @submit="onSubmit"
+          @ask-question="askQuestion"
           @paste="handlePaste"
           @remove-attachment="removeAttachment"
           @vote="vote"

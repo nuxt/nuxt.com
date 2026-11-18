@@ -13,11 +13,16 @@ function nextTextBoundary(text: string, position: number, budget: number, comple
     if (end >= target) break
   }
 
-  const citationStart = text.indexOf(':source-link{', position)
-  if (citationStart >= 0 && citationStart < end) {
-    const citationEnd = text.indexOf('}', citationStart)
-    if (citationEnd >= 0) return citationEnd + 1
-    if (!complete) return Math.max(position, citationStart)
+  const componentStart = text.slice(position).search(/:source-link\{|:follow-ups\{/)
+  if (componentStart >= 0 && position + componentStart < end) {
+    const start = position + componentStart
+    const component = /^:[\w-]+\{(?:[^}"'\\]|\\[\s\S]|"(?:\\[\s\S]|[^"\\])*"|'(?:\\[\s\S]|[^'\\])*')*\}/u.exec(text.slice(start))
+    if (component) return start + component[0].length
+    if (!complete) return Math.max(position, start)
+  }
+  const colon = text.lastIndexOf(':')
+  if (!complete && colon >= position && [':source-link{', ':follow-ups{'].some(marker => marker.startsWith(text.slice(colon)))) {
+    end = Math.min(end, colon)
   }
 
   const candidate = text.slice(0, end)

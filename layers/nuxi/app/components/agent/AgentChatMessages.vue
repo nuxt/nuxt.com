@@ -167,7 +167,9 @@ defineShortcuts({
               :animate="liveMessages.has(message.id)"
               :preparing="message.id === betweenStepsMessageId && !revealingMessages.has(message.id)"
               :streaming="(chat.status === 'submitted' || chat.status === 'streaming') && message.id === chat.messages.at(-1)?.id"
+              :show-follow-ups="message.id === chat.messages.at(-1)?.id && chat.status === 'ready' && !isAssistantPending(message)"
               @pending="onMessagePending(message.id, $event)"
+              @follow-up="emit('askQuestion', $event)"
             />
           </div>
         </div>

@@ -1,6 +1,10 @@
 import type { UIMessage } from 'ai'
 import { isTextUIPart } from 'ai'
 
+export function stripFollowUpSuggestions(text: string): string {
+  return text.replace(/(?:^|\n)\s*:follow-ups\{(?:[^}"'\\]|\\[\s\S]|"(?:\\[\s\S]|[^"\\])*"|'(?:\\[\s\S]|[^'\\])*')*\}\s*$/u, '').trimEnd()
+}
+
 export function getMergedParts(parts: UIMessage['parts']): UIMessage['parts'] {
   const result: UIMessage['parts'] = []
   for (const part of parts) {

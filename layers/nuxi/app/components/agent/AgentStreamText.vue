@@ -6,17 +6,22 @@ const props = defineProps<{
   value: string
   streaming: boolean
   animate?: boolean
+  showFollowUps?: boolean
 }>()
 
-const emit = defineEmits<{ pending: [value: boolean] }>()
+const emit = defineEmits<{ pending: [value: boolean], followUp: [question: string] }>()
 const { text, pending } = useStreamedText(() => props.value, () => props.streaming, props.animate)
+provide('chat-follow-up', {
+  enabled: computed(() => !!props.showFollowUps && !pending.value),
+  ask: (question: string) => emit('followUp', question)
+})
 // Keep the same word nodes when the turn settles, including a one-word reply.
 const animate = props.animate || props.streaming
 function wrapWords(node: Node): Node[] {
   if (typeof node === 'string') {
     return Array.from(streamWordSegmenter.segment(node), ({ segment }) => /^\s+$/u.test(segment) ? segment : ['span', { class: 'nuxi-stream-word' }, segment])
   }
-  if (!node[0] || ['pre', 'code', 'source-link'].includes(node[0]) || node[1].class === 'nuxi-stream-word') return [node]
+  if (!node[0] || ['pre', 'code', 'source-link', 'follow-ups'].includes(node[0]) || node[1].class === 'nuxi-stream-word') return [node]
   return [[node[0], node[1], ...node.slice(2).flatMap(child => wrapWords(child as Node))]]
 }
 const plugins: ComarkPlugin[] = [{

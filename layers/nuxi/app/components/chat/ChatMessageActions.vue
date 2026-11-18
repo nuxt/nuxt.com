@@ -21,10 +21,10 @@ const { refresh: refreshChats } = useChats()
 const toast = useToast()
 
 const textContent = computed(() => {
-  return props.message.parts
+  return stripFollowUpSuggestions(props.message.parts
     .filter(p => p.type === 'text')
     .map(p => (p as { text: string }).text)
-    .join('\n')
+    .join('\n'))
 })
 
 const createdAt = computed(() => {
