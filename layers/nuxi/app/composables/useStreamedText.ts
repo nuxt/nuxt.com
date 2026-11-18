@@ -29,13 +29,22 @@ function nextTextBoundary(text: string, position: number, budget: number, comple
   // A link's label must not appear as plain text then jump when its URL arrives.
   let codeDelimiter = ''
   let linkStart = -1
-  for (const match of candidate.matchAll(/\\[\s\S]|`+|\[/g)) {
+  let labelEnd = -1
+  let bracketDepth = 0
+  for (const match of text.matchAll(/\\[\s\S]|`+|\[|\]/g)) {
+    if (match.index >= end && bracketDepth === 0) break
     if (match[0].startsWith('`')) {
       if (!codeDelimiter) codeDelimiter = match[0]
       else if (codeDelimiter === match[0]) codeDelimiter = ''
-    } else if (!codeDelimiter && match[0] === '[') linkStart = match.index
+    } else if (!codeDelimiter && match[0] === '[') {
+      if (bracketDepth++ === 0) {
+        linkStart = match.index
+        labelEnd = -1
+      }
+    } else if (!codeDelimiter && match[0] === ']' && bracketDepth > 0 && --bracketDepth === 0) {
+      labelEnd = match.index
+    }
   }
-  const labelEnd = linkStart >= 0 ? text.indexOf(']', linkStart) : -1
   const couldBeLink = labelEnd < 0 || labelEnd + 1 === text.length || text[labelEnd + 1] === '('
   if (linkStart >= 0 && couldBeLink && !candidate.slice(linkStart).includes(')')) {
     const linkEnd = labelEnd >= 0 ? text.indexOf(')', labelEnd + 2) : -1

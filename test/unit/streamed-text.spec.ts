@@ -45,8 +45,8 @@ describe('streamed text', () => {
     }
   })
 
-  it('waits for an inline link, then reveals it when its URL arrives', async () => {
-    const replay = setup('Read [the guide](https://nuxt.com/docs')
+  it.each(['the guide', 'the items[0] entry'])('waits for the full URL with label "%s"', async (label) => {
+    const replay = setup(`Read [${label}](https://nuxt.com/docs`)
     try {
       replay.drain()
       expect(replay.stream.text.value).toBe('Read ')
