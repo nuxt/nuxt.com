@@ -32,6 +32,8 @@ function setup(initial: string) {
 describe('streamed text', () => {
   it.each([
     'Use items[0] to read the first entry.',
+    'Read [draft\n\nUse items[0] here.',
+    'Read [draft\n \t\nContinue in a new paragraph.',
     'Use `items[0]` to read the first entry.',
     'Use `items[0` while explaining incomplete code.',
     'A bracket can be escaped: \\[example.'
@@ -45,8 +47,13 @@ describe('streamed text', () => {
     }
   })
 
-  it.each(['the guide', 'the items[0] entry'])('waits for the full URL with label "%s"', async (label) => {
-    const replay = setup(`Read [${label}](https://nuxt.com/docs`)
+  it.each([
+    ['the guide', 'https://nuxt.com/docs'],
+    ['the items[0] entry', 'https://nuxt.com/docs'],
+    ['items[0]', '/docs/foo(bar)'],
+    ['the guide', '/docs']
+  ])('waits for the full URL with label "%s" and destination "%s"', async (label, destination) => {
+    const replay = setup(`Read [${label}](${destination}`)
     try {
       replay.drain()
       expect(replay.stream.text.value).toBe('Read ')

@@ -31,11 +31,14 @@ function nextTextBoundary(text: string, position: number, budget: number, comple
   let linkStart = -1
   let labelEnd = -1
   let bracketDepth = 0
-  for (const match of text.matchAll(/\\[\s\S]|`+|\[|\]/g)) {
+  for (const match of text.matchAll(/\\[\s\S]|`+|\[|\]|\n[ \t]*\n/g)) {
     if (match.index >= end && bracketDepth === 0) break
     if (match[0].startsWith('`')) {
       if (!codeDelimiter) codeDelimiter = match[0]
       else if (codeDelimiter === match[0]) codeDelimiter = ''
+    } else if (!codeDelimiter && match[0].startsWith('\n')) {
+      bracketDepth = 0
+      linkStart = labelEnd = -1
     } else if (!codeDelimiter && match[0] === '[') {
       if (bracketDepth++ === 0) {
         linkStart = match.index
@@ -46,8 +49,19 @@ function nextTextBoundary(text: string, position: number, budget: number, comple
     }
   }
   const couldBeLink = labelEnd < 0 || labelEnd + 1 === text.length || text[labelEnd + 1] === '('
-  if (linkStart >= 0 && couldBeLink && !candidate.slice(linkStart).includes(')')) {
-    const linkEnd = labelEnd >= 0 ? text.indexOf(')', labelEnd + 2) : -1
+  if (linkStart >= 0 && couldBeLink) {
+    let linkEnd = -1
+    let parenthesisDepth = 0
+    if (labelEnd >= 0 && text[labelEnd + 1] === '(') {
+      for (const match of text.slice(labelEnd + 1).matchAll(/\\[\s\S]|[()]|\n[ \t]*\n/g)) {
+        if (match[0].startsWith('\n')) break
+        if (match[0] === '(') parenthesisDepth++
+        else if (match[0] === ')' && --parenthesisDepth === 0) {
+          linkEnd = labelEnd + 1 + match.index
+          break
+        }
+      }
+    }
     if (linkEnd >= 0) end = Math.max(end, linkEnd + 1)
     else if (!complete) end = Math.min(end, linkStart > 0 && candidate[linkStart - 1] === '!' ? linkStart - 1 : linkStart)
   }
