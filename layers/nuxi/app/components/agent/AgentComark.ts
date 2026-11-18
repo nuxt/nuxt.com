@@ -2,13 +2,14 @@ import rangi from '@comark/vue/plugins/rangi'
 import security from 'comark/plugins/security'
 import type { ElementNode } from 'comark'
 import SourceLink from '#layers/nuxi/app/components/tools/SourceLink.vue'
+import AgentFollowUps from './AgentFollowUps.vue'
 
-// Only the tags plain markdown produces are rendered; anything else is unwrapped or dropped.
+// Render Markdown and explicit chat components; unwrap or drop other tags.
 const allowedTags = [
   'p', 'br', 'hr', 'span', 'a', 'strong', 'em', 'b', 'i', 'u', 's', 'del', 'mark', 'small', 'sub', 'sup', 'kbd',
   'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'blockquote', 'ul', 'ol', 'li',
   'code', 'pre', 'img', 'table', 'thead', 'tbody', 'tr', 'th', 'td', 'details', 'summary',
-  'source-link'
+  'source-link', 'follow-ups'
 ]
 
 const droppedTags = new Set(['script', 'style', 'iframe', 'frame', 'object', 'embed', 'template', 'textarea', 'title', 'noscript', 'svg', 'math'])
@@ -30,7 +31,8 @@ export default defineMarkdownComponent({
   ],
   components: {
     ...proseComponents,
-    'source-link': SourceLink
+    'source-link': SourceLink,
+    'follow-ups': AgentFollowUps
   },
   class: '*:first:mt-0 *:last:mb-0'
 })

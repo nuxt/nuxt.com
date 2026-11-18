@@ -11,12 +11,13 @@ const props = defineProps<{
   animate?: boolean
   streaming?: boolean
   preparing?: boolean
+  showFollowUps?: boolean
 }>()
 
 const parts = computed(() => getMergedParts(props.message.parts))
 const activity = computed(() => parts.value.filter((part): part is ToolPart | ReasoningUIPart => isToolUIPart(part) || (isReasoningUIPart(part) && part.text.trim().length > 0)))
 
-const emit = defineEmits<{ pending: [value: boolean] }>()
+const emit = defineEmits<{ pending: [value: boolean], followUp: [question: string] }>()
 const pendingParts = new Set<string>()
 
 function onTextPending(key: string, pending: boolean) {
@@ -85,7 +86,9 @@ function partKey(part: UIMessage['parts'][number], index: number) {
         :value="part.text"
         :streaming="streaming && isPartStreaming(part)"
         :animate="animate"
+        :show-follow-ups="showFollowUps"
         @pending="onTextPending(partKey(part, partIndex), $event)"
+        @follow-up="emit('followUp', $event)"
       />
     </template>
   </template>

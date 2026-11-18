@@ -78,4 +78,22 @@ describe('streamed text', () => {
       replay.stop()
     }
   })
+
+  it('holds follow-up markup across chunks and reveals the whole component at once', async () => {
+    const replay = setup('Here is the answer.\n\n:follow')
+    try {
+      replay.drain()
+      expect(replay.stream.text.value).toBe('Here is the answer.\n\n')
+      replay.source.value += '-ups{first="How does {{ name }}'
+      await nextTick()
+      replay.drain()
+      expect(replay.stream.text.value).toBe('Here is the answer.\n\n')
+      replay.source.value += ' work?"}'
+      await nextTick()
+      replay.drain()
+      expect(replay.stream.text.value).toBe(replay.source.value)
+    } finally {
+      replay.stop()
+    }
+  })
 })
