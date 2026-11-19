@@ -175,6 +175,9 @@ importers:
 
   .:
     dependencies:
+      '@agent-browser/eve':
+        specifier: ^0.43.0
+        version: 0.43.0(@vercel/sandbox@3.9.1)(eve@1.0.1(e8610aed677a9637da7c9b90397e6745))
       '@ai-sdk/mcp':
         specifier: ^2.0.93
         version: 2.0.93(zod@4.6.7)
@@ -499,6 +502,20 @@ packages:
       argon2:
         optional: true
       bcrypt:
+        optional: true
+
+  '@agent-browser/eve@0.43.0':
+    resolution: {integrity: sha512-BgtOD/JmrgKLt4HO0UVL3BIRweph+fkQrDgmAFI8y3hCGh+wJtcswSijtV72L72wnfB++Ko0W6fNupnKYJwwMQ==}
+    engines: {node: '>=24.0.0'}
+    peerDependencies:
+      eve: '>=0.84.0'
+
+  '@agent-browser/sandbox@0.43.0':
+    resolution: {integrity: sha512-je4YRrWUpNh7sPljcWltT/iAw+yzZLIgIS14YYRj014SiorSS+Xu07JkUnEt8+hrB913fgLIXgHEpW4zhcU41g==}
+    peerDependencies:
+      '@vercel/sandbox': '>=1.0.0'
+    peerDependenciesMeta:
+      '@vercel/sandbox':
         optional: true
 
   '@ai-sdk/gateway@4.0.139':
@@ -10969,6 +10986,9 @@ packages:
   zod@4.1.11:
     resolution: {integrity: sha512-WPsqwxITS2tzx1bzhIKsEs19ABD5vmCVa4xBo2tq/SrV4RNZtfws1EnCWQXM6yh8bD08a1idvkB5MZSBiZsjwg==}
 
+  zod@4.4.3:
+    resolution: {integrity: sha512-ytENFjIJFl2UwYglde2jchW2Hwm4GJFLDiSXWdTrJQBIN9Fcyp7n4DhxJEiWNAJMV1/BqWfW/kkg71UDcHJyTQ==}
+
   zod@4.5.4:
     resolution: {integrity: sha512-sC95tT5iHHH9gtpj6A81kh+NEaRAUFN+qlUPDUbRfOMvNf5QCBqsb3WgvnpVtK5Y+4UfA6KqufotuTvMGiTlsA==}
 
@@ -10984,6 +11004,18 @@ snapshots:
     dependencies:
       '@phc/format': 1.0.0
       '@poppinss/utils': 6.10.1
+
+  '@agent-browser/eve@0.43.0(@vercel/sandbox@3.9.1)(eve@1.0.1(e8610aed677a9637da7c9b90397e6745))':
+    dependencies:
+      '@agent-browser/sandbox': 0.43.0(@vercel/sandbox@3.9.1)
+      eve: 1.0.1(e8610aed677a9637da7c9b90397e6745)
+      zod: 4.4.3
+    transitivePeerDependencies:
+      - '@vercel/sandbox'
+
+  '@agent-browser/sandbox@0.43.0(@vercel/sandbox@3.9.1)':
+    optionalDependencies:
+      '@vercel/sandbox': 3.9.1
 
   '@ai-sdk/gateway@4.0.139(zod@4.6.7)':
     dependencies:
@@ -22801,6 +22833,8 @@ snapshots:
   zod@3.25.76: {}
 
   zod@4.1.11: {}
+
+  zod@4.4.3: {}
 
   zod@4.5.4: {}
 

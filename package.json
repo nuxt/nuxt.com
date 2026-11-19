@@ -35,6 +35,7 @@
     "templates:check": "nuxt task run templates:check"
   },
   "dependencies": {
+    "@agent-browser/eve": "^0.43.0",
     "@ai-sdk/mcp": "^2.0.93",
     "@chat-adapter/discord": "^4.44.0",
     "@chat-adapter/state-memory": "^4.44.0",
