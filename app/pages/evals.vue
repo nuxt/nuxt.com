@@ -234,6 +234,14 @@ function formatCost(usd?: number): string {
   return `$${usd.toFixed(3)}`
 }
 
+// Column header with its definition in a tooltip
+function headerWithInfo(label: string, text: string) {
+  return () => h(UTooltip, { text }, () => h('span', { class: 'inline-flex items-center gap-1' }, [
+    h('span', {}, label),
+    h(UIcon, { name: 'i-lucide-info', class: 'size-3.5 text-dimmed' })
+  ]))
+}
+
 // Expanded rows state
 const expanded = ref({})
 
@@ -288,7 +296,7 @@ const columns: TableColumn<ModelRow>[] = [
   },
   {
     accessorKey: 'avgDuration',
-    header: 'Avg Duration',
+    header: headerWithInfo('Avg Duration', 'Mean time per eval.'),
     meta: {
       class: {
         th: 'text-center',
@@ -299,12 +307,7 @@ const columns: TableColumn<ModelRow>[] = [
   },
   {
     accessorKey: 'avgCost',
-    header: () => h(UTooltip, {
-      text: 'Mean cost per eval, estimated from the tokens each run used at the provider\'s public list price.'
-    }, () => h('span', { class: 'inline-flex items-center gap-1' }, [
-      h('span', {}, 'Avg List Cost'),
-      h(UIcon, { name: 'i-lucide-info', class: 'size-3.5 text-dimmed' })
-    ])),
+    header: headerWithInfo('Avg List Cost', 'Mean cost per eval at public list prices. A guide, not a bill.'),
     meta: {
       class: {
         th: 'text-center',
@@ -315,7 +318,7 @@ const columns: TableColumn<ModelRow>[] = [
   },
   {
     accessorKey: 'successRate',
-    header: 'Success Rate',
+    header: headerWithInfo('Success Rate', 'Passed on any of 4 attempts. Not run yet counts as failed.'),
     meta: {
       class: {
         th: 'text-right',
@@ -326,12 +329,7 @@ const columns: TableColumn<ModelRow>[] = [
   },
   {
     accessorKey: 'passAt1',
-    header: () => h(UTooltip, {
-      text: 'Passed on the first attempt. Each eval allows up to 4 attempts; Success counts an eval as passed if any attempt succeeds.'
-    }, () => h('span', { class: 'inline-flex items-center gap-1' }, [
-      h('span', {}, 'First-Try Rate'),
-      h(UIcon, { name: 'i-lucide-info', class: 'size-3.5 text-dimmed' })
-    ])),
+    header: headerWithInfo('First-Try Rate', 'Passed on the first attempt. Breaks ties.'),
     meta: {
       class: {
         th: 'text-right',
@@ -507,18 +505,10 @@ const tableMeta = {
           </template>
         </UTable>
 
-        <div class="mt-4 text-sm text-dimmed text-pretty text-justify bg-elevated/50 p-4 rounded-lg">
-          Current models are rerun whenever the evals change, and are scored on every eval: one they haven't run yet shows as
-          <span class="text-default font-medium">N/A</span> and counts as not passed.
-          Previous models keep their last results, scored on the evals they ran, dated by their last run.
-          Each evaluation is attempted up to 4 times.
-          <span class="text-default font-medium">Success Rate</span> is the percentage of evals that passed on at least one attempt;
-          <span class="text-default font-medium">First-Try Rate</span> is the percentage that passed on the first attempt, used to break ties between models with the same success rate.
-          <span class="text-default font-medium">Avg Duration</span> is the mean time an agent took per eval.
-          <span class="text-default font-medium">Avg List Cost</span> is the mean cost per eval, estimated from the tokens each run used at the provider's public list price, so it's a relative guide and not a bill: your rate depends on caching, discounts and subscription plans.
-          Expand a row to see per-eval results, where a
-          <span class="text-default font-medium">1/3</span> badge means the eval failed twice before passing.
-        </div>
+        <p class="mt-4 text-sm text-dimmed text-pretty">
+          Current models are rerun whenever the evals change. Previous models keep their last results, dated by their last run.
+          Hover a column header for its definition, or expand a row for per-eval results.
+        </p>
       </UContainer>
     </UPageBody>
   </UPage>
