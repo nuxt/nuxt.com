@@ -523,16 +523,6 @@ websites:
     logo:
       width: 613
       height: 145
-  - name: World Triathlon
-    url: https://triathlon.org/
-    industry: Travel & Leisure
-    logo:
-      width: 120
-      height: 40
-    screenshotOptions:
-      hideElements: ['.cky-consent-container', '.cky-overlay', '.cky-btn-revisit-wrapper', '.uw-sl']
-      removeElements: ['.uwy', 'us-button']
-      delay: 3
   # TODO: add public/assets/websites/logos/world-triathlon.svg (then set logo width/height) and public/assets/websites/world-triathlon.webp.
   - name: World Triathlon
     url: https://triathlon.org/
