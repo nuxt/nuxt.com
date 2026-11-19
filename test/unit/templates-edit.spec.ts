@@ -464,11 +464,19 @@ describe('downloading an edited project', () => {
 })
 
 describe('template preview analytics', () => {
-  /** Runs the sandbox's shell commands for real, with the state directory moved into a temporary one. */
-  function bashSandbox(directory: string) {
+  /**
+   * Runs the sandbox's shell commands for real, with the state directory moved into `root`.
+   * `mkdir` behaves as uutils coreutils 0.10 does (Ubuntu 26.04), with the race made certain: without `-p`, it checks
+   * the path and then creates it, so calls that race for one path all succeed. A claim made with `mkdir` fails here.
+   */
+  function bashSandbox(root: string) {
+    const bin = join(root, 'bin')
+    mkdirSync(bin)
+    writeFileSync(join(bin, 'mkdir'), '#!/bin/bash\n[ "$1" = -p ] || { [ -e "$1" ] && exit 1; sleep 0.05; }\nPATH=${PATH#*:} exec mkdir -p "${@: -1}"\n', { mode: 0o755 })
+    const env = { ...process.env, PATH: `${bin}:${process.env.PATH}` }
     return { tags: { template: 'docus' }, runCommand: async ({ args }: { args: string[] }) => {
       // Asynchronous, so parallel changes really compete for the counter and the level claims.
-      const child = spawn('bash', ['-c', args[1]!.replaceAll('/tmp/nuxt-com-analytics', directory)])
+      const child = spawn('bash', ['-c', args[1]!.replaceAll('/tmp/nuxt-com-analytics', join(root, 'state'))], { env })
       let stdout = ''
       child.stdout.on('data', (chunk) => {
         stdout += chunk
@@ -488,7 +496,7 @@ describe('template preview analytics', () => {
     try {
       vi.resetModules()
       const { trackPreviewChange, previewChanges, claimPreviewStep } = await import('../../server/utils/templates/analytics')
-      const sandbox = bashSandbox(join(directory, 'state'))
+      const sandbox = bashSandbox(directory)
       expect(await previewChanges(sandbox)).toBe('0')
       // 1, 4, 13 then 21 changes in total, each batch in parallel.
       for (const [batch, level] of [[1, '1+'], [3, '1+'], [9, '5+'], [8, '20+']] as const) {

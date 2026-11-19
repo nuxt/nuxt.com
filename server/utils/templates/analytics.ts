@@ -32,9 +32,15 @@ async function run(sandbox: Sandbox, script: string) {
   return await result.stdout()
 }
 
-/** True the first time `step` happens in this preview. `mkdir` is atomic, so parallel requests can't both claim it. */
+/**
+ * Shell that succeeds for one caller only, however many race for `name`: with noclobber, bash creates the file exclusively.
+ * `mkdir` is no such claim: uutils coreutils 0.10 (Ubuntu 26.04) reports success to every caller that raced for the path.
+ */
+const claim = (name: string) => `(set -C; : > ${STATE_DIR}/${name}) 2>/dev/null`
+
+/** True the first time `step` happens in this preview, even when parallel requests reach it together. */
 export async function claimPreviewStep(sandbox: Sandbox, step: string) {
-  return (await run(sandbox, `mkdir -p ${STATE_DIR} && mkdir ${STATE_DIR}/${step} 2>/dev/null && echo claimed`)).includes('claimed')
+  return (await run(sandbox, `mkdir -p ${STATE_DIR} && ${claim(step)} && echo claimed`)).includes('claimed')
 }
 
 const changeLevel = (count: number) => CHANGE_LEVELS.findLast(level => count >= level)
@@ -47,7 +53,7 @@ export function trackPreviewChange(event: H3Event, sandbox: Sandbox) {
 
 async function recordPreviewChange(sandbox: Sandbox) {
   // One byte per change: appends don't lose concurrent changes, and each level is claimed once even when two changes see it.
-  const claims = CHANGE_LEVELS.map(level => `[ "$n" -ge ${level} ] && mkdir ${STATE_DIR}/changes-${level} 2>/dev/null && echo ${level}`).join('; ')
+  const claims = CHANGE_LEVELS.map(level => `[ "$n" -ge ${level} ] && ${claim(`changes-${level}`)} && echo ${level}`).join('; ')
   const output = await run(sandbox, `mkdir -p ${STATE_DIR} && printf x >> ${STATE_DIR}/changes && n=$(stat -c %s ${STATE_DIR}/changes); ${claims}; true`)
   return output.split('\n').filter(Boolean).map(level => `${level}+`)
 }
