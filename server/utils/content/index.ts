@@ -1,9 +1,11 @@
 import { resolveContent } from '@nuxt/content/content'
-import type { ComarkContent, ParsedSource, Source } from 'comark-content'
+import type { AnyComarkContent, ComarkContent, ParsedSource, Source } from 'comark-content'
 import { withSnapshot } from 'comark-content/sources/snapshot'
 import { createInstanceSource, createRuntimeInstance } from '../../../utils/factory'
 import { instanceSnapshotDir, SNAPSHOT_ASSET_BASE } from './snapshot'
 import type { ContentInstanceKey } from '#shared/utils/content'
+// Imported, not auto-imported: the app's `content` is the browser client, and the app tsconfig checks this file too.
+import { content } from '../../content'
 
 const assets = () => useStorage(`assets:${SNAPSHOT_ASSET_BASE}`)
 
@@ -79,8 +81,8 @@ function getBaseInstance(key: ContentInstanceKey): ComarkContent {
 /**
  * The instance for `key`, pinned to `sha`. Holds no state of its own beyond the base it derives from.
  */
-export function contentInstanceAt(key: ContentInstanceKey, sha: string): ComarkContent {
-  if (key === 'site') return (content as unknown as ComarkContent).withRef(sha)
+export function contentInstanceAt(key: ContentInstanceKey, sha: string): AnyComarkContent {
+  if (key === 'site') return content.withRef(sha)
   return getBaseInstance(key).withRef(sha)
 }
 
@@ -127,8 +129,8 @@ let siteWatch: Promise<unknown> | undefined
  * its `live.ref` resolves, the one the app reads through `/__nuxt_content`.
  * Dev reads the checkout. The module watches its own copy, for the browser: this one is the copy server code reads.
  */
-async function siteInstance(): Promise<ComarkContent> {
-  const site = content as unknown as ComarkContent
+async function siteInstance(): Promise<AnyComarkContent> {
+  const site = content
   if (!import.meta.dev) return resolveContent(site)
   await (siteWatch ??= site.watch())
   return site
