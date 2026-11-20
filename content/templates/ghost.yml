@@ -1,0 +1,6 @@
+name: 'Ghost'
+slug: 'ghost'
+description: 'An unofficial blog template using Ghost as a headless CMS.'
+repo: 'serman/nuxt-template-ghost'
+demo: 'https://nuxt-static-template-ghost.netlify.app/'
+screenshotUrl: 'https://nuxt-static-template-ghost.netlify.app/'
