@@ -588,7 +588,12 @@ export default defineNuxtConfig({
       }
     },
     // `nuxt-workers` breaks under the Vite environment API.
-    viteEnvironmentApi: false
+    viteEnvironmentApi: false,
+    // Builds the server route matcher once instead of on every request. Nothing here calls `router.addRoute()`.
+    staticRoutes: true,
+    // `staticRoutes` turns this on, but it 404s paths no page matches before the app runs: localised docs
+    // (`/fr/docs/**`) and pull previews (`/pull/**`) only match through the router history base in `app/router.options.ts`.
+    early404: false
   },
   compatibilityDate: '2026-01-14',
   nitro: {
