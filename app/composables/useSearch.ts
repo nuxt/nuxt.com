@@ -38,7 +38,7 @@ export function useSearch() {
 
   /** Where `key`'s artifacts are pinned. */
   function artifactsBase(key: ContentInstanceKey, sha: string | null): string {
-    if (pull.value && pullHead.value?.instanceKey === key) {
+    if (pull.value && pullHead.value?.instanceKeys.includes(key)) {
       return instancePullBlobPath(key, pull.value, pullHead.value.sha)
     }
 

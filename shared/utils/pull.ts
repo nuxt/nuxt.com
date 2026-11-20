@@ -13,7 +13,7 @@ import { MODULE_DOCS, MODULE_DOCS_NAMES, moduleDocsPathPrefix, type ModuleDocsNa
  * Repos in the `nuxt` org a content instance reads from; the PR's base branch picks which instances.
  * Module docs repos are listed here too (`icon` → `nuxt/icon`), so they must live in the `nuxt` org.
  */
-export const PULL_REPOS = ['nuxt', 'cli', 'examples', 'nuxt.com', 'icon', 'devtools', 'fonts', 'hints', 'eslint', 'image'] as const
+export const PULL_REPOS = ['nuxt', 'cli', 'module-builder', 'examples', 'nuxt.com', 'icon', 'devtools', 'fonts', 'hints', 'eslint', 'image'] as const
 
 export type PullRepo = (typeof PULL_REPOS)[number]
 
@@ -84,6 +84,8 @@ export function instanceRepo(key: ContentInstanceKey): PullRepo {
   if (key.startsWith('module:')) {
     return MODULE_DOCS[key.slice('module:'.length) as ModuleDocsName].repo.slice('nuxt/'.length) as PullRepo
   }
+
+  if (key.startsWith('module-builder:') || key.startsWith('build-module:')) return 'module-builder'
 
   return key.startsWith('cli:') ? 'cli' : 'nuxt'
 }
