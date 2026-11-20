@@ -97,7 +97,36 @@ Auth uses the `nuxi-code` GitHub App on the `nuxt` org through the Vercel Connec
 
 ## Caller identity
 
-`agent/lib/identity/context.ts` resolves `Context.person` (id, name, bot flag) for every surface, and `agent/lib/identity/caller-instructions.ts` renders it into the always-on prompt so "who am I?" has an answer. Discord's display name (`global_name`) comes for free from the inbound message payload; the `@`-mention handle (`username`) is still kept on the auth context for future use, it's just not what the model sees. Slack's `app_mention`/`message` events only carry a user id — `channels/slack.ts` resolves the real name via `users.info` (`agent/lib/slack/api.ts`, cached 1h per user), which needs the **`users:read`** bot scope on top of the ones above; without it, Slack callers fall back to their user id.
+`agent/lib/identity/context.ts` resolves `Context.person` (id, name, bot flag) for every surface, and `agent/lib/identity/caller-instructions.ts` renders it into the always-on prompt so "who am I?" has an answer. Discord's display name (`global_name`) comes for free from the inbound message payload; the `@`-mention handle (`username`) is still kept on the auth context for future use, it's just not what the model sees. Slack's `app_mention`/`message` events only carry a user id: the Slack access check below looks the sender up with `users.info` and passes their display name along.
+
+## Slack access and threads
+
+Every Slack caller gets admin mode, so `agent/channels/slack.ts` admits only **full members of the home workspace**: `agent/lib/slack/members.ts` rejects guests (`is_restricted`, `is_ultra_restricted`), deactivated accounts and, when `SLACK_TEAM_ID` is set on the eve service, Slack Connect users from other workspaces. One `users.info` call (cached 10 minutes) gives both the decision and the caller's name. A failed lookup drops the message instead of letting it through. `onAnswers` applies the same check to approval and question clicks, so a guest can't approve a `coder` change in a member's thread. Other apps' bots still reach Nuxi from the home workspace but never get admin mode.
+
+Nuxi also **follows threads it's part of**: a reply without a mention in such a thread reaches it with `status: 'deferred'` and a guidance line, and Nuxi calls `no_reply` (`agent/tools/no_reply.ts`) when the reply is for someone else. Top-level messages still need a mention.
+
+Connector settings (`slack/nuxi` and `slack/nuxi-preview`, **Advanced**):
+
+- **Trigger Event Types:** `message.channels` and `message.groups`, for followed threads.
+- **Bot Scopes:** `users:read` (access check, required: without it nobody gets through), `channels:history` and `groups:history` (followed threads), `search:read.public` (`search_slack`), `channels:read`, `groups:read`, `im:read` and `mpim:read` (scheduled tasks check the destination conversation with `conversations.info` before each run, which needs the read scope of its type).
+
+`agent/tools/search_slack.ts` searches public channels with Slack's [Real-time Search API](https://docs.slack.dev/apis/web-api/real-time-search-api), on Slack and in admin mode only. It uses the per-message `action_token`, so it works only in a turn a mention or DM started.
+
+## Scheduled tasks
+
+`agent/schedules/tasks.ts` uses eve's experimental [dynamic schedules](https://eve.dev/docs/experimental/dynamic-schedules): people ask Nuxi in Slack for recurring or one-time tasks ("every Monday at 9am Paris time, post open showcase candidates here"), and it calls the deferred `schedule__tasks__*` tools. The destination channel, thread and creator come from the Slack session, never from the model. Each person manages only their own schedules, from Slack only, and creating or changing one asks for approval. Before each run, Nuxi checks the creator is still a full member and still in the channel, and disables the schedule otherwise. Under `eve dev` schedules never fire on their own; ask Nuxi to run one now (`invoke`). Fixed workflows stay in code, below.
+
+## Evals
+
+`evals/` checks the reply rules in `agent/instructions.md` against the real model, with tools such as `search_docs` replaced by fixed results (`allowToolStubs`, granted to the local `eve dev` caller only in `agent/channels/eve.ts`):
+
+```sh
+pnpm eval:nuxi                 # every eval
+pnpm eval:nuxi threads         # one directory
+pnpm eval:nuxi --repeat 3      # results vary; repeat before trusting a prompt change
+```
+
+They need only AI Gateway access. When you change reply behaviour in the instructions, add or update a case.
 
 ## Data retention
 
