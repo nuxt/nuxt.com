@@ -3,6 +3,8 @@ import type { UIMessage } from 'ai'
 import type { AgentChatHandle } from '../../composables/eve/types'
 import { isBetweenSteps, resolveChatDisplayState } from '../../composables/eve/adapter'
 
+defineOptions({ inheritAttrs: false })
+
 const props = withDefaults(defineProps<{
   chat: AgentChatHandle
   chatId: string
@@ -34,6 +36,24 @@ const display = computed(() =>
   resolveChatDisplayState(props.chat.messages, props.chat.status)
 )
 
+const revealingMessages = reactive(new Set<string>())
+const liveMessages = reactive(new Set<string>())
+watch([() => props.chat.messages.at(-1)?.id, () => props.chat.status], ([id, status], [previousId, previousStatus]) => {
+  if (id === previousId || ![status, previousStatus].some(value => value === 'submitted' || value === 'streaming')) return
+  const message = props.chat.messages.at(-1)
+  if (message?.role !== 'assistant') return
+  liveMessages.add(message.id)
+  if (message.parts.some(part => part.type === 'text' && part.text.length > 0)) revealingMessages.add(message.id)
+})
+watch(() => props.chatId, () => {
+  liveMessages.clear()
+  revealingMessages.clear()
+})
+function onMessagePending(id: string, pending: boolean) {
+  if (pending) revealingMessages.add(id)
+  else revealingMessages.delete(id)
+}
+
 /**
  * Mounted after a short delay, so the pause between the final text and the end of the turn
  * does not flash an indicator under every answer.
@@ -59,6 +79,7 @@ onBeforeUnmount(() => clearTimeout(betweenStepsTimer))
 
 function isAssistantPending(message: UIMessage): boolean {
   if (message.role !== 'assistant') return false
+  if (revealingMessages.has(message.id)) return true
 
   const { status, messages } = props.chat
   if (status !== 'submitted' && status !== 'streaming') return false
@@ -68,6 +89,24 @@ function isAssistantPending(message: UIMessage): boolean {
 }
 
 const messagesRoot = useTemplateRef<{ $el: HTMLElement }>('messagesRoot')
+const reducedMotion = usePreferredReducedMotion()
+const avatarTransitionName = computed(() => props.compact ? 'nuxi-panel-avatar' : 'nuxi-avatar')
+const showConversation = ref(!!display.value.displayMessages.length)
+
+// Capture only the welcome-to-conversation swap; streaming stays outside the transition.
+watch(() => !!display.value.displayMessages.length, (hasMessages) => {
+  if (!props.compact || !props.showFaqEmpty || !import.meta.client || reducedMotion.value === 'reduce' || !document.startViewTransition) {
+    showConversation.value = hasMessages
+    return
+  }
+
+  const transition = document.startViewTransition(async () => {
+    showConversation.value = hasMessages
+    await nextTick()
+  })
+  void transition.ready.catch(() => {})
+  onWatcherCleanup(() => transition.skipTransition())
+})
 
 function scrollMessages(to: 'top' | 'bottom') {
   if (!display.value.displayMessages.length) return
@@ -75,7 +114,7 @@ function scrollMessages(to: 'top' | 'bottom') {
   let node = messagesRoot.value?.$el
   while (node && node !== document.documentElement) {
     if (/auto|scroll/.test(getComputedStyle(node).overflowY)) {
-      node.scrollTo({ top: to === 'top' ? 0 : node.scrollHeight, behavior: 'smooth' })
+      node.scrollTo({ top: to === 'top' ? 0 : node.scrollHeight, behavior: reducedMotion.value === 'reduce' ? 'instant' : 'smooth' })
       return
     }
     node = node.parentElement
@@ -83,38 +122,56 @@ function scrollMessages(to: 'top' | 'bottom') {
 }
 
 defineShortcuts({
-  home: { usingInput: true, handler: () => scrollMessages('top') },
-  end: { usingInput: true, handler: () => scrollMessages('bottom') }
+  home: { handler: () => scrollMessages('top') },
+  end: { handler: () => scrollMessages('bottom') }
 })
 </script>
 
 <template>
   <UTheme :ui="AGENT_CHAT_THEME">
     <UChatMessages
-      v-if="display.displayMessages.length"
+      v-if="showConversation"
       ref="messagesRoot"
+      v-bind="$attrs"
       should-auto-scroll
       :messages="display.displayMessages"
-      :status="display.displayStatus"
+      :status="chat.status === 'ready' && revealingMessages.size ? 'streaming' : display.displayStatus"
       :compact="compact"
       :spacing-offset="spacingOffset"
       :class="compact ? 'gap-2 px-0' : 'flex-1 pt-4 pb-4 sm:pb-6'"
       :user="{ ui: compact ? AGENT_USER_MESSAGE_UI_COMPACT : AGENT_USER_MESSAGE_UI }"
-      :assistant="{ ui: { body: 'flex-1', actions: 'has-data-[state=open]:opacity-100' } }"
-      :ui="compact ? undefined : { root: '[&>article]:last-of-type:min-h-0' }"
+      :assistant="{ ui: { body: 'flex-1', content: '[text-wrap:wrap]', actions: 'ps-10 has-data-[state=open]:opacity-100 focus-within:opacity-100' } }"
+      :ui="{ root: '[overflow-anchor:none]' }"
     >
       <template #indicator>
-        <AgentIndicator />
+        <AgentIndicator avatar :avatar-transition-name="avatarTransitionName" />
       </template>
 
       <template #content="{ message }">
-        <ChatContent :message="message" />
-        <Transition
-          enter-from-class="opacity-0"
-          enter-active-class="transition-opacity duration-200"
-        >
-          <AgentIndicator v-if="message.id === betweenStepsMessageId" class="mt-2" />
-        </Transition>
+        <div v-if="message.role === 'assistant'" class="flex items-start gap-3">
+          <span
+            class="sticky top-4 grid size-7 shrink-0 self-start place-items-center"
+            :style="display.displayStatus !== 'submitted' && message.id === chat.messages.at(-1)?.id ? { viewTransitionName: avatarTransitionName } : undefined"
+            aria-hidden="true"
+          >
+            <AgentNuxiIcon
+              :mood="isAssistantPending(message) ? 'thinking' : 'happy'"
+              :interactive="false"
+              class="h-6 w-7 text-default"
+              :class="!isAssistantPending(message) && '[&_.nuxi-body]:animate-none'"
+            />
+          </span>
+          <div class="flex min-w-0 flex-1 flex-col gap-3">
+            <ChatContent
+              :message="message"
+              :animate="liveMessages.has(message.id)"
+              :preparing="message.id === betweenStepsMessageId && !revealingMessages.has(message.id)"
+              :streaming="(chat.status === 'submitted' || chat.status === 'streaming') && message.id === chat.messages.at(-1)?.id"
+              @pending="onMessagePending(message.id, $event)"
+            />
+          </div>
+        </div>
+        <ChatContent v-else :message="message" />
       </template>
 
       <template v-if="showActions" #actions="{ message }">
@@ -138,9 +195,12 @@ defineShortcuts({
       </template>
     </UChatMessages>
 
-    <div v-else-if="showFaqEmpty" class="flex flex-col">
+    <div v-else-if="showFaqEmpty" v-bind="$attrs" class="flex flex-col">
       <div class="relative h-48 overflow-hidden rounded-lg mx-1">
         <LazyAgentShader />
+        <span class="absolute bottom-4 left-1/2 grid size-12 -translate-x-1/2 place-items-center" :style="{ viewTransitionName: avatarTransitionName }" aria-hidden="true">
+          <AgentNuxiIcon class="size-full text-default" />
+        </span>
       </div>
 
       <div class="flex flex-col gap-6 mt-6">

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-const { isOpen, nuxiMood } = useNuxtAgent()
+const { isOpen } = useNuxtAgent()
 const { chatList } = useChats()
 
 const panel = inject<{
@@ -42,11 +42,6 @@ watch(popoverOpen, (open) => {
     v-if="!hasChatHistory"
     class="inline-flex items-center gap-2 min-w-0"
   >
-    <Transition appear enter-from-class="opacity-0 scale-50 blur-xs" enter-active-class="transition-[opacity,scale,filter] duration-300 delay-100 ease-out motion-reduce:transition-none">
-      <span class="inline-flex">
-        <AgentNuxiIcon class="size-5 shrink-0" :mood="nuxiMood" />
-      </span>
-    </Transition>
     <span class="truncate">Nuxi</span>
     <UBadge variant="subtle" size="sm" class="shrink-0">
       Beta
@@ -66,15 +61,7 @@ watch(popoverOpen, (open) => {
       variant="ghost"
       class="font-medium max-w-44"
       :ui="{ label: 'truncate min-w-0' }"
-    >
-      <template #leading>
-        <Transition appear enter-from-class="opacity-0 scale-50 blur-xs" enter-active-class="transition-[opacity,scale,filter] duration-300 delay-100 ease-out motion-reduce:transition-none">
-          <span class="inline-flex">
-            <AgentNuxiIcon class="size-5 shrink-0" :mood="nuxiMood" />
-          </span>
-        </Transition>
-      </template>
-    </UButton>
+    />
 
     <template #content>
       <div class="p-1.5 border-b border-default">
