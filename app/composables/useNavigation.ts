@@ -1,5 +1,5 @@
 import type { CommandPaletteGroup } from '@nuxt/ui'
-import type { NuxterSummary } from '#shared/types'
+import type { NuxterSummary, Template } from '#shared/types'
 import { createSharedComposable } from '@vueuse/core'
 
 function _useHeaderLinks() {
@@ -173,6 +173,11 @@ const _useNavigation = () => {
   const { modules, fetchList: fetchModules } = useModules()
   const { providers, fetchList: fetchHosting } = useHostingProviders()
   const { articles: blogArticles, fetchList: fetchBlog } = useBlog()
+  // Its own key: `useTemplates()` loads the same list eagerly under `templates`.
+  const { data: templates, execute: fetchTemplates } = useAsyncData('templates-search', () => listByDir<Template>('/templates'), {
+    immediate: false,
+    default: () => []
+  })
 
   const searchLinks = computed(() => [{
     label: 'Ask Nuxi',
@@ -247,6 +252,14 @@ const _useNavigation = () => {
     to: hosting.path
   })))
 
+  const templateItems = computed(() => templates.value.map(template => ({
+    id: `template-${template.slug}`,
+    label: isStarter(template) ? `${template.name} Starter` : template.name,
+    suffix: template.description,
+    icon: template.icon || 'i-lucide-app-window',
+    to: `/templates/${template.slug}`
+  })))
+
   const blogItems = computed(() => blogArticles.value.map(article => ({
     id: `blog-${article.path}`,
     label: article.title,
@@ -298,6 +311,11 @@ const _useNavigation = () => {
     items: modulesItems.value,
     postFilter
   }, {
+    id: 'templates-search',
+    label: 'Templates',
+    items: templateItems.value,
+    postFilter
+  }, {
     id: 'hosting-search',
     label: 'Hosting',
     items: hostingItems.value,
@@ -335,6 +353,7 @@ const _useNavigation = () => {
       fetchModules()
       fetchHosting()
       fetchBlog()
+      if (!templates.value.length) fetchTemplates()
     }
   })
 
