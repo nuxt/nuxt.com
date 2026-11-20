@@ -4,10 +4,11 @@
   "type": "module",
   "scripts": {
     "build": "eve build",
-    "dev": "eve dev",
+    "dev": "eve dev --no-default-extensions",
     "start": "eve start"
   },
   "dependencies": {
+    "@agent-browser/eve": "^0.43.0",
     "@ai-sdk/gateway": "^4.0.138",
     "@chat-adapter/discord": "^4.44.0",
     "@chat-adapter/state-memory": "^4.44.0",

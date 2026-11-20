@@ -2,6 +2,8 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { isAdminMode } from '../../layers/nuxi/agent/lib/identity/admin-mode'
 import { githubToolsApproval } from '../../layers/nuxi/agent/lib/github'
 
+vi.mock('@vercel/connect', () => ({ getToken: vi.fn(async () => 'app-token') }))
+
 vi.mock('@vercel/global-config', () => ({
   getAll: vi.fn(async () => ({ discord: { channels: { admin: ['C_ADMIN'], public: ['C_PUBLIC'] } } }))
 }))
@@ -124,14 +126,86 @@ describe('githubToolsApproval', () => {
 
   afterEach(() => {
     vi.unstubAllEnvs()
+    vi.unstubAllGlobals()
+    vi.restoreAllMocks()
   })
 
   const slackUser = { issuer: 'slack:T123', principalId: 'slack:T123:U1', principalType: 'user', attributes: { user_id: 'U1', author_type: 'user' } }
   const denied = { type: 'denied', reason: 'GitHub tools are only available to the Nuxt team on Slack and in admin Discord channels.' }
 
-  function decide(toolName: string, auth: Record<string, unknown> | null) {
-    return githubToolsApproval({ toolName, session: { auth: { current: auth } } } as unknown as Parameters<typeof githubToolsApproval>[0])
+  function decide(toolName: string, auth: Record<string, unknown> | null, toolInput?: Record<string, unknown>) {
+    return githubToolsApproval({ toolName, toolInput, session: { auth: { current: auth } } } as unknown as Parameters<typeof githubToolsApproval>[0])
   }
+
+  /** GitHub with one open pull request, from `nuxi/showcase-world-triathlon`. Returns the `head` of every lookup. */
+  function githubWithOnePullRequest() {
+    const heads: Array<string | null> = []
+    vi.stubGlobal('fetch', async (input: string | URL) => {
+      const url = new URL(String(input))
+      const head = url.searchParams.get('head')
+      heads.push(head)
+      return Response.json(url.pathname === '/repos/nuxt/nuxt.com/pulls' && head === 'nuxt:nuxi/showcase-world-triathlon' ? [{ number: 2679 }] : [])
+    })
+    return heads
+  }
+
+  it('asks before a commit to a branch that has an open pull request', async () => {
+    githubWithOnePullRequest()
+
+    expect(await decide('github__editFiles', slackUser, { branch: 'nuxi/showcase-world-triathlon', message: 'feat(showcase): add World Triathlon' })).toBe('user-approval')
+    expect(await decide('commit_assets', slackUser, { repository: 'nuxt/nuxt.com', branch: 'nuxi/showcase-world-triathlon' })).toBe('user-approval')
+  })
+
+  it('lets a commit to a branch without a pull request through, and looks up nothing for other tools', async () => {
+    const heads = githubWithOnePullRequest()
+
+    expect(await decide('github__editFiles', slackUser, { owner: 'nuxt', repo: 'nuxt.com', branch: 'nuxi/showcase-world-triathlon-assets' })).toBeUndefined()
+    expect(await decide('commit_assets', slackUser, { branch: 'nuxi/showcase-world-triathlon-assets' })).toBeUndefined()
+    expect(await decide('github__createBranch', slackUser, { branch: 'nuxi/showcase-world-triathlon' })).toBeUndefined()
+    expect(await decide('capture_screenshot', slackUser, { name: 'world-triathlon' })).toBeUndefined()
+    expect(heads).toEqual(['nuxt:nuxi/showcase-world-triathlon-assets', 'nuxt:nuxi/showcase-world-triathlon-assets'])
+  })
+
+  it('asks whatever the case of the repository, which GitHub and the guardrails ignore', async () => {
+    const heads = githubWithOnePullRequest()
+
+    expect(await decide('github__editFiles', slackUser, { owner: 'Nuxt', repo: 'nuxt.com', branch: 'nuxi/showcase-world-triathlon' })).toBe('user-approval')
+    expect(await decide('github__editFiles', slackUser, { repo: 'NUXT.COM', branch: 'nuxi/showcase-world-triathlon' })).toBe('user-approval')
+    expect(await decide('commit_assets', slackUser, { repository: 'Nuxt/Nuxt.com', branch: 'nuxi/showcase-world-triathlon' })).toBe('user-approval')
+    expect(heads).toEqual(Array(3).fill('nuxt:nuxi/showcase-world-triathlon'))
+  })
+
+  it('reads the repository where the tool does, so an input the tool ignores can\'t move the lookup', async () => {
+    githubWithOnePullRequest()
+
+    expect(await decide('github__editFiles', slackUser, { repository: 'nuxt/ui', branch: 'nuxi/showcase-world-triathlon' })).toBe('user-approval')
+    expect(await decide('commit_assets', slackUser, { owner: 'nuxt', repo: 'ui', branch: 'nuxi/showcase-world-triathlon' })).toBe('user-approval')
+  })
+
+  it('denies a commit it can\'t place, instead of letting it through unasked', async () => {
+    const heads = githubWithOnePullRequest()
+    const unplaced = { type: 'denied', reason: 'A commit names a branch of one of these repositories: nuxt/nuxt.com.' }
+
+    expect(await decide('github__editFiles', slackUser, { owner: 'nuxt', repo: 'ui', branch: 'nuxi/showcase-world-triathlon' })).toEqual(unplaced)
+    expect(await decide('github__editFiles', slackUser, { owner: null, branch: 'nuxi/showcase-world-triathlon' })).toEqual(unplaced)
+    expect(await decide('commit_assets', slackUser, { repository: 'nuxt/ui', branch: 'nuxi/showcase-world-triathlon' })).toEqual(unplaced)
+    expect(await decide('github__editFiles', slackUser, { message: 'docs: fix typo' })).toEqual(unplaced)
+    expect(await decide('commit_assets', slackUser)).toEqual(unplaced)
+    expect(heads).toEqual([])
+  })
+
+  it('asks when GitHub can\'t say whether the branch has a pull request', async () => {
+    vi.stubGlobal('fetch', async () => Response.json({ message: 'Bad credentials' }, { status: 401 }))
+    vi.spyOn(console, 'warn').mockImplementation(() => {})
+
+    expect(await decide('github__editFiles', slackUser, { branch: 'nuxi/fix-typo' })).toBe('user-approval')
+  })
+
+  it('still denies a commit where GitHub tools are not offered', async () => {
+    githubWithOnePullRequest()
+
+    expect(await decide('github__editFiles', { issuer: 'discord', principalId: 'discord:U1', principalType: 'user', attributes: { channel_id: 'C_PUBLIC' } }, { branch: 'nuxi/showcase-world-triathlon' })).toEqual(denied)
+  })
 
   it('leaves GitHub tools to their own policy for a human on Slack and in an admin Discord channel', async () => {
     expect(await decide('github__createPullRequest', slackUser)).toBeUndefined()
