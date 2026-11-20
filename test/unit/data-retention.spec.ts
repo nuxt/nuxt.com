@@ -2,12 +2,14 @@ import { mkdtempSync, readFileSync, rmSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { createClient, type Client } from '@libsql/client'
+import { eq } from 'drizzle-orm'
 import { drizzle, type LibSQLDatabase } from 'drizzle-orm/libsql'
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 import { feedback, l10nSaves, users } from '../../server/db/schema'
-import { agentDailyUsage, chats, messages, votes } from '../../layers/nuxi/server/db/schema'
+import { agentDailyUsage, agentMemory, chats, messages, votes } from '../../layers/nuxi/server/db/schema'
 import { purgeExpiredSiteData } from '../../server/utils/data-retention'
 import { purgeExpiredNuxiData } from '../../layers/nuxi/server/utils/data-retention'
+import { readAgentMemory, writeAgentMemory } from '../../layers/nuxi/server/utils/agent-memory'
 
 const migrationsDir = new URL('../../server/db/migrations/sqlite/', import.meta.url)
 const journal = JSON.parse(readFileSync(new URL('meta/_journal.json', migrationsDir), 'utf8')) as { entries: { tag: string }[] }
@@ -129,6 +131,45 @@ describe('purgeExpiredNuxiData', () => {
 
     expect(result.agentDailyUsage).toBe(2)
     expect((await db.select({ dayKey: agentDailyUsage.dayKey }).from(agentDailyUsage)).map(row => row.dayKey).sort()).toEqual(['2026-10-07', '2026-10-14'])
+  })
+
+  it('deletes agent memory not updated for 12 months', async () => {
+    await db.insert(agentMemory).values([
+      { key: 'stale', content: 'a', version: 1, updatedAt: STALE },
+      { key: 'fresh', content: 'b', version: 1, updatedAt: RECENT }
+    ])
+
+    const result = await purgeExpiredNuxiData(db, { now: NOW })
+
+    expect(result.agentMemory).toBe(1)
+    expect((await db.select({ key: agentMemory.key }).from(agentMemory)).map(row => row.key)).toEqual(['fresh'])
+  })
+})
+
+describe('agent memory storage', () => {
+  beforeEach(() => applyMigrations(client))
+
+  it('creates only when absent, and replaces only from the version it read', async () => {
+    expect(await writeAgentMemory(db, { key: 'k', content: 'one', expectedVersion: null })).toEqual({ content: 'one', version: '1' })
+    // A second create-only write must not overwrite the first.
+    expect(await writeAgentMemory(db, { key: 'k', content: 'other', expectedVersion: null })).toBeNull()
+
+    expect(await writeAgentMemory(db, { key: 'k', content: 'two', expectedVersion: '1' })).toEqual({ content: 'two', version: '2' })
+    // A writer that read version 1 lost the race: conflict, nothing changes.
+    expect(await writeAgentMemory(db, { key: 'k', content: 'stale', expectedVersion: '1' })).toBeNull()
+    expect(await readAgentMemory(db, 'k')).toEqual({ content: 'two', version: '2' })
+    expect(await readAgentMemory(db, 'missing')).toBeNull()
+  })
+
+  it('deletes a person\'s memory with their account, and keeps documents without one', async () => {
+    await db.insert(users).values([user('u1', RECENT), user('u2', RECENT)])
+    await writeAgentMemory(db, { key: 'web-u1', content: 'a', expectedVersion: null, userId: 'u1' })
+    await writeAgentMemory(db, { key: 'web-u2', content: 'b', expectedVersion: null, userId: 'u2' })
+    await writeAgentMemory(db, { key: 'slack-channel', content: 'c', expectedVersion: null })
+
+    await db.delete(users).where(eq(users.id, 'u1'))
+
+    expect((await db.select({ key: agentMemory.key }).from(agentMemory)).map(row => row.key).sort()).toEqual(['slack-channel', 'web-u2'])
   })
 })
 

@@ -68,6 +68,21 @@ export const votesRelations = relations(votes, ({ one }) => ({
   message: one(messages, { fields: [votes.chatId, votes.messageId], references: [messages.chatId, messages.id] })
 }))
 
+/**
+ * One Nuxi memory document per eve scope key (`agent/memory/`). eve hands the backend only an
+ * opaque key, so `userId` records the nuxt.com account a personal document belongs to: deleting
+ * the account deletes it. Slack documents have no account and expire through data retention.
+ */
+export const agentMemory = sqliteTable('agent_memory', {
+  key: text('key').primaryKey(),
+  content: text('content').notNull(),
+  version: integer('version').notNull(),
+  userId: text('user_id').references(() => users.id, { onDelete: 'cascade' }),
+  updatedAt: integer('updated_at', { mode: 'timestamp' }).notNull().$defaultFn(() => new Date())
+}, table => [
+  index('agent_memory_updated_at_idx').on(table.updatedAt)
+])
+
 export const agentDailyUsage = sqliteTable('agent_daily_usage', {
   userId: text('user_id').notNull(),
   dayKey: text('day_key').notNull(),

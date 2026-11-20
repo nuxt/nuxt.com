@@ -112,6 +112,10 @@ Connector settings (`slack/nuxi` and `slack/nuxi-preview`, **Advanced**):
 
 `agent/tools/search_slack.ts` searches public channels with Slack's [Real-time Search API](https://docs.slack.dev/apis/web-api/real-time-search-api), on Slack and in admin mode only. It uses the per-message `action_token`, so it works only in a turn a mention or DM started.
 
+## Memory
+
+People signed in on nuxt.com get one private eve [file memory](https://eve.dev/docs/memory/file) document (`agent/memory/personal.ts`), which Nuxi edits with `personal__save_memory` and `personal__remove_memory`, such as their Nuxt version, hosting or modules. Anonymous visitors, Slack, Discord and schedules get none: the scope comes from trusted auth (`memoryOwner` in `agent/lib/memory.ts`), never from the model. Documents live in the `agent_memory` table through `/api/internal/agent/memory/*`, with optimistic versioning. Each carries its account id, so deleting the account deletes it, and data retention deletes documents untouched for 12 months. Without `INTERNAL_API_SECRET` (evals, `pnpm nuxi` alone) memory stays in the process.
+
 ## Scheduled tasks
 
 `agent/schedules/tasks.ts` uses eve's experimental [dynamic schedules](https://eve.dev/docs/experimental/dynamic-schedules): people ask Nuxi in Slack for recurring or one-time tasks ("every Monday at 9am Paris time, post open showcase candidates here"), and it calls the deferred `schedule__tasks__*` tools. The destination channel, thread and creator come from the Slack session, never from the model. Each person manages only their own schedules, from Slack only, and creating or changing one asks for approval. Before each run, Nuxi checks the creator is still a full member and still in the channel, and disables the schedule otherwise. Under `eve dev` schedules never fire on their own; ask Nuxi to run one now (`invoke`). Fixed workflows stay in code, below.
@@ -133,6 +137,7 @@ They need only AI Gateway access. When you change reply behaviour in the instruc
 `agent/schedules/data-retention.ts` calls `POST /api/internal/data-retention` daily at 3:30 UTC. The route runs `purgeExpiredNuxiData` (`server/utils/data-retention.ts`), which deletes:
 
 - chats not updated for 12 months (their messages and votes cascade)
+- agent memory documents not updated for 12 months
 - `agent_daily_usage` counters older than 7 days
 
 It then runs the main app's `purgeExpiredSiteData`, which deletes accounts not seen for 12 months and page feedback older than 12 months.
