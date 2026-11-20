@@ -6,7 +6,7 @@ const base: Template = { name: 'Docs', slug: 'nuxt-ui-docs', description: 'Docs 
 
 describe('deployProviders', () => {
   it('offers every provider by default', () => {
-    expect(deployProviders(base)).toEqual(['vercel', 'netlify'])
+    expect(deployProviders(base)).toEqual(['vercel', 'netlify', 'cloudflare'])
   })
 
   it('limits templates with Vercel stores to Vercel', () => {
@@ -19,6 +19,37 @@ describe('deployProviders', () => {
 })
 
 describe('buildDeployUrl', () => {
+  it('points Cloudflare at the repository', () => {
+    expect(buildDeployUrl({ ...base, repo: 'nuxt/movies' }, 'cloudflare')).toBe('https://deploy.workers.cloudflare.com/?url=https%3A%2F%2Fgithub.com%2Fnuxt%2Fmovies')
+  })
+
+  it('passes the branch of a starter to Cloudflare', () => {
+    const url = new URL(buildDeployUrl({ ...base, repo: 'nuxt/starter', branch: 'v4', kind: 'starter' }, 'cloudflare')!)
+    expect(url.searchParams.get('url')).toBe('https://github.com/nuxt/starter/tree/v4')
+  })
+
+  it('preserves the source subdirectory for Cloudflare', () => {
+    const url = new URL(buildDeployUrl({ ...base, repo: 'nuxt/examples', source: 'gh:nuxt/examples/examples/hello-world' }, 'cloudflare')!)
+    expect(url.searchParams.get('url')).toBe('https://github.com/nuxt/examples/tree/main/examples/hello-world')
+  })
+
+  it('uses the deploy repository override for Cloudflare', () => {
+    const repositoryUrl = 'https://github.com/nuxt-modules/shopify/tree/main/template'
+    const url = new URL(buildDeployUrl({ ...base, deploy: { repositoryUrl } }, 'cloudflare')!)
+    expect(url.searchParams.get('url')).toBe(repositoryUrl)
+  })
+
+  it('skips Cloudflare when a template has no repository', () => {
+    expect(buildDeployUrl({ ...base, repo: undefined }, 'cloudflare')).toBeUndefined()
+  })
+
+  it('respects provider restrictions for Cloudflare', () => {
+    expect(buildDeployUrl({ ...base, deploy: { stores: [{ type: 'blob' }] } }, 'cloudflare')).toBeUndefined()
+    expect(buildDeployUrl({ ...base, deploy: { providers: ['vercel', 'netlify'] } }, 'cloudflare')).toBeUndefined()
+    expect(buildDeployUrl({ ...base, deploy: { providers: [] } }, 'cloudflare')).toBeUndefined()
+    expect(buildDeployUrl({ ...base, deploy: { providers: ['cloudflare'] } }, 'cloudflare')).toBeDefined()
+  })
+
   it('points Netlify at the repository', () => {
     expect(buildDeployUrl(base, 'netlify')).toBe('https://app.netlify.com/start/deploy?repository=https%3A%2F%2Fgithub.com%2Fnuxt-ui-templates%2Fdocs')
   })

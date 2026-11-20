@@ -131,10 +131,11 @@ export function buildCreateCommand(template: Template, packageManager: PackageMa
   return `${RUNNERS[packageManager](defaultProjectName(template))} -t ${source}`
 }
 
-/** A Vercel Deploy Button URL: clones the template into the visitor's GitHub and deploys it, asking for its environment variables. */
+/** Hosts with a one-click deploy link that clones the template's repository. */
 export const DEPLOY_PROVIDERS: Array<{ value: TemplateDeployProvider, label: string, icon: string }> = [
   { value: 'vercel', label: 'Vercel', icon: 'i-simple-icons-vercel' },
-  { value: 'netlify', label: 'Netlify', icon: 'i-simple-icons-netlify' }
+  { value: 'netlify', label: 'Netlify', icon: 'i-simple-icons-netlify' },
+  { value: 'cloudflare', label: 'Cloudflare', icon: 'i-simple-icons-cloudflare' }
 ]
 
 export function deployProviders(template: Pick<Template, 'deploy'>): TemplateDeployProvider[] {
@@ -151,6 +152,7 @@ export function buildDeployUrl(template: Template, provider: TemplateDeployProvi
   if (!deployProviders(template).includes(provider)) return undefined
   const url = template.deploy?.repositoryUrl || templateRepoUrl(template)
   if (!url) return undefined
+  if (provider === 'cloudflare') return `https://deploy.workers.cloudflare.com/?${new URLSearchParams({ url }).toString()}`
   return provider === 'netlify' ? buildNetlifyDeployUrl(template, url) : buildVercelDeployUrl(template, url)
 }
 
