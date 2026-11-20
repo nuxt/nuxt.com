@@ -627,7 +627,7 @@ function glossaryHint(entry: NonNullable<typeof segment.value>['glossary'][numbe
                   <li v-for="item in group.segments" :key="item.hash">
                     <button
                       type="button"
-                      class="w-full rounded-md border p-2 text-start text-xs transition-colors hover:bg-elevated focus-visible:outline-2 focus-visible:outline-primary"
+                      class="w-full rounded-md border p-2 text-start text-xs transition-colors hover:bg-elevated outline-primary/25 focus-visible:outline-3"
                       :class="item.hash === segment.hash ? 'border-primary bg-elevated' : 'border-default'"
                       :aria-current="item.hash === segment.hash ? 'true' : undefined"
                       :aria-label="`${t.editThis}${strings.colon}${where(item)}`"

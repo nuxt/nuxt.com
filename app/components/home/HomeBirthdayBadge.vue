@@ -13,7 +13,7 @@ const candles = [
   <button
     ref="badge"
     type="button"
-    class="group cursor-pointer"
+    class="group cursor-pointer rounded-full outline-pink-500/25 focus-visible:outline-3"
     @mouseenter="startHoverCelebrate(badge)"
     @mouseleave="cancelHoverCelebrate"
     @click="celebrate(badge)"
@@ -22,7 +22,7 @@ const candles = [
       variant="subtle"
       color="neutral"
       size="lg"
-      class="gap-2 px-3 rounded-full font-semibold bg-pink-500/10 text-pink-600 ring-pink-500/25 transition-colors group-hover:bg-pink-500/15 group-hover:ring-pink-500/40 dark:text-pink-300"
+      class="gap-2 px-3 rounded-full font-semibold bg-pink-500/10 text-pink-600 ring-pink-500/25 transition-colors group-hover:bg-pink-500/15 group-hover:ring-pink-500/40 group-focus-visible:ring-pink-500 dark:text-pink-300"
     >
       <svg
         viewBox="0 0 24 24"

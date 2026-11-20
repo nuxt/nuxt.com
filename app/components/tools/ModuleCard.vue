@@ -33,10 +33,10 @@ const { copyInstall, copyPrompt } = useModuleInstallActions(() => ({
 </script>
 
 <template>
-  <div class="flex flex-col rounded-lg border border-default bg-elevated/50 overflow-hidden">
+  <div class="flex flex-col rounded-lg border border-default bg-elevated/50 overflow-hidden outline-primary/25 has-[>a:focus-visible]:outline-3">
     <NuxtLink
       :to="`/modules/${slug}`"
-      class="flex items-start gap-3 p-3 transition-colors hover:bg-elevated"
+      class="flex items-start gap-3 p-3 transition-colors hover:bg-elevated focus-visible:bg-elevated focus:outline-none"
     >
       <UAvatar
         :src="moduleImage(icon)"
@@ -59,11 +59,11 @@ const { copyInstall, copyPrompt } = useModuleInstallActions(() => ({
           <UIcon name="i-lucide-star" class="size-3" />
           {{ formatNumber(stars) }}
         </span>
-        <NuxtLink v-if="website" :to="website" target="_blank" class="flex items-center gap-1 hover:text-default transition-colors">
+        <NuxtLink v-if="website" :to="website" target="_blank" class="flex items-center gap-1 rounded-xs hover:text-default transition-colors outline-primary/25 focus-visible:outline-3">
           <UIcon name="i-lucide-book" class="size-3" />
           Docs
         </NuxtLink>
-        <NuxtLink v-if="repo" :to="`https://github.com/${repo}`" target="_blank" class="flex items-center gap-1 hover:text-default transition-colors">
+        <NuxtLink v-if="repo" :to="`https://github.com/${repo}`" target="_blank" class="flex items-center gap-1 rounded-xs hover:text-default transition-colors outline-primary/25 focus-visible:outline-3">
           <UIcon name="i-lucide-github" class="size-3" />
           GitHub
         </NuxtLink>

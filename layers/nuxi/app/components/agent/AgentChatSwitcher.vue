@@ -93,12 +93,12 @@ watch(popoverOpen, (open) => {
           v-for="chat in filteredChats"
           :key="chat.id"
           type="button"
-          class="group flex items-center justify-between gap-2 px-2.5 py-1.5 text-sm text-left rounded-md mx-1 hover:bg-elevated transition-colors"
+          class="group flex items-center justify-between gap-2 px-2.5 py-1.5 text-sm text-left rounded-md mx-1 hover:bg-elevated transition-colors outline-primary/25 focus-visible:outline-3 focus-visible:-outline-offset-3"
           :class="chat.id === panel?.chatId.value ? 'text-primary' : 'text-default'"
           @click="select(chat.id)"
         >
           <span class="truncate min-w-0">{{ chat.title || 'Untitled' }}</span>
-          <div class="flex items-center gap-1 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity">
+          <div class="flex items-center gap-1 shrink-0 opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity">
             <UIcon
               v-if="chat.id === panel?.chatId.value"
               name="i-lucide-check"
@@ -106,7 +106,7 @@ watch(popoverOpen, (open) => {
             />
             <NuxtLink
               :to="`/dashboard/chat/${chat.id}`"
-              class="p-0.5 rounded hover:bg-muted"
+              class="p-0.5 rounded hover:bg-muted outline-primary/25 focus-visible:outline-3"
               title="Open in full screen"
               aria-label="Open in full screen"
               @click.stop="isOpen = false"

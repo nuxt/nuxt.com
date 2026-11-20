@@ -305,7 +305,7 @@ defineOgImage('Nuxter.takumi', { username, period: () => period.value === 'all' 
             </div>
             <p v-if="nuxter.country || since || best" class="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm lg:text-base text-muted">
               <!-- The leaderboard of the same country and period. `nofollow`: crawlers would render every country × period. -->
-              <NuxtLink v-if="nuxter.country" :to="{ path: '/nuxters', query: { period, country: nuxter.country }, hash: '#leaderboard' }" rel="nofollow" class="inline-flex items-center gap-1.5 hover:text-highlighted transition-colors">
+              <NuxtLink v-if="nuxter.country" :to="{ path: '/nuxters', query: { period, country: nuxter.country }, hash: '#leaderboard' }" rel="nofollow" class="inline-flex items-center gap-1.5 rounded-sm hover:text-highlighted transition-colors outline-primary/25 focus-visible:outline-3">
                 <UIcon name="i-lucide-map-pin" class="size-4" />
                 {{ countryName(nuxter.country) }}
               </NuxtLink>
@@ -314,7 +314,7 @@ defineOgImage('Nuxter.takumi', { username, period: () => period.value === 'all' 
                 Contributing since {{ since }}
               </span>
               <!-- Opens that year -->
-              <NuxtLink v-if="best" :to="{ query: periodQuery(best.period) }" class="inline-flex items-center gap-1.5 hover:text-highlighted transition-colors tabular-nums">
+              <NuxtLink v-if="best" :to="{ query: periodQuery(best.period) }" class="inline-flex items-center gap-1.5 rounded-sm hover:text-highlighted transition-colors outline-primary/25 focus-visible:outline-3 tabular-nums">
                 <UIcon name="i-lucide-award" class="size-4" />
                 Best year {{ best.period }}, #{{ format(best.rank) }} with {{ format(best.score) }} pts
               </NuxtLink>
@@ -441,7 +441,7 @@ defineOgImage('Nuxter.takumi', { username, period: () => period.value === 'all' 
               <li v-for="module in contributedPreview.visible" :key="module.name">
                 <NuxtLink
                   :to="`/modules/${module.name}`"
-                  class="flex items-center gap-3 rounded-lg px-3 py-2 ring ring-default hover:bg-elevated/50 transition-colors"
+                  class="flex items-center gap-3 rounded-lg px-3 py-2 ring ring-default hover:bg-elevated/50 transition-colors focus-visible:ring-primary outline-primary/25 focus-visible:outline-3"
                 >
                   <UAvatar
                     :src="moduleImage(module.icon)"
@@ -480,7 +480,7 @@ defineOgImage('Nuxter.takumi', { username, period: () => period.value === 'all' 
               <li v-for="post in blogPostsPreview.visible" :key="post.path">
                 <NuxtLink
                   :to="post.path"
-                  class="flex items-center gap-3 rounded-lg px-3 py-2 ring ring-default hover:bg-elevated/50 transition-colors"
+                  class="flex items-center gap-3 rounded-lg px-3 py-2 ring ring-default hover:bg-elevated/50 transition-colors focus-visible:ring-primary outline-primary/25 focus-visible:outline-3"
                 >
                   <NuxtImg
                     v-if="post.image"
@@ -523,7 +523,7 @@ defineOgImage('Nuxter.takumi', { username, period: () => period.value === 'all' 
                 <ULink
                   :to="localisePath(locale.locale, '/docs')"
                   external
-                  class="flex items-center gap-3 rounded-lg px-3 py-2 ring ring-default hover:bg-elevated/50 transition-colors"
+                  class="flex items-center gap-3 rounded-lg px-3 py-2 ring ring-default hover:bg-elevated/50 transition-colors focus-visible:ring-primary"
                 >
                   <span class="flex items-center justify-center size-8 shrink-0 rounded-md bg-elevated font-mono text-xs uppercase text-highlighted">{{ locale.locale }}</span>
                   <span class="min-w-0">
