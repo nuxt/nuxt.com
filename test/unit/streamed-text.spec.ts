@@ -56,6 +56,7 @@ describe('streamed text', () => {
     ['the guide', '</docs/foo)bar>'],
     ['the guide', '/docs "Read ("'],
     ['the guide', '/docs "Read )"'],
+    ['the guide', '/docs "Read (\nmore"'],
     ['the guide', '/docs \'Read (\''],
     ['the guide', '/docs/it\'s(here)']
   ])('waits for the full URL with label "%s" and destination "%s"', async (label, destination) => {
@@ -98,6 +99,16 @@ describe('streamed text', () => {
       await nextTick()
       replay.drain()
       expect(replay.stream.text.value).toBe(replay.source.value)
+    } finally {
+      replay.stop()
+    }
+  })
+  it.each(['\n', '\r\n', '\r'])('releases an angle destination invalidated by a line ending %j', (lineEnding) => {
+    const text = `Read [guide](</docs)${lineEnding}Continue here. `
+    const replay = setup(text)
+    try {
+      replay.drain()
+      expect(replay.stream.text.value).toBe(text)
     } finally {
       replay.stop()
     }

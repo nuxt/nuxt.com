@@ -55,9 +55,10 @@ function nextTextBoundary(text: string, position: number, budget: number, comple
     let delimiter = ''
     let ruledOut = false
     if (labelEnd >= 0 && text[labelEnd + 1] === '(') {
-      for (const match of text.slice(labelEnd + 1).matchAll(/\\[\s\S]|[()<>"']|\n[ \t]*\n/g)) {
+      for (const match of text.slice(labelEnd + 1).matchAll(/\\[^\r\n]|[()<>"']|\r?\n[ \t]*\r?\n|[\r\n]/g)) {
         const token = match[0]
-        if (token.startsWith('\n')) {
+        // Blank lines end any link; angle destinations also forbid single line endings.
+        if ((token.startsWith('\n') || token.startsWith('\r')) && (delimiter === '>' || token.length > 1)) {
           ruledOut = true
           break
         }
