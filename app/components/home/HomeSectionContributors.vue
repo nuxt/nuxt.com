@@ -10,6 +10,7 @@ let _contributors
 let currentTimeout
 // Keyboard focus pauses the grid like hover: the rotation would unmount the focused avatar link.
 let focusPaused = false
+let hovered = false
 
 function onIntersectionObserver([{ isIntersecting }]) {
   intersecting.value = isIntersecting
@@ -50,9 +51,14 @@ function onFocusIn(event) {
 function onFocusOut() {
   if (!focusPaused) return
   focusPaused = false
-  startTimer(2500)
+  if (!hovered) startTimer(2500)
+}
+function onMouseEnter() {
+  hovered = true
+  stopTimer()
 }
 function onMouseLeave() {
+  hovered = false
   if (!focusPaused) startTimer(2500)
 }
 async function loadImages(usernames) {
@@ -70,8 +76,10 @@ async function loadImages(usernames) {
 async function nextContributors() {
   const newStart = (start.value + total >= contributors.value.length ? 0 : start.value + total)
   await loadImages(contributors.value.slice(newStart, newStart + total))
+  // Paused while the images loaded: the grid moves on once focus or the pointer leaves
+  if (focusPaused || hovered) return
   start.value = newStart
-  if (!focusPaused) startTimer()
+  startTimer()
 }
 </script>
 
@@ -79,7 +87,7 @@ async function nextContributors() {
   <div
     v-intersection-observer="onIntersectionObserver"
     class="grid grid-cols-6 md:grid-cols-8 lg:grid-cols-6 gap-4 sm:gap-8 lg:gap-6 xl:gap-8 xl:p-8"
-    @mouseenter="stopTimer()"
+    @mouseenter="onMouseEnter"
     @mouseleave="onMouseLeave"
     @focusin="onFocusIn"
     @focusout="onFocusOut"
