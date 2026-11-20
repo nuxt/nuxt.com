@@ -52,18 +52,31 @@ function nextTextBoundary(text: string, position: number, budget: number, comple
   if (linkStart >= 0 && couldBeLink) {
     let linkEnd = -1
     let parenthesisDepth = 0
+    let delimiter = ''
+    let ruledOut = false
     if (labelEnd >= 0 && text[labelEnd + 1] === '(') {
-      for (const match of text.slice(labelEnd + 1).matchAll(/\\[\s\S]|[()]|\n[ \t]*\n/g)) {
-        if (match[0].startsWith('\n')) break
-        if (match[0] === '(') parenthesisDepth++
-        else if (match[0] === ')' && --parenthesisDepth === 0) {
+      for (const match of text.slice(labelEnd + 1).matchAll(/\\[\s\S]|[()<>"']|\n[ \t]*\n/g)) {
+        const token = match[0]
+        if (token.startsWith('\n')) {
+          ruledOut = true
+          break
+        }
+        if (token.startsWith('\\')) continue
+        if (delimiter) {
+          if (token === delimiter) delimiter = ''
+          continue
+        }
+        if (token === '<' && !text.slice(labelEnd + 2, labelEnd + 1 + match.index).trim()) delimiter = '>'
+        else if ((token === '"' || token === '\'') && parenthesisDepth === 1 && /\s/u.test(text[labelEnd + match.index] ?? '')) delimiter = token
+        else if (token === '(') parenthesisDepth++
+        else if (token === ')' && --parenthesisDepth === 0) {
           linkEnd = labelEnd + 1 + match.index
           break
         }
       }
     }
     if (linkEnd >= 0) end = Math.max(end, linkEnd + 1)
-    else if (!complete) end = Math.min(end, linkStart > 0 && candidate[linkStart - 1] === '!' ? linkStart - 1 : linkStart)
+    else if (!complete && !ruledOut) end = Math.min(end, linkStart > 0 && candidate[linkStart - 1] === '!' ? linkStart - 1 : linkStart)
   }
   const emptyFence = /(?:^|\n)[ \t]*(?:`{3}|~{3})[^\n]*(?:\n[ \t]*)?$/u.exec(candidate)
   if (!complete && emptyFence) end = Math.min(end, emptyFence.index)

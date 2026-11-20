@@ -51,7 +51,13 @@ describe('streamed text', () => {
     ['the guide', 'https://nuxt.com/docs'],
     ['the items[0] entry', 'https://nuxt.com/docs'],
     ['items[0]', '/docs/foo(bar)'],
-    ['the guide', '/docs']
+    ['the guide', '/docs'],
+    ['the guide', '</docs/foo(bar>'],
+    ['the guide', '</docs/foo)bar>'],
+    ['the guide', '/docs "Read ("'],
+    ['the guide', '/docs "Read )"'],
+    ['the guide', '/docs \'Read (\''],
+    ['the guide', '/docs/it\'s(here)']
   ])('waits for the full URL with label "%s" and destination "%s"', async (label, destination) => {
     const replay = setup(`Read [${label}](${destination}`)
     try {
@@ -71,6 +77,24 @@ describe('streamed text', () => {
     try {
       replay.drain()
       replay.source.value += ' to read the first entry.'
+      await nextTick()
+      replay.drain()
+      expect(replay.stream.text.value).toBe(replay.source.value)
+    } finally {
+      replay.stop()
+    }
+  })
+
+  it.each(['\n\n', '\n \t\n'])('releases an unfinished destination at a paragraph boundary %j', async (boundary) => {
+    const replay = setup('Read [guide](/docs')
+    try {
+      replay.drain()
+      expect(replay.stream.text.value).toBe('Read ')
+      replay.source.value += `${boundary}Next. `
+      await nextTick()
+      replay.drain()
+      expect(replay.stream.text.value).toBe(replay.source.value)
+      replay.source.value += 'Still streaming. '
       await nextTick()
       replay.drain()
       expect(replay.stream.text.value).toBe(replay.source.value)
