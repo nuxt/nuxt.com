@@ -39,7 +39,7 @@ function copyEnv() {
           <ULink
             :to="module.name ? `/modules/${module.name}` : `https://npmx.dev/package/${module.npm}`"
             :target="module.name ? undefined : '_blank'"
-            class="group h-full flex items-start gap-3 rounded-lg p-3 ring ring-default bg-elevated/25 transition-[background-color,box-shadow] duration-150 hover:bg-elevated/60 hover:ring-accented focus-visible:outline-2 focus-visible:outline-primary"
+            class="group h-full flex items-start gap-3 rounded-lg p-3 ring ring-default bg-elevated/25 transition-[background-color,box-shadow] duration-150 hover:bg-elevated/60 hover:ring-accented outline-primary/25 focus-visible:outline-3 focus-visible:ring-primary"
           >
             <span class="size-9 shrink-0 flex items-center justify-center rounded-md bg-default ring ring-default">
               <img v-if="module.icon" :src="moduleImage(module.icon)" alt="" loading="lazy" class="size-5 object-contain">

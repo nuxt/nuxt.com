@@ -115,7 +115,7 @@ const buttonLabel = computed(() => {
             v-for="option in options"
             :key="option.value"
             type="button"
-            class="flex items-start gap-3 px-2 py-2 rounded-md text-left hover:bg-elevated/60 transition-colors disabled:opacity-50"
+            class="flex items-start gap-3 px-2 py-2 rounded-md text-left hover:bg-elevated/60 transition-colors outline-primary/25 focus-visible:outline-3 focus-visible:-outline-offset-3 disabled:opacity-50"
             :disabled="loading"
             @click="updateVisibility(option.value)"
           >

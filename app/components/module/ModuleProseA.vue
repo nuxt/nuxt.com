@@ -2,7 +2,7 @@
   <NuxtLink
     :href="href"
     :target="target"
-    class="inline-block mr-1 text-primary hover:text-primary/80"
+    class="inline-block mr-1 rounded-xs text-primary hover:text-primary/80 outline-primary/25 focus-visible:outline-3"
   >
     <slot />
   </NuxtLink>

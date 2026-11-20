@@ -78,7 +78,7 @@ const recentChats = [
           label="Back"
           class="-ml-2"
         />
-        <NuxtLink to="/" aria-label="Nuxt home" class="inline-flex opacity-80 hover:opacity-100 transition-opacity">
+        <NuxtLink to="/" aria-label="Nuxt home" class="inline-flex rounded-sm opacity-80 hover:opacity-100 focus-visible:opacity-100 transition-opacity outline-primary/25 focus-visible:outline-3">
           <NuxtLogo class="h-6 w-auto" />
         </NuxtLink>
       </div>

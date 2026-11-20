@@ -21,7 +21,7 @@ function safeExternalHref(raw: string) {
       :href="safeExternalHref(source.url)"
       target="_blank"
       rel="noopener noreferrer"
-      class="flex items-center gap-2 px-2 py-1 text-sm text-muted hover:text-default hover:bg-elevated/50 transition-colors min-w-0 rounded-md"
+      class="flex items-center gap-2 px-2 py-1 text-sm text-muted hover:text-default hover:bg-elevated/50 transition-colors min-w-0 rounded-md outline-primary/25 focus-visible:outline-3"
     >
       <img
         :src="getFaviconUrl(source.url)"

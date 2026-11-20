@@ -28,7 +28,7 @@ const sinceFormat = new Intl.DateTimeFormat('en-US', { month: 'short', year: 'nu
         :key="sponsor.sponsorUrl"
         :to="sponsor.sponsorUrl"
         target="_blank"
-        class="flex-1 basis-0 min-w-0 flex items-center justify-center hover:bg-muted/50 transition-colors"
+        class="flex-1 basis-0 min-w-0 flex items-center justify-center hover:bg-muted/50 focus-visible:bg-muted/50 transition-colors outline-primary/25 focus-visible:outline-3 focus-visible:-outline-offset-3"
         :class="featured ? 'flex-col gap-3 px-6 py-10 text-center' : 'gap-2 px-4 h-[110px]'"
       >
         <div class="flex items-center min-w-0" :class="featured ? 'gap-3' : 'gap-2'">

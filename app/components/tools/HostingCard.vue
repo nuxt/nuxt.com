@@ -14,8 +14,8 @@ defineProps<{
 </script>
 
 <template>
-  <div class="flex flex-col rounded-lg border border-default bg-elevated/50 overflow-hidden">
-    <NuxtLink :to="path" class="flex items-start gap-3 p-3 hover:bg-elevated transition-colors">
+  <div class="flex flex-col rounded-lg border border-default bg-elevated/50 overflow-hidden outline-primary/25 has-[>a:focus-visible]:outline-3">
+    <NuxtLink :to="path" class="flex items-start gap-3 p-3 hover:bg-elevated focus-visible:bg-elevated transition-colors focus:outline-none">
       <UAvatar
         v-if="logoSrc"
         :src="logoSrc"
@@ -40,11 +40,11 @@ defineProps<{
           <UIcon name="i-lucide-layers" class="size-3" />
           {{ category }}
         </span>
-        <NuxtLink v-if="website" :to="website" target="_blank" class="flex items-center gap-1 hover:text-default transition-colors">
+        <NuxtLink v-if="website" :to="website" target="_blank" class="flex items-center gap-1 rounded-xs hover:text-default transition-colors outline-primary/25 focus-visible:outline-3">
           <UIcon name="i-lucide-globe" class="size-3" />
           Website
         </NuxtLink>
-        <NuxtLink v-if="nitroPreset" :to="`https://nitro.unjs.io/deploy/providers/${nitroPreset}`" target="_blank" class="flex items-center gap-1 hover:text-default transition-colors">
+        <NuxtLink v-if="nitroPreset" :to="`https://nitro.unjs.io/deploy/providers/${nitroPreset}`" target="_blank" class="flex items-center gap-1 rounded-xs hover:text-default transition-colors outline-primary/25 focus-visible:outline-3">
           <UIcon name="i-lucide-book" class="size-3" />
           Nitro Docs
         </NuxtLink>

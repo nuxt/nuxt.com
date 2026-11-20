@@ -12,12 +12,12 @@ const { meta: docsMeta } = useDocsVersion()
     >
       <template #description>
         It no longer receives bug fixes or security patches.
-        <NuxtLink :to="docsMeta.upgradePath" class="underline">
+        <NuxtLink :to="docsMeta.upgradePath" class="underline rounded-xs outline-warning/25 focus-visible:outline-3">
           Upgrade to Nuxt 4
         </NuxtLink>
         <template v-if="docsMeta.extendedSupport">
           or get
-          <NuxtLink :to="docsMeta.extendedSupport" target="_blank" class="underline">
+          <NuxtLink :to="docsMeta.extendedSupport" target="_blank" class="underline rounded-xs outline-warning/25 focus-visible:outline-3">
             extended support from HeroDevs
           </NuxtLink>
         </template>
