@@ -2,14 +2,11 @@ import { lt, sql } from 'drizzle-orm'
 import type { LibSQLDatabase } from 'drizzle-orm/libsql'
 import { deleteInBatches, personalDataCutoff } from '#server/utils/data-retention'
 import type { DataRetentionOptions } from '#server/utils/data-retention'
-import { agentDailyUsage, agentMemory, chats } from '../db/schema'
+import { agentDailyUsage, chats } from '../db/schema'
 
 const AGENT_USAGE_RETENTION_DAYS = 7
 
-/**
- * Deletes chats and agent memory documents not updated for 12 months (messages and votes
- * cascade), and daily agent usage older than 7 days.
- */
+/** Deletes chats not updated for 12 months (messages and votes cascade) and daily agent usage older than 7 days. */
 export async function purgeExpiredNuxiData<TSchema extends Record<string, unknown>>(
   database: LibSQLDatabase<TSchema>,
   options: DataRetentionOptions = {}
@@ -20,7 +17,6 @@ export async function purgeExpiredNuxiData<TSchema extends Record<string, unknow
 
   return {
     chats: await deleteInBatches(database, chats, lt(sql`coalesce(${chats.updatedAt}, ${chats.createdAt})`, cutoffSeconds), options),
-    agentMemory: await deleteInBatches(database, agentMemory, lt(agentMemory.updatedAt, personalDataCutoff(now)), options),
     agentDailyUsage: await deleteInBatches(database, agentDailyUsage, lt(agentDailyUsage.dayKey, usageCutoffDay), options)
   }
 }
