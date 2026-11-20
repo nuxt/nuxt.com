@@ -12,33 +12,11 @@ const liveUrl = ref<string>()
 const status = ref<LivePreviewStatus>()
 const readyIn = ref<number>()
 const device = ref<'desktop' | 'mobile'>('desktop')
-const downloading = ref(false)
 
-const { preview: livePreview, editor, reloadRequest, startEditing } = useLivePreview()
+const { preview: livePreview, editor, reloadRequest, stopsAt, startEditing, download } = useLivePreview()
 const { open: openNuxi } = useNuxtAgent()
 const { track } = useAnalytics()
 const toast = useToast()
-
-async function downloadProject() {
-  if (!livePreview.value || downloading.value) return
-  downloading.value = true
-  try {
-    const zip = await $fetch<Blob>(`/api/templates/preview/${livePreview.value.id}/download`, { responseType: 'blob' })
-    const url = URL.createObjectURL(zip)
-    const link = document.createElement('a')
-    link.href = url
-    link.download = `${props.template.slug}.zip`
-    document.body.appendChild(link)
-    link.click()
-    link.remove()
-    setTimeout(() => URL.revokeObjectURL(url), 1000)
-    track('Template Action', { template: props.template.name, action: 'Download ZIP' })
-  } catch {
-    toast.add({ title: 'Download failed', description: 'Please try again while the preview is running.', color: 'error' })
-  } finally {
-    downloading.value = false
-  }
-}
 
 function editWithNuxi() {
   track('Template Action', { template: props.template.name, action: 'Edit with Nuxi' })
@@ -51,6 +29,14 @@ const canGoLive = computed(() => canLivePreview(props.template) && !!props.healt
 const booting = computed(() => live.value && status.value !== 'live')
 const livePage = computed(() => liveUrl.value && `${liveUrl.value}${livePreview.value?.path ?? ''}`)
 const address = computed(() => (live.value ? livePage.value || 'Starting the preview…' : props.template.demo || templateRepoUrl(props.template))?.replace(/^https?:\/\//, '').replace(/\/$/, ''))
+const ADDRESS_ACTION = 'size-6 rounded-full flex items-center justify-center text-dimmed transition-[color,background-color,scale] duration-150 ease-snappy hover:text-highlighted hover:bg-elevated active:scale-90 focus-visible:outline-2 focus-visible:outline-primary'
+
+/** The host reads quieter than the route, like a browser's address bar. */
+const addressParts = computed(() => {
+  const value = address.value ?? ''
+  const slash = value.indexOf('/')
+  return slash === -1 ? { host: value, path: '' } : { host: value.slice(0, slash), path: value.slice(slash) }
+})
 const openUrl = computed(() => live.value ? livePage.value : props.template.demo)
 
 /** When the sandbox stops: an estimate until the server reports it, then moved by each extension. */
@@ -86,7 +72,7 @@ watch([remaining, extending], ([value]) => {
       duration: 0,
       actions: [
         ...(canExtend.value ? [{ label: `Add ${PREVIEW_TIMEOUT_MS / 60_000} minutes`, icon: 'i-lucide-clock-plus', onClick: extend }] : []),
-        { label: 'Download ZIP', icon: 'i-lucide-download', color: 'neutral' as const, variant: 'outline' as const, closeOnClick: false, onClick: downloadProject }
+        { label: 'Download ZIP', icon: 'i-lucide-download', color: 'neutral' as const, variant: 'outline' as const, closeOnClick: false, onClick: downloadZip }
       ]
     })
   }
@@ -95,6 +81,15 @@ watch([remaining, extending], ([value]) => {
 function resetTimer() {
   expiresAt.value = Date.now() + PREVIEW_TIMEOUT_MS
   canExtend.value = true
+}
+// A deploy keeps the sandbox running until it ends: the countdown follows, so it never stops the preview mid-deploy.
+/** The latest a deploy keeps the current preview running, or 0. */
+const deployStopsAt = () => stopsAt.value && stopsAt.value.id === livePreview.value?.id ? stopsAt.value.at : 0
+watch(stopsAt, () => live.value && (expiresAt.value = Math.max(expiresAt.value, deployStopsAt())))
+
+function downloadZip() {
+  track('Template Action', { template: props.template.name, action: 'Download ZIP' })
+  download()
 }
 
 function start() {
@@ -119,7 +114,8 @@ async function extend() {
   try {
     const result = await $fetch<{ expiresAt: number, canExtend: boolean }>(`/api/templates/preview/${id}/extend`, { method: 'POST' })
     if (!current()) return
-    expiresAt.value = result.expiresAt
+    // An extension capped by the preview's lifetime can end before a deploy running now: the deploy's deadline wins.
+    expiresAt.value = Math.max(result.expiresAt, deployStopsAt())
     canExtend.value = result.canExtend
     toast.remove(EXPIRY_TOAST)
     track('Template Action', { template: props.template.name, action: 'Extend Live Preview' })
@@ -182,40 +178,51 @@ function stop() {
         </template>
       </div>
 
-      <div class="min-w-0 flex items-center justify-center gap-1.5 text-xs text-muted">
-        <UIcon v-if="!live" name="i-lucide-lock" class="size-3 shrink-0 text-dimmed" />
-        <span class="truncate font-mono">{{ address }}</span>
-        <UTooltip v-if="live && editor === 'on'" text="Running nuxt dev: edits show live">
-          <span class="shrink-0 px-1.5 rounded-sm bg-primary/10 text-primary font-mono text-[10px] leading-4 cursor-default">dev</span>
-        </UTooltip>
-        <UTooltip v-if="live && status === 'live'" text="Reload">
-          <UButton
-            icon="i-lucide-rotate-cw"
-            aria-label="Reload the preview"
-            color="neutral"
-            variant="ghost"
-            size="xs"
-            class="size-6 justify-center text-dimmed hover:text-muted"
-            :ui="{ leadingIcon: 'size-3' }"
-            @click="reloadRequest++"
-          />
-        </UTooltip>
+      <div class="min-w-0 flex justify-center">
+        <div class="min-w-0 w-full max-w-sm h-7 ps-2.5 pe-0.5 flex items-center gap-1.5 rounded-full bg-default ring ring-default text-xs">
+          <UIcon :name="live ? 'i-lucide-globe' : 'i-lucide-lock'" class="size-3.5 shrink-0 text-dimmed" />
+          <span class="min-w-0 flex-1 truncate font-mono">
+            <span class="text-muted">{{ addressParts.host }}</span><span class="text-highlighted">{{ addressParts.path }}</span>
+          </span>
+          <UTooltip v-if="live && editor === 'on'" text="Running nuxt dev: edits show live">
+            <span class="shrink-0 px-1.5 rounded-full bg-primary/10 text-primary font-mono text-[10px] leading-4 cursor-default">dev</span>
+          </UTooltip>
+          <div class="shrink-0 flex items-center">
+            <UTooltip v-if="live && status === 'live'" text="Reload">
+              <button type="button" aria-label="Reload the preview" :class="ADDRESS_ACTION" @click="reloadRequest++">
+                <UIcon name="i-lucide-rotate-cw" class="size-3.5" />
+              </button>
+            </UTooltip>
+            <UTooltip v-if="openUrl" text="Open in New Tab">
+              <a
+                :href="openUrl"
+                target="_blank"
+                rel="noopener"
+                aria-label="Open in new tab"
+                :class="ADDRESS_ACTION"
+                @click="!live && track('Template Action', { template: template.name, action: 'Open Demo' })"
+              >
+                <UIcon name="i-lucide-arrow-up-right" class="size-3.5" />
+              </a>
+            </UTooltip>
+          </div>
+        </div>
       </div>
 
       <div class="flex items-center justify-end gap-0.5">
-        <template v-if="live">
-          <UTooltip v-if="status === 'live'" text="Download ZIP">
+        <template v-if="live && status === 'live'">
+          <UTooltip :text="device === 'mobile' ? 'Desktop View' : 'Mobile View'">
             <UButton
-              icon="i-lucide-download"
-              aria-label="Download project as ZIP"
+              :icon="device === 'mobile' ? 'i-lucide-monitor' : 'i-lucide-smartphone'"
+              :aria-label="device === 'mobile' ? 'Show desktop view' : 'Show mobile view'"
               color="neutral"
               variant="ghost"
               size="xs"
-              :loading="downloading"
-              @click="downloadProject"
+              class="hidden sm:inline-flex"
+              @click="device = device === 'mobile' ? 'desktop' : 'mobile'"
             />
           </UTooltip>
-          <UTooltip v-if="status === 'live'" text="Edit with Nuxi">
+          <UTooltip text="Edit with Nuxi">
             <UButton
               icon="i-custom-nuxi"
               aria-label="Edit with Nuxi"
@@ -225,40 +232,17 @@ function stop() {
               @click="editWithNuxi"
             />
           </UTooltip>
-          <UTooltip v-for="item in ([{ value: 'desktop', icon: 'i-lucide-monitor', label: 'Desktop' }, { value: 'mobile', icon: 'i-lucide-smartphone', label: 'Mobile' }] as const)" :key="item.value" :text="item.label">
-            <UButton
-              :icon="item.icon"
-              :aria-label="item.label"
-              :aria-pressed="device === item.value"
-              color="neutral"
-              :variant="device === item.value ? 'soft' : 'ghost'"
-              size="xs"
-              class="hidden sm:inline-flex"
-              @click="device = item.value"
-            />
-          </UTooltip>
-          <button
-            type="button"
-            aria-label="Stop live preview"
-            class="group ms-1 me-0.5 h-6 ps-2 pe-2.5 flex items-center gap-1.5 rounded-full bg-error/10 ring ring-error/25 text-xs font-medium text-error transition-[background-color,scale] duration-150 ease-snappy hover:bg-error/15 active:scale-[0.96] focus-visible:outline-2 focus-visible:outline-error"
-            @click="stop"
-          >
-            <span class="size-2 rounded-[2px] bg-current transition-transform duration-150 ease-snappy group-hover:scale-110" />
-            Stop
-          </button>
         </template>
-        <UTooltip v-if="openUrl" text="Open in New Tab">
-          <UButton
-            :to="openUrl"
-            target="_blank"
-            icon="i-lucide-arrow-up-right"
-            aria-label="Open in new tab"
-            color="neutral"
-            variant="ghost"
-            size="xs"
-            @click="!live && track('Template Action', { template: template.name, action: 'Open Demo' })"
-          />
-        </UTooltip>
+        <button
+          v-if="live"
+          type="button"
+          aria-label="Stop live preview"
+          class="group ms-1 me-0.5 h-6 ps-2 pe-2.5 flex items-center gap-1.5 rounded-full bg-error/10 ring ring-error/25 text-xs font-medium text-error transition-[background-color,scale] duration-150 ease-snappy hover:bg-error/15 active:scale-[0.96] focus-visible:outline-2 focus-visible:outline-error"
+          @click="stop"
+        >
+          <span class="size-2 rounded-[2px] bg-current transition-transform duration-150 ease-snappy group-hover:scale-110" />
+          Stop
+        </button>
       </div>
     </div>
 

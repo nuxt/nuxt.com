@@ -1,41 +1,13 @@
-import { desc, inArray } from 'drizzle-orm'
+import { desc } from 'drizzle-orm'
 import type { BatchItem } from 'drizzle-orm/batch'
-import type { H3Event } from 'h3'
 import { start } from 'workflow/api'
 import type { Template } from '#shared/types'
 import { checkTemplatesWorkflow } from '../../workflows/check-templates'
-import { applyCheckReport, TEMPLATE_SNAPSHOT_TTL_MS, type CheckReport, type CheckRow, type TemplateToCheck } from './check-report'
+import { TEMPLATE_SNAPSHOT_TTL_MS, type CheckRow, type TemplateToCheck } from './check-report'
+import { recordTemplateCheckRun } from './check-store'
 
 /** A run still `running` after this was cancelled outside nuxt.com or crashed: it no longer blocks a new one. */
 const STALE_AFTER_MS = 3 * 60 * 60 * 1000
-
-export async function recordTemplateCheck(report: CheckReport) {
-  const [previous] = await db.select().from(schema.templateChecks).where(eq(schema.templateChecks.slug, report.slug))
-  const { accepted, row, previousSnapshotId } = applyCheckReport(previous, report, new Date())
-  if (!accepted) return { stopped: true }
-  // Only while the row is still the one the report was checked against: another run may have queued the template since.
-  const owner = report.kind === 'start'
-    ? and(eq(schema.templateChecks.state, 'queued'), eq(schema.templateChecks.batchId, report.batchId))
-    : and(eq(schema.templateChecks.state, 'running'), eq(schema.templateChecks.runId, report.runId))
-  const updated = await db.update(schema.templateChecks).set(row)
-    .where(and(eq(schema.templateChecks.slug, report.slug), owner))
-    .returning({ slug: schema.templateChecks.slug })
-  if (!updated.length) return { stopped: true }
-  return { stopped: false, previousSnapshotId }
-}
-
-/** Called by the run itself: its Chromium sandbox once created, then its end. Templates it didn't get to are no longer queued. */
-export async function recordTemplateCheckRun(update: { id: string, browser?: string, finished?: boolean }) {
-  if (update.browser) {
-    await db.update(schema.templateCheckRuns).set({ browser: update.browser }).where(eq(schema.templateCheckRuns.id, update.id))
-  }
-  if (update.finished) {
-    await db.update(schema.templateCheckRuns).set({ state: 'finished', finishedAt: new Date() })
-      .where(and(eq(schema.templateCheckRuns.id, update.id), eq(schema.templateCheckRuns.state, 'running')))
-    await db.update(schema.templateChecks).set({ state: 'idle', phase: null })
-      .where(and(eq(schema.templateChecks.batchId, update.id), inArray(schema.templateChecks.state, ['queued', 'running'])))
-  }
-}
 
 export async function listTemplateChecks() {
   return db.select().from(schema.templateChecks)
@@ -71,12 +43,7 @@ export async function getActiveTemplateCheckRuns() {
 }
 
 /** Starts a run over every template, the ones in `slugs`, or the ones that don't pass (`failing`). Templates another run checks are skipped. */
-/** Where the check reports back. It sends internal secrets to this URL, so production never takes it from request headers. */
-export function templateCheckBaseURL(event: H3Event) {
-  return process.env.VERCEL_ENV === 'production' ? SITE_URL : getRequestURL(event, { xForwardedHost: true }).origin
-}
-
-export async function startTemplateChecks(baseURL: string, options: { slugs?: string[], failing?: boolean, trigger: 'cron' | 'task' | 'mcp' | 'admin', startedBy?: string }) {
+export async function startTemplateChecks(options: { slugs?: string[], failing?: boolean, trigger: 'cron' | 'task' | 'mcp' | 'admin', startedBy?: string }) {
   const [templates, rows, activeRuns] = await Promise.all([listCheckableTemplates(), listTemplateChecks(), getActiveTemplateCheckRuns()])
   const bySlug = new Map(rows.map(row => [row.slug, row]))
   const activeIds = new Set(activeRuns.map(run => run.id))
@@ -107,8 +74,8 @@ export async function startTemplateChecks(baseURL: string, options: { slugs?: st
   ]
   await db.batch(statements as [BatchItem<'sqlite'>, ...BatchItem<'sqlite'>[]])
 
-  const run = await start(checkTemplatesWorkflow, [{ baseURL, batchId, templates: input }]).catch(async (error) => {
-    await recordTemplateCheckRun({ id: batchId, finished: true })
+  const run = await start(checkTemplatesWorkflow, [{ batchId, templates: input }]).catch(async (error) => {
+    await recordTemplateCheckRun(db, { id: batchId, finished: true })
     throw error
   })
   await db.update(schema.templateCheckRuns).set({ runId: run.runId }).where(eq(schema.templateCheckRuns.id, batchId))

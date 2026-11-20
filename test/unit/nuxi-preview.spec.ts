@@ -12,6 +12,7 @@ let preview: {
   activity: ReturnType<typeof ref<LivePreviewActivity | null>>
   reloadRequest: ReturnType<typeof ref<number>>
   editRequest: ReturnType<typeof ref<number>>
+  deploy: ReturnType<typeof vi.fn>
   startEditing: ReturnType<typeof vi.fn>
   navigate: ReturnType<typeof vi.fn>
 }
@@ -20,7 +21,7 @@ beforeEach(() => {
   chat = reactive({ status: 'streaming', messages: [{ id: 'reply', role: 'assistant', parts: [] }] })
   preview = {
     preview: ref({ id: 'sandbox', url: 'https://example.vercel.run', template: { slug: 'minimal', name: 'Minimal' }, error: 'Previous error' }),
-    activity: ref(null), reloadRequest: ref(0), editRequest: ref(0), startEditing: vi.fn(), navigate: vi.fn()
+    activity: ref(null), reloadRequest: ref(0), editRequest: ref(0), deploy: vi.fn(), startEditing: vi.fn(), navigate: vi.fn()
   }
   vi.stubGlobal('computed', computed)
   vi.stubGlobal('watch', watch)
@@ -75,6 +76,15 @@ describe('Nuxi preview updates', () => {
     await tool('search_docs')
     expect(preview.startEditing).not.toHaveBeenCalled()
     expect(preview.activity.value).toBeNull()
+  })
+
+  it('asks the page to deploy once per call, without starting the dev server', async () => {
+    await tool('deploy_app', { input: { sandboxId: 'sandbox' } })
+    await done('deploy_app', { requested: true }, { sandboxId: 'sandbox' })
+    expect(preview.deploy).toHaveBeenCalledTimes(1)
+    expect(preview.startEditing).not.toHaveBeenCalled()
+    await tool('deploy_app', { input: { sandboxId: 'other' }, toolCallId: 'other-deploy' })
+    expect(preview.deploy).toHaveBeenCalledTimes(1)
   })
 
   it('reloads once after a restarted app has been checked', async () => {
