@@ -108,7 +108,7 @@ Nuxi also **follows threads it's part of**: a reply without a mention in such a 
 Connector settings (`slack/nuxi` and `slack/nuxi-preview`, **Advanced**):
 
 - **Trigger Event Types:** `message.channels` and `message.groups`, for followed threads.
-- **Bot Scopes:** `users:read` (access check, required: without it nobody gets through), `channels:history` and `groups:history` (followed threads), `search:read.public` (`search_slack`), `groups:read` and `mpim:read` (scheduled tasks in private channels).
+- **Bot Scopes:** `users:read` (access check, required: without it nobody gets through), `channels:history` and `groups:history` (followed threads), `search:read.public` (`search_slack`), `channels:read`, `groups:read`, `im:read` and `mpim:read` (scheduled tasks check the destination conversation with `conversations.info` before each run, which needs the read scope of its type).
 
 `agent/tools/search_slack.ts` searches public channels with Slack's [Real-time Search API](https://docs.slack.dev/apis/web-api/real-time-search-api), on Slack and in admin mode only. It uses the per-message `action_token`, so it works only in a turn a mention or DM started.
 

@@ -38,7 +38,8 @@ interface ConversationsMembersResponse {
  * Whether the creator can still see the schedule's conversation. A member can read any public
  * channel and a DM with the app is theirs, so only private channels and group DMs need a
  * membership check: without it, someone removed from a private channel would keep posting there
- * through Nuxi. Needs `groups:read` and `mpim:read`. Errors other than a missing channel throw,
+ * through Nuxi. `conversations.info` needs the read scope of each conversation type (`channels:read`,
+ * `groups:read`, `im:read`, `mpim:read`). Errors other than a missing channel throw,
  * so the provider retries instead of reading an outage as a denial.
  */
 async function canReachChannel(payload: TaskPayload): Promise<boolean> {

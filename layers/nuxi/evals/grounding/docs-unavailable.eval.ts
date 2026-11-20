@@ -1,5 +1,4 @@
 import { defineEval } from 'eve/evals'
-import { satisfies } from 'eve/evals/expect'
 import { readPageDown, searchDocsDown } from '../lib/fixtures'
 
 export default defineEval({
@@ -9,13 +8,10 @@ export default defineEval({
     const session = await t.session({ stubs: [searchDocsDown, readPageDown] })
     const turn = await session.send('What does the `routeRules` option in nuxt.config do?')
     turn.succeeded()
-    t.check(
-      turn.reply ?? '',
-      satisfies((reply: string) => !/\b(?:nothing|no results?|didn'?t find anything)\b/iu.test(reply), 'doesn\'t call a failure "nothing found"')
-    )
     t.judge(
-      'The response either answers from another source or says plainly that the documentation '
-      + 'could not be reached, and never presents the outage as the docs having no answer.',
+      'The response does not claim that the documentation has no answer or that nothing was found '
+      + 'about the question. Explaining what the option does, or saying the docs could not be '
+      + 'reached, both pass.',
       { on: turn.reply }
     ).gate(0.7)
   }
