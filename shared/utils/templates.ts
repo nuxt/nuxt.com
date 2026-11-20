@@ -152,8 +152,14 @@ export function buildDeployUrl(template: Template, provider: TemplateDeployProvi
   if (!deployProviders(template).includes(provider)) return undefined
   const url = template.deploy?.repositoryUrl || templateRepoUrl(template)
   if (!url) return undefined
-  if (provider === 'cloudflare') return `https://deploy.workers.cloudflare.com/?${new URLSearchParams({ url }).toString()}`
-  return provider === 'netlify' ? buildNetlifyDeployUrl(template, url) : buildVercelDeployUrl(template, url)
+  switch (provider) {
+    case 'cloudflare':
+      return `https://deploy.workers.cloudflare.com/?${new URLSearchParams({ url }).toString()}`
+    case 'netlify':
+      return buildNetlifyDeployUrl(template, url)
+    case 'vercel':
+      return buildVercelDeployUrl(template, url)
+  }
 }
 
 function buildNetlifyDeployUrl(template: Template, url: string): string | undefined {
