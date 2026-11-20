@@ -1,7 +1,7 @@
 import { timingSafeEqual } from 'node:crypto'
 import type { AuthFn } from 'eve/channels/auth'
 import { localDev, vercelOidc } from 'eve/channels/auth'
-import { defaultEveAuth, eveChannel } from 'eve/channels/eve'
+import { defaultEveAuth, eveChannel, type EveAuthFn } from 'eve/channels/eve'
 import { checkBotId } from 'botid/server'
 import { appFetch, internalHeaders } from '../lib/internal-api.js'
 import { anonymousIpKey, clientIp } from '../../shared/utils/rate-limit.js'
@@ -79,11 +79,22 @@ function nuxtServerAuth(): AuthFn<Request> {
   }
 }
 
+const localDevAuth = localDev()
+
+/**
+ * `evals/` replace tools such as `search_docs` with fixed results, which needs `allowToolStubs`.
+ * `localDev()` admits callers only on a local `eve dev` server, so deployments never grant it.
+ */
+const localDevWithStubs: EveAuthFn = async (request) => {
+  const caller = await localDevAuth(request)
+  return caller ? { ...caller, allowToolStubs: true } : null
+}
+
 export default eveChannel({
   auth: [
     nuxtSessionAuth(),
     nuxtServerAuth(),
-    localDev(),
+    localDevWithStubs,
     vercelOidc()
   ],
   // Anything scoped to a single turn (the page the user has open) rides on

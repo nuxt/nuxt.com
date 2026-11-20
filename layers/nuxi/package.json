@@ -5,7 +5,8 @@
   "scripts": {
     "build": "eve build",
     "dev": "eve dev",
-    "start": "eve start"
+    "start": "eve start",
+    "eval": "eve eval"
   },
   "dependencies": {
     "@ai-sdk/gateway": "^4.0.138",
@@ -25,6 +26,7 @@
     "zlib-sync": "^0.1.10"
   },
   "devDependencies": {
+    "just-bash": "^3.6.1",
     "microsandbox": "^0.7.13"
   }
 }

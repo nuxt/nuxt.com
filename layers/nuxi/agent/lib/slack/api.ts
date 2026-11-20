@@ -116,19 +116,6 @@ interface SlackHistoryResponse {
   }>
 }
 
-interface SlackUserInfoResponse {
-  ok: boolean
-  error?: string
-  user?: {
-    name?: string
-    real_name?: string
-    profile?: {
-      display_name?: string
-      real_name?: string
-    }
-  }
-}
-
 interface UsersConversationsResponse {
   ok: boolean
   error?: string
@@ -155,7 +142,7 @@ function slackBotToken(): Promise<string> {
 }
 
 /** Eve's `callSlackApi` signs and form-encodes the request; callers check `ok`. */
-async function slackApi<T>(operation: string, body: Record<string, unknown>): Promise<T> {
+export async function slackApi<T>(operation: string, body: Record<string, unknown>): Promise<T> {
   return await callSlackApi({ botToken: slackBotToken, operation, body }) as T
 }
 
@@ -210,35 +197,6 @@ async function loadBotChannelIndex(): Promise<Map<string, SlackChannelInfo>> {
   }
 
   return channelIndexInflight
-}
-
-const USER_NAME_TTL_MS = 60 * 60 * 1000
-
-interface UserNameCacheEntry {
-  name: string | undefined
-  expiresAt: number
-}
-
-const userNameCache = new Map<string, UserNameCacheEntry>()
-
-/** Real display name for a Slack user id, via `users.info`. Cached an hour, including failures (missing `users:read` scope, deleted user, ...) to avoid retrying every message. */
-export async function resolveSlackUserName(userId: string): Promise<string | undefined> {
-  const cached = userNameCache.get(userId)
-  if (cached && cached.expiresAt > Date.now()) return cached.name
-
-  let name: string | undefined
-  try {
-    const data = await slackApi<SlackUserInfoResponse>('users.info', { user: userId })
-    name = data.ok
-      ? (data.user?.profile?.display_name || data.user?.profile?.real_name || data.user?.real_name || data.user?.name || undefined)
-      : undefined
-    if (!data.ok) console.warn('[nuxi:slack] users.info failed', { userId, error: data.error })
-  } catch (error) {
-    console.warn('[nuxi:slack] users.info lookup failed', { userId, error })
-  }
-
-  userNameCache.set(userId, { name, expiresAt: Date.now() + USER_NAME_TTL_MS })
-  return name
 }
 
 const HTTP_URL_KEYS = new Set([

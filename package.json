@@ -16,6 +16,7 @@
     "dev:nuxi": "nuxt dev --ui-only --with-nuxi",
     "dev:full": "nuxt dev",
     "nuxi": "pnpm --dir layers/nuxi run dev",
+    "eval:nuxi": "pnpm --dir layers/nuxi run eval",
     "build": "NODE_OPTIONS='--max-old-space-size=8192' nuxt build",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",

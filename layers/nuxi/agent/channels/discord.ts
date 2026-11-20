@@ -286,7 +286,7 @@ function createDiscordBridge() {
     }
 
     // Discord-specific behaviour lives in the always-on prompt, keyed on the
-    // principal (`lib/surface-instructions.ts`) — passing it as `context` here
+    // principal (`lib/identity/surface-instructions.ts`) — passing it as `context` here
     // would prepend a fresh copy to history on every message.
     await send(
       toMessageContent(turn),
