@@ -8,7 +8,7 @@ export type TemplateStatusFilter = 'working' | 'live'
 export type TemplateSort = 'recommended' | 'stars' | 'updated' | 'name'
 
 /** A host with a one-click deploy link that clones the template into the user's GitHub account. */
-export type TemplateDeployProvider = 'vercel' | 'netlify'
+export type TemplateDeployProvider = 'vercel' | 'netlify' | 'cloudflare'
 
 /** An entry of a Vercel Deploy Button `stores` parameter. */
 export type DeployStore
