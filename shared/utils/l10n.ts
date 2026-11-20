@@ -8,7 +8,8 @@ import { CURRENT_DOCS_VERSION, docsPathPrefix, docsStatus, isArchivedDocVersion,
  */
 export const L10N_LOCALES = {
   fr: { machine: true },
-  de: { machine: true }
+  de: { machine: true },
+  ru: { machine: true }
 } as const satisfies Record<string, { machine: boolean }>
 
 export type L10nLocale = keyof typeof L10N_LOCALES
@@ -444,6 +445,39 @@ export const L10N_STRINGS = {
       'edited': 'Übersetzung geprüft und bearbeitet',
       'verified': 'Übersetzung bestätigt',
       'rejected': 'Übersetzung abgelehnt: englischer Text'
+    } satisfies Record<SegmentStatus, string>
+  },
+  ru: {
+    language: 'Русский',
+    languageLabel: 'Язык:',
+    colon: ': ',
+    machine: 'Машинный перевод',
+    reviewedTranslation: 'Проверенный перевод',
+    reviewed: (share: number) => `${Math.floor(share * 100)}\u00A0% проверено`,
+    pending: 'Некоторые фрагменты ещё нужно проверить.',
+    toReview: 'проверить',
+    review: 'Проверить',
+    reviewHint: 'Показать состояние каждого фрагмента и изменить его',
+    reviewBlockHint: 'Нажмите Enter, чтобы изменить этот фрагмент.',
+    legend: {
+      'untranslated': 'Не переведено',
+      'machine': 'Машинный',
+      'pending-review': 'На проверку',
+      'edited': 'Изменено',
+      'verified': 'Проверено',
+      'rejected': 'Отклонено'
+    } satisfies Record<SegmentStatus, string>,
+    improve: 'Улучшить этот перевод',
+    readMore: { before: 'Подробнее: ', after: '.' },
+    source: 'Исходный текст (английский)',
+    loading: 'Загрузка…',
+    status: {
+      'untranslated': 'Ещё не переведено: английский текст',
+      'machine': 'Машинный перевод',
+      'pending-review': 'Перевод нужно проверить: английский текст изменился',
+      'edited': 'Перевод проверен и изменён',
+      'verified': 'Перевод проверен',
+      'rejected': 'Перевод отклонён: английский текст'
     } satisfies Record<SegmentStatus, string>
   }
 } as const satisfies Record<L10nLocale, unknown>

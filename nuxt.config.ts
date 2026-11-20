@@ -187,7 +187,8 @@ export default defineNuxtConfig({
           nuxtathon2: '',
           // One key per locale in `L10N_LOCALES` (`nuxterTranslatorRole`)
           translatorFr: '',
-          translatorDe: ''
+          translatorDe: '',
+          translatorRu: ''
         }
       }
     }
