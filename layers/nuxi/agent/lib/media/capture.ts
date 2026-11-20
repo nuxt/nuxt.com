@@ -5,6 +5,14 @@ import { z } from 'zod'
 /** One browser per sandbox: the `browser__*` tools and the capture tools drive the same page. */
 export const BROWSER_SESSION = 'nuxi'
 
+/**
+ * Launch flags of the sandbox's Chromium, which `subagents/coder/sandbox.ts` writes to agent-browser's
+ * user config. Headless Chromium reports no mouse, so `(hover: hover)` doesn't match and a site built
+ * with Tailwind v4 never shows its `hover:` styles in a capture. These Blink settings make it report
+ * one. The setting is per browser, so the `tablet` and `mobile` viewports report a mouse too.
+ */
+export const BROWSER_LAUNCH_ARGS = '--blink-settings=primaryHoverType=2,availableHoverTypes=2,primaryPointerType=4,availablePointerTypes=4'
+
 /** Where captures land in the sandbox, as `<name>.<ext>`. */
 export const CAPTURES_DIR = '/workspace/captures'
 

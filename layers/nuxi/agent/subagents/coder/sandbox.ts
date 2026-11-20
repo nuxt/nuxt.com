@@ -1,6 +1,6 @@
-import { installAgentBrowser } from '@agent-browser/eve/sandbox'
+import { installAgentBrowser, quoteShellArg } from '@agent-browser/eve/sandbox'
 import { DefaultSandbox, defineSandbox } from 'eve/sandbox'
-import { PRIVATE_SUBNETS } from '../../lib/media/capture.js'
+import { BROWSER_LAUNCH_ARGS, PRIVATE_SUBNETS } from '../../lib/media/capture.js'
 
 type PrepareSandbox = NonNullable<NonNullable<Parameters<typeof DefaultSandbox.environment>[0]>['prepare']>
 
@@ -26,6 +26,12 @@ const prepare: PrepareSandbox = async (sandbox) => {
     { run: ({ command, abortSignal }) => sandbox.run({ command, signal: abortSignal }) },
     { installBrowser, installSystemDependencies: true }
   )
+
+  // agent-browser reads its user config at every launch, so the `browser__*` tools and the capture
+  // tools start the same Chromium whichever runs first. `args` is one string: it refuses an array.
+  const config = quoteShellArg(JSON.stringify({ args: BROWSER_LAUNCH_ARGS }))
+  const configured = await sandbox.run({ command: `mkdir -p "$HOME/.agent-browser" && printf '%s' ${config} > "$HOME/.agent-browser/config.json"` })
+  if (configured.exitCode !== 0) throw new Error(`Could not write the agent-browser config: ${configured.stderr || configured.stdout}`)
 
   const ffmpeg = await sandbox.run({ command: 'sudo apt-get install -y --no-install-recommends ffmpeg' })
   if (ffmpeg.exitCode !== 0) throw new Error(`Could not install ffmpeg: ${ffmpeg.stderr || ffmpeg.stdout}`)
