@@ -83,12 +83,14 @@ describe('instanceSource', () => {
       }
     })
 
-    it('parses both with the command reference\'s plugins, versioning their `/docs/*` links', () => {
+    it('parses both with the command reference\'s plugins, versioning their `/docs/*` links and resolving relative `.md` links', () => {
       const names = (key: Parameters<typeof instancePlugins>[0]) => instancePlugins(key).map(plugin => plugin.name)
       for (const version of MODULE_BUILDER_DOC_VERSIONS) {
-        expect(names(moduleBuilderInstanceKey(version))).toEqual(names(cliInstanceKey(version)))
-        expect(names(buildModuleInstanceKey(version))).toEqual(names(cliInstanceKey(version)))
+        const expected = expect.arrayContaining([...names(cliInstanceKey(version)), 'relative-links'])
+        expect(names(moduleBuilderInstanceKey(version))).toEqual(expected)
+        expect(names(buildModuleInstanceKey(version))).toEqual(expected)
         expect(names(buildModuleInstanceKey(version))).toContain('nuxt-docs-links')
+        expect(names(cliInstanceKey(version))).not.toContain('relative-links')
       }
     })
 

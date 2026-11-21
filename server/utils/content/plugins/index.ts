@@ -10,6 +10,7 @@ import { dottedFrontmatter } from './dotted-frontmatter'
 import { docsLinks } from './docs-links'
 import { repoImages } from './repo-images'
 import { docsMedia } from './docs-media'
+import { relativeLinks } from './relative-links'
 import { configDocs } from './config-docs'
 import { sanitizeData } from './sanitize-data'
 import { CLI_DOCS_REFS, CLI_DOCS_REPO, type CliDocVersion } from '../../../../shared/utils/cli'
@@ -54,7 +55,7 @@ export function instancePlugins(key: ContentInstanceKey): ContentPlugin<Record<s
   }
   if (key.startsWith('module-builder:') || key.startsWith('build-module:')) {
     const version = key.slice(key.indexOf(':') + 1) as ModuleBuilderDocVersion
-    return [dottedFrontmatter(), docsLinks(version), repoImages(MODULE_BUILDER_DOCS_REPO, MODULE_BUILDER_DOCS_REFS[version].branch)]
+    return [dottedFrontmatter(), docsLinks(version), relativeLinks(), repoImages(MODULE_BUILDER_DOCS_REPO, MODULE_BUILDER_DOCS_REFS[version].branch)]
   }
   if (key.startsWith('module:')) {
     const name = key.slice('module:'.length) as ModuleDocsName
