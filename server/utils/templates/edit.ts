@@ -187,8 +187,15 @@ function pageText(html: string) {
 
 const DEV_STARTED = '/tmp/nuxt-com-dev-started'
 const DEV_PID = '/tmp/nuxt-com-dev.pid'
+/** The detached script that owns a start: it runs the warmup and removes the start's files when it exits. */
+const DEV_WRAPPER_PID = '/tmp/nuxt-com-dev-wrapper.pid'
 const DEV_READY = '/tmp/nuxt-com-dev-ready'
 const WARMUP_PATH = '/tmp/nuxt-com-warmup.mjs'
+/** Set while a deploy builds the app: `nuxt dev` and a production build don't both fit in the sandbox's memory. */
+const DEPLOYING = '/tmp/nuxt-com-deploying'
+const DEPLOY_MARKER_TTL_S = 6 * 60
+/** Waiting for a start under way, then for `nuxt dev` to exit. Counted in the preview's extension for the deploy. */
+export const PAUSE_TIMEOUT_MS = 60_000
 const BRIDGE_PATH = '/tmp/nuxt-com-preview.client.js'
 const BOOT_GUARD_PATH = '/tmp/nuxt-com-preview.js'
 
@@ -197,8 +204,13 @@ const BOOT_GUARD_PATH = '/tmp/nuxt-com-preview.js'
  * so edits reach the page through hot module replacement.
  */
 export async function startDevServer(sandbox: Sandbox) {
-  // `mkdir` fails when the directory exists, so only the first of two concurrent callers starts it.
-  if ((await run(sandbox, `mkdir ${DEV_STARTED} 2>/dev/null`)).exitCode !== 0) return
+  // `mkdir` fails when the directory exists, so only the first of two concurrent callers starts it. A deploy marks the sandbox
+  // first and then waits for a start already holding the directory, so checking after `mkdir` leaves no gap between them.
+  // A marker older than any deploy was left by one that couldn't clean up, and no longer blocks editing.
+  const lock = await run(sandbox, `mkdir ${DEV_STARTED} 2>/dev/null || exit 1
+if [ -f ${DEPLOYING} ] && [ $(( $(date +%s) - $(stat -c %Y ${DEPLOYING}) )) -lt ${DEPLOY_MARKER_TTL_S} ]; then rmdir ${DEV_STARTED}; exit 3; fi`)
+  if (lock.exitCode === 3) throw createError({ statusCode: 409, message: 'A deploy is building the app. Edit again once it finishes.' })
+  if (lock.exitCode !== 0) return
   try {
     await sandbox.writeFiles([
       { path: WARMUP_PATH, content: DEV_WARMUP_SCRIPT },
@@ -211,13 +223,49 @@ export async function startDevServer(sandbox: Sandbox) {
     const host = new URL(sandbox.domain(DEV_PORT)).hostname
     await sandbox.runCommand({
       cmd: 'bash',
-      args: ['-c', `trap 'rm -f ${DEV_READY} ${DEV_PID}; rmdir ${DEV_STARTED}' EXIT; ${bridge}; ${DISABLE_DEVTOOLS}; export NUXT_TELEMETRY_DISABLED=1 __VITE_ADDITIONAL_SERVER_ALLOWED_HOSTS=${host}; ./node_modules/.bin/nuxt dev --port ${DEV_PORT} --public > ${DEV_LOG} 2>&1 & dev_pid=$!; echo "$dev_pid" > ${DEV_PID}; if ! node ${WARMUP_PATH} page; then kill "$dev_pid"; exit 1; fi; touch ${DEV_READY}; wait "$dev_pid"`],
+      args: ['-c', `echo $$ > ${DEV_WRAPPER_PID}; trap 'rm -f ${DEV_READY} ${DEV_PID} ${DEV_WRAPPER_PID}; rmdir ${DEV_STARTED}' EXIT; ${bridge}; ${DISABLE_DEVTOOLS}; export NUXT_TELEMETRY_DISABLED=1 __VITE_ADDITIONAL_SERVER_ALLOWED_HOSTS=${host}; ./node_modules/.bin/nuxt dev --port ${DEV_PORT} --public > ${DEV_LOG} 2>&1 & dev_pid=$!; echo "$dev_pid" > ${DEV_PID}; if ! node ${WARMUP_PATH} page; then kill "$dev_pid"; exit 1; fi; touch ${DEV_READY}; wait "$dev_pid"`],
       cwd: WORKDIR,
       detached: true
     })
   } catch (error) {
     await run(sandbox, `rmdir ${DEV_STARTED}`).catch(() => {})
     throw error
+  }
+}
+
+/**
+ * Stops `nuxt dev` for a deploy, with its whole process tree, and keeps it from starting until `resumeDevServer`.
+ * A start already under way is waited for and stopped too. Fails rather than let the build run next to a dev server.
+ */
+export async function pauseDevServer(sandbox: Sandbox) {
+  const result = await run(sandbox, `touch ${DEPLOYING}; test -d ${DEV_STARTED} || exit 0
+tree() { echo "$1"; for child in $(pgrep -P "$1"); do tree "$child"; done; }
+alive() { for p in $pids; do kill -0 "$p" 2>/dev/null && return 0; done; return 1; }
+for i in $(seq 1 120); do test -f ${DEV_WRAPPER_PID} && break; test -d ${DEV_STARTED} || exit 0; sleep 0.25; done
+test -f ${DEV_WRAPPER_PID} || exit 4
+# The wrapper owns the start's files: once it's gone, nothing can remove a later start's. The tree is listed up front,
+# since a child the wrapper leaves behind is no longer its child.
+pids=$(tree "$(cat ${DEV_WRAPPER_PID})"); kill -TERM $pids 2>/dev/null
+for i in $(seq 1 40); do alive || break; sleep 0.25; done
+if alive; then kill -KILL $pids 2>/dev/null; sleep 1; fi
+alive && exit 5
+rm -f ${DEV_READY} ${DEV_PID} ${DEV_WRAPPER_PID}; rmdir ${DEV_STARTED} 2>/dev/null; exit 0`, PAUSE_TIMEOUT_MS)
+  if (result.exitCode !== 0) {
+    console.error('[templates] dev server did not stop for the deploy', result.exitCode, result.output)
+    throw createError({ statusCode: 503, message: 'Live editing could not pause for the deploy. Try again.' })
+  }
+}
+
+/** Lets editing start again. Retried: while the marker stays, editing waits for it to expire. */
+export async function resumeDevServer(sandbox: Sandbox) {
+  for (let attempt = 0; ; attempt++) {
+    try {
+      await run(sandbox, `rm -f ${DEPLOYING}`)
+      return
+    } catch (error) {
+      if (attempt >= 2) throw error
+      await new Promise(resolve => setTimeout(resolve, 1000 * (attempt + 1)))
+    }
   }
 }
 

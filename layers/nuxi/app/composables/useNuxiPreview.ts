@@ -1,7 +1,7 @@
 import { getToolName, isToolUIPart } from 'ai'
 import type { AgentChatHandle } from './eve/types'
 
-const PREVIEW_TOOLS = new Set(['list_app_files', 'read_app_file', 'edit_app_file', 'add_app_module', 'check_app_page'])
+const PREVIEW_TOOLS = new Set(['list_app_files', 'read_app_file', 'edit_app_file', 'add_app_module', 'check_app_page', 'deploy_app'])
 const isBusy = (status: string) => status === 'streaming' || status === 'submitted'
 
 export function useNuxiPreview(chat: Pick<AgentChatHandle, 'messages' | 'status'>) {
@@ -46,8 +46,14 @@ export function useNuxiPreview(chat: Pick<AgentChatHandle, 'messages' | 'status'
     }
 
     for (const tool of tools.value) {
-      preview.startEditing()
       const name = getToolName(tool)
+      // Deploying builds the source files: it doesn't need `nuxt dev`, and runs once per call.
+      if (name === 'deploy_app') {
+        if (!followed.has(tool.toolCallId)) preview.deploy()
+        followed.add(tool.toolCallId)
+        continue
+      }
+      preview.startEditing()
       const input = tool.input as Record<string, unknown>
       const output = tool.state === 'output-available' ? tool.output as Record<string, unknown> | undefined : undefined
       const target = name === 'add_app_module' ? input.name : input.path

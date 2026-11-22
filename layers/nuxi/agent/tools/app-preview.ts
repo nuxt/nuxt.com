@@ -9,7 +9,8 @@ export const APP_PREVIEW_INSTRUCTIONS = `**Live preview — web chat only:** A \
 - Install modules with \`add_app_module\` and a real npm name from \`show_module\` or \`search_modules\`, then finish the module's setup before using it: for \`@nuxt/ui\`, a CSS file with \`@import "tailwindcss";\` and \`@import "@nuxt/ui";\` listed in \`css\` in \`nuxt.config.ts\`, and the app wrapped in \`<UApp>\`.
 - Changes show in the preview live. The first edit waits for the preview's dev server to start, which can take a minute: the user sees it starting. A \`Live preview page:\` line is the route the user is looking at: "this page" means that route. When an edit shows on another route, pass it as \`previewPath\` so the preview opens it. A \`Live preview error:\` line is an error the app threw since: fix it.
 - After your last change, call \`check_app_page\` on the page you changed. A status other than 200, missing text you added, or a dev server error means it doesn't work yet: fix it and check again. Never say a change is done before the check shows it.
-- Reply in a sentence or two with what you changed on which page, e.g. "The home page now says Hello world." Talk about the page, not "the application". Do **not** offer \`show_prompt\` for these changes unless the user asks how to apply them to their own project.`
+- Reply in a sentence or two with what you changed on which page, e.g. "The home page now says Hello world." Talk about the page, not "the application". Do **not** offer \`show_prompt\` for these changes unless the user asks how to apply them to their own project.
+- When the user asks to deploy, publish, ship or share their version, call \`deploy_app\` after your last change has passed \`check_app_page\`. The page deploys it to Vercel without an account, in about a minute, and shows them the live URL and a claim link. You never see either: tell them its progress shows at the bottom of the preview and the links stay in the Deploy menu above it, that the deployment stays live for an hour unless they claim it with a free Vercel account, and that the claim link is private. Deploy once per request: a visitor can deploy once every 5 minutes.`
 
 type PreviewAction = 'list' | 'read' | 'edit' | 'add_module' | 'check'
 
@@ -67,6 +68,15 @@ export default defineDynamic((ctx) => {
       description: 'Load a route of the app in the user\'s live preview the way their browser would: returns the HTTP status, the text the page rendered, and recent dev server errors. Call it after your last change, before you reply.',
       inputSchema: z.object({ sandboxId, path: z.string().startsWith('/').describe('The route to load, e.g. "/"') }),
       execute: (input, ctx) => callPreview('check', input, ctx.session.auth.current, 300_000)
+    }),
+    deploy_app: defineTool({
+      description: 'Deploy the app in the user\'s live preview, with every change made so far, to Vercel without an account. The page runs the deploy and shows the user its URL and private claim link: this tool only asks it to, and returns at once.',
+      inputSchema: z.object({ sandboxId }),
+      // The claim link hands over the project, so it must never enter the chat: the browser deploys, through the visitor's own session.
+      execute: (_input, ctx) => {
+        if (!browserPrincipal(ctx.session.auth.current)) throw new Error('Live preview deploys require a browser session.')
+        return { requested: true, note: 'The page is deploying now. The user sees the URL and claim link at the bottom of the preview in about a minute; you do not get them.' }
+      }
     })
   }
 })

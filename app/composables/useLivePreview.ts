@@ -1,3 +1,5 @@
+import type { PreviewDeployEvent } from '#shared/types'
+
 export interface LivePreview {
   id: string
   url: string
@@ -6,6 +8,15 @@ export interface LivePreview {
   path?: string
   /** The last error the app threw after it mounted. */
   error?: string
+}
+
+export interface LivePreviewDeployment {
+  /** The template it was deployed from: the state outlives the page, and other templates mustn't show it. */
+  slug: string
+  url: string
+  /** Hands the project over to whoever opens it: shown only to the visitor. */
+  claimUrl: string
+  expiresAt: number
 }
 
 export type LivePreviewEditor = 'off' | 'starting' | 'on' | 'failed'
@@ -31,6 +42,16 @@ export function useLivePreview() {
   /** Bumped to reload the frame, once a change restarted the dev server or the visitor asks for it. */
   const reloadRequest = useState('live-preview-reload-request', () => 0)
   const activity = useState<LivePreviewActivity | null>('live-preview-activity', () => null)
+  /** The visitor's temporary Vercel deployment. Deploying again from the same preview updates its URL and claim link. */
+  const deployment = useState<LivePreviewDeployment | null>('live-preview-deployment', () => null)
+  const deploying = useState('live-preview-deploying', () => false)
+  const deployError = useState('live-preview-deploy-error', () => '')
+  /** When a preview's sandbox stops, once a deploy extended it. Keyed by preview, so a late event can't move another preview's countdown. */
+  const stopsAt = useState<{ id: string, at: number } | null>('live-preview-stops-at', () => null)
+  const downloading = useState('live-preview-downloading', () => false)
+  /** The deploy panel shows the deploy's progress itself, so the island leaves it out while it's open. */
+  const deployPanelOpen = useState('live-preview-deploy-panel-open', () => false)
+  const toast = useToast()
 
   /** Loads another server of the same sandbox out of sight and swaps over once it mounts. */
   function serveFrom(url: string) {
@@ -45,6 +66,61 @@ export function useLivePreview() {
     if (preview.value && (editor.value === 'off' || editor.value === 'failed')) editRequest.value++
   }
 
+  /**
+   * Deploys the preview, with every edit, to Vercel without an account. The browser runs it, for the toolbar and for Nuxi alike,
+   * so the claim link, which hands over the project, never enters the chat.
+   */
+  async function deploy() {
+    const current = preview.value
+    if (!current || deploying.value) return
+    deploying.value = true
+    deployError.value = ''
+    // The build needs the memory `nuxt dev` uses: the deploy stops it, and editing starts again once it ends.
+    const editing = editor.value === 'on' || editor.value === 'starting'
+    try {
+      const response = await fetch(`/api/templates/preview/${current.id}/deploy`, { method: 'POST' })
+      let deployed = false
+      await readEvents<PreviewDeployEvent>(response, (data) => {
+        if (data.type === 'error') throw new Error(data.message)
+        if (data.type === 'started' && preview.value?.id === current.id) stopsAt.value = { id: current.id, at: data.stopsAt }
+        if (data.type === 'ready') {
+          deployment.value = { slug: current.template.slug, url: data.url, claimUrl: data.claimUrl, expiresAt: data.expiresAt }
+          deployed = true
+        }
+      }, 'The deploy failed.')
+      if (!deployed) throw new Error('The deploy failed.')
+    } catch (err: any) {
+      deployError.value = err instanceof SyntaxError ? 'The deploy failed.' : err?.message || 'The deploy failed.'
+    } finally {
+      deploying.value = false
+      if (editing && preview.value?.id === current.id) {
+        editor.value = 'off'
+        editRequest.value++
+      }
+    }
+  }
+
+  async function download() {
+    const current = preview.value
+    if (!current || downloading.value) return
+    downloading.value = true
+    try {
+      const zip = await $fetch<Blob>(`/api/templates/preview/${current.id}/download`, { responseType: 'blob' })
+      const url = URL.createObjectURL(zip)
+      const link = document.createElement('a')
+      link.href = url
+      link.download = `${current.template.slug}.zip`
+      document.body.appendChild(link)
+      link.click()
+      link.remove()
+      setTimeout(() => URL.revokeObjectURL(url), 1000)
+    } catch {
+      toast.add({ title: 'Download failed', description: 'Please try again while the preview is running.', color: 'error' })
+    } finally {
+      downloading.value = false
+    }
+  }
+
   function clientContext() {
     if (!preview.value) return undefined
     const { id, template, path, error } = preview.value
@@ -55,5 +131,5 @@ export function useLivePreview() {
     ].filter(Boolean).join('\n')
   }
 
-  return { preview, navigation, editor, editStep, editError, editRequest, reloadRequest, activity, serveFrom, navigate, startEditing, clientContext }
+  return { preview, navigation, editor, editStep, editError, editRequest, reloadRequest, activity, deployment, deploying, deployError, stopsAt, downloading, deployPanelOpen, serveFrom, navigate, startEditing, deploy, download, clientContext }
 }
