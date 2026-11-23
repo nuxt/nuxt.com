@@ -5,7 +5,7 @@ const props = defineProps<{
   navigation?: NavigationItem[]
 }>()
 
-const { search, status } = useSearch()
+const { search, status, warmup } = useSearch()
 const { searchGroups, searchLinks, searchTerm } = useNavigation()
 const { mapSearchResults } = useContentSearch()
 const { track } = useAnalytics()
@@ -33,6 +33,28 @@ async function searchWithIndexTitles(query: string, opts?: SearchOptions): Promi
 const fuse = {
   resultLimit: 25
 }
+
+// The palette's search, without opening it: the first call loads the index (about 1.2 MB).
+useAgentTool(defineAgentTool<{ query: string }>({
+  name: 'search_docs',
+  description: 'Search the Nuxt documentation, the CLI reference, the examples and the official module docs. Use when the user asks how to do something in Nuxt or looks for an API.',
+  inputSchema: {
+    type: 'object',
+    properties: { query: { type: 'string', description: 'Keywords or an API name, such as "useFetch" or "route middleware".' } },
+    required: ['query']
+  },
+  annotations: { readOnlyHint: true },
+  async execute({ query }) {
+    await warmup()
+    if (status.value !== 'ready') throw new Error('The search index could not be loaded.')
+    const results = await searchWithIndexTitles(String(query), { limit: 6 })
+    return results.map(result => ({
+      title: result.titles.concat(result.title).join(' > '),
+      path: result.id,
+      excerpt: result.content.slice(0, 160)
+    }))
+  }
+}))
 
 // `docsResults` (capped at the palette's 25) surfaces searches the docs can't answer. It counts what
 // the palette shows (results outside `navigation` are dropped there too), and is left out while the

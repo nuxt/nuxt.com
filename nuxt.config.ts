@@ -593,7 +593,10 @@ export default defineNuxtConfig({
     staticRoutes: true,
     // `staticRoutes` turns this on, but it 404s paths no page matches before the app runs: localised docs
     // (`/fr/docs/**`) and pull previews (`/pull/**`) only match through the router history base in `app/router.options.ts`.
-    early404: false
+    early404: false,
+    // WebMCP tools for agents in the browser: `get_page_markdown` (app.vue), `search_docs` (Search.vue) and
+    // `search_modules` (pages/modules/index.vue), plus Nuxt's own `navigate`.
+    webmcp: true
   },
   compatibilityDate: '2026-01-14',
   nitro: {
