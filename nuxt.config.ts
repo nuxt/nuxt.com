@@ -810,7 +810,8 @@ export default defineNuxtConfig({
   },
   image: {
     format: ['webp', 'jpeg', 'jpg', 'png', 'svg'],
-    provider: 'ipx',
+    // ipx.nuxt.com only fetches from the production site
+    provider: process.env.VERCEL_ENV === 'preview' ? 'none' : 'ipx',
     // Opt-out escape hatch for images IPX must not touch, used by `DocsProseImg`.
     providers: {
       none: { provider: 'none' }
