@@ -237,9 +237,12 @@ function formatCost(usd?: number): string {
   return `$${usd.toFixed(3)}`
 }
 
-// Column header with its definition in a tooltip
+// Column header with its definition in a tooltip, focusable so keyboard users can open it
 function headerWithInfo(label: string, text: string) {
-  return () => h(UTooltip, { text }, () => h('span', { class: 'inline-flex items-center gap-1' }, [
+  return () => h(UTooltip, { text }, () => h('span', {
+    tabindex: 0,
+    class: 'inline-flex items-center gap-1 rounded-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary'
+  }, [
     h('span', {}, label),
     h(UIcon, { name: 'i-lucide-info', class: 'size-3.5 text-dimmed' })
   ]))
