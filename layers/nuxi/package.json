@@ -4,7 +4,7 @@
   "type": "module",
   "scripts": {
     "build": "eve build",
-    "dev": "eve dev",
+    "dev": "eve dev --no-default-extensions",
     "start": "eve start",
     "eval": "eve eval"
   },
