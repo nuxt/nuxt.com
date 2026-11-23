@@ -184,7 +184,7 @@ const items = computed(() => [
           <div class="flex items-center gap-3 flex-wrap">
             <UTooltip text="Monthly NPM Downloads">
               <NuxtLink
-                class="flex items-center gap-1 hover:text-highlighted"
+                class="flex items-center gap-1 rounded-sm hover:text-highlighted outline-primary/25 focus-visible:outline-3"
                 :to="`https://npmx.dev/package-stats/${module.npm}/v/${module.stats.version}?granularity=monthly`"
                 target="_blank"
               >
@@ -195,7 +195,7 @@ const items = computed(() => [
 
             <UTooltip text="GitHub Stars">
               <NuxtLink
-                class="flex items-center gap-1 hover:text-highlighted"
+                class="flex items-center gap-1 rounded-sm hover:text-highlighted outline-primary/25 focus-visible:outline-3"
                 :to="`https://github.com/${module.repo}`"
                 target="_blank"
               >
@@ -208,7 +208,7 @@ const items = computed(() => [
               <UTooltip :text="`Health: ${module.health.status} - ${module.health.score}/100`">
                 <NuxtLink
                   :to="`https://nuxt.care/?search=npm:${module.npm}`"
-                  class="flex items-center gap-1 hover:text-highlighted"
+                  class="flex items-center gap-1 rounded-sm hover:text-highlighted outline-primary/25 focus-visible:outline-3"
                   target="_blank"
                 >
                   <UIcon name="i-lucide-heart-pulse" class="size-4 shrink-0" :style="{ color: module.health.color }" />
@@ -221,7 +221,7 @@ const items = computed(() => [
 
             <UTooltip v-if="sortKey === 'publishedAt'" :text="`Updated ${formatDateByLocale('en', module.stats.publishedAt)}`">
               <NuxtLink
-                class="flex items-center gap-1 hover:text-highlighted"
+                class="flex items-center gap-1 rounded-sm hover:text-highlighted outline-primary/25 focus-visible:outline-3"
                 :to="`https://github.com/${module.repo}`"
                 target="_blank"
               >
@@ -239,7 +239,7 @@ const items = computed(() => [
 
             <UTooltip v-if="sortKey === 'createdAt'" :text="`Created ${formatDateByLocale('en', module.stats.createdAt)}`">
               <NuxtLink
-                class="flex items-center gap-1 hover:text-highlighted"
+                class="flex items-center gap-1 rounded-sm hover:text-highlighted outline-primary/25 focus-visible:outline-3"
                 :to="`https://github.com/${module.repo}`"
                 target="_blank"
               >

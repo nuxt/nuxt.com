@@ -58,7 +58,7 @@ watch(isVisible, (visible) => {
         <ul class="grid grid-cols-6 gap-2 mt-4" :aria-busy="!people.length || undefined">
           <li v-for="(nuxter, index) in tiles" :key="nuxter?.githubId ?? `tile-${index}`" class="aspect-square">
             <UTooltip v-if="nuxter" :text="`${nuxter.username} · #${format(nuxter.rank)}`">
-              <NuxtLink :to="`/nuxters/${nuxter.username}`" :aria-label="`${nuxter.username}, #${format(nuxter.rank)}`" class="block size-full rounded-md overflow-hidden bg-muted ring ring-default hover:ring-primary transition">
+              <NuxtLink :to="`/nuxters/${nuxter.username}`" :aria-label="`${nuxter.username}, #${format(nuxter.rank)}`" class="block size-full rounded-md overflow-hidden bg-muted ring ring-default hover:ring-primary transition outline-primary/25 focus-visible:outline-3 focus-visible:ring-primary">
                 <NuxtImg
                   :src="`/gh_avatar/${nuxter.username}`"
                   provider="ipx"
@@ -111,7 +111,7 @@ watch(isVisible, (visible) => {
         <li v-for="item in map.countries" :key="item.code">
           <button
             type="button"
-            class="w-full flex items-center gap-3 px-2 py-1.5 rounded-md text-sm text-left hover:bg-elevated/50 transition-colors aria-pressed:bg-elevated"
+            class="w-full flex items-center gap-3 px-2 py-1.5 rounded-md text-sm text-left hover:bg-elevated/50 transition-colors aria-pressed:bg-elevated outline-primary/25 focus-visible:outline-3 focus-visible:-outline-offset-3"
             :aria-pressed="item.code === country"
             @click="country = item.code === country ? null : item.code"
           >

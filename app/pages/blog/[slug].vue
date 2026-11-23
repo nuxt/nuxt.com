@@ -169,7 +169,7 @@ function copyLink() {
         <p class="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-muted">
           <NuxtLink
             :to="`/updates?category=${category.slug}`"
-            class="font-medium text-primary hover:text-highlighted focus-visible:outline-primary"
+            class="rounded-xs font-medium text-primary hover:text-highlighted outline-primary/25 focus-visible:outline-3"
           >
             {{ category.label }}
           </NuxtLink>
@@ -202,7 +202,7 @@ function copyLink() {
               <template v-for="(author, index) in authors" :key="author.name">
                 <ULink
                   :to="author.to"
-                  class="font-medium text-highlighted hover:text-primary focus-visible:outline-primary"
+                  class="rounded-xs font-medium text-highlighted hover:text-primary"
                 >{{ author.name }}</ULink>{{ authorSeparator(index) }}
               </template>
             </span>

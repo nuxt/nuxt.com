@@ -89,16 +89,21 @@ watch(popoverOpen, (open) => {
       </div>
 
       <div v-if="filteredChats.length" class="flex flex-col py-1">
-        <button
+        <!-- The full screen link sits next to the select button, not inside it: its `before` covers the row instead -->
+        <div
           v-for="chat in filteredChats"
           :key="chat.id"
-          type="button"
-          class="group flex items-center justify-between gap-2 px-2.5 py-1.5 text-sm text-left rounded-md mx-1 hover:bg-elevated transition-colors"
+          class="group relative flex items-center justify-between gap-2 px-2.5 py-1.5 mx-1 rounded-md text-sm hover:bg-elevated transition-colors"
           :class="chat.id === panel?.chatId.value ? 'text-primary' : 'text-default'"
-          @click="select(chat.id)"
         >
-          <span class="truncate min-w-0">{{ chat.title || 'Untitled' }}</span>
-          <div class="flex items-center gap-1 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity">
+          <button
+            type="button"
+            class="flex-1 min-w-0 truncate text-left before:absolute before:inset-0 before:rounded-md focus:outline-none before:outline-primary/25 focus-visible:before:outline-3 focus-visible:before:-outline-offset-3"
+            @click="select(chat.id)"
+          >
+            {{ chat.title || 'Untitled' }}
+          </button>
+          <div class="flex items-center gap-1 shrink-0 opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity">
             <UIcon
               v-if="chat.id === panel?.chatId.value"
               name="i-lucide-check"
@@ -106,15 +111,15 @@ watch(popoverOpen, (open) => {
             />
             <NuxtLink
               :to="`/dashboard/chat/${chat.id}`"
-              class="p-0.5 rounded hover:bg-muted"
+              class="relative p-0.5 rounded hover:bg-muted outline-primary/25 focus-visible:outline-3"
               title="Open in full screen"
               aria-label="Open in full screen"
-              @click.stop="isOpen = false"
+              @click="isOpen = false"
             >
               <UIcon name="i-lucide-maximize-2" class="size-3.5 text-muted" />
             </NuxtLink>
           </div>
-        </button>
+        </div>
 
         <p v-if="hasMore" class="px-3.5 py-1.5 text-xs text-muted">
           +{{ matchingChats.length - PAGE_SIZE }} more — use search to filter

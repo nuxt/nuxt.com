@@ -22,7 +22,7 @@ function send() {
 <template>
   <button
     type="button"
-    class="not-prose group my-4 flex w-full items-center gap-3 rounded-lg border border-default bg-elevated/50 px-4 py-3 text-left transition-colors hover:bg-elevated focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+    class="not-prose group my-4 flex w-full items-center gap-3 rounded-lg border border-default bg-elevated/50 px-4 py-3 text-left transition-colors hover:bg-elevated outline-primary/25 focus-visible:outline-3"
     @click="send"
     @mouseenter="nuxiMood = 'happy'"
     @mouseleave="nuxiMood = 'idle'"

@@ -44,7 +44,7 @@ async function showMore() {
           <NuxtLink
             :to="{ path: `/nuxters/${nuxter.username}`, query: profileQuery }"
             :aria-label="`${nuxter.username}, #${format(nuxter.rank)}, ${points(nuxter.score)}`"
-            class="block aspect-square rounded-lg overflow-hidden bg-muted ring ring-default hover:ring-primary transition"
+            class="block aspect-square rounded-lg overflow-hidden bg-muted ring ring-default hover:ring-primary transition outline-primary/25 focus-visible:outline-3 focus-visible:ring-primary"
           >
             <!-- Cells are 123px at most (10 columns of the full container): 124px, and 248px on 2x screens -->
             <NuxtImg

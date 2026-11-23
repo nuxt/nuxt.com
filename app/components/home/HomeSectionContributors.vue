@@ -8,6 +8,9 @@ const contributors = useState('contributors-grid', () => [])
 const intersecting = ref(false)
 let _contributors
 let currentTimeout
+// Keyboard focus pauses the grid like hover: the rotation would unmount the focused avatar link.
+let focusPaused = false
+let hovered = false
 
 function onIntersectionObserver([{ isIntersecting }]) {
   intersecting.value = isIntersecting
@@ -33,11 +36,30 @@ onBeforeUnmount(stopTimer)
 
 const $contributors = computed(() => contributors.value.length ? contributors.value.slice(start.value, start.value + total) : Array.from({ length: total }).fill(null))
 function startTimer(ms = 5000) {
+  clearTimeout(currentTimeout)
   currentTimeout = setTimeout(nextContributors, ms)
 }
 function stopTimer() {
   clearTimeout(currentTimeout)
   currentTimeout = null
+}
+function onFocusIn(event) {
+  if (!event.target.matches(':focus-visible')) return
+  focusPaused = true
+  stopTimer()
+}
+function onFocusOut() {
+  if (!focusPaused) return
+  focusPaused = false
+  if (!hovered) startTimer(2500)
+}
+function onMouseEnter() {
+  hovered = true
+  stopTimer()
+}
+function onMouseLeave() {
+  hovered = false
+  if (!focusPaused) startTimer(2500)
 }
 async function loadImages(usernames) {
   const size = window.devicePixelRatio === 2 ? '160px' : '80px'
@@ -54,6 +76,8 @@ async function loadImages(usernames) {
 async function nextContributors() {
   const newStart = (start.value + total >= contributors.value.length ? 0 : start.value + total)
   await loadImages(contributors.value.slice(newStart, newStart + total))
+  // Paused while the images loaded: the grid moves on once focus or the pointer leaves
+  if (focusPaused || hovered) return
   start.value = newStart
   startTimer()
 }
@@ -63,8 +87,10 @@ async function nextContributors() {
   <div
     v-intersection-observer="onIntersectionObserver"
     class="grid grid-cols-6 md:grid-cols-8 lg:grid-cols-6 gap-4 sm:gap-8 lg:gap-6 xl:gap-8 xl:p-8"
-    @mouseenter="stopTimer()"
-    @mouseleave="startTimer(2500)"
+    @mouseenter="onMouseEnter"
+    @mouseleave="onMouseLeave"
+    @focusin="onFocusIn"
+    @focusout="onFocusOut"
   >
     <div
       v-for="(username, index) in $contributors"
@@ -79,7 +105,7 @@ async function nextContributors() {
           v-if="username"
           :key="username"
           :to="`/nuxters/${username}`"
-          class="absolute inset-0 flex transition-all"
+          class="absolute inset-0 flex rounded-xl transition-all outline-primary/25 focus-visible:outline-3"
           :style="{
             'transition-delay': `${(index % 8 + Math.floor(index / 8)) * 20}ms`
           }"
