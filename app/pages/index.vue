@@ -165,8 +165,8 @@ useNuxtBirthday()
     >
       <template #headline>
         <HomeBirthdayBadge class="[html:not([data-nuxt-birthday])_&]:hidden" />
-        <NuxtLink :to="pageData.hero.cta.to" class="[html[data-nuxt-birthday]_&]:hidden">
-          <UBadge variant="subtle" size="lg" class="px-3 relative rounded-full font-semibold dark:hover:bg-primary-400/15 dark:hover:ring-primary-700">
+        <NuxtLink :to="pageData.hero.cta.to" class="group inline-flex rounded-full outline-primary/25 focus-visible:outline-3 [html[data-nuxt-birthday]_&]:hidden">
+          <UBadge variant="subtle" size="lg" class="px-3 relative rounded-full font-semibold dark:hover:bg-primary-400/15 dark:hover:ring-primary-700 group-focus-visible:ring-primary dark:group-focus-visible:ring-primary">
             {{ pageData?.hero.cta.label }}
             <UIcon
               v-if="pageData?.hero.cta.icon"
@@ -240,7 +240,7 @@ useNuxtBirthday()
     <UPageSection :ui="{ container: '!pt-0' }">
       <div>
         <h2 class="mb-4">
-          <NuxtLink to="/showcase" class="group inline-flex items-center gap-1.5 text-lg font-medium text-muted transition-colors hover:text-highlighted">
+          <NuxtLink to="/showcase" class="group inline-flex items-center gap-1.5 rounded-md text-lg font-medium text-muted transition-colors hover:text-highlighted focus-visible:text-highlighted outline-primary/25 focus-visible:outline-3">
             {{ pageData?.logos.title }}
             <UIcon name="i-lucide-arrow-right" class="size-4 opacity-0 -translate-x-1 transition-[opacity,translate] duration-200 group-hover:opacity-100 group-hover:translate-x-0 group-focus-visible:opacity-100 group-focus-visible:translate-x-0 pointer-coarse:opacity-100 pointer-coarse:translate-x-0" />
           </NuxtLink>
@@ -356,14 +356,21 @@ useNuxtBirthday()
                   :key="bIndex"
                   class="size-7 justify-center inline-flex items-end"
                 >
-                  <UIcon
-                    :name="bundler.logo"
-                    class="cursor-pointer transition-all duration-150 ease-in-out"
-                    :class="bIndex === activeBundlerIndex
-                      ? 'size-7 opacity-100'
-                      : 'size-6 opacity-50 grayscale hover:size-7'"
+                  <button
+                    type="button"
+                    :aria-label="bundler.title"
+                    :aria-pressed="bIndex === activeBundlerIndex"
+                    class="group inline-flex cursor-pointer rounded-sm outline-primary/25 focus-visible:outline-3"
                     @click="activeBundlerIndex = bIndex"
-                  />
+                  >
+                    <UIcon
+                      :name="bundler.logo"
+                      class="transition-all duration-150 ease-in-out"
+                      :class="bIndex === activeBundlerIndex
+                        ? 'size-7 opacity-100'
+                        : 'size-6 opacity-50 grayscale group-hover:size-7 group-focus-visible:size-7'"
+                    />
+                  </button>
                 </div>
               </div>
             </template>

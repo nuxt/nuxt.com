@@ -64,9 +64,9 @@ if (import.meta.server) {
           </p>
           <ul class="mt-6 divide-y divide-default border-y border-default">
             <li v-for="error in section.errors" :key="error.path">
-              <NuxtLink :to="error.path" class="group flex items-baseline gap-4 py-3">
+              <NuxtLink :to="error.path" class="group flex items-baseline gap-4 py-3 rounded-md outline-primary/25 focus-visible:outline-3">
                 <code class="shrink-0 text-sm font-mono text-primary">{{ code(error.path) }}</code>
-                <span class="text-default group-hover:text-highlighted">{{ error.title }}</span>
+                <span class="text-default group-hover:text-highlighted group-focus-visible:text-highlighted">{{ error.title }}</span>
               </NuxtLink>
             </li>
           </ul>

@@ -6,7 +6,7 @@ const base: Template = { name: 'Docs', slug: 'nuxt-ui-docs', description: 'Docs 
 
 describe('deployProviders', () => {
   it('offers every provider by default', () => {
-    expect(deployProviders(base)).toEqual(['vercel', 'netlify'])
+    expect(deployProviders(base)).toEqual(['vercel', 'netlify', 'cloudflare'])
   })
 
   it('limits templates with Vercel stores to Vercel', () => {
@@ -19,6 +19,10 @@ describe('deployProviders', () => {
 })
 
 describe('buildDeployUrl', () => {
+  it('points Cloudflare at the repository', () => {
+    expect(buildDeployUrl({ ...base, repo: 'nuxt/movies' }, 'cloudflare')).toBe('https://deploy.workers.cloudflare.com/?url=https%3A%2F%2Fgithub.com%2Fnuxt%2Fmovies')
+  })
+
   it('points Netlify at the repository', () => {
     expect(buildDeployUrl(base, 'netlify')).toBe('https://app.netlify.com/start/deploy?repository=https%3A%2F%2Fgithub.com%2Fnuxt-ui-templates%2Fdocs')
   })

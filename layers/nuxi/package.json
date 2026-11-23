@@ -9,17 +9,17 @@
     "eval": "eve eval"
   },
   "dependencies": {
-    "@ai-sdk/gateway": "^4.0.138",
-    "@chat-adapter/discord": "^4.44.0",
-    "@chat-adapter/state-memory": "^4.44.0",
-    "@chat-adapter/state-redis": "^4.44.0",
-    "@github-tools/eve-extension": "^0.14.0",
-    "@opentelemetry/instrumentation-undici": "^0.35.0",
+    "@ai-sdk/gateway": "^4.0.152",
+    "@chat-adapter/discord": "^4.45.0",
+    "@chat-adapter/state-memory": "^4.45.0",
+    "@chat-adapter/state-redis": "^4.45.0",
+    "@github-tools/eve-extension": "^0.15.0",
+    "@opentelemetry/instrumentation-undici": "^0.35.1",
     "@vercel/global-config": "^1.5.1",
-    "ai": "^7.0.165",
-    "chat": "^4.44.0",
-    "eve": "^1.0.1",
-    "evlog": "^2.35.1",
+    "ai": "^7.0.179",
+    "chat": "^4.45.0",
+    "eve": "^1.3.0",
+    "evlog": "^2.37.0",
     "zod": "^4.6.7"
   },
   "optionalDependencies": {
@@ -27,6 +27,6 @@
   },
   "devDependencies": {
     "just-bash": "^3.6.1",
-    "microsandbox": "^0.7.13"
+    "microsandbox": "^0.7.16"
   }
 }

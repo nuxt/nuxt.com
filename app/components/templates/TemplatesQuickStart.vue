@@ -36,7 +36,7 @@ function move(offset: number) {
         :aria-selected="item.slug === selected"
         :aria-controls="`${id}-panel`"
         :tabindex="item.slug === selected ? 0 : -1"
-        class="h-8 px-3 flex items-center gap-1.5 rounded-md text-sm font-medium transition-colors focus-visible:outline-2 focus-visible:outline-primary"
+        class="h-8 px-3 flex items-center gap-1.5 rounded-md text-sm font-medium transition-colors outline-primary/25 focus-visible:outline-3"
         :class="item.slug === selected ? 'bg-elevated text-highlighted ring ring-default' : 'text-muted hover:text-default hover:bg-elevated/50'"
         @click="selected = item.slug; track('Template Action', { template: item.name, action: 'Select Starter' })"
       >

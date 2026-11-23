@@ -63,6 +63,7 @@ const logoMenuItems = computed(() => [
     ref="logoLink"
     to="/"
     aria-label="Back to home"
+    class="block -m-1 p-1 rounded-md outline-primary/25 focus-visible:outline-3"
     @contextmenu.prevent="openLogoMenu"
   >
     <NuxtLogo class="block w-auto h-6" />
@@ -73,7 +74,7 @@ const logoMenuItems = computed(() => [
     v-model:open="logoMenuOpen"
     :items="logoMenuItems"
     :modal="false"
-    :content="{ reference: logoLink?.$el, align: 'start', sideOffset: 12 }"
+    :content="{ reference: logoLink?.$el, align: 'start', sideOffset: 8, alignOffset: 4 }"
     :ui="{
       content: 'w-80 rounded-xl',
       group: 'p-2 first:grid first:grid-cols-2 first:gap-2',

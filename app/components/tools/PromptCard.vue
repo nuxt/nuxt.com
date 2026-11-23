@@ -66,7 +66,7 @@ function copyPrompt() {
       <button
         v-if="isLong"
         type="button"
-        class="mt-1 text-[11px] text-dimmed hover:text-default transition-colors"
+        class="mt-1 rounded-xs text-[11px] text-dimmed hover:text-default transition-colors outline-primary/25 focus-visible:outline-3"
         @click="expanded = !expanded"
       >
         {{ expanded ? 'Show less' : 'Show full prompt' }}

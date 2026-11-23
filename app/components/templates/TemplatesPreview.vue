@@ -240,7 +240,7 @@ function stop() {
           <button
             type="button"
             aria-label="Stop live preview"
-            class="group ms-1 me-0.5 h-6 ps-2 pe-2.5 flex items-center gap-1.5 rounded-full bg-error/10 ring ring-error/25 text-xs font-medium text-error transition-[background-color,scale] duration-150 ease-snappy hover:bg-error/15 active:scale-[0.96] focus-visible:outline-2 focus-visible:outline-error"
+            class="group ms-1 me-0.5 h-6 ps-2 pe-2.5 flex items-center gap-1.5 rounded-full bg-error/10 ring ring-error/25 text-xs font-medium text-error transition-[background-color,scale] duration-150 ease-snappy hover:bg-error/15 active:scale-[0.96] outline-error/25 focus-visible:outline-3"
             @click="stop"
           >
             <span class="size-2 rounded-[2px] bg-current transition-transform duration-150 ease-snappy group-hover:scale-110" />

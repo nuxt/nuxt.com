@@ -533,3 +533,13 @@ websites:
       hideElements: ['.cky-consent-container', '.cky-overlay', '.cky-btn-revisit-wrapper', '.uw-sl']
       removeElements: ['.uwy', 'us-button']
       delay: 3
+  - name: wagamama
+    url: https://www.wagamama.com/
+    industry: Retail & Food
+    logo:
+      width: 256
+      height: 72
+    screenshotOptions:
+      hideElements: ['#onetrust-consent-sdk']
+      removeElements: ['#onetrust-consent-sdk']
+      delay: 3
