@@ -91,9 +91,8 @@ const experimentMap = computed(() => {
   return map
 })
 
-// Current models first, then by success rate, first-try rate (tiebreak) and most recent run date
+// Sort by success rate, then first-try rate (tiebreak), then most recent run date first
 function sortRows(a: ModelRow, b: ModelRow): number {
-  if (a.tier !== b.tier) return a.tier - b.tier
   if (b.successRate !== a.successRate) return b.successRate - a.successRate
   const aPassAt1 = a.passAt1 ?? -1
   const bPassAt1 = b.passAt1 ?? -1
@@ -392,14 +391,10 @@ const evalColumns: TableColumn<EvalResultItem>[] = [
   }
 ]
 
-// Previously measured rows are dimmed, and the first one gets a stronger divider
+// Previously measured rows are dimmed so current models stand out when both are shown
 const tableMeta = {
   class: {
-    tr: (row: TableRow<ModelRow>) => {
-      if (row.original.tier !== 2) return ''
-      const first = filteredResults.value.findIndex(r => r.tier === 2) === row.index
-      return ['[&>td]:text-muted', first ? 'border-t-2 border-default' : ''].join(' ')
-    }
+    tr: (row: TableRow<ModelRow>) => row.original.tier === 2 ? 'opacity-60' : ''
   }
 }
 </script>
