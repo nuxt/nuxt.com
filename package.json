@@ -138,7 +138,7 @@
     "typescript": "^6.0.3",
     "vitest": "^5.1.1",
     "vue": "^3.5.46",
-    "vue-tsc": "3.3.14"
+    "vue-tsc": "3.3.11"
   },
   "optionalDependencies": {
     "zlib-sync": "^0.1.10"
