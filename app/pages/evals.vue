@@ -91,12 +91,16 @@ const experimentMap = computed(() => {
   return map
 })
 
-// Sort by success rate, then first-try rate (tiebreak), then most recent run date first
+// Sort by success rate, then first-try rate, then the cheaper model (unpriced last),
+// then most recent run date first
 function sortRows(a: ModelRow, b: ModelRow): number {
   if (b.successRate !== a.successRate) return b.successRate - a.successRate
   const aPassAt1 = a.passAt1 ?? -1
   const bPassAt1 = b.passAt1 ?? -1
   if (bPassAt1 !== aPassAt1) return bPassAt1 - aPassAt1
+  const aCost = a.avgCost ?? Infinity
+  const bCost = b.avgCost ?? Infinity
+  if (aCost !== bCost) return aCost - bCost
   return new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
 }
 
@@ -328,7 +332,7 @@ const columns: TableColumn<ModelRow>[] = [
   },
   {
     accessorKey: 'passAt1',
-    header: headerWithInfo('First-Try Rate', 'Passed on the first attempt. Breaks ties.'),
+    header: headerWithInfo('First-Try Rate', 'Passed on the first attempt. Breaks ties, then the cheaper model goes first.'),
     meta: {
       class: {
         th: 'text-right',
