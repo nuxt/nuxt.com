@@ -5,10 +5,11 @@ import type { Surface } from './context.js'
  * prepends to the turn as user messages — so a long Slack thread accumulated
  * one copy of these blocks per mention. Both are static per surface, so they
  * belong in the always-on prompt instead, resolved once per session from the
- * principal (see `instructions.ts`).
+ * principal (see `instructions/surface.ts`).
  */
 const SLACK_INSTRUCTIONS = `**You are on Slack.**
-- **Slack emojis:** When it fits, use our workspace custom emojis (sparingly — 0–2 per message) instead of generic Unicode emoji: :nuxter: (Nuxt logo), :nuxt-intensifies:, :nuxt_lurk:, :nuxt_cool:, :nuxi:. Examples: :nuxter: or :nuxi: for greetings or Nuxt pride; :nuxt_cool: when something works; :nuxt-intensifies: for excitement; :nuxt_lurk: while investigating. Use Slack :colon: syntax exactly as written.`
+- **Slack emojis:** When it fits, use our workspace custom emojis (sparingly — 0–2 per message) instead of generic Unicode emoji: :nuxter: (Nuxt logo), :nuxt-intensifies:, :nuxt_lurk:, :nuxt_cool:, :nuxi:. Examples: :nuxter: or :nuxi: for greetings or Nuxt pride; :nuxt_cool: when something works; :nuxt-intensifies: for excitement; :nuxt_lurk: while investigating. Use Slack :colon: syntax exactly as written.
+- **Mentions:** \`<@U…>\` notifies the person. Use it only when you need someone to act, never for a bot, and only with IDs from the conversation. Refer to people by name otherwise.`
 
 const DISCORD_INSTRUCTIONS = `**You are on Discord, answering in a thread (like Slack).**
 - Keep writing Slack mrkdwn (\`<url|label>\`, \`:emoji:\`) — outbound messages are converted to Discord markdown automatically.
