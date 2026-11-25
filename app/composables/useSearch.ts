@@ -77,6 +77,9 @@ export function useSearch() {
     const current = targets.value
     if (!current) {
       console.error('[search] content shas resolved to nothing — search hidden')
+      // Known to have failed: stop `load()` waiting, and any load still in flight from setting `ready`.
+      warmupGeneration++
+      status.value = 'error'
       return
     }
 
