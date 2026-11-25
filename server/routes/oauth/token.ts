@@ -12,7 +12,7 @@ export default defineEventHandler(async (event) => {
     await pruneMcpGrants()
 
     if (body.grant_type === 'authorization_code') {
-      const client = await readMcpOAuthClient(body.client_id)
+      const client = await authenticateMcpOAuthClient(body)
       const grant = await consumeMcpGrant('code', body.code)
       if (grant.clientId !== client.key || grant.redirectUri !== body.redirect_uri) {
         await revokeMcpGrantFamily(grant.familyId)
@@ -30,7 +30,7 @@ export default defineEventHandler(async (event) => {
     }
 
     if (body.grant_type === 'refresh_token') {
-      const client = await readMcpOAuthClient(body.client_id)
+      const client = await authenticateMcpOAuthClient(body)
       const grant = await consumeMcpGrant('refresh', body.refresh_token)
       if (grant.clientId !== client.key) {
         await revokeMcpGrantFamily(grant.familyId)

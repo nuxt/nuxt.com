@@ -1,7 +1,7 @@
 import { createClient } from '@libsql/client'
 import { drizzle } from 'drizzle-orm/libsql'
 import { generateSQLiteDrizzleJson, generateSQLiteMigration } from 'drizzle-kit/api'
-import { decodeJwt, SignJWT } from 'jose'
+import { decodeJwt, exportJWK, generateKeyPair, SignJWT } from 'jose'
 import { beforeAll, describe, expect, it, vi } from 'vitest'
 import * as schema from '../../server/db/schema'
 
@@ -96,5 +96,48 @@ describe('admin MCP OAuth server', () => {
 
     await expect(oauth.consumeMcpGrant('refresh', first.refresh_token)).rejects.toMatchObject({ error: 'invalid_grant' })
     await expect(oauth.consumeMcpGrant('refresh', second.refresh_token)).rejects.toMatchObject({ error: 'invalid_grant' })
+  })
+
+  it('trusts a client metadata document only for its own URL, and checks its private_key_jwt assertions', async () => {
+    const clientId = 'https://connect.example/connectors/nuxi'
+    const { privateKey, publicKey } = await generateKeyPair('ES256')
+    const documents: Record<string, unknown> = {
+      [clientId]: { client_id: clientId, client_name: 'nuxi', token_endpoint_auth_method: 'private_key_jwt', redirect_uris: ['https://connect.example/callback'], jwks_uri: 'https://connect.example/jwks.json' },
+      'https://connect.example/jwks.json': { keys: [{ ...await exportJWK(publicKey), kid: 'k1', alg: 'ES256' }] },
+      'https://connect.example/connectors/impostor': { client_id: clientId, redirect_uris: ['https://evil.example/cb'] },
+      'https://connect.example/connectors/secret': { client_id: 'https://connect.example/connectors/secret', client_secret: 'x', redirect_uris: ['https://connect.example/cb'] }
+    }
+    vi.stubGlobal('fetch', async (input: string | URL | Request) => {
+      const url = input instanceof Request ? input.url : String(input)
+      return url in documents ? Response.json(documents[url]) : new Response('Not found', { status: 404 })
+    })
+    const assertion = (key: CryptoKey, audience = 'http://localhost:3000/oauth/token') => new SignJWT({})
+      .setProtectedHeader({ alg: 'ES256', kid: 'k1' }).setIssuer(clientId).setSubject(clientId).setAudience(audience)
+      .setJti(crypto.randomUUID()).setExpirationTime('1m').sign(key)
+    const body = async (key = privateKey, audience?: string) => ({
+      client_assertion_type: 'urn:ietf:params:oauth:client-assertion-type:jwt-bearer',
+      client_assertion: await assertion(key, audience)
+    })
+
+    try {
+      const request = await oauth.parseMcpAuthorizationRequest({
+        client_id: clientId, response_type: 'code', code_challenge: challenge, code_challenge_method: 'S256'
+      })
+      expect(request).toMatchObject({ client: { key: clientId, name: 'nuxi' }, redirectUri: 'https://connect.example/callback' })
+
+      // The client_id can come from the assertion's issuer alone.
+      await expect(oauth.authenticateMcpOAuthClient(await body())).resolves.toMatchObject({ key: clientId })
+      await expect(oauth.authenticateMcpOAuthClient({ client_id: clientId })).rejects.toMatchObject({ error: 'invalid_client' })
+      await expect(oauth.authenticateMcpOAuthClient(await body((await generateKeyPair('ES256')).privateKey))).rejects.toMatchObject({ error: 'invalid_client' })
+      await expect(oauth.authenticateMcpOAuthClient(await body(privateKey, 'https://other.example'))).rejects.toMatchObject({ error: 'invalid_client' })
+
+      for (const id of ['https://connect.example/connectors/impostor', 'https://connect.example/connectors/secret', 'https://connect.example/missing', 'https://connect.example/', 'https://127.0.0.1/client', 'https://connect.example/a/../connectors/nuxi']) {
+        await expect(oauth.readMcpOAuthClient(id), id).rejects.toMatchObject({ error: 'invalid_client' })
+      }
+    } finally {
+      vi.unstubAllGlobals()
+      vi.stubGlobal('db', db)
+      vi.stubGlobal('schema', schema)
+    }
   })
 })

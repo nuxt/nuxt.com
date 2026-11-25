@@ -113,7 +113,7 @@ export const mcpOAuthGrants = sqliteTable('admin_mcp_oauth_grants', {
   kind: text('kind', { enum: ['code', 'refresh'] }).notNull(),
   familyId: text('family_id').notNull(),
   userId: text('user_id').notNull(),
-  // Stable key of the registered client, from its signed client ID
+  // Stable key of the client: the jti of its signed client ID, or its metadata document URL
   clientId: text('client_id').notNull(),
   scope: text('scope').notNull(),
   redirectUri: text('redirect_uri'),

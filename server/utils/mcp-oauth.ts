@@ -1,6 +1,6 @@
 import { createHash, randomBytes } from 'node:crypto'
 import { and, eq, gt, isNull, lt } from 'drizzle-orm'
-import { jwtVerify, SignJWT } from 'jose'
+import { createRemoteJWKSet, decodeJwt, jwtVerify, SignJWT } from 'jose'
 import { deriveSecret } from 'nuxt/server'
 import type { H3Event } from 'h3'
 import { MCP_OAUTH_SCOPE_LIST, MCP_OAUTH_SCOPES, mcpAdminResource, mcpOAuthIssuer } from '../../shared/utils/mcp-admin'
@@ -16,6 +16,8 @@ import type { McpOAuthScope } from '../../shared/utils/mcp-admin'
 const CODE_TTL = 60
 const ACCESS_TOKEN_TTL = 60 * 60
 const REFRESH_TOKEN_TTL = 30 * 24 * 60 * 60
+const ASSERTION_ALGORITHMS = ['RS256', 'PS256', 'ES256', 'EdDSA']
+const JWT_BEARER_ASSERTION = 'urn:ietf:params:oauth:client-assertion-type:jwt-bearer'
 
 export function mcpOAuthMetadata() {
   const issuer = mcpOAuthIssuer()
@@ -29,7 +31,9 @@ export function mcpOAuthMetadata() {
     response_modes_supported: ['query'],
     grant_types_supported: ['authorization_code', 'refresh_token'],
     code_challenge_methods_supported: ['S256'],
-    token_endpoint_auth_methods_supported: ['none'],
+    client_id_metadata_document_supported: true,
+    token_endpoint_auth_methods_supported: ['none', 'private_key_jwt'],
+    token_endpoint_auth_signing_alg_values_supported: ASSERTION_ALGORITHMS,
     authorization_response_iss_parameter_supported: true,
     service_documentation: `${issuer}/docs/4.x/guide/ai/mcp`
   }
@@ -117,10 +121,12 @@ async function signingKey(purpose: 'client' | 'access'): Promise<Uint8Array> {
 }
 
 export interface McpOAuthClient {
-  /** Short, stable identifier recorded on grants and tokens. */
+  /** Stable identifier recorded on grants and tokens. */
   key: string
   name: string
   redirectUris: string[]
+  /** Set when the client authenticates at the token endpoint with `private_key_jwt`. */
+  jwksUri?: string
 }
 
 /**
@@ -161,6 +167,7 @@ export async function readMcpOAuthClient(clientId: unknown): Promise<McpOAuthCli
   if (typeof clientId !== 'string' || !clientId) {
     throw new McpOAuthError('invalid_client', 'Missing client_id.', 401)
   }
+  if (clientId.startsWith('https://')) return readClientMetadataDocument(clientId)
   try {
     const { payload } = await jwtVerify(clientId, await signingKey('client'), {
       issuer: mcpOAuthIssuer(),
@@ -173,6 +180,127 @@ export async function readMcpOAuthClient(clientId: unknown): Promise<McpOAuthCli
   } catch {
     throw new McpOAuthError('invalid_client', 'Unknown client_id. Register the client again.', 401)
   }
+}
+
+const CLIENT_METADATA_TTL = 5 * 60 * 1000
+const CLIENT_METADATA_MAX_BYTES = 5 * 1024
+const clientMetadataCache = new Map<string, { client: McpOAuthClient, expiresAt: number }>()
+const clientKeySets = new Map<string, ReturnType<typeof createRemoteJWKSet>>()
+
+/**
+ * Client ID Metadata Documents: a client such as Vercel Connect uses an HTTPS
+ * URL as its client_id, and the document at that URL lists its redirect URIs
+ * and keys. No registration happens; the URL's owner vouches for the client.
+ */
+async function readClientMetadataDocument(clientId: string): Promise<McpOAuthClient> {
+  const cached = clientMetadataCache.get(clientId)
+  if (cached && cached.expiresAt > Date.now()) return cached.client
+
+  let url: URL
+  try {
+    url = new URL(clientId)
+  } catch {
+    throw new McpOAuthError('invalid_client', 'client_id is not a valid URL.', 401)
+  }
+  // The URL must be in canonical form, so one client has exactly one ID, and must not point at this network.
+  if (url.href !== clientId || url.pathname === '/' || url.hash || url.username || url.password
+    || LOOPBACK_HOSTS.has(url.hostname) || /^[\d.]+$|^\[/.test(url.hostname)) {
+    throw new McpOAuthError('invalid_client', 'client_id must be a canonical HTTPS URL with a path on a public host.', 401)
+  }
+
+  let document: Record<string, unknown>
+  try {
+    const response = await fetch(clientId, {
+      headers: { accept: 'application/json' },
+      redirect: 'error',
+      signal: AbortSignal.timeout(5000)
+    })
+    if (!response.ok) throw new Error(`HTTP ${response.status}`)
+    const body = await response.text()
+    if (body.length > CLIENT_METADATA_MAX_BYTES) throw new Error('Document too large')
+    document = JSON.parse(body)
+  } catch (error) {
+    throw new McpOAuthError('invalid_client', `Could not read the client metadata document: ${(error as Error).message}.`, 401)
+  }
+
+  const client = parseClientMetadataDocument(clientId, document)
+  clientMetadataCache.set(clientId, { client, expiresAt: Date.now() + CLIENT_METADATA_TTL })
+  if (clientMetadataCache.size > 100) clientMetadataCache.delete(clientMetadataCache.keys().next().value!)
+  return client
+}
+
+function parseClientMetadataDocument(clientId: string, document: Record<string, unknown>): McpOAuthClient {
+  const invalid = (reason: string) => new McpOAuthError('invalid_client', `Invalid client metadata document: ${reason}.`, 401)
+  if (!document || typeof document !== 'object' || document.client_id !== clientId) throw invalid('its client_id must equal its URL')
+  if ('client_secret' in document) throw invalid('it must not contain a client_secret')
+
+  const redirectUris = document.redirect_uris
+  if (!Array.isArray(redirectUris) || redirectUris.length === 0
+    || !redirectUris.every(uri => typeof uri === 'string' && isAllowedRedirectUri(uri))) {
+    throw invalid('redirect_uris must list HTTPS, loopback HTTP or private-use scheme URIs')
+  }
+
+  const method = document.token_endpoint_auth_method ?? 'none'
+  let jwksUri: string | undefined
+  if (method === 'private_key_jwt') {
+    if (typeof document.jwks_uri !== 'string' || !document.jwks_uri.startsWith('https://')) throw invalid('private_key_jwt needs an HTTPS jwks_uri')
+    jwksUri = document.jwks_uri
+  } else if (method !== 'none') {
+    throw invalid('token_endpoint_auth_method must be none or private_key_jwt')
+  }
+
+  const name = typeof document.client_name === 'string' && document.client_name.trim()
+    ? document.client_name.trim().slice(0, 100)
+    : new URL(clientId).host
+  return { key: clientId, name, redirectUris, jwksUri }
+}
+
+/**
+ * Identifies the client at the token endpoint. Public clients only send their
+ * client_id; `private_key_jwt` clients prove they hold a key listed at their
+ * jwks_uri with a signed assertion (RFC 7523).
+ */
+export async function authenticateMcpOAuthClient(body: Record<string, unknown>): Promise<McpOAuthClient> {
+  const assertion = body.client_assertion
+  if (assertion !== undefined && (body.client_assertion_type !== JWT_BEARER_ASSERTION || typeof assertion !== 'string')) {
+    throw new McpOAuthError('invalid_client', `client_assertion_type must be ${JWT_BEARER_ASSERTION}.`, 401)
+  }
+  let clientId = body.client_id
+  if (clientId === undefined && typeof assertion === 'string') {
+    try {
+      clientId = decodeJwt(assertion).iss
+    } catch {
+      throw new McpOAuthError('invalid_client', 'client_assertion is not a JWT.', 401)
+    }
+  }
+
+  const client = await readMcpOAuthClient(clientId)
+  if (!client.jwksUri) {
+    if (assertion !== undefined) throw new McpOAuthError('invalid_client', 'This client does not authenticate with private_key_jwt.', 401)
+    return client
+  }
+  if (typeof assertion !== 'string') throw new McpOAuthError('invalid_client', 'This client must authenticate with a client_assertion.', 401)
+
+  let keySet = clientKeySets.get(client.jwksUri)
+  if (!keySet) {
+    keySet = createRemoteJWKSet(new URL(client.jwksUri), { timeoutDuration: 5000 })
+    clientKeySets.set(client.jwksUri, keySet)
+  }
+  const issuer = mcpOAuthIssuer()
+  try {
+    const { payload } = await jwtVerify(assertion, keySet, {
+      issuer: client.key,
+      subject: client.key,
+      audience: [issuer, `${issuer}/oauth/token`],
+      algorithms: ASSERTION_ALGORITHMS,
+      requiredClaims: ['exp', 'jti'],
+      clockTolerance: 5
+    })
+    if (payload.exp! - Date.now() / 1000 > 10 * 60) throw new Error('Assertion lives too long')
+  } catch {
+    throw new McpOAuthError('invalid_client', 'The client_assertion is invalid or expired.', 401)
+  }
+  return client
 }
 
 /** Requested scopes, defaulting to all of them; unknown scopes are an error. */
