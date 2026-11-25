@@ -69,7 +69,7 @@ pnpm build
 
 ### MCP Toolkit preview
 
-The toolkit dependency is pinned to [the 1.0 preview from `987571d`](https://github.com/nuxt-modules/mcp-toolkit/pull/420). Its matching Nitro runtime preview is pinned by the package itself. This branch tests that preview before switching to a published beta.
+The toolkit dependency is pinned to [the 1.0 preview from `947973a`](https://github.com/nuxt-modules/mcp-toolkit/pull/423), the tip of the beta stack. Its matching Nitro runtime preview is pinned by the package itself. This branch tests that preview before switching to a published beta.
 
 ```bash
 pnpm install --frozen-lockfile
