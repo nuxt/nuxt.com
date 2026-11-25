@@ -103,7 +103,14 @@ export default defineNuxtConfig({
   },
   app: {
     pageTransition: false,
-    layoutTransition: false
+    layoutTransition: false,
+    head: {
+      meta: [
+        // WebMCP origin trial for https://nuxt.com, expires 2027-03-30: Chrome offers the `experimental.webmcp`
+        // tools to agents. Other origins, such as previews, ignore it. https://developer.chrome.com/origintrials
+        { 'http-equiv': 'origin-trial', 'content': 'AmqDCjZQy1dUxsmO437qW0AIowIm5VQBK1TzyNKMure66TZ1FSdI8hXBmqtVygFcOoI3f0XHPylFPj/jQEKoBw8AAABIeyJvcmlnaW4iOiJodHRwczovL251eHQuY29tOjQ0MyIsImZlYXR1cmUiOiJXZWJNQ1AiLCJleHBpcnkiOjE4MDYzNjQ4MDB9' }
+      ]
+    }
   },
   css: ['~/assets/css/main.css'],
   site: {
