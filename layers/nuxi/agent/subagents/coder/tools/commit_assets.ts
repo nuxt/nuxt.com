@@ -7,7 +7,7 @@ import { withGithubToken } from '../../../lib/github-token.js'
 export default defineTool({
   description: [
     'Commit images from the sandbox to a `nuxi/*` branch of a repository, in one commit: a showcase screenshot, a template preview, an illustration for a post.',
-    '`github__editFiles` writes text only, so this is how a png, jpg, gif or webp reaches a repository, 1 MB each at most. Commit an SVG, which is text, with `github__editFiles`.',
+    '`github__editFiles` writes text only, so this is how a png, jpg, gif or webp reaches a repository, 4 MB each at most. Commit an SVG, which is text, with `github__editFiles`.',
     'The branch is created from the default branch when it does not exist, so this can be the first or a later commit of the task; open the pull request with the GitHub tools.',
     'Never use it for evidence of a change (before and after captures): those go through `publish_media`, not onto the branch.'
   ].join(' '),

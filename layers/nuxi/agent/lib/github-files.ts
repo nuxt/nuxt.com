@@ -5,8 +5,11 @@ const API = 'https://api.github.com'
 const BRANCH = /^nuxi\/[a-z0-9][a-z0-9._/-]*$/
 const FILE_PATH = /^[\w.-]+(?:\/[\w.-]+)*$/
 
-/** Showcase screenshots are 80 to 350 KB; an image near this is a mistake, not an asset. */
-export const MAX_COMMIT_BYTES = 1024 * 1024
+/**
+ * A blog cover at 2400x1260 is a PNG of 0.5 to 2.5 MB, and most images of `public/assets/blog` over
+ * 1 MB are under this. Showcase screenshots are 80 to 350 KB: the skill that makes them holds them to that.
+ */
+export const MAX_COMMIT_BYTES = 4 * 1024 * 1024
 
 export class GithubRequestError extends Error {
   constructor(message: string, readonly status: number) {

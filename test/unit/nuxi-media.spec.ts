@@ -368,6 +368,14 @@ describe('commitAssets', () => {
     expect(JSON.parse(String(requests[4]!.body)).variables.input).toMatchObject({ expectedHeadOid: 'v4-sha', message: { headline: 'feat: add screenshot' } })
   })
 
+  it('commits a blog cover of 1.5 MB', async () => {
+    const { fetchImpl, requests } = fakeGithub({ ...committed, [`GET ${REFS}/ref/heads/nuxi/showcase`]: { object: { sha: 'branch-sha' } } })
+    const cover = { path: 'public/assets/blog/v4.7.png', bytes: new Uint8Array([...PNG, ...new Uint8Array(1_500_000)]) }
+
+    expect(await commitAssets({ ...input, files: [cover], fetchImpl })).toMatchObject({ paths: [cover.path] })
+    expect(JSON.parse(String(requests[1]!.body)).variables.input.fileChanges.additions[0].contents).toBe(Buffer.from(cover.bytes).toString('base64'))
+  })
+
   it('reports why GitHub refused the commit', async () => {
     const { fetchImpl } = fakeGithub({
       [`GET ${REFS}/ref/heads/nuxi/showcase`]: { object: { sha: 'branch-sha' } },

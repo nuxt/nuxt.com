@@ -44,7 +44,7 @@ The frame is good when it shows the site's own homepage, above the fold, with no
 
 When the frame is clean, write the options that got you there into the entry's `screenshotOptions`, with the same names (`cookies`, `hideElements`, `removeElements`, `scripts`, `delay`), so a person can regenerate the image later.
 
-Commit it with `commit_assets`, from `/workspace/captures/<slug>.webp` to `public/assets/websites/<slug>.webp`. It takes 1 MB at most: when the capture's `bytes` is higher, capture again with a lower `quality`, such as 60.
+Commit it with `commit_assets`, from `/workspace/captures/<slug>.webp` to `public/assets/websites/<slug>.webp`. Showcase screenshots are 80 to 350 KB. `commit_assets` accepts more, but keep this one under 1 MB: when the capture's `bytes` is higher, capture again with a lower `quality`, such as 60.
 
 ## The logo
 

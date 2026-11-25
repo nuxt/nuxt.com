@@ -50,7 +50,7 @@ export const screenshotRequest = z.object({
   scripts: z.array(z.string().min(1).max(2000)).max(5).optional().describe('JavaScript run in the page before the frame, such as a click that dismisses a dialog'),
   delay: z.number().min(0).max(15).optional().describe('Seconds to wait before the frame, for fonts, images and entrance animations. Default 2.'),
   selector: z.string().min(1).max(200).optional().describe('CSS selector or `@ref` scrolled into view before the frame'),
-  quality: z.number().int().min(1).max(100).optional().describe('WebP quality. Default 80. Lower it when the file is too large for `commit_assets`.')
+  quality: z.number().int().min(1).max(100).optional().describe('WebP quality. Default 80. Lower it when the file is heavier than the images it sits with.')
 })
 
 const target = z.string().min(1).max(200).describe('CSS selector or `@ref` from `browser__snapshot`')
