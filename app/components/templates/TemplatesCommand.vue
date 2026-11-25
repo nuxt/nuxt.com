@@ -28,7 +28,7 @@ async function copyCommand() {
 </script>
 
 <template>
-  <div class="h-10 min-w-0 flex items-center rounded-md border border-default bg-elevated has-focus-visible:border-primary" :class="copied && 'border-primary'">
+  <div class="h-10 min-w-0 flex items-center rounded-md border border-default bg-elevated has-[>button:focus-visible]:border-primary" :class="copied && 'border-primary'">
     <UTooltip v-if="pinned" :text="`This template uses ${pinned}. Run corepack enable if you don't have it.`">
       <span class="h-full shrink-0 ps-3 pe-3.5 flex items-center gap-2 border-e border-default font-mono text-xs text-muted cursor-default">
         <UIcon :name="PACKAGE_MANAGER_ICONS[pinned]" class="size-4" />
@@ -47,7 +47,7 @@ async function copyCommand() {
           role="radio"
           :aria-checked="packageManager === item"
           :aria-label="item"
-          class="size-8 flex items-center justify-center rounded-sm transition focus-visible:outline-2 focus-visible:outline-primary"
+          class="size-8 flex items-center justify-center rounded-sm transition outline-primary/25 focus-visible:outline-3 focus-visible:-outline-offset-3"
           :class="packageManager === item ? 'bg-default ring ring-default shadow-xs' : 'opacity-50 hover:opacity-100 hover:bg-elevated/50'"
           @click="preferred = item"
         >

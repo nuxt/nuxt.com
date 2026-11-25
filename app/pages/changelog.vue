@@ -128,7 +128,7 @@ function copyRelease(release: Release) {
                   size="xs"
                   class="w-fit"
                 />
-                <NuxtLink :to="release.url" target="_blank" class="text-2xl sm:text-3xl tracking-tight font-semibold text-highlighted hover:text-primary transition-colors">
+                <NuxtLink :to="release.url" target="_blank" class="text-2xl sm:text-3xl tracking-tight font-semibold text-highlighted hover:text-primary transition-colors rounded-md outline-primary/25 focus-visible:outline-3">
                   {{ release.title }}
                 </NuxtLink>
               </div>

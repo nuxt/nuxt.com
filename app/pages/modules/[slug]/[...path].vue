@@ -230,7 +230,7 @@ if (import.meta.server) {
         title="This module is not yet compatible with Nuxt 3"
       >
         <template #description>
-          Head over to the <NuxtLink to="/docs/2.x/getting-started/installation" class="underline">
+          Head over to the <NuxtLink to="/docs/2.x/getting-started/installation" class="underline rounded-xs outline-warning/25 focus-visible:outline-3">
             Nuxt 2 docs
           </NuxtLink>
         </template>
@@ -289,7 +289,7 @@ if (import.meta.server) {
       <div class="flex flex-col lg:flex-row lg:items-center gap-3 mt-4">
         <div class="flex flex-wrap items-center gap-x-4 gap-y-2 lg:gap-x-3">
           <UTooltip text="Monthly NPM Downloads">
-            <NuxtLink class="flex items-center gap-1.5" :to="`https://npmx.dev/package-stats/${module.npm}/v/${module.stats.version}?granularity=monthly`" target="_blank">
+            <NuxtLink class="flex items-center gap-1.5 rounded-sm outline-primary/25 focus-visible:outline-3" :to="`https://npmx.dev/package-stats/${module.npm}/v/${module.stats.version}?granularity=monthly`" target="_blank">
               <UIcon name="i-lucide-circle-arrow-down" class="size-5 shrink-0" />
               <span class="text-sm font-medium">{{ formatNumber(module.stats.downloads) }}<span class="max-sm:sr-only"> downloads</span></span>
             </NuxtLink>
@@ -298,7 +298,7 @@ if (import.meta.server) {
           <span class="hidden lg:block text-muted">&bull;</span>
 
           <UTooltip text="GitHub Stars">
-            <NuxtLink class="flex items-center gap-1.5" :to="`https://github.com/${(module.repo || '').split('#')[0]}`" target="_blank">
+            <NuxtLink class="flex items-center gap-1.5 rounded-sm outline-primary/25 focus-visible:outline-3" :to="`https://github.com/${(module.repo || '').split('#')[0]}`" target="_blank">
               <UIcon name="i-lucide-star" class="size-5 shrink-0" />
               <span class="text-sm font-medium">{{ formatNumber(module.stats.stars || 0) }}<span class="max-sm:sr-only"> stars</span></span>
             </NuxtLink>
@@ -307,7 +307,7 @@ if (import.meta.server) {
           <span class="hidden lg:block text-muted">&bull;</span>
 
           <UTooltip text="Latest Version">
-            <NuxtLink class="flex items-center gap-1.5" :to="`${(module.github || '').split('/tree/main/')[0]}/releases`" target="_blank">
+            <NuxtLink class="flex items-center gap-1.5 rounded-sm outline-primary/25 focus-visible:outline-3" :to="`${(module.github || '').split('/tree/main/')[0]}/releases`" target="_blank">
               <UIcon name="i-lucide-tag" class="size-5 shrink-0" />
               <span class="text-sm font-medium">v{{ module.stats.version }}</span>
             </NuxtLink>
@@ -318,7 +318,7 @@ if (import.meta.server) {
             <UTooltip :text="`Health: ${moduleHealth.status} - ${moduleHealth.score}/100`">
               <NuxtLink
                 :to="`https://nuxt.care/?search=npm:${module.npm}`"
-                class="flex items-center gap-1.5"
+                class="flex items-center gap-1.5 rounded-sm outline-primary/25 focus-visible:outline-3"
                 target="_blank"
               >
                 <UIcon name="i-lucide-heart-pulse" class="size-5 shrink-0" :style="{ color: moduleHealth.color }" />
@@ -335,7 +335,7 @@ if (import.meta.server) {
             <NuxtLink
               :to="maintainer.nuxter ? `/nuxters/${maintainer.github}` : `https://github.com/${maintainer.github}`"
               :target="maintainer.nuxter ? undefined : '_blank'"
-              class="flex items-center gap-1.5 hover:text-primary"
+              class="flex items-center gap-1.5 rounded-sm hover:text-primary outline-primary/25 focus-visible:outline-3"
             >
               <UAvatar provider="ipx" :src="`https://ipx.nuxt.com/f_auto,s_20x20/gh_avatar/${maintainer.github}`" :srcset="`https://ipx.nuxt.com/f_auto,s_40x40/gh_avatar/${maintainer.github} 2x`" :alt="maintainer.github" size="xs" />
               <span class="text-sm font-medium">{{ maintainer.github }}</span>

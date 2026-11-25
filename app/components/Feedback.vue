@@ -118,7 +118,7 @@ const success = computed(() => ({
                 variant="ghost"
                 :label="option.label"
                 :aria-pressed="formState.rating === option.value"
-                class="rounded-full border px-2.5 transition-[color,background-color,border-color,scale] duration-150 ease-out active:scale-[0.97] focus-visible:outline-1 focus-visible:outline-offset-1 focus-visible:outline-primary"
+                class="rounded-full border px-2.5 transition-[color,background-color,border-color,scale] duration-150 ease-out active:scale-[0.97] outline-primary/25 focus-visible:outline-3"
                 :class="formState.rating === option.value
                   ? FEEDBACK_MOODS[option.value].active
                   : ['border-default bg-accented/20 text-muted hover:bg-accented/60', FEEDBACK_MOODS[option.value].hover]"

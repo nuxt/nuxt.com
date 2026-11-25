@@ -72,7 +72,7 @@ function scroll(direction: 1 | -1) {
         <NuxtLink
           :to="item.to"
           :target="item.external ? '_blank' : undefined"
-          class="group me-3 mt-3 flex flex-col gap-2 rounded-lg p-3 transition-colors hover:bg-elevated/60 focus-visible:outline-2 focus-visible:outline-primary"
+          class="group me-3 mt-3 flex flex-col gap-2 rounded-lg p-3 transition-colors hover:bg-elevated/60 outline-primary/25 focus-visible:outline-3"
         >
           <h3 class="flex items-center gap-1.5 text-base text-highlighted">
             {{ item.title }}

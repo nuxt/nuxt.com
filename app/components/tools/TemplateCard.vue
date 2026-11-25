@@ -27,8 +27,8 @@ function copyInit() {
 </script>
 
 <template>
-  <div class="@container flex flex-col rounded-lg border border-default bg-elevated/50 overflow-hidden">
-    <NuxtLink :to="`/templates`" class="block hover:bg-elevated transition-colors overflow-hidden">
+  <div class="@container flex flex-col rounded-lg border border-default bg-elevated/50 overflow-hidden outline-primary/25 has-[>a:focus-visible]:outline-3">
+    <NuxtLink :to="`/templates`" class="block hover:bg-elevated focus-visible:bg-elevated transition-colors overflow-hidden focus:outline-none">
       <NuxtImg
         :src="`/assets/templates/${slug}.webp`"
         :alt="name"
@@ -67,15 +67,15 @@ function copyInit() {
 
     <div class="flex items-center gap-1.5 px-3 py-1.5 border-t border-default">
       <div class="flex items-center gap-1 @xs:gap-2.5 flex-1">
-        <NuxtLink v-if="demo" :to="demo" target="_blank" aria-label="Open demo" class="flex items-center gap-1 text-muted hover:text-default transition-colors">
+        <NuxtLink v-if="demo" :to="demo" target="_blank" aria-label="Open demo" class="flex items-center gap-1 rounded-xs text-muted hover:text-default transition-colors outline-primary/25 focus-visible:outline-3">
           <UIcon name="i-lucide-laptop" class="size-3.5" />
           <span class="hidden @xs:inline text-[11px]">Demo</span>
         </NuxtLink>
-        <NuxtLink v-if="repo" :to="`https://github.com/${repo}`" target="_blank" aria-label="Open on GitHub" class="flex items-center gap-1 text-muted hover:text-default transition-colors">
+        <NuxtLink v-if="repo" :to="`https://github.com/${repo}`" target="_blank" aria-label="Open on GitHub" class="flex items-center gap-1 rounded-xs text-muted hover:text-default transition-colors outline-primary/25 focus-visible:outline-3">
           <UIcon name="i-simple-icons-github" class="size-3.5" />
           <span class="hidden @xs:inline text-[11px]">GitHub</span>
         </NuxtLink>
-        <NuxtLink v-if="purchase" :to="purchase" target="_blank" aria-label="Purchase" class="flex items-center gap-1 text-muted hover:text-default transition-colors">
+        <NuxtLink v-if="purchase" :to="purchase" target="_blank" aria-label="Purchase" class="flex items-center gap-1 rounded-xs text-muted hover:text-default transition-colors outline-primary/25 focus-visible:outline-3">
           <UIcon name="i-lucide-credit-card" class="size-3.5" />
           <span class="hidden @xs:inline text-[11px]">Purchase</span>
         </NuxtLink>

@@ -11,6 +11,12 @@ import type { H3Event } from 'h3'
 type TemplateEvent = 'Template Preview Started' | 'Template Editor Started' | 'Template Edited' | 'Template Module Added' | 'Template Downloaded' | 'Template Preview Failed'
 type Properties = { template: string | undefined } & Record<string, string | undefined>
 
+// `track` posts to `VERCEL_URL`, the deployment's own `*.vercel.app` URL. Deployment Protection answers it with a 401, which
+// `track` never checks, so no event arrives. Production sends to its public domain instead, which protection leaves open.
+if (process.env.VERCEL_ENV === 'production' && !process.env.VERCEL_WEB_ANALYTICS_ENDPOINT && process.env.VERCEL_PROJECT_PRODUCTION_URL) {
+  process.env.VERCEL_WEB_ANALYTICS_ENDPOINT = `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}/_vercel/insights/event`
+}
+
 /** Lives outside the project, so the ZIP leaves it out, and dies with the sandbox. */
 const STATE_DIR = '/tmp/nuxt-com-analytics'
 /** How deep a preview's editing went, reported once per level instead of once per change. */

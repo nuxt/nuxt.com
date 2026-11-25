@@ -66,7 +66,7 @@ defineOgImage('Docs.takumi', {
               class="border border-default rounded-lg overflow-hidden"
             />
             <div v-else class="flex flex-wrap gap-8">
-              <NuxtLink v-for="(sponsor, index) in tierSponsors" :key="index" :to="sponsor.sponsorUrl" target="_blank" class="inline-flex">
+              <NuxtLink v-for="(sponsor, index) in tierSponsors" :key="index" :to="sponsor.sponsorUrl" target="_blank" class="inline-flex rounded-full outline-primary/25 focus-visible:outline-3">
                 <span class="sr-only">Visit {{ sponsor.sponsorName }} profile</span>
                 <UAvatar
                   :src="sponsor.sponsorLogo"
@@ -96,12 +96,12 @@ defineOgImage('Docs.takumi', {
                 :key="sponsor.sponsorId"
                 :to="sponsor.sponsorUrl"
                 target="_blank"
-                class="group inline-flex items-center gap-3 opacity-70 hover:opacity-100 transition-opacity"
+                class="group inline-flex items-center gap-3 rounded-md opacity-70 hover:opacity-100 focus-visible:opacity-100 transition-opacity outline-primary/25 focus-visible:outline-3"
               >
                 <UAvatar
                   :src="sponsor.sponsorLogo"
                   size="lg"
-                  class="grayscale group-hover:grayscale-0 transition"
+                  class="grayscale group-hover:grayscale-0 group-focus-visible:grayscale-0 transition"
                   :alt="`${sponsor.sponsorName} logo`"
                 />
                 <span class="text-sm font-medium text-toned">{{ sponsor.sponsorName }}</span>

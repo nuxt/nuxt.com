@@ -16,6 +16,8 @@ definePageMeta({
 // Types
 interface EvalResultItem {
   evalPath: string
+  // A current model hasn't run this eval yet; it counts as not passed.
+  notAvailable?: boolean
   costUsd?: number
   result: {
     success: boolean
@@ -38,6 +40,8 @@ interface Experiment {
   avgCostUsd?: number
   passAt1?: number
   avgPassRate?: number
+  // 1: current, rerun whenever the evals change. 2: previously measured.
+  tier?: number
 }
 
 interface ModelRow {
@@ -49,6 +53,7 @@ interface ModelRow {
   passAt1?: number
   avgDuration: number
   avgCost?: number
+  tier: 1 | 2
   evals: EvalResultItem[]
 }
 
@@ -86,12 +91,16 @@ const experimentMap = computed(() => {
   return map
 })
 
-// Sort by success rate, then first-try rate (tiebreak), then most recent run date first
+// Sort by success rate, then first-try rate, then the cheaper model (unpriced last),
+// then most recent run date first
 function sortRows(a: ModelRow, b: ModelRow): number {
   if (b.successRate !== a.successRate) return b.successRate - a.successRate
   const aPassAt1 = a.passAt1 ?? -1
   const bPassAt1 = b.passAt1 ?? -1
   if (bPassAt1 !== aPassAt1) return bPassAt1 - aPassAt1
+  const aCost = a.avgCost ?? Infinity
+  const bCost = b.avgCost ?? Infinity
+  if (aCost !== bCost) return aCost - bCost
   return new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
 }
 
@@ -111,6 +120,7 @@ const allResults = computed<ModelRow[]>(() => {
       passAt1: experiment?.passAt1,
       avgDuration: experiment?.avgDuration ?? 0,
       avgCost: experiment?.avgCostUsd,
+      tier: experiment?.tier === 2 ? 2 : 1,
       evals
     })
   }
@@ -136,8 +146,16 @@ const categories = computed(() => {
 })
 const selectedCategories = ref<string[]>([])
 
+// Previously measured models are kept for reference but hidden by default
+const showPrevious = ref(false)
+const previousCount = computed(() => allResults.value.filter(r => r.tier === 2).length)
+
 const filteredResults = computed(() => {
   let rows = allResults.value
+
+  if (!showPrevious.value) {
+    rows = rows.filter(r => r.tier === 1)
+  }
 
   if (selectedAgents.value.length > 0) {
     rows = rows.filter(r => selectedAgents.value.includes(r.agent))
@@ -148,7 +166,8 @@ const filteredResults = computed(() => {
       const evals = r.evals.filter(e => selectedCategories.value.includes(getEvalCategory(e.evalPath)))
       const successes = evals.filter(e => e.result.success).length
       const firstTries = evals.filter(e => e.result.firstRunSuccess).length
-      const priced = evals.filter(e => e.costUsd != null)
+      const measured = evals.filter(e => !e.notAvailable)
+      const priced = measured.filter(e => e.costUsd != null)
       return {
         ...r,
         evals,
@@ -159,7 +178,7 @@ const filteredResults = computed(() => {
         passAt1: r.passAt1 != null && evals.length ? firstTries / evals.length : undefined,
         // Averages are plain means over the per-eval values, so they can be recomputed
         // from the filtered subset and still match the unfiltered experiment numbers.
-        avgDuration: evals.length ? evals.reduce((sum, e) => sum + e.result.duration, 0) / evals.length / 1000 : 0,
+        avgDuration: measured.length ? measured.reduce((sum, e) => sum + e.result.duration, 0) / measured.length / 1000 : 0,
         avgCost: priced.length ? priced.reduce((sum, e) => sum + (e.costUsd ?? 0), 0) / priced.length : undefined
       }
     }).sort(sortRows)
@@ -174,6 +193,10 @@ const formattedDate = computed(() => {
   const date = new Date(rawData.metadata.exportedAt)
   return date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })
 })
+
+function formatShortDate(timestamp: string): string {
+  return new Date(timestamp).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+}
 
 // Model icon mapping (matched by lowercase prefix of model name)
 const modelIconMap: Record<string, string> = {
@@ -212,6 +235,17 @@ function formatAvgDuration(seconds: number): string {
 function formatCost(usd?: number): string {
   if (usd == null) return '—'
   return `$${usd.toFixed(3)}`
+}
+
+// Column header with its definition in a tooltip, focusable so keyboard users can open it
+function headerWithInfo(label: string, text: string) {
+  return () => h(UTooltip, { text }, () => h('span', {
+    tabindex: 0,
+    class: 'inline-flex items-center gap-1 rounded-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary'
+  }, [
+    h('span', {}, label),
+    h(UIcon, { name: 'i-lucide-info', class: 'size-3.5 text-dimmed' })
+  ]))
 }
 
 // Expanded rows state
@@ -254,7 +288,12 @@ const columns: TableColumn<ModelRow>[] = [
     header: 'Model',
     cell: ({ row }) => h('div', { class: 'flex items-center gap-2' }, [
       h(UAvatar, { icon: getModelIcon(row.original.model), size: 'sm', class: 'ring ring-default ring-inset' }),
-      h('span', {}, row.original.model)
+      h('span', {}, row.original.model),
+      row.original.tier === 2
+        ? h(UTooltip, {
+            text: `Previously measured on ${row.original.totalEvals} evals and not rerun since.`
+          }, () => h(UBadge, { color: 'neutral', variant: 'subtle', size: 'sm' }, () => formatShortDate(row.original.timestamp)))
+        : null
     ])
   },
   {
@@ -263,7 +302,7 @@ const columns: TableColumn<ModelRow>[] = [
   },
   {
     accessorKey: 'avgDuration',
-    header: 'Avg Duration',
+    header: headerWithInfo('Avg Duration', 'Mean time per eval.'),
     meta: {
       class: {
         th: 'text-center',
@@ -274,12 +313,7 @@ const columns: TableColumn<ModelRow>[] = [
   },
   {
     accessorKey: 'avgCost',
-    header: () => h(UTooltip, {
-      text: 'Mean cost per eval, estimated from the tokens each run used at the provider\'s public list price.'
-    }, () => h('span', { class: 'inline-flex items-center gap-1' }, [
-      h('span', {}, 'Avg List Cost'),
-      h(UIcon, { name: 'i-lucide-info', class: 'size-3.5 text-dimmed' })
-    ])),
+    header: headerWithInfo('Avg List Cost', 'Mean cost per eval at public list prices. A guide, not a bill.'),
     meta: {
       class: {
         th: 'text-center',
@@ -290,7 +324,7 @@ const columns: TableColumn<ModelRow>[] = [
   },
   {
     accessorKey: 'successRate',
-    header: 'Success Rate',
+    header: headerWithInfo('Success Rate', 'Passed on any of 4 attempts. Not run yet counts as failed.'),
     meta: {
       class: {
         th: 'text-right',
@@ -301,12 +335,7 @@ const columns: TableColumn<ModelRow>[] = [
   },
   {
     accessorKey: 'passAt1',
-    header: () => h(UTooltip, {
-      text: 'Passed on the first attempt. Each eval allows up to 4 attempts; Success counts an eval as passed if any attempt succeeds.'
-    }, () => h('span', { class: 'inline-flex items-center gap-1' }, [
-      h('span', {}, 'First-Try Rate'),
-      h(UIcon, { name: 'i-lucide-info', class: 'size-3.5 text-dimmed' })
-    ])),
+    header: headerWithInfo('First-Try Rate', 'Passed on the first attempt. Breaks ties, then the cheaper model goes first.'),
     meta: {
       class: {
         th: 'text-right',
@@ -333,6 +362,11 @@ const evalColumns: TableColumn<EvalResultItem>[] = [
       }
     },
     cell: ({ row }) => {
+      if (row.original.notAvailable) {
+        return h('div', { class: 'flex items-center justify-center' }, [
+          h(UTooltip, { text: 'Not run yet. Counts as not passed.' }, () => h(UBadge, { color: 'neutral', variant: 'outline' }, () => 'N/A'))
+        ])
+      }
       const { success, passedRuns, totalRuns } = row.original.result
       const children = [
         h(UBadge, {
@@ -360,9 +394,16 @@ const evalColumns: TableColumn<EvalResultItem>[] = [
         td: 'text-right'
       }
     },
-    cell: ({ row }) => h('span', {}, formatDuration(row.original.result.duration))
+    cell: ({ row }) => h('span', {}, row.original.notAvailable ? '—' : formatDuration(row.original.result.duration))
   }
 ]
+
+// Previously measured rows are dimmed so current models stand out when both are shown
+const tableMeta = {
+  class: {
+    tr: (row: TableRow<ModelRow>) => row.original.tier === 2 ? 'opacity-60' : ''
+  }
+}
 </script>
 
 <template>
@@ -399,7 +440,14 @@ const evalColumns: TableColumn<EvalResultItem>[] = [
             Agent Performance Results
           </h2>
 
-          <div class="flex items-center justify-center lg:justify-end gap-2 w-full lg:w-auto">
+          <div class="flex flex-wrap items-center justify-center lg:justify-end gap-2 w-full lg:w-auto">
+            <USwitch
+              v-if="previousCount"
+              v-model="showPrevious"
+              :label="`Show ${previousCount} previous models`"
+              class="me-2"
+            />
+
             <USelectMenu
               v-model="selectedCategories"
               :items="categories"
@@ -436,6 +484,7 @@ const evalColumns: TableColumn<EvalResultItem>[] = [
           v-model:expanded="expanded"
           :data="filteredResults"
           :columns="columns"
+          :meta="tableMeta"
           :ui="{
             thead: '[&>tr]:bg-elevated/50 border-b border-default',
             tr: 'py-2.5 peer peer-data-[expanded=true]:[&>td]:p-4! group transition-[background-color] cursor-default',
@@ -458,15 +507,10 @@ const evalColumns: TableColumn<EvalResultItem>[] = [
           </template>
         </UTable>
 
-        <div class="mt-4 text-sm text-dimmed text-pretty text-justify bg-elevated/50 p-4 rounded-lg">
-          Each evaluation is attempted up to 4 times.
-          <span class="text-default font-medium">Success Rate</span> is the percentage of evals that passed on at least one attempt;
-          <span class="text-default font-medium">First-Try Rate</span> is the percentage that passed on the first attempt, used to break ties between models with the same success rate.
-          <span class="text-default font-medium">Avg Duration</span> is the mean time an agent took per eval.
-          <span class="text-default font-medium">Avg List Cost</span> is the mean cost per eval, estimated from the tokens each run used at the provider's public list price, so it's a relative guide and not a bill: your rate depends on caching, discounts and subscription plans.
-          Expand a row to see per-eval results, where a
-          <span class="text-default font-medium">1/3</span> badge means the eval failed twice before passing.
-        </div>
+        <p class="mt-4 text-sm text-dimmed text-pretty">
+          Current models are rerun whenever the evals change. Previous models keep their last results, dated by their last run.
+          Hover a column header for its definition, or expand a row for per-eval results.
+        </p>
       </UContainer>
     </UPageBody>
   </UPage>
