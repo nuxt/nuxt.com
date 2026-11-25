@@ -1,8 +1,12 @@
+import { mkdtemp, rm } from 'node:fs/promises'
+import { tmpdir } from 'node:os'
+import { join } from 'node:path'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { captureScreenshot, captureUrlError, hideElementsExpression, parseCookie, recordVideo, removeElementsExpression, stepCommand } from '../../layers/nuxi/agent/lib/media/capture'
 import { mediaTypeFromPath, sniffMediaType } from '../../layers/nuxi/agent/lib/media/media-type'
 import { publishMedia } from '../../layers/nuxi/agent/lib/media/publish'
 import { commitAssets, MAX_COMMIT_BYTES, openPullRequestOf } from '../../layers/nuxi/agent/lib/github-files'
+import { handoffStore, localStore, MAX_SHARED_BYTES, receiveAttachments, shareAttachments, type HandoffStore } from '../../layers/nuxi/agent/lib/handoff'
 
 const ascii = (text: string) => [...text].map(char => char.charCodeAt(0))
 const WEBP = new Uint8Array([...ascii('RIFF'), 0x24, 0, 0, 0, ...ascii('WEBPVP8 '), 1, 2, 3])
@@ -399,5 +403,87 @@ describe('commitAssets', () => {
 
     await expect(commitAssets({ ...input, ...override, fetchImpl })).rejects.toThrow()
     expect(requests).toEqual([])
+  })
+})
+
+describe('attachment hand-off', () => {
+  const ATTACHED = '/workspace/.eve/attachments'
+  let directory: string
+  let store: HandoffStore
+
+  beforeEach(async () => {
+    directory = await mkdtemp(join(tmpdir(), 'nuxi-handoff-test-'))
+    store = localStore(directory)
+  })
+  afterEach(() => rm(directory, { recursive: true, force: true }))
+
+  /** The conversation's sandbox, holding `files`, and the coder's, which records what is written to it. */
+  function sandboxes(files: Record<string, Uint8Array>) {
+    const written = new Map<string, Uint8Array>()
+    return {
+      written,
+      root: { readBinaryFile: async ({ path }: { path: string }) => files[path] ?? null },
+      coder: { writeBinaryFile: async ({ path, content }: { path: string, content: Uint8Array }) => void written.set(path, content) }
+    }
+  }
+
+  it('puts a file attached to a conversation in the sandbox of its coder, and of no other', async () => {
+    const { root, coder, written } = sandboxes({ [`${ATTACHED}/3f2a9c1e/v4.7.png`]: PNG })
+
+    expect(await shareAttachments({ sandbox: root, store, sessionId: 'session-a', paths: [`${ATTACHED}/3f2a9c1e/v4.7.png`] })).toEqual([{ name: 'v4.7.png', bytes: PNG.byteLength }])
+    expect(await receiveAttachments({ sandbox: coder, store, sessionId: 'session-b' })).toEqual([])
+    expect(written.size).toBe(0)
+
+    expect(await receiveAttachments({ sandbox: coder, store, sessionId: 'session-a' })).toEqual([{ path: '/workspace/shared/v4.7.png', bytes: PNG.byteLength }])
+    expect([...written]).toEqual([['/workspace/shared/v4.7.png', PNG]])
+  })
+
+  it('keeps earlier files when the conversation shares another, and replaces one of the same name', async () => {
+    const { root, coder, written } = sandboxes({ [`${ATTACHED}/aaaa/cover.png`]: PNG, [`${ATTACHED}/bbbb/logo.webp`]: WEBP, [`${ATTACHED}/cccc/cover.png`]: new Uint8Array([...PNG, 9]) })
+
+    await shareAttachments({ sandbox: root, store, sessionId: 's', paths: [`${ATTACHED}/aaaa/cover.png`] })
+    await shareAttachments({ sandbox: root, store, sessionId: 's', paths: [`${ATTACHED}/bbbb/logo.webp`] })
+    await shareAttachments({ sandbox: root, store, sessionId: 's', paths: [`${ATTACHED}/cccc/cover.png`] })
+    await receiveAttachments({ sandbox: coder, store, sessionId: 's' })
+
+    expect(Object.fromEntries(written)).toEqual({ '/workspace/shared/cover.png': new Uint8Array([...PNG, 9]), '/workspace/shared/logo.webp': WEBP })
+  })
+
+  it('names a file so it is a safe path, and tells two files of one name apart', async () => {
+    const { root } = sandboxes({ [`${ATTACHED}/0123456789ab/Screen Shot (1).png`]: PNG, [`${ATTACHED}/aaaaaaaaaaaa/image.png`]: PNG, [`${ATTACHED}/bbbbbbbbbbbb/image.png`]: WEBP, [`${ATTACHED}/cccc/.env`]: TEXT })
+    const names = async (...paths: string[]) => (await shareAttachments({ sandbox: root, store, sessionId: 's', paths })).map(file => file.name)
+
+    expect(await names(`${ATTACHED}/0123456789ab/Screen Shot (1).png`, `${ATTACHED}/cccc/.env`)).toEqual(['Screen-Shot-1-.png', 'env'])
+    expect(await names(`${ATTACHED}/aaaaaaaaaaaa/image.png`, `${ATTACHED}/bbbbbbbbbbbb/image.png`)).toEqual(['aaaaaaaa-image.png', 'bbbbbbbb-image.png'])
+    // The same attachment named twice is one file.
+    expect(await names(`${ATTACHED}/aaaaaaaaaaaa/image.png`, `${ATTACHED}/aaaaaaaaaaaa/image.png`)).toEqual(['image.png'])
+  })
+
+  it.each([
+    ['a file outside the attachments', ['/workspace/.env']],
+    ['a path that climbs out of the attachments', [`${ATTACHED}/../../etc/passwd`]],
+    ['a file that is not there', [`${ATTACHED}/aaaa/missing.png`]],
+    ['a file over the size limit', [`${ATTACHED}/aaaa/huge.png`]],
+    ['no file', []],
+    ['more files than the limit', Array.from({ length: 6 }, (_, index) => `${ATTACHED}/aaaa/${index}.png`)]
+  ])('shares nothing for %s', async (_, paths) => {
+    const { root, coder } = sandboxes({ '/workspace/.env': TEXT, '/etc/passwd': TEXT, [`${ATTACHED}/aaaa/ok.png`]: PNG, [`${ATTACHED}/aaaa/huge.png`]: new Uint8Array(MAX_SHARED_BYTES + 1) })
+
+    // One good file in the same call must not get through on its own.
+    await expect(shareAttachments({ sandbox: root, store, sessionId: 's', paths: paths.length ? [`${ATTACHED}/aaaa/ok.png`, ...paths] : [] })).rejects.toThrow()
+    expect(await receiveAttachments({ sandbox: coder, store, sessionId: 's' })).toEqual([])
+  })
+
+  it('writes nothing for a stored name that is not a file name', async () => {
+    const { coder, written } = sandboxes({})
+    const tampered: HandoffStore = { put: async () => {}, get: async () => [{ name: '../../etc/cron.d/x', bytes: TEXT }, { name: '.bashrc', bytes: TEXT }, { name: 'ok.png', bytes: PNG }] }
+
+    expect(await receiveAttachments({ sandbox: coder, store: tampered, sessionId: 's' })).toEqual([{ path: '/workspace/shared/ok.png', bytes: PNG.byteLength }])
+    expect([...written.keys()]).toEqual(['/workspace/shared/ok.png'])
+  })
+
+  it('refuses to fall back to a local directory on Vercel', () => {
+    expect(() => handoffStore({ VERCEL: '1' })).toThrow('REDIS_URL')
+    expect(() => handoffStore({})).not.toThrow()
   })
 })

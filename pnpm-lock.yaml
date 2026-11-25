@@ -379,6 +379,9 @@ importers:
       rangi:
         specifier: ^2.2.0
         version: 2.2.0
+      redis:
+        specifier: ^5.12.1
+        version: 5.12.1(@opentelemetry/api@1.10.0)
       resend:
         specifier: ^6.37.0
         version: 6.37.0
