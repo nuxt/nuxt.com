@@ -102,3 +102,26 @@ export const nuxtersSyncs = sqliteTable('nuxters_syncs', {
   count: integer('count').notNull(),
   syncedAt: integer('synced_at', { mode: 'timestamp' }).notNull()
 })
+
+/**
+ * Authorization codes and refresh tokens the admin MCP OAuth server issued, keyed by
+ * the SHA-256 of the token. One family per sign-in: replaying a used code or refresh
+ * token revokes the whole family. Access tokens are short-lived JWTs and not stored.
+ */
+export const mcpOAuthGrants = sqliteTable('mcp_oauth_grants', {
+  id: text('id').primaryKey(),
+  kind: text('kind', { enum: ['code', 'refresh'] }).notNull(),
+  familyId: text('family_id').notNull(),
+  userId: text('user_id').notNull(),
+  // Stable key of the registered client, from its signed client ID
+  clientId: text('client_id').notNull(),
+  scope: text('scope').notNull(),
+  redirectUri: text('redirect_uri'),
+  codeChallenge: text('code_challenge'),
+  expiresAt: integer('expires_at', { mode: 'timestamp' }).notNull(),
+  usedAt: integer('used_at', { mode: 'timestamp' }),
+  ...timestamps
+}, table => [
+  index('mcp_oauth_grants_family_idx').on(table.familyId),
+  index('mcp_oauth_grants_expires_idx').on(table.expiresAt)
+])

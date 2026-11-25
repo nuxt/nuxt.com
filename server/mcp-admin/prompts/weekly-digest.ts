@@ -5,6 +5,7 @@ const inputSchema = z.object({
 })
 
 export default defineMcpPrompt({
+  scopes: ['admin:analytics', 'admin:chats'],
   description: 'Generate the Nuxt Monday digest — traffic, docs feedback, AI agent quality, and prioritized follow-ups.',
   inputSchema,
   handler({ sinceDays }) {

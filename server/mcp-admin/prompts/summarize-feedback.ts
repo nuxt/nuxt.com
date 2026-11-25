@@ -6,6 +6,7 @@ const inputSchema = z.object({
 })
 
 export default defineMcpPrompt({
+  scopes: ['admin:analytics'],
   description: 'Summarize user feedback on the docs over a recent window: rating distribution, worst pages, and recurring themes from negative comments.',
   inputSchema,
   handler({ sinceDays, pathContains }) {

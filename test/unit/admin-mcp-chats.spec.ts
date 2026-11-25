@@ -1,4 +1,4 @@
-import { createMcpHandler, defineMcpTool } from 'nitro-mcp-toolkit'
+import { createMcpHandler, createMcpOAuth, defineMcpTool } from 'nitro-mcp-toolkit'
 import { createMcpTestClient, textOf } from 'nitro-mcp-toolkit/testing'
 import { z } from 'zod'
 import { createClient } from '@libsql/client'
@@ -24,12 +24,25 @@ vi.stubGlobal('db', db)
 const listChats = (await import('../../server/mcp-admin/tools/list-agent-chats')).default
 const getChat = (await import('../../server/mcp-admin/tools/get-agent-chat')).default
 const listVotes = (await import('../../server/mcp-admin/tools/list-agent-votes')).default
-const client = await createMcpTestClient(createMcpHandler({ tools: [
-  { ...listChats, name: 'list-agent-chats' },
-  { ...getChat, name: 'get-agent-chat' },
-  { ...listVotes, name: 'list-agent-votes' }
-] }))
-afterAll(() => client.close())
+// The bearer token is the granted scope list, so each client chooses what it may reach.
+const handler = createMcpHandler({
+  oauth: createMcpOAuth({
+    resource: 'http://localhost/mcp/admin',
+    authorizationServers: ['http://localhost'],
+    verify: (token, event) => {
+      event.context.oauth = { sub: 'admin', scope: token.replaceAll('+', ' ') }
+      return true
+    }
+  }),
+  tools: [
+    { ...listChats, name: 'list-agent-chats' },
+    { ...getChat, name: 'get-agent-chat' },
+    { ...listVotes, name: 'list-agent-votes' }
+  ]
+})
+const client = await createMcpTestClient(handler, { headers: { authorization: 'Bearer admin:chats' } })
+const analyticsClient = await createMcpTestClient(handler, { headers: { authorization: 'Bearer admin:analytics' } })
+afterAll(() => Promise.all([client.close(), analyticsClient.close()]))
 
 async function callTool(name: string, args: Record<string, unknown>) {
   const result = await client.callTool({ name, arguments: args })
@@ -67,6 +80,12 @@ describe('admin agent chat tools', () => {
     for (const id of ['admin', 'public']) {
       const chat = await callTool('get-agent-chat', { chatId: id, includeRawParts: false })
       expect(chat).toMatchObject({ messages: [{ text: `${id} answer` }] })
+    }
+  })
+
+  it('requires the admin:chats scope to read transcripts', async () => {
+    for (const name of ['list-agent-chats', 'get-agent-chat', 'list-agent-votes']) {
+      await expect(analyticsClient.callTool({ name, arguments: { chatId: 'public' } })).rejects.toThrow(/admin:chats/)
     }
   })
 

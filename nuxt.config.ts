@@ -221,6 +221,8 @@ export default defineNuxtConfig({
     '/admin': { ssr: false },
     '/admin/**': { ssr: false },
     '/admin/login': { redirect: '/login?redirect=/admin', prerender: false },
+    // Admin MCP OAuth consent: client-side only, never framed (clickjacking would approve access)
+    '/oauth/authorize': { ssr: false, headers: { 'x-frame-options': 'DENY', 'content-security-policy': 'frame-ancestors \'none\'' } },
     // Auth-protected client-side area — never SSR'd.
     '/dashboard': { ssr: false },
     '/dashboard/**': { ssr: false },
@@ -840,6 +842,7 @@ export default defineNuxtConfig({
       '/dashboard',
       '/dashboard/**',
       '/login',
+      '/oauth/**',
       '/chat',
       '/chat/**',
       '/enterprise',

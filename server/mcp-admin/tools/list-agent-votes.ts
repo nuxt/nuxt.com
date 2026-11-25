@@ -17,6 +17,7 @@ const inputSchema = z.object({
 })
 
 export default defineMcpTool({
+  scopes: ['admin:chats'],
   description: `Lists per-message votes (upvotes/downvotes) on AI agent answers, joined with chat metadata and the actual voted message text. Only includes chats shared with admins or made public.
 
 WHEN TO USE: Use this tool to read what users actually disliked. Default sort is most recent vote first; pass \`onlyDownvotes\` to focus on negative signal.`,

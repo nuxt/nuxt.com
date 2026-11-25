@@ -1,4 +1,4 @@
-import { createMcpHandler, defineMcpTool } from 'nitro-mcp-toolkit'
+import { createMcpHandler, createMcpOAuth, defineMcpTool } from 'nitro-mcp-toolkit'
 import { createMcpTestClient, textOf } from 'nitro-mcp-toolkit/testing'
 import { createVerify, generateKeyPairSync } from 'node:crypto'
 import { createError } from 'h3'
@@ -26,10 +26,20 @@ vi.stubGlobal('cruxFetch', google.cruxFetch)
 
 const analytics = (await import('../../server/mcp-admin/tools/search-console-analytics')).default
 const webVitals = (await import('../../server/mcp-admin/tools/crux-web-vitals')).default
-const client = await createMcpTestClient(createMcpHandler({ tools: [
-  { ...analytics, name: 'search-console-analytics' },
-  { ...webVitals, name: 'crux-web-vitals' }
-] }))
+const client = await createMcpTestClient(createMcpHandler({
+  oauth: createMcpOAuth({
+    resource: 'http://localhost/mcp/admin',
+    authorizationServers: ['http://localhost'],
+    verify: (_token, event) => {
+      event.context.oauth = { sub: 'admin', scope: 'admin:analytics' }
+      return true
+    }
+  }),
+  tools: [
+    { ...analytics, name: 'search-console-analytics' },
+    { ...webVitals, name: 'crux-web-vitals' }
+  ]
+}), { headers: { authorization: 'Bearer test' } })
 afterAll(() => client.close())
 
 async function callTool(name: string, args: Record<string, unknown>): Promise<unknown> {

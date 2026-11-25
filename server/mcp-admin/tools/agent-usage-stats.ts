@@ -6,6 +6,7 @@ const inputSchema = z.object({
 })
 
 export default defineMcpTool({
+  scopes: ['admin:analytics'],
   description: `Nuxt.com-specific agent quality metrics: persisted web chat counts, message volume, and per-answer votes.
 
 For runs, tokens, cost, duration, and channel breakdown (Slack / Discord / web), use **Vercel Observability → Agent Runs** on the nuxt project — Eve records that data automatically and it is more accurate than anything stored locally.

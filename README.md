@@ -69,14 +69,20 @@ pnpm build
 
 ### MCP Toolkit preview
 
-The toolkit dependency is pinned to [the 1.0 preview from `2fa99b1`](https://github.com/nuxt-modules/mcp-toolkit/pull/406). Its matching Nitro runtime preview is pinned by the package itself. This branch tests that preview before switching to a published beta.
+The toolkit dependency is pinned to [the 1.0 preview from `987571d`](https://github.com/nuxt-modules/mcp-toolkit/pull/420). Its matching Nitro runtime preview is pinned by the package itself. This branch tests that preview before switching to a published beta.
 
 ```bash
 pnpm install --frozen-lockfile
 pnpm dev
 ```
 
-The public server card at `/.well-known/mcp/server-card.json` contains only the public catalog. Admin tools and prompts live separately in `server/mcp-admin` and are discovered by the `admin` server configured in `nuxt.config.ts`. Each server keeps its metadata and instructions in its own `index.ts`. The admin index also defines authentication, which reads `NUXT_MCP_ADMIN_TOKEN` at request time. An unset token refuses access.
+The public server card at `/.well-known/mcp/server-card.json` contains only the public catalog. Admin tools and prompts live separately in `server/mcp-admin` and are discovered by the `admin` server configured in `nuxt.config.ts`. Each server keeps its metadata and instructions in its own `index.ts`. The admin index also defines authentication.
+
+### Admin MCP OAuth
+
+People connect to `/mcp/admin` with their GitHub login: nuxt.com is the OAuth 2.1 authorization server for that endpoint (`server/utils/mcp-oauth.ts`), and the toolkit verifies its tokens as the resource server. An MCP client discovers the server from the `401` challenge, registers itself (`/oauth/register`), and sends the person to `/oauth/authorize`. That page reuses `/login`, accepts only admins, and asks for consent. Clients then exchange the code with PKCE at `/oauth/token` and get a one-hour access token for `/mcp/admin` and a rotating 30-day refresh token. Each refresh re-checks admin access, and replaying a used code or refresh token revokes the whole sign-in.
+
+Tools and prompts declare `scopes`: `admin:chats` for chat transcripts and votes, `admin:analytics` for everything else. Grants live in the `mcp_oauth_grants` table; signing keys derive from `NUXT_APP_SECRET`, which must be set. The Nuxi agent keeps the shared `NUXT_MCP_ADMIN_TOKEN`, which grants every scope. Locally, run `pnpm dev` and connect a client to `http://localhost:3000/mcp/admin`; set `NUXT_ADMIN_GITHUB_LOGINS` to your login.
 
 Public tools and resources use native Nitro cached functions with their existing 10-minute, 30-minute or 1-hour lifetimes. Cache keys include the request origin and parsed arguments. No MCP client credentials are needed for the public endpoint.
 
