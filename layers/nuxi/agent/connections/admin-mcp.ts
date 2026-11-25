@@ -1,17 +1,14 @@
 import { defineMcpClientConnection } from 'eve/connections'
 import { connect } from '@vercel/connect/eve'
 import type { SessionContext } from 'eve/context'
-import { MCP_OAUTH_SCOPE_LIST, mcpAdminResource } from '../../../../shared/utils/mcp-admin.js'
+import { MCP_OAUTH_SCOPE_LIST } from '../../../../shared/utils/mcp-admin.js'
 import { isAdminMode } from '../lib/identity/admin-mode.js'
 
-const ADMIN_MCP_URL = mcpAdminResource()
-
 /**
- * Production only: Vercel Authentication keeps MCP clients and Connect out of
- * preview deployments, and provisioning from a preview would point the
- * connector at that preview's URL.
+ * Always production, also from local dev and previews: Vercel Connect calls the
+ * server itself, so it can't reach localhost or a preview behind Vercel Authentication.
  */
-const ADMIN_MCP_AVAILABLE = process.env.VERCEL_ENV === 'production'
+const ADMIN_MCP_URL = 'https://nuxt.com/mcp/admin'
 
 /** The admin MCP server exposes exactly these; keep the surface explicit. */
 const ALLOWED_TOOLS = [
@@ -41,20 +38,17 @@ export const ADMIN_MCP_INSTRUCTIONS = `**Admin MCP connection (\`admin-mcp__*\`,
  * in `connection_search`, but every call fails before reaching the server.
  */
 async function adminOnlyConnect(ctx: SessionContext) {
-  const refusal = !ADMIN_MCP_AVAILABLE
-    ? 'The admin MCP connection only runs in production.'
-    : !(await isAdminMode(ctx.session.auth.current)) ? 'This tool is not available in the current session.' : null
-  if (refusal) {
+  if (!(await isAdminMode(ctx.session.auth.current))) {
     return {
       principalType: 'app' as const,
       async getToken(): Promise<never> {
-        console.warn(`[nuxi:admin-mcp] blocked: ${refusal}`)
-        throw new Error(refusal)
+        console.warn('[nuxi:admin-mcp] blocked non-admin access')
+        throw new Error('This tool is not available in the current session.')
       }
     }
   }
 
-  // Connect creates the `nuxt.com/nuxi` connector for this URL on first use; an admin then installs it
+  // Connect creates the `nuxt.com/nuxi` connector on first use; an admin then installs it
   // once through nuxt.com's GitHub consent page, and Connect refreshes the grant from there.
   return connect({
     connector: 'nuxt.com/nuxi',
