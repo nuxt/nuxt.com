@@ -1,7 +1,23 @@
 import { defineMcpClientConnection } from 'eve/connections'
+import { connect } from '@vercel/connect/eve'
 import type { SessionContext } from 'eve/context'
+import { MCP_OAUTH_SCOPE_LIST, mcpAdminResource } from '../../../../shared/utils/mcp-admin.js'
 import { isAdminMode } from '../lib/identity/admin-mode.js'
-import { appOrigin } from '../lib/internal-api.js'
+
+const ADMIN_MCP_URL = mcpAdminResource()
+
+/**
+ * Vercel Connect connector holding Nuxi's grant on the admin MCP, one per environment like Slack's.
+ * An admin installs it once through nuxt.com's GitHub consent page; Connect then refreshes it.
+ */
+function adminMcpConnectorId(): string {
+  const override = process.env.NUXI_ADMIN_MCP_CONNECTOR?.trim()
+  if (override) return override
+  if (process.env.NODE_ENV === 'development' || process.env.VERCEL_ENV === 'preview') {
+    return 'nuxt.com/nuxi-preview'
+  }
+  return 'nuxt.com/nuxi'
+}
 
 /** The admin MCP server exposes exactly these; keep the surface explicit. */
 const ALLOWED_TOOLS = [
@@ -30,7 +46,7 @@ export const ADMIN_MCP_INSTRUCTIONS = `**Admin MCP connection (\`admin-mcp__*\`,
  * Mirrors `adminOnlyVercelAuth`: a non-admin session still sees the connection
  * in `connection_search`, but every call fails before reaching the server.
  */
-async function adminOnlyToken(ctx: SessionContext) {
+async function adminOnlyConnect(ctx: SessionContext) {
   if (!(await isAdminMode(ctx.session.auth.current))) {
     return {
       principalType: 'app' as const,
@@ -41,19 +57,18 @@ async function adminOnlyToken(ctx: SessionContext) {
     }
   }
 
-  return {
-    principalType: 'app' as const,
-    async getToken() {
-      const token = process.env.NUXT_MCP_ADMIN_TOKEN?.trim()
-      if (!token) throw new Error('NUXT_MCP_ADMIN_TOKEN is not configured')
-      return { token }
-    }
-  }
+  return connect({
+    connector: adminMcpConnectorId(),
+    principalType: 'app',
+    autoProvision: false,
+    // nuxt.com only issues tokens bound to this exact resource (RFC 8707), and rejects Connect's default `*` scope.
+    tokenParams: { resources: [ADMIN_MCP_URL], scopes: [...MCP_OAUTH_SCOPE_LIST] }
+  })
 }
 
 export default defineMcpClientConnection({
-  url: `${appOrigin()}/mcp/admin`,
+  url: ADMIN_MCP_URL,
   description: 'Nuxi admin analytics: docs feedback ratings, shared web chat transcripts, and per-message votes. Admin/Slack/Discord/schedule sessions only.',
   tools: { allow: ALLOWED_TOOLS },
-  auth: adminOnlyToken
+  auth: adminOnlyConnect
 })

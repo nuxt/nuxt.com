@@ -132,7 +132,6 @@ export default defineNuxtConfig({
         }
       }
     },
-    mcpAdminToken: '',
     // Service account added as a user of the Search Console property (admin MCP `search-console-*` tools)
     googleSearchConsole: {
       clientEmail: '',

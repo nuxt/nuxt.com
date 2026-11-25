@@ -3,6 +3,8 @@ import { and, eq, gt, isNull, lt } from 'drizzle-orm'
 import { jwtVerify, SignJWT } from 'jose'
 import { deriveSecret } from 'nuxt/server'
 import type { H3Event } from 'h3'
+import { MCP_OAUTH_SCOPE_LIST, MCP_OAUTH_SCOPES, mcpAdminResource, mcpOAuthIssuer } from '../../shared/utils/mcp-admin'
+import type { McpOAuthScope } from '../../shared/utils/mcp-admin'
 
 /**
  * nuxt.com is the OAuth 2.1 authorization server for its admin MCP endpoint:
@@ -11,31 +13,9 @@ import type { H3Event } from 'h3'
  * resource server in `server/mcp-admin/index.ts`.
  */
 
-export const MCP_OAUTH_SCOPES = {
-  'admin:analytics': 'Read docs feedback, agent usage and votes, Google Search Console and Core Web Vitals data',
-  'admin:chats': 'Read web chat transcripts shared with admins or made public'
-} as const
-
-export type McpOAuthScope = keyof typeof MCP_OAUTH_SCOPES
-
-export const MCP_OAUTH_SCOPE_LIST = Object.keys(MCP_OAUTH_SCOPES) as McpOAuthScope[]
-
 const CODE_TTL = 60
 const ACCESS_TOKEN_TTL = 60 * 60
 const REFRESH_TOKEN_TTL = 30 * 24 * 60 * 60
-
-/** Public origin MCP clients connect to; the resource and issuer must match it exactly. */
-export function mcpOAuthIssuer(): string {
-  if (process.env.VERCEL_ENV === 'production') return 'https://nuxt.com'
-  if (process.env.VERCEL_ENV === 'preview' && process.env.VERCEL_BRANCH_URL) {
-    return `https://${process.env.VERCEL_BRANCH_URL}`
-  }
-  return process.env.NUXT_PUBLIC_SITE_URL?.trim().replace(/\/+$/, '') || 'http://localhost:3000'
-}
-
-export function mcpAdminResource(): string {
-  return `${mcpOAuthIssuer()}/mcp/admin`
-}
 
 export function mcpOAuthMetadata() {
   const issuer = mcpOAuthIssuer()
