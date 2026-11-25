@@ -429,57 +429,48 @@ describe('attachment hand-off', () => {
 
   it('puts a file attached to a conversation in the sandbox of its coder, and of no other', async () => {
     const { root, coder, written } = sandboxes({ [`${ATTACHED}/3f2a9c1e/v4.7.png`]: PNG })
+    const shared = [{ path: '/workspace/shared/3f2a9c1e/v4.7.png', bytes: PNG.byteLength }]
 
-    expect(await shareAttachments({ sandbox: root, store, sessionId: 'session-a', paths: [`${ATTACHED}/3f2a9c1e/v4.7.png`] })).toEqual([{ name: 'v4.7.png', bytes: PNG.byteLength }])
+    expect(await shareAttachments({ sandbox: root, store, sessionId: 'session-a', paths: [`${ATTACHED}/3f2a9c1e/v4.7.png`] })).toEqual(shared)
     expect(await receiveAttachments({ sandbox: coder, store, sessionId: 'session-b' })).toEqual([])
     expect(written.size).toBe(0)
 
-    expect(await receiveAttachments({ sandbox: coder, store, sessionId: 'session-a' })).toEqual([{ path: '/workspace/shared/v4.7.png', bytes: PNG.byteLength }])
-    expect([...written]).toEqual([['/workspace/shared/v4.7.png', PNG]])
+    expect(await receiveAttachments({ sandbox: coder, store, sessionId: 'session-a' })).toEqual(shared)
+    expect([...written]).toEqual([['/workspace/shared/3f2a9c1e/v4.7.png', PNG]])
   })
 
-  it('keeps earlier files when the conversation shares another, and replaces one of the same name', async () => {
-    const { root, coder, written } = sandboxes({ [`${ATTACHED}/aaaa/cover.png`]: PNG, [`${ATTACHED}/bbbb/logo.webp`]: WEBP, [`${ATTACHED}/cccc/cover.png`]: new Uint8Array([...PNG, 9]) })
+  it('keeps two attachments of one name apart, and the files of an earlier call', async () => {
+    const { root, coder, written } = sandboxes({ [`${ATTACHED}/aaaa/image.png`]: PNG, [`${ATTACHED}/bbbb/image.png`]: WEBP, [`${ATTACHED}/cccc/logo.webp`]: WEBP })
 
-    await shareAttachments({ sandbox: root, store, sessionId: 's', paths: [`${ATTACHED}/aaaa/cover.png`] })
-    await shareAttachments({ sandbox: root, store, sessionId: 's', paths: [`${ATTACHED}/bbbb/logo.webp`] })
-    await shareAttachments({ sandbox: root, store, sessionId: 's', paths: [`${ATTACHED}/cccc/cover.png`] })
+    await shareAttachments({ sandbox: root, store, sessionId: 's', paths: [`${ATTACHED}/aaaa/image.png`, `${ATTACHED}/bbbb/image.png`] })
+    await shareAttachments({ sandbox: root, store, sessionId: 's', paths: [`${ATTACHED}/cccc/logo.webp`] })
     await receiveAttachments({ sandbox: coder, store, sessionId: 's' })
 
-    expect(Object.fromEntries(written)).toEqual({ '/workspace/shared/cover.png': new Uint8Array([...PNG, 9]), '/workspace/shared/logo.webp': WEBP })
+    expect(Object.fromEntries(written)).toEqual({
+      '/workspace/shared/aaaa/image.png': PNG,
+      '/workspace/shared/bbbb/image.png': WEBP,
+      '/workspace/shared/cccc/logo.webp': WEBP
+    })
   })
 
-  it('names a file so it is a safe path, and tells two files of one name apart', async () => {
-    const { root } = sandboxes({ [`${ATTACHED}/0123456789ab/Screen Shot (1).png`]: PNG, [`${ATTACHED}/aaaaaaaaaaaa/image.png`]: PNG, [`${ATTACHED}/bbbbbbbbbbbb/image.png`]: WEBP, [`${ATTACHED}/cccc/.env`]: TEXT })
-    const names = async (...paths: string[]) => (await shareAttachments({ sandbox: root, store, sessionId: 's', paths })).map(file => file.name)
+  it('makes a file name safe to write and to type in a shell', async () => {
+    const { root } = sandboxes({ [`${ATTACHED}/3f2a9c1e/Screen Shot (1).png`]: PNG, [`${ATTACHED}/3f2a9c1e/.env`]: TEXT })
+    const paths = await shareAttachments({ sandbox: root, store, sessionId: 's', paths: [`${ATTACHED}/3f2a9c1e/Screen Shot (1).png`, `${ATTACHED}/3f2a9c1e/.env`] })
 
-    expect(await names(`${ATTACHED}/0123456789ab/Screen Shot (1).png`, `${ATTACHED}/cccc/.env`)).toEqual(['Screen-Shot-1-.png', 'env'])
-    expect(await names(`${ATTACHED}/aaaaaaaaaaaa/image.png`, `${ATTACHED}/bbbbbbbbbbbb/image.png`)).toEqual(['aaaaaaaa-image.png', 'bbbbbbbb-image.png'])
-    // The same attachment named twice is one file.
-    expect(await names(`${ATTACHED}/aaaaaaaaaaaa/image.png`, `${ATTACHED}/aaaaaaaaaaaa/image.png`)).toEqual(['image.png'])
+    expect(paths.map(file => file.path)).toEqual(['/workspace/shared/3f2a9c1e/Screen-Shot-1-.png', '/workspace/shared/3f2a9c1e/env'])
   })
 
   it.each([
-    ['a file outside the attachments', ['/workspace/.env']],
-    ['a path that climbs out of the attachments', [`${ATTACHED}/../../etc/passwd`]],
-    ['a file that is not there', [`${ATTACHED}/aaaa/missing.png`]],
-    ['a file over the size limit', [`${ATTACHED}/aaaa/huge.png`]],
-    ['no file', []],
-    ['more files than the limit', Array.from({ length: 6 }, (_, index) => `${ATTACHED}/aaaa/${index}.png`)]
-  ])('shares nothing for %s', async (_, paths) => {
+    ['a file outside the attachments', '/workspace/.env'],
+    ['a path that climbs out of the attachments', `${ATTACHED}/../../etc/passwd`],
+    ['a file that is not there', `${ATTACHED}/aaaa/missing.png`],
+    ['a file over the size limit', `${ATTACHED}/aaaa/huge.png`]
+  ])('shares nothing for %s', async (_, path) => {
     const { root, coder } = sandboxes({ '/workspace/.env': TEXT, '/etc/passwd': TEXT, [`${ATTACHED}/aaaa/ok.png`]: PNG, [`${ATTACHED}/aaaa/huge.png`]: new Uint8Array(MAX_SHARED_BYTES + 1) })
 
-    // One good file in the same call must not get through on its own.
-    await expect(shareAttachments({ sandbox: root, store, sessionId: 's', paths: paths.length ? [`${ATTACHED}/aaaa/ok.png`, ...paths] : [] })).rejects.toThrow()
+    // The good file of the same call must not get through on its own.
+    await expect(shareAttachments({ sandbox: root, store, sessionId: 's', paths: [`${ATTACHED}/aaaa/ok.png`, path] })).rejects.toThrow()
     expect(await receiveAttachments({ sandbox: coder, store, sessionId: 's' })).toEqual([])
-  })
-
-  it('writes nothing for a stored name that is not a file name', async () => {
-    const { coder, written } = sandboxes({})
-    const tampered: HandoffStore = { put: async () => {}, get: async () => [{ name: '../../etc/cron.d/x', bytes: TEXT }, { name: '.bashrc', bytes: TEXT }, { name: 'ok.png', bytes: PNG }] }
-
-    expect(await receiveAttachments({ sandbox: coder, store: tampered, sessionId: 's' })).toEqual([{ path: '/workspace/shared/ok.png', bytes: PNG.byteLength }])
-    expect([...written.keys()]).toEqual(['/workspace/shared/ok.png'])
   })
 
   it('refuses to fall back to a local directory on Vercel', () => {

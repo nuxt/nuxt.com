@@ -16,7 +16,7 @@ export default defineTool({
     branch: z.string().min(6).max(120).describe('The task\'s branch, such as `nuxi/showcase-world-triathlon`'),
     message: z.string().trim().min(8).max(1000).describe('A conventional commit message, such as `feat(showcase): add World Triathlon screenshot`'),
     files: z.array(z.object({
-      from: z.string().min(1).max(300).describe('Sandbox path, such as /workspace/captures/world-triathlon.webp or /workspace/shared/cover.png'),
+      from: z.string().min(1).max(300).describe('Sandbox path, such as /workspace/captures/world-triathlon.webp or /workspace/shared/3f2a9c1e/cover.png'),
       to: z.string().min(1).max(300).describe('Repository path, such as public/assets/websites/world-triathlon.webp')
     })).min(1).max(10)
   }),

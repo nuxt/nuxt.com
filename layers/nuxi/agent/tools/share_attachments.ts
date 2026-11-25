@@ -12,7 +12,7 @@ export default defineDynamic(async (ctx) => {
   return defineTool({
     description: [
       'Give `coder` files attached to this conversation, such as an image to add to the site or a document to work from. `coder` does not see attachments otherwise.',
-      `Call it before \`coder\`, with the paths from the \`Attached file ${ATTACHMENTS_DIR}/…\` labels, then name each returned file in the message to \`coder\` and say what to do with it.`,
+      `Call it before \`coder\`, with the paths from the \`Attached file ${ATTACHMENTS_DIR}/…\` labels, then give each returned \`path\` in the message to \`coder\` and say what to do with the file.`,
       'Share only the files the task needs. They stay available to `coder` for an hour.'
     ].join(' '),
     inputSchema: z.object({
