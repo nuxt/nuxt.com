@@ -11,6 +11,9 @@ const status = ref<SearchStatus>('idle')
 /** Set on the first open of the palette: the index only loads from then on. */
 const requested = ref(false)
 
+/** The latest `warmup()`: an earlier one, superseded by a target change, must not set `status`. */
+let warmupGeneration = 0
+
 /** Hydration logging switch: `?debug=search` */
 function searchDebug(): boolean {
   if (!import.meta.client) return false
@@ -77,14 +80,16 @@ export function useSearch() {
       return
     }
 
+    const generation = ++warmupGeneration
     status.value = 'loading'
     try {
       const debug = searchDebug()
       if (debug) console.info(`[search] warmup from ${current.map(target => target.base).join(', ')}`)
 
       await warmupSearch(current, location.origin, debug)
-      status.value = 'ready'
+      if (generation === warmupGeneration) status.value = 'ready'
     } catch (error) {
+      if (generation !== warmupGeneration) return
       status.value = 'error'
       console.error('[search] could not load the search database', error)
     }
