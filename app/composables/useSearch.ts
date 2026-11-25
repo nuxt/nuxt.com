@@ -95,18 +95,30 @@ export function useSearch() {
     // first open, not on every page view. Opened before `shas` lands, the watcher below picks it up.
     // Reopening after a failed load retries it.
     const { open } = useContentSearch()
-    watch(open, (value) => {
-      if (!value || (requested.value && status.value !== 'error')) return
-
-      requested.value = true
-      warmup()
-    }, { immediate: true })
+    watch(open, value => value && request(), { immediate: true })
     watch([targetsKey, pullHead], () => requested.value && warmup())
+  }
+
+  /** Start loading, as the palette's first open does. A failed load retries. */
+  function request() {
+    if (requested.value && status.value !== 'error') return
+
+    requested.value = true
+    warmup()
+  }
+
+  /**
+   * Load the index without opening the palette, and wait until it is ready or has failed.
+   * Requested like an open, so the watcher above reloads it if `shas` or the target set change meanwhile.
+   */
+  async function load(): Promise<void> {
+    request()
+    await until(status).toMatch(value => value === 'ready' || value === 'error', { timeout: 60_000 })
   }
 
   async function search(query: string, opts?: SearchOptions): Promise<SearchResult[]> {
     return searchContent(query, opts)
   }
 
-  return { search, status: readonly(status), warmup }
+  return { search, status: readonly(status), load }
 }

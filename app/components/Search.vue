@@ -5,7 +5,7 @@ const props = defineProps<{
   navigation?: NavigationItem[]
 }>()
 
-const { search, status, warmup } = useSearch()
+const { search, status, load } = useSearch()
 const { searchGroups, searchLinks, searchTerm } = useNavigation()
 const { mapSearchResults } = useContentSearch()
 const { track } = useAnalytics()
@@ -45,7 +45,7 @@ useAgentTool(defineAgentTool<{ query: string }>({
   },
   annotations: { readOnlyHint: true },
   async execute({ query }) {
-    await warmup()
+    await load()
     if (status.value !== 'ready') throw new Error('The search index could not be loaded.')
     const results = await searchWithIndexTitles(String(query), { limit: 6 })
     return results.map(result => ({

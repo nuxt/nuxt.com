@@ -60,8 +60,15 @@ useAgentTool(defineAgentTool<{ section?: string }>({
   async execute({ section }, { signal }) {
     // Fetched from this origin: the link points to the production site, also on previews.
     const markdown = await $fetch<string>(new URL(markdownLink()!.href).pathname, { signal })
-    // A section at a time keeps results short enough for an agent's context.
-    const [intro, ...sections] = markdown.split(/^(?=## )/m)
+    // A section at a time keeps results short enough for an agent's context. A `## ` line in a code fence is not a heading.
+    const parts = ['']
+    let fenced = false
+    for (const line of markdown.split('\n')) {
+      if (/^\s*(?:```|~~~)/.test(line)) fenced = !fenced
+      if (!fenced && line.startsWith('## ')) parts.push('')
+      parts[parts.length - 1] += `${line}\n`
+    }
+    const [intro, ...sections] = parts
     const titles = sections.map(part => part.slice(3, part.indexOf('\n')).trim())
     if (!section) return titles.length ? `${intro!.trim()}\n\nSections: ${titles.join(' | ')}` : markdown
     const index = titles.findIndex(title => title.toLowerCase() === String(section).toLowerCase())
