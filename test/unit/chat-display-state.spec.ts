@@ -1,6 +1,7 @@
 import type { UIMessage } from 'ai'
 import { describe, expect, it } from 'vitest'
-import { isBetweenSteps, resolveChatDisplayState } from '../../layers/nuxi/app/composables/eve/adapter'
+import type { EveMessage } from 'eve/vue'
+import { eveMessagesToUIMessages, isBetweenSteps, resolveChatDisplayState } from '../../layers/nuxi/app/composables/eve/adapter'
 
 const user: UIMessage = { id: 'u1', role: 'user', parts: [{ type: 'text', text: 'How do I add auth?' }] }
 
@@ -52,5 +53,45 @@ describe('isBetweenSteps', () => {
 
   it('leaves the empty-reply case to the main indicator', () => {
     expect(isBetweenSteps([user, assistant([{ type: 'reasoning', text: '', state: 'done' }])], 'streaming')).toBe(false)
+  })
+})
+
+describe('eveMessagesToUIMessages', () => {
+  function reply(parts: EveMessage['parts']): EveMessage {
+    return { id: 'turn_0:assistant', role: 'assistant', metadata: { turnId: 'turn_0' }, parts }
+  }
+
+  function tool(part: Record<string, unknown>) {
+    return { type: 'tool', callId: 'c1', name: 'search_docs', kind: 'tool', label: 'Search docs', stepIndex: 0, ...part } as EveMessage['parts'][number]
+  }
+
+  it('scopes assistant ids with the session id', () => {
+    const [message] = eveMessagesToUIMessages([reply([{ type: 'text', text: 'Hi', state: 'done' }])], 'ses_1')
+    expect(message?.id).toBe('ses_1:turn_0:assistant')
+  })
+
+  it('maps call states to dynamic tool parts', () => {
+    const [message] = eveMessagesToUIMessages([reply([
+      tool({ state: 'streaming', inputText: '{"q' }),
+      tool({ state: 'running', input: { q: 'auth' } }),
+      tool({ state: 'running', input: { q: 'auth' }, output: { partial: 1 } }),
+      tool({ state: 'completed', input: { q: 'auth' }, output: { hits: 1 } }),
+      tool({ state: 'failed', input: { q: 'auth' }, error: { code: 'TOOL_FAILED', message: 'Boom' } })
+    ])])
+
+    expect(message?.parts.map(part => 'state' in part && part.state)).toEqual([
+      'input-streaming',
+      'input-available',
+      'output-available',
+      'output-available',
+      'output-error'
+    ])
+    expect(message?.parts[3]).toMatchObject({ type: 'dynamic-tool', toolCallId: 'c1', toolName: 'search_docs', output: { hits: 1 } })
+    expect(message?.parts[4]).toMatchObject({ errorText: 'Boom' })
+  })
+
+  it('drops interaction parts', () => {
+    const [message] = eveMessagesToUIMessages([reply([{ type: 'interaction' } as EveMessage['parts'][number]])])
+    expect(message?.parts).toEqual([])
   })
 })

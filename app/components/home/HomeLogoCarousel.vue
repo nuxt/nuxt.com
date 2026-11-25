@@ -39,6 +39,15 @@ const sets = computed(() => {
 const root = useTemplateRef('root')
 const isVisible = useElementVisibility(root)
 const isHovered = useElementHover(root)
+// A logo focused from the keyboard would rotate out from under it: its row turns inert on exit.
+// Not `useFocusWithin`: a clicked `target="_blank"` link keeps focus and would stop the rotation for good.
+const focused = ref(false)
+useEventListener(root, 'focusin', (event) => {
+  focused.value = (event.target as Element).matches(':focus-visible')
+})
+useEventListener(root, 'focusout', () => {
+  focused.value = false
+})
 const documentVisibility = useDocumentVisibility()
 const reducedMotion = usePreferredReducedMotion()
 
@@ -56,7 +65,7 @@ const { pause, resume } = useIntervalFn(() => {
 }, INTERVAL, { immediate: false })
 
 watchEffect(() => {
-  const canRotate = revealed.value && isVisible.value && !isHovered.value && documentVisibility.value === 'visible' && reducedMotion.value !== 'reduce' && sets.value.length > 1
+  const canRotate = revealed.value && isVisible.value && !isHovered.value && !focused.value && documentVisibility.value === 'visible' && reducedMotion.value !== 'reduce' && sets.value.length > 1
   if (canRotate) resume()
   else pause()
 })
@@ -83,14 +92,14 @@ const rows = computed(() => [
         :style="{ '--delay': `${index * STAGGER}s` }"
         class="logo min-w-0 justify-self-center max-lg:nth-[3n+1]:justify-self-start max-lg:nth-[3n]:justify-self-end max-lg:nth-[n+7]:hidden"
       >
-        <NuxtLink :to="company.url" target="_blank" class="group block">
+        <NuxtLink :to="company.url" target="_blank" class="group block rounded-md outline-primary/25 focus-visible:outline-3">
           <BrandLogo
             :src="company.src"
             :alt="company.alt"
             :width="company.width"
             :height="company.height"
             :style="logoStyle(company)"
-            class="max-w-full max-lg:max-w-[26vw] text-muted transition-colors group-hover:text-highlighted"
+            class="max-w-full max-lg:max-w-[26vw] text-muted transition-colors group-hover:text-highlighted group-focus-visible:text-highlighted"
           />
         </NuxtLink>
       </li>

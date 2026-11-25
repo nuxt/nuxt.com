@@ -1,7 +1,13 @@
-import { appOrigin } from './internal-api.js'
+import { appFetch } from './internal-api.js'
 
-/** `llms.txt` sections whose pages are indexed: the current docs and the deploy guides. */
-const INDEXED_SETS = ['Nuxt v4 Documentation', 'Deployment Guides']
+/**
+ * Whether an `llms.txt` section's pages are indexed: the deploy guides, the blog (release posts often explain
+ * a new feature before the docs do) and every `… Documentation` section, which `nuxt.config.ts` gives the current
+ * Nuxt docs and each module whose docs nuxt.com hosts (`/modules/<slug>/…`).
+ */
+function isIndexedSet(title: string): boolean {
+  return title === 'Deployment Guides' || title === 'Blog' || title.endsWith(' Documentation')
+}
 const INDEX_TTL_MS = 60 * 60 * 1000
 const FETCH_CONCURRENCY = 32
 const FETCH_TIMEOUT_MS = 10_000
@@ -93,7 +99,7 @@ export function parseLlmsIndex(text: string): DocPage[] {
   let indexed = false
   for (const line of text.split('\n')) {
     if (line.startsWith('## ')) {
-      indexed = INDEXED_SETS.includes(line.slice(3).trim())
+      indexed = isIndexedSet(line.slice(3).trim())
       continue
     }
     if (!indexed) continue
@@ -152,9 +158,9 @@ export function splitSections(markdown: string): { headings: string[], text: str
   return sections
 }
 
-async function fetchText(url: string): Promise<string | null> {
+async function fetchText(path: string): Promise<string | null> {
   try {
-    const response = await fetch(url, { signal: AbortSignal.timeout(FETCH_TIMEOUT_MS) })
+    const response = await appFetch(path, { signal: AbortSignal.timeout(FETCH_TIMEOUT_MS) })
     return response.ok ? await response.text() : null
   } catch {
     return null
@@ -224,11 +230,10 @@ let indexPromise: Promise<DocsIndex> | null = null
 let refreshing: Promise<void> | null = null
 
 async function loadIndex(): Promise<DocsIndex> {
-  const origin = appOrigin()
-  const llms = await fetchText(`${origin}/llms.txt`)
+  const llms = await fetchText('/llms.txt')
   if (!llms) throw new Error('Could not load the documentation index')
   const pages = parseLlmsIndex(llms)
-  const bodies = await mapConcurrent(pages, FETCH_CONCURRENCY, page => fetchText(`${origin}/raw${page.path}.md`))
+  const bodies = await mapConcurrent(pages, FETCH_CONCURRENCY, page => fetchText(`/raw${page.path}.md`))
   return buildIndex(pages, bodies)
 }
 

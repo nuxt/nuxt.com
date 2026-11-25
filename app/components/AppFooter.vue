@@ -1,11 +1,12 @@
 <script setup lang="ts">
 const { footerLinks } = useFooterLinks()
+const locale = useDocsLocale()
 </script>
 
 <template>
   <USeparator icon="i-simple-icons-nuxtdotjs" class="h-px" />
 
-  <UFooter :ui="{ top: 'border-b border-default' }">
+  <UFooter :lang="locale ? 'en' : undefined" :ui="{ top: 'border-b border-default' }">
     <template #top>
       <UContainer>
         <UFooterColumns :columns="footerLinks">
@@ -18,7 +19,7 @@ const { footerLinks } = useFooterLinks()
 
     <template #left>
       <p class="text-muted text-sm">
-        Copyright © 2016-{{ new Date().getFullYear() }} Nuxt - <NuxtLink class="hover:underline" to="https://go.nuxt.com/license" target="_blank">
+        Copyright © 2016-{{ new Date().getFullYear() }} Nuxt - <NuxtLink class="hover:underline rounded-xs outline-primary/25 focus-visible:outline-3" to="https://go.nuxt.com/license" target="_blank">
           MIT License
         </NuxtLink>
       </p>

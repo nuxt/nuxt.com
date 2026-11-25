@@ -2,6 +2,8 @@ import { createResolver } from 'nuxt/kit'
 import type { LLMsSection } from 'nuxt-llms'
 import { agentHowToCall, agentWhenToUse } from './shared/utils/agents'
 import { ARCHIVED_DOC_VERSIONS, CURRENT_DOCS_VERSION, NEXT_DOC_VERSIONS } from './shared/utils/docs'
+import { MODULE_DOCS, MODULE_DOCS_NAMES, moduleDocsPathPrefix } from './shared/utils/module-docs'
+import { L10N_LOCALE_CODES } from './shared/utils/l10n'
 
 const { resolve } = createResolver(import.meta.url)
 
@@ -32,9 +34,11 @@ export default defineNuxtConfig({
   extends: ['./layers/nuxi'],
 
   modules: [
+    // TODO: Revisit this explicit registration and dependency once Nuxt UI ships @nuxt/fonts >=1.0, required for OG font extraction.
+    '@nuxt/fonts',
     '@nuxt/ui',
     '@nuxt/test-utils',
-    '@comark/nuxt',
+    '@comark/vue',
     '@nuxt/image',
     '@nuxt/eslint',
     '@nuxt/scripts',
@@ -43,7 +47,6 @@ export default defineNuxtConfig({
     'motion-v/nuxt',
     'nuxt-llms',
     '@nuxthub/core',
-    'nuxt-charts',
     'nuxt-auth-utils',
     'nuxt-schema-org',
     '@nuxtjs/mcp-toolkit',
@@ -106,6 +109,8 @@ export default defineNuxtConfig({
   site: {
     name: 'Nuxt',
     url: PREVIEW_URL ?? SITE_URL,
+    // Previews are public: keep crawlers out, every page they render reads the preview database.
+    indexable: process.env.VERCEL_ENV !== 'preview',
     description: 'Build fast, production-ready web apps with Vue. File-based routing, auto-imports, and server-side rendering — all configured out of the box.',
     defaultLocale: 'en'
   },
@@ -143,7 +148,13 @@ export default defineNuxtConfig({
       apiKey: ''
     },
     github: {
-      token: ''
+      token: '',
+      // The `nuxt-translations` GitHub App, which commits translations to nuxt/translations
+      app: {
+        id: '',
+        privateKey: '',
+        installationId: ''
+      }
     },
     linear: {
       apiKey: '',
@@ -172,7 +183,10 @@ export default defineNuxtConfig({
           moduleAuthor: '',
           // One key per hackathon id in `NUXTERS_HACKATHONS`
           nuxtathon1: '',
-          nuxtathon2: ''
+          nuxtathon2: '',
+          // One key per locale in `L10N_LOCALES` (`nuxterTranslatorRole`)
+          translatorFr: '',
+          translatorDe: ''
         }
       }
     }
@@ -197,15 +211,22 @@ export default defineNuxtConfig({
     // Lists blog posts and GitHub releases: purged on content push, refreshed hourly for releases.
     '/updates': { isr: 60 * 60 },
     '/docs/**': { isr: CONTENT_ISR },
+    // Localised docs: cached like the English pages, which they are rendered from.
+    ...Object.fromEntries(L10N_LOCALE_CODES.map(locale => [`/${locale}/docs/**`, { isr: CONTENT_ISR }])),
     '/blog': { redirect: { to: '/updates', statusCode: 301 } },
     '/blog/**': { isr: CONTENT_ISR },
     '/deploy': { isr: CONTENT_ISR },
     '/deploy/**': { isr: CONTENT_ISR },
     '/raw/**': { isr: CONTENT_ISR, robots: 'noindex' },
     '/enterprise/**': { isr: CONTENT_ISR },
-    '/templates': { isr: CONTENT_ISR },
+    // Filtered from the query, like `/modules`.
+    '/templates': { isr: { expiration: CONTENT_ISR, allowQuery: ['category', 'status', 'sort', 'q'], passQuery: true } },
+    // nuxt.new redirects here (`nuxt.new/s/ui` → `/new/s/ui`).
+    '/new': { redirect: '/templates' },
     '/showcase': { isr: CONTENT_ISR },
     '/team': { isr: CONTENT_ISR },
+    // Purged by the translations push webhook.
+    '/translations': { isr: CONTENT_ISR },
     '/design-kit': { isr: CONTENT_ISR },
     '/video-courses': { isr: CONTENT_ISR },
     '/newsletter': { isr: CONTENT_ISR },
@@ -232,6 +253,10 @@ export default defineNuxtConfig({
     '/mcp/badge.svg': { headers: { 'content-security-policy': 'default-src \'none\'; style-src \'unsafe-inline\'; sandbox' } },
     // Main navigation
     '/api/navigation/**': { isr: CONTENT_ISR },
+    '/api/l10n/*/navigation/**': { isr: CONTENT_ISR },
+    // `sha` fetches a page past the cache once the editor sees a save served.
+    '/api/l10n/*/get/**': { isr: { expiration: CONTENT_ISR, allowQuery: ['sha'] } },
+    '/api/l10n/indexable': { isr: CONTENT_ISR },
     '/api/content/blob/**': { isr: true },
     '/api/content/pull/*/*/blob/**': { isr: true },
     '/pull/**': { isr: CONTENT_ISR, robots: 'noindex, nofollow' },
@@ -285,10 +310,10 @@ export default defineNuxtConfig({
     '/docs/3.x/api/composables': { redirect: '/docs/3.x/api/composables/use-app-config', prerender: false },
     '/docs/4.x/api/composables': { redirect: '/docs/4.x/api/composables/use-app-config', prerender: false },
     '/docs/5.x/api/composables': { redirect: '/docs/5.x/api/composables/use-app-config', prerender: false },
-    '/docs/api/utils': { redirect: '/docs/api/utils/dollarfetch', prerender: false },
-    '/docs/3.x/api/utils': { redirect: '/docs/3.x/api/utils/dollarfetch', prerender: false },
-    '/docs/4.x/api/utils': { redirect: '/docs/4.x/api/utils/dollarfetch', prerender: false },
-    '/docs/5.x/api/utils': { redirect: '/docs/5.x/api/utils/dollarfetch', prerender: false },
+    '/docs/api/utils': { redirect: '/docs/api/utils/$fetch', prerender: false },
+    '/docs/3.x/api/utils': { redirect: '/docs/3.x/api/utils/$fetch', prerender: false },
+    '/docs/4.x/api/utils': { redirect: '/docs/4.x/api/utils/$fetch', prerender: false },
+    '/docs/5.x/api/utils': { redirect: '/docs/5.x/api/utils/$fetch', prerender: false },
     '/docs/api/kit': { redirect: '/docs/api/kit/modules', prerender: false },
     '/docs/3.x/api/kit': { redirect: '/docs/3.x/api/kit/modules', prerender: false },
     '/docs/4.x/api/kit': { redirect: '/docs/4.x/api/kit/modules', prerender: false },
@@ -314,6 +339,14 @@ export default defineNuxtConfig({
     '/docs/4.x/examples': { redirect: { to: '/docs/examples/hello-world', statusCode: 301 }, prerender: false },
     '/docs/5.x/examples': { redirect: { to: '/docs/examples/hello-world', statusCode: 301 }, prerender: false },
     '/docs/examples': { redirect: '/docs/examples/hello-world', prerender: false },
+    // comark-content 0.6 keeps `$` in paths instead of spelling it out (`$fetch.md` was `dollarfetch`)
+    '/docs/2.x/api/internals/dollarnuxt': { redirect: { to: '/docs/2.x/api/internals/$nuxt', statusCode: 301 }, prerender: false },
+    '/docs/3.x/api/utils/dollarfetch': { redirect: { to: '/docs/3.x/api/utils/$fetch', statusCode: 301 }, prerender: false },
+    '/docs/4.x/api/utils/dollarfetch': { redirect: { to: '/docs/4.x/api/utils/$fetch', statusCode: 301 }, prerender: false },
+    '/docs/5.x/api/utils/dollarfetch': { redirect: { to: '/docs/5.x/api/utils/$fetch', statusCode: 301 }, prerender: false },
+    // Their Markdown, as `llms.txt` used to list it (only the versions served as raw Markdown)
+    '/raw/docs/3.x/api/utils/dollarfetch.md': { redirect: { to: '/raw/docs/3.x/api/utils/$fetch.md', statusCode: 301 }, prerender: false },
+    '/raw/docs/4.x/api/utils/dollarfetch.md': { redirect: { to: '/raw/docs/4.x/api/utils/$fetch.md', statusCode: 301 }, prerender: false },
     '/docs/examples/features': { redirect: '/docs/examples/features/auto-imports', prerender: false },
     '/docs/examples/routing': { redirect: '/docs/examples/routing/middleware', prerender: false },
     '/docs/examples/advanced': { redirect: '/docs/examples/advanced/config-extends', prerender: false },
@@ -342,6 +375,10 @@ export default defineNuxtConfig({
     '/docs/3.x/guide/going-further/custom-routing': { redirect: '/docs/3.x/guide/recipes/custom-routing', prerender: false },
     '/docs/4.x/guide/going-further/custom-routing': { redirect: '/docs/4.x/guide/recipes/custom-routing', prerender: false },
     '/docs/5.x/guide/going-further/custom-routing': { redirect: '/docs/5.x/guide/recipes/custom-routing', prerender: false },
+    '/docs/api/components/teleport': { redirect: { to: '/docs/api/components/teleports', statusCode: 301 }, prerender: false },
+    '/docs/3.x/api/components/teleport': { redirect: { to: '/docs/3.x/api/components/teleports', statusCode: 301 }, prerender: false },
+    '/docs/4.x/api/components/teleport': { redirect: { to: '/docs/4.x/api/components/teleports', statusCode: 301 }, prerender: false },
+    '/docs/5.x/api/components/teleport': { redirect: { to: '/docs/5.x/api/components/teleports', statusCode: 301 }, prerender: false },
     // new directory structure
     '/docs/3.x/directory-structure/app/assets': { redirect: '/docs/3.x/directory-structure/assets', prerender: false },
     '/docs/3.x/directory-structure/app/components': { redirect: '/docs/3.x/directory-structure/components', prerender: false },
@@ -536,7 +573,9 @@ export default defineNuxtConfig({
     '/modules/router': { redirect: { to: '/docs/guide/recipes/custom-routing', statusCode: 301 }, prerender: false },
     '/modules/separate-env': { redirect: { to: '/docs/guide/going-further/runtime-config', statusCode: 301 }, prerender: false },
     '/modules/svg': { redirect: { to: '/modules/nuxt-svgo', statusCode: 301 }, prerender: false },
-    '/modules/vuetify': { redirect: { to: '/modules/vuetify-nuxt-module', statusCode: 301 }, prerender: false }
+    '/modules/vuetify': { redirect: { to: '/modules/vuetify-nuxt-module', statusCode: 301 }, prerender: false },
+    // Deprecated modules removed from nuxt/modules
+    '/modules/google-fonts': { redirect: { to: '/modules/fonts/migrating-from-google-fonts', statusCode: 301 }, prerender: false }
   },
   sourcemap: true,
   experimental: {
@@ -554,6 +593,9 @@ export default defineNuxtConfig({
   },
   compatibilityDate: '2026-01-14',
   nitro: {
+    // Bundle the HTML tokenizer so unused parser code and package files are omitted.
+    // Entries match by prefix, so `parse5` also covers `parse5-sax-parser`.
+    externals: { inline: ['parse5', 'entities'] },
     experimental: {
       // `pnpm nuxters:sync` (server/tasks/nuxters/sync.ts)
       tasks: true,
@@ -567,7 +609,9 @@ export default defineNuxtConfig({
     vercel: {
       config: {
         // Required for `x-prerender-revalidate` to purge an ISR route.
-        bypassToken: process.env.VERCEL_BYPASS_TOKEN
+        bypassToken: process.env.VERCEL_BYPASS_TOKEN,
+        // Checks every template daily (server/workflows/check-templates.ts). Vercel sends `CRON_SECRET` as a bearer token.
+        crons: [{ path: '/api/cron/templates-check', schedule: '0 4 * * *' }]
       }
     }
   },
@@ -594,7 +638,7 @@ export default defineNuxtConfig({
         'ai'
       ],
       // Pre-bundling `@sqlite.org/sqlite-wasm` breaks the wasm asset it resolves against its own module URL.
-      exclude: ['vue-chrts', 'shaders', '@sqlite.org/sqlite-wasm']
+      exclude: ['shaders', '@sqlite.org/sqlite-wasm']
     }
   },
   typescript: {
@@ -610,6 +654,20 @@ export default defineNuxtConfig({
           component.global = false
         }
       }
+    },
+    'build:manifest': (manifest) => {
+      // `nuxt-workers` starts workers with `new Worker(new URL(…))`, which Vite lists as a script asset of
+      // the chunk that does it. The renderer then preloads it on every page: the 270 KB search worker,
+      // only needed once the palette opens, at a priority Lighthouse counts as render-blocking.
+      for (const chunk of Object.values(manifest)) {
+        for (const asset of chunk.assets ?? []) {
+          const resource = manifest[asset]
+          if (resource?.resourceType === 'script') {
+            resource.preload = false
+            resource.prefetch = false
+          }
+        }
+      }
     }
   },
   agentDiscovery: {
@@ -621,6 +679,8 @@ export default defineNuxtConfig({
       '/blog/**',
       '/deploy/**',
       { path: '/modules', raw: '/raw/modules.md' },
+      // Hosted module docs: the module page is the docs `index.md`, so it negotiates too.
+      ...MODULE_DOCS_NAMES.flatMap(name => [moduleDocsPathPrefix(name), `${moduleDocsPathPrefix(name)}/**`]),
       { path: '/changelog', raw: '/raw/changelog.md' },
       { path: '/updates', raw: '/raw/updates.md' }
     ],
@@ -646,7 +706,11 @@ export default defineNuxtConfig({
       ]
     },
     llms: {
-      details: agentHowToCall(SITE_URL)
+      details: [
+        ...agentHowToCall(SITE_URL),
+        // A sourced, scoped claim: one small app, median of 5 runs per framework. Not a blanket "token efficient" claim.
+        'In a 2026 benchmark by Nolan Lawson, agents building the same app with Nuxt used the fewest tokens of the frameworks tested (median of 5 runs, one small app): <https://nolanlawson.com/2026/10/28/the-ai-cost-of-javascript-frameworks/>.'
+      ]
     },
     sitemap: {
       markdown: {
@@ -680,6 +744,15 @@ export default defineNuxtConfig({
         { duration: 2000 }
       ]
     }
+  },
+  fonts: {
+    families: [
+      // Latin only, like Outfit: each other subset (Cyrillic, Greek, Vietnamese…) adds 8 inline `@font-face`
+      // rules to every page, and text in those scripts falls back to the system font.
+      // Preload the upright Latin faces (one variable file each) so they load with the HTML instead of after the CSS.
+      { name: 'Inter', weights: [400, 500, 600, 700], subsets: ['latin', 'latin-ext'], global: true, preload: { subsets: ['latin'], styles: ['normal'] } },
+      { name: 'Outfit', weights: [400, 500, 600, 700], global: true, preload: { subsets: ['latin'], styles: ['normal'] } }
+    ]
   },
   hints: {
     features: {
@@ -734,11 +807,10 @@ export default defineNuxtConfig({
   },
   image: {
     format: ['webp', 'jpeg', 'jpg', 'png', 'svg'],
-    provider: 'ipx',
+    // ipx.nuxt.com only fetches from the production site
+    provider: process.env.VERCEL_ENV === 'preview' ? 'none' : 'ipx',
     // Opt-out escape hatch for images IPX must not touch, used by `DocsProseImg`.
-    providers: {
-      none: { provider: 'none' }
-    }
+    none: {}
   },
   llms: {
     prerender: false,
@@ -779,6 +851,11 @@ export default defineNuxtConfig({
         description: 'Release announcements and deep dives',
         navigation: '/blog'
       },
+      ...MODULE_DOCS_NAMES.map(name => ({
+        title: `${MODULE_DOCS[name].title} Documentation`,
+        description: 'Documentation of an official Nuxt module',
+        navigation: moduleDocsPathPrefix(name)
+      })),
       {
         title: 'Optional',
         links: [
@@ -806,7 +883,9 @@ export default defineNuxtConfig({
     // The nightly docs version, carried over from the static public/robots.txt
     // this replaces. The agent Allow groups and Content-Signal come from
     // nuxt-agent-discovery through the robots:config hook.
-    disallow: [...NEXT_DOC_VERSIONS.map(version => `/docs/${version}/`), '/pull/']
+    // Country leaderboards: about 2.3k `?period=` × `?country=` pages, each rendered from the database
+    // once an hour per crawl. Their canonical is `/nuxters`.
+    disallow: [...NEXT_DOC_VERSIONS.map(version => `/docs/${version}/`), '/pull/', '/nuxters?*country=']
   },
   schemaOrg: {
     identity: {

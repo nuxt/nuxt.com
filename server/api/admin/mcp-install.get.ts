@@ -1,8 +1,5 @@
 export default defineEventHandler(async (event) => {
-  const { user } = await requireUserSession(event)
-  if (user.role !== 'admin') {
-    throw createError({ statusCode: 403, statusMessage: 'Admin access required' })
-  }
+  await requireAdminUserSession(event)
 
   // No credentials: MCP clients sign in with GitHub through the endpoint's OAuth flow.
   const name = 'nuxt-admin'

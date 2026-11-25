@@ -3,3 +3,5 @@ slug: 'nuxt-ui-changelog'
 description: "A changelog template powered by GitHub Releases made with Nuxt UI."
 repo: 'nuxt-ui-templates/changelog'
 demo: 'https://changelog-template.nuxt.dev'
+category: 'content'
+official: true

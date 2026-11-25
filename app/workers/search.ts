@@ -1,6 +1,6 @@
 /**
  * Search worker: owns the browser-standalone `comark-content` hub (sqlite-wasm FTS5) hydrated from
- * several instances' per-commit snapshot artifacts (docs, its command reference, and examples).
+ * several instances' per-commit snapshot artifacts (docs, its command reference, examples, and hosted module docs).
  */
 import { comarkContent, contentHub, readArtifact } from 'comark-content/runtime'
 import sqliteWasm from 'comark-content/database/sqlite-wasm'

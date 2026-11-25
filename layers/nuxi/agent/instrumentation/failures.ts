@@ -29,42 +29,43 @@ export default defineInstrumentation({
   // Error details only — prompts and model output never reach runtime logs.
   tracePolicy: () => ({ emit: true, recordInputs: false, recordOutputs: true }),
   events: {
-    'tool.call.started': (event, ctx) => {
-      const state: ToolCallState = event.kind
-        ? { toolName: event.toolName, kind: event.kind }
-        : { toolName: event.toolName }
+    'call.requested': (event, ctx) => {
+      const state: ToolCallState = { toolName: event.toolName, kind: event.capability.kind }
       ctx.state.set({ ...state })
     },
-    'tool.call.failed': (event, ctx) => {
+    'call.settled': (event, ctx) => {
+      if (event.outcome === 'completed') return
       const started = ctx.state.get() as ToolCallState | undefined
-      const outcome = event.outcome ?? 'failed'
-      const log = outcome === 'failed' ? console.error : console.warn
+      const log = event.outcome === 'failed' ? console.error : console.warn
       log('[nuxi:tool] call did not complete', {
         sessionId: event.scope.sessionId,
         turnId: event.scope.turnId,
         tool: started?.toolName,
         kind: started?.kind,
-        outcome,
+        outcome: event.outcome,
         errorCode: event.errorCode,
         error: errorKind(event.error)
       })
     },
-    'model.call.failed': (event) => {
+    'model.call.settled': (event) => {
+      if (event.outcome !== 'failed') return
       console.error('[nuxi:model] call failed', {
         sessionId: event.scope.sessionId,
         turnId: event.scope.turnId,
-        attempt: event.scope.attemptIndex,
+        attempt: event.scope.attempt,
         error: errorKind(event.error)
       })
     },
-    'turn.failed': (event) => {
+    'turn.settled': (event) => {
+      if (event.outcome !== 'failed') return
       console.error('[nuxi:turn] failed', {
         sessionId: event.sessionId,
         turnId: event.turnId,
         error: errorKind(event.error)
       })
     },
-    'session.failed': (event) => {
+    'session.ended': (event) => {
+      if (event.outcome !== 'failed') return
       console.error('[nuxi:session] failed', {
         sessionId: event.sessionId,
         turnId: event.turnId,

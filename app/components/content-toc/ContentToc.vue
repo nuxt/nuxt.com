@@ -30,7 +30,11 @@ defineProps<Props>()
         :has-links="!!links?.length"
         :community-links="communityLinks"
         :drawer="drawer"
-      />
+      >
+        <template v-if="$slots.aside" #default>
+          <slot name="aside" />
+        </template>
+      </ContentTocBottom>
     </template>
     <template v-for="(_, name) in $slots" #[name]="slotData" :key="name">
       <slot :name="name" v-bind="slotData" />

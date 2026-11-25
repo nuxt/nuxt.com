@@ -523,3 +523,23 @@ websites:
     logo:
       width: 613
       height: 145
+  - name: World Triathlon
+    url: https://triathlon.org/
+    industry: Travel & Leisure
+    logo:
+      width: 120
+      height: 40
+    screenshotOptions:
+      hideElements: ['.cky-consent-container', '.cky-overlay', '.cky-btn-revisit-wrapper', '.uw-sl']
+      removeElements: ['.uwy', 'us-button']
+      delay: 3
+  - name: wagamama
+    url: https://www.wagamama.com/
+    industry: Retail & Food
+    logo:
+      width: 256
+      height: 72
+    screenshotOptions:
+      hideElements: ['#onetrust-consent-sdk']
+      removeElements: ['#onetrust-consent-sdk']
+      delay: 3

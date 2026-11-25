@@ -3,7 +3,7 @@ import type { H3Event } from 'h3'
 import type { ComarkContent, NavigationItem } from 'comark-content'
 import type { PullPreviewSummary } from '#shared/types'
 import { cliDocsPathPrefix, hasCliDocs } from '#shared/utils/cli'
-import { CONTENT_INSTANCE_KEYS, cliInstanceKey, docsInstanceKey, isNavigationConfig, type ContentInstanceKey } from '#shared/utils/content'
+import { CONTENT_INSTANCE_KEYS, cliInstanceKey, docsInstanceKey, hasModuleDocsSearch, isNavigationConfig, type ContentInstanceKey } from '#shared/utils/content'
 import { docsPathPrefix, EXAMPLES_PATH_PREFIX, hasExamples, type DocVersion } from '#shared/utils/docs'
 import { isPullContentPage, parsePullTarget, pullRepoName, type PullTarget } from '#shared/utils/pull'
 import { createRuntimeInstance } from '../../../utils/factory'
@@ -345,12 +345,13 @@ export async function pullNavigation(version: DocVersion, preview: PullPreview):
   }
 
   const prefix = docsPathPrefix(version)
-  const [[docs], commands, examples, blog] = await Promise.all([
+  const [[docs], commands, examples, blog, modules] = await Promise.all([
     subtree(docsInstanceKey(version), prefix),
     // Optional grafts, as in production: losing one keeps the rest of the tree.
     hasCliDocs(version) ? subtree(cliInstanceKey(version), cliDocsPathPrefix(version)).catch(() => []) : [],
     hasExamples(version) ? subtree('examples', EXAMPLES_PATH_PREFIX).catch(() => []) : [],
-    subtree('site', '/blog').catch(() => [])
+    subtree('site', '/blog').catch(() => []),
+    hasModuleDocsSearch(version) ? moduleDocsTrees(key => getInstanceForPull(preview, key)) : []
   ])
 
   // Examples after the API section, commands after its utils.
@@ -358,5 +359,5 @@ export async function pullNavigation(version: DocVersion, preview: PullPreview):
     ? { ...item, children: insertAfter(item.children ?? [], `${prefix}/api/utils`, commands) }
     : item)
 
-  return [{ ...(docs ?? { title: 'Docs', path: prefix }), children }, ...blog]
+  return [{ ...(docs ?? { title: 'Docs', path: prefix }), children }, ...blog, ...modules]
 }

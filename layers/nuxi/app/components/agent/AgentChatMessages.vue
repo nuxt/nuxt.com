@@ -27,6 +27,9 @@ const emit = defineEmits<{
   vote: [message: UIMessage, isUpvoted: boolean]
 }>()
 
+// `ToolsFeedbackCard` sends it with the report so the server can attach this chat's transcript.
+provide('chat-id', toRef(props, 'chatId'))
+
 const display = computed(() =>
   resolveChatDisplayState(props.chat.messages, props.chat.status)
 )
@@ -137,7 +140,7 @@ defineShortcuts({
 
     <div v-else-if="showFaqEmpty" class="flex flex-col">
       <div class="relative h-48 overflow-hidden rounded-lg mx-1">
-        <AgentShader />
+        <LazyAgentShader />
       </div>
 
       <div class="flex flex-col gap-6 mt-6">

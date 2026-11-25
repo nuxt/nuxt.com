@@ -11,11 +11,20 @@ const [{ data: page }, { data: officialModules }, { data: showcase }, { data: sp
   useAsyncData('index', () => useContent('site').get('/')),
   useFetch('/api/v1/modules', {
     key: 'official-modules',
+    // Only what `ModuleItem` reads: the payload carries every module object otherwise.
     transform: (res: { modules: Module[], stats: Stats }) => res.modules
       .filter(module => module.type === 'official')
-      .sort((a, b) => b.stats.stars - a.stats.stars)
+      .sort((a, b) => b.stats!.stars - a.stats!.stars)
+      .map(({ name, npm, description, icon, category, type, sponsor, repo, website, health, stats }) => ({
+        name, npm, description, icon, category, type, sponsor, repo, website, health,
+        stats: { version: stats!.version, downloads: stats!.downloads, stars: stats!.stars, publishedAt: stats!.publishedAt, createdAt: stats!.createdAt }
+      }) as Module)
   }),
-  useAsyncData('showcase', () => useContent('site').get('/showcase')),
+  useAsyncData('showcase-home', async () => {
+    const doc = await useContent('site').get('/showcase')
+    // The carousel shows the first 10 websites.
+    return { websites: (doc?.data.websites as any[]).slice(0, 10).map(({ name, url }) => ({ name, url })) }
+  }),
   useFetch('/api/sponsors', {
     key: 'sponsors-home',
     transform(sponsors: SponsorsByTier) {
@@ -36,13 +45,18 @@ const [{ data: page }, { data: officialModules }, { data: showcase }, { data: sp
 ])
 
 const pageData = computed(() => page.value?.data)
-const showcaseData = computed(() => showcase.value?.data)
 
 // Merge via computed, not mutation: useFetch `data` is a shallowRef (Nuxt 4
 // default), so writing module.health in place would not trigger a re-render.
 const { health } = useModuleHealth()
+// The health map loads on the client only: merge it once the modules section hydrated, or its server
+// HTML (without the health badges) would not match.
+// The features fade in once their section hydrates, which happens as it scrolls into view. CSS, not
+// `<Motion>`: motion-v would be the homepage's largest preloaded dependency for this one effect.
+const featuresRevealed = ref(false)
+const modulesHydrated = ref(false)
 const officialModulesWithHealth = computed(() =>
-  (officialModules.value || []).map(m => ({ ...m, health: health.value[m.name] ?? m.health ?? null }))
+  (officialModules.value || []).map(m => ({ ...m, health: (modulesHydrated.value && health.value[m.name]) || m.health || null }))
 )
 
 const stats = useStats()
@@ -151,8 +165,8 @@ useNuxtBirthday()
     >
       <template #headline>
         <HomeBirthdayBadge class="[html:not([data-nuxt-birthday])_&]:hidden" />
-        <NuxtLink :to="pageData.hero.cta.to" class="[html[data-nuxt-birthday]_&]:hidden">
-          <UBadge variant="subtle" size="lg" class="px-3 relative rounded-full font-semibold dark:hover:bg-primary-400/15 dark:hover:ring-primary-700">
+        <NuxtLink :to="pageData.hero.cta.to" class="group inline-flex rounded-full outline-primary/25 focus-visible:outline-3 [html[data-nuxt-birthday]_&]:hidden">
+          <UBadge variant="subtle" size="lg" class="px-3 relative rounded-full font-semibold dark:hover:bg-primary-400/15 dark:hover:ring-primary-700 group-focus-visible:ring-primary dark:group-focus-visible:ring-primary">
             {{ pageData?.hero.cta.label }}
             <UIcon
               v-if="pageData?.hero.cta.icon"
@@ -208,14 +222,13 @@ useNuxtBirthday()
       >
         <UTabs
           :items="tabs"
-          :unmount-on-hide="false"
           color="neutral"
           :ui="{
             list: 'px-0 bg-transparent lg:pr-4 overflow-x-auto',
             trigger: 'group data-[state=active]:text-highlighted shrink-0 in-[[data-slot=list]:not(:has([data-slot=indicator]))]:data-[state=active]:before:bg-default',
             indicator: 'bg-default',
             leadingIcon: 'group-data-[state=active]:text-primary size-4 hidden sm:inline-flex',
-            content: 'lg:h-[450px] bg-default [@media(min-width:2400px)]:border-e [@media(min-width:2400px)]:border-default [@media(min-width:2400px)]:rounded-l-[calc(var(--ui-radius)*1.5)] transition-opacity duration-500 data-[state=inactive]:opacity-0 opacity-100'
+            content: 'lg:h-[450px] bg-default [@media(min-width:2400px)]:border-e [@media(min-width:2400px)]:border-default [@media(min-width:2400px)]:rounded-l-[calc(var(--ui-radius)*1.5)]'
           }"
         >
           <template #content="{ item, index }">
@@ -227,7 +240,7 @@ useNuxtBirthday()
     <UPageSection :ui="{ container: '!pt-0' }">
       <div>
         <h2 class="mb-4">
-          <NuxtLink to="/showcase" class="group inline-flex items-center gap-1.5 text-lg font-medium text-muted transition-colors hover:text-highlighted">
+          <NuxtLink to="/showcase" class="group inline-flex items-center gap-1.5 rounded-md text-lg font-medium text-muted transition-colors hover:text-highlighted focus-visible:text-highlighted outline-primary/25 focus-visible:outline-3">
             {{ pageData?.logos.title }}
             <UIcon name="i-lucide-arrow-right" class="size-4 opacity-0 -translate-x-1 transition-[opacity,translate] duration-200 group-hover:opacity-100 group-hover:translate-x-0 group-focus-visible:opacity-100 group-focus-visible:translate-x-0 pointer-coarse:opacity-100 pointer-coarse:translate-x-0" />
           </NuxtLink>
@@ -235,7 +248,10 @@ useNuxtBirthday()
         <HomeLogoCarousel :companies="pageData.logos.companies" />
       </div>
     </UPageSection>
-    <UPageSection
+    <!-- Sections below the hero hydrate when they scroll into view: hydrating the whole page at once
+         is one long main-thread task, most of it in components nobody sees on load. -->
+    <LazyUPageSection
+      hydrate-on-visible
       :title="pageData?.features.title"
       :description="pageData?.features.description"
       :ui="{
@@ -244,29 +260,24 @@ useNuxtBirthday()
         root: 'bg-linear-to-b border-t border-default from-muted dark:from-muted/40 to-default',
         features: 'xl:grid-cols-4 lg:gap-10'
       }"
+      @hydrated="featuresRevealed = true"
     >
       <template #features>
-        <Motion
+        <li
           v-for="(feature, index) in (pageData.features.features as any[])"
           :key="feature.title"
-          as="li"
-          :initial="{ opacity: 0, transform: 'translateY(10px)' }"
-          :while-in-view="{ opacity: 1, transform: 'translateY(0)' }"
-          :transition="{ delay: 0.1 * index }"
-          :in-view-options="{ once: true }"
+          :class="featuresRevealed && 'feature-reveal'"
+          :style="{ animationDelay: `${index * 100}ms` }"
         >
           <UPageFeature
             v-bind="pickFeature(feature)"
             orientation="vertical"
           />
-        </Motion>
-        <Motion
-          as="li"
-          :initial="{ opacity: 0, transform: 'translateY(10px)' }"
-          :while-in-view="{ opacity: 1, transform: 'translateY(0)' }"
-          :transition="{ delay: 0.1 * pageData.features.features.length }"
-          :in-view-options="{ once: true }"
+        </li>
+        <li
           class="flex flex-col justify-center gap-4 p-4 bg-muted/50 h-full"
+          :class="featuresRevealed && 'feature-reveal'"
+          :style="{ animationDelay: `${pageData.features.features.length * 100}ms` }"
         >
           <span class="text-lg font-semibold">
             {{ pageData.features.cta.title }}
@@ -274,11 +285,12 @@ useNuxtBirthday()
           <div>
             <UButton :to="pageData.features.cta.to" :label="pageData.features.cta.label" trailing :icon="pageData.features.cta.icon" />
           </div>
-        </Motion>
+        </li>
       </template>
-    </UPageSection>
+    </LazyUPageSection>
 
-    <UPageCTA
+    <LazyUPageCTA
+      hydrate-on-visible
       :description="pageData.testimonial.quote"
       variant="subtle"
       class="rounded-none"
@@ -292,9 +304,10 @@ useNuxtBirthday()
         size="xl"
         class="justify-center"
       />
-    </UPageCTA>
+    </LazyUPageCTA>
 
-    <UPageSection
+    <LazyUPageSection
+      hydrate-on-visible
       :ui="{
         root: 'bg-linear-to-b border-t border-default from-muted dark:from-muted/40 to-default'
       }"
@@ -343,14 +356,21 @@ useNuxtBirthday()
                   :key="bIndex"
                   class="size-7 justify-center inline-flex items-end"
                 >
-                  <UIcon
-                    :name="bundler.logo"
-                    class="cursor-pointer transition-all duration-150 ease-in-out"
-                    :class="bIndex === activeBundlerIndex
-                      ? 'size-7 opacity-100'
-                      : 'size-6 opacity-50 grayscale hover:size-7'"
+                  <button
+                    type="button"
+                    :aria-label="bundler.title"
+                    :aria-pressed="bIndex === activeBundlerIndex"
+                    class="group inline-flex cursor-pointer rounded-sm outline-primary/25 focus-visible:outline-3"
                     @click="activeBundlerIndex = bIndex"
-                  />
+                  >
+                    <UIcon
+                      :name="bundler.logo"
+                      class="transition-all duration-150 ease-in-out"
+                      :class="bIndex === activeBundlerIndex
+                        ? 'size-7 opacity-100'
+                        : 'size-6 opacity-50 grayscale group-hover:size-7 group-focus-visible:size-7'"
+                    />
+                  </button>
                 </div>
               </div>
             </template>
@@ -363,9 +383,10 @@ useNuxtBirthday()
           </UPageCard>
         </template>
       </div>
-    </UPageSection>
+    </LazyUPageSection>
 
-    <UPageSection
+    <LazyUPageSection
+      hydrate-on-visible
       :title="pageData.stats.title"
       :description="pageData.stats.description"
       class="relative"
@@ -452,9 +473,10 @@ useNuxtBirthday()
           </UPageCard>
         </div>
       </div>
-    </UPageSection>
+    </LazyUPageSection>
 
-    <UPageSection
+    <LazyUPageSection
+      hydrate-on-visible
       :description="pageData.modules.description"
       :links="pickLinks(pageData.modules.links)"
       :ui="{
@@ -463,6 +485,7 @@ useNuxtBirthday()
         description: 'text-left',
         links: 'justify-start'
       }"
+      @hydrated="modulesHydrated = true"
     >
       <template #title>
         <LazyMarkdown :value="pageData.modules.title" unwrap="p" hydrate-never />
@@ -483,9 +506,10 @@ useNuxtBirthday()
       >
         <ModuleItem :module="item" :show-badge="false" :is-added="false" :show-add-button="false" class="min-h-full" />
       </UCarousel>
-    </UPageSection>
+    </LazyUPageSection>
 
-    <UPageSection
+    <LazyUPageSection
+      hydrate-on-visible
       :title="pageData.deploy.title"
       :description="pageData.deploy.description"
       :links="pickLinks(pageData.deploy.links)"
@@ -502,9 +526,10 @@ useNuxtBirthday()
         class="mx-auto max-w-lg sm:w-full w-full"
         loading="lazy"
       />
-    </UPageSection>
+    </LazyUPageSection>
 
-    <UPageSection
+    <LazyUPageSection
+      hydrate-on-visible
       :title="pageData.contributors.title"
       :description="pageData.contributors.description"
       :links="pickLinks(pageData.contributors.links)"
@@ -515,10 +540,11 @@ useNuxtBirthday()
       }"
     >
       <HomeSectionContributors />
-    </UPageSection>
+    </LazyUPageSection>
 
-    <UPageSection
+    <LazyUPageSection
       id="showcaseData"
+      hydrate-on-visible
       headline="Showcase"
       title="Real-world Web Applications built with Nuxt"
       :links="[{
@@ -541,7 +567,7 @@ useNuxtBirthday()
         wheel-gestures
         arrows
         :autoplay="{ delay: 3000 }"
-        :items="(showcaseData.websites as any[]).slice(0, 10)"
+        :items="showcase?.websites ?? []"
         :active="isMounted"
         class="min-w-0"
         :ui="{
@@ -578,9 +604,10 @@ useNuxtBirthday()
           />
         </UPageCard>
       </UCarousel>
-    </UPageSection>
+    </LazyUPageSection>
 
-    <UPageSection
+    <LazyUPageSection
+      hydrate-on-visible
       :title="pageData.sponsors.title"
       :description="pageData.sponsors.description"
       :links="pickLinks(pageData.sponsors.links)"
@@ -598,6 +625,25 @@ useNuxtBirthday()
           <SponsorsGrid :sponsors="sponsors" :featured="tier === 'diamond'" :columns="tier === 'diamond' ? 2 : 3" />
         </div>
       </div>
-    </UPageSection>
+    </LazyUPageSection>
   </div>
 </template>
+
+<style scoped>
+.feature-reveal {
+  animation: feature-reveal 0.5s var(--ease-snappy) backwards;
+}
+
+@keyframes feature-reveal {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .feature-reveal {
+    animation: none;
+  }
+}
+</style>

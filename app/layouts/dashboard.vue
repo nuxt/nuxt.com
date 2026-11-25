@@ -5,7 +5,6 @@ const { loggedIn, user, clear } = useUserSession()
 const route = useRoute()
 const loginHref = computed(() => `/login?redirect=${encodeURIComponent(route.fullPath)}`)
 const colorMode = useColorMode()
-const deleteAccount = useDeleteAccount()
 const { renameChat, deleteChat, groups, refresh: refreshChats } = useChats()
 
 const sidebarOpen = ref(false)
@@ -73,6 +72,11 @@ const userMenuItems = computed<DropdownMenuItem[][]>(() => {
       label: 'Docs',
       icon: 'i-lucide-book-open',
       to: '/docs'
+    },
+    {
+      label: 'Settings',
+      icon: 'i-lucide-settings',
+      to: '/dashboard/settings'
     }
   ])
 
@@ -102,11 +106,6 @@ const userMenuItems = computed<DropdownMenuItem[][]>(() => {
       await clear()
       await navigateTo('/')
     }
-  }, {
-    label: 'Delete account',
-    icon: 'i-lucide-user-x',
-    color: 'error',
-    onSelect: deleteAccount
   }])
 
   return groups
@@ -129,7 +128,7 @@ defineShortcuts({
       class="border-e-0 pt-2 sm:pt-3 pb-4 dark:[--ui-bg-elevated:var(--ui-color-neutral-900)]"
     >
       <template #header="{ collapsed }">
-        <NuxtLink v-if="!collapsed" to="/" class="flex items-center gap-1.5">
+        <NuxtLink v-if="!collapsed" to="/" class="flex items-center gap-1.5 rounded-sm outline-primary/25 focus-visible:outline-3">
           <NuxtLogo class="h-5 w-auto shrink-0" />
         </NuxtLink>
         <UDashboardSidebarCollapse class="ms-auto" />

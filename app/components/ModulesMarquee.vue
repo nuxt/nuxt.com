@@ -45,45 +45,48 @@ watch(() => props.modules, (newVal?: Module[]) => {
 
 <template>
   <div class="absolute isolate inset-0 overflow-hidden">
-    <div class="flex flex-col justify-between pt-4">
-      <UMarquee
-        v-for="(row, rowIndex) in marqueeModulesData"
-        :key="rowIndex"
-        :reverse="rowIndex % 2 === 1"
-        :overlay="false"
-        :ui="{
-          root: `[--gap:--spacing(4)] [--duration:400s]`
-        }"
-        class="mb-(--gap)"
-      >
-        <Motion
-          v-for="(module, index) in row"
-          :key="`${rowIndex}-${index}`"
-          :initial="{
-            scale: 0.5,
-            opacity: 0,
-            filter: 'blur(10px)'
+    <!-- reduced-motion="user": under prefers-reduced-motion the tiles skip the scale and only fade in -->
+    <MotionConfig reduced-motion="user">
+      <div class="flex flex-col justify-between pt-4">
+        <UMarquee
+          v-for="(row, rowIndex) in marqueeModulesData"
+          :key="rowIndex"
+          :reverse="rowIndex % 2 === 1"
+          :overlay="false"
+          :ui="{
+            root: `[--gap:--spacing(4)] [--duration:400s]`
           }"
-          :animate="{
-            scale: 1,
-            opacity: 1,
-            filter: 'blur(0px)'
-          }"
-          :transition="{
-            delay: getRandomDelay(rowIndex, index)
-          }"
-          class="flex items-center justify-center size-16 rounded-lg bg-muted p-2 border border-default dark:shadow-lg"
+          class="mb-(--gap)"
         >
-          <UAvatar
-            :src="moduleImage(module.icon)"
-            :icon="moduleIcon(module.category)"
-            :alt="module.name"
-            size="lg"
-            class="rounded-none bg-transparent"
-          />
-        </Motion>
-      </UMarquee>
-    </div>
+          <Motion
+            v-for="(module, index) in row"
+            :key="`${rowIndex}-${index}`"
+            :initial="{
+              scale: 0.5,
+              opacity: 0,
+              filter: 'blur(10px)'
+            }"
+            :animate="{
+              scale: 1,
+              opacity: 1,
+              filter: 'blur(0px)'
+            }"
+            :transition="{
+              delay: getRandomDelay(rowIndex, index)
+            }"
+            class="flex items-center justify-center size-16 rounded-lg bg-muted p-2 border border-default dark:shadow-lg"
+          >
+            <UAvatar
+              :src="moduleImage(module.icon)"
+              :icon="moduleIcon(module.category)"
+              :alt="module.name"
+              size="lg"
+              class="rounded-none bg-transparent"
+            />
+          </Motion>
+        </UMarquee>
+      </div>
+    </MotionConfig>
 
     <div class="absolute left-0 top-0 bottom-0 w-1/2 z-10 bg-linear-to-bl from-default/30 to-default to-40%" />
     <div class="absolute right-0 top-0 bottom-0 w-1/2 z-10 bg-linear-to-br from-default/30 to-default to-40%" />

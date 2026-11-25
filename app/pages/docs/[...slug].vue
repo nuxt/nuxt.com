@@ -4,7 +4,8 @@ import type { NavigationItem } from 'comark-content'
 import { DocsProseImg, Browser, CodeExplorer, Important, LinkExample, ReadMore, VideoAccordion } from '#components'
 import { CLI_DOCS_REFS, CLI_DOCS_REPO, cliDocsPathPrefix, hasCliDocs } from '#shared/utils/cli'
 import { cliInstanceKey } from '#shared/utils/content'
-import { DOCS_REFS, DOCS_REPO, getVersionByPath, isArchivedDocVersion, isCanonicalDocsPath } from '#shared/utils/docs'
+import { DOCS_REFS, DOCS_REPO, docsStatus, getVersionByPath, isArchivedDocVersion, isCanonicalDocsPath } from '#shared/utils/docs'
+import { isLocalisedPage, l10nHead, l10nPagePath, type L10nPageMeta } from '#shared/utils/l10n'
 
 definePageMeta({
   heroBackground: false,
@@ -22,7 +23,9 @@ const markdownComponents = {
   VideoAccordion
 }
 
-const navigation = inject<Ref<NavigationItem[]>>('navigation', ref([]))
+// Awaited with the page below, so docs pages server-render their aside, breadcrumb and surround links.
+const navigationFetch = useDocsNavigation()
+const navigation = computed(() => navigationFetch.data.value ?? [])
 const menuDrawerOpen = ref(false)
 const onThisPageDrawerOpen = ref(false)
 
@@ -78,11 +81,31 @@ const instanceKey = computed(() => {
   return cliVersion.value ? cliInstanceKey(cliVersion.value) : docsInstanceKey.value
 })
 
-const { data: page, status } = await useAsyncData(pageKey, () => {
-  const pagePath = path.value
-  const client = useContent(instanceKey.value)
-  return paintResponse().then(() => client.get(pagePath))
-})
+const { data: indexable } = useL10nIndexable(path)
+
+const [{ data: page, status, refresh: refreshPage }] = await Promise.all([
+  useAsyncData(pageKey, () => {
+    const pagePath = path.value
+    const client = useContent(instanceKey.value)
+    return paintResponse().then(() => client.get(pagePath))
+  }),
+  navigationFetch
+])
+
+const locale = useDocsLocale()
+
+/** Read the localised page past the cache, once the editor sees a save served at translations commit `sha`. */
+async function showPublished(sha: string) {
+  try {
+    page.value = await $fetch<typeof page.value>(l10nPagePath(locale.value!, path.value), { query: { sha } })
+  } catch {
+    await refreshPage()
+  }
+}
+
+const l10n = computed(() => (page.value?.meta as { l10n?: L10nPageMeta } | undefined)?.l10n)
+const showL10nStatus = useState('docs-l10n-status', () => false)
+const pageBody = useTemplateRef<{ $el: HTMLElement }>('pageBody')
 
 const surround = computed(() => findSurroundLinks(navigation.value, path.value))
 
@@ -165,6 +188,9 @@ const editLink = computed(() => {
   return `https://github.com/${DOCS_REPO}/edit/${ref}/docs/${meta.stem}${meta.extension}`
 })
 
+// Only live versions in English are served as raw Markdown.
+const markdown = computed(() => docsStatus(docsVersion.value) === 'live' && !locale.value)
+
 const communityLinks = [{
   icon: 'i-lucide-heart',
   label: 'Become a Sponsor',
@@ -195,8 +221,23 @@ useSeoMeta({
 })
 // Only emit canonical where the URL is authoritative.
 // Archived versions get no markdown alternate (not exposed to agents)
-if (isCanonicalDocsPath(path.value)) {
+if (isCanonicalDocsPath(path.value) && !locale.value) {
   useCanonical(() => isArchivedDocVersion(docsVersion.value) ? undefined : `/raw${path.value}.md`)
+}
+
+const siteUrl = useSiteConfig().url
+const l10nHeadTags = computed(() => isLocalisedPage(path.value)
+  ? l10nHead({ siteUrl, path: path.value, locale: locale.value, indexable: indexable.value })
+  : undefined)
+
+useHead({
+  link: () => [
+    ...(locale.value && l10nHeadTags.value && isCanonicalDocsPath(path.value) ? [{ rel: 'canonical' as const, href: l10nHeadTags.value.url }] : []),
+    ...(l10nHeadTags.value?.alternates ?? []).map(({ hreflang, href }) => ({ rel: 'alternate' as const, hreflang, href }))
+  ]
+})
+if (locale.value) {
+  useSeoMeta({ ogUrl: () => l10nHeadTags.value?.url, robots: () => l10nHeadTags.value?.robots })
 }
 
 if (import.meta.server) {
@@ -312,7 +353,11 @@ const noRightAside = computed(() => route.path.includes('/examples/'))
               trailingIcon: 'hidden',
               bottom: 'flex flex-col'
             }"
-          />
+          >
+            <template #aside>
+              <DocsPageAsideLinks :path="path" :edit-link="editLink" :markdown="markdown" />
+            </template>
+          </ContentToc>
         </template>
       </UDrawer>
     </div>
@@ -371,15 +416,24 @@ const noRightAside = computed(() => route.path.includes('/examples/'))
             </template>
           </UButton>
 
-          <PageHeaderLinks v-if="!isArchivedDocVersion(docsVersion)" :key="page.path" />
+          <!-- Examples have no aside to hold the page links. -->
+          <PageHeaderLinks v-if="noRightAside" :key="page.path" />
         </template>
       </UPageHeader>
 
-      <UPageBody>
+      <UPageBody ref="pageBody" :data-l10n-show="l10n && showL10nStatus ? '' : undefined">
+        <LazyDocsL10nStatus
+          v-if="l10n"
+          v-model:show="showL10nStatus"
+          :meta="l10n"
+          :path="path"
+          :target="pageBody?.$el"
+          @published="showPublished"
+        />
         <MarkdownDocument v-if="page.nodes?.length" :value="page" :components="markdownComponents" />
         <div>
-          <Feedback :page="{ title: fm.title, stem: page.meta.stem }" />
-          <USeparator class="mt-6 mb-10">
+          <Feedback :page="{ title: fm.title, stem: page.meta.stem }" :lang="locale ? 'en' : undefined" />
+          <USeparator class="mt-6 mb-10" :lang="locale ? 'en' : undefined">
             <div class="flex items-center gap-2 text-sm text-muted">
               <UButton
                 size="sm"
@@ -416,7 +470,11 @@ const noRightAside = computed(() => route.path.includes('/examples/'))
             container: 'lg:max-h-[inherit]',
             content: 'lg:min-h-[min(var(--list-height,8rem),16rem)]'
           }"
-        />
+        >
+          <template #aside>
+            <DocsPageAsideLinks :path="path" :edit-link="editLink" :markdown="markdown" />
+          </template>
+        </ContentToc>
       </template>
     </UPage>
   </UContainer>

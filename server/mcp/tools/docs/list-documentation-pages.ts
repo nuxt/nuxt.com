@@ -51,11 +51,11 @@ const getResult = defineCachedFunction(async (event: H3Event, { version, search 
 })
 
 export default defineMcpTool({
-  description: `Lists Nuxt documentation pages, optionally filtered by search term.
+  description: `Lists Nuxt docs pages (title and path) for a version, optionally filtered by words in the title, path or description.
 
-WHEN TO USE: When you need to find documentation about a topic but don't know the exact page path.
-WHEN NOT TO USE: If you already know the page path, use get-documentation-page directly.
-TIPS: Always pass a search term to narrow results — avoids dumping the entire catalog.`,
+WHEN TO USE: To browse the docs catalog, or to list the pages of a section or another version (3.x, 5.x).
+WHEN NOT TO USE: For a question or topic, use search-documentation, which searches page content. If you know the page path, use get-documentation-page.
+TIPS: Always pass a search term to narrow results; every word must match.`,
   inputSchema: inputSchema.meta({ examples: [
     { search: 'data fetching', version: '4.x' },
     { search: 'middleware' },

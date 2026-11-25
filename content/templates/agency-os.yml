@@ -3,3 +3,12 @@ slug: 'agency-os'
 description: 'The open source operating system for digital agencies.'
 repo: 'directus-community/agency-os'
 demo: 'https://www.agencyos.dev/'
+category: 'app'
+deploy:
+  env:
+    - 'DIRECTUS_URL'
+    - 'DIRECTUS_SERVER_TOKEN'
+    - 'NUXT_PUBLIC_SITE_URL'
+    - 'STRIPE_SECRET_KEY'
+    - 'STRIPE_PUBLISHABLE_KEY'
+    - 'STRIPE_WEBHOOK_SECRET'

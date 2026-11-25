@@ -1,4 +1,5 @@
-import type { FileUIPart, UIMessage, UserContent } from 'ai'
+import type { FileUIPart, UIMessage } from 'ai'
+import type { MessageContent, MessagePart } from 'eve/client'
 
 export const PASTE_ATTACHMENT_MIN_CHARS = 400
 export const PASTE_ATTACHMENT_MIN_LINES = 8
@@ -228,8 +229,8 @@ export function isTextFilePart(part: FileUIPart): boolean {
 }
 
 /** Turns UI parts into Eve user content, inlining text attachments. */
-export function toEveUserContent(parts: UIMessage['parts']): string | UserContent | null {
-  const content: Exclude<UserContent, string> = []
+export function toEveUserContent(parts: UIMessage['parts']): MessageContent | null {
+  const content: MessagePart[] = []
 
   for (const part of parts) {
     if (part.type === 'text') {

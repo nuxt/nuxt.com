@@ -4,8 +4,8 @@ import { writeSnapshots } from 'comark-content/build'
 import { join } from 'pathe'
 import { createBuildInstance, createInstanceSource } from '../../utils/factory'
 import { instanceSource } from '../../server/utils/content/instances'
-import { instanceSnapshotDir, SNAPSHOT_ASSET_BASE, SNAPSHOT_INSTANCE_KEYS } from '../../server/utils/content/snapshot'
-import type { ContentInstanceKey } from '../../shared/utils/content'
+import { instanceSnapshotDir, SNAPSHOT_ASSET_BASE } from '../../server/utils/content/snapshot'
+import { CONTENT_INSTANCE_KEYS, type ContentInstanceKey } from '../../shared/utils/content'
 import { resolveSnapshotSha } from './utils'
 
 const logger = useLogger('snapshot')
@@ -15,7 +15,7 @@ const logger = useLogger('snapshot')
  * A cold start at that commit hydrates from one instead of walking the content repository.
  * At a later commit it still supplies every unchanged body.
  *
- * `SNAPSHOT_INSTANCE_KEYS` says which instances get one, and why not all of them.
+ * Every instance gets one: without it, a cold cache downloads every file of the instance.
  */
 export default defineNuxtModule({
   meta: { name: 'snapshot' },
@@ -37,7 +37,7 @@ export default defineNuxtModule({
       const token = process.env.NUXT_GITHUB_TOKEN || process.env.GITHUB_TOKEN
 
       // Sequential: parallel parses compete for the same CPU and make the timings below meaningless.
-      for (const key of SNAPSHOT_INSTANCE_KEYS) {
+      for (const key of CONTENT_INSTANCE_KEYS) {
         await writeInstanceSnapshot(key, { dir, rootDir: nuxt.options.rootDir, token })
       }
     })

@@ -7,7 +7,8 @@ const input = defineModel<string>('input', { required: true })
 const props = withDefaults(defineProps<{
   chat: AgentChatHandle
   chatId: string
-  prompt: { pasteAttachments: TextPasteAttachment[], canSubmit: boolean }
+  /** Spread on `AgentChatPrompt`. */
+  prompt: { pasteAttachments: TextPasteAttachment[], canSubmit: boolean } & Record<string, unknown>
   usage?: { used: number, remaining: number, limit: number }
   rateLimitReached?: boolean
   compact?: boolean

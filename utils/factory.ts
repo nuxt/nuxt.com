@@ -1,7 +1,8 @@
 import { join } from 'node:path'
 import { comarkContent, type CacheOptions, type ComarkContent, type ParsedSource, type Source } from 'comark-content'
 import fs from 'comark-content/sources/fs'
-import github from 'comark-content/sources/github'
+import forge from 'comark-content/sources/forge'
+import { github } from 'forges/github'
 import markdown from 'comark-content/plugins/markdown'
 import yaml from 'comark-content/plugins/yaml'
 import json from 'comark-content/plugins/json'
@@ -43,13 +44,11 @@ export function createInstanceSource(source: InstanceSource, ctx: SourceContext)
     return fs(join(overridePath, source.contentDir), options)
   }
 
-  return github({
+  return forge({
+    provider: github(ctx.token ? { auth: { type: 'token', token: ctx.token } } : {}),
     repo: source.repo,
-    branch: source.branch,
+    ref: source.branch,
     path: source.contentDir,
-    token: ctx.token,
-    // Reads happen through `withRef(<sha>)`, an immutable commit => cache hard.
-    ttl: 60 * 60 * 24,
     ...options
   })
 }

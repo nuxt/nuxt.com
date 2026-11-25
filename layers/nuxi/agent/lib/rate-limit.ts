@@ -1,4 +1,4 @@
-import { appOrigin, internalHeaders } from './internal-api.js'
+import { appFetch, internalHeaders } from './internal-api.js'
 
 export const DAILY_LIMIT_MESSAGE = 'You\'ve reached today\'s message limit with Nuxi. Try again tomorrow.'
 
@@ -10,9 +10,9 @@ export async function consumeDailyQuota(principalId: string, defaultLimit?: numb
   try {
     // No inbound browser request here, so the cookie cannot be forwarded. The
     // consume route accepts the bearer secret alone for these callers.
-    const response = await fetch(`${appOrigin()}/api/internal/agent/rate-limit/consume`, {
+    const response = await appFetch('/api/internal/agent/rate-limit/consume', {
       method: 'POST',
-      headers: internalHeaders(),
+      headers: await internalHeaders(),
       body: JSON.stringify({ userId: principalId, defaultLimit })
     })
 

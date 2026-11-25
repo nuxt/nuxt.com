@@ -38,7 +38,8 @@ const getResult = defineCachedFunction(async (event: H3Event, { username, period
       comments: stats.comments,
       helpfulComments: stats.helpfulComments,
       reactionsReceived: stats.reactions,
-      core: stats.core
+      core: stats.core,
+      translations: stats.translations
     },
     firstContributionAt: profile.firstContributionAt,
     hackathons: nuxterHackathons(profile.githubId).map(hackathon => hackathon.name),

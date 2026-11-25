@@ -35,7 +35,7 @@ const modules = computed(() => [
 
 <template>
   <!-- One link for the whole card: no inner links or buttons -->
-  <NuxtLink :to="path" class="flex flex-col rounded-lg border border-default bg-elevated/50 overflow-hidden hover:bg-elevated transition-colors">
+  <NuxtLink :to="path" class="flex flex-col rounded-lg border border-default bg-elevated/50 overflow-hidden hover:bg-elevated transition-colors outline-primary/25 focus-visible:outline-3">
     <div class="flex items-center gap-3 p-3">
       <!-- UAvatar renders with <NuxtImg> (IPX): the source path, not an IPX URL -->
       <UAvatar

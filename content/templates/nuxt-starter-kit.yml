@@ -6,3 +6,4 @@ purchase: 'https://nuxtstarterkit.com'
 screenshotUrl: 'https://nuxtstarterkit.com'
 badge: 'Premium'
 featured: true
+category: 'saas'

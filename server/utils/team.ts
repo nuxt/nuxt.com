@@ -55,3 +55,12 @@ export async function isAuthorizedAdmin(event: H3Event, login: string): Promise<
   }
   return isCoreTeamMember(event, normalized)
 }
+
+/** Like `requireUserSession`, but throws 403 unless the user is still an admin: the session role is set at sign-in, so it is re-checked. */
+export async function requireAdminUserSession(event: H3Event) {
+  const session = await requireUserSession(event)
+  if (session.user.role !== 'admin' || !(await isAuthorizedAdmin(event, session.user.username))) {
+    throw createError({ statusCode: 403, statusMessage: 'Admin access required' })
+  }
+  return session
+}

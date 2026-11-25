@@ -8,6 +8,9 @@ type SearchStatus = 'idle' | 'loading' | 'ready' | 'error'
 
 const status = ref<SearchStatus>('idle')
 
+/** Set on the first open of the palette: the index only loads from then on. */
+const requested = ref(false)
+
 /** Hydration logging switch: `?debug=search` */
 function searchDebug(): boolean {
   if (!import.meta.client) return false
@@ -23,8 +26,8 @@ function usePullHead(pull: PullTarget) {
 }
 
 /**
- * Client-side full-text search over the active docs version, the CLI corresponding reference and the
- * examples (sqlite-wasm FTS5), hydrated from each instance's per-commit snapshot artifacts.
+ * Client-side full-text search over the active docs version, the CLI corresponding reference, the
+ * examples and the hosted module docs (sqlite-wasm FTS5), hydrated from each instance's per-commit snapshot artifacts.
  */
 export function useSearch() {
   // Fetched once in `app.vue`/`error.vue`
@@ -88,8 +91,17 @@ export function useSearch() {
   }
 
   if (import.meta.client) {
-    onNuxtReady(warmup)
-    watch([targetsKey, pullHead], warmup)
+    // The index is the SQLite wasm and every instance's snapshot, about 1.2 MB: it loads on the
+    // first open, not on every page view. Opened before `shas` lands, the watcher below picks it up.
+    // Reopening after a failed load retries it.
+    const { open } = useContentSearch()
+    watch(open, (value) => {
+      if (!value || (requested.value && status.value !== 'error')) return
+
+      requested.value = true
+      warmup()
+    }, { immediate: true })
+    watch([targetsKey, pullHead], () => requested.value && warmup())
   }
 
   async function search(query: string, opts?: SearchOptions): Promise<SearchResult[]> {

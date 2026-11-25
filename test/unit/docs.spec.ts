@@ -92,10 +92,10 @@ describe('docsLinks', () => {
   it('versions the Nuxt 2 docs links, `$nuxt` slug included', () => {
     const { nodes } = rewrite('2.x', [
       ['a', { href: '/docs/guide/concepts/views' }],
-      ['read-more', { to: '/docs/api/internals/dollarnuxt' }]
+      ['read-more', { to: '/docs/api/internals/$nuxt' }]
     ])
     expect(nodes[0]![1]).toEqual({ href: '/docs/2.x/guide/concepts/views' })
-    expect(nodes[1]![1]).toEqual({ to: '/docs/2.x/api/internals/dollarnuxt' })
+    expect(nodes[1]![1]).toEqual({ to: '/docs/2.x/api/internals/$nuxt' })
   })
 })
 

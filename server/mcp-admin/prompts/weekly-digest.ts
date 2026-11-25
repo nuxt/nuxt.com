@@ -6,7 +6,7 @@ const inputSchema = z.object({
 
 export default defineMcpPrompt({
   scopes: ['admin:analytics', 'admin:chats'],
-  description: 'Generate the Nuxt Monday digest — traffic, docs feedback, AI agent quality, and prioritized follow-ups.',
+  description: 'Generate the Nuxt Monday digest — traffic, Search Console and SEO opportunities, docs feedback, AI agent quality, and prioritized follow-ups.',
   inputSchema,
   handler({ sinceDays }) {
     return `Produce the Nuxt admin digest for the last ${sinceDays} days.
@@ -14,6 +14,7 @@ export default defineMcpPrompt({
 Steps to follow (run them in parallel where possible):
 1. Traffic via Vercel Web Analytics for nuxt.com: use \`count_pageviews\` and \`aggregate_pageviews\` for visitors/pageviews + WoW delta, daily trend, top routes with deltas, referrers/geo/device.
    Pass the configured Nuxt \`projectId\` and \`teamId\`; do not pass \`slug\`. For aggregates, only use buckets inside the requested half-open \`[start, end)\` window; ignore buckets introduced by API boundary rounding.
+   Template live previews (same project): \`aggregate_events\` with \`by=['eventName']\` and \`filter="startswith(eventName, 'Template ')"\` for the funnel (current + previous window), then \`by=['eventData/template']\`, \`by=['eventData/changes']\` on \`Template Downloaded\`, and \`by=['eventData/reason']\` on \`Template Preview Failed\`. Each event fires once per step and preview; \`Template Edited\` fires once per depth reached (\`changes\` = \`1+\`, \`5+\`, \`20+\`), so count edited previews with \`eventData/changes eq '1+'\` only.
 2. \`feedback-stats\` with \`sinceDays=${sinceDays}\`, \`topPages=5\`.
 3. \`list-feedback\` with \`ratings=["not-helpful", "confusing"]\`, \`sinceDays=${sinceDays}\`, \`limit=30\`.
 4. For worst feedback pages, weigh by real visit counts from step 1.
@@ -21,6 +22,7 @@ Steps to follow (run them in parallel where possible):
 6. \`list-agent-chats\` with \`sinceDays=${sinceDays}\`, \`hasDownvotes=true\`, \`limit=5\` (shared or public chats only).
 7. \`list-agent-votes\` with \`onlyDownvotes=true\`, \`sinceDays=${sinceDays}\`, \`limit=15\`.
 8. Agent runs (Slack / Discord / web) and Nuxi-scoped AI Gateway spend if available — never quote account-wide / other-product totals.
+9. Search Console: set the inclusive end date to today minus 3 days, start date to end minus (${sinceDays} - 1) days, and compare with the immediately preceding ${sinceDays}-day window. Pass both dates explicitly to \`search-console-analytics\`. On every analytics call apply a page includingRegex filter with expression \`^https?://([a-z0-9-]+[.])*nuxt[.]com/\` to include nuxt.com and all subdomains, using the same scope in both windows. Use \`dimensions=[]\` for authoritative totals, \`dimensions=["page"]\` for page changes, and \`dimensions=["page", "query"]\` for opportunities (high impressions at positions 8–20, low CTR among comparable positions, declining pages or intent mismatches). CTR is already a percentage. Grouped rows are partial; never sum them into site totals or treat an absent page as zero without an exact-page query. Identify both meaningful gains and losses by absolute click change, label every finding with its actual hostname, and balance findings across sites. Use readers for the actual host; the nuxt.com reader and feedback database do not establish another subdomain's content or feedback. For at most 2 promising pages, compare exact-page top queries in BOTH explicit windows (use exact page + query queries if a cited query is absent from either top list), read the current docs, check page-specific negative \`list-feedback\`, inspect declining URLs with \`search-console-inspect-url\` and use \`crux-web-vitals\` when relevant (origin fallback is not page evidence). Keep failures explicit and continue the rest of the digest.
 
 Then write a digest in Markdown with these sections (be concise — each section ≤ 8 bullets):
 
@@ -37,6 +39,17 @@ Then write a digest in Markdown with these sections (be concise — each section
 ## Referrers & audience
 - Top referrers, countries, device mix (short).
 
+## Templates
+- Funnel: previews started → editor started → edited (1+, 5+) → downloaded (edited vs untouched), with WoW %.
+- Top templates by previews and edits; top failure reasons and installed modules.
+
+## Search & SEO
+- First verify both date series with \`dimensions=["date"]\`, \`rowLimit=500\` and the same host filters: all expected dates including boundaries must be present. Search Console retains only 16 months and data may lag more than 3 days. Missing dates are unverified, never zero-filled. If either window is incomplete or unavailable, show separately labelled partial totals with actual returned dates; omit deltas and win/loss claims and state the specific coverage limitation. Other sections continue.
+- Label the scope as nuxt.com + all subdomains and every page finding with its actual hostname.
+- When coverage is verified, show actual delayed data dates and totals vs previous equal-length window: clicks, impressions, CTR (percentage-point changes) and position (rank-point changes, lower is better).
+- One linked meaningful gain and one linked loss, with clicks before/after and paired query evidence (say if none found). Give a specific content/snippet/link change backed by current-page reads, plus a measured baseline and follow-up check; label hypotheses and partial data. Feed the best action into Fix this week.
+- Link to [Search Console](https://search.google.com/search-console). Report missing access/data here if unavailable.
+
 ## Docs feedback
 - Headline numbers: total, positive %, average score.
 - Worst pages (title + URL + score + traffic + 1-line takeaway).
@@ -48,7 +61,7 @@ Then write a digest in Markdown with these sections (be concise — each section
 - Nuxi-scoped spend/tokens only — [AI Gateway](https://vercel.com/nuxt-js/nuxt/ai-gateway). If not attributable, say so; never invent or use team-wide numbers.
 
 ## Fix this week
-- 3 prioritized actions (traffic × feedback × agent), with owner suggestion and links.
+- 3 prioritized actions (traffic × feedback, evidenced SEO opportunities, and agent quality), with owner suggestion and links.
 
 Always include direct links so a reader can jump straight to the source. Prefer short paragraphs and bullet points; this is a digest, not a thesis.`
   }

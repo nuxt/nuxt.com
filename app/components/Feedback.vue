@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { AnimatePresence, motion, useReducedMotion } from 'motion-v'
+import type { FormError } from '@nuxt/ui'
 
 const props = defineProps<{
   page: {
@@ -22,6 +23,13 @@ const FEEDBACK_MOODS: Record<FeedbackRating, { mood: NuxiMood, text: string, hov
   'helpful': { mood: 'idle', text: 'text-primary', hover: 'hover:text-primary hover:border-primary/50', active: 'text-primary border-primary bg-primary/15' },
   'not-helpful': { mood: 'sad', text: 'text-info', hover: 'hover:text-info hover:border-info/50', active: 'text-info border-info bg-info/15' },
   'confusing': { mood: 'confused', text: 'text-warning', hover: 'hover:text-warning hover:border-warning/50', active: 'text-warning border-warning bg-warning/15' }
+}
+
+function validateFeedback(state: Partial<typeof formState>): FormError[] {
+  const length = state.feedback?.trim().length ?? 0
+  return length > 0 && length < 10
+    ? [{ name: 'feedback', message: 'Please provide at least 10 characters or leave the field empty' }]
+    : []
 }
 
 const previewRating = ref<FeedbackRating | null>(null)
@@ -110,7 +118,7 @@ const success = computed(() => ({
                 variant="ghost"
                 :label="option.label"
                 :aria-pressed="formState.rating === option.value"
-                class="rounded-full border px-2.5 transition-[color,background-color,border-color,scale] duration-150 ease-out active:scale-[0.97] focus-visible:outline-1 focus-visible:outline-offset-1 focus-visible:outline-primary"
+                class="rounded-full border px-2.5 transition-[color,background-color,border-color,scale] duration-150 ease-out active:scale-[0.97] outline-primary/25 focus-visible:outline-3"
                 :class="formState.rating === option.value
                   ? FEEDBACK_MOODS[option.value].active
                   : ['border-default bg-accented/20 text-muted hover:bg-accented/60', FEEDBACK_MOODS[option.value].hover]"
@@ -135,7 +143,7 @@ const success = computed(() => ({
           <div class="min-h-0 overflow-hidden -mx-1 px-1">
             <UForm
               :state="formState"
-              :schema="feedbackFormSchema"
+              :validate="validateFeedback"
               class="max-w-md pt-3 pb-1 space-y-2"
               @submit="submitFeedback"
             >

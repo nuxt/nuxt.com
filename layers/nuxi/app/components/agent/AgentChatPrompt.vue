@@ -1,7 +1,10 @@
 <script setup lang="ts">
 import type { AgentChatHandle } from '../../composables/eve/types'
+import type { ChatQueueItem } from '../../composables/useChatQueue'
 
 const input = defineModel<string>({ required: true })
+/** Bound where Nuxi answers: messages submitted during an answer wait here instead of being dropped. */
+const queue = defineModel<ChatQueueItem[]>('queue')
 
 const props = withDefaults(defineProps<{
   pasteAttachments?: TextPasteAttachment[]
@@ -25,6 +28,7 @@ const props = withDefaults(defineProps<{
 
 const emit = defineEmits<{
   submit: []
+  send: []
   paste: [event: ClipboardEvent]
   removeAttachment: [index: number]
 }>()
@@ -61,6 +65,8 @@ function submitAttachmentsOnly(event?: KeyboardEvent) {
   <UChatPrompt
     ref="chatPromptRef"
     v-model="input"
+    v-model:queue="queue"
+    :status="promptStatus"
     :error="promptError"
     placeholder="Ask anything…"
     :variant="variant"
@@ -71,6 +77,7 @@ function submitAttachmentsOnly(event?: KeyboardEvent) {
     :class="props.class"
     :ui="ui"
     @submit="emit('submit')"
+    @send="emit('send')"
     @paste="emit('paste', $event)"
     @keydown.enter="submitAttachmentsOnly"
   >

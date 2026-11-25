@@ -4,7 +4,7 @@ import { join } from 'node:path'
 import { createClient, type Client } from '@libsql/client'
 import { drizzle, type LibSQLDatabase } from 'drizzle-orm/libsql'
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
-import { feedback, users } from '../../server/db/schema'
+import { feedback, l10nSaves, users } from '../../server/db/schema'
 import { agentDailyUsage, chats, messages, votes } from '../../layers/nuxi/server/db/schema'
 import { purgeExpiredSiteData } from '../../server/utils/data-retention'
 import { purgeExpiredNuxiData } from '../../layers/nuxi/server/utils/data-retention'
@@ -84,7 +84,18 @@ describe('purgeExpiredSiteData', () => {
 
     expect((await purgeExpiredSiteData(db, { now: NOW, batchSize: 2, maxBatches: 2 })).feedback).toBe(4)
     expect((await purgeExpiredSiteData(db, { now: NOW, batchSize: 2, maxBatches: 2 })).feedback).toBe(1)
-    expect(await purgeExpiredSiteData(db, { now: NOW, batchSize: 2, maxBatches: 2 })).toEqual({ users: 0, feedback: 0 })
+    expect(await purgeExpiredSiteData(db, { now: NOW, batchSize: 2, maxBatches: 2 })).toEqual({ users: 0, feedback: 0, l10nSaves: 0 })
+  })
+
+  it('deletes translation save counts of past hours', async () => {
+    const hour = Math.floor(NOW.getTime() / 3_600_000)
+    await db.insert(l10nSaves).values([
+      { userId: 'u1', hour, saves: 1, changes: 1 },
+      { userId: 'u1', hour: hour - 1, saves: 1, changes: 1 }
+    ])
+
+    expect((await purgeExpiredSiteData(db, { now: NOW })).l10nSaves).toBe(1)
+    expect((await db.select({ hour: l10nSaves.hour }).from(l10nSaves)).map(row => row.hour)).toEqual([hour])
   })
 })
 

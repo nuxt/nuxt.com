@@ -1,6 +1,7 @@
 import { createContentClient, type ContentFetch } from 'comark-content/client'
 import { instanceBasePath, type ContentInstanceKey } from '#shared/utils/content'
 import { instancePullPath, instanceRepo } from '#shared/utils/pull'
+import { l10nContentBasePath } from '#shared/utils/l10n'
 
 type ContentClient = ReturnType<typeof createContentClient>
 
@@ -14,8 +15,15 @@ const contentFetch: ContentFetch = <T>(url: string, options?: Record<string, any
  * - `examples` (code examples)
  * - `docs:<version>` (one instance per docs version)
  * - `cli:<version>` (one instance per CLI version)
+ *
+ * Under a locale, the docs and their command reference are read localised.
  */
 export function useContent(key: ContentInstanceKey): ContentClient {
+  const locale = useDocsLocale().value
+  if (locale && (key.startsWith('docs:') || key.startsWith('cli:'))) {
+    return createContentClient({ basePath: l10nContentBasePath(locale), fetch: contentFetch })
+  }
+
   const pull = usePullPreview().value
   if (pull && instanceRepo(key) === pull.repo) {
     return createContentClient({ basePath: instancePullPath(key, pull), fetch: contentFetch })

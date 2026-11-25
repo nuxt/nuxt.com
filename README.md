@@ -82,7 +82,7 @@ The public server card at `/.well-known/mcp/server-card.json` contains only the 
 
 People connect to `/mcp/admin` with their GitHub login: nuxt.com is the OAuth 2.1 authorization server for that endpoint (`server/utils/mcp-oauth.ts`), and the toolkit verifies its tokens as the resource server. An MCP client discovers the server from the `401` challenge, registers itself (`/oauth/register`), and sends the person to `/oauth/authorize`. That page reuses `/login`, accepts only admins, and asks for consent. Clients then exchange the code with PKCE at `/oauth/token` and get a one-hour access token for `/mcp/admin` and a rotating 30-day refresh token. Each refresh re-checks admin access, and replaying a used code or refresh token revokes the whole sign-in.
 
-Tools and prompts declare `scopes`: `admin:chats` for chat transcripts and votes, `admin:analytics` for everything else. Grants live in the `admin_mcp_oauth_grants` table; signing keys derive from `NUXT_APP_SECRET`, which must be set. MCP clients either register dynamically or use an HTTPS client ID metadata document (CIMD), which may authenticate with `private_key_jwt`. The Nuxi agent signs in the same way through Vercel Connect, always against `https://nuxt.com/mcp/admin` (also from local dev, with a Vercel OIDC token from `vercel env pull`): the `nuxt.com/nuxi` connector is created on first use, and an admin installs it once from the Connect dashboard and approves it on nuxt.com's consent page; the grant then follows that admin's access. Locally, run `pnpm dev` and connect a client to `http://localhost:3000/mcp/admin`; set `NUXT_ADMIN_GITHUB_LOGINS` to your login.
+Tools and prompts declare `scopes`: `admin:chats` for chat transcripts and votes, `admin:templates` for template checks, `admin:analytics` for everything else. Grants live in the `admin_mcp_oauth_grants` table; signing keys derive from `NUXT_APP_SECRET`, which must be set. MCP clients either register dynamically or use an HTTPS client ID metadata document (CIMD), which may authenticate with `private_key_jwt`. The Nuxi agent signs in the same way through Vercel Connect, always against `https://nuxt.com/mcp/admin` (also from local dev, with a Vercel OIDC token from `vercel env pull`): the `nuxt.com/nuxi` connector is created on first use, and an admin installs it once from the Connect dashboard and approves it on nuxt.com's consent page; the grant then follows that admin's access. Locally, run `pnpm dev` and connect a client to `http://localhost:3000/mcp/admin`; set `NUXT_ADMIN_GITHUB_LOGINS` to your login.
 
 Public tools and resources use native Nitro cached functions with their existing 10-minute, 30-minute or 1-hour lifetimes. Cache keys include the request origin and parsed arguments. No MCP client credentials are needed for the public endpoint.
 
@@ -100,7 +100,7 @@ To run the evals for the MCP server, follow these steps:
    Go to https://vercel.com/ai-gateway and create an API key.
    Add the following variable to your `.env` file (replace `sk-...` with your actual key):
    ```
-   AI_GATEWAY_API_KEY=<you-api-key>
+   AI_GATEWAY_API_KEY=<your-api-key>
    ```
 
 3. **Run the evals**  

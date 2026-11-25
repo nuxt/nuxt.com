@@ -22,7 +22,7 @@ const getResult = defineCachedFunction(async (event: H3Event, { period = 'all', 
     throw createError({ statusCode: 400, message: `Invalid country "${requestedCountry}": use an ISO 3166-1 alpha-2 code such as FR` })
   }
 
-  const page = await nuxters.list({ period, country, offset: search ? 0 : offset, limit: search ? 1 : limit })
+  const page = await nuxters.list(event, { period, country, offset: search ? 0 : offset, limit: search ? 1 : limit })
   const items = search
   // GitHub usernames: letters, digits and hyphens
     ? await nuxters.search({ query: search.replace(/[^a-z0-9-]/gi, ''), period, country, limit })

@@ -18,7 +18,8 @@ export function mcpAdminResource(): string {
 
 export const MCP_OAUTH_SCOPES = {
   'admin:analytics': 'Read docs feedback, agent usage and votes, Google Search Console and Core Web Vitals data',
-  'admin:chats': 'Read web chat transcripts shared with admins or made public'
+  'admin:chats': 'Read web chat transcripts shared with admins or made public',
+  'admin:templates': 'Read template check results and start template checks on Vercel Sandbox'
 } as const
 
 export type McpOAuthScope = keyof typeof MCP_OAUTH_SCOPES

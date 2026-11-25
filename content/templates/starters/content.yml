@@ -1,0 +1,10 @@
+name: 'Content'
+slug: 'content'
+kind: 'starter'
+template: 'content'
+order: 3
+description: 'Starter for a content-driven website with Nuxt Content.'
+icon: 'i-lucide-file-text'
+repo: 'nuxt/starter'
+branch: 'content'
+docs: 'https://content.nuxt.com'

@@ -81,7 +81,7 @@ describe('admin MCP OAuth server', () => {
     const request = await authorize()
     const code = await oauth.createMcpAuthorizationCode(request, 'user-1')
     const grant = await oauth.consumeMcpGrant('code', code)
-    expect(grant).toMatchObject({ userId: 'user-1', codeChallenge: challenge, scope: 'admin:analytics admin:chats' })
+    expect(grant).toMatchObject({ userId: 'user-1', codeChallenge: challenge, scope: 'admin:analytics admin:chats admin:templates' })
 
     const { refresh_token } = await oauth.issueMcpTokens(grant, request.scopes, 'atinux')
     await expect(oauth.consumeMcpGrant('code', code)).rejects.toMatchObject({ error: 'invalid_grant' })

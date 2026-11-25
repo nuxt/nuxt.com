@@ -1,8 +1,18 @@
-import { useAnimate } from 'motion-v'
+type Keyframes = number | Array<number | null>
+
+interface BodyKeyframes {
+  y?: Keyframes
+  rotate?: Keyframes
+  scale?: Keyframes
+  scaleX?: Keyframes
+  scaleY?: Keyframes
+}
+
+type Ease = 'easeIn' | [number, number, number, number]
 
 type LookDir = 'center' | 'left' | 'right' | 'up'
 
-type MouthShape = 'default' | 'O' | 'wavy' | 'flat' | 'wobble'
+type MouthShape = 'default' | 'O' | 'wavy' | 'flat' | 'wobble' | 'frown'
 
 interface MoodVisual {
   showSmile: boolean
@@ -48,7 +58,8 @@ const MOUTH_PATHS: Record<MouthShape, string> = {
   O: 'M132 178 a 17 13 0 1 0 34 0 a 17 13 0 1 0 -34 0 Z',
   wavy: 'M128 181 Q 139 169 150 179 T 172 176',
   flat: 'M134 178 Q 150 176 166 178',
-  wobble: 'M139 179 Q 144.5 172 150 178 Q 155.5 184 161 177'
+  wobble: 'M139 179 Q 144.5 172 150 178 Q 155.5 184 161 177',
+  frown: 'M135 184 Q 150 172 165 184'
 }
 
 // Stroked mouths are drawn as a line instead of a filled shape.
@@ -57,7 +68,8 @@ const MOUTH_STROKED: Record<MouthShape, boolean> = {
   O: false,
   wavy: true,
   flat: true,
-  wobble: true
+  wobble: true,
+  frown: true
 }
 
 /* eslint-disable @stylistic/key-spacing, @stylistic/no-multi-spaces -- table layout for legibility */
@@ -69,6 +81,8 @@ const MOOD_VISUALS: Record<NuxiMood, MoodVisual> = {
   sleeping:  { showSmile: false, eyeLeftScaleY: 0.15, eyeLeftScaleX: 1,    eyeRightScaleY: 0.15, eyeRightScaleX: 1,    eyeTranslateY: 0,  mouthShape: 'default', mouthScale: 0,    mouthTY: 0, mouthOpacity: 1, blinkEnabled: false },
   surprised: { showSmile: false, eyeLeftScaleY: 1.08, eyeLeftScaleX: 1.03, eyeRightScaleY: 1.08, eyeRightScaleX: 1.03, eyeTranslateY: 0,  mouthShape: 'O',       mouthScale: 1,    mouthTY: 0, mouthOpacity: 1, blinkEnabled: false },
   sad:       { showSmile: false, showSquint: true, eyeLeftScaleY: 0.02, eyeLeftScaleX: 0.5, eyeRightScaleY: 0.02, eyeRightScaleX: 0.5, eyeTranslateY: 0, mouthShape: 'wobble', mouthScale: 1.1, mouthTY: 0, mouthOpacity: 1, blinkEnabled: false },
+  // Gently sad: round eyes looking down and a soft frown. For goodbyes that shouldn't guilt anyone.
+  wistful:   { showSmile: false, eyeLeftScaleY: 0.92, eyeLeftScaleX: 0.92, eyeRightScaleY: 0.92, eyeRightScaleX: 0.92, eyeTranslateY: 5,  mouthShape: 'frown',   mouthScale: 1,    mouthTY: 0, mouthOpacity: 1, blinkEnabled: true  },
   confused:  { showSmile: false, eyeLeftScaleY: 1.05, eyeLeftScaleX: 1,    eyeRightScaleY: 0.45, eyeRightScaleX: 0.95, eyeTranslateY: 2,  eyeRightRotate: -10, mouthShape: 'wavy', mouthScale: 0.9, mouthTY: 2, mouthOpacity: 1, blinkEnabled: false }
 }
 /* eslint-enable @stylistic/key-spacing, @stylistic/no-multi-spaces */
@@ -82,7 +96,45 @@ type EmitFn = (event: 'moodChange', mood: NuxiMood) => void
 
 export function useNuxiIcon(props: NuxiIconProps, emit?: EmitFn) {
   const maskId = useId()
-  const [svgEl, animate] = useAnimate()
+  const svgEl = shallowRef<SVGSVGElement>()
+
+  // Where the body rests between easter eggs: a keyframe of `null` starts from here.
+  const body = { y: 0, rotate: 0, scaleX: 1, scaleY: 1 }
+
+  /**
+   * Plays the easter eggs with the Web Animations API, in the shape of motion's `animate()`: each of
+   * `translate`, `rotate` and `scale` runs as its own animation, the ease applies between keyframes,
+   * and a single value animates from where the body is.
+   */
+  async function animate(selector: string, keyframes: BodyKeyframes, { duration, ease }: { duration: number, ease?: Ease }) {
+    const el = svgEl.value?.querySelector<SVGElement>(selector)
+    if (!el) return
+
+    const { scale, ...rest } = keyframes
+    const values: Omit<BodyKeyframes, 'scale'> = scale === undefined ? rest : { scaleX: scale, scaleY: scale, ...rest }
+    const frames = Object.fromEntries(Object.entries(values).map(([key, value]) => {
+      const from = body[key as keyof typeof body]
+      return [key, (Array.isArray(value) ? value : [null, value]).map(v => v ?? from)]
+    })) as Partial<Record<keyof typeof body, number[]>>
+    for (const [key, list] of Object.entries(frames)) body[key as keyof typeof body] = list.at(-1)!
+
+    const scaleFrames = frames.scaleX || frames.scaleY
+      ? zip(frames.scaleX ?? [body.scaleX], frames.scaleY ?? [body.scaleY], (x, y) => `${x} ${y}`)
+      : undefined
+    const tracks = [
+      ['translate', frames.y?.map(v => `0 ${v}px`)],
+      ['rotate', frames.rotate?.map(v => `${v}deg`)],
+      ['scale', scaleFrames]
+    ].filter((track): track is [string, string[]] => !!track[1])
+
+    const easing = !ease ? 'ease-out' : ease === 'easeIn' ? 'ease-in' : `cubic-bezier(${ease.join(', ')})`
+    await Promise.all(tracks.map(async ([property, list]) => {
+      // The end value goes inline first: the animation runs over it, and it stays once the animation ends.
+      el.style.setProperty(property, list.at(-1)!)
+      // `easing` inside the keyframes applies between each pair of them, as motion's `ease` does.
+      if (duration > 0) await el.animate({ [property]: list, easing }, { duration: duration * 1000 }).finished
+    }))
+  }
 
   const internalMood = ref<NuxiMood>('idle')
   const isHovered = ref(false)
@@ -121,6 +173,7 @@ export function useNuxiIcon(props: NuxiIconProps, emit?: EmitFn) {
     if (mood === 'surprised') return { x: 0, y: -8 }
     if (mood === 'excited') return { x: 0, y: -11 }
     if (mood === 'sad') return { x: 0, y: 1 }
+    if (mood === 'wistful') return { x: 0, y: 3 }
     if (mood === 'confused') return { x: 5, y: -3 }
     const baseY = mood === 'happy' ? -4 : 0
     if (isInProximity.value) return { x: rawOffset.x, y: baseY + rawOffset.y }
@@ -241,6 +294,7 @@ export function useNuxiIcon(props: NuxiIconProps, emit?: EmitFn) {
   }
 
   function scheduleAttention() {
+    if (!mounted) return
     clearTimeout(attentionTimer)
     attentionTimer = setTimeout(async () => {
       if (effectiveMood.value === 'idle' && !isEasterEggPlaying.value && !props.mood) {
@@ -492,4 +546,11 @@ export function useNuxiIcon(props: NuxiIconProps, emit?: EmitFn) {
     handleMouseLeave,
     handleSvgClick
   }
+}
+
+/** Pairs two keyframe lists, stretching a shorter one by holding its first and last values. */
+function zip(a: number[], b: number[], join: (a: number, b: number) => string): string[] {
+  const length = Math.max(a.length, b.length)
+  const at = (list: number[], i: number) => list.length === length ? list[i]! : i === 0 ? list[0]! : list.at(-1)!
+  return Array.from({ length }, (_, i) => join(at(a, i), at(b, i)))
 }

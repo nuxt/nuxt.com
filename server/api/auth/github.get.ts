@@ -1,9 +1,9 @@
 import { and, eq } from 'drizzle-orm'
-import { getQuery, setCookie, getCookie, deleteCookie, defineEventHandler } from 'h3'
+import { getQuery, setCookie, getCookie, deleteCookie, defineEventHandler, sendRedirect } from 'nuxt/server'
 
 const oauthHandler = defineOAuthGitHubEventHandler({
   async onSuccess(event, { user: ghUser }) {
-    const redirectTo = getCookie(event, 'oauth-redirect') || '/'
+    const redirectTo = safeRedirectPath(getCookie(event, 'oauth-redirect')) ?? '/'
     deleteCookie(event, 'oauth-redirect')
     const session = await getUserSession(event)
 
@@ -14,7 +14,7 @@ const oauthHandler = defineOAuthGitHubEventHandler({
       )
     })
 
-    const role: 'user' | 'admin' = (await isAuthorizedAdmin(event, ghUser.login)) ? 'admin' : 'user'
+    const role: 'user' | 'admin' = (await isAuthorizedAdmin(toH3Event(event), ghUser.login)) ? 'admin' : 'user'
 
     if (!user) {
       // New user: reuse `session.id` as the primary key so any anonymous chats
@@ -36,7 +36,7 @@ const oauthHandler = defineOAuthGitHubEventHandler({
       await db.update(schema.chats).set({ userId: user!.id })
         .where(eq(schema.chats.userId, session.id))
 
-      const [updated] = await db.update(schema.users).set({ role, lastSeenAt: new Date() })
+      const [updated] = await db.update(schema.users).set({ role, username: ghUser.login, lastSeenAt: new Date() })
         .where(eq(schema.users.id, user.id))
         .returning()
       user = updated
@@ -55,8 +55,8 @@ const oauthHandler = defineOAuthGitHubEventHandler({
 export default defineEventHandler(async (event) => {
   const query = getQuery(event)
   if (!query.code && query.redirect) {
-    const redirect = Array.isArray(query.redirect) ? query.redirect[0] : query.redirect as string
-    if (typeof redirect === 'string' && redirect.startsWith('/') && !redirect.startsWith('//')) {
+    const redirect = safeRedirectPath(Array.isArray(query.redirect) ? query.redirect[0] : query.redirect)
+    if (redirect) {
       setCookie(event, 'oauth-redirect', redirect, {
         httpOnly: true,
         secure: process.env.NODE_ENV !== 'development',

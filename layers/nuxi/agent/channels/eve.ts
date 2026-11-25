@@ -1,8 +1,9 @@
+import { timingSafeEqual } from 'node:crypto'
 import type { AuthFn } from 'eve/channels/auth'
 import { localDev, vercelOidc } from 'eve/channels/auth'
 import { defaultEveAuth, eveChannel } from 'eve/channels/eve'
 import { checkBotId } from 'botid/server'
-import { appOrigin, internalHeaders } from '../lib/internal-api.js'
+import { appFetch, internalHeaders } from '../lib/internal-api.js'
 import { anonymousIpKey, clientIp } from '../../shared/utils/rate-limit.js'
 
 interface SessionPrincipal {
@@ -29,8 +30,8 @@ function nuxtSessionAuth(): AuthFn<Request> {
         if (verification.isBot) return null
       }
 
-      const response = await fetch(`${appOrigin()}/api/internal/session`, {
-        headers: internalHeaders({ cookie })
+      const response = await appFetch('/api/internal/session', {
+        headers: await internalHeaders({ cookie })
       })
 
       if (!response.ok) return null
@@ -58,9 +59,30 @@ function nuxtSessionAuth(): AuthFn<Request> {
   }
 }
 
+/**
+ * The Nuxt server calling with the shared internal secret, such as ending a
+ * deleted chat's session. It has no user cookie, and a server fetch can't pass BotID.
+ */
+function nuxtServerAuth(): AuthFn<Request> {
+  return async (request) => {
+    const secret = process.env.INTERNAL_API_SECRET?.trim()
+    const expected = Buffer.from(`Bearer ${secret}`)
+    const provided = Buffer.from(request.headers.get('authorization') ?? '')
+    if (!secret || provided.length !== expected.length || !timingSafeEqual(provided, expected)) return null
+
+    return {
+      authenticator: 'internal',
+      issuer: 'nuxt.com',
+      principalId: 'nuxt.com',
+      principalType: 'service'
+    }
+  }
+}
+
 export default eveChannel({
   auth: [
     nuxtSessionAuth(),
+    nuxtServerAuth(),
     localDev(),
     vercelOidc()
   ],
@@ -75,8 +97,8 @@ export default eveChannel({
     if (isNewSession && chatId) {
       try {
         const cookie = ctx.eve.request.headers.get('cookie') ?? ''
-        const response = await fetch(`${appOrigin()}/api/internal/chats/${encodeURIComponent(chatId)}/context`, {
-          headers: internalHeaders(cookie ? { cookie } : undefined)
+        const response = await appFetch(`/api/internal/chats/${encodeURIComponent(chatId)}/context`, {
+          headers: await internalHeaders(cookie ? { cookie } : undefined)
         })
 
         if (response.ok) {

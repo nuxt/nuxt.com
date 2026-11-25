@@ -4,3 +4,10 @@ description: 'Canvas a portfolio template, with a minimal and clean design, usin
 badge: 'Free'
 repo: 'HugoRCD/canvas'
 demo: 'https://canvas.hrcd.fr/'
+category: 'portfolio'
+deploy:
+  env:
+    - 'NUXT_PRIVATE_RESEND_API_KEY'
+    - 'NUXT_PUBLIC_SITE_URL'
+    - 'STUDIO_GITHUB_CLIENT_ID'
+    - 'STUDIO_GITHUB_CLIENT_SECRET'

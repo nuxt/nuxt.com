@@ -106,6 +106,20 @@ const authorHandles: { twitter?: string, bluesky?: string } = {
   bluesky: authors.value[0]?.bluesky
 }
 
+if (import.meta.server) {
+  useSchemaOrg([
+    defineArticle({
+      '@type': 'BlogPosting',
+      'headline': articleData.value.title,
+      description,
+      'datePublished': articleData.value.date,
+      'image': articleData.value.image,
+      // Without authors the article falls back to the site identity (the Nuxt organization).
+      'author': authors.value.length ? authors.value.map(author => ({ name: author.name, url: author.to })) : undefined
+    })
+  ])
+}
+
 const socialLinks = computed<DropdownMenuItem[]>(() =>
   !articleData.value
     ? []
@@ -155,7 +169,7 @@ function copyLink() {
         <p class="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-muted">
           <NuxtLink
             :to="`/updates?category=${category.slug}`"
-            class="font-medium text-primary hover:text-highlighted focus-visible:outline-primary"
+            class="rounded-xs font-medium text-primary hover:text-highlighted outline-primary/25 focus-visible:outline-3"
           >
             {{ category.label }}
           </NuxtLink>
@@ -188,7 +202,7 @@ function copyLink() {
               <template v-for="(author, index) in authors" :key="author.name">
                 <ULink
                   :to="author.to"
-                  class="font-medium text-highlighted hover:text-primary focus-visible:outline-primary"
+                  class="rounded-xs font-medium text-highlighted hover:text-primary"
                 >{{ author.name }}</ULink>{{ authorSeparator(index) }}
               </template>
             </span>

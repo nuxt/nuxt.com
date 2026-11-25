@@ -82,8 +82,43 @@
     {
       "idx": 11,
       "version": "6",
-      "when": 1795607854545,
-      "tag": "0011_admin_mcp_oauth_grants",
+      "when": 1793613152387,
+      "tag": "0011_nuxters_username_lower_rank_idx",
+      "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "6",
+      "when": 1793613152388,
+      "tag": "0012_template_checks",
+      "breakpoints": true
+    },
+    {
+      "idx": 13,
+      "version": "6",
+      "when": 1793613152389,
+      "tag": "0013_template_previews",
+      "breakpoints": true
+    },
+    {
+      "idx": 14,
+      "version": "6",
+      "when": 1793710296576,
+      "tag": "0014_l10n_saves",
+      "breakpoints": true
+    },
+    {
+      "idx": 15,
+      "version": "6",
+      "when": 1793876733500,
+      "tag": "0015_nuxters_translations",
+      "breakpoints": true
+    },
+    {
+      "idx": 16,
+      "version": "6",
+      "when": 1795625647450,
+      "tag": "0016_admin_mcp_oauth_grants",
       "breakpoints": true
     }
   ]

@@ -1,0 +1,10 @@
+name: 'Nuxt UI'
+slug: 'ui'
+kind: 'starter'
+template: 'ui'
+order: 2
+description: 'Starter with Nuxt UI and Tailwind CSS, ready to theme.'
+icon: 'i-lucide-component'
+repo: 'nuxt-ui-templates/starter'
+branch: 'main'
+docs: 'https://ui.nuxt.com'

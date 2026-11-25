@@ -1,17 +1,18 @@
 import type { BlogArticle, BlogCategory } from '#shared/types'
 
 export const useBlog = () => {
-  const { data: articles, refresh } = useAsyncData<BlogArticle[]>('blog', async () => {
+  const { data: articles, execute } = useAsyncData<BlogArticle[]>('blog', async () => {
     const items = await listByDir<BlogArticle>('/blog')
 
     return items
       .filter(article => article.extension !== '.yml')
       .sort((a, b) => String(b.date).localeCompare(String(a.date))) as BlogArticle[]
-  }, { default: () => [] })
+  // `fetchList()` loads it: the search palette calls this on every page, and the list is over 250 KB.
+  }, { default: () => [], immediate: false })
 
   async function fetchList() {
     if (!articles.value?.length) {
-      return refresh()
+      return execute()
     }
   }
 

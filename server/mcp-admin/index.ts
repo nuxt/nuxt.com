@@ -6,7 +6,7 @@ import { CURRENT_DOCS_VERSION } from '../../shared/utils/docs'
 export default defineMcpServer({
   name: 'admin',
   websiteUrl: `https://nuxt.com/docs/${CURRENT_DOCS_VERSION}/guide/ai/mcp`,
-  description: 'Authenticated MCP handler for the Nuxt team to query feedback, agent chats, and votes from the production database, Google Search Console data and field Core Web Vitals for nuxt.com.',
+  description: 'Authenticated MCP handler for the Nuxt team to query feedback, agent chats, votes and template checks from the production database, Google Search Console data and field Core Web Vitals for nuxt.com.',
   icons: [
     { src: 'https://nuxt.com/icon.png', mimeType: 'image/png', sizes: ['64x64'] }
   ],
@@ -16,7 +16,9 @@ Tools:
 - Feedback: \`feedback-stats\`, \`list-feedback\`
 - Agent quality: \`agent-usage-stats\` (web chats + votes only), \`list-agent-chats\`, \`get-agent-chat\`, \`list-agent-votes\`
 - Google Search: \`search-console-analytics\` (clicks, impressions, CTR, position), \`search-console-inspect-url\` (indexing of one URL), \`search-console-sitemaps\`
+- Live pages: \`page-head\` (redirects, status, title, meta description, canonical and robots of one page on nuxt.com or a subdomain)
 - Performance: \`crux-web-vitals\` (field LCP, INP, CLS from real Chrome users, per page or site, with weekly trend)
+- Templates: \`template-check-status\` (which templates pass the daily check, and why they fail), \`start-template-checks\` (re-check some of them on Vercel Sandbox: pass \`slugs\` or \`failing\`, each one runs a sandbox for up to 15 minutes)
 
 **Usage, tokens, cost, duration, and Slack runs** are in Vercel Observability → Agent Runs (nuxt project). Never report token/cost numbers from local DB — they are stale or absent post-Eve.
 
