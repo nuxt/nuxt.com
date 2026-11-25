@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS `mcp_oauth_grants` (
+CREATE TABLE IF NOT EXISTS `admin_mcp_oauth_grants` (
 	`id` text PRIMARY KEY NOT NULL,
 	`kind` text NOT NULL,
 	`family_id` text NOT NULL,
@@ -12,5 +12,5 @@ CREATE TABLE IF NOT EXISTS `mcp_oauth_grants` (
 	`created_at` integer NOT NULL
 );
 --> statement-breakpoint
-CREATE INDEX IF NOT EXISTS `mcp_oauth_grants_family_idx` ON `mcp_oauth_grants` (`family_id`);--> statement-breakpoint
-CREATE INDEX IF NOT EXISTS `mcp_oauth_grants_expires_idx` ON `mcp_oauth_grants` (`expires_at`);
+CREATE INDEX IF NOT EXISTS `admin_mcp_oauth_grants_family_idx` ON `admin_mcp_oauth_grants` (`family_id`);--> statement-breakpoint
+CREATE INDEX IF NOT EXISTS `admin_mcp_oauth_grants_expires_idx` ON `admin_mcp_oauth_grants` (`expires_at`);

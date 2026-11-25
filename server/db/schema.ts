@@ -108,7 +108,7 @@ export const nuxtersSyncs = sqliteTable('nuxters_syncs', {
  * the SHA-256 of the token. One family per sign-in: replaying a used code or refresh
  * token revokes the whole family. Access tokens are short-lived JWTs and not stored.
  */
-export const mcpOAuthGrants = sqliteTable('mcp_oauth_grants', {
+export const mcpOAuthGrants = sqliteTable('admin_mcp_oauth_grants', {
   id: text('id').primaryKey(),
   kind: text('kind', { enum: ['code', 'refresh'] }).notNull(),
   familyId: text('family_id').notNull(),
@@ -122,6 +122,6 @@ export const mcpOAuthGrants = sqliteTable('mcp_oauth_grants', {
   usedAt: integer('used_at', { mode: 'timestamp' }),
   ...timestamps
 }, table => [
-  index('mcp_oauth_grants_family_idx').on(table.familyId),
-  index('mcp_oauth_grants_expires_idx').on(table.expiresAt)
+  index('admin_mcp_oauth_grants_family_idx').on(table.familyId),
+  index('admin_mcp_oauth_grants_expires_idx').on(table.expiresAt)
 ])

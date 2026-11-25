@@ -83,7 +83,7 @@
       "idx": 11,
       "version": "6",
       "when": 1795607854545,
-      "tag": "0011_mcp_oauth_grants",
+      "tag": "0011_admin_mcp_oauth_grants",
       "breakpoints": true
     }
   ]

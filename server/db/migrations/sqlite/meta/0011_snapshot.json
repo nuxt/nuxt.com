@@ -264,8 +264,8 @@
       "uniqueConstraints": {},
       "checkConstraints": {}
     },
-    "mcp_oauth_grants": {
-      "name": "mcp_oauth_grants",
+    "admin_mcp_oauth_grants": {
+      "name": "admin_mcp_oauth_grants",
       "columns": {
         "id": {
           "name": "id",
@@ -346,15 +346,15 @@
         }
       },
       "indexes": {
-        "mcp_oauth_grants_family_idx": {
-          "name": "mcp_oauth_grants_family_idx",
+        "admin_mcp_oauth_grants_family_idx": {
+          "name": "admin_mcp_oauth_grants_family_idx",
           "columns": [
             "family_id"
           ],
           "isUnique": false
         },
-        "mcp_oauth_grants_expires_idx": {
-          "name": "mcp_oauth_grants_expires_idx",
+        "admin_mcp_oauth_grants_expires_idx": {
+          "name": "admin_mcp_oauth_grants_expires_idx",
           "columns": [
             "expires_at"
           ],
