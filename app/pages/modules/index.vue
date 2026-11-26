@@ -60,6 +60,37 @@ function resetFilters() {
   for (const filter of Object.values(filters)) filter.value = ''
 }
 
+// Applies the filters a user would pick, so the page shows what the agent found.
+useAgentTool(defineAgentTool<{ query?: string, category?: string, sortBy?: string }>({
+  name: 'search_modules',
+  description: 'Find Nuxt modules by name, purpose or category, and show them on this page. Use when the user looks for a module to add a feature to their Nuxt app.',
+  inputSchema: {
+    type: 'object',
+    properties: {
+      query: { type: 'string', description: 'Words to match in module names and descriptions, such as "auth" or "image".' },
+      category: { type: 'string', enum: categories.value.map(c => c.key), description: 'Only modules of this category.' },
+      sortBy: { type: 'string', enum: sorts.map(s => s.key), description: 'Sort order, most first. Defaults to official and sponsored modules first.' }
+    }
+  },
+  annotations: { readOnlyHint: true },
+  execute({ query, category: categoryKey, sortBy: sortKey }) {
+    resetFilters()
+    q.value = typeof query === 'string' ? query : ''
+    category.value = categories.value.some(c => c.key === categoryKey) ? categoryKey! : ''
+    sortBy.value = sorts.some(s => s.key === sortKey) ? sortKey! : ''
+    return {
+      total: filteredModules.value.length,
+      modules: filteredModules.value.slice(0, 8).map(module => ({
+        name: module.name,
+        npm: module.npm,
+        description: module.description.slice(0, 100),
+        category: module.category,
+        page: `/modules/${module.name}`
+      }))
+    }
+  }
+}))
+
 function filterKey(param: string | { key: string | number }) {
   return typeof param === 'string' ? param : String(param?.key ?? '')
 }
