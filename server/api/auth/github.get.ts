@@ -1,3 +1,5 @@
+import { defineHandler, getQuery } from 'nuxt/server'
+
 /**
  * Starts GitHub sign-in, then comes back to `?redirect=` (a path on this site).
  * Better Auth handles the callback (`/api/auth/callback/github`) and creates the session.
@@ -6,8 +8,8 @@
  * to `/login`. Passed on, it lets Better Auth's OAuth provider resume that request after sign-in;
  * Better Auth verifies its signature.
  */
-export default defineEventHandler(async (event) => {
-  const { redirect, oauth_query: oauthQuery } = getQuery(event)
+export default defineHandler(async (event) => {
+  const { redirect, oauth_query: oauthQuery } = getQuery<{ redirect?: string | string[], oauth_query?: string }>(event)
   const auth = await useAuth()
   const { headers, response } = await auth.api.signInSocial({
     body: {
@@ -16,7 +18,7 @@ export default defineEventHandler(async (event) => {
       errorCallbackURL: '/',
       ...(typeof oauthQuery === 'string' && oauthQuery && { oauth_query: oauthQuery })
     },
-    headers: event.headers,
+    headers: event.req.headers,
     returnHeaders: true
   })
   return redirectWithCookies(event, headers, response.url!)

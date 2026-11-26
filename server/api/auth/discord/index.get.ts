@@ -1,9 +1,11 @@
+import { createError, defineHandler, sendRedirect } from 'nuxt/server'
+
 /**
  * Links a Discord account to the signed-in GitHub user, then unlocks their Nuxters roles in `./linked`.
  * Returns 404 when Discord is not configured (see `runtimeConfig.nuxters.discord`).
  */
-export default defineEventHandler(async (event) => {
-  if (!nuxtersDiscord.config(event).enabled) {
+export default defineHandler(async (event) => {
+  if (!nuxtersDiscord.config(toH3Event(event)).enabled) {
     throw createError({ status: 404, message: 'Discord is not configured' })
   }
 
@@ -19,7 +21,7 @@ export default defineEventHandler(async (event) => {
       callbackURL: '/api/auth/discord/linked',
       errorCallbackURL: '/nuxters?discord=error'
     },
-    headers: event.headers,
+    headers: event.req.headers,
     returnHeaders: true
   })
   return redirectWithCookies(event, headers, response.url)

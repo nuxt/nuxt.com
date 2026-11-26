@@ -3,7 +3,8 @@ import { betterAuth } from 'better-auth'
 import { drizzleAdapter } from 'better-auth/adapters/drizzle'
 import { APIError, createAuthMiddleware } from 'better-auth/api'
 import { eq } from 'drizzle-orm'
-import { deriveSecret } from 'nuxt/server'
+import type { RequestEvent } from 'nuxt/server'
+import { deriveSecret, sendRedirect as sendNuxtRedirect } from 'nuxt/server'
 
 const LAST_SEEN_RESOLUTION_MS = 24 * 60 * 60 * 1000
 
@@ -117,14 +118,22 @@ export interface UserSession {
   user?: AuthUser
 }
 
+/** Routes built with `nuxt/server` and h3 routes both read the session. */
+type SessionEvent = RequestEvent | H3Event
+
+/** The request headers: a `nuxt/server` event carries the web request, an h3 event its own `headers`. */
+function requestHeaders(event: SessionEvent): Headers {
+  return event.req instanceof Request ? event.req.headers : (event as H3Event).headers
+}
+
 /** The signed-in user of the request, read from Better Auth's session cookie. */
-export async function getUserSession(event: H3Event): Promise<UserSession> {
+export async function getUserSession(event: SessionEvent): Promise<UserSession> {
   const auth = await useAuth()
-  const session = await auth.api.getSession({ headers: event.headers })
+  const session = await auth.api.getSession({ headers: requestHeaders(event) })
   return session ? { user: toUser(session.user) } : {}
 }
 
-export async function requireUserSession(event: H3Event): Promise<Required<UserSession>> {
+export async function requireUserSession(event: SessionEvent): Promise<Required<UserSession>> {
   const session = await getUserSession(event)
   if (!session.user) {
     throw createError({ statusCode: 401, statusMessage: 'Unauthorized' })
@@ -136,17 +145,15 @@ export async function requireUserSession(event: H3Event): Promise<Required<UserS
 export async function clearUserSession(event: H3Event) {
   const auth = await useAuth()
   const { headers } = await auth.api.signOut({ headers: event.headers, returnHeaders: true })
-  forwardCookies(event, headers)
-}
-
-/** Redirects to Better Auth's OAuth URL with the state cookies its API call set. */
-export function redirectWithCookies(event: H3Event, headers: Headers, url: string) {
-  forwardCookies(event, headers)
-  return sendRedirect(event, url)
-}
-
-function forwardCookies(event: H3Event, headers: Headers) {
   for (const cookie of headers.getSetCookie()) {
     appendResponseHeader(event, 'set-cookie', cookie)
   }
+}
+
+/** Redirects to Better Auth's OAuth URL with the state cookies its API call set. */
+export function redirectWithCookies(event: RequestEvent, headers: Headers, url: string) {
+  for (const cookie of headers.getSetCookie()) {
+    event.res.headers.append('set-cookie', cookie)
+  }
+  return sendNuxtRedirect(event, url)
 }

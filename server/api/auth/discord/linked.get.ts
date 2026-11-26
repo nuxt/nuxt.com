@@ -1,7 +1,8 @@
 import { and, desc, eq } from 'drizzle-orm'
+import { defineHandler, sendRedirect } from 'nuxt/server'
 
 /** Where Better Auth returns once Discord is linked: adds the user to the Nuxt guild and grants their Nuxters roles. */
-export default defineEventHandler(async (event) => {
+export default defineHandler(async (event) => {
   const { user } = await requireUserSession(event)
 
   // A user can have linked several Discord accounts over time. Linking writes the account it
@@ -15,16 +16,16 @@ export default defineEventHandler(async (event) => {
   }
 
   const nuxter = await nuxters.getByGithubId(user.providerId)
-  const badges = await nuxters.badges(event, user, nuxter)
+  const badges = await nuxters.badges(toH3Event(event), user, nuxter)
   let roles: string[]
   let username: string
   try {
     const auth = await useAuth()
-    const { accessToken } = await auth.api.getAccessToken({ body: { accountId: account.id }, headers: event.headers })
+    const { accessToken } = await auth.api.getAccessToken({ body: { accountId: account.id }, headers: event.req.headers })
     ;({ username } = await $fetch<{ username: string }>('https://discord.com/api/v10/users/@me', {
       headers: { authorization: `Bearer ${accessToken}` }
     }))
-    roles = await nuxtersDiscord.grant(event, { discordId: account.accountId, accessToken, badges })
+    roles = await nuxtersDiscord.grant(toH3Event(event), { discordId: account.accountId, accessToken, badges })
   } catch (error) {
     console.error('Discord role grant failed:', error)
     return sendRedirect(event, '/nuxters?discord=error')
