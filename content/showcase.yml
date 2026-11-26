@@ -543,3 +543,13 @@ websites:
       hideElements: ['#onetrust-consent-sdk']
       removeElements: ['#onetrust-consent-sdk']
       delay: 3
+  - name: Snapmaker
+    url: https://www.snapmaker.com/
+    industry: Retail & Food
+    logo:
+      width: 125
+      height: 24
+    screenshotOptions:
+      hideElements: ['.cky-consent-container', '.cky-overlay', '.cky-btn-revisit-wrapper', '#fastgpt-chatbot-button', '#fastgpt-chatbot-window', '.promo-countdown']
+      removeElements: ['.i18n-tip', '.promo-countdown']
+      delay: 4
