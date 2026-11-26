@@ -138,6 +138,8 @@ export default defineNuxtConfig({
       }
     },
     mcpAdminToken: '',
+    // Shared by production and previews: encrypts the GitHub profile nuxt.com hands back to a preview (`server/utils/auth-proxy.ts`).
+    oauthProxySecret: '',
     // Service account added as a user of the Search Console property (admin MCP `search-console-*` tools)
     googleSearchConsole: {
       clientEmail: '',
