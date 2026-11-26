@@ -1,7 +1,7 @@
-import { toWebRequest } from 'h3'
+import { defineHandler } from 'nuxt/server'
 
 /** Better Auth's endpoints: OAuth callbacks, `get-session`, `sign-out`… */
-export default defineEventHandler(async (event) => {
+export default defineHandler(async (event) => {
   const auth = await useAuth()
-  return auth.handler(toWebRequest(event))
+  return auth.handler(event.req)
 })
