@@ -41,7 +41,6 @@ watch(() => route.path, () => {
         <UContentNavigation
           :navigation="navigation"
           :collapsible="false"
-          :ui="{ link: 'data-[state=open]:text-muted data-[state=open]:hover:text-highlighted', trigger: 'font-normal' }"
           highlight
         />
       </template>
