@@ -368,6 +368,7 @@ const noRightAside = computed(() => route.path.includes('/examples/'))
           <UContentNavigation
             :navigation="asideNavigation"
             :collapsible="false"
+            :ui="{ trigger: '[[data-slot=content]_&]:data-[state=open]:text-muted [[data-slot=content]_&]:font-normal' }"
             highlight
           />
         </UPageAside>
