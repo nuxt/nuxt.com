@@ -11,6 +11,9 @@ const status = ref<SearchStatus>('idle')
 /** Set on the first open of the palette: the index only loads from then on. */
 const requested = ref(false)
 
+/** The latest `warmup()`: an earlier one, superseded by a target change, must not set `status`. */
+let warmupGeneration = 0
+
 /** Hydration logging switch: `?debug=search` */
 function searchDebug(): boolean {
   if (!import.meta.client) return false
@@ -74,17 +77,22 @@ export function useSearch() {
     const current = targets.value
     if (!current) {
       console.error('[search] content shas resolved to nothing — search hidden')
+      // Known to have failed: stop `load()` waiting, and any load still in flight from setting `ready`.
+      warmupGeneration++
+      status.value = 'error'
       return
     }
 
+    const generation = ++warmupGeneration
     status.value = 'loading'
     try {
       const debug = searchDebug()
       if (debug) console.info(`[search] warmup from ${current.map(target => target.base).join(', ')}`)
 
       await warmupSearch(current, location.origin, debug)
-      status.value = 'ready'
+      if (generation === warmupGeneration) status.value = 'ready'
     } catch (error) {
+      if (generation !== warmupGeneration) return
       status.value = 'error'
       console.error('[search] could not load the search database', error)
     }
@@ -95,18 +103,30 @@ export function useSearch() {
     // first open, not on every page view. Opened before `shas` lands, the watcher below picks it up.
     // Reopening after a failed load retries it.
     const { open } = useContentSearch()
-    watch(open, (value) => {
-      if (!value || (requested.value && status.value !== 'error')) return
-
-      requested.value = true
-      warmup()
-    }, { immediate: true })
+    watch(open, value => value && request(), { immediate: true })
     watch([targetsKey, pullHead], () => requested.value && warmup())
+  }
+
+  /** Start loading, as the palette's first open does. A failed load retries. */
+  function request() {
+    if (requested.value && status.value !== 'error') return
+
+    requested.value = true
+    warmup()
+  }
+
+  /**
+   * Load the index without opening the palette, and wait until it is ready or has failed.
+   * Requested like an open, so the watcher above reloads it if `shas` or the target set change meanwhile.
+   */
+  async function load(): Promise<void> {
+    request()
+    await until(status).toMatch(value => value === 'ready' || value === 'error', { timeout: 60_000 })
   }
 
   async function search(query: string, opts?: SearchOptions): Promise<SearchResult[]> {
     return searchContent(query, opts)
   }
 
-  return { search, status: readonly(status), warmup }
+  return { search, status: readonly(status), load }
 }
