@@ -1,11 +1,14 @@
-import { and, eq } from 'drizzle-orm'
+import { and, desc, eq } from 'drizzle-orm'
 
 /** Where Better Auth returns once Discord is linked: adds the user to the Nuxt guild and grants their Nuxters roles. */
 export default defineEventHandler(async (event) => {
   const { user } = await requireUserSession(event)
 
+  // A user can have linked several Discord accounts over time. Linking writes the account it
+  // just authorised (new row or refreshed tokens), so the most recently updated one is it.
   const account = await db.query.authAccounts.findFirst({
-    where: () => and(eq(schema.authAccounts.userId, user.id), eq(schema.authAccounts.providerId, 'discord'))
+    where: () => and(eq(schema.authAccounts.userId, user.id), eq(schema.authAccounts.providerId, 'discord')),
+    orderBy: () => desc(schema.authAccounts.updatedAt)
   })
   if (!account) {
     return sendRedirect(event, '/nuxters?discord=error')
