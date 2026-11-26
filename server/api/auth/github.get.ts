@@ -1,69 +1,23 @@
-import { and, eq } from 'drizzle-orm'
-import { getQuery, setCookie, getCookie, deleteCookie, defineEventHandler, sendRedirect } from 'nuxt/server'
-
-const oauthHandler = defineOAuthGitHubEventHandler({
-  async onSuccess(event, { user: ghUser }) {
-    const redirectTo = safeRedirectPath(getCookie(event, 'oauth-redirect')) ?? '/'
-    deleteCookie(event, 'oauth-redirect')
-    const session = await getUserSession(event)
-
-    let user = await db.query.users.findFirst({
-      where: () => and(
-        eq(schema.users.provider, 'github'),
-        eq(schema.users.providerId, ghUser.id.toString())
-      )
-    })
-
-    const role: 'user' | 'admin' = (await isAuthorizedAdmin(toH3Event(event), ghUser.login)) ? 'admin' : 'user'
-
-    if (!user) {
-      // New user: reuse `session.id` as the primary key so any anonymous chats
-      // already created with `session.id` as `userId` keep working without an
-      // UPDATE pass — they're already attached to the new row.
-      [user] = await db.insert(schema.users).values({
-        id: session.id,
-        name: ghUser.name || '',
-        avatar: ghUser.avatar_url || '',
-        username: ghUser.login,
-        provider: 'github',
-        providerId: ghUser.id.toString(),
-        role
-      }).returning()
-    } else {
-      // Returning user signing in from a previously-anonymous device:
-      // re-attach anonymous chats from this device (keyed by `session.id`) to
-      // the existing user row. No-op when there were none.
-      await db.update(schema.chats).set({ userId: user!.id })
-        .where(eq(schema.chats.userId, session.id))
-
-      const [updated] = await db.update(schema.users).set({ role, username: ghUser.login, lastSeenAt: new Date() })
-        .where(eq(schema.users.id, user.id))
-        .returning()
-      user = updated
-    }
-
-    await setUserSession(event, { user })
-
-    return sendRedirect(event, redirectTo)
-  },
-  onError(event, error) {
-    console.error('GitHub OAuth error:', error)
-    return sendRedirect(event, '/')
-  }
-})
-
+/**
+ * Starts GitHub sign-in, then comes back to `?redirect=` (a path on this site).
+ * Better Auth handles the callback (`/api/auth/callback/github`) and creates the session.
+ *
+ * `?oauth_query=` is the signed authorization request an OAuth client (such as the admin MCP) sent
+ * to `/login`. Passed on, it lets Better Auth's OAuth provider resume that request after sign-in;
+ * Better Auth verifies its signature.
+ */
 export default defineEventHandler(async (event) => {
-  const query = getQuery(event)
-  if (!query.code && query.redirect) {
-    const redirect = safeRedirectPath(Array.isArray(query.redirect) ? query.redirect[0] : query.redirect)
-    if (redirect) {
-      setCookie(event, 'oauth-redirect', redirect, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV !== 'development',
-        maxAge: 300,
-        path: '/'
-      })
-    }
-  }
-  return oauthHandler(event)
+  const { redirect, oauth_query: oauthQuery } = getQuery(event)
+  const auth = await useAuth()
+  const { headers, response } = await auth.api.signInSocial({
+    body: {
+      provider: 'github',
+      callbackURL: safeRedirectPath(Array.isArray(redirect) ? redirect[0] : redirect) ?? '/',
+      errorCallbackURL: '/',
+      ...(typeof oauthQuery === 'string' && oauthQuery && { oauth_query: oauthQuery })
+    },
+    headers: event.headers,
+    returnHeaders: true
+  })
+  return redirectWithCookies(event, headers, response.url!)
 })

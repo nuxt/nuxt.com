@@ -6,7 +6,7 @@ interface TeamMemberSearchResponse {
 }
 
 /** Asks GitHub directly (uncached) so leaving the team takes effect immediately. */
-export async function isCoreTeamMember(event: H3Event, login: string): Promise<boolean> {
+export async function isCoreTeamMember(event: H3Event | undefined, login: string): Promise<boolean> {
   if (!useRuntimeConfig(event).github.token) {
     throw createError({ statusCode: 500, statusMessage: 'Missing NUXT_GITHUB_TOKEN env variable' })
   }
@@ -47,7 +47,7 @@ async function getExtraAdminLogins(): Promise<string[]> {
   return [...new Set([...fromEnv, ...parseGithubLogins(config.admin?.githubLogins)])]
 }
 
-export async function isAuthorizedAdmin(event: H3Event, login: string): Promise<boolean> {
+export async function isAuthorizedAdmin(event: H3Event | undefined, login: string): Promise<boolean> {
   const normalized = login.toLowerCase()
   const extraLogins = await getExtraAdminLogins()
   if (extraLogins.includes(normalized)) {

@@ -11,7 +11,7 @@ export const nuxtersDiscord = {
    * Each value comes from the runtime config (`NUXT_OAUTH_DISCORD_*`, `NUXT_NUXTERS_DISCORD_*`), or the
    * `NUXT_DISCORD_*` env vars of the Vercel project: read at runtime, they never end up in the build.
    */
-  config(event: H3Event) {
+  config(event?: H3Event) {
     const { nuxters: { discord }, oauth } = useRuntimeConfig(event)
     const env = process.env
     const configured = discord.roles as Record<string, string | undefined>

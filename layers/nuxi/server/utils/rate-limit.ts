@@ -1,5 +1,6 @@
-import type { H3Event } from 'h3'
+import { useSession, type H3Event } from 'h3'
 import { and, eq, sql } from 'drizzle-orm'
+import { deriveSecret } from 'nuxt/server'
 import { DEFAULT_DAILY_LIMIT, ADMIN_DAILY_LIMIT } from '../../shared/utils/rate-limit'
 
 type DbTransaction = Parameters<Parameters<typeof db.transaction>[0]>[0]
@@ -8,21 +9,33 @@ function today(): string {
   return new Date().toISOString().slice(0, 10)
 }
 
-/** Read the rate-limit principal from the browser session cookie — never mints. */
-export async function getRateLimitPrincipalId(event: H3Event): Promise<string | undefined> {
-  const session = await getUserSession(event)
-  return session.user?.id ?? session.anonymousUserId
+const ANONYMOUS_COOKIE = 'nuxt-anonymous'
+
+/** Signed-out visitors get a stable anonymous id in their own sealed cookie, for rate limiting only. */
+async function useAnonymousSession(event: H3Event) {
+  const password = await deriveSecret('nuxt.com:anonymous-session')
+  return useSession<{ anonymousUserId?: string }>(event, { name: ANONYMOUS_COOKIE, password, maxAge: 60 * 60 * 24 * 365 })
 }
 
-/** Mint a stable anonymous id in the browser session — browser-facing routes only. */
+/** Read the rate-limit principal from the browser's cookies — never mints. */
+export async function getRateLimitPrincipalId(event: H3Event): Promise<string | undefined> {
+  const session = await getUserSession(event)
+  if (session.user) return session.user.id
+  if (!getCookie(event, ANONYMOUS_COOKIE)) return undefined
+  const anonymous = await useAnonymousSession(event)
+  return anonymous.data.anonymousUserId
+}
+
+/** Mint a stable anonymous id in the browser's cookies — browser-facing routes only. */
 export async function ensureRateLimitPrincipalId(event: H3Event): Promise<string> {
   const session = await getUserSession(event)
-  if (session.user?.id) return session.user.id
+  if (session.user) return session.user.id
 
-  if (session.anonymousUserId) return session.anonymousUserId
+  const anonymous = await useAnonymousSession(event)
+  if (anonymous.data.anonymousUserId) return anonymous.data.anonymousUserId
 
   const anonymousUserId = crypto.randomUUID()
-  await setUserSession(event, { anonymousUserId })
+  await anonymous.update({ anonymousUserId })
   return anonymousUserId
 }
 
