@@ -49,32 +49,13 @@ const { data: searchShas } = useAsyncData(
 
 // The Markdown version the page links to with `useCanonical()`, as served for "Copy page".
 const markdownLink = () => document.querySelector<HTMLLinkElement>('link[rel="alternate"][type="text/markdown"]')
-useAgentTool(defineAgentTool<{ section?: string }>({
+useAgentTool(defineAgentTool({
   name: 'get_page_markdown',
-  description: 'Read the page the user is on as Markdown: its introduction and section titles, or one section. Use when the user asks about this page, to summarize, quote or explain it.',
-  inputSchema: {
-    type: 'object',
-    properties: { section: { type: 'string', description: 'A section title from a previous call, to read that section.' } }
-  },
+  description: 'Get the page the user is reading as Markdown. Use when the user asks about this page, to summarize, quote or explain it.',
+  inputSchema: { type: 'object', properties: {} },
   annotations: { readOnlyHint: true },
-  async execute({ section }, { signal }) {
-    // Fetched from this origin: the link points to the production site, also on previews.
-    const markdown = await $fetch<string>(new URL(markdownLink()!.href).pathname, { signal })
-    // A section at a time keeps results short enough for an agent's context. A `## ` line in a code fence is not a heading.
-    const parts = ['']
-    let fenced = false
-    for (const line of markdown.split('\n')) {
-      if (/^\s*(?:```|~~~)/.test(line)) fenced = !fenced
-      if (!fenced && line.startsWith('## ')) parts.push('')
-      parts[parts.length - 1] += `${line}\n`
-    }
-    const [intro, ...sections] = parts
-    const titles = sections.map(part => part.slice(3, part.indexOf('\n')).trim())
-    if (!section) return titles.length ? `${intro!.trim()}\n\nSections: ${titles.join(' | ')}` : markdown
-    const index = titles.findIndex(title => title.toLowerCase() === String(section).toLowerCase())
-    if (index === -1) throw new Error(`No section "${section}". Sections: ${titles.join(' | ')}`)
-    return sections[index]!.trim()
-  }
+  // Fetched from this origin: the link points to the production site, also on previews.
+  execute: (_input, { signal }) => $fetch<string>(new URL(markdownLink()!.href).pathname, { signal })
 }), { enabled: () => !!markdownLink() })
 
 useHead({
