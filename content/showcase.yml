@@ -550,6 +550,6 @@ websites:
       width: 125
       height: 24
     screenshotOptions:
-      hideElements: ['.cky-consent-container', '.cky-overlay', '.cky-btn-revisit-wrapper', '#fastgpt-chatbot-button', '#fastgpt-chatbot-window']
-      removeElements: ['.i18n-tip']
+      hideElements: ['.cky-consent-container', '.cky-overlay', '.cky-btn-revisit-wrapper', '#fastgpt-chatbot-button', '#fastgpt-chatbot-window', '.promo-countdown']
+      removeElements: ['.i18n-tip', '.promo-countdown']
       delay: 4
