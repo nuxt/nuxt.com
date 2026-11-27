@@ -2,9 +2,11 @@ import { afterEach, describe, expect, it, vi } from 'vitest'
 
 vi.mock('eve/tools', () => ({ defineDynamic: (value: unknown) => value, defineTool: (value: unknown) => value }))
 vi.mock('eve/connections', () => ({ defineMcpClientConnection: (value: unknown) => value }))
+vi.mock('@vercel/connect/eve', () => ({ connect: vi.fn((options: unknown) => ({ principalType: 'app', options })) }))
 vi.mock('../../layers/nuxi/agent/lib/internal-api', () => ({ internalFetch: vi.fn(), appOrigin: () => 'https://nuxt.com', selfAccessHeaders: () => ({}) }))
 
 const { internalFetch } = await import('../../layers/nuxi/agent/lib/internal-api')
+const { connect } = await import('@vercel/connect/eve')
 const discovery = (await import('../../layers/nuxi/agent/tools/discover_showcase_candidates')).default as any
 const preview = (await import('../../layers/nuxi/agent/tools/app-preview')).default as any
 const connection = (await import('../../layers/nuxi/agent/connections/admin-mcp')).default as any
@@ -69,16 +71,22 @@ describe('Nuxi discovery and SEO access', () => {
     expect(internalFetch).not.toHaveBeenCalled()
   })
 
-  it('preserves Google and template tools but refuses public calls before returning a token', async () => {
+  it('preserves Google and template tools but refuses public calls before asking Vercel Connect for a token', async () => {
     expect(connection.tools.allow).toEqual(expect.arrayContaining([
       'search-console-analytics', 'search-console-inspect-url', 'search-console-sitemaps', 'page-head', 'crux-web-vitals',
       'start-template-checks', 'template-check-status'
     ]))
     const denied = await connection.auth(context(publicAuth))
     await expect(denied.getToken()).rejects.toThrow('not available')
-    vi.stubEnv('NUXT_MCP_ADMIN_TOKEN', 'test-admin-token')
-    const allowed = await connection.auth(context(admin))
-    await expect(allowed.getToken()).resolves.toEqual({ token: 'test-admin-token' })
+    expect(connect).not.toHaveBeenCalled()
+
+    // Every scope the allowed tools need plus a refresh token, for the production resource only: nuxt.com rejects any other.
+    await connection.auth(context(admin))
+    expect(connect).toHaveBeenCalledWith(expect.objectContaining({
+      connector: 'nuxt.com/nuxi',
+      principalType: 'app',
+      tokenParams: { resources: ['https://nuxt.com/mcp/admin'], scopes: ['offline_access', 'admin:analytics', 'admin:chats', 'admin:templates'] }
+    }))
   })
 })
 

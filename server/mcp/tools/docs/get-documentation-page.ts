@@ -1,6 +1,48 @@
+import { defineCachedFunction } from 'nitropack/runtime'
+import { hash } from 'ohash'
+import type { H3Event } from 'h3'
 import { z } from 'zod'
 import { getAgentDocument } from '#agent-discovery'
 import { getVersionByPath, isArchivedDocVersion } from '#shared/utils/docs'
+
+const inputSchema = z.object({
+  path: z.string().describe('The path to the documentation page (e.g., /docs/4.x/getting-started/introduction)'),
+  sections: z.array(z.string()).optional().describe('Specific h2 section titles to return (e.g., ["Usage", "API"]). If omitted, returns full documentation.')
+})
+
+const getResult = defineCachedFunction(async (event: H3Event, { path, sections }: z.output<typeof inputSchema>) => {
+  // Resolved in-process by the same adapter `/raw/**.md` uses, so the tool
+  // returns the bytes the URL does. A path naming a section resolves to its
+  // first document, which is what following the raw route's redirect does.
+  // `includeExcluded` because this tool deliberately serves the nightly
+  // version that `excludePrefixes` keeps out of the public listings.
+  let document = await getAgentDocument(event, path, { sections, includeExcluded: true })
+  if (document && 'redirect' in document) {
+    document = await getAgentDocument(event, document.redirect, { sections, includeExcluded: true })
+  }
+
+  const version = document && !('redirect' in document) ? getVersionByPath(new URL(document.canonicalUrl).pathname) : undefined
+
+  const isArchived = version && isArchivedDocVersion(version)
+
+  if (!document || 'redirect' in document || isArchived) {
+    throw createError({ statusCode: 404, message: `Documentation page not found: ${path}. Use search-documentation to find pages by topic.` })
+  }
+
+  let content = document.markdown
+  // Covers every API page (use-fetch is ~27k characters); only a few long guides go over
+  const MAX_CHARS = 30_000
+  if (content.length > MAX_CHARS) {
+    content = content.slice(0, MAX_CHARS) + '\n\n[Content truncated. Use the sections parameter to request specific h2 sections.]'
+  }
+
+  return content
+}, {
+  name: 'mcp-get-documentation-page',
+  maxAge: 1800,
+  swr: false,
+  getKey: (event, args) => hash([getRequestURL(event).origin, args])
+})
 
 export default defineMcpTool({
   description: `Retrieves the full content of a Nuxt docs page by its path.
@@ -19,47 +61,13 @@ COMMON PAGES (Nuxt 4.x):
 - "/docs/4.x/guide/going-further/runtime-config" - runtimeConfig and environment variables
 - "/docs/4.x/guide/best-practices/hydration" - hydration mismatches
 - "/docs/4.x/directory-structure/app/pages", "/docs/4.x/directory-structure/app/components", "/docs/4.x/directory-structure/app/composables", "/docs/4.x/directory-structure/app/middleware", "/docs/4.x/directory-structure/server"`,
-  inputSchema: {
-    path: z.string().describe('The path to the documentation page (e.g., /docs/4.x/getting-started/introduction)'),
-    sections: z.array(z.string()).optional().describe('Specific h2 section titles to return (e.g., ["Usage", "API"]). If omitted, returns full documentation.')
-  },
+  inputSchema: inputSchema.meta({ examples: [
+    { path: '/docs/4.x/getting-started/introduction' },
+    { path: '/docs/4.x/guide/directory-structure/components', sections: ['Usage'] }
+  ] }),
   annotations: {
     readOnlyHint: true,
     openWorldHint: false
   },
-  inputExamples: [
-    { path: '/docs/4.x/getting-started/introduction' },
-    { path: '/docs/4.x/guide/directory-structure/components', sections: ['Usage'] }
-  ],
-  cache: '30m',
-  async handler({ path, sections }) {
-    const event = useEvent()
-
-    // Resolved in-process by the same adapter `/raw/**.md` uses, so the tool
-    // returns the bytes the URL does. A path naming a section resolves to its
-    // first document, which is what following the raw route's redirect does.
-    // `includeExcluded` because this tool deliberately serves the nightly
-    // version that `excludePrefixes` keeps out of the public listings.
-    let document = await getAgentDocument(event, path, { sections, includeExcluded: true })
-    if (document && 'redirect' in document) {
-      document = await getAgentDocument(event, document.redirect, { sections, includeExcluded: true })
-    }
-
-    const version = document && !('redirect' in document) ? getVersionByPath(new URL(document.canonicalUrl).pathname) : undefined
-
-    const isArchived = version && isArchivedDocVersion(version)
-
-    if (!document || 'redirect' in document || isArchived) {
-      throw createError({ statusCode: 404, message: `Documentation page not found: ${path}. Use search-documentation to find pages by topic.` })
-    }
-
-    let content = document.markdown
-    // Covers every API page (use-fetch is ~27k characters); only a few long guides go over
-    const MAX_CHARS = 30_000
-    if (content.length > MAX_CHARS) {
-      content = content.slice(0, MAX_CHARS) + '\n\n[Content truncated. Use the sections parameter to request specific h2 sections.]'
-    }
-
-    return content
-  }
+  handler: args => getResult(useEvent(), args)
 })

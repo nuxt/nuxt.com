@@ -64,8 +64,27 @@ To regenerate the image, delete the generated one in `public/assets/templates`.
 Build the application for production:
 
 ```bash
-pnpm generate
+pnpm build
 ```
+
+### MCP Toolkit preview
+
+The toolkit dependency is pinned to [the 1.0 preview from `947973a`](https://github.com/nuxt-modules/mcp-toolkit/pull/423), the tip of the beta stack. Its matching Nitro runtime preview is pinned by the package itself. This branch tests that preview before switching to a published beta.
+
+```bash
+pnpm install --frozen-lockfile
+pnpm dev
+```
+
+The public server card at `/.well-known/mcp/server-card.json` contains only the public catalog. Admin tools and prompts live separately in `server/mcp-admin` and are discovered by the `admin` server configured in `nuxt.config.ts`. Each server keeps its metadata and instructions in its own `index.ts`. The admin index also defines authentication.
+
+### Admin MCP OAuth
+
+People connect to `/mcp/admin` with their GitHub login. Better Auth's OAuth provider (`mcp()`, `cimd()` and `jwt()` in `server/utils/auth.ts`) is the authorization server, with nuxt.com as its issuer. The toolkit's Better Auth adapter verifies its tokens on `/mcp/admin`. An MCP client discovers the server from the `401` challenge, registers itself, and sends you to `/api/auth/oauth2/authorize`. Signed out, you go through `/login` first. Signed in, you approve the client on `/oauth/authorize`, and only admins can approve. The client then exchanges the code with PKCE and gets a 15-minute access token for `/mcp/admin`. It also gets a rotating 30-day refresh token when it asks for `offline_access`, which the `401` challenge lists. Every request re-checks that you're still an admin. Deleting a consent (`/api/auth/oauth2/delete-consent`) also deletes that client's refresh tokens.
+
+Tools and prompts declare `scopes`: `admin:chats` for chat transcripts and votes, `admin:templates` for template checks, `admin:analytics` for everything else. Clients, consents and tokens live in the `auth_oauth_*` tables. The signing keys live in `auth_jwks`, encrypted with a secret derived from `NUXT_APP_SECRET`, which must be set. MCP clients either register dynamically or use an HTTPS client ID metadata document (CIMD), which may authenticate with `private_key_jwt`. The Nuxi agent signs in the same way through Vercel Connect, always against `https://nuxt.com/mcp/admin` (also from local dev, with a Vercel OIDC token from `vercel env pull`): the `nuxt.com/nuxi` connector is created on first use, and an admin installs it once from the Connect dashboard and approves it on nuxt.com's consent page; the grant then follows that admin's access. Locally, run `pnpm dev` and connect a client to `http://localhost:3000/mcp/admin`; set `NUXT_ADMIN_GITHUB_LOGINS` to your login.
+
+Public tools and resources use native Nitro cached functions with their existing 10-minute, 30-minute or 1-hour lifetimes. Cache keys include the request origin and parsed arguments. No MCP client credentials are needed for the public endpoint.
 
 ### Running Evals for the MCP Server
 

@@ -1,6 +1,9 @@
 import { createError } from 'h3'
 import { describe, expect, it, vi } from 'vitest'
 
+// The tool caches through Nitro's storage, which only exists inside a Nitro build.
+vi.mock('nitropack/runtime', () => ({ defineCachedFunction: <T>(fn: T) => fn }))
+
 const fetchMock = vi.fn()
 vi.stubGlobal('$fetch', fetchMock)
 vi.stubGlobal('defineMcpTool', <T>(definition: T) => definition)

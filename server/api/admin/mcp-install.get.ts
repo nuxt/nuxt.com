@@ -1,32 +1,21 @@
 export default defineEventHandler(async (event) => {
   await requireAdminUserSession(event)
 
-  const { mcpAdminToken } = useRuntimeConfig(event)
-  if (!mcpAdminToken) {
-    throw createError({
-      statusCode: 503,
-      statusMessage: 'MCP admin token is not configured (NUXT_MCP_ADMIN_TOKEN env variable).'
-    })
-  }
-
+  // No credentials: MCP clients sign in with GitHub through the endpoint's OAuth flow.
   const name = 'nuxt-admin'
-  const url = `${getRequestURL(event).origin}/mcp/admin`
-  const headers = { Authorization: `Bearer ${mcpAdminToken}` }
-  const json = { type: 'http' as const, url, headers }
+  const url = mcpAdminResource()
+  const json = { type: 'http' as const, url }
 
   const cursorConfig = Buffer.from(JSON.stringify(json)).toString('base64')
-  const cursorDeeplink = `cursor://anysphere.cursor-deeplink/mcp/install?name=${encodeURIComponent(name)}&config=${encodeURIComponent(cursorConfig)}`
-
-  const vscodeDeeplink = `vscode:mcp/install?${encodeURIComponent(JSON.stringify({ name, ...json }))}`
 
   return {
     name,
     url,
-    token: mcpAdminToken,
     json,
     deeplinks: {
-      cursor: cursorDeeplink,
-      vscode: vscodeDeeplink
-    }
+      cursor: `cursor://anysphere.cursor-deeplink/mcp/install?name=${encodeURIComponent(name)}&config=${encodeURIComponent(cursorConfig)}`,
+      vscode: `vscode:mcp/install?${encodeURIComponent(JSON.stringify({ name, ...json }))}`
+    },
+    claudeCode: `claude mcp add --transport http ${name} ${url}`
   }
 })

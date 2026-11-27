@@ -1,11 +1,13 @@
 import { z } from 'zod'
 
+const inputSchema = z.object({
+  sinceDays: z.coerce.number().int().min(1).max(60).default(7).describe('Window in days (default 7).')
+})
+
 export default defineMcpPrompt({
+  scopes: ['admin:analytics', 'admin:chats'],
   description: 'Generate the Nuxt Monday digest — traffic, Search Console and SEO opportunities, docs feedback, AI agent quality, and prioritized follow-ups.',
-  inputSchema: {
-    sinceDays: z.number().int().min(1).max(60).default(7).describe('Window in days (default 7).')
-  },
-  enabled: event => isMcpAdmin(event),
+  inputSchema,
   handler({ sinceDays }) {
     return `Produce the Nuxt admin digest for the last ${sinceDays} days.
 

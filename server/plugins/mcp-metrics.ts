@@ -9,7 +9,7 @@ export default defineNitroPlugin((nitroApp) => {
   nitroApp.hooks.hook('mcp:tool:called', ({ name, result, durationMs }) => {
     metric('mcp.tool.duration_ms', Math.round(durationMs), {
       toolName: name,
-      outcome: result.isError ? 'error' : 'success'
+      outcome: 'isError' in result && result.isError ? 'error' : 'success'
     })
   })
 })

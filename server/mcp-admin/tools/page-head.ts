@@ -125,24 +125,25 @@ async function fetchPage(url: URL): Promise<Response> {
   }
 }
 
+const inputSchema = z.object({
+  url: z.string().describe('Full URL on nuxt.com or a subdomain (https://ui.nuxt.com/docs/components/button), or a nuxt.com path (/docs/4.x/getting-started/data-fetching).')
+})
+
 export default defineMcpTool({
+  scopes: ['admin:analytics'],
   description: `Fetches one live page on nuxt.com or a subdomain (ui.nuxt.com, content.nuxt.com, devtools.nuxt.com, ...) and returns what a search engine reads first: the redirects it follows, the final HTTP status, and the page's \`<title>\`, meta description, canonical URL and robots directives.
 
 WHEN TO USE: Read the current title and description before proposing new ones. Check whether a page or a whole host now redirects elsewhere: a moved page keeps losing clicks and impressions in \`search-console-analytics\` under its old URL while its new URL gains them. Confirm that a redirect lands on a page that exists.
 
 NOTES: This is the live page; \`search-console-inspect-url\` gives Google's indexed copy and its chosen canonical. Redirects are followed for up to ${MAX_REDIRECTS} hops and only while they stay on nuxt.com hosts; \`redirects\` is empty when the URL answers directly. \`title\`, \`description\`, \`canonical\` and \`robots\` are \`null\` when the tag is absent or the final response is not a 2xx HTML page. It returns no page content.`,
-  inputSchema: {
-    url: z.string().describe('Full URL on nuxt.com or a subdomain (https://ui.nuxt.com/docs/components/button), or a nuxt.com path (/docs/4.x/getting-started/data-fetching).')
-  },
+  inputSchema: inputSchema.meta({ examples: [
+    { url: '/docs/4.x/getting-started/data-fetching' },
+    { url: 'https://ui.nuxt.com/docs/components/button' }
+  ] }),
   annotations: {
     readOnlyHint: true,
     openWorldHint: true
   },
-  inputExamples: [
-    { url: '/docs/4.x/getting-started/data-fetching' },
-    { url: 'https://ui.nuxt.com/docs/components/button' }
-  ],
-  enabled: event => isMcpAdmin(event),
   async handler({ url }) {
     const start = toNuxtUrl(url)
     if (!start) {

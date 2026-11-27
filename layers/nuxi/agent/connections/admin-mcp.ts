@@ -1,7 +1,14 @@
 import { defineMcpClientConnection } from 'eve/connections'
+import { connect } from '@vercel/connect/eve'
 import type { SessionContext } from 'eve/context'
+import { MCP_OAUTH_SCOPE_LIST } from '../../../../shared/utils/mcp-admin.js'
 import { isAdminMode } from '../lib/identity/admin-mode.js'
-import { appOrigin, selfAccessHeaders } from '../lib/internal-api.js'
+
+/**
+ * Always production, also from local dev and previews: Vercel Connect calls the
+ * server itself, so it can't reach localhost or a preview behind Vercel Authentication.
+ */
+const ADMIN_MCP_URL = 'https://nuxt.com/mcp/admin'
 
 /** Admin tools available to Nuxi; keep the surface explicit. */
 const ALLOWED_TOOLS = [
@@ -48,7 +55,7 @@ export const ADMIN_MCP_INSTRUCTIONS = `**Admin MCP connection (\`admin-mcp__*\`,
  * Mirrors `adminOnlyVercelAuth`: a non-admin session still sees the connection
  * in `eve__search`, but every call fails before reaching the server.
  */
-async function adminOnlyToken(ctx: SessionContext) {
+async function adminOnlyConnect(ctx: SessionContext) {
   if (!(await isAdminMode(ctx.session.auth.current))) {
     return {
       principalType: 'app' as const,
@@ -59,20 +66,20 @@ async function adminOnlyToken(ctx: SessionContext) {
     }
   }
 
-  return {
-    principalType: 'app' as const,
-    async getToken() {
-      const token = process.env.NUXT_MCP_ADMIN_TOKEN?.trim()
-      if (!token) throw new Error('NUXT_MCP_ADMIN_TOKEN is not configured')
-      return { token }
-    }
-  }
+  // Connect creates the `nuxt.com/nuxi` connector on first use; an admin then installs it
+  // once through nuxt.com's GitHub consent page, and Connect refreshes the grant from there (`offline_access`).
+  return connect({
+    connector: 'nuxt.com/nuxi',
+    principalType: 'app',
+    autoProvision: true,
+    // nuxt.com only issues tokens bound to this exact resource (RFC 8707), and rejects Connect's default `*` scope.
+    tokenParams: { resources: [ADMIN_MCP_URL], scopes: ['offline_access', ...MCP_OAUTH_SCOPE_LIST] }
+  })
 }
 
 export default defineMcpClientConnection({
-  url: `${appOrigin()}/mcp/admin`,
+  url: ADMIN_MCP_URL,
   description: 'Nuxi admin analytics: docs feedback, shared web chats and votes, Google Search Console performance/indexing/sitemaps, live page redirects and metadata, CrUX Core Web Vitals, and template checks. Requires admin mode, including opted-in local CLI sessions.',
   tools: { allow: ALLOWED_TOOLS },
-  auth: adminOnlyToken,
-  headers: selfAccessHeaders
+  auth: adminOnlyConnect
 })

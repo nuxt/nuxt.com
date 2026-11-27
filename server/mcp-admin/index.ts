@@ -1,7 +1,11 @@
-import { getMcpPrompts, getMcpTools } from '@nuxtjs/mcp-toolkit/server'
+import { defineMcpServer } from '@nuxtjs/mcp-toolkit/server'
+import { betterAuth } from '@nuxtjs/mcp-toolkit/oauth/better-auth'
+import { MCP_OAUTH_SCOPE_LIST, mcpAdminResource, mcpOAuthIssuer } from '../../shared/utils/mcp-admin'
+import { CURRENT_DOCS_VERSION } from '../../shared/utils/docs'
 
-export default defineMcpHandler({
+export default defineMcpServer({
   name: 'admin',
+  websiteUrl: `https://nuxt.com/docs/${CURRENT_DOCS_VERSION}/guide/ai/mcp`,
   description: 'Authenticated MCP handler for the Nuxt team to query feedback, agent chats, votes and template checks from the production database, Google Search Console data and field Core Web Vitals for nuxt.com.',
   icons: [
     { src: 'https://nuxt.com/icon.png', mimeType: 'image/png', sizes: ['64x64'] }
@@ -21,9 +25,14 @@ Tools:
 For recurring tasks, prefer the prompts (\`summarize-feedback\`, \`triage-problematic-pages\`, \`review-agent-chats\`, \`weekly-digest\`, \`seo-opportunities\`) which already chain the right tool calls.
 
 Default to recent data (last 7-30 days) unless the user asks for a longer window. Always include direct links (path / chat id) so the team can drill down on the website.`,
-  middleware: (event) => {
-    requireMcpAdminToken(event)
-  },
-  tools: event => getMcpTools({ event, group: 'admin' }),
-  prompts: event => getMcpPrompts({ event, group: 'admin' })
+  // People, and the Nuxi agent through Vercel Connect, sign in with GitHub through Better Auth's
+  // OAuth provider (`mcp()` in `server/utils/auth.ts`), which issues these tokens.
+  oauth: betterAuth({
+    resource: mcpAdminResource(),
+    issuer: mcpOAuthIssuer(),
+    jwks: `${mcpOAuthIssuer()}/api/auth/jwks`,
+    scopesSupported: ['offline_access', ...MCP_OAUTH_SCOPE_LIST]
+  }),
+  // The role is set at sign-in, and an admin can leave the team after approving a client.
+  authorize: ({ sub }) => isMcpAdmin(sub)
 })

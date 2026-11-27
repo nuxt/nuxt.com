@@ -1,42 +1,51 @@
+import { defineCachedFunction } from 'nitropack/runtime'
+import { hash } from 'ohash'
+import type { H3Event } from 'h3'
 import type { BlogArticle } from '#shared/types'
 import { blogAuthors } from '#shared/utils/blog'
 
-export default defineMcpResource({
-  uri: 'resource://nuxt-com/blog-posts',
-  description: 'Complete list of Nuxt blog posts including releases, tutorials, and announcements',
-  cache: '1h',
-  async handler(uri: URL) {
-    const blogPosts = (await listByDir<BlogArticle>('/blog')).filter(post => post.extension === '.md' && post.path !== '/blog')
+const getResult = defineCachedFunction(async (event: H3Event, uri: URL) => {
+  const blogPosts = (await listByDir<BlogArticle>('/blog')).filter(post => post.extension === '.md' && post.path !== '/blog')
 
-    if (!blogPosts.length) {
-      return {
-        contents: [{
-          uri: uri.href,
-          mimeType: 'application/json',
-          text: JSON.stringify({ error: 'Blog posts collection not found' })
-        }]
-      }
-    }
-
-    const result = blogPosts.map(post => ({
-      title: post.title,
-      path: post.path,
-      description: post.description,
-      date: post.date,
-      category: post.category,
-      tags: post.tags,
-      // GitHub usernames: get-nuxter / show_nuxter take them
-      authors: blogAuthors(post.authors).map(({ name, username }) => ({ name, username })),
-      image: post.image,
-      url: `https://nuxt.com${post.path}`
-    }))
-
+  if (!blogPosts.length) {
     return {
       contents: [{
         uri: uri.href,
         mimeType: 'application/json',
-        text: JSON.stringify(result, null, 2)
+        text: JSON.stringify({ error: 'Blog posts collection not found' })
       }]
     }
   }
+
+  const result = blogPosts.map(post => ({
+    title: post.title,
+    path: post.path,
+    description: post.description,
+    date: post.date,
+    category: post.category,
+    tags: post.tags,
+    // GitHub usernames: get-nuxter / show_nuxter take them
+    authors: blogAuthors(post.authors).map(({ name, username }) => ({ name, username })),
+    image: post.image,
+    url: `https://nuxt.com${post.path}`
+  }))
+
+  return {
+    contents: [{
+      uri: uri.href,
+      mimeType: 'application/json',
+      text: JSON.stringify(result, null, 2)
+    }]
+  }
+}, {
+  name: 'mcp-nuxt-blog-posts',
+  maxAge: 3600,
+  swr: false,
+  getKey: (event, uri) => hash([getRequestURL(event).origin, uri.href])
+})
+
+export default defineMcpResource({
+  uri: 'resource://nuxt-com/blog-posts',
+  description: 'Complete list of Nuxt blog posts including releases, tutorials, and announcements',
+  handler: uri => getResult(useEvent(), uri)
 })

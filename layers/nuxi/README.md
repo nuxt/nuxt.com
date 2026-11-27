@@ -218,7 +218,7 @@ The Slack report is a short briefing: **Scorecard**, **What improved**, **What r
 
 Both standalone and compact reports check daily date coverage before calculating changes. Search Console retains only 16 months, and reporting can lag beyond 3 days. Incomplete or unverified windows show separately labelled available totals and a coverage limitation instead of misleading period deltas. On request, the skill can narrow the report to an exact host using a replacement filter and suitable content readers. The admin SEO MCP prompt exposes the same selection through `host` (default `*.nuxt.com`, which includes the apex too). URL-prefix Search Console properties may not cover subdomains; the report must disclose that limitation. Content readers, docs feedback and origin performance evidence must match the actual site; nuxt.com evidence cannot be attributed to another host.
 
-The Google credentials belong on the **Nuxt web runtime**, which serves `/mcp/admin`: `NUXT_GOOGLE_SEARCH_CONSOLE_CLIENT_EMAIL`, `NUXT_GOOGLE_SEARCH_CONSOLE_PRIVATE_KEY`, optionally `NUXT_GOOGLE_SEARCH_CONSOLE_SITE_URL` (default `sc-domain:nuxt.com`), and `NUXT_GOOGLE_CRUX_API_KEY`. The service account needs read access to that Search Console property. Eve reuses `NUXT_MCP_ADMIN_TOKEN`; no Google credentials are passed to the model.
+The Google credentials belong on the **Nuxt web runtime**, which serves `/mcp/admin`: `NUXT_GOOGLE_SEARCH_CONSOLE_CLIENT_EMAIL`, `NUXT_GOOGLE_SEARCH_CONSOLE_PRIVATE_KEY`, optionally `NUXT_GOOGLE_SEARCH_CONSOLE_SITE_URL` (default `sc-domain:nuxt.com`), and `NUXT_GOOGLE_CRUX_API_KEY`. The service account needs read access to that Search Console property. Eve signs in to `/mcp/admin` through the `nuxt.com/nuxi` Vercel Connect connector; no Google credentials are passed to the model.
 
 ### Discord mirror
 
@@ -256,7 +256,7 @@ curl -X POST "https://<preview-url>/eve/v1/ops/seo-opportunities/trigger?sinceDa
   -H "Authorization: Bearer $INTERNAL_API_SECRET"
 ```
 
-Requires on the **eve** runtime: `INTERNAL_API_SECRET`, `NUXT_MCP_ADMIN_TOKEN`. Local dev and Vercel preview use Connect client `slack/nuxi-preview` automatically; prod uses `slack/nuxi` (override with `SLACK_CONNECTOR`). `weekly-digest` additionally needs `NUXI_VERCEL_TEAM_ID`, `NUXI_VERCEL_PROJECT_ID` (nuxt.com), and `NUXI_VERCEL_NUXT_UI_PROJECT_ID` (Nuxt UI) plus, for spend/token numbers, `AI_GATEWAY_API_KEY` (optionally `AI_GATEWAY_REPORT_API_KEY_NAME` / `AI_GATEWAY_REPORT_TAGS`) — both connections are admin-gated so only the scheduled/Slack/admin path can reach them.
+Requires on the **eve** runtime: `INTERNAL_API_SECRET` (`NUXT_MCP_ADMIN_TOKEN` is also accepted by the trigger endpoints). Local dev and Vercel preview use Connect client `slack/nuxi-preview` automatically; prod uses `slack/nuxi` (override with `SLACK_CONNECTOR`). The admin MCP connection always targets production `https://nuxt.com/mcp/admin`, from every environment including local dev, through Connect client `nuxt.com/nuxi` (created on first use); an admin installs it once and approves it with GitHub on nuxt.com. `weekly-digest` additionally needs `NUXI_VERCEL_TEAM_ID`, `NUXI_VERCEL_PROJECT_ID` (nuxt.com), and `NUXI_VERCEL_NUXT_UI_PROJECT_ID` (Nuxt UI) plus, for spend/token numbers, `AI_GATEWAY_API_KEY` (optionally `AI_GATEWAY_REPORT_API_KEY_NAME` / `AI_GATEWAY_REPORT_TAGS`) — both connections are admin-gated so only the scheduled/Slack/admin path can reach them.
 
 ### Global Config
 

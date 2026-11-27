@@ -1,4 +1,34 @@
+import { defineCachedFunction } from 'nitropack/runtime'
+import { hash } from 'ohash'
+import type { H3Event } from 'h3'
 import type { DeployProvider } from '#shared/types'
+
+const getResult = defineCachedFunction(async (_event: H3Event) => {
+  const deployProviders = (await listByDir<DeployProvider>('/deploy')).filter(provider => provider.extension === '.md' && provider.path !== '/deploy')
+
+  if (!deployProviders.length) {
+    throw createError({ statusCode: 404, message: 'Deploy providers collection not found' })
+  }
+
+  return deployProviders.map(provider => ({
+    title: provider.title,
+    name: provider.title,
+    path: provider.path,
+    description: provider.description,
+    logoSrc: provider.logoSrc,
+    logoIcon: provider.logoIcon,
+    category: provider.category,
+    nitroPreset: provider.nitroPreset,
+    website: provider.website,
+    sponsor: provider.sponsor,
+    url: `https://nuxt.com${provider.path}`
+  }))
+}, {
+  name: 'mcp-list-deploy-providers',
+  maxAge: 3600,
+  swr: false,
+  getKey: event => hash([getRequestURL(event).origin])
+})
 
 export default defineMcpTool({
   description: `Lists all deployment providers and hosting platforms for Nuxt applications with their features and capabilities.
@@ -16,26 +46,5 @@ OUTPUT: Returns list of providers with titles, descriptions, and paths. Use get-
     readOnlyHint: true,
     openWorldHint: false
   },
-  cache: '1h',
-  async handler() {
-    const deployProviders = (await listByDir<DeployProvider>('/deploy')).filter(provider => provider.extension === '.md' && provider.path !== '/deploy')
-
-    if (!deployProviders.length) {
-      throw createError({ statusCode: 404, message: 'Deploy providers collection not found' })
-    }
-
-    return deployProviders.map(provider => ({
-      title: provider.title,
-      name: provider.title,
-      path: provider.path,
-      description: provider.description,
-      logoSrc: provider.logoSrc,
-      logoIcon: provider.logoIcon,
-      category: provider.category,
-      nitroPreset: provider.nitroPreset,
-      website: provider.website,
-      sponsor: provider.sponsor,
-      url: `https://nuxt.com${provider.path}`
-    }))
-  }
+  handler: () => getResult(useEvent())
 })

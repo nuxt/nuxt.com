@@ -1,26 +1,27 @@
 import { z } from 'zod'
 import { desc } from 'drizzle-orm'
 
+const inputSchema = z.object({
+  slugs: z.array(z.string().regex(/^[a-z0-9-]+$/)).max(50).optional().describe('Template slugs to return. Omit for every template.'),
+  only: z.enum(['failed', 'running']).optional().describe('`failed`: templates whose last check failed. `running`: templates queued or being checked.'),
+  includeLog: z.boolean().default(false).describe('Include the last 4000 characters of each log. Off by default to keep responses small.')
+})
+
 export default defineMcpTool({
+  scopes: ['admin:templates'],
   description: `The last template check of each template, and the latest check runs.
 
 WHEN TO USE: To see which templates fail and why, or to follow a run started with \`start-template-checks\` (\`state\` is \`queued\` or \`running\` until it finishes).
 
 OUTPUT: One entry per template: \`state\`, the current \`phase\` while it runs, the last \`status\` (\`passed\` or \`failed\`), the failing \`step\` (\`install\`, \`build\` or \`start\`), the Nuxt version installed, whether it has a live preview snapshot, and the end of its log with \`includeLog\` (the failing step's output, or the live output while it runs).`,
-  inputSchema: {
-    slugs: z.array(z.string().regex(/^[a-z0-9-]+$/)).max(50).optional().describe('Template slugs to return. Omit for every template.'),
-    only: z.enum(['failed', 'running']).optional().describe('`failed`: templates whose last check failed. `running`: templates queued or being checked.'),
-    includeLog: z.boolean().default(false).describe('Include the last 4000 characters of each log. Off by default to keep responses small.')
-  },
+  inputSchema: inputSchema.meta({ examples: [
+    { only: 'failed', includeLog: true },
+    { slugs: ['docus'], includeLog: true }
+  ] }),
   annotations: {
     readOnlyHint: true,
     openWorldHint: false
   },
-  inputExamples: [
-    { only: 'failed', includeLog: true },
-    { slugs: ['docus'], includeLog: true }
-  ],
-  enabled: event => isMcpAdmin(event),
   async handler({ slugs, only, includeLog }) {
     const [rows, runs] = await Promise.all([
       listTemplateChecks(),

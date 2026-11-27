@@ -1,14 +1,16 @@
 import { z } from 'zod'
 
+const inputSchema = z.object({
+  days: z.coerce.number().int().min(7).max(90).default(28).describe('Window in days, compared with the window just before it (default 28).'),
+  top: z.coerce.number().int().min(1).max(20).default(10).describe('How many opportunities to report (default 10).'),
+  host: z.string().trim().toLowerCase().regex(/^(?:\*\.nuxt\.com|(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)*nuxt\.com)$/).default('*.nuxt.com').describe('Default *.nuxt.com includes nuxt.com and all subdomains. Set an exact host such as ui.nuxt.com to narrow the report. Requires a Search Console property covering the requested scope.'),
+  pathContains: z.string().optional().describe('Only consider pages whose URL contains this, e.g. "/docs/4.x" or "/blog".')
+})
+
 export default defineMcpPrompt({
+  scopes: ['admin:analytics'],
   description: 'Explain nuxt.com search gains and losses, recommend specific SEO changes backed by query and page evidence, and define what to monitor next.',
-  inputSchema: {
-    days: z.number().int().min(7).max(90).default(28).describe('Window in days, compared with the window just before it (default 28).'),
-    top: z.number().int().min(1).max(20).default(10).describe('How many opportunities to report (default 10).'),
-    host: z.string().trim().toLowerCase().regex(/^(?:\*\.nuxt\.com|(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)*nuxt\.com)$/).default('*.nuxt.com').describe('Default *.nuxt.com includes nuxt.com and all subdomains. Set an exact host such as ui.nuxt.com to narrow the report. Requires a Search Console property covering the requested scope.'),
-    pathContains: z.string().optional().describe('Only consider pages whose URL contains this, e.g. "/docs/4.x" or "/blog".')
-  },
-  enabled: event => isMcpAdmin(event),
+  inputSchema,
   /** Build the domain-wide or exact-host scope, combining optional path filters with AND. */
   handler({ days, top, pathContains, host = '*.nuxt.com' }) {
     const scope = host === '*.nuxt.com' ? 'nuxt.com and all subdomains' : host

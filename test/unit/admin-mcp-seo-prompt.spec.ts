@@ -2,18 +2,18 @@ import { afterAll, describe, expect, it, vi } from 'vitest'
 import type { ZodType } from 'zod'
 
 vi.stubGlobal('defineMcpPrompt', <T>(definition: T) => definition)
-const prompt = (await import('../../server/mcp/prompts/admin/seo-opportunities')).default as unknown as {
-  inputSchema: Record<string, ZodType>
+const prompt = (await import('../../server/mcp-admin/prompts/seo-opportunities')).default as unknown as {
+  inputSchema: { shape: Record<string, ZodType> }
   handler: (input: { days: number, top: number, host?: string, pathContains?: string }) => string
 }
 afterAll(() => vi.unstubAllGlobals())
 
 describe('SEO prompt host scope', () => {
   it('defaults to the whole domain and validates requested hosts within the Nuxt domain', () => {
-    expect(prompt.inputSchema.host!.parse(undefined)).toBe('*.nuxt.com')
-    expect(prompt.inputSchema.host!.parse(' UI.NUXT.COM ')).toBe('ui.nuxt.com')
+    expect(prompt.inputSchema.shape.host.parse(undefined)).toBe('*.nuxt.com')
+    expect(prompt.inputSchema.shape.host.parse(' UI.NUXT.COM ')).toBe('ui.nuxt.com')
     for (const host of ['https://ui.nuxt.com', 'ui.nuxt.com.evil.com', 'other.com', 'ui.nuxt.com|.*', '*.example.com', '*.ui.nuxt.com']) {
-      expect(prompt.inputSchema.host!.safeParse(host).success).toBe(false)
+      expect(prompt.inputSchema.shape.host.safeParse(host).success).toBe(false)
     }
   })
 

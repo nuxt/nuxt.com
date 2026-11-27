@@ -5,9 +5,8 @@ const fetchMock = vi.fn<(url: URL, init: RequestInit) => Promise<Response>>()
 vi.stubGlobal('fetch', fetchMock)
 vi.stubGlobal('defineMcpTool', <T>(definition: T) => definition)
 vi.stubGlobal('createError', createError)
-vi.stubGlobal('isMcpAdmin', () => true)
 
-const pageHead = (await import('../../server/mcp/tools/admin/page-head')).default as unknown as {
+const pageHead = (await import('../../server/mcp-admin/tools/page-head')).default as unknown as {
   handler: (input: { url: string }) => Promise<Record<string, any>>
 }
 
