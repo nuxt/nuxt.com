@@ -111,6 +111,7 @@ export function parsePullPath(url: string): { target: PullTarget, path: string }
  */
 export const PULL_CONTENT_PAGES = [
   '/',
+  '/agents',
   '/blog/**',
   '/deploy/**',
   '/design-kit',

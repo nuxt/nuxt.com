@@ -95,8 +95,13 @@ function _useHeaderLinks() {
       label: 'More',
       icon: 'i-lucide-library',
       search: false,
-      active: ['/video-courses', '/enterprise', '/sponsors'].some(path => route.path.startsWith(path)),
+      active: route.path === '/agents' || ['/video-courses', '/enterprise', '/sponsors'].some(path => route.path.startsWith(path)),
       children: [{
+        label: 'Build with AI',
+        description: 'Nuxt for coding agents and the apps they ship.',
+        icon: 'i-lucide-sparkles',
+        to: '/agents'
+      }, {
         label: 'Video Courses',
         description: 'Learn Nuxt by watching video courses.',
         icon: 'i-lucide-graduation-cap',
@@ -146,6 +151,9 @@ const footerLinks = [{
   }, {
     label: 'Showcase',
     to: '/showcase'
+  }, {
+    label: 'Build with AI',
+    to: '/agents'
   }, {
     label: 'AI Evals',
     to: '/evals'
@@ -202,6 +210,10 @@ const _useNavigation = () => {
     label: 'Design Kit',
     icon: 'i-lucide-palette',
     to: '/design-kit'
+  }, {
+    label: 'Build with AI',
+    icon: 'i-lucide-sparkles',
+    to: '/agents'
   }, {
     label: 'AI Evals',
     icon: 'i-lucide-brain',

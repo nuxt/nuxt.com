@@ -241,6 +241,7 @@ export default defineNuxtConfig({
     // Purged by the translations push webhook.
     '/translations': { isr: CONTENT_ISR },
     '/design-kit': { isr: CONTENT_ISR },
+    '/agents': { isr: CONTENT_ISR },
     '/video-courses': { isr: CONTENT_ISR },
     '/newsletter': { isr: CONTENT_ISR },
     // Stats change once a day (nuxt/nuxters CI); the import purges /nuxters itself.
