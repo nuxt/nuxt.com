@@ -178,7 +178,7 @@ useNuxtBirthday()
       </template>
 
       <template #title>
-        The Full-Stack<br><span class="text-primary">Vue Framework</span>
+        Run in a sandbox:<br><span class="text-primary">Vue Framework</span>
       </template>
 
       <template #description>
