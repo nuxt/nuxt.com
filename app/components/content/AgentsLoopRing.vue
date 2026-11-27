@@ -1,8 +1,9 @@
 <script setup lang="ts">
 /**
  * The agent loop as a ring of four steps around the time it takes to build the app. From `md`
- * the steps sit on the ring; below, they move to a grid under it. An arc runs around the ring
- * when motion is allowed. The default slot is the caption.
+ * the steps sit on the ring; below, they move to a grid under it. With motion, an arc runs
+ * around the ring once every 4s and each step lights up as the arc's head reaches it.
+ * The default slot is the caption.
  */
 const props = defineProps<{
   value: string
@@ -23,6 +24,9 @@ const steps = [
 ]
 
 const ariaLabel = computed(() => `The agent loop: ${steps.map(s => s.label.toLowerCase()).join(', ')}. ${props.label}: ${props.value}${props.detail ? `, ${props.detail}` : ''}.`)
+// Step `i` lights at second `i` of the 4s loop, when the arc's head reaches it.
+const delay = (index: number) => `${index ? index - steps.length : 0}s`
+
 const pill = 'inline-flex items-center gap-2 h-9 px-3 rounded-full border border-default bg-elevated text-[13px] font-medium text-highlighted whitespace-nowrap'
 </script>
 
@@ -45,24 +49,15 @@ const pill = 'inline-flex items-center gap-2 h-9 px-3 rounded-full border border
           cy="200"
           r="156"
           fill="none"
-          class="stroke-(--ui-primary)"
+          class="agents-loop-arc stroke-(--ui-primary)"
           stroke-width="2"
           stroke-linecap="round"
           stroke-dasharray="140 840"
-        >
-          <animateTransform
-            attributeName="transform"
-            type="rotate"
-            from="-90 200 200"
-            to="270 200 200"
-            dur="4s"
-            repeatCount="indefinite"
-          />
-        </circle>
+        />
         <circle cx="200" cy="200" r="108" class="fill-(--ui-bg-elevated)/50 stroke-(--ui-border)" />
       </svg>
 
-      <span v-for="(step, index) in steps" :key="step.label" aria-hidden="true" class="absolute max-md:hidden" :class="[pill, step.position]">
+      <span v-for="(step, index) in steps" :key="step.label" aria-hidden="true" class="absolute max-md:hidden" :class="[pill, step.position, { 'agents-loop-step': motion }]" :style="{ animationDelay: delay(index) }">
         <span class="font-mono text-[11px]/none font-medium text-primary">{{ agentsSectionNumber(index) }}</span>
         {{ step.label }}
       </span>
@@ -81,7 +76,12 @@ const pill = 'inline-flex items-center gap-2 h-9 px-3 rounded-full border border
     </div>
 
     <ol aria-hidden="true" class="md:hidden w-full m-0 p-0 list-none grid grid-cols-2 gap-2">
-      <li v-for="(step, index) in steps" :key="step.label" class="flex items-center gap-2 min-h-11 px-3 rounded-[10px] border border-default bg-elevated text-[13px] font-medium text-highlighted">
+      <li
+        v-for="(step, index) in steps"
+        :key="step.label"
+        :class="{ 'agents-loop-step': motion }"
+        :style="{ animationDelay: delay(index) }"
+        class="flex items-center gap-2 min-h-11 px-3 rounded-[10px] border border-default bg-elevated text-[13px] font-medium text-highlighted">
         <span class="font-mono text-[11px]/none font-medium text-primary">{{ agentsSectionNumber(index) }}</span>
         {{ step.label }}
       </li>
@@ -92,3 +92,33 @@ const pill = 'inline-flex items-center gap-2 h-9 px-3 rounded-full border border
     </figcaption>
   </figure>
 </template>
+
+<style>
+/* The dash is 140 of the ring's 980 units (51.4deg). Starting at -141.4deg puts its head at
+   the top step at 0s, then one step per second. */
+.agents-loop-arc {
+  transform-box: view-box;
+  transform-origin: 200px 200px;
+  animation: agents-loop-arc 4s linear infinite;
+}
+
+.agents-loop-step {
+  animation: agents-loop-step 4s ease-out infinite;
+}
+
+@keyframes agents-loop-arc {
+  from { transform: rotate(-141.4deg) }
+  to { transform: rotate(218.6deg) }
+}
+
+@keyframes agents-loop-step {
+  0%, 20% {
+    border-color: color-mix(in oklab, var(--ui-primary) 60%, transparent);
+    box-shadow: 0 0 0 4px color-mix(in oklab, var(--ui-primary) 12%, transparent);
+  }
+  45%, 100% {
+    border-color: var(--ui-border);
+    box-shadow: 0 0 0 0 transparent;
+  }
+}
+</style>
