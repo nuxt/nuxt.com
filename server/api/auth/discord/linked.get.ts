@@ -16,7 +16,7 @@ export default defineHandler(async (event) => {
   }
 
   const nuxter = await nuxters.getByGithubId(user.providerId)
-  const badges = await nuxters.badges(toH3Event(event), user, nuxter)
+  const badges = await nuxters.badges(event, user, nuxter)
   let roles: string[]
   let username: string
   try {
@@ -25,7 +25,7 @@ export default defineHandler(async (event) => {
     ;({ username } = await $fetch<{ username: string }>('https://discord.com/api/v10/users/@me', {
       headers: { authorization: `Bearer ${accessToken}` }
     }))
-    roles = await nuxtersDiscord.grant(toH3Event(event), { discordId: account.accountId, accessToken, badges })
+    roles = await nuxtersDiscord.grant({ discordId: account.accountId, accessToken, badges })
   } catch (error) {
     console.error('Discord role grant failed:', error)
     return sendRedirect(event, '/nuxters?discord=error')

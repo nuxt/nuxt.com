@@ -2,6 +2,7 @@ import { createHash } from 'node:crypto'
 import { readdir, readFile } from 'node:fs/promises'
 import { join } from 'node:path'
 import type { H3Event } from 'h3'
+import type { RequestEvent } from 'nuxt/server'
 import type { BatchItem } from 'drizzle-orm/batch'
 import { and, asc, count, desc, eq, inArray, isNotNull, lte, sql, sum } from 'drizzle-orm'
 import type { NuxterBadges, NuxterLinks, NuxterProfile, NuxtersMap, NuxtersPage, NuxtersPeriod, NuxterSummary } from '#shared/types'
@@ -254,7 +255,7 @@ export const nuxters = {
   },
 
   /** Badges are earned on all-time stats. */
-  async badges(event: H3Event, user: { username: string, providerId: string }, nuxter: NuxterProfile | null): Promise<NuxterBadges> {
+  async badges(event: H3Event | RequestEvent, user: { username: string, providerId: string }, nuxter: NuxterProfile | null): Promise<NuxterBadges> {
     const login = user.username.toLowerCase()
     const [modules, translations] = await Promise.all([
       fetchModules(event).catch(() => undefined).then(modules => modules ?? []),

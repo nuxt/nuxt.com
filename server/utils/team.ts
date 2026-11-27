@@ -6,14 +6,14 @@ interface TeamMemberSearchResponse {
 }
 
 /** Asks GitHub directly (uncached) so leaving the team takes effect immediately. */
-export async function isCoreTeamMember(event: H3Event | undefined, login: string): Promise<boolean> {
-  if (!useRuntimeConfig(event).github.token) {
+export async function isCoreTeamMember(login: string): Promise<boolean> {
+  if (!useRuntimeConfig().github.token) {
     throw createError({ statusCode: 500, statusMessage: 'Missing NUXT_GITHUB_TOKEN env variable' })
   }
 
   const response = await $fetch<TeamMemberSearchResponse>('https://api.github.com/graphql', {
     method: 'POST',
-    headers: githubHeaders(event),
+    headers: githubHeaders(),
     body: {
       query: `query($login: String!) {
         organization(login: "nuxt") { team(slug: "core") { members(query: $login, first: 10) { nodes { login } } } }
@@ -47,19 +47,19 @@ async function getExtraAdminLogins(): Promise<string[]> {
   return [...new Set([...fromEnv, ...parseGithubLogins(config.admin?.githubLogins)])]
 }
 
-export async function isAuthorizedAdmin(event: H3Event | undefined, login: string): Promise<boolean> {
+export async function isAuthorizedAdmin(login: string): Promise<boolean> {
   const normalized = login.toLowerCase()
   const extraLogins = await getExtraAdminLogins()
   if (extraLogins.includes(normalized)) {
     return true
   }
-  return isCoreTeamMember(event, normalized)
+  return isCoreTeamMember(normalized)
 }
 
 /** Like `requireUserSession`, but throws 403 unless the user is still an admin: the session role is set at sign-in, so it is re-checked. */
 export async function requireAdminUserSession(event: H3Event) {
   const session = await requireUserSession(event)
-  if (session.user.role !== 'admin' || !(await isAuthorizedAdmin(event, session.user.username))) {
+  if (session.user.role !== 'admin' || !(await isAuthorizedAdmin(session.user.username))) {
     throw createError({ statusCode: 403, statusMessage: 'Admin access required' })
   }
   return session

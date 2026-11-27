@@ -5,7 +5,7 @@ import { createError, defineHandler, sendRedirect } from 'nuxt/server'
  * Returns 404 when Discord is not configured (see `runtimeConfig.nuxters.discord`).
  */
 export default defineHandler(async (event) => {
-  if (!nuxtersDiscord.config(toH3Event(event)).enabled) {
+  if (!nuxtersDiscord.config().enabled) {
     throw createError({ status: 404, message: 'Discord is not configured' })
   }
 

@@ -1,4 +1,3 @@
-import type { H3Event } from 'h3'
 import type { NuxterBadges } from '#shared/types'
 import { L10N_LOCALE_CODES } from '#shared/utils/l10n'
 import { NUXTERS_HACKATHONS, nuxterTranslatorRole } from '#shared/utils/nuxters'
@@ -11,8 +10,8 @@ export const nuxtersDiscord = {
    * Each value comes from the runtime config (`NUXT_OAUTH_DISCORD_*`, `NUXT_NUXTERS_DISCORD_*`), or the
    * `NUXT_DISCORD_*` env vars of the Vercel project: read at runtime, they never end up in the build.
    */
-  config(event?: H3Event) {
-    const { nuxters: { discord }, oauth } = useRuntimeConfig(event)
+  config() {
+    const { nuxters: { discord }, oauth } = useRuntimeConfig()
     const env = process.env
     const configured = discord.roles as Record<string, string | undefined>
     const config = {
@@ -43,8 +42,8 @@ export const nuxtersDiscord = {
    * Add the user to the Nuxt guild, then give the roles their badges unlock.
    * Returns the role keys granted (`nuxter`, `moduleAuthor`, hackathon ids, `translatorFr`…).
    */
-  async grant(event: H3Event, { discordId, accessToken, badges }: { discordId: string, accessToken: string, badges: NuxterBadges }): Promise<string[]> {
-    const { guildId, botToken, roles } = nuxtersDiscord.config(event)
+  async grant({ discordId, accessToken, badges }: { discordId: string, accessToken: string, badges: NuxterBadges }): Promise<string[]> {
+    const { guildId, botToken, roles } = nuxtersDiscord.config()
     const headers = {
       'Authorization': `Bot ${botToken}`,
       'User-Agent': 'DiscordBot (https://nuxt.com/nuxters, 1.0)'

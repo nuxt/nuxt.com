@@ -17,7 +17,7 @@ export default defineEventHandler(async (event): Promise<NuxterMe> => {
     nuxter,
     badges: await nuxters.badges(event, user, nuxter),
     discord: {
-      enabled: nuxtersDiscord.config(event).enabled,
+      enabled: nuxtersDiscord.config().enabled,
       username: discord?.username ?? null,
       roles: discord?.roles ?? []
     }

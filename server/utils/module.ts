@@ -1,4 +1,5 @@
 import type { H3Event } from 'h3'
+import type { RequestEvent } from 'nuxt/server'
 import type { BaseModule, Module, ModuleContributor, ModuleHealth, ModuleStats } from '#shared/types'
 import type { NpmDownloadStats } from '../types/npm'
 import { resolveModuleCategory } from '#shared/utils/modules'
@@ -7,7 +8,7 @@ export function isBotUsername(username: string) {
   return username.includes('[bot]') || username.includes('-bot')
 }
 
-export const fetchModules = cachedFunction(async (_event: H3Event): Promise<Module[]> => {
+export const fetchModules = cachedFunction(async (_event: H3Event | RequestEvent): Promise<Module[]> => {
   console.info(`Fetching modules from CDN..`)
   const modules = await $fetch<BaseModule[]>('https://unpkg.com/@nuxt/modules@latest/modules.json')
   // Keeps the site consistent while the published modules.json still uses former category names.

@@ -104,7 +104,7 @@ async function createAuth() {
 }
 
 async function roleFor(username: unknown): Promise<AuthUser['role']> {
-  return typeof username === 'string' && await isAuthorizedAdmin(undefined, username) ? 'admin' : 'user'
+  return typeof username === 'string' && await isAuthorizedAdmin(username) ? 'admin' : 'user'
 }
 
 let instance: ReturnType<typeof createAuth> | undefined
