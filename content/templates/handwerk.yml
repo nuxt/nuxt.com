@@ -1,0 +1,6 @@
+name: 'Handwerk'
+slug: 'handwerk'
+description: 'Multilingual (EN/DE/FR) website for trades, with postcode checker, price table and quote form.'
+demo: 'https://handwerk-nuxt-demo.pages.dev'
+purchase: 'https://stavreva68.gumroad.com/l/handwerk-nuxt-template'
+badge: 'Premium'
