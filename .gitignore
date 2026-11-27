@@ -14,6 +14,7 @@ dist
 .eslintcache
 .eve
 .workflow-data
+.design
 
 # Local Netlify folder
 .netlify
