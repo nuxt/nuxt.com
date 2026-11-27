@@ -87,7 +87,7 @@ Dispatch is restricted to channels listed under `discord.channels.admin`, `.publ
 When someone on Slack or in an admin Discord channel gives Nuxi a coding task on nuxt.com, such as a fix, a feature, a content change or a question about the code, Nuxi hands it to the `coder` subagent (`agent/subagents/coder/`). `coder` is a coding agent on Claude Opus 5.5 that delivers its changes as pull requests. It mounts [`@github-tools/eve-extension`](https://github-tools.com/integrations/eve) with the `pr-author` preset, trimmed to what opening a pull request needs. It clones the repository into its own sandbox, changes and runs the code there, commits the result to a new `nuxi/*` branch, opens a pull request when it's done, and replies with the link. It never merges.
 
 - **Who:** `coder`'s `agent.ts` returns `null` outside Slack, `discord.channels.admin` channels, and `pnpm nuxi` with `NUXI_CLI_ADMIN=1`, so the web chat, public Discord channels and schedules never see it or its tools. `githubToolsApproval` in `agent/lib/github.ts`, the root agent's `approval` policy, also covers subagents and denies every `github__*` call anywhere else.
-- **Where:** `GITHUB_REPOSITORIES` in `agent/lib/github.ts` lists the repositories `coder` works on, which is `nuxt/nuxt.com` for now. `guardrails` refuse any call outside that list and any write outside `nuxi/*` branches. See [Work on another repository](#work-on-another-repository).
+- **Where:** `GITHUB_REPOSITORIES` in `agent/lib/github.ts` lists the repositories `coder` writes to, which is `nuxt/nuxt.com` for now. Every tool that writes reads that list, and `guardrails` refuse any call outside it and any write outside `nuxi/*` branches. See [Open Nuxi to more repositories](#open-nuxi-to-more-repositories).
 - **Approval:** creating the branch, committing and opening the pull request run without asking; a person reviews and merges on GitHub. `updatePullRequest` still asks the person who requested it, with **Approve** and **Deny** buttons in the thread. So does a commit to a branch that already has an open pull request (`githubToolsApproval` in `agent/lib/github.ts`): `coder` can't add to a pull request from another task, or to its own on a follow-up, without a click. The same policy denies a commit that names no branch, or a repository outside the list. It compares repository names without their case, as GitHub does. On Discord, the buttons need the Interactions Endpoint URL from the [Discord setup](#discord-channel).
 - **Tools:** `coder` has its own sandbox with a browser, see [Browser and captures](#browser-and-captures), and with what it takes to clone a repository and run it, see [Checkout and running the project](#checkout-and-running-the-project). It uses eve's `bash`, `read_file`, `edit_file` and `write_file` there. The sandbox holds no credentials, so every write to GitHub goes through a tool that runs in the app. It keeps `web_search` and `web_fetch` to read docs, issues and pages linked in the request. `web_fetch` stays off on the root agent, which serves public chats.
 
@@ -127,15 +127,26 @@ Setup:
 - **What it can't run:** a project that needs a secret or a service to start. The sandbox holds none, and `coder` is told to say which page or check it could not run.
 - **Lifetime:** processes end when eve stops the idle sandbox, five minutes after `coder` replies. Files stay, so a follow-up finds the checkout and its `node_modules`, and starts the server again.
 
-### Work on another repository
+### Open Nuxi to more repositories
 
-Nothing in `coder`'s tools or sandbox is specific to `nuxt/nuxt.com`: `coder` can already clone and run any public repository. To let it commit and open pull requests on another one:
+Nothing in `coder` is built for `nuxt/nuxt.com`. Its tools take the repository as an input, its sandbox runs whatever a project asks for, and what it knows about a project comes from the project's own `AGENTS.md` and README. One list decides where it may write: `GITHUB_REPOSITORIES` in `agent/lib/github.ts`.
 
-1. Add the repository to `GITHUB_REPOSITORIES` in `agent/lib/github.ts`. The first entry stays the default.
-2. Give the `nuxi-code` GitHub App access to the repository, and give the account of `NUXI_GITHUB_ATTACHMENTS_PAT` write access to it.
-3. Add a section for it to `coder/instructions.md`, like the `nuxt/nuxt.com` one. Say where its site is deployed, where its images live, and how its pull requests preview. How it installs and runs belongs in the repository's own `AGENTS.md` or README, which `coder` reads.
+- **The list:** an entry is `owner/name`, or `owner/*` for every repository of an account. The first entry is the default of every tool. The GitHub tools' `guardrails`, `commit_changes`, `commit_assets`, `publish_media` and the approval policy all read it, so a repository outside it is refused before any call reaches GitHub.
+- **Whose access:** every write runs with the GitHub token of the person who asked (`actAs: 'caller'`), issued through the `nuxi-code` App. GitHub accepts such a token only where the App is installed and the person has access, with the role the person has there. A wider list therefore gives nobody more than GitHub already gives them: a maintainer does what a maintainer can, and a reader only reads.
+- **Never the default branch:** the `branches` guardrail and both commit tools write to `nuxi/*` branches only, whatever the repository. A change reaches another branch through a pull request a person merges.
 
-`commit_changes`, `commit_assets` and `publish_media` take the repository as an input, and the `github__*` tools take `owner` and `repo`.
+To add repositories of the Nuxt org:
+
+1. Add `nuxt/<name>`, or `nuxt/*`, to `GITHUB_REPOSITORIES`.
+2. Give the `nuxi-code` App access to them, and give the account of `NUXI_GITHUB_ATTACHMENTS_PAT` write access to them.
+3. Put how each one installs and runs in its own `AGENTS.md` or README. Add a section to `coder/instructions.md` only for what those can't hold, like the notes on `nuxt/nuxt.com`.
+
+Letting people use Nuxi on repositories outside the org, where they installed the App themselves, needs more than a wider list. None of it is built:
+
+- **Private repositories:** `checkout_repository` clones without credentials. A private repository needs the person's token for the clone without handing it to the sandbox, for example added by the sandbox's firewall for the time of the clone.
+- **Attachments:** `publish_media` uploads with one personal access token, and GitHub refuses App tokens for that upload. That account has no access to someone else's repository, so captures there can't be published this way.
+- **Who can ask:** `canUseGithubTools` offers `coder` to the Nuxt team on Slack and in admin Discord channels only. Another audience needs its own rule there, and its own limits on sandbox time.
+- **The list itself:** it has no entry for "any repository". With the two points above solved, the check can become "wherever GitHub accepts the person's token", in `allowedRepository`.
 
 ## Caller identity
 

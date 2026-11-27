@@ -1,5 +1,6 @@
 import { getToken } from '@vercel/connect'
 import type { ApprovalPolicy } from 'eve/tools/approval'
+import { z } from 'zod'
 import { openPullRequestOf } from './github-files.js'
 import { isAdminMode } from './identity/admin-mode.js'
 import { resolveContext, type AuthContext, type Surface } from './identity/context.js'
@@ -8,19 +9,46 @@ import { resolveContext, type AuthContext, type Surface } from './identity/conte
 export const GITHUB_CONNECTOR = 'github/nuxi-code'
 
 /**
- * The repositories the coder works on, as `owner/name`; the first is the default. To let Nuxi work
- * on another one, add it here, give the `nuxi-code` App access to it, and describe it in
- * `subagents/coder/instructions.md`.
+ * The repositories the coder may write to. An entry is `owner/name`, or `owner/*` for every
+ * repository of that account: the syntax of the GitHub tools' `repositories` guardrail, which reads
+ * this list too. The first entry names one repository, the default of every tool.
+ *
+ * This list is the only thing that holds Nuxi to these repositories. Nothing else in the coder
+ * names one: its tools take the repository as an input, and every write runs with the GitHub token
+ * of the person who asked. GitHub accepts that token only where the `nuxi-code` App is installed
+ * and the person has access, with the role the person has there. So a wider list, such as
+ * `nuxt/*`, gives nobody more than GitHub already gives them. Writes stay on `nuxi/*` branches
+ * whatever the repository.
  */
-export const GITHUB_REPOSITORIES = ['nuxt/nuxt.com'] as const
+export const GITHUB_REPOSITORIES: readonly [string, ...string[]] = ['nuxt/nuxt.com']
+export const DEFAULT_REPOSITORY = GITHUB_REPOSITORIES[0]
+
+const REPOSITORY_PART = /^[\w.-]+$/
 
 /**
- * The entry of `GITHUB_REPOSITORIES` that `repository` names, if any. GitHub ignores the case of
- * owners and repository names, and so does the `repositories` guardrail of the GitHub tools.
+ * The repository of `allowed` that `repository` names, with its owner written as the list writes
+ * it, if any. GitHub ignores the case of owners and repository names, and so does the
+ * `repositories` guardrail of the GitHub tools.
  */
-function allowedRepository(repository: unknown) {
+export function allowedRepository(repository: unknown, allowed: readonly string[] = GITHUB_REPOSITORIES): string | undefined {
   if (typeof repository !== 'string') return undefined
-  return GITHUB_REPOSITORIES.find(allowed => allowed.toLowerCase() === repository.toLowerCase())
+  const [owner = '', name = '', ...rest] = repository.split('/')
+  if (rest.length || !REPOSITORY_PART.test(owner) || !REPOSITORY_PART.test(name) || name === '.' || name === '..') return undefined
+  for (const entry of allowed) {
+    const [entryOwner = '', entryName = ''] = entry.split('/')
+    if (entryOwner.toLowerCase() !== owner.toLowerCase()) continue
+    if (entryName === '*') return `${entryOwner}/${name}`
+    if (entryName.toLowerCase() === name.toLowerCase()) return entry
+  }
+  return undefined
+}
+
+/** A tool input that names a repository to write to: one the list allows, and the default when omitted. */
+export function repositoryInput(description: string) {
+  return z.string().max(140)
+    .refine(repository => allowedRepository(repository) !== undefined, { error: `Not a repository Nuxi works on: ${GITHUB_REPOSITORIES.join(', ')}.` })
+    .default(DEFAULT_REPOSITORY)
+    .describe(description)
 }
 
 const GITHUB_SURFACES = new Set<Surface>(['slack', 'discord', 'cli'])
@@ -49,7 +77,7 @@ export function appToken(repository: string): Promise<string> {
   })
 }
 
-const [DEFAULT_OWNER, DEFAULT_REPO] = GITHUB_REPOSITORIES[0].split('/')
+const [DEFAULT_OWNER, DEFAULT_REPO] = DEFAULT_REPOSITORY.split('/')
 
 /**
  * The coder's tools that commit to a branch, with the repository each one commits to, read from
@@ -57,8 +85,8 @@ const [DEFAULT_OWNER, DEFAULT_REPO] = GITHUB_REPOSITORIES[0].split('/')
  */
 const COMMIT_TOOLS = new Map<string, (input: Readonly<Record<string, unknown>>) => unknown>([
   ['github__editFiles', ({ owner = DEFAULT_OWNER, repo = DEFAULT_REPO }) => typeof owner === 'string' && typeof repo === 'string' ? `${owner}/${repo}` : undefined],
-  ['commit_assets', ({ repository = GITHUB_REPOSITORIES[0] }) => repository],
-  ['commit_changes', ({ repository = GITHUB_REPOSITORIES[0] }) => repository]
+  ['commit_assets', ({ repository = DEFAULT_REPOSITORY }) => repository],
+  ['commit_changes', ({ repository = DEFAULT_REPOSITORY }) => repository]
 ])
 
 /**

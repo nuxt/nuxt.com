@@ -1,7 +1,7 @@
 import { basename } from 'node:path/posix'
 import { defineTool } from 'eve/tools'
 import { z } from 'zod'
-import { assertCanUseGithubTools, GITHUB_REPOSITORIES } from '../../../lib/github.js'
+import { assertCanUseGithubTools, repositoryInput } from '../../../lib/github.js'
 import { CAPTURES_DIR } from '../../../lib/media/capture.js'
 import { publishMedia } from '../../../lib/media/publish.js'
 
@@ -14,7 +14,7 @@ export default defineTool({
     'Not for images the site serves: those are committed to the branch with `commit_assets`.'
   ].join(' '),
   inputSchema: z.object({
-    repository: z.enum(GITHUB_REPOSITORIES).default(GITHUB_REPOSITORIES[0]).describe('Repository whose pull request, issue or comment will embed the capture, as `owner/name`'),
+    repository: repositoryInput('Repository whose pull request, issue or comment will embed the capture, as `owner/name`'),
     path: z.string().min(1).max(300).describe('A `path` that `capture_screenshot` or `record_video` returned, such as /workspace/captures/showcase-after.webp'),
     alt: z.string().trim().min(1).max(200).describe('What the capture shows, such as `World Triathlon tile on /showcase, hovered`. A clip has no alt text on GitHub, so say it in the label above the clip too.')
   }),

@@ -1,7 +1,7 @@
 import { defineTool } from 'eve/tools'
 import { z } from 'zod'
 import { followCommit, MAX_CHANGE_BYTES, MAX_CHANGED_FILES, readChanges } from '../../../lib/checkout.js'
-import { assertCanUseGithubTools, GITHUB_REPOSITORIES } from '../../../lib/github.js'
+import { assertCanUseGithubTools, repositoryInput } from '../../../lib/github.js'
 import { commitChanges } from '../../../lib/github-files.js'
 import { withGithubToken } from '../../../lib/github-token.js'
 
@@ -14,7 +14,7 @@ export default defineTool({
     'After the commit, `git status` in the checkout lists only what you left out or changed since. Open the pull request with the GitHub tools.'
   ].join(' '),
   inputSchema: z.object({
-    repository: z.enum(GITHUB_REPOSITORIES).default(GITHUB_REPOSITORIES[0]).describe('The checked-out repository to commit to, as `owner/name`'),
+    repository: repositoryInput('The checked-out repository to commit to, as `owner/name`'),
     branch: z.string().min(6).max(120).describe('The task\'s branch, such as `nuxi/fix-header-overflow`'),
     message: z.string().trim().min(8).max(1000).describe('A conventional commit message, such as `fix(header): keep the menu inside the viewport`'),
     paths: z.array(z.string().min(1).max(300)).min(1).max(50).describe('Files or directories, relative to the checkout, such as `app/components/AppHeader.vue` or `content/blog`. `.` is every change in the checkout.')

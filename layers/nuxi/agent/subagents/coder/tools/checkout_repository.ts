@@ -1,7 +1,7 @@
 import { defineTool } from 'eve/tools'
 import { z } from 'zod'
 import { checkoutRepository, CHECKOUTS_DIR } from '../../../lib/checkout.js'
-import { assertCanUseGithubTools, GITHUB_REPOSITORIES } from '../../../lib/github.js'
+import { assertCanUseGithubTools, DEFAULT_REPOSITORY, GITHUB_REPOSITORIES } from '../../../lib/github.js'
 
 export default defineTool({
   description: [
@@ -11,7 +11,7 @@ export default defineTool({
     'The sandbox has no GitHub credentials: `git push` reaches nothing, and what you change leaves the sandbox through `commit_changes`.'
   ].join(' '),
   inputSchema: z.object({
-    repository: z.string().min(3).max(140).default(GITHUB_REPOSITORIES[0]).describe('Repository to clone, as `owner/name`'),
+    repository: z.string().min(3).max(140).default(DEFAULT_REPOSITORY).describe('Repository to clone, as `owner/name`'),
     ref: z.string().min(1).max(200).optional().describe('A branch, a tag, a commit, or `pull/<number>/head` for a pull request. Omit for the default branch.'),
     fresh: z.boolean().optional().describe('Delete the existing checkout, with the changes it holds, and clone again. Needed to move to another `ref`.')
   }),

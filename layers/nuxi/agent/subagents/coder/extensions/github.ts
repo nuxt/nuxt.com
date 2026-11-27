@@ -1,7 +1,7 @@
 import githubExtension from '@github-tools/eve-extension'
-import { GITHUB_CONNECTOR, GITHUB_REPOSITORIES } from '../../../lib/github.js'
+import { DEFAULT_REPOSITORY, GITHUB_CONNECTOR, GITHUB_REPOSITORIES } from '../../../lib/github.js'
 
-const [owner, repo] = GITHUB_REPOSITORIES[0].split('/')
+const [owner, repo] = DEFAULT_REPOSITORY.split('/')
 
 // Mounted under the coder subagent only, so the root agent and its public sessions never list
 // these tools. `githubToolsApproval` in the root `agent.ts` still gates every call.
@@ -22,7 +22,7 @@ export default githubExtension({
     'compareCommits',
     'searchCode' // a free-text query: `repositories` can't hold it to the allowed repositories
   ],
-  // Calls default to the first repository and are refused outside the list.
+  // Calls default to the first repository and are refused outside the list, whose syntax is the guardrail's.
   context: { owner, repo },
   guardrails: { repositories: [...GITHUB_REPOSITORIES], branches: ['nuxi/*'] },
   // Each call runs as the person who asked, so the pull request and its commits are theirs on

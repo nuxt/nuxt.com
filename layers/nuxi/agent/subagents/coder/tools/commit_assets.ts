@@ -1,6 +1,6 @@
 import { defineTool } from 'eve/tools'
 import { z } from 'zod'
-import { assertCanUseGithubTools, GITHUB_REPOSITORIES } from '../../../lib/github.js'
+import { assertCanUseGithubTools, repositoryInput } from '../../../lib/github.js'
 import { commitAssets } from '../../../lib/github-files.js'
 import { withGithubToken } from '../../../lib/github-token.js'
 
@@ -12,7 +12,7 @@ export default defineTool({
     'Never use it for evidence of a change (before and after captures): those go through `publish_media`, not onto the branch.'
   ].join(' '),
   inputSchema: z.object({
-    repository: z.enum(GITHUB_REPOSITORIES).default(GITHUB_REPOSITORIES[0]).describe('Repository to commit to, as `owner/name`'),
+    repository: repositoryInput('Repository to commit to, as `owner/name`'),
     branch: z.string().min(6).max(120).describe('The task\'s branch, such as `nuxi/showcase-world-triathlon`'),
     message: z.string().trim().min(8).max(1000).describe('A conventional commit message, such as `feat(showcase): add World Triathlon screenshot`'),
     files: z.array(z.object({

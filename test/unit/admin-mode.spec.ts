@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { isAdminMode } from '../../layers/nuxi/agent/lib/identity/admin-mode'
-import { githubToolsApproval } from '../../layers/nuxi/agent/lib/github'
+import { allowedRepository, githubToolsApproval, repositoryInput } from '../../layers/nuxi/agent/lib/github'
 
 vi.mock('@vercel/connect', () => ({ getToken: vi.fn(async () => 'app-token') }))
 
@@ -116,6 +116,40 @@ describe('isAdminMode', () => {
     vi.stubEnv('NUXI_CLI_ADMIN', '1')
     vi.stubEnv('VERCEL_ENV', 'production')
     expect(await isAdminMode(localDevAuth)).toBe(false)
+  })
+})
+
+describe('the repositories the coder may write to', () => {
+  const allowed = ['nuxt/nuxt.com', 'nuxt-modules/*']
+
+  it('allows a listed repository and every repository of a listed account, whatever the case', () => {
+    expect(allowedRepository('nuxt/nuxt.com', allowed)).toBe('nuxt/nuxt.com')
+    expect(allowedRepository('Nuxt/Nuxt.com', allowed)).toBe('nuxt/nuxt.com')
+    expect(allowedRepository('nuxt-modules/i18n', allowed)).toBe('nuxt-modules/i18n')
+    expect(allowedRepository('Nuxt-Modules/.github', allowed)).toBe('nuxt-modules/.github')
+  })
+
+  it.each([
+    ['another repository of an account listed for one', 'nuxt/ui'],
+    ['an account that only starts like a listed one', 'nuxt-modules-evil/i18n'],
+    ['a listed account as a repository name', 'evil/nuxt-modules'],
+    ['the pattern itself', 'nuxt-modules/*'],
+    ['a third segment', 'nuxt-modules/i18n/extra'],
+    ['a name that climbs', 'nuxt-modules/..'],
+    ['a name with a query', 'nuxt-modules/i18n?x=1'],
+    ['no name', 'nuxt-modules/'],
+    ['no owner', 'nuxt.com'],
+    ['something that is not text', null]
+  ])('refuses %s', (_, repository) => {
+    expect(allowedRepository(repository, allowed)).toBeUndefined()
+  })
+
+  it('gives a tool the default repository, and refuses one outside the list before the tool runs', () => {
+    const input = repositoryInput('Repository to commit to')
+
+    expect(input.parse(undefined)).toBe('nuxt/nuxt.com')
+    expect(input.parse('Nuxt/nuxt.com')).toBe('Nuxt/nuxt.com')
+    expect(() => input.parse('nuxt/ui')).toThrow('Not a repository Nuxi works on: nuxt/nuxt.com.')
   })
 })
 
