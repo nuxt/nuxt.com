@@ -1,0 +1,7 @@
+name: 'Sanity × Nuxt UI'
+slug: 'sanity-nuxtui'
+description: 'A block-based website builder built with Nuxt 4, Nuxt UI 4, and Sanity Studio.'
+screenshotUrl: 'https://sanity-nuxtui.vercel.app'
+repo: 'narr07/sanity-nuxtui'
+demo: 'https://sanity-nuxtui.vercel.app'
+
