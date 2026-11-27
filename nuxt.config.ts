@@ -47,7 +47,6 @@ export default defineNuxtConfig({
     'motion-v/nuxt',
     'nuxt-llms',
     '@nuxthub/core',
-    'nuxt-auth-utils',
     'nuxt-schema-org',
     '@nuxtjs/mcp-toolkit',
     '@nuxtjs/robots',
@@ -150,6 +149,11 @@ export default defineNuxtConfig({
       }
     },
     mcpAdminToken: '',
+    // Sign-in with GitHub and Discord linking (`server/utils/auth.ts`)
+    oauth: {
+      github: { clientId: '', clientSecret: '' },
+      discord: { clientId: '', clientSecret: '' }
+    },
     // Service account added as a user of the Search Console property (admin MCP `search-console-*` tools)
     googleSearchConsole: {
       clientEmail: '',
@@ -743,11 +747,6 @@ export default defineNuxtConfig({
         }
       }
     }
-  },
-  auth: {
-    // Pages are cached (ISR on Vercel): a session fetched while rendering would be cached with the
-    // page for every visitor, and the browser would never fetch its own. Always fetch it client-side.
-    loadStrategy: 'client-only'
   },
   eslint: {
     config: {

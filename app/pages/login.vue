@@ -11,9 +11,20 @@ const route = useRoute()
 
 const redirect = computed(() => safeRedirectPath(route.query.redirect))
 
+// An OAuth client (such as the admin MCP) sends people here with a signed authorization request
+// (`sig` in the query). It goes through GitHub sign-in so Better Auth can resume it afterwards.
+const oauthQuery = computed(() => {
+  if (!route.query.sig) return null
+  const params = new URL(route.fullPath, 'http://localhost').searchParams
+  params.delete('redirect')
+  return params.toString()
+})
+
 const githubHref = computed(() => {
-  if (!redirect.value) return '/api/auth/github'
-  return `/api/auth/github?redirect=${encodeURIComponent(redirect.value)}`
+  const params = new URLSearchParams()
+  if (redirect.value) params.set('redirect', redirect.value)
+  if (oauthQuery.value) params.set('oauth_query', oauthQuery.value)
+  return params.size ? `/api/auth/github?${params}` : '/api/auth/github'
 })
 
 useSeoMeta({
