@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import { createError, defineHandler, readValidatedBody } from 'nuxt/server'
 
 const target = { sandboxId: z.string().min(1), principalId: z.string().min(1) }
 
@@ -20,19 +21,19 @@ const bodySchema = z.discriminatedUnion('action', [
 function applyEdits(content: string, edits: { find: string, replace: string }[], path: string) {
   return edits.reduce((current, { find, replace }) => {
     const index = current.indexOf(find)
-    if (index === -1) throw createError({ statusCode: 422, message: `Text to replace not found in ${path}: ${find.slice(0, 120)}` })
-    if (current.includes(find, index + 1)) throw createError({ statusCode: 422, message: `Text to replace appears more than once in ${path}, include more context: ${find.slice(0, 120)}` })
+    if (index === -1) throw createError({ status: 422, message: `Text to replace not found in ${path}: ${find.slice(0, 120)}` })
+    if (current.includes(find, index + 1)) throw createError({ status: 422, message: `Text to replace appears more than once in ${path}, include more context: ${find.slice(0, 120)}` })
     return current.slice(0, index) + replace + current.slice(index + find.length)
   }, content)
 }
 
 /** Lets Nuxi read and change the code of a live template preview, for the visitor who started it. */
-export default defineEventHandler(async (event) => {
+export default defineHandler(async (event) => {
   requireInternalRequest(event)
   const body = await readValidatedBody(event, bodySchema.parse)
   const sandbox = await getPreviewSandbox(body.sandboxId, body.principalId)
   if (sandbox?.status !== 'running') {
-    throw createError({ statusCode: 404, message: 'No live preview with this id is open for this user.' })
+    throw createError({ status: 404, message: 'No live preview with this id is open for this user.' })
   }
 
   switch (body.action) {
@@ -41,7 +42,7 @@ export default defineEventHandler(async (event) => {
 
     case 'read': {
       const file = await readAppFile(sandbox, body.path)
-      if (!file) throw createError({ statusCode: 404, message: `${body.path} does not exist.` })
+      if (!file) throw createError({ status: 404, message: `${body.path} does not exist.` })
       return file
     }
 
@@ -66,11 +67,11 @@ export default defineEventHandler(async (event) => {
         let text = body.content
         if (body.edits?.length) {
           const current = await readAppFile(sandbox, body.path)
-          if (!current) throw createError({ statusCode: 404, message: `${body.path} does not exist, pass the full content to create it.` })
-          if (current.truncated) throw createError({ statusCode: 422, message: `${body.path} is too large to edit.` })
+          if (!current) throw createError({ status: 404, message: `${body.path} does not exist, pass the full content to create it.` })
+          if (current.truncated) throw createError({ status: 422, message: `${body.path} is too large to edit.` })
           text = applyEdits(current.content, body.edits, current.path)
         }
-        if (text === undefined) throw createError({ statusCode: 400, message: 'Pass either content or edits.' })
+        if (text === undefined) throw createError({ status: 400, message: 'Pass either content or edits.' })
         path = await writeAppFile(sandbox, body.path, text)
       }
       trackPreviewChange(event, sandbox)

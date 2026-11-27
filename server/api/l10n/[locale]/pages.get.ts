@@ -1,10 +1,11 @@
 import { isL10nLocale, type L10nPageStatus } from '#shared/utils/l10n'
+import { createError, defineHandler, getRouterParam } from 'nuxt/server'
 
 /** The review state of each localised page of a locale. */
-export default defineEventHandler(async (event): Promise<L10nPageStatus[]> => {
-  const locale = getRouterParam(event, 'locale')
+export default defineHandler(async (event): Promise<L10nPageStatus[]> => {
+  const locale = getRouterParam(event, 'locale', { decode: true })
   if (!isL10nLocale(locale)) {
-    throw createError({ statusCode: 404, statusMessage: 'Unknown locale' })
+    throw createError({ status: 404, statusText: 'Unknown locale' })
   }
   return (await getL10nStatus(locale)).pages
 })

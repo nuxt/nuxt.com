@@ -1,8 +1,9 @@
 import { z } from 'zod'
 import { isNuxtersPeriod, nuxterForPeriod, nuxterHackathons, nuxtersPeriodPhrase } from '#shared/utils/nuxters'
+import { defineHandler, readValidatedBody } from 'nuxt/server'
 
 /** Called by Nuxi's `show_nuxter` tool: what the Nuxter card of the chat shows. */
-export default defineEventHandler(async (event) => {
+export default defineHandler(async (event) => {
   requireInternalRequest(event)
 
   const { username, period } = await readValidatedBody(event, z.object({

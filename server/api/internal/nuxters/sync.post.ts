@@ -1,7 +1,8 @@
 import { z } from 'zod'
+import { defineHandler, readValidatedBody } from 'nuxt/server'
 
 /** Called by `syncNuxtersWorkflow`: import the changed period files and profiles of a nuxt/nuxters commit. */
-export default defineEventHandler(async (event) => {
+export default defineHandler(async (event) => {
   requireInternalRequest(event)
 
   const { sha, force } = await readValidatedBody(event, z.object({

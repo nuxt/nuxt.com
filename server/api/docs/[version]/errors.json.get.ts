@@ -1,13 +1,14 @@
 import { docsPathPrefix, isDocVersion } from '#shared/utils/docs'
 import { docsInstanceKey } from '#shared/utils/content'
+import { createError, defineHandler, getRouterParam } from 'nuxt/server'
 
 /**
  * The error-code reference for one docs version.
  */
-export default defineEventHandler(async (event) => {
-  const version = getRouterParam(event, 'version')
+export default defineHandler(async (event) => {
+  const version = getRouterParam(event, 'version', { decode: true })
   if (!version || !isDocVersion(version)) {
-    throw createError({ statusCode: 404, statusMessage: 'Unknown docs version' })
+    throw createError({ status: 404, statusText: 'Unknown docs version' })
   }
 
   const content = await getInstanceAtHead(docsInstanceKey(version))

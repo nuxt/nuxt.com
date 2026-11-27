@@ -3,6 +3,7 @@ import type { NavigationItem } from 'comark-content'
 import type { ContentInstanceKey } from '../../shared/utils/content'
 import { cliInstanceKey, docsInstanceKey, moduleInstanceKey } from '../../shared/utils/content'
 import { docsPathPrefix, EXAMPLES_PATH_PREFIX } from '../../shared/utils/docs'
+import { requestEvent } from '../utils/request-event'
 
 const VERSION = '4.x'
 
@@ -27,13 +28,9 @@ vi.stubGlobal('docTree', docTree)
 vi.stubGlobal('findByPath', findByPath)
 vi.stubGlobal('blogTree', blogTree)
 vi.stubGlobal('moduleDocsTrees', moduleDocsTrees)
-vi.stubGlobal('defineEventHandler', <T>(handler: T) => handler)
-vi.stubGlobal('getRouterParam', (event: Record<string, string>, name: string) => event[name])
-vi.stubGlobal('createError', (input: { statusCode: number, statusMessage: string }) =>
-  Object.assign(new Error(input.statusMessage), input))
-
-const handler = (await import('../../server/api/navigation/[version].get')).default as unknown as
-  (event: Record<string, string>) => Promise<NavigationItem[]>
+const route = (await import('../../server/api/navigation/[version].get')).default
+const handler = ({ version }: { version: string }): Promise<NavigationItem[]> =>
+  route(requestEvent(`/api/navigation/${version}`, { params: { version } }))
 
 const docsNav = [{
   title: 'Docs',

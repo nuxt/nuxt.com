@@ -1,14 +1,15 @@
 import { eq } from 'drizzle-orm'
 import { z } from 'zod'
+import { createError, defineHandler } from 'nuxt/server'
 
 const deleteParamsSchema = z.object({
   id: z.coerce.number()
 })
 
-export default defineEventHandler(async (event) => {
+export default defineHandler(async (event) => {
   await requireAdminUserSession(event)
 
-  const { id } = await getValidatedRouterParams(event, deleteParamsSchema.parse)
+  const { id } = await getValidatedParams(event, deleteParamsSchema.parse)
 
   const result = await db
     .delete(schema.feedback)
@@ -17,8 +18,8 @@ export default defineEventHandler(async (event) => {
 
   if (result.length === 0) {
     throw createError({
-      statusCode: 404,
-      statusMessage: 'Feedback not found'
+      status: 404,
+      statusText: 'Feedback not found'
     })
   }
 

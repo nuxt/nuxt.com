@@ -2,19 +2,24 @@ import type { NavigationItem } from 'comark-content'
 import { isDocVersion } from '#shared/utils/docs'
 import { isL10nLocale, isLocalisedDocVersion, l10nNavigationPath } from '#shared/utils/l10n'
 import { navigationPath } from '#shared/utils/content'
+import { createError, defineHandler, getRouterParam, serverFetch } from 'nuxt/server'
 
 /** One docs version's navigation tree, as `/api/navigation/<version>` serves it, with localised titles. */
-export default defineEventHandler(async (event): Promise<NavigationItem[]> => {
-  const locale = getRouterParam(event, 'locale')
-  const version = getRouterParam(event, 'version')
+export default defineHandler(async (event): Promise<NavigationItem[]> => {
+  const locale = getRouterParam(event, 'locale', { decode: true })
+  const version = getRouterParam(event, 'version', { decode: true })
   if (!isL10nLocale(locale) || !version || !isDocVersion(version) || !isLocalisedDocVersion(version)) {
-    throw createError({ statusCode: 404, statusMessage: 'Unknown docs version' })
+    throw createError({ status: 404, statusText: 'Unknown docs version' })
   }
 
-  const [tree, bundle] = await Promise.all([
-    event.$fetch<NavigationItem[]>(navigationPath(version)),
+  const [response, bundle] = await Promise.all([
+    serverFetch(event, navigationPath(version)),
     getL10nBundle(locale)
   ])
+  if (!response.ok) {
+    throw createError({ status: response.status, statusText: 'Navigation unavailable' })
+  }
+  const tree: NavigationItem[] = await response.json()
 
   try {
     return localiseNavigation(tree, bundle)

@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import { defineHandler, readValidatedBody } from 'nuxt/server'
 
 const slug = z.string().regex(/^[a-z0-9-]+$/)
 const runId = z.string().min(1).max(200)
@@ -8,7 +9,7 @@ const log = z.string().transform(log => log.slice(-16000))
  * Called by `checkTemplatesWorkflow` as a template check starts, moves to a new phase and finishes.
  * `stopped: true` tells the check another run took over its template. A passing finish returns the snapshot it replaced, to delete.
  */
-export default defineEventHandler(async (event) => {
+export default defineHandler(async (event) => {
   requireInternalRequest(event)
 
   const report = await readValidatedBody(event, z.discriminatedUnion('kind', [

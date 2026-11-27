@@ -1,18 +1,19 @@
+import { createError, defineHandler, getRouterParam } from 'nuxt/server'
 /**
  * SHA-pinned mirror of the live endpoint, serving the artifacts the client-side search database
  * hydrates from (`manifest.json`, `snapshot/<source>`).
  *
  * The pin is what makes the response immutable, so it can be cached forever (`isr: true`).
  */
-export default defineEventHandler(async (event) => {
-  const sha = getRouterParam(event, 'sha')
-  const path = getRouterParam(event, 'path')
+export default defineHandler(async (event) => {
+  const sha = getRouterParam(event, 'sha', { decode: true })
+  const path = getRouterParam(event, 'path', { decode: true })
   if (!sha || !path) {
-    throw createError({ statusCode: 400, statusMessage: 'Missing sha or path' })
+    throw createError({ status: 400, statusText: 'Missing sha or path' })
   }
   // This URL is public and unauthenticated, so reject anything that cannot be a commit
   if (!/^[0-9a-f]{7,40}$/.test(sha)) {
-    throw createError({ statusCode: 400, statusMessage: 'Malformed content commit' })
+    throw createError({ status: 400, statusText: 'Malformed content commit' })
   }
 
   const key = instanceKeyFromSegments(path.split('/').filter(Boolean))
@@ -20,15 +21,20 @@ export default defineEventHandler(async (event) => {
   // Ensure the sha is the latest.
   // Deliberately no `{ refresh: true }` retry: that bypasses the ref cache, so any well-formed-but-wrong sha would cost a live GitHub query.
   if (sha !== await resolveInstanceSha(key)) {
-    throw createError({ statusCode: 404, statusMessage: 'Stale content commit' })
+    throw createError({ status: 404, statusText: 'Stale content commit' })
   }
 
   const content = await getInstanceAtHead(key)
 
   // `handler()` matches on its own `basePath` (`/api/content/<instance>`), so drop the pin.
-  const request = toWebRequest(event)
+  const request = event.req
   const url = new URL(request.url)
-  url.pathname = url.pathname.replace(`/blob/${sha}`, '')
+  const pathname = url.pathname.replace(`/blob/${sha}`, '')
+  // A percent-encoded sha decodes to a valid one but leaves the pin in the URL: refuse it instead of caching a second copy.
+  if (pathname === url.pathname) {
+    throw createError({ status: 400, statusText: 'Malformed content commit' })
+  }
+  url.pathname = pathname
 
   return content.handler(new Request(url, request))
 })

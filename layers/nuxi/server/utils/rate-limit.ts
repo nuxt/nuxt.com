@@ -1,6 +1,5 @@
-import { useSession, type H3Event } from 'h3'
 import { and, eq, sql } from 'drizzle-orm'
-import { deriveSecret } from 'nuxt/server'
+import { deriveSecret, getCookie, getRequestHeader, useSession, type RequestEvent } from 'nuxt/server'
 import { DEFAULT_DAILY_LIMIT, ADMIN_DAILY_LIMIT } from '../../shared/utils/rate-limit'
 
 type DbTransaction = Parameters<Parameters<typeof db.transaction>[0]>[0]
@@ -12,13 +11,13 @@ function today(): string {
 const ANONYMOUS_COOKIE = 'nuxt-anonymous'
 
 /** Signed-out visitors get a stable anonymous id in their own sealed cookie, for rate limiting only. */
-async function useAnonymousSession(event: H3Event) {
+async function useAnonymousSession(event: RequestEvent) {
   const password = await deriveSecret('nuxt.com:anonymous-session')
   return useSession<{ anonymousUserId?: string }>(event, { name: ANONYMOUS_COOKIE, password, maxAge: 60 * 60 * 24 * 365 })
 }
 
 /** Read the rate-limit principal from the browser's cookies — never mints. */
-export async function getRateLimitPrincipalId(event: H3Event): Promise<string | undefined> {
+export async function getRateLimitPrincipalId(event: RequestEvent): Promise<string | undefined> {
   const session = await getUserSession(event)
   if (session.user) return session.user.id
   if (!getCookie(event, ANONYMOUS_COOKIE)) return undefined
@@ -27,7 +26,7 @@ export async function getRateLimitPrincipalId(event: H3Event): Promise<string | 
 }
 
 /** Mint a stable anonymous id in the browser's cookies — browser-facing routes only. */
-export async function ensureRateLimitPrincipalId(event: H3Event): Promise<string> {
+export async function ensureRateLimitPrincipalId(event: RequestEvent): Promise<string> {
   const session = await getUserSession(event)
   if (session.user) return session.user.id
 
@@ -48,7 +47,7 @@ async function readUsage(userId: string, defaultLimit: number): Promise<{ used: 
   return { used, remaining: Math.max(0, limit - used), limit }
 }
 
-export async function checkAgentRateLimit(event: H3Event): Promise<{ used: number, remaining: number, limit: number }> {
+export async function checkAgentRateLimit(event: RequestEvent): Promise<{ used: number, remaining: number, limit: number }> {
   const userId = await ensureRateLimitPrincipalId(event)
   const session = await getUserSession(event)
   const usage = await readUsage(userId, session.user?.role === 'admin' ? ADMIN_DAILY_LIMIT : DEFAULT_DAILY_LIMIT)
@@ -86,7 +85,7 @@ export async function consumeAgentRateLimitForUser(userId: string, defaultLimit 
   })
 }
 
-export async function consumeAgentRateLimit(event: H3Event): Promise<{ used: number, remaining: number, limit: number }> {
+export async function consumeAgentRateLimit(event: RequestEvent): Promise<{ used: number, remaining: number, limit: number }> {
   const userId = await ensureRateLimitPrincipalId(event)
   const session = await getUserSession(event)
   return consumeAgentRateLimitForUser(userId, session.user?.role === 'admin' ? ADMIN_DAILY_LIMIT : DEFAULT_DAILY_LIMIT)

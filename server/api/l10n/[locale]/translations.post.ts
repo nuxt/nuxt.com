@@ -1,6 +1,7 @@
 import { recordStatus } from '@diglot/core'
 import { z } from 'zod'
 import { isL10nLocale, isLocalisedPage, L10N_NOTE_MAX_LENGTH, type L10nSaveResult } from '#shared/utils/l10n'
+import { createError, defineHandler, getRouterParam, readValidatedBody } from 'nuxt/server'
 
 const bodySchema = z.object({
   /** The English page the changes were made on, unprefixed. */
@@ -20,17 +21,17 @@ const bodySchema = z.object({
  * Members of `nuxt/translators-<locale>` commit to `main`; anyone else signed in adds to their suggestion
  * pull request. The push webhook then refreshes the served bundle and purges the pages.
  */
-export default defineEventHandler(async (event): Promise<L10nSaveResult> => {
-  const locale = getRouterParam(event, 'locale')
+export default defineHandler(async (event): Promise<L10nSaveResult> => {
+  const locale = getRouterParam(event, 'locale', { decode: true })
   if (!isL10nLocale(locale)) {
-    throw createError({ statusCode: 404, statusMessage: 'Unknown locale' })
+    throw createError({ status: 404, statusText: 'Unknown locale' })
   }
 
   assertSameOrigin(event)
   const { user } = await requireUserSession(event)
   const { page, changes, note } = await readValidatedBody(event, bodySchema.parse)
   if (!isLocalisedPage(page)) {
-    throw createError({ statusCode: 404, statusMessage: 'Page not found' })
+    throw createError({ status: 404, statusText: 'Page not found' })
   }
 
   await consumeL10nSave(db, user.id, changes.length)
@@ -41,7 +42,7 @@ export default defineEventHandler(async (event): Promise<L10nSaveResult> => {
     getL10nBundle(locale)
   ])
   if (!file) {
-    throw createError({ statusCode: 404, statusMessage: 'Page not found' })
+    throw createError({ status: 404, statusText: 'Page not found' })
   }
   if (role === 'suggester') await consumeL10nSuggestion(db, user.id, changes.length)
 
@@ -66,10 +67,10 @@ export default defineEventHandler(async (event): Promise<L10nSaveResult> => {
     }
   } catch (error) {
     if (error instanceof L10nChangeError) {
-      throw createError({ statusCode: 422, statusMessage: 'No change can be saved', data: { issues: error.issues } })
+      throw createError({ status: 422, statusText: 'No change can be saved', data: { issues: error.issues } })
     }
     if (error instanceof L10nConflictError) {
-      throw createError({ statusCode: 409, statusMessage: 'The translations changed while saving: try again' })
+      throw createError({ status: 409, statusText: 'The translations changed while saving: try again' })
     }
     throw error
   }

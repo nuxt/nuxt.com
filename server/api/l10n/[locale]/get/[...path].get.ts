@@ -1,15 +1,16 @@
 import { withLeadingSlash } from 'ufo'
 import { isL10nLocale, isLocalisedPage } from '#shared/utils/l10n'
+import { createError, defineHandler, getRouterParam } from 'nuxt/server'
 
 /**
  * A localised docs page: the English page at the instance's head commit, with the translations of
  * the pinned bundle substituted. Same shape as `/api/content/<instance>/get/<path>`, plus `meta.l10n`.
  */
-export default defineEventHandler(async (event) => {
-  const locale = getRouterParam(event, 'locale')
-  const path = withLeadingSlash(getRouterParam(event, 'path') ?? '')
+export default defineHandler(async (event) => {
+  const locale = getRouterParam(event, 'locale', { decode: true })
+  const path = withLeadingSlash(getRouterParam(event, 'path', { decode: true }) ?? '')
   if (!isL10nLocale(locale) || !isLocalisedPage(path)) {
-    throw createError({ statusCode: 404, statusMessage: 'Page not found' })
+    throw createError({ status: 404, statusText: 'Page not found' })
   }
 
   const [content, bundle] = await Promise.all([
@@ -18,7 +19,7 @@ export default defineEventHandler(async (event) => {
   ])
   const page = await content.get(path)
   if (!page) {
-    throw createError({ statusCode: 404, statusMessage: 'Page not found' })
+    throw createError({ status: 404, statusText: 'Page not found' })
   }
 
   const startedAt = performance.now()

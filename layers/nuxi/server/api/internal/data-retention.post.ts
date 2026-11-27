@@ -1,10 +1,12 @@
-export default defineEventHandler(async (event) => {
+import { defineHandler } from 'nuxt/server'
+
+export default defineHandler(async (event) => {
   requireInternalRequest(event)
 
   const result = {
     ...await purgeExpiredNuxiData(db),
     ...await purgeExpiredSiteData(db)
   }
-  useLogger(event).set({ retention: result })
+  useRequestLogger(event).set({ retention: result })
   return result
 })

@@ -1,3 +1,4 @@
+import { defineHandler, getRequestURL, sendRedirect } from 'nuxt/server'
 /**
  * Redirect unversioned error doc paths to the current default version.
  *
@@ -7,7 +8,7 @@
  *
  * The error code is lowercased to match the content collection path.
  */
-export default defineEventHandler((event) => {
+export default defineHandler((event) => {
   const path = getRequestURL(event).pathname
 
   // Match /docs/errors/... but NOT /docs/3.x/errors/... or /docs/4.x/errors/...

@@ -1,12 +1,13 @@
-import type { H3Event } from 'h3'
+import type { RequestEvent } from 'nuxt/server'
 import { describe, expect, it } from 'vitest'
 import { feedbackFingerprint, fingerprintInput } from '../../server/utils/feedback'
 
 const secret = 'a'.repeat(64)
 const userAgent = 'Mozilla/5.0 (Macintosh) Chrome/140'
 
-function event(headers: Record<string, string>): H3Event {
-  return { context: {}, node: { req: { headers, socket: {} } } } as unknown as H3Event
+function event(headers: Record<string, string>): RequestEvent {
+  const req = new Request('https://nuxt.com/api/feedback', { method: 'POST', headers })
+  return { req, url: new URL(req.url), res: { headers: new Headers() }, context: {} }
 }
 
 async function fingerprintFor(headers: Record<string, string>): Promise<string | undefined> {

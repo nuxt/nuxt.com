@@ -1,3 +1,4 @@
+import { createError, defineHandler, getRouterParam, sendRedirect } from 'nuxt/server'
 /**
  * Short URL handler for Nuxt error codes.
  *
@@ -8,12 +9,12 @@
  * The NUXT_ prefix is stripped, the code is lowercased, and the user
  * is redirected to the current default docs version.
  */
-export default defineEventHandler((event) => {
-  const code = getRouterParam(event, 'code')
+export default defineHandler((event) => {
+  const code = getRouterParam(event, 'code', { decode: true })
 
   // Validate: must be NUXT_ followed by E or B and 1-4 digits
   if (!code || !/^NUXT_[EB]\d{1,4}$/i.test(code)) {
-    throw createError({ statusCode: 404, statusMessage: 'Not found' })
+    throw createError({ status: 404, statusText: 'Not found' })
   }
 
   // Strip the NUXT_ prefix and lowercase → e1001 or b1001

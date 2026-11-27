@@ -1,6 +1,7 @@
 import type { NavigationItem } from 'comark-content'
 import { isDocVersion } from '#shared/utils/docs'
 import { hasModuleDocsSearch } from '#shared/utils/content'
+import { createError, defineHandler, getRouterParam } from 'nuxt/server'
 
 /** Drop fields the client never reads off a nav item — `stem` is only ever read from page frontmatter. */
 function withoutStem(items: NavigationItem[]): NavigationItem[] {
@@ -15,10 +16,10 @@ function withoutStem(items: NavigationItem[]): NavigationItem[] {
  * to fetch in full then filter down to client-side. Scoping it here means the other versions never
  * leave the server. The search palette only shows results it can place in this tree.
  */
-export default defineEventHandler(async (event): Promise<NavigationItem[]> => {
-  const version = getRouterParam(event, 'version')
+export default defineHandler(async (event): Promise<NavigationItem[]> => {
+  const version = getRouterParam(event, 'version', { decode: true })
   if (!version || !isDocVersion(version)) {
-    throw createError({ statusCode: 404, statusMessage: 'Unknown docs version' })
+    throw createError({ status: 404, statusText: 'Unknown docs version' })
   }
   const [tree, blog, modules] = await Promise.all([
     docTree(version),

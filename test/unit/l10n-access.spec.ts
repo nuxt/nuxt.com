@@ -3,9 +3,7 @@ import { drizzle } from 'drizzle-orm/libsql'
 import { generateSQLiteDrizzleJson, generateSQLiteMigration } from 'drizzle-kit/api'
 import { beforeEach, describe, expect, it } from 'vitest'
 import * as schema from '../../server/db/schema'
-import { IncomingMessage, ServerResponse } from 'node:http'
-import { Socket } from 'node:net'
-import { createEvent } from 'h3'
+import type { RequestEvent } from 'nuxt/server'
 import { assertSameOrigin, translatorsTeam } from '../../server/utils/l10n/access'
 import { consumeL10nSave, consumeL10nSuggestion } from '../../server/utils/l10n/allowance'
 
@@ -64,10 +62,9 @@ describe('consumeL10nSuggestion', () => {
 })
 
 describe('assertSameOrigin', () => {
-  const request = (headers: Record<string, string>) => {
-    const req = new IncomingMessage(new Socket())
-    req.headers = headers
-    return createEvent(req, new ServerResponse(req))
+  const request = (headers: Record<string, string>): RequestEvent => {
+    const req = new Request('https://nuxt.com/api/l10n/fr/translations', { method: 'POST', headers })
+    return { req, url: new URL(req.url), res: { headers: new Headers() }, context: {} }
   }
 
   it('should refuse writes sent from another site or subdomain', () => {

@@ -1,20 +1,26 @@
-import { createError } from 'h3'
 import { describe, expect, it, vi } from 'vitest'
+import { redirectOf, requestEvent } from '../utils/request-event'
 
-/** A few of the site's redirect rules, as Nitro's matcher returns them. */
-const RULES: Record<string, { to: string, _redirectStripBase?: string }> = {
+/** A few of the site's redirect rules, as Nitro's matcher returns them: it ignores case and keeps the rule's lowercase base. */
+const RULES = vi.hoisted((): Record<string, { to: string, _redirectStripBase?: string }> => ({
   '/docs': { to: '/docs/getting-started/introduction' },
   '/docs/4.x': { to: '/docs/4.x/getting-started/introduction' },
   '/docs/4.x/examples/hello-world': { to: '/docs/examples/**', _redirectStripBase: '/docs/4.x/examples' }
+}))
+
+vi.mock('nuxt/server', async importOriginal => ({
+  ...await importOriginal<typeof import('nuxt/server')>(),
+  matchRouteRules: (path: string) => ({ redirect: RULES[path.toLowerCase()] })
+}))
+
+const { default: handler } = await import('../../server/middleware/l10n')
+
+/** Where the middleware sends `path`, or `undefined` when it serves it. The server receives the path URL-encoded. */
+function middleware({ path }: { path: string }) {
+  const event = requestEvent(encodeURI(path))
+  handler(event)
+  return redirectOf(event)
 }
-
-vi.stubGlobal('createError', createError)
-vi.stubGlobal('defineEventHandler', <T>(handler: T) => handler)
-vi.stubGlobal('sendRedirect', (_event: unknown, location: string, status: number) => ({ location, status }))
-vi.stubGlobal('getRouteRules', (event: { path: string }) => ({ redirect: RULES[event.path] }))
-
-type Middleware = (event: { path: string }) => unknown
-const middleware = (await import('../../server/middleware/l10n')).default as unknown as Middleware
 
 describe('l10n middleware', () => {
   it('should serve localised pages', () => {
@@ -31,6 +37,7 @@ describe('l10n middleware', () => {
 
   it('should follow wildcard redirect rules to the English page', () => {
     expect(middleware({ path: '/fr/docs/4.x/examples/hello-world' })).toEqual({ location: '/docs/examples/hello-world', status: 302 })
+    expect(middleware({ path: '/fr/docs/4.x/EXAMPLES/Hello-World' })).toEqual({ location: '/docs/examples/Hello-World', status: 302 })
   })
 
   it('should send agents, raw markdown and the rest of the site to English', () => {

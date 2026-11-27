@@ -1,9 +1,10 @@
 import { z } from 'zod'
+import { defineHandler } from 'nuxt/server'
 
-export default defineEventHandler(async (event) => {
+export default defineHandler(async (event) => {
   await requireAdminUserSession(event)
-  const { slug } = await getValidatedRouterParams(event, z.object({ slug: z.string().regex(/^[a-z0-9-]+$/) }).parse)
-  setResponseHeader(event, 'cache-control', 'no-store')
+  const { slug } = await getValidatedParams(event, z.object({ slug: z.string().regex(/^[a-z0-9-]+$/) }).parse)
+  event.res.headers.set('cache-control', 'no-store')
   const [row] = await db.select({
     state: schema.templateChecks.state, phase: schema.templateChecks.phase,
     status: schema.templateChecks.status, step: schema.templateChecks.step, batchId: schema.templateChecks.batchId

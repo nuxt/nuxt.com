@@ -2,6 +2,8 @@ import { DEFAULT_MEDIA_EXTENSIONS, type MediaMethods } from 'comark-content/plug
 import { hasModuleDocs, moduleDocsPathPrefix } from '#shared/utils/module-docs'
 import { moduleInstanceKey } from '#shared/utils/content'
 import { parsePullPath } from '#shared/utils/pull'
+import { decodePath } from 'ufo'
+import { defineHandler } from 'nuxt/server'
 
 /** `/modules/<name>/<file key>.<media extension>`, the URL `docsMedia()` gives an image. */
 const MEDIA_PATH_RE = new RegExp(`^/modules/([^/]+)/(.+(?:${DEFAULT_MEDIA_EXTENSIONS.map(ext => ext.replace('.', '\\.')).join('|')}))$`, 'i')
@@ -11,11 +13,12 @@ const MEDIA_PATH_RE = new RegExp(`^/modules/([^/]+)/(.+(?:${DEFAULT_MEDIA_EXTENS
  * the local checkout in dev, the PR's head commit in a preview (`/pull/:repo/:number/modules/…`).
  * Anything else falls through to the page.
  */
-export default defineEventHandler(async (event) => {
-  if (event.method !== 'GET' && event.method !== 'HEAD') return
+export default defineHandler(async (event) => {
+  if (event.req.method !== 'GET' && event.req.method !== 'HEAD') return
 
-  const preview = parsePullPath(event.path)
-  const match = MEDIA_PATH_RE.exec((preview?.path ?? event.path).split('?')[0]!)
+  const pathname = decodePath(event.url.pathname)
+  const preview = parsePullPath(pathname)
+  const match = MEDIA_PATH_RE.exec(preview?.path ?? pathname)
   const name = match?.[1]
   if (!name || !hasModuleDocs(name)) return
 
@@ -30,12 +33,12 @@ export default defineEventHandler(async (event) => {
   const body = await content.media.get(item.meta.key)
   if (body == null) return
 
-  setResponseHeader(event, 'content-type', item.meta.type || 'application/octet-stream')
-  setResponseHeader(event, 'x-content-type-options', 'nosniff')
+  event.res.headers.set('content-type', item.meta.type || 'application/octet-stream')
+  event.res.headers.set('x-content-type-options', 'nosniff')
   // An SVG opened on its own runs on this origin: no scripts, no requests.
-  setResponseHeader(event, 'content-security-policy', 'default-src \'none\'; style-src \'unsafe-inline\'; sandbox')
+  event.res.headers.set('content-security-policy', 'default-src \'none\'; style-src \'unsafe-inline\'; sandbox')
   // A media item changes with the commit the instance reads, as the pages do (`/modules/**` ISR).
-  setResponseHeader(event, 'cache-control', 'public, max-age=600')
+  event.res.headers.set('cache-control', 'public, max-age=600')
 
   return body as Uint8Array
 })

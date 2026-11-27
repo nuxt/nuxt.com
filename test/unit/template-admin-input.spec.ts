@@ -1,5 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { createError } from 'h3'
+import { requestEvent } from '../utils/request-event'
 
 vi.stubGlobal('defineMcpTool', (tool: unknown) => tool)
 const { default: tool } = await import('../../server/mcp/tools/admin/start-template-checks')
@@ -17,7 +18,7 @@ describe('template check selection', () => {
 })
 
 describe('admin template check controls', () => {
-  const event = {}
+  let event: ReturnType<typeof requestEvent>
   const user = { role: 'admin', username: 'HugoRCD' }
   let session: ReturnType<typeof vi.fn>
   let authorized: ReturnType<typeof vi.fn>
@@ -29,6 +30,7 @@ describe('admin template check controls', () => {
   let startCheck: (event: unknown) => Promise<unknown>
 
   beforeEach(async () => {
+    event = requestEvent('/api/admin/templates/minimal/check', { method: 'POST', params: { slug: 'minimal' } })
     session = vi.fn().mockResolvedValue({ user })
     authorized = vi.fn().mockResolvedValue(true)
     start = vi.fn().mockResolvedValue({ runId: 'run', queued: ['minimal'], skipped: [] })
@@ -45,12 +47,10 @@ describe('admin template check controls', () => {
       }
       return result
     })
-    vi.stubGlobal('getValidatedRouterParams', (_event: unknown, parse: (value: unknown) => unknown) => parse({ slug: 'minimal' }))
+    vi.stubGlobal('getValidatedParams', (_event: unknown, parse: (value: unknown) => unknown) => parse({ slug: 'minimal' }))
     vi.stubGlobal('startTemplateChecks', start)
     vi.stubGlobal('getActiveTemplateCheckRuns', activeRuns)
     vi.stubGlobal('templateCheckBaseURL', () => 'https://preview.example')
-    vi.stubGlobal('setResponseStatus', vi.fn())
-    vi.stubGlobal('setResponseHeader', vi.fn())
     vi.stubGlobal('db', { select })
     vi.stubGlobal('schema', { templateChecks: { slug: 'slug', state: 'state', phase: 'phase', status: 'status', step: 'step' } })
     vi.stubGlobal('eq', (field: string, value: string) => ({ field, value }))
@@ -82,7 +82,7 @@ describe('admin template check controls', () => {
   it('checks only the selected template on the current deployment', async () => {
     await expect(startCheck(event)).resolves.toMatchObject({ queued: ['minimal'] })
     expect(start).toHaveBeenCalledWith('https://preview.example', { slugs: ['minimal'], trigger: 'admin', startedBy: user.username })
-    expect(setResponseStatus).toHaveBeenCalledWith(event, 202)
+    expect(event.res.status).toBe(202)
   })
 
   it('reports an unknown template when the selected check queues nothing', async () => {

@@ -1,12 +1,13 @@
 import { withLeadingSlash } from 'ufo'
 import { isL10nLocale, isLocalisedPage, type L10nEditorPage } from '#shared/utils/l10n'
+import { createError, defineHandler, getRouterParam } from 'nuxt/server'
 
 /** The segments of a localised page for the translation editor, and what the signed-in user's saves become. */
-export default defineEventHandler(async (event): Promise<L10nEditorPage> => {
-  const locale = getRouterParam(event, 'locale')
-  const path = withLeadingSlash(getRouterParam(event, 'path') ?? '')
+export default defineHandler(async (event): Promise<L10nEditorPage> => {
+  const locale = getRouterParam(event, 'locale', { decode: true })
+  const path = withLeadingSlash(getRouterParam(event, 'path', { decode: true }) ?? '')
   if (!isL10nLocale(locale) || !isLocalisedPage(path)) {
-    throw createError({ statusCode: 404, statusMessage: 'Page not found' })
+    throw createError({ status: 404, statusText: 'Page not found' })
   }
 
   const [{ user }, content, { bundle, glossary }] = await Promise.all([
@@ -16,7 +17,7 @@ export default defineEventHandler(async (event): Promise<L10nEditorPage> => {
   ])
   const page = await content.get(path)
   if (!page) {
-    throw createError({ statusCode: 404, statusMessage: 'Page not found' })
+    throw createError({ status: 404, statusText: 'Page not found' })
   }
 
   const [role, segments] = await Promise.all([
@@ -31,6 +32,6 @@ export default defineEventHandler(async (event): Promise<L10nEditorPage> => {
       })
     : undefined
 
-  setResponseHeader(event, 'cache-control', 'private, no-store')
+  event.res.headers.set('cache-control', 'private, no-store')
   return { sha: bundle.sha, role, segments, ...(suggestions ? { suggestions } : {}) }
 })

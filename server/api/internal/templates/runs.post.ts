@@ -1,7 +1,8 @@
 import { z } from 'zod'
+import { defineHandler, readValidatedBody } from 'nuxt/server'
 
 /** Called by `checkTemplatesWorkflow` with its Chromium sandbox once created, then once the run ends. */
-export default defineEventHandler(async (event) => {
+export default defineHandler(async (event) => {
   requireInternalRequest(event)
 
   const update = await readValidatedBody(event, z.object({

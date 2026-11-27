@@ -1,13 +1,14 @@
 import { pullBasePath } from '#shared/utils/pull'
+import { createError, defineHandler, getRouterParam } from 'nuxt/server'
 
 /**
  * `/api/content/blob/:sha`, for the instance a pull request replaces: its search artifacts at the PR's commit.
  * Pinned to that commit, so cached forever (`isr: true`).
  */
-export default defineEventHandler(async (event) => {
+export default defineHandler(async (event) => {
   const target = pullTargetFromEvent(event)
-  const sha = getRouterParam(event, 'sha')
-  const path = getRouterParam(event, 'path')
+  const sha = getRouterParam(event, 'sha', { decode: true })
+  const path = getRouterParam(event, 'path', { decode: true })
   if (!sha || !path) {
     throw createError({ status: 400, statusText: 'Missing sha or path' })
   }
@@ -26,9 +27,14 @@ export default defineEventHandler(async (event) => {
   const content = await getInstanceAtPull(key, sha)
 
   // `handler()` matches on its own `basePath` (`/api/content/<instance>`), so drop the PR and the pin.
-  const request = toWebRequest(event)
+  const request = event.req
   const url = new URL(request.url)
-  url.pathname = url.pathname.replace(`${pullBasePath(target)}/blob/${sha}`, '')
+  const pathname = url.pathname.replace(`${pullBasePath(target)}/blob/${sha}`, '')
+  // A percent-encoded sha decodes to a valid one but leaves the pin in the URL: refuse it instead of caching a second copy.
+  if (pathname === url.pathname) {
+    throw createError({ status: 400, statusText: 'Malformed content commit' })
+  }
+  url.pathname = pathname
 
   return content.handler(new Request(url, request))
 })

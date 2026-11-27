@@ -1,17 +1,19 @@
 import type { PreviewEditEvent } from '#shared/types'
+import { createError, defineHandler, getRouterParam } from 'nuxt/server'
 
 /**
  * Starts `nuxt dev` in the visitor's live preview, so Nuxi's edits show through hot module replacement.
  * Streams NDJSON `PreviewEditEvent`s so the page can show it starting. Calling it again while it runs waits for the same server.
  */
-export default defineEventHandler(async (event) => {
+export default defineHandler(async (event) => {
   const owner = await getRateLimitPrincipalId(event)
-  const sandbox = owner ? await getPreviewSandbox(getRouterParam(event, 'id')!, owner) : null
+  const sandbox = owner ? await getPreviewSandbox(getRouterParam(event, 'id', { decode: true })!, owner) : null
   if (sandbox?.status !== 'running') {
-    throw createError({ statusCode: 404, message: 'This preview has stopped.' })
+    throw createError({ status: 404, message: 'This preview has stopped.' })
   }
 
-  setResponseHeaders(event, { 'content-type': 'application/x-ndjson', 'cache-control': 'no-store' })
+  event.res.headers.set('content-type', 'application/x-ndjson')
+  event.res.headers.set('cache-control', 'no-store')
   const encoder = new TextEncoder()
   let cancelled = false
   return new ReadableStream({

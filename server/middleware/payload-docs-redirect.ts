@@ -1,4 +1,5 @@
 import { CURRENT_DOCS_VERSION, EXAMPLES_PATH_PREFIX, docsPathPrefix, getVersionByPath } from '#shared/utils/docs'
+import { defineHandler, getRequestURL, sendRedirect } from 'nuxt/server'
 
 /**
  * Redirect unversioned docs payloads to the current version, keeping the `/_payload.json` suffix.
@@ -7,7 +8,7 @@ import { CURRENT_DOCS_VERSION, EXAMPLES_PATH_PREFIX, docsPathPrefix, getVersionB
  * - Page requests and client-side navigation stay on that route middleware.
  * - Runs after `error-docs-redirect.ts`, which lowercases error codes.
  */
-export default defineEventHandler((event) => {
+export default defineHandler((event) => {
   const url = getRequestURL(event)
   if (!url.pathname.startsWith('/docs/') || !url.pathname.endsWith('/_payload.json')) return
 

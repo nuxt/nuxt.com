@@ -1,6 +1,7 @@
 import { existsSync } from 'node:fs'
 import { readdir, readFile } from 'node:fs/promises'
 import { basename, join, relative, resolve } from 'node:path'
+import { createError, defineHandler, getRouterParam } from 'nuxt/server'
 
 interface ExampleSourceTreeItem {
   filename: string
@@ -88,7 +89,7 @@ function normalizeRoutePath(value: string) {
     .replace(/\/+/g, '/')
 
   if (!normalized || normalized.split('/').includes('..')) {
-    throw createError({ statusCode: 400, statusMessage: 'Invalid example path' })
+    throw createError({ status: 400, statusText: 'Invalid example path' })
   }
 
   return normalized
@@ -274,8 +275,8 @@ async function getRemoteSource(org: string, repo: string, branch: string, dirPat
   }
 }
 
-export default defineEventHandler(async (event) => {
-  const dirPath = normalizeRoutePath(getRouterParam(event, 'path') || '')
+export default defineHandler(async (event) => {
+  const dirPath = normalizeRoutePath(getRouterParam(event, 'path', { decode: true }) || '')
 
   if (process.env.NUXT_EXAMPLES_PATH) {
     return await getLocalSource(process.env.NUXT_EXAMPLES_PATH, dirPath)

@@ -1,6 +1,7 @@
 import { z } from 'zod'
+import { defineHandler, readValidatedBody } from 'nuxt/server'
 
-export default defineEventHandler(async (event) => {
+export default defineHandler(async (event) => {
   requireInternalRequest(event)
 
   const body = await readValidatedBody(event, z.object({
@@ -9,5 +10,5 @@ export default defineEventHandler(async (event) => {
     state: z.enum(['open', 'closed', 'all']).optional()
   }).parse)
 
-  return await searchGitHubIssues(event, body)
+  return await searchGitHubIssues(body)
 })

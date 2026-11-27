@@ -1,12 +1,12 @@
-import { createError } from 'h3'
 import type { ExtractTablesWithRelations } from 'drizzle-orm'
 import type { LibSQLTransaction } from 'drizzle-orm/libsql'
 import { asc, eq } from 'drizzle-orm'
 import { z } from 'zod'
+import { createError, defineHandler, readValidatedBody } from 'nuxt/server'
 
 type Tx = LibSQLTransaction<typeof schema, ExtractTablesWithRelations<typeof schema>>
 
-export default defineEventHandler(async (event) => {
+export default defineHandler(async (event) => {
   const { user } = await requireUserSession(event)
 
   const { id, message } = await readValidatedBody(event, z.object({
@@ -18,7 +18,7 @@ export default defineEventHandler(async (event) => {
     })
   }).parse)
 
-  const log = useLogger(event)
+  const log = useRequestLogger(event)
   log.set({
     user: { id: user.id, authenticated: true },
     chat: { id }
@@ -31,7 +31,7 @@ export default defineEventHandler(async (event) => {
 
     if (existing) {
       if (existing.userId !== user.id) {
-        throw createError({ statusCode: 403, statusMessage: 'Forbidden' })
+        throw createError({ status: 403, statusText: 'Forbidden' })
       }
 
       await tx.insert(schema.messages).values({
@@ -55,7 +55,7 @@ export default defineEventHandler(async (event) => {
     }).returning()
 
     if (!row) {
-      throw createError({ statusCode: 500, statusMessage: 'Failed to create chat' })
+      throw createError({ status: 500, statusText: 'Failed to create chat' })
     }
 
     await tx.insert(schema.messages).values({
@@ -78,7 +78,7 @@ export default defineEventHandler(async (event) => {
   })
 
   if (!detail) {
-    throw createError({ statusCode: 500, statusMessage: 'Failed to load created chat' })
+    throw createError({ status: 500, statusText: 'Failed to load created chat' })
   }
 
   const { userId: _, state, ...rest } = detail

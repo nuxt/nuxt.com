@@ -1,17 +1,18 @@
 import type { NuxterProfilePage } from '#shared/types'
+import { createError, defineHandler, getRouterParam } from 'nuxt/server'
 
-export default defineEventHandler(async (event) => {
-  const username = getRouterParam(event, 'username')
+export default defineHandler(async (event) => {
+  const username = getRouterParam(event, 'username', { decode: true })
   if (!username || !/^[a-z0-9-]{1,39}$/i.test(username)) {
-    throw createError({ statusCode: 400, statusMessage: 'Invalid GitHub username' })
+    throw createError({ status: 400, statusText: 'Invalid GitHub username' })
   }
 
   const nuxter = await nuxters.get(username)
   if (!nuxter) {
-    throw createError({ statusCode: 404, statusMessage: 'Nuxter not found' })
+    throw createError({ status: 404, statusText: 'Nuxter not found' })
   }
 
-  setResponseHeader(event, 'cache-control', 'public, max-age=0, s-maxage=600, stale-while-revalidate=3600')
+  event.res.headers.set('cache-control', 'public, max-age=0, s-maxage=600, stale-while-revalidate=3600')
   const [modules, blogPosts, translationLocales] = await Promise.all([
     nuxterModules(event, nuxter),
     nuxterBlogPosts(nuxter.username),

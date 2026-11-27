@@ -1,11 +1,12 @@
 import { createError } from 'evlog'
 import { and, asc, eq, inArray } from 'drizzle-orm'
 import { z } from 'zod'
+import { defineHandler, readValidatedBody } from 'nuxt/server'
 
-export default defineEventHandler(async (event) => {
+export default defineHandler(async (event) => {
   const { user } = await requireUserSession(event)
 
-  const { id } = await getValidatedRouterParams(event, z.object({
+  const { id } = await getValidatedParams(event, z.object({
     id: z.uuid()
   }).parse)
 
@@ -14,7 +15,7 @@ export default defineEventHandler(async (event) => {
     type: z.enum(['edit', 'regenerate'])
   }).parse)
 
-  const log = useLogger(event)
+  const log = useRequestLogger(event)
   log.set({
     user: { id: user.id, authenticated: true },
     chat: { id },

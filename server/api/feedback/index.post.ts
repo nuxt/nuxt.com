@@ -1,7 +1,6 @@
-import type { H3Event } from 'h3'
 import { z } from 'zod'
 import { checkBotId } from 'botid/server'
-import { deriveSecret } from 'nuxt/server'
+import { createError, defineHandler, deriveSecret, getRequestHeader, readValidatedBody, type RequestEvent } from 'nuxt/server'
 
 const feedbackSchema = z.object({
   rating: z.enum(FEEDBACK_RATINGS),
@@ -24,7 +23,7 @@ async function fingerprintSecret(): Promise<string | undefined> {
   }
 }
 
-async function getFingerprint(event: H3Event): Promise<string> {
+async function getFingerprint(event: RequestEvent): Promise<string> {
   const input = fingerprintInput(event)
   if (!input) return crypto.randomUUID()
 
@@ -34,15 +33,15 @@ async function getFingerprint(event: H3Event): Promise<string> {
   return feedbackFingerprint(secret, input)
 }
 
-export default defineEventHandler(async (event: H3Event) => {
+export default defineHandler(async (event) => {
   const verification = await checkBotId()
   if (verification.isBot) {
-    throw createError({ statusCode: 403, statusMessage: 'Forbidden' })
+    throw createError({ status: 403, statusText: 'Forbidden' })
   }
 
   const data = await readValidatedBody(event, feedbackSchema.parse)
 
-  const country = getHeader(event, 'x-vercel-ip-country') || 'unknown'
+  const country = getRequestHeader(event, 'x-vercel-ip-country') || 'unknown'
   const fingerprint = await getFingerprint(event)
 
   await db.insert(schema.feedback).values({

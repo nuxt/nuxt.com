@@ -1,7 +1,7 @@
 import { track } from '@vercel/analytics/server'
 import { waitUntil } from '@vercel/functions'
 import type { Sandbox } from '@vercel/sandbox'
-import type { H3Event } from 'h3'
+import { getRequestHeaders, type RequestEvent } from 'nuxt/server'
 
 /**
  * Template preview analytics, a funnel with one event per step and preview:
@@ -26,7 +26,7 @@ const CHANGE_LEVELS = [1, 5, 20]
  * Sends the event once `properties` resolve, after the response: it never slows or fails the request.
  * Resolving to `null` skips it, and to a list sends one event per item.
  */
-export function trackTemplateEvent(event: H3Event, name: TemplateEvent, properties: Properties | Promise<Properties | Properties[] | null>) {
+export function trackTemplateEvent(event: RequestEvent, name: TemplateEvent, properties: Properties | Promise<Properties | Properties[] | null>) {
   const headers = getRequestHeaders(event)
   waitUntil(Promise.resolve(properties)
     .then(data => Promise.all([data ?? []].flat().map(item => track(name, item, { headers }))))
@@ -52,7 +52,7 @@ export async function claimPreviewStep(sandbox: Sandbox, step: string) {
 const changeLevel = (count: number) => CHANGE_LEVELS.findLast(level => count >= level)
 
 /** Counts one Nuxi change, and reports each level (`'1+'`, `'5+'`, `'20+'`) the first time the preview reaches it. */
-export function trackPreviewChange(event: H3Event, sandbox: Sandbox) {
+export function trackPreviewChange(event: RequestEvent, sandbox: Sandbox) {
   const template = sandbox.tags?.template
   trackTemplateEvent(event, 'Template Edited', recordPreviewChange(sandbox).then(levels => levels.map(changes => ({ template, changes }))))
 }

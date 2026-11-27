@@ -1,6 +1,7 @@
 import { z } from 'zod'
+import { createError, defineHandler, readValidatedBody } from 'nuxt/server'
 
-export default defineEventHandler(async (event) => {
+export default defineHandler(async (event) => {
   requireInternalRequest(event)
 
   const { userId: claimedUserId, defaultLimit } = await readValidatedBody(event, z.object({
@@ -12,7 +13,7 @@ export default defineEventHandler(async (event) => {
 
   if (sessionUserId) {
     if (sessionUserId !== claimedUserId) {
-      throw createError({ statusCode: 403, statusMessage: 'Forbidden' })
+      throw createError({ status: 403, statusText: 'Forbidden' })
     }
     return await consumeAgentRateLimit(event)
   }

@@ -2,6 +2,7 @@ import type { ExtractTablesWithRelations } from 'drizzle-orm'
 import type { LibSQLTransaction } from 'drizzle-orm/libsql'
 import { and, eq } from 'drizzle-orm'
 import { z } from 'zod'
+import { createError, defineHandler, readValidatedBody } from 'nuxt/server'
 
 type Tx = LibSQLTransaction<typeof schema, ExtractTablesWithRelations<typeof schema>>
 
@@ -10,10 +11,10 @@ type Tx = LibSQLTransaction<typeof schema, ExtractTablesWithRelations<typeof sch
  * session stream cursor. User messages are persisted at send time, so DB
  * history is append-only — nothing is ever deleted or reordered.
  */
-export default defineEventHandler(async (event) => {
+export default defineHandler(async (event) => {
   const { user } = await requireUserSession(event)
 
-  const { id } = await getValidatedRouterParams(event, z.object({
+  const { id } = await getValidatedParams(event, z.object({
     id: z.uuid()
   }).parse)
 
@@ -38,7 +39,7 @@ export default defineEventHandler(async (event) => {
   })
 
   if (!chat) {
-    throw createError({ statusCode: 404, statusMessage: 'Chat not found' })
+    throw createError({ status: 404, statusText: 'Chat not found' })
   }
 
   const now = Date.now()

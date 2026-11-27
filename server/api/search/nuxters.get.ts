@@ -1,11 +1,12 @@
 import { z } from 'zod'
 import { isNuxtersPeriod } from '#shared/utils/nuxters'
+import { defineHandler, getValidatedQuery } from 'nuxt/server'
 
 /**
  * Search Nuxters by username: `?q=dan&period=2024`.
  * Not under /api/nuxters/: a GitHub user named "search" would lose their profile API.
  */
-export default defineEventHandler(async (event) => {
+export default defineHandler(async (event) => {
   const { q, period, limit } = await getValidatedQuery(event, z.object({
     // GitHub usernames: letters, digits and hyphens, 39 characters at most
     q: z.string().trim().max(39).transform(value => value.replace(/[^a-z0-9-]/gi, '')),
@@ -13,6 +14,6 @@ export default defineEventHandler(async (event) => {
     limit: z.coerce.number().int().min(1).max(20).default(8)
   }).parse)
 
-  setResponseHeader(event, 'cache-control', 'public, max-age=0, s-maxage=600, stale-while-revalidate=3600')
+  event.res.headers.set('cache-control', 'public, max-age=0, s-maxage=600, stale-while-revalidate=3600')
   return nuxters.search({ query: q, period, limit })
 })

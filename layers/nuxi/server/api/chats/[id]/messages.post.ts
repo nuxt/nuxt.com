@@ -1,11 +1,12 @@
 import { and, eq } from 'drizzle-orm'
 import { z } from 'zod'
 import type { UIMessage } from 'ai'
+import { createError, defineHandler, readValidatedBody } from 'nuxt/server'
 
-export default defineEventHandler(async (event) => {
+export default defineHandler(async (event) => {
   const { user } = await requireUserSession(event)
 
-  const { id } = await getValidatedRouterParams(event, z.object({
+  const { id } = await getValidatedParams(event, z.object({
     id: z.uuid()
   }).parse)
 
@@ -26,7 +27,7 @@ export default defineEventHandler(async (event) => {
   })
 
   if (!chat) {
-    throw createError({ statusCode: 404, statusMessage: 'Chat not found' })
+    throw createError({ status: 404, statusText: 'Chat not found' })
   }
 
   await insertChatMessages(id, [{

@@ -1,4 +1,4 @@
-import { getHeader, getRequestIP, type H3Event } from 'h3'
+import { getRequestHeader, getRequestIP, type RequestEvent } from 'nuxt/server'
 
 export interface FingerprintInput {
   /** UTC day (`YYYY-MM-DD`), so fingerprints rotate daily. */
@@ -8,14 +8,14 @@ export interface FingerprintInput {
 }
 
 /** What a feedback fingerprint is derived from, or `undefined` when the request carries no client IP. */
-export function fingerprintInput(event: H3Event): FingerprintInput | undefined {
+export function fingerprintInput(event: RequestEvent): FingerprintInput | undefined {
   const ip = getRequestIP(event, { xForwardedFor: true })
   if (!ip) return
 
   return {
     day: new Date().toISOString().slice(0, 10),
     ip,
-    userAgent: getHeader(event, 'user-agent') || ''
+    userAgent: getRequestHeader(event, 'user-agent') || ''
   }
 }
 
