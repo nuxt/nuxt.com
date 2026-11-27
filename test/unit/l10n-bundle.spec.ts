@@ -150,12 +150,13 @@ describe('translations webhook', () => {
     expect(rebuiltLocales([{ modified: ['fr/locale.yml'] }])).toEqual(['fr'])
     expect(rebuiltLocales([{ modified: ['fr/glossary.yml'] }])).toEqual(['fr'])
     expect(rebuiltLocales([{ modified: ['de/locale.yml'] }])).toEqual(['de'])
+    expect(rebuiltLocales([{ modified: ['ru/locale.yml'] }])).toEqual(['ru'])
     expect(rebuiltLocales([{ modified: ['xx/locale.yml'] }])).toEqual([])
   })
 
   it('should list every locale when a push changed a source manifest or the shared glossary', () => {
-    expect(rebuiltLocales([{ modified: ['.diglot/manifest/nuxt-4.x.json'] }])).toEqual(['fr', 'de'])
-    expect(rebuiltLocales([{ modified: ['glossary.yml'] }])).toEqual(['fr', 'de'])
+    expect(rebuiltLocales([{ modified: ['.diglot/manifest/nuxt-4.x.json'] }])).toEqual(['fr', 'de', 'ru'])
+    expect(rebuiltLocales([{ modified: ['glossary.yml'] }])).toEqual(['fr', 'de', 'ru'])
   })
 
   it('should list the records two bundles disagree on', () => {
