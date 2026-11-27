@@ -38,5 +38,6 @@ The source of nuxt.com.
 
 - `https://nuxt.com` serves `main`.
 - The images the site serves live under `public/assets/`. Screenshots of showcase sites (`websites/<slug>.webp`), templates (`templates/<slug>.webp`) and video courses (`video-courses/<slug>.webp`) are all what `capture_screenshot` saves at its default viewport.
+- `pnpm dev` regenerates the types under `.nuxt/` without the `eve` module, and `pnpm test:types` then fails on an unknown `eve` key in `layers/nuxi/nuxt.config.ts`. That failure is not in the code: once the dev server has run, run `pnpm nuxt prepare` before the type check.
 - The Vercel preview of a pull request redirects to a Vercel sign-in, so you can't open it.
 - A pull request that only changes files under `content/` gets no Vercel build. It previews at `https://nuxt.com/pull/nuxt.com/<number>` once a maintainer adds the `preview:enabled` label. Open that page only when the request says the label is on.
