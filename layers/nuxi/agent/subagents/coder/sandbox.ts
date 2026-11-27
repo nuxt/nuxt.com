@@ -7,9 +7,9 @@ type PrepareSandbox = NonNullable<NonNullable<Parameters<typeof DefaultSandbox.e
 /**
  * Chromium, agent-browser, ffmpeg and what a JavaScript project needs to install and run, installed
  * once per template: every coder session starts with a browser that can screenshot and record, and
- * can clone a repository and start its dev server (`lib/checkout.ts`). It holds no credentials.
- * Code still reaches GitHub through its API only: the tools that commit or publish run in the app
- * runtime and read the files out of the sandbox.
+ * can clone a repository and start its dev server. It holds no credentials: `git clone` reaches
+ * public repositories and `git push` reaches nothing. Code reaches GitHub through its API only:
+ * the tools that commit or publish run in the app runtime and read the files out of the sandbox.
  */
 const prepare: PrepareSandbox = async (sandbox) => {
   // just-bash (`eve dev` without Docker) runs no native binaries: leave it empty, and the capture

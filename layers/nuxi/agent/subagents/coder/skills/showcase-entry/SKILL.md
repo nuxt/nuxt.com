@@ -44,7 +44,7 @@ The frame is good when it shows the site's own homepage, above the fold, with no
 
 When the frame is clean, write the options that got you there into the entry's `screenshotOptions`, with the same names (`cookies`, `hideElements`, `removeElements`, `scripts`, `delay`), so a person can regenerate the image later.
 
-Commit it with `commit_assets`, from `/workspace/captures/<slug>.webp` to `public/assets/websites/<slug>.webp`. Showcase screenshots are 80 to 350 KB. `commit_assets` accepts more, but keep this one under 1 MB: when the capture's `bytes` is higher, capture again with a lower `quality`, such as 60.
+Copy it from `/workspace/captures/<slug>.webp` to `public/assets/websites/<slug>.webp` in the clone. Showcase screenshots are 80 to 350 KB, so keep this one under 1 MB: when the capture's `bytes` is higher, capture again with a lower `quality`, such as 60.
 
 ## The logo
 
@@ -58,10 +58,10 @@ The tile uses the logo as a mask and paints it in one colour. Only its shape cou
 
 Look at the cleaned logo before you commit it. With `browser__eval` on the site's page, cover the page with a dark `position: fixed` box that holds one element with a white background and `mask: url("data:image/svg+xml,…") center/contain no-repeat`, where the URL is the cleaned markup through `encodeURIComponent`. The tile draws the logo the same way. Call `capture_screenshot` without `url` and compare the shape with the logo in the site's header. A solid block, an empty box or a missing part means the cleaning broke the logo: fix the markup and look again. When the box is empty for the site's original markup too, the page refuses `data:` images: do the same on another public page, such as `https://example.com/`.
 
-Commit the SVG with `github__editFiles`; it is text.
+Write the SVG to `public/assets/websites/logos/<slug>.svg` in the clone.
 
 ## The pull request
 
-- One branch, `nuxi/showcase-<slug>`, and a title such as `feat(showcase): add World Triathlon`.
+- One branch, `nuxi/showcase-<slug>`, one commit with the three files, and a title such as `feat(showcase): add World Triathlon`.
 - In the body: what the site is in one sentence, the Nuxt evidence with its link, why you picked the `industry`, and the screenshot. Show the screenshot by publishing the same capture with `publish_media` and pasting its Markdown.
 - Open it ready for review when the three parts are in. Open it as a draft only when you tried and could not produce one of them, and say in the body which one, what you tried, and what a person needs to add. A draft is not the default for a task you did not finish trying.

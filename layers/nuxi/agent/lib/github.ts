@@ -17,8 +17,8 @@ export const GITHUB_CONNECTOR = 'github/nuxi-code'
  * names one: its tools take the repository as an input, and every write runs with the GitHub token
  * of the person who asked. GitHub accepts that token only where the `nuxi-code` App is installed
  * and the person has access, with the role the person has there. So a wider list, such as
- * `nuxt/*`, gives nobody more than GitHub already gives them. Writes stay on `nuxi/*` branches
- * whatever the repository.
+ * `nuxt/*`, gives nobody more than GitHub already gives them. Whatever the repository, a commit
+ * goes to a `nuxi/*` branch or to the branch of an open pull request, never to the default branch.
  */
 export const GITHUB_REPOSITORIES: readonly [string, ...string[]] = ['nuxt/nuxt.com']
 export const DEFAULT_REPOSITORY = GITHUB_REPOSITORIES[0]
@@ -77,18 +77,6 @@ export function appToken(repository: string): Promise<string> {
   })
 }
 
-const [DEFAULT_OWNER, DEFAULT_REPO] = DEFAULT_REPOSITORY.split('/')
-
-/**
- * The coder's tools that commit to a branch, with the repository each one commits to, read from
- * the inputs that tool reads and with its defaults. All name the branch `branch`.
- */
-const COMMIT_TOOLS = new Map<string, (input: Readonly<Record<string, unknown>>) => unknown>([
-  ['github__editFiles', ({ owner = DEFAULT_OWNER, repo = DEFAULT_REPO }) => typeof owner === 'string' && typeof repo === 'string' ? `${owner}/${repo}` : undefined],
-  ['commit_assets', ({ repository = DEFAULT_REPOSITORY }) => repository],
-  ['commit_changes', ({ repository = DEFAULT_REPOSITORY }) => repository]
-])
-
 /**
  * Whether `branch` has an open pull request: work someone may be reviewing, which the coder may
  * not have opened. Not knowing counts as yes.
@@ -107,9 +95,9 @@ async function hasOpenPullRequest(repository: string, branch: string): Promise<b
  *
  * - A second line of defense: anywhere else, every `github__*` call, read or write, is denied
  *   before it reaches GitHub.
- * - A commit to a branch that already has an open pull request asks the person first, like
- *   `updatePullRequest`. The coder's branches are new, so this only stops a commit to a pull
- *   request that is already open: its own on a follow-up, or one from another task.
+ * - `commit_changes`, the only tool that writes files to GitHub, asks the person first when the
+ *   branch already has an open pull request, like `updatePullRequest`: the coder's own on a
+ *   follow-up, or someone else's, such as a dependency update whose conflict it was asked to fix.
  * - A commit this policy can't place, with no branch or a repository outside the list, is denied.
  *   Letting it through would rely on the tool to refuse it, and the two once read the same input
  *   differently: `Nuxt/nuxt.com` was unknown here and allowed there.
@@ -118,11 +106,11 @@ export const githubToolsApproval: ApprovalPolicy = async ({ toolName, toolInput,
   if (toolName.startsWith('github__') && !(await canUseGithubTools(session.auth.current))) {
     return { type: 'denied', reason: 'GitHub tools are only available to the Nuxt team on Slack and in admin Discord channels.' }
   }
-  const repositoryOf = COMMIT_TOOLS.get(toolName)
-  if (!repositoryOf) return undefined
+  if (toolName !== 'commit_changes') return undefined
 
-  const repository = allowedRepository(repositoryOf(toolInput ?? {}))
-  const branch = toolInput?.branch
+  // Read like the tool's schema reads them: the default repository only when none is given.
+  const { repository: named = DEFAULT_REPOSITORY, branch } = toolInput ?? {}
+  const repository = allowedRepository(named)
   if (!repository || typeof branch !== 'string' || !branch) {
     return { type: 'denied', reason: `A commit names a branch of one of these repositories: ${GITHUB_REPOSITORIES.join(', ')}.` }
   }

@@ -1,5 +1,5 @@
 ---
-description: Install and run a checked-out project in the sandbox, whatever it is built with. Covers its dev server, tests, lint, type check and build, and opening its pages in the browser. Load it before the first install or run of a task, and when a server you started no longer answers.
+description: Install and run a cloned project in the sandbox, whatever it is built with. Covers its dev server, tests, lint, type check and build, and opening its pages in the browser. Load it before the first install or run of a task, and when a server you started no longer answers.
 ---
 
 The sandbox is a Linux machine with Node.js, npm, pnpm, Yarn, Bun, git, a C toolchain, ffmpeg and a browser. Install anything else a project needs with `sudo apt-get install -y`. It holds no secrets and no services: no database, no Docker, no account of any kind.
@@ -8,7 +8,7 @@ Every project runs its own way, so read how this one runs before you run it.
 
 ## Read first
 
-In the checkout, read what exists of `AGENTS.md` or `CLAUDE.md`, `README.md`, `CONTRIBUTING.md`, `package.json` (`packageManager`, `scripts`, `engines`, `workspaces`) and `.env.example`. They name the package manager, the commands, and what the app needs to start.
+In the clone, read what exists of `AGENTS.md` or `CLAUDE.md`, `README.md`, `CONTRIBUTING.md`, `package.json` (`packageManager`, `scripts`, `engines`, `workspaces`) and `.env.example`. They name the package manager, the commands, and what the app needs to start.
 
 The lockfile names the package manager when `packageManager` doesn't: `pnpm-lock.yaml` is pnpm, `yarn.lock` is Yarn, `bun.lock` or `bun.lockb` is Bun, `package-lock.json` is npm. `pnpm` and `yarn` run the version the project pins, and download it on first use.
 
@@ -38,7 +38,7 @@ Run the checks the project has for what you changed: its lint, its type check an
 4. Look at the page your change touches. Read `browser__errors` and the server's `stderr` for errors your change causes.
 
 - When the app needs environment variables to start, use the values that `.env.example` or the README give for local development. Never invent a credential. When a page needs a service the sandbox doesn't have, say which page you could not check.
-- Processes end when your task ends, and the files stay. On a follow-up message, the checkout and its `node_modules` are there and the server is not: start it again.
+- Processes end when your task ends, and the files stay. On a follow-up message, the clone and its `node_modules` are there and the server is not: start it again.
 - Stop a server you no longer need with `kill -- -<pid>`. Two dev servers at once can use up the sandbox's memory.
 
 ## Say what you ran

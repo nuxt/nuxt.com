@@ -1,15 +1,10 @@
-import { checkedMediaType } from './media/media-type.js'
+import type { Changes } from './clone.js'
 
 const API = 'https://api.github.com'
-/** Same rule as the `branches` guardrail of the GitHub tools. */
-const BRANCH = /^nuxi\/[a-z0-9][a-z0-9._/-]*$/
-const FILE_PATH = /^[\w.-]+(?:\/[\w.-]+)*$/
-
-/**
- * A blog cover at 2400x1260 is a PNG of 0.5 to 2.5 MB, and most images of `public/assets/blog` over
- * 1 MB are under this. Showcase screenshots are 80 to 350 KB: the skill that makes them holds them to that.
- */
-export const MAX_COMMIT_BYTES = 4 * 1024 * 1024
+/** A branch the coder makes for a task. Same rule as the `branches` guardrail of the GitHub tools. */
+const NUXI_BRANCH = /^nuxi\/[a-z0-9][a-z0-9._/-]*$/
+/** Any branch this file puts in a URL. */
+const BRANCH = /^\w[\w./-]*$/
 
 export class GithubRequestError extends Error {
   constructor(message: string, readonly status: number) {
@@ -26,11 +21,11 @@ interface Github {
   readonly fetchImpl?: typeof fetch
 }
 
-/** GET `url`, or POST `body` to it: bytes as they are, anything else as JSON. */
-export async function request<T>({ token, fetchImpl = fetch }: Pick<Github, 'token' | 'fetchImpl'>, url: string, body?: object): Promise<T> {
+/** GET `url`, or send `body` to it: bytes as they are, anything else as JSON. */
+export async function request<T>({ token, fetchImpl = fetch }: Pick<Github, 'token' | 'fetchImpl'>, url: string, body?: object, method = body ? 'POST' : 'GET'): Promise<T> {
   const binary = body instanceof Uint8Array
   const response = await fetchImpl(url, {
-    method: body ? 'POST' : 'GET',
+    method,
     headers: {
       accept: 'application/vnd.github+json',
       authorization: `Bearer ${token}`,
@@ -53,12 +48,6 @@ export async function openPullRequestOf({ branch, ...github }: Github & { readon
   return pulls[0]?.number
 }
 
-const COMMIT_MUTATION = 'mutation ($input: CreateCommitOnBranchInput!) { createCommitOnBranch(input: $input) { commit { oid url } } }'
-
-function assertNuxiBranch(branch: string) {
-  if (!BRANCH.test(branch) || branch.includes('..')) throw new Error(`Commits go to a \`nuxi/*\` branch only, not "${branch}".`)
-}
-
 /** The commit `branch` points to, if the branch exists. */
 async function headOf(github: Github, branch: string): Promise<string | undefined> {
   try {
@@ -69,36 +58,49 @@ async function headOf(github: Github, branch: string): Promise<string | undefine
   }
 }
 
-function createBranch(github: Github, branch: string, sha: string) {
-  return request(github, `${API}/repos/${github.repository}/git/refs`, { ref: `refs/heads/${branch}`, sha })
+/**
+ * The branches a commit may go to: a `nuxi/*` branch, which the coder makes for a task, or the
+ * branch of an open pull request of the repository, which is work in review and where
+ * `githubToolsApproval` asks the person first. Never the default branch.
+ */
+async function assertCommitBranch(github: Github, branch: string): Promise<void> {
+  if (!BRANCH.test(branch) || branch.includes('..')) throw new Error(`"${branch}" is not a branch name this tool takes.`)
+  if (NUXI_BRANCH.test(branch)) return
+
+  const [{ default_branch }, pullRequest] = await Promise.all([
+    request<{ default_branch: string }>(github, `${API}/repos/${github.repository}`),
+    openPullRequestOf({ ...github, branch })
+  ])
+  if (branch === default_branch) throw new Error(`\`${branch}\` is the default branch of ${github.repository}. Commit to a \`nuxi/*\` branch and open a pull request.`)
+  if (pullRequest === undefined) throw new Error(`\`${branch}\` is not a \`nuxi/*\` branch and has no open pull request. Commit to a \`nuxi/*\` branch, or to the branch of the open pull request the task is about.`)
 }
 
-interface CommitOnBranch {
-  readonly branch: string
-  /** The commit the branch must point to: GitHub refuses the commit when someone moved it since. */
-  readonly head: string
-  /** A conventional commit: the first line is the headline, the rest the body. */
-  readonly message: string
-  readonly additions: ReadonlyArray<{ readonly path: string, readonly bytes: Uint8Array }>
-  readonly deletions?: readonly string[]
+/** A path as git lists it: relative, and never into `.git`. */
+function isTrackedPath(path: string): boolean {
+  return !path.split('/').some(segment => segment === '' || segment === '.' || segment === '..' || segment === '.git')
 }
 
-/** One commit on `branch`. GitHub signs a `createCommitOnBranch` commit and records the token's owner as its author. */
-async function commitOnBranch(github: Github, { branch, head, message, additions, deletions = [] }: CommitOnBranch) {
-  const [headline = '', ...rest] = message.trim().split('\n')
+type Commit = Changes & { readonly branch: string, readonly message: string }
+
+/**
+ * One commit with one parent, the head of `branch`, through `createCommitOnBranch`: GitHub signs
+ * it and records the token's owner as its author, and refuses it when the branch moved since.
+ */
+async function commitOnBranch(github: Github, { branch, message, parents: [head], files, deletions }: Commit): Promise<{ sha: string, url: string }> {
+  const [headline = '', ...rest] = message.split('\n')
   const body = rest.join('\n').trim()
   const { data, errors } = await request<{
     data?: { createCommitOnBranch?: { commit?: { oid: string, url: string } } }
     errors?: Array<{ message?: string }>
   }>(github, `${API}/graphql`, {
-    query: COMMIT_MUTATION,
+    query: 'mutation ($input: CreateCommitOnBranchInput!) { createCommitOnBranch(input: $input) { commit { oid url } } }',
     variables: {
       input: {
         branch: { repositoryNameWithOwner: github.repository, branchName: branch },
         expectedHeadOid: head,
         message: body ? { headline, body } : { headline },
         fileChanges: {
-          additions: additions.map(({ path, bytes }) => ({ path, contents: Buffer.from(bytes).toString('base64') })),
+          additions: files.map(({ path, bytes }) => ({ path, contents: Buffer.from(bytes).toString('base64') })),
           ...(deletions.length ? { deletions: deletions.map(path => ({ path })) } : {})
         }
       }
@@ -107,73 +109,67 @@ async function commitOnBranch(github: Github, { branch, head, message, additions
 
   const commit = data?.createCommitOnBranch?.commit
   if (!commit) throw new Error(`GitHub refused the commit: ${errors?.map(error => error.message).join('; ') || 'no reason given'}`)
-  return { commitSha: commit.oid, commitUrl: commit.url }
-}
-
-interface AssetsInput extends Github {
-  readonly branch: string
-  readonly message: string
-  /** `path` is the repository path, such as `public/assets/websites/world-triathlon.webp`. */
-  readonly files: ReadonlyArray<{ readonly path: string, readonly bytes: Uint8Array }>
+  return { sha: commit.oid, url: commit.url }
 }
 
 /**
- * Commit images to a `nuxi/*` branch in one commit, creating the branch from the default branch
- * when it doesn't exist. `github__editFiles` takes text only, so an image can't go through it.
+ * A merge commit, which `createCommitOnBranch` can't make: it gives a commit one parent. Built
+ * from its parts instead. GitHub records the token's owner as its author and does not sign it.
  */
-export async function commitAssets({ branch, message, files, ...github }: AssetsInput) {
-  assertNuxiBranch(branch)
-  if (!files.length) throw new Error('No files to commit.')
+async function mergeCommit(github: Github, { message, parents, files, inherited, deletions }: Commit): Promise<{ sha: string, url: string }> {
+  const git = `${API}/repos/${github.repository}/git`
+  const { tree: base } = await request<{ tree: { sha: string } }>(github, `${git}/commits/${parents[0]}`)
+
+  // One at a time: GitHub limits writes sent together, and a merge leaves few files of its own.
+  const written: Array<{ path: string, mode: string, id: string }> = []
   for (const { path, bytes } of files) {
-    if (!FILE_PATH.test(path) || path.includes('..')) throw new Error(`"${path}" is not a path in the repository.`)
-    if (checkedMediaType(path, bytes, MAX_COMMIT_BYTES) === 'video/mp4') throw new Error(`"${path}" is a video: only images are committed.`)
+    const blob = await request<{ sha: string }>(github, `${git}/blobs`, { content: Buffer.from(bytes).toString('base64'), encoding: 'base64' })
+    written.push({ path, mode: '100644', id: blob.sha })
   }
 
-  let head = await headOf(github, branch)
-  const createdBranch = !head
-  if (!head) {
-    const { default_branch } = await request<{ default_branch: string }>(github, `${API}/repos/${github.repository}`)
-    head = await headOf(github, default_branch)
-    if (!head) throw new Error(`Could not read the head of ${default_branch}.`)
-    await createBranch(github, branch, head)
-  }
-
-  const commit = await commitOnBranch(github, { branch, head, message, additions: files })
-  return { repository: github.repository, branch, createdBranch, ...commit, paths: files.map(file => file.path) }
-}
-
-interface ChangesInput extends Github {
-  readonly branch: string
-  readonly message: string
-  /** The commit the changes were made on, which GitHub has. */
-  readonly base: string
-  /** `path` is the repository path, as git names it. */
-  readonly additions: ReadonlyArray<{ readonly path: string, readonly bytes: Uint8Array }>
-  readonly deletions: readonly string[]
-}
-
-/** A path as git lists it: relative, and never into `.git`. Unlike `FILE_PATH`, it can hold `[slug].vue` or a space. */
-function isTrackedPath(path: string): boolean {
-  return !path.split('/').some(segment => segment === '' || segment === '.' || segment === '..' || segment === '.git')
+  const tree = await request<{ sha: string }>(github, `${git}/trees`, {
+    base_tree: base.sha,
+    tree: [
+      ...[...written, ...inherited].map(({ path, mode, id }) => ({ path, mode, type: mode === '160000' ? 'commit' : 'blob', sha: id })),
+      ...deletions.map(path => ({ path, mode: '100644', type: 'blob', sha: null }))
+    ]
+  })
+  const commit = await request<{ sha: string, html_url: string }>(github, `${git}/commits`, { message, tree: tree.sha, parents })
+  return { sha: commit.sha, url: commit.html_url }
 }
 
 /**
- * Commit what changed in a checkout (`checkout.ts`) to a `nuxi/*` branch in one commit: files of
- * any kind, added, modified or deleted. A new branch starts at `base`. An existing one must point
- * to `base`: the changes are whole files, so on any other commit they would undo what it holds.
+ * Commit what was staged in a clone (`clone.ts`) to `branch`, in one commit. A new branch starts
+ * at the commit the clone is at. An existing one must point to it: the changes are whole files, so
+ * on any other commit they would undo what it holds.
  */
-export async function commitChanges({ branch, message, base, additions, deletions, ...github }: ChangesInput) {
-  assertNuxiBranch(branch)
-  if (!additions.length && !deletions.length) throw new Error('No changes to commit.')
-  const stray = [...additions.map(file => file.path), ...deletions].find(path => !isTrackedPath(path))
+export async function commitChanges({ token, fetchImpl, repository, ...commit }: Github & Commit) {
+  const github = { token, fetchImpl, repository }
+  const { branch, parents: [base, merged], files, deletions } = commit
+  if (!files.length && !deletions.length && !commit.inherited.length) throw new Error('No changes to commit.')
+  const stray = [...files, ...commit.inherited].map(file => file.path).concat(deletions).find(path => !isTrackedPath(path))
   if (stray !== undefined) throw new Error(`"${stray}" is not a path in the repository.`)
+  await assertCommitBranch(github, branch)
 
   const head = await headOf(github, branch)
   if (head && head !== base) {
-    throw new Error(`\`${branch}\` is at ${head.slice(0, 8)}, and the checkout is based on ${base.slice(0, 8)}. Check out \`${branch}\` with \`fresh: true\` and make the change there, or commit to a new branch.`)
+    throw new Error(`\`${branch}\` is at ${head.slice(0, 8)} on GitHub, and the clone is at ${base.slice(0, 8)}. Nothing was committed. Stash your changes, fetch \`${branch}\` and check it out, apply them there, then commit again.`)
   }
-  if (!head) await createBranch(github, branch, base)
+  const refs = `${API}/repos/${repository}/git/refs`
+  // GitHub answers 422 for a commit it doesn't have: one made in the sandbox with `git commit`.
+  const unknownCommit = (error: unknown) => {
+    if (!(error instanceof GithubRequestError && error.status === 422)) throw error
+    throw new Error(`${error.message}. Nothing was committed. GitHub must have the commit the clone is at, ${base.slice(0, 8)}: undo a commit made in the sandbox with \`git reset --soft\`, then call this again.`)
+  }
 
-  const commit = await commitOnBranch(github, { branch, head: base, message, additions, deletions })
-  return { repository: github.repository, branch, createdBranch: !head, ...commit, paths: additions.map(file => file.path), deleted: [...deletions] }
+  let created: { sha: string, url: string }
+  if (merged) {
+    created = await mergeCommit(github, commit).catch(unknownCommit)
+    // Not forced: GitHub refuses to move a branch that someone moved since.
+    await (head ? request(github, `${refs}/heads/${branch}`, { sha: created.sha, force: false }, 'PATCH') : request(github, refs, { ref: `refs/heads/${branch}`, sha: created.sha }))
+  } else {
+    if (!head) await request(github, refs, { ref: `refs/heads/${branch}`, sha: base }).catch(unknownCommit)
+    created = await commitOnBranch(github, commit)
+  }
+  return { repository, branch, createdBranch: !head, commitSha: created.sha, commitUrl: created.url, paths: files.map(file => file.path), deleted: [...deletions] }
 }

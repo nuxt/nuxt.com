@@ -94,7 +94,7 @@ for (const subnet of [...PRIVATE_SUBNETS, '0.0.0.0/8']) {
 const LOCAL_NAME = /\.(?:localhost|local|internal)$/
 
 /**
- * The sandbox itself, where a dev server the coder started from a checkout answers. Whatever
+ * The sandbox itself, where a dev server the coder started from a clone answers. Whatever
  * listens there runs in the sandbox, which holds no credentials.
  */
 function isLoopback(host: string): boolean {

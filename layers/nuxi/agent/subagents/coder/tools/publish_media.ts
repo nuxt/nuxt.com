@@ -11,7 +11,7 @@ export default defineTool({
     'Use it for evidence: paste the `markdown` into the body of a pull request, an issue or a comment of that repository. For an image it is `![alt](url)`. For a clip it is the URL, which renders as a video player when it stands alone on a line with a blank line before and after.',
     'GitHub is checked to serve the URL before it is returned. The URL opens for everyone only once a pull request, an issue or a comment of the repository embeds it. Until then, a person who opens it can get a 404.',
     'An attachment can\'t be deleted, so publish captures of public pages only, and only the ones you will use.',
-    'Not for images the site serves: those are committed to the branch with `commit_assets`.'
+    'Not for images the site serves: copy those into the clone and commit them with `commit_changes`.'
   ].join(' '),
   inputSchema: z.object({
     repository: repositoryInput('Repository whose pull request, issue or comment will embed the capture, as `owner/name`'),
