@@ -121,9 +121,12 @@ export interface UserSession {
 /** Routes built with `nuxt/server` and h3 routes both read the session. */
 type SessionEvent = RequestEvent | H3Event
 
-/** The request headers: a `nuxt/server` event carries the web request, an h3 event its own `headers`. */
+/**
+ * The request headers. On Nuxt 4 a `nuxt/server` event is a Proxy over the h3 event: only `req`, `res`
+ * and `url` are its own, so `headers` is h3's for both kinds. With Nitro v3 this becomes `event.req.headers`.
+ */
 function requestHeaders(event: SessionEvent): Headers {
-  return event.req instanceof Request ? event.req.headers : (event as H3Event).headers
+  return (event as H3Event).headers
 }
 
 /** The signed-in user of the request, read from Better Auth's session cookie. */
