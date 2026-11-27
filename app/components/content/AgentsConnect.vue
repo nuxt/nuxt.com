@@ -16,7 +16,7 @@ defineSlots<{ default?: () => unknown, aside?: () => unknown, below?: () => unkn
         <slot name="aside" />
       </div>
     </div>
-    <div class="grid lg:grid-cols-2 gap-4 *:my-0">
+    <div class="flex flex-col gap-4 *:my-0">
       <slot name="below" />
     </div>
   </div>
