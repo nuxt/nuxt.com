@@ -5,7 +5,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { captureScreenshot, captureUrlError, hideElementsExpression, parseCookie, recordVideo, removeElementsExpression, stepCommand } from '../../layers/nuxi/agent/lib/media/capture'
 import { mediaTypeFromPath, sniffMediaType } from '../../layers/nuxi/agent/lib/media/media-type'
 import { publishMedia } from '../../layers/nuxi/agent/lib/media/publish'
-import { commitAssets, MAX_COMMIT_BYTES, openPullRequestOf } from '../../layers/nuxi/agent/lib/github-files'
+import { commitAssets, commitChanges, MAX_COMMIT_BYTES, openPullRequestOf } from '../../layers/nuxi/agent/lib/github-files'
 import { handoffStore, localStore, MAX_SHARED_BYTES, receiveAttachments, shareAttachments, type HandoffStore } from '../../layers/nuxi/agent/lib/handoff'
 
 const ascii = (text: string) => [...text].map(char => char.charCodeAt(0))
@@ -40,20 +40,25 @@ describe('captureUrlError', () => {
     expect(captureUrlError('https://internal.example.com/')).toBeNull()
   })
 
+  it('accepts a server running in the sandbox itself', () => {
+    expect(captureUrlError('http://localhost:3000/docs')).toBeNull()
+    expect(captureUrlError('http://localhost./')).toBeNull()
+    expect(captureUrlError('http://127.0.0.1:5173/')).toBeNull()
+    expect(captureUrlError('http://[::1]:3000/')).toBeNull()
+  })
+
   it.each([
     'triathlon.org',
     'about:blank',
     'file:///etc/passwd',
     'javascript:alert(1)',
     'https://user:pass@example.com/',
-    'http://localhost:3000/',
-    'http://localhost./',
     'http://app.localhost/',
     'http://db.internal/',
-    'http://127.0.0.1/',
-    // The URL parser normalises these to 127.0.0.1.
-    'http://2130706433/',
-    'http://0x7f.1/',
+    'http://0.0.0.0:3000/',
+    // The URL parser normalises these to 10.0.0.1.
+    'http://167772161/',
+    'http://0xa.1/',
     'http://10.1.2.3/',
     'http://172.16.0.1/',
     'http://172.31.255.255/',
@@ -67,7 +72,8 @@ describe('captureUrlError', () => {
     'http://192.0.0.8/',
     'http://224.0.0.1/',
     'http://255.255.255.255/',
-    'http://[::1]/'
+    'http://[fd00::1]/',
+    'http://[::ffff:10.0.0.1]/'
   ])('rejects %s', (url) => {
     expect(captureUrlError(url)).toEqual(expect.any(String))
   })
@@ -155,7 +161,7 @@ describe('recordVideo', () => {
   })
 
   it('keeps nothing of a recording whose step leaves the public page', async () => {
-    const urls = ['https://nuxt.com/', 'http://127.0.0.1:3000/admin']
+    const urls = ['https://nuxt.com/', 'http://10.0.0.1:3000/admin']
     const commands: string[] = []
     const sandbox = {
       // What the agent-browser CLI prints with `--json`.
@@ -166,7 +172,7 @@ describe('recordVideo', () => {
       readBinaryFile: async () => null
     }
 
-    await expect(recordVideo(sandbox, { name: 'menu', steps: [{ action: 'click', selector: '#admin' }] })).rejects.toThrow('"127.0.0.1" is a local or private address')
+    await expect(recordVideo(sandbox, { name: 'menu', steps: [{ action: 'click', selector: '#admin' }] })).rejects.toThrow('"10.0.0.1" is a local or private address')
     expect(commands.some(command => command.includes('record stop'))).toBe(true)
     expect(commands.at(-1)).toContain('rm -f /workspace/captures/menu.webm')
     expect(commands.some(command => command.includes('ffmpeg'))).toBe(false)
@@ -402,6 +408,78 @@ describe('commitAssets', () => {
     const { fetchImpl, requests } = fakeGithub({})
 
     await expect(commitAssets({ ...input, ...override, fetchImpl })).rejects.toThrow()
+    expect(requests).toEqual([])
+  })
+})
+
+describe('commitChanges', () => {
+  const API = 'https://api.github.com'
+  const REFS = `${API}/repos/nuxt/ui/git`
+  const commit = { oid: 'c0ffee', url: 'https://github.com/nuxt/ui/commit/c0ffee' }
+  const committed = { [`POST ${API}/graphql`]: { data: { createCommitOnBranch: { commit } } } }
+  const input = {
+    repository: 'nuxt/ui',
+    token: 'token',
+    branch: 'nuxi/header',
+    message: 'fix(header): keep the menu inside the viewport',
+    base: 'base-sha',
+    additions: [{ path: 'app/pages/[slug].vue', bytes: TEXT }, { path: 'public/logo.png', bytes: PNG }],
+    deletions: ['app/pages/old.vue']
+  }
+
+  it('starts a new branch at the commit the changes were made on', async () => {
+    const { fetchImpl, requests } = fakeGithub({ ...committed, [`POST ${REFS}/refs`]: {} })
+
+    expect(await commitChanges({ ...input, fetchImpl })).toEqual({
+      repository: 'nuxt/ui',
+      branch: 'nuxi/header',
+      createdBranch: true,
+      commitSha: 'c0ffee',
+      commitUrl: commit.url,
+      paths: ['app/pages/[slug].vue', 'public/logo.png'],
+      deleted: ['app/pages/old.vue']
+    })
+    expect(requests.map(request => request.call)).toEqual([`GET ${REFS}/ref/heads/nuxi/header`, `POST ${REFS}/refs`, `POST ${API}/graphql`])
+    expect(JSON.parse(String(requests[1]!.body))).toEqual({ ref: 'refs/heads/nuxi/header', sha: 'base-sha' })
+    expect(JSON.parse(String(requests[2]!.body)).variables.input).toEqual({
+      branch: { repositoryNameWithOwner: 'nuxt/ui', branchName: 'nuxi/header' },
+      expectedHeadOid: 'base-sha',
+      message: { headline: 'fix(header): keep the menu inside the viewport' },
+      fileChanges: {
+        additions: [
+          { path: 'app/pages/[slug].vue', contents: Buffer.from(TEXT).toString('base64') },
+          { path: 'public/logo.png', contents: Buffer.from(PNG).toString('base64') }
+        ],
+        deletions: [{ path: 'app/pages/old.vue' }]
+      }
+    })
+  })
+
+  it('adds to a branch that points to that commit', async () => {
+    const { fetchImpl, requests } = fakeGithub({ ...committed, [`GET ${REFS}/ref/heads/nuxi/header`]: { object: { sha: 'base-sha' } } })
+
+    expect(await commitChanges({ ...input, deletions: [], fetchImpl })).toMatchObject({ createdBranch: false, deleted: [] })
+    expect(requests.map(request => request.call)).toEqual([`GET ${REFS}/ref/heads/nuxi/header`, `POST ${API}/graphql`])
+    expect(JSON.parse(String(requests[1]!.body)).variables.input.fileChanges).not.toHaveProperty('deletions')
+  })
+
+  it('commits nothing to a branch that moved on, where whole files would undo its commits', async () => {
+    const { fetchImpl, requests } = fakeGithub({ ...committed, [`GET ${REFS}/ref/heads/nuxi/header`]: { object: { sha: 'other-sha' } } })
+
+    await expect(commitChanges({ ...input, fetchImpl })).rejects.toThrow('`nuxi/header` is at other-sh, and the checkout is based on base-sha')
+    expect(requests.map(request => request.call)).toEqual([`GET ${REFS}/ref/heads/nuxi/header`])
+  })
+
+  it.each([
+    ['the default branch', { branch: 'main' }],
+    ['no change', { additions: [], deletions: [] }],
+    ['a file of the git directory', { additions: [{ path: '.git/config', bytes: TEXT }] }],
+    ['a path that climbs out of the repository', { deletions: ['../other/file'] }],
+    ['an absolute path', { additions: [{ path: '/etc/passwd', bytes: TEXT }] }]
+  ])('sends nothing to GitHub for %s', async (_, override) => {
+    const { fetchImpl, requests } = fakeGithub({})
+
+    await expect(commitChanges({ ...input, ...override, fetchImpl })).rejects.toThrow()
     expect(requests).toEqual([])
   })
 })

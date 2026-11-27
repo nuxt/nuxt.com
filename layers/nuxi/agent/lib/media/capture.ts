@@ -36,7 +36,7 @@ const selectors = z.array(z.string().min(1).max(200)).max(20).optional()
 /** What both capture tools take: the page, and what to take out of the frame. */
 const page = {
   name: z.string().regex(/^[a-z0-9][a-z0-9-]{0,62}$/, 'Lowercase letters, digits and hyphens only').describe('File name without extension, such as `world-triathlon`. A capture with the same name is replaced.'),
-  url: z.string().optional().describe('Public http(s) URL to open. Omit to use the page the `browser__*` tools left open, in the state they left it.'),
+  url: z.string().optional().describe('URL to open: a public http(s) page, or `http://localhost:<port>/…` for a server you started in the sandbox. Omit to use the page the `browser__*` tools left open, in the state they left it.'),
   viewport: z.enum(['desktop', 'tablet', 'mobile']).optional().describe('desktop 1280x720 (default), tablet 768x1024 or mobile 390x844'),
   colorScheme: z.enum(['light', 'dark']).optional().describe('Emulated `prefers-color-scheme`. Omit for the browser\'s default, which is light.'),
   cookies: z.array(z.string().min(3).max(2000)).max(10).optional().describe('Cookies set before the page opens, as `name=value`, such as a consent cookie. Needs `url`.'),
@@ -86,17 +86,26 @@ export interface MediaSandbox {
 export const PRIVATE_SUBNETS = ['10.0.0.0/8', '100.64.0.0/10', '169.254.0.0/16', '172.16.0.0/12', '192.0.0.0/24', '192.168.0.0/16', '198.18.0.0/15', '224.0.0.0/3']
 
 const privateAddresses = new BlockList()
-// 0/8 and loopback never leave the sandbox, so only the URL check knows them.
-for (const subnet of [...PRIVATE_SUBNETS, '0.0.0.0/8', '127.0.0.0/8']) {
+// 0/8 never leaves the sandbox, so only the URL check knows it.
+for (const subnet of [...PRIVATE_SUBNETS, '0.0.0.0/8']) {
   const [network = '', prefix] = subnet.split('/')
   privateAddresses.addSubnet(network, Number(prefix))
 }
-const LOCAL_NAME = /^(?:localhost|.*\.(?:localhost|local|internal))$/
+const LOCAL_NAME = /\.(?:localhost|local|internal)$/
 
 /**
- * Why `raw` can't be captured, or null: public http(s) pages only. It reads the URL and resolves
- * nothing, so it stops a mistake with a clear message. A hostname that points to a private address,
- * a redirect to one and the `browser__*` tools are the firewall's to refuse.
+ * The sandbox itself, where a dev server the coder started from a checkout answers. Whatever
+ * listens there runs in the sandbox, which holds no credentials.
+ */
+function isLoopback(host: string): boolean {
+  return host === 'localhost' || host === '[::1]' || (isIPv4(host) && host.startsWith('127.'))
+}
+
+/**
+ * Why `raw` can't be captured, or null: public http(s) pages and the sandbox's own loopback only.
+ * It reads the URL and resolves nothing, so it stops a mistake with a clear message. A hostname
+ * that points to a private address, a redirect to one and the `browser__*` tools are the
+ * firewall's to refuse.
  */
 export function captureUrlError(raw: string): string | null {
   let url: URL
@@ -109,7 +118,8 @@ export function captureUrlError(raw: string): string | null {
   if (url.username || url.password) return 'URLs with credentials are not captured.'
   // `localhost.` resolves like `localhost`.
   const host = url.hostname.toLowerCase().replace(/\.$/, '')
-  // An IPv6 literal is refused whatever it is. `URL` writes every IPv4 form as dotted decimal.
+  if (isLoopback(host)) return null
+  // Any other IPv6 literal is refused whatever it is. `URL` writes every IPv4 form as dotted decimal.
   if (host.startsWith('[') || LOCAL_NAME.test(host) || (isIPv4(host) && privateAddresses.check(host))) return `"${host}" is a local or private address.`
   return null
 }
@@ -202,7 +212,7 @@ async function preparePage(run: Runner, request: PageRequest, scale: 1 | 2) {
   return viewport
 }
 
-/** The URL of the page the browser shows, refused when it isn't public: the `browser__*` tools, a redirect or a click may have led anywhere. */
+/** The URL of the page the browser shows, refused when it is neither public nor the sandbox's own: the `browser__*` tools, a redirect or a click may have led anywhere. */
 async function shownUrl(run: Runner) {
   const url = (await run.browser<{ url?: string }>('get', 'url'))?.url ?? ''
   const reason = captureUrlError(url)
@@ -287,7 +297,7 @@ async function recording(sandbox: MediaSandbox, request: z.infer<typeof recordin
       await shownUrl(run)
     }
   } catch (error) {
-    // Nothing recorded so far is kept: it may show a page that isn't public.
+    // Nothing recorded so far is kept: it may show a page that must not be captured.
     await stop().catch(() => {})
     await runner(sandbox).shell(`rm -f ${quote(`${base}.webm`)}`).catch(() => {})
     throw error

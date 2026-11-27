@@ -53,11 +53,12 @@ const [DEFAULT_OWNER, DEFAULT_REPO] = GITHUB_REPOSITORIES[0].split('/')
 
 /**
  * The coder's tools that commit to a branch, with the repository each one commits to, read from
- * the inputs that tool reads and with its defaults. Both name the branch `branch`.
+ * the inputs that tool reads and with its defaults. All name the branch `branch`.
  */
 const COMMIT_TOOLS = new Map<string, (input: Readonly<Record<string, unknown>>) => unknown>([
   ['github__editFiles', ({ owner = DEFAULT_OWNER, repo = DEFAULT_REPO }) => typeof owner === 'string' && typeof repo === 'string' ? `${owner}/${repo}` : undefined],
-  ['commit_assets', ({ repository = GITHUB_REPOSITORIES[0] }) => repository]
+  ['commit_assets', ({ repository = GITHUB_REPOSITORIES[0] }) => repository],
+  ['commit_changes', ({ repository = GITHUB_REPOSITORIES[0] }) => repository]
 ])
 
 /**

@@ -5,10 +5,11 @@ import { BROWSER_LAUNCH_ARGS, PRIVATE_SUBNETS } from '../../lib/media/capture.js
 type PrepareSandbox = NonNullable<NonNullable<Parameters<typeof DefaultSandbox.environment>[0]>['prepare']>
 
 /**
- * Chromium, agent-browser and ffmpeg, installed once per template: every coder session starts with
- * a browser that can screenshot and record. It holds no checkout and no credentials. Code still
- * changes through the GitHub API, and the tools that publish or commit a capture run in the app
- * runtime and read the file out of the sandbox.
+ * Chromium, agent-browser, ffmpeg and what a JavaScript project needs to install and run, installed
+ * once per template: every coder session starts with a browser that can screenshot and record, and
+ * can clone a repository and start its dev server (`lib/checkout.ts`). It holds no credentials.
+ * Code still reaches GitHub through its API only: the tools that commit or publish run in the app
+ * runtime and read the files out of the sandbox.
  */
 const prepare: PrepareSandbox = async (sandbox) => {
   // just-bash (`eve dev` without Docker) runs no native binaries: leave it empty, and the capture
@@ -33,17 +34,25 @@ const prepare: PrepareSandbox = async (sandbox) => {
   const configured = await sandbox.run({ command: `mkdir -p "$HOME/.agent-browser" && printf '%s' ${config} > "$HOME/.agent-browser/config.json"` })
   if (configured.exitCode !== 0) throw new Error(`Could not write the agent-browser config: ${configured.stderr || configured.stdout}`)
 
-  const ffmpeg = await sandbox.run({ command: 'sudo apt-get install -y --no-install-recommends ffmpeg' })
-  if (ffmpeg.exitCode !== 0) throw new Error(`Could not install ffmpeg: ${ffmpeg.stderr || ffmpeg.stdout}`)
+  // `build-essential` is for a dependency that compiles a native module when it has no prebuilt binary.
+  const packages = await sandbox.run({ command: 'sudo apt-get install -y --no-install-recommends ffmpeg build-essential' })
+  if (packages.exitCode !== 0) throw new Error(`Could not install ffmpeg and build-essential: ${packages.stderr || packages.stdout}`)
+
+  // The image has npm only. Corepack's `pnpm` and `yarn` run the version a project pins in
+  // `packageManager`, downloaded on first use, so no project's choice is baked in here.
+  const packageManagers = await sandbox.run({ command: 'npm install -g corepack bun && corepack enable' })
+  if (packageManagers.exitCode !== 0) throw new Error(`Could not install the package managers: ${packageManagers.stderr || packageManagers.stdout}`)
 }
 
 export const environment = DefaultSandbox.environment({
   prepare,
   vercel: {
-    // Chromium, a recording and an ffmpeg encode at once.
+    // Chromium, a recording and an ffmpeg encode at once, or Chromium next to a project's dev
+    // server. Memory follows at 2 GB per vCPU.
     resources: { vcpus: 4 },
-    // The browser opens any public page and nothing else: the firewall resets a connection to a
-    // private address, whatever name, redirect or tool led to it. Docker has no such rule.
+    // The browser and the project's code reach the public internet and the sandbox itself, and
+    // nothing else: the firewall resets a connection to a private address, whatever name, redirect
+    // or tool led to it. Docker has no such rule.
     networkPolicy: { allow: ['*'], subnets: { deny: PRIVATE_SUBNETS } }
   },
   // Don't add `just-bash` to the app's dependencies for a sandbox that can't run a browser anyway.
