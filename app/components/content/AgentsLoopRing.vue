@@ -57,7 +57,14 @@ const pill = 'inline-flex items-center gap-2 h-9 px-3 rounded-full border border
         <circle cx="200" cy="200" r="108" class="fill-(--ui-bg-elevated)/50 stroke-(--ui-border)" />
       </svg>
 
-      <span v-for="(step, index) in steps" :key="step.label" aria-hidden="true" class="absolute max-md:hidden" :class="[pill, step.position, { 'agents-loop-step': motion }]" :style="{ animationDelay: delay(index) }">
+      <span
+        v-for="(step, index) in steps"
+        :key="step.label"
+        aria-hidden="true"
+        class="absolute max-md:hidden"
+        :class="[pill, step.position, { 'agents-loop-step': motion }]"
+        :style="{ animationDelay: delay(index) }"
+      >
         <span class="font-mono text-[11px]/none font-medium text-primary">{{ agentsSectionNumber(index) }}</span>
         {{ step.label }}
       </span>
@@ -81,7 +88,8 @@ const pill = 'inline-flex items-center gap-2 h-9 px-3 rounded-full border border
         :key="step.label"
         :class="{ 'agents-loop-step': motion }"
         :style="{ animationDelay: delay(index) }"
-        class="flex items-center gap-2 min-h-11 px-3 rounded-[10px] border border-default bg-elevated text-[13px] font-medium text-highlighted">
+        class="flex items-center gap-2 min-h-11 px-3 rounded-[10px] border border-default bg-elevated text-[13px] font-medium text-highlighted"
+      >
         <span class="font-mono text-[11px]/none font-medium text-primary">{{ agentsSectionNumber(index) }}</span>
         {{ step.label }}
       </li>
