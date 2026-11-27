@@ -1,13 +1,13 @@
 import { Sandbox } from '@vercel/sandbox'
-import type { H3Event } from 'h3'
+import type { RequestEvent } from 'nuxt/server'
 import { and, desc, eq, lt, sql } from 'drizzle-orm'
 import type { PreviewEvent, PreviewStep, Template } from '#shared/types'
 import { TEMPLATE_WORKDIR } from './check-scripts'
 import { DEV_PORT } from './dev-server'
 import { SERVE_SCRIPT_PATH } from './static-server'
 
-declare module 'nitropack/types' {
-  interface NitroRuntimeHooks {
+declare module 'nuxt/schema' {
+  interface NuxtServerHooks {
     /** Runs once a live preview serves, while its stream is still open: a Nitro plugin can keep working on the sandbox and `send` more events. */
     'templates:preview': (context: { template: Template, owner: string, sandbox: Sandbox, send: (event: PreviewEvent) => void }) => Promise<void> | void
   }
@@ -124,7 +124,7 @@ export async function startPreview(template: Template, owner: string, timeoutMs:
  * How long a visitor's preview runs at first, and at most with extensions: longer for an admin signed in on nuxt.com.
  * A failed admin check (GitHub down) only costs the admin the longer limits, never the preview.
  */
-export async function getPreviewLimits(event: H3Event) {
+export async function getPreviewLimits(event: RequestEvent) {
   const { user } = await getUserSession(event)
   const admin = user?.role === 'admin' && await isAuthorizedAdmin(user.username).catch(() => false)
   return admin

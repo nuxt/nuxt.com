@@ -1,5 +1,5 @@
 import { createStorage } from 'unstorage'
-import type { H3Event } from 'h3'
+import { getRouterParam, type RequestEvent } from 'nuxt/server'
 import type { ComarkContent, NavigationItem } from 'comark-content'
 import type { PullPreviewSummary } from '#shared/types'
 import { cliDocsPathPrefix, hasCliDocs } from '#shared/utils/cli'
@@ -263,7 +263,7 @@ export function getInstanceForPull(preview: PullPreview, key: ContentInstanceKey
 }
 
 /** The `:repo` and `:number` route params, validated. */
-export function pullTargetFromEvent(event: H3Event): PullTarget {
+export function pullTargetFromEvent(event: RequestEvent): PullTarget {
   const target = parsePullTarget(getRouterParam(event, 'repo'), getRouterParam(event, 'number'))
   if (!target) {
     throw createError({ status: 404, statusText: 'Unknown pull request' })

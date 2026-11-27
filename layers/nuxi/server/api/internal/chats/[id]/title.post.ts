@@ -1,11 +1,12 @@
 import { and, eq } from 'drizzle-orm'
 import { z } from 'zod'
 import type { UIMessage } from 'ai'
+import { defineHandler, readValidatedBody } from 'nuxt/server'
 
-export default defineEventHandler(async (event) => {
+export default defineHandler(async (event) => {
   requireInternalRequest(event)
 
-  const { id } = await getValidatedRouterParams(event, z.object({
+  const { id } = await getValidatedParams(event, z.object({
     id: z.uuid()
   }).parse)
 

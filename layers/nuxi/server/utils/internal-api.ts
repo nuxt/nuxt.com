@@ -1,5 +1,5 @@
 import { timingSafeEqual } from 'node:crypto'
-import type { H3Event } from 'h3'
+import { createError, getRequestHeader, type RequestEvent } from 'nuxt/server'
 
 function safeBearerMatch(provided: string, expected: string): boolean {
   const a = Buffer.from(provided)
@@ -8,21 +8,21 @@ function safeBearerMatch(provided: string, expected: string): boolean {
   return timingSafeEqual(a, b)
 }
 
-export function requireInternalRequest(event: H3Event) {
+export function requireInternalRequest(event: RequestEvent) {
   const secret = process.env.INTERNAL_API_SECRET?.trim()
 
   if (!secret) {
     throw createError({
-      statusCode: 503,
-      statusMessage: 'Internal API is not configured'
+      status: 503,
+      statusText: 'Internal API is not configured'
     })
   }
 
   const authorization = getRequestHeader(event, 'authorization') ?? ''
   if (!safeBearerMatch(authorization, `Bearer ${secret}`)) {
     throw createError({
-      statusCode: 401,
-      statusMessage: 'Unauthorized'
+      status: 401,
+      statusText: 'Unauthorized'
     })
   }
 }

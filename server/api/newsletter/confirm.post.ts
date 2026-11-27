@@ -1,17 +1,18 @@
 import { Resend } from 'resend'
 import { z } from 'zod'
+import { createError, defineHandler, readValidatedBody } from 'nuxt/server'
 
-export default eventHandler(async (event) => {
+export default defineHandler(async (event) => {
   const { email, confirmation } = await readValidatedBody(event, z.object({
     email: z.string().email().trim(),
     confirmation: z.string()
   }).parse)
 
-  const { apiKey, audienceId, secret } = useNewsletterConfig(event)
+  const { apiKey, audienceId, secret } = useNewsletterConfig()
 
   if (generateConfirmation(secret, email) !== confirmation) {
     throw createError({
-      statusCode: 400,
+      status: 400,
       message: 'Confirmation code is invalid.'
     })
   }
@@ -25,7 +26,7 @@ export default eventHandler(async (event) => {
 
   if (error) {
     throw createError({
-      statusCode: 400,
+      status: 400,
       message: error.message || 'Failed to subscribe. Please try again.'
     })
   }

@@ -1,15 +1,10 @@
-import { createError } from 'h3'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import type { ContentInstanceKey } from '../../shared/utils/content'
 import { instanceKeyFromSegments } from '../../server/utils/content/instances'
+import { requestEvent } from '../utils/request-event'
 
 const PR_SHA = 'a'.repeat(40)
 const HEAD_SHA = 'b'.repeat(40)
-
-interface FakeEvent {
-  params: Record<string, string>
-  url?: string
-}
 
 /** The preview both routes resolve: `nuxt/nuxt#1`, targeting the 5.x docs. */
 const preview = {
@@ -31,18 +26,13 @@ const instanceFor = (key: ContentInstanceKey) => ({
 })
 
 /** The routes reach for these through Nitro's auto-imports. */
-vi.stubGlobal('defineEventHandler', <T>(handler: T) => handler)
-vi.stubGlobal('createError', createError)
-vi.stubGlobal('getRouterParam', (event: FakeEvent, name: string) => event.params[name])
-vi.stubGlobal('toWebRequest', (event: FakeEvent) => new Request(`http://localhost${event.url}`))
 vi.stubGlobal('pullTargetFromEvent', () => preview.target)
 vi.stubGlobal('resolvePullPreview', async () => preview)
 vi.stubGlobal('instanceKeyFromSegments', instanceKeyFromSegments)
 vi.stubGlobal('getInstanceAtPull', async (key: ContentInstanceKey) => instanceFor(key))
 
-type Handler = (event: FakeEvent) => Promise<unknown>
-const headRoute = (await import('../../server/api/content/pull/[repo]/[number]/head.get')).default as unknown as Handler
-const blobRoute = (await import('../../server/api/content/pull/[repo]/[number]/blob/[sha]/[...path].get')).default as unknown as Handler
+const headRoute = (await import('../../server/api/content/pull/[repo]/[number]/head.get')).default
+const blobRoute = (await import('../../server/api/content/pull/[repo]/[number]/blob/[sha]/[...path].get')).default
 
 beforeEach(() => {
   handled.length = 0
@@ -50,15 +40,14 @@ beforeEach(() => {
 
 describe('GET /api/content/pull/:repo/:number/head', () => {
   it('names the instance the PR replaces and its commit', async () => {
-    expect(await headRoute({ params: {} })).toEqual({ instanceKey: 'docs:5.x', sha: PR_SHA })
+    expect(await headRoute(requestEvent('/api/content/pull/nuxt/1/head'))).toEqual({ instanceKey: 'docs:5.x', sha: PR_SHA })
   })
 })
 
 describe('GET /api/content/pull/:repo/:number/blob/:sha/...', () => {
-  const blob = (sha: string, path: string) => blobRoute({
-    params: { sha, path },
-    url: `/api/content/pull/nuxt/1/blob/${sha}/${path}`
-  })
+  const blob = (sha: string, path: string) => blobRoute(requestEvent(`/api/content/pull/nuxt/1/blob/${sha}/${path}`, {
+    params: { sha, path }
+  }))
 
   it('serves a targeted instance at the PR\'s commit, under the instance\'s own base path', async () => {
     await blob(PR_SHA, 'docs/5.x/manifest.json')

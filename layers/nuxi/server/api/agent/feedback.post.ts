@@ -1,6 +1,7 @@
 import { createError } from 'evlog'
 import { z } from 'zod'
 import { asc, eq } from 'drizzle-orm'
+import { defineHandler, readValidatedBody, useRuntimeConfig } from 'nuxt/server'
 
 const LINEAR_API = 'https://api.linear.app/graphql'
 const MAX_TRANSCRIPT_CHARS = 3000
@@ -63,11 +64,11 @@ function buildIssueBody(params: {
   return sections.join('\n\n---\n\n')
 }
 
-export default defineEventHandler(async (event) => {
+export default defineHandler(async (event) => {
   const { chatId, title, summary, userFeedback } = await readValidatedBody(event, bodySchema.parse)
 
   const { user } = await requireUserSession(event)
-  const log = useLogger(event)
+  const log = useRequestLogger(event)
 
   const [chat] = await db
     .select({
@@ -88,7 +89,7 @@ export default defineEventHandler(async (event) => {
     feedback: { chatId, title, hasUserFeedback: !!userFeedback }
   })
 
-  const { apiKey, teamId, projectId } = useRuntimeConfig(event).linear
+  const { apiKey, teamId, projectId } = useRuntimeConfig().linear
   if (!apiKey || !teamId || !projectId) {
     throw createError({ message: 'Linear integration not configured', status: 503, why: 'The NUXT_LINEAR_API_KEY, NUXT_LINEAR_TEAM_ID, or NUXT_LINEAR_PROJECT_ID environment variables are missing.' })
   }

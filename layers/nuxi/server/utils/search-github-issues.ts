@@ -1,5 +1,3 @@
-import type { H3Event } from 'h3'
-
 const NUXT_ORGS = ['nuxt', 'nuxt-modules', 'nuxt-content']
 
 interface GitHubSearchResult {
@@ -18,11 +16,10 @@ interface GitHubSearchResult {
 }
 
 export async function searchGitHubIssues(
-  event: H3Event,
   input: { query: string, repo?: string, state?: 'open' | 'closed' | 'all' }
 ) {
   const { query, repo, state = 'all' } = input
-  const token = useRuntimeConfig(event).github.token
+  const token = useRuntimeConfig().github.token
 
   let q = query
   if (repo) {

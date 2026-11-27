@@ -3,15 +3,16 @@ import { checkBotId } from 'botid/server'
 import { waitUntil } from '@vercel/functions'
 import type { Sandbox } from '@vercel/sandbox'
 import type { PreviewEvent, Template } from '#shared/types'
+import { createError, defineHandler, isNuxtError, readValidatedBody, useServerHooks } from 'nuxt/server'
 
 /**
  * Boots a live preview of a template in a Vercel Sandbox, for every visitor. Each preview runs a VM: BotID keeps bots out.
  * Streams NDJSON `PreviewEvent`s so the page can show each stage as it happens.
  */
-export default defineEventHandler(async (event) => {
+export default defineHandler(async (event) => {
   const verification = await checkBotId()
   if (verification.isBot) {
-    throw createError({ statusCode: 403, statusMessage: 'Forbidden' })
+    throw createError({ status: 403, statusText: 'Forbidden' })
   }
   const owner = await ensureRateLimitPrincipalId(event)
   const { timeoutMs } = await getPreviewLimits(event)
@@ -19,10 +20,11 @@ export default defineEventHandler(async (event) => {
   const { slug } = await readValidatedBody(event, z.object({ slug: z.string().regex(/^[a-z0-9-]+$/) }).parse)
   const template = (await listByDir<Template>('/templates')).find(template => template.slug === slug)
   if (!template || !canLivePreview(template)) {
-    throw createError({ statusCode: 400, message: 'This template has no live preview.' })
+    throw createError({ status: 400, message: 'This template has no live preview.' })
   }
 
-  setResponseHeaders(event, { 'content-type': 'application/x-ndjson', 'cache-control': 'no-store' })
+  event.res.headers.set('content-type', 'application/x-ndjson')
+  event.res.headers.set('cache-control', 'no-store')
   const encoder = new TextEncoder()
   // A visitor who leaves before the stream ends never gets the preview: its sandbox stops instead of running until it times out.
   let left = false
@@ -35,9 +37,8 @@ export default defineEventHandler(async (event) => {
     left = true
     if (started) stop(started)
   }
-  event.node.res.once('close', () => {
-    if (!event.node.res.writableFinished) leave()
-  })
+  // Aborts when the visitor disconnects before the response is finished.
+  event.req.signal.addEventListener('abort', leave, { once: true })
 
   return new ReadableStream({
     async start(controller) {
@@ -53,11 +54,11 @@ export default defineEventHandler(async (event) => {
         // Bundling for `nuxt dev` takes over half a minute on large apps (Docus): starting it now, on CPU the idle preview leaves free,
         // usually has it ready before the visitor asks Nuxi for an edit. It costs CPU time only, the sandbox runs either way.
         waitUntil(startDevServer(sandbox).catch(error => console.error('[templates] dev server start failed', error)))
-        await useNitroApp().hooks.callHook('templates:preview', { template, owner, sandbox, send })
+        await useServerHooks().callHook('templates:preview', { template, owner, sandbox, send })
       } catch (error) {
         // Only errors `startPreview` raises on purpose reach visitors: upstream ones can carry request or account details.
-        if (!isError(error)) console.error('[templates] preview failed', error)
-        const message = isError(error) && error.message ? error.message : 'The preview could not start.'
+        if (!isNuxtError(error)) console.error('[templates] preview failed', error)
+        const message = isNuxtError(error) && error.message ? error.message : 'The preview could not start.'
         // `reason` is the message the visitor saw, so the dashboard groups failures by cause (busy, no snapshot, server timeout…).
         if (!left) trackTemplateEvent(event, 'Template Preview Failed', { template: template.slug, reason: message })
         send({ type: 'error', message })

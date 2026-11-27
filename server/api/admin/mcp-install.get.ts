@@ -1,16 +1,18 @@
-export default defineEventHandler(async (event) => {
+import { createError, defineHandler, getRequestURL, useRuntimeConfig } from 'nuxt/server'
+
+export default defineHandler(async (event) => {
   await requireAdminUserSession(event)
 
-  const { mcpAdminToken } = useRuntimeConfig(event)
+  const { mcpAdminToken } = useRuntimeConfig()
   if (!mcpAdminToken) {
     throw createError({
-      statusCode: 503,
-      statusMessage: 'MCP admin token is not configured (NUXT_MCP_ADMIN_TOKEN env variable).'
+      status: 503,
+      statusText: 'MCP admin token is not configured (NUXT_MCP_ADMIN_TOKEN env variable).'
     })
   }
 
   const name = 'nuxt-admin'
-  const url = `${getRequestURL(event).origin}/mcp/admin`
+  const url = `${getRequestURL(event, { xForwardedProto: true }).origin}/mcp/admin`
   const headers = { Authorization: `Bearer ${mcpAdminToken}` }
   const json = { type: 'http' as const, url, headers }
 

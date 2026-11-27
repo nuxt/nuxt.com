@@ -1,6 +1,7 @@
 import { z } from 'zod'
 import { start } from 'workflow/api'
 import { syncNuxtersWorkflow } from '../../../workflows/sync-nuxters'
+import { defineHandler, getRequestHost, getRequestProtocol, readValidatedBody, setResponseStatus } from 'nuxt/server'
 
 /**
  * Start a Nuxters import as a signed-in admin, without any secret: for the first import
@@ -10,7 +11,7 @@ import { syncNuxtersWorkflow } from '../../../workflows/sync-nuxters'
  *   await $fetch('/api/admin/nuxters/sync', { method: 'POST' })
  *   await $fetch('/api/admin/nuxters/sync', { method: 'POST', body: { force: true } })
  */
-export default defineEventHandler(async (event) => {
+export default defineHandler(async (event) => {
   const { user } = await requireAdminUserSession(event)
 
   const { sha, force } = await readValidatedBody(event, z.object({
@@ -18,7 +19,7 @@ export default defineEventHandler(async (event) => {
     force: z.boolean().optional()
   }).optional().parse) ?? {}
 
-  const baseURL = `${getRequestProtocol(event)}://${getRequestHost(event, { xForwardedHost: true })}`
+  const baseURL = `${getRequestProtocol(event, { xForwardedProto: true })}://${getRequestHost(event, { xForwardedHost: true })}`
   const run = await start(syncNuxtersWorkflow, [{ baseURL, sha, force }])
 
   console.log(`[nuxters] admin ${user.username} started workflow run ${run.runId}${force ? ' (force)' : ''}`)

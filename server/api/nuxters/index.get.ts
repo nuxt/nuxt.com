@@ -1,8 +1,9 @@
 import { z } from 'zod'
 import { isNuxtersPeriod, nuxterCountryCode } from '#shared/utils/nuxters'
+import { defineHandler, getValidatedQuery } from 'nuxt/server'
 
 /** A leaderboard, by rank: `?period=all` (default), `30d`, `12m` or a year (`2025`), and `?country=FR` for one country. */
-export default defineEventHandler(async (event) => {
+export default defineHandler(async (event) => {
   const { period, country, offset, limit } = await getValidatedQuery(event, z.object({
     period: z.string().refine(isNuxtersPeriod, 'Expected all, 30d, 12m or a year from 2016').default('all'),
     country: z.string().optional().refine(value => value === undefined || nuxterCountryCode(value) !== null, 'Expected an ISO 3166-1 alpha-2 country code').transform(nuxterCountryCode),
@@ -11,6 +12,6 @@ export default defineEventHandler(async (event) => {
   }).parse)
 
   // Data changes once a day: let the CDN absorb the "Show more" traffic.
-  setResponseHeader(event, 'cache-control', 'public, max-age=0, s-maxage=600, stale-while-revalidate=3600')
+  event.res.headers.set('cache-control', 'public, max-age=0, s-maxage=600, stale-while-revalidate=3600')
   return nuxters.list(event, { period, country, offset, limit })
 })

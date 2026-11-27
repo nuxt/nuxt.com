@@ -2,18 +2,19 @@ import { Resend } from 'resend'
 import { z } from 'zod'
 import { withQuery, withTrailingSlash } from 'ufo'
 import { checkBotId } from 'botid/server'
+import { createError, defineHandler, getRequestURL, readValidatedBody } from 'nuxt/server'
 
-export default eventHandler(async (event) => {
+export default defineHandler(async (event) => {
   const verification = await checkBotId()
   if (verification.isBot) {
-    throw createError({ statusCode: 403, statusMessage: 'Forbidden' })
+    throw createError({ status: 403, statusText: 'Forbidden' })
   }
 
   const { email } = await readValidatedBody(event, z.object({
     email: z.string().email().trim()
   }).parse)
 
-  const { apiKey, audienceId, secret } = useNewsletterConfig(event)
+  const { apiKey, audienceId, secret } = useNewsletterConfig()
 
   const resend = new Resend(apiKey)
 
@@ -22,7 +23,7 @@ export default eventHandler(async (event) => {
   if (contact && !contact.unsubscribed) {
     throw createError({
       message: 'You are already subscribed to the newsletter ❤️',
-      statusCode: 400
+      status: 400
     })
   }
 
@@ -44,7 +45,7 @@ export default eventHandler(async (event) => {
 
   if (error) {
     throw createError({
-      statusCode: 400,
+      status: 400,
       message: error.message || 'Failed to send confirmation email. Please try again.'
     })
   }

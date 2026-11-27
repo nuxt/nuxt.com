@@ -1,5 +1,6 @@
 import { and, asc, eq } from 'drizzle-orm'
 import { z } from 'zod'
+import { defineHandler } from 'nuxt/server'
 
 function messageText(parts: unknown): string {
   if (!Array.isArray(parts)) return ''
@@ -10,10 +11,10 @@ function messageText(parts: unknown): string {
     .trim()
 }
 
-export default defineEventHandler(async (event) => {
+export default defineHandler(async (event) => {
   requireInternalRequest(event)
 
-  const { id } = await getValidatedRouterParams(event, z.object({
+  const { id } = await getValidatedParams(event, z.object({
     id: z.uuid()
   }).parse)
 

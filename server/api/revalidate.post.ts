@@ -6,6 +6,7 @@ import { DOC_VERSIONS, isDocVersion } from '#shared/utils/docs'
 import { isLocalisedDocVersion, isLocalisedPage, L10N_INDEXABLE_PATH, L10N_LOCALE_CODES, l10nNavigationPath, l10nPagePath, localisePath } from '#shared/utils/l10n'
 import type { GitHubPushPayload } from '../types/github'
 import type { ContentChanges } from '../utils/content/webhook'
+import { createError, defineHandler, getRequestHeader, getRequestHost, getRequestProtocol, useRuntimeConfig } from 'nuxt/server'
 
 /**
  * Content push webhook: purge exactly the URLs a commit changed.
@@ -28,33 +29,33 @@ const MAX_LOGGED_PATHS_PER_REASON = 5
 /** Instances whose sha-pinned artifacts are served (for search indexing) */
 const isInstanceIndexedForSearch = (key: ContentInstanceKey): boolean => SEARCH_INDEXED_KEYS.has(key)
 
-export default defineEventHandler(async (event) => {
-  const secret = useRuntimeConfig(event).webhookSecret || process.env.WEBHOOK_SECRET
+export default defineHandler(async (event) => {
+  const secret = useRuntimeConfig().webhookSecret || process.env.WEBHOOK_SECRET
   const bypassToken = process.env.VERCEL_BYPASS_TOKEN
 
   if (!secret || !bypassToken) {
-    throw createError({ statusCode: 501, statusMessage: 'Revalidation webhook is not configured' })
+    throw createError({ status: 501, statusText: 'Revalidation webhook is not configured' })
   }
 
-  const signature = getHeader(event, 'x-hub-signature-256')
+  const signature = getRequestHeader(event, 'x-hub-signature-256')
   if (!signature) {
-    throw createError({ statusCode: 401, statusMessage: 'Missing signature' })
+    throw createError({ status: 401, statusText: 'Missing signature' })
   }
 
-  const raw = await readRawBody(event, 'utf8')
+  const raw = await event.req.text()
   if (!raw) {
-    throw createError({ statusCode: 400, statusMessage: 'Empty body' })
+    throw createError({ status: 400, statusText: 'Empty body' })
   }
   if (!(await verify(secret, raw, signature))) {
-    throw createError({ statusCode: 401, statusMessage: 'Invalid signature' })
+    throw createError({ status: 401, statusText: 'Invalid signature' })
   }
 
-  const requestId = getHeader(event, 'x-vercel-id') ?? getHeader(event, 'x-request-id') ?? 'local'
-  const deliveryId = getHeader(event, 'x-github-delivery')
+  const requestId = getRequestHeader(event, 'x-vercel-id') ?? getRequestHeader(event, 'x-request-id') ?? 'local'
+  const deliveryId = getRequestHeader(event, 'x-github-delivery')
   const tag = `[revalidate:${requestId}${deliveryId ? `:${deliveryId}` : ''}]`
   const timings = createTimings()
 
-  const githubEvent = getHeader(event, 'x-github-event')
+  const githubEvent = getRequestHeader(event, 'x-github-event')
   if (githubEvent !== 'push') {
     console.log(`${tag} skipped: ${githubEvent ?? 'unknown'} event`)
     return { ok: true, skipped: 'not-a-push-event', event: githubEvent }
@@ -96,7 +97,7 @@ export default defineEventHandler(async (event) => {
   const pathsToPurge = new Set<string>()
   const pathsByScope = new Map<string, Map<PurgeReason, Set<string>>>()
   const summary: Record<string, { pages: string[], navChanged: boolean, sha?: string, indexableChanged?: string[] }> = {}
-  const buildId = useRuntimeConfig(event).app.buildId
+  const buildId = useRuntimeConfig().app.buildId
 
   /** Add a path to the purge set, and track it by scope and reason. */
   const addPath = (scope: string, reason: PurgeReason, path: string): void => {
@@ -225,7 +226,7 @@ export default defineEventHandler(async (event) => {
     return { ok: true, requestId, delivery: deliveryId, repo, branch, instances: summary, routes: routesBreakdown(pathsByScope), dev: true }
   }
 
-  const baseURL = `${getRequestProtocol(event)}://${getRequestHost(event, { xForwardedHost: true })}`
+  const baseURL = `${getRequestProtocol(event, { xForwardedProto: true })}://${getRequestHost(event, { xForwardedHost: true })}`
 
   // Lets the deployment call itself while Vercel Authentication is on (preview deploys).
   const baseHeaders: Record<string, string> = process.env.VERCEL_AUTOMATION_BYPASS_SECRET

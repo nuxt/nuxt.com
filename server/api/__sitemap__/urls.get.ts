@@ -3,9 +3,10 @@ import { CURRENT_DOCS_VERSION } from '#shared/utils/docs'
 import { supportsNuxt3OrLater } from '#shared/utils/modules'
 import { MODULE_DOCS_NAMES, moduleDocsPathPrefix } from '#shared/utils/module-docs'
 import { localisePath, type L10nLocale } from '#shared/utils/l10n'
+import { defineHandler } from 'nuxt/server'
 
 // Sitemap source for @nuxtjs/sitemap (see `sitemap.sources` in nuxt.config).
-export default defineEventHandler(async (event) => {
+export default defineHandler(async (event) => {
   const [docs, cli, examples, siteContent, modules, moduleDocs, localised] = await Promise.all([
     listInstancePages(docsInstanceKey(CURRENT_DOCS_VERSION)),
     listInstancePages(cliInstanceKey(CURRENT_DOCS_VERSION)).catch(() => []),

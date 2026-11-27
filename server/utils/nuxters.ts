@@ -72,7 +72,7 @@ function syncVersion(syncs: Array<{ period: string, sha: string }>, period: Nuxt
 const SYNC_CACHE_MAX_AGE = 7 * 24 * 60 * 60
 
 // The event comes first: Nitro only keeps the cache write alive after the response (`waitUntil`) for an event argument.
-const cachedTotals = defineCachedFunction(async (_event: H3Event, period: NuxtersPeriod, country: string | null, _version: string) => {
+const cachedTotals = defineCachedFunction(async (_event: H3Event | RequestEvent, period: NuxtersPeriod, country: string | null, _version: string) => {
   // One indexed scan of the period: contributors and what they made.
   const [totals] = await db.select({
     contributors: count(),
@@ -93,7 +93,7 @@ const cachedTotals = defineCachedFunction(async (_event: H3Event, period: Nuxter
   getKey: (_event, period, country, version) => `${period}-${country ?? 'all'}-${version}`
 })
 
-const cachedMap = defineCachedFunction(async (_event: H3Event, period: NuxtersPeriod, _version: string): Promise<NuxtersMap> => {
+const cachedMap = defineCachedFunction(async (_event: RequestEvent, period: NuxtersPeriod, _version: string): Promise<NuxtersMap> => {
   const located = and(eq(schema.nuxters.period, period), isNotNull(schema.nuxterProfiles.country))
   const ranked = db.select({
     country: schema.nuxterProfiles.country,
@@ -156,7 +156,7 @@ export const nuxters = {
   },
 
   /** `country`: the Nuxters of this ISO code only, still with their rank among everyone. */
-  async list(event: H3Event, { period = 'all', country = null, offset = 0, limit = 100 }: { period?: NuxtersPeriod, country?: string | null, offset?: number, limit?: number } = {}): Promise<NuxtersPage> {
+  async list(event: H3Event | RequestEvent, { period = 'all', country = null, offset = 0, limit = 100 }: { period?: NuxtersPeriod, country?: string | null, offset?: number, limit?: number } = {}): Promise<NuxtersPage> {
     const allSyncs = await db.select().from(schema.nuxtersSyncs)
     const syncs = allSyncs.filter(sync => isNuxtersPeriod(sync.period))
     const [items, { contributors, mergedPullRequests, issues, comments }] = await Promise.all([
@@ -192,7 +192,7 @@ export const nuxters = {
    * The Nuxters of a period by country, with the 3 best ranked of each.
    * Only profiles with a location GitHub resolved to a country are counted.
    */
-  async map(event: H3Event, period: NuxtersPeriod = 'all'): Promise<NuxtersMap> {
+  async map(event: RequestEvent, period: NuxtersPeriod = 'all'): Promise<NuxtersMap> {
     const syncs = await db.select({ period: schema.nuxtersSyncs.period, sha: schema.nuxtersSyncs.sha }).from(schema.nuxtersSyncs)
     return cachedMap(event, period, syncVersion(syncs, period, true))
   },

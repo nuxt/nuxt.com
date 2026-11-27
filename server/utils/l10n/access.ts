@@ -1,6 +1,7 @@
 import type { TranslationRecord } from '@diglot/core'
 import { parseRecordPath, serialiseRecord } from '@diglot/store'
-import { createError, getRequestHeader, type H3Event } from 'h3'
+import { createError } from 'h3'
+import { getRequestHeader, type RequestEvent } from 'nuxt/server'
 import type { L10nLocale, L10nRole } from '../../../shared/utils/l10n'
 import { TRANSLATIONS_BRANCH, TRANSLATIONS_REPO } from './bundle'
 import { dryRunGit, type DryRunLog, type TranslationsGit } from './git'
@@ -18,7 +19,7 @@ export function translatorsTeam(locale: L10nLocale): string {
 }
 
 /** Refuse a write sent by a browser from another origin, even a sibling subdomain sharing the session cookie. */
-export function assertSameOrigin(event: H3Event): void {
+export function assertSameOrigin(event: RequestEvent): void {
   const site = getRequestHeader(event, 'sec-fetch-site')
   if (site && site !== 'same-origin') {
     throw createError({ statusCode: 403, statusMessage: 'Cross-origin requests are not allowed' })

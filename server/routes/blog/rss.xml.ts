@@ -1,9 +1,9 @@
 import { Feed } from 'feed'
 import { joinURL } from 'ufo'
-import type { H3Event } from 'h3'
 import type { BlogArticle } from '#shared/types'
+import { defineHandler } from 'nuxt/server'
 
-export default defineEventHandler(async (event: H3Event) => {
+export default defineHandler(async (event) => {
   const baseUrl = 'https://nuxt.com'
   const siteUrl = joinURL(baseUrl, 'blog')
   const feed = new Feed({
@@ -41,6 +41,6 @@ export default defineEventHandler(async (event: H3Event) => {
     })
   }
 
-  appendHeader(event, 'Content-Type', 'application/xml')
+  event.res.headers.set('content-type', 'application/xml')
   return feed.rss2()
 })

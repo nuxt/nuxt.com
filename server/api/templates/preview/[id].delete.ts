@@ -1,4 +1,6 @@
-export default defineEventHandler(async (event) => {
+import { defineHandler, getRouterParam } from 'nuxt/server'
+
+export default defineHandler(async (event) => {
   const owner = await getRateLimitPrincipalId(event)
   const id = getRouterParam(event, 'id')!
   const sandbox = owner ? await getPreviewSandbox(id, owner) : null

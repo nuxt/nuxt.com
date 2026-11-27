@@ -1,4 +1,4 @@
-import type { H3Event } from 'h3'
+import type { RequestEvent } from 'nuxt/server'
 import { isTemplateCheckFresh } from '#shared/utils/templates'
 import type { BaseModule, PackageManager, Template, TemplateCheck, TemplateHealth, TemplateModule } from '#shared/types'
 
@@ -42,7 +42,7 @@ function parsePackageJson(text: string | undefined, registry: Map<string, BaseMo
 }
 
 /** Repository facts for every template with a public repo, in one GraphQL request. */
-const fetchRepoHealth = cachedFunction(async (event: H3Event): Promise<Record<string, TemplateHealth>> => {
+const fetchRepoHealth = cachedFunction(async (event: RequestEvent): Promise<Record<string, TemplateHealth>> => {
   const templates = (await listByDir<Template>('/templates')).filter(template => template.repo)
   const registry = new Map((await fetchModules(event) || []).map(module => [module.npm, module]))
 
@@ -57,7 +57,7 @@ const fetchRepoHealth = cachedFunction(async (event: H3Event): Promise<Record<st
   })
   const { data } = await $fetch<{ data: Record<string, RepoNode | null> }>('https://api.github.com/graphql', {
     method: 'POST',
-    headers: githubHeaders(event),
+    headers: githubHeaders(),
     body: { query: `query { ${fields.join('\n')} }` }
   })
 
@@ -99,7 +99,7 @@ export async function fetchTemplateChecks(): Promise<Record<string, TemplateChec
   }))
 }
 
-export async function fetchTemplateHealth(event: H3Event): Promise<Record<string, TemplateHealth>> {
+export async function fetchTemplateHealth(event: RequestEvent): Promise<Record<string, TemplateHealth>> {
   const [repos = {}, checks = {}] = await Promise.all([
     fetchRepoHealth(event).catch((error): Record<string, TemplateHealth> => {
       console.error('[templates] repository health failed', error)

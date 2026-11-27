@@ -1,6 +1,5 @@
 import { desc, inArray } from 'drizzle-orm'
 import type { BatchItem } from 'drizzle-orm/batch'
-import type { H3Event } from 'h3'
 import { start } from 'workflow/api'
 import type { Template } from '#shared/types'
 import { checkTemplatesWorkflow } from '../../workflows/check-templates'
@@ -71,9 +70,12 @@ export async function getActiveTemplateCheckRuns() {
 }
 
 /** Starts a run over every template, the ones in `slugs`, or the ones that don't pass (`failing`). Templates another run checks are skipped. */
-/** Where the check reports back. It sends internal secrets to this URL, so production never takes it from request headers. */
-export function templateCheckBaseURL(event: H3Event) {
-  return process.env.VERCEL_ENV === 'production' ? SITE_URL : getRequestURL(event, { xForwardedHost: true }).origin
+/**
+ * Where the check reports back, given the request's origin. It sends internal secrets to this URL,
+ * so production never takes it from request headers.
+ */
+export function templateCheckBaseURL(requestOrigin: string) {
+  return process.env.VERCEL_ENV === 'production' ? SITE_URL : requestOrigin
 }
 
 export async function startTemplateChecks(baseURL: string, options: { slugs?: string[], failing?: boolean, trigger: 'cron' | 'task' | 'mcp' | 'admin', startedBy?: string }) {

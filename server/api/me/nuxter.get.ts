@@ -1,9 +1,10 @@
 import type { NuxterMe } from '#shared/types'
+import { defineHandler } from 'nuxt/server'
 
 /** The signed-in user's stats, badges and Discord link, for the /nuxters card. */
-export default defineEventHandler(async (event): Promise<NuxterMe> => {
+export default defineHandler(async (event): Promise<NuxterMe> => {
   const { user } = await requireUserSession(event)
-  setResponseHeader(event, 'cache-control', 'private, no-store')
+  event.res.headers.set('cache-control', 'private, no-store')
 
   const [nuxter, row] = await Promise.all([
     // By GitHub id: stable when the user renames their account.

@@ -1,10 +1,11 @@
 import type { PullPreviewSummary } from '#shared/types'
 import { pullRepoName } from '#shared/utils/pull'
+import { defineHandler } from 'nuxt/server'
 
 /**
  * What a pull request preview's banner shows; a 404 here is the preview's 404.
  */
-export default defineEventHandler(async (event): Promise<PullPreviewSummary> => {
+export default defineHandler(async (event): Promise<PullPreviewSummary> => {
   const preview = await resolvePullPreview(pullTargetFromEvent(event))
 
   return {

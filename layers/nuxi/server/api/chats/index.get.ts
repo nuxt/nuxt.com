@@ -1,9 +1,10 @@
 import { eq, sql } from 'drizzle-orm'
+import { defineHandler } from 'nuxt/server'
 
-export default defineEventHandler(async (event) => {
+export default defineHandler(async (event) => {
   const { user } = await requireUserSession(event)
 
-  const log = useLogger(event)
+  const log = useRequestLogger(event)
   log.set({ user: { id: user.id, authenticated: true } })
 
   const chats = await db.query.chats.findMany({

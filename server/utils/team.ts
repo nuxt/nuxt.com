@@ -1,4 +1,4 @@
-import type { H3Event } from 'h3'
+import type { RequestEvent } from 'nuxt/server'
 import { readGlobalConfig } from '../../layers/nuxi/agent/lib/global-config'
 
 interface TeamMemberSearchResponse {
@@ -57,7 +57,7 @@ export async function isAuthorizedAdmin(login: string): Promise<boolean> {
 }
 
 /** Like `requireUserSession`, but throws 403 unless the user is still an admin: the session role is set at sign-in, so it is re-checked. */
-export async function requireAdminUserSession(event: H3Event) {
+export async function requireAdminUserSession(event: RequestEvent) {
   const session = await requireUserSession(event)
   if (session.user.role !== 'admin' || !(await isAuthorizedAdmin(session.user.username))) {
     throw createError({ statusCode: 403, statusMessage: 'Admin access required' })

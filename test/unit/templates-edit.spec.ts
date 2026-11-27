@@ -6,7 +6,8 @@ import { join } from 'node:path'
 import { Readable } from 'node:stream'
 import { unzipSync } from 'fflate'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { createError } from 'h3'
+import { createError } from 'nuxt/server'
+import { requestEvent } from '../utils/request-event'
 import { checkAppPage, devServerLog, readAppFile, RESTARTING_FILES, resolveAppPath, waitForRestart } from '../../server/utils/templates/edit'
 
 describe('resolveAppPath', () => {
@@ -165,10 +166,7 @@ const trackEvent = vi.fn()
 const trackChange = vi.fn()
 
 beforeEach(async () => {
-  vi.stubGlobal('defineEventHandler', (value: unknown) => value)
-  vi.stubGlobal('createError', createError)
   vi.stubGlobal('requireInternalRequest', requireInternal)
-  vi.stubGlobal('readValidatedBody', (_event: unknown, parse: (value: unknown) => unknown) => parse(body))
   vi.stubGlobal('getPreviewSandbox', getSandbox.mockResolvedValue(sandbox))
   vi.stubGlobal('waitForDevServer', vi.fn())
   vi.stubGlobal('resolveAppPath', resolveAppPath)
@@ -189,14 +187,13 @@ afterEach(() => {
 })
 
 function request(value: Record<string, unknown>) {
-  vi.stubGlobal('readValidatedBody', (_event: unknown, parse: (value: unknown) => unknown) => parse({ ...body, ...value }))
-  return handler({})
+  return handler(requestEvent('/api/internal/templates/preview', { method: 'POST', body: { ...body, ...value } }))
 }
 
 describe('editing a template preview', () => {
   it('refuses requests without internal authentication', async () => {
     requireInternal.mockImplementationOnce(() => {
-      throw createError({ statusCode: 401 })
+      throw createError({ status: 401 })
     })
     await expect(request({ content: 'Hello' })).rejects.toMatchObject({ statusCode: 401 })
     expect(getSandbox).not.toHaveBeenCalled()
@@ -244,7 +241,7 @@ describe('editing a template preview', () => {
     expect(trackEvent).not.toHaveBeenCalled()
     await request({ action: 'add_module', name: '@nuxt/image' })
     expect(trackChange).toHaveBeenCalledTimes(1)
-    expect(trackEvent).toHaveBeenCalledWith({}, 'Template Module Added', { template: 'docus', module: '@nuxt/image' })
+    expect(trackEvent).toHaveBeenCalledWith(expect.anything(), 'Template Module Added', { template: 'docus', module: '@nuxt/image' })
   })
 
   it('waits for config changes to restart before reporting success', async () => {
@@ -253,14 +250,14 @@ describe('editing a template preview', () => {
   })
 
   it('still writes a fix when the dev server has exited, without waiting for a restart', async () => {
-    vi.stubGlobal('waitForDevServer', vi.fn().mockRejectedValue(createError({ statusCode: 504, data: { stopped: true } })))
+    vi.stubGlobal('waitForDevServer', vi.fn().mockRejectedValue(createError({ status: 504, data: { stopped: true } })))
     await expect(request({ path: 'nuxt.config.ts', content: 'export default defineNuxtConfig({})' })).resolves.toEqual({ path: 'nuxt.config.ts', devServerStopped: true })
     expect(writeFile).toHaveBeenCalledWith(sandbox, 'nuxt.config.ts', 'export default defineNuxtConfig({})')
     expect(restart).not.toHaveBeenCalled()
   })
 
   it('fails without writing while the dev server is still starting', async () => {
-    vi.stubGlobal('waitForDevServer', vi.fn().mockRejectedValue(createError({ statusCode: 504, data: { stopped: false } })))
+    vi.stubGlobal('waitForDevServer', vi.fn().mockRejectedValue(createError({ status: 504, data: { stopped: false } })))
     await expect(request({ content: 'Hello' })).rejects.toMatchObject({ statusCode: 504 })
     expect(writeFile).not.toHaveBeenCalled()
   })
@@ -269,8 +266,6 @@ describe('editing a template preview', () => {
 describe('starting the preview editor', () => {
   it.each([false, true])('streams startup before the result (failed: %s)', async (failed) => {
     vi.stubGlobal('getRateLimitPrincipalId', vi.fn().mockResolvedValue('visitor'))
-    vi.stubGlobal('getRouterParam', vi.fn().mockReturnValue('preview'))
-    vi.stubGlobal('setResponseHeaders', vi.fn())
     let finish!: () => void
     const pending = new Promise<void>((resolve) => {
       finish = resolve
@@ -286,7 +281,7 @@ describe('starting the preview editor', () => {
     const log = vi.spyOn(console, 'error').mockImplementation(() => {})
     try {
       const edit = (await import('../../server/api/templates/preview/[id]/edit.post')).default as any
-      const reader = (await edit({})).getReader()
+      const reader = (await edit(requestEvent('/api/templates/preview/preview/edit', { method: 'POST', params: { id: 'preview' } }))).getReader()
       const next = async () => {
         const { value } = await reader.read()
         return value && JSON.parse(new TextDecoder().decode(value))
@@ -297,7 +292,7 @@ describe('starting the preview editor', () => {
       expect(await reader.read()).toMatchObject({ done: true })
       expect(start).toHaveBeenCalledTimes(1)
       expect(getSandbox).toHaveBeenCalledWith('preview', 'visitor')
-      expect(trackEvent).toHaveBeenCalledWith({}, failed ? 'Template Preview Failed' : 'Template Editor Started', failed ? expect.objectContaining({ reason: 'The dev server could not start.' }) : expect.any(Promise))
+      expect(trackEvent).toHaveBeenCalledWith(expect.anything(), failed ? 'Template Preview Failed' : 'Template Editor Started', failed ? expect.objectContaining({ reason: 'The dev server could not start.' }) : expect.any(Promise))
     } finally {
       finish()
       log.mockRestore()
@@ -308,22 +303,27 @@ describe('starting the preview editor', () => {
 describe('downloading an edited project', () => {
   beforeEach(() => {
     vi.stubGlobal('getRateLimitPrincipalId', vi.fn().mockResolvedValue('visitor'))
-    vi.stubGlobal('getRouterParam', vi.fn().mockReturnValue('preview'))
-    vi.stubGlobal('setResponseHeaders', vi.fn())
     vi.stubGlobal('previewChanges', vi.fn().mockResolvedValue('5+'))
     vi.stubGlobal('claimPreviewStep', vi.fn().mockResolvedValueOnce(true).mockResolvedValue(false))
   })
+
+  const downloadEvent = () => requestEvent('/api/templates/preview/preview/download', { params: { id: 'preview' } })
+  async function readAll(stream: ReadableStream<Uint8Array>) {
+    const chunks: Uint8Array[] = []
+    for await (const chunk of stream) chunks.push(chunk)
+    return Buffer.concat(chunks)
+  }
 
   it('requires an identified visitor and looks up their running preview', async () => {
     const download = (await import('../../server/api/templates/preview/[id]/download.get')).default as any
     for (const value of [null, { status: 'stopped' }]) {
       getSandbox.mockResolvedValueOnce(value)
-      await expect(download({})).rejects.toMatchObject({ statusCode: 404 })
+      await expect(download(downloadEvent())).rejects.toMatchObject({ statusCode: 404 })
     }
     expect(getSandbox).toHaveBeenCalledWith('preview', 'visitor')
     getSandbox.mockClear()
     vi.stubGlobal('getRateLimitPrincipalId', vi.fn().mockResolvedValue(undefined))
-    await expect(download({})).rejects.toMatchObject({ statusCode: 404 })
+    await expect(download(downloadEvent())).rejects.toMatchObject({ statusCode: 404 })
     expect(getSandbox).not.toHaveBeenCalled()
   })
 
@@ -365,14 +365,10 @@ describe('downloading an edited project', () => {
         return { exitCode: 0 }
       })
       getSandbox.mockResolvedValueOnce({ status: 'running', runCommand, readFile: ({ path }: { path: string }) => createReadStream(path) })
-      vi.stubGlobal('sendStream', async (_event: unknown, stream: AsyncIterable<Buffer>) => {
-        const chunks = []
-        for await (const chunk of stream) chunks.push(chunk)
-        return Buffer.concat(chunks)
-      })
       const download = (await import('../../server/api/templates/preview/[id]/download.get')).default as any
-      const archive = unzipSync(await download({}))
-      expect(trackTemplateEvent).toHaveBeenCalledWith({}, 'Template Downloaded', expect.any(Promise))
+      const event = downloadEvent()
+      const archive = unzipSync(await readAll(await download(event)))
+      expect(trackTemplateEvent).toHaveBeenCalledWith(event, 'Template Downloaded', expect.any(Promise))
       await expect(vi.mocked(trackTemplateEvent).mock.calls[0]![2]).resolves.toEqual({ template: undefined, changes: '5+' })
       expect(claimPreviewStep).toHaveBeenCalledWith(expect.anything(), 'download')
       // The depth comes from before the ZIP, so an edit landing while the event is claimed can't change it.
@@ -380,7 +376,8 @@ describe('downloading an edited project', () => {
       expect(Object.keys(archive).sort()).toEqual(['.gitignore', 'app/app.vue', 'nuxt.config.ts', 'package.json', 'pnpm-lock.yaml', 'public/dist/brand.svg', 'public/logo.png', 'public/nuxt-com-preview.client.js', 'public/nuxt-com-preview.js'])
       expect(Buffer.from(archive['app/app.vue']!).toString()).toBe(files['app/app.vue'])
       expect(Buffer.from(archive['public/logo.png']!)).toEqual(files['public/logo.png'])
-      expect(setResponseHeaders).toHaveBeenCalledWith({}, expect.objectContaining({ 'content-type': 'application/zip', 'cache-control': 'no-store' }))
+      expect(event.res.headers.get('content-type')).toBe('application/zip')
+      expect(event.res.headers.get('cache-control')).toBe('no-store')
       expect(existsSync(archivePath)).toBe(false)
     } finally {
       rmSync(directory, { recursive: true, force: true })
@@ -388,20 +385,30 @@ describe('downloading an edited project', () => {
     }
   })
 
-  it.each(['archive', 'read', 'stream'])('cleans up and reports a failed %s without returning a broken download', async (failure) => {
+  it.each(['archive', 'read'])('cleans up and reports a failed %s without returning a broken download', async (failure) => {
     const runCommand = vi.fn().mockResolvedValue({ exitCode: 0 })
     if (failure === 'archive') runCommand.mockResolvedValueOnce({ exitCode: 1 })
-    const stream = Readable.from([Buffer.from('zip')])
-    getSandbox.mockResolvedValueOnce({ status: 'running', runCommand, readFile: async () => failure === 'read' ? null : stream })
-    vi.stubGlobal('sendStream', vi.fn().mockRejectedValue(new Error('Connection closed')))
+    getSandbox.mockResolvedValueOnce({ status: 'running', runCommand, readFile: async () => failure === 'read' ? null : Readable.from([Buffer.from('zip')]) })
     const download = (await import('../../server/api/templates/preview/[id]/download.get')).default as any
-    await expect(download({})).rejects.toMatchObject(failure === 'stream'
-      ? { message: 'Connection closed' }
-      : { statusCode: 500, message: failure === 'archive' ? 'The project could not be zipped. Please try again.' : 'The project ZIP could not be read.' })
+    await expect(download(downloadEvent())).rejects.toMatchObject({ statusCode: 500, message: failure === 'archive' ? 'The project could not be zipped. Please try again.' : 'The project ZIP could not be read.' })
     const path = runCommand.mock.calls[0]![0].args[2]
     expect(runCommand).toHaveBeenLastCalledWith({ cmd: 'rm', args: ['-f', path], signal: expect.any(AbortSignal) })
-    if (failure !== 'stream') expect(sendStream).not.toHaveBeenCalled()
     // A failed download must not use up the preview's download event: its retry sends it.
+    expect(trackTemplateEvent).not.toHaveBeenCalled()
+  })
+
+  it('cleans up when the visitor disconnects mid-download, without reporting it', async () => {
+    const runCommand = vi.fn().mockResolvedValue({ exitCode: 0 })
+    const stream = new Readable({ read() {} })
+    stream.push(Buffer.from('zip'))
+    getSandbox.mockResolvedValueOnce({ status: 'running', runCommand, readFile: async () => stream })
+    const download = (await import('../../server/api/templates/preview/[id]/download.get')).default as any
+    const reader = (await download(downloadEvent())).getReader()
+    await reader.read()
+    await reader.cancel()
+    const path = runCommand.mock.calls[0]![0].args[2]
+    await vi.waitFor(() => expect(runCommand).toHaveBeenLastCalledWith({ cmd: 'rm', args: ['-f', path], signal: expect.any(AbortSignal) }))
+    expect(stream.destroyed).toBe(true)
     expect(trackTemplateEvent).not.toHaveBeenCalled()
   })
 
@@ -414,13 +421,10 @@ describe('downloading an edited project', () => {
       return new Promise<never>((_resolve, reject) => signal.addEventListener('abort', () => reject(new Error('Read aborted')), { once: true }))
     })
     getSandbox.mockResolvedValueOnce({ status: 'running', runCommand, readFile })
-    vi.stubGlobal('sendStream', async (_event: unknown, input: AsyncIterable<Buffer>) => {
-      for await (const _chunk of input) { /* consume the download */ }
-    })
     try {
       const download = (await import('../../server/api/templates/preview/[id]/download.get')).default as any
       let failure: Error | undefined
-      const result = download({}).catch((error: Error) => {
+      const result = download(downloadEvent()).then(readAll).catch((error: Error) => {
         failure = error
       })
       await vi.advanceTimersByTimeAsync(30_000)
@@ -438,23 +442,18 @@ describe('downloading an edited project', () => {
   it('lets an active ZIP download outlast the inactivity timeout', async () => {
     vi.useFakeTimers()
     const stream = new Readable({ read() {} })
-    const chunks: Buffer[] = []
     const readFile = vi.fn(async () => stream)
     getSandbox.mockResolvedValueOnce({ status: 'running', runCommand: vi.fn().mockResolvedValue({ exitCode: 0 }), readFile })
-    vi.stubGlobal('sendStream', async (_event: unknown, input: AsyncIterable<Buffer>) => {
-      for await (const chunk of input) chunks.push(chunk)
-    })
     try {
       const download = (await import('../../server/api/templates/preview/[id]/download.get')).default as any
-      const result = download({})
+      const result = download(downloadEvent()).then(readAll)
       for (let i = 0; i < 3; i++) {
         await vi.advanceTimersByTimeAsync(20_000)
         stream.push(Buffer.from('zip'))
         await vi.advanceTimersByTimeAsync(0)
       }
       stream.push(null)
-      await result
-      expect(Buffer.concat(chunks).toString()).toBe('zipzipzip')
+      expect((await result).toString()).toBe('zipzipzip')
       expect(vi.getTimerCount()).toBe(0)
     } finally {
       stream.destroy()
@@ -488,7 +487,6 @@ describe('template preview analytics', () => {
 
   it('reports each edit level once per preview, even for parallel changes, and the level at download', async () => {
     const tracked: unknown[] = []
-    vi.stubGlobal('getRequestHeaders', () => ({}))
     vi.doMock('@vercel/functions', () => ({ waitUntil: (promise: Promise<unknown>) => tracked.push(promise) }))
     const track = vi.fn()
     vi.doMock('@vercel/analytics/server', () => ({ track }))
@@ -500,7 +498,7 @@ describe('template preview analytics', () => {
       expect(await previewChanges(sandbox)).toBe('0')
       // 1, 4, 13 then 21 changes in total, each batch in parallel.
       for (const [batch, level] of [[1, '1+'], [3, '1+'], [9, '5+'], [8, '20+']] as const) {
-        for (let i = 0; i < batch; i++) trackPreviewChange({} as any, sandbox)
+        for (let i = 0; i < batch; i++) trackPreviewChange(requestEvent(), sandbox)
         await Promise.all(tracked)
         expect(await previewChanges(sandbox)).toBe(level)
       }

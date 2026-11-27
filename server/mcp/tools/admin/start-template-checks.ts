@@ -22,6 +22,6 @@ OUTPUT: The run id and the templates it queued. Templates another run is already
   enabled: event => isMcpAdmin(event),
   async handler({ slugs, failing }) {
     const event = useEvent()
-    return await startTemplateChecks(templateCheckBaseURL(event), { slugs, failing, trigger: 'mcp', startedBy: 'admin-mcp' })
+    return await startTemplateChecks(templateCheckBaseURL(getRequestURL(event, { xForwardedHost: true }).origin), { slugs, failing, trigger: 'mcp', startedBy: 'admin-mcp' })
   }
 })

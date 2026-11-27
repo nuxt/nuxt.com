@@ -1,4 +1,4 @@
-import type { H3Event } from 'h3'
+import type { RequestEvent } from 'nuxt/server'
 import { rawUrl, useAgentDiscoveryConfig } from '#agent-discovery'
 
 /**
@@ -14,7 +14,7 @@ export function isContentRoute(path: string): boolean {
 /**
  * Page path -> raw markdown URL, or `undefined` when the page has no markdown twin.
  */
-export function rawUrlForPage(event: H3Event, path: string): string | undefined {
+export function rawUrlForPage(event: RequestEvent, path: string): string | undefined {
   const resolved = new URL(rawUrl(event, path)).pathname
   const { rawPrefix } = useAgentDiscoveryConfig(event)
 

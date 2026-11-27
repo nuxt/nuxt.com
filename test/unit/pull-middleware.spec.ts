@@ -1,13 +1,14 @@
-import { createError } from 'h3'
-import { describe, expect, it, vi } from 'vitest'
+import { describe, expect, it } from 'vitest'
+import { redirectOf, requestEvent } from '../utils/request-event'
 
-/** The middleware reaches for these through Nitro's auto-imports. */
-vi.stubGlobal('createError', createError)
-vi.stubGlobal('defineEventHandler', <T>(handler: T) => handler)
-vi.stubGlobal('sendRedirect', (_event: unknown, location: string, status: number) => ({ location, status }))
+const { default: handler } = await import('../../server/middleware/pull-preview')
 
-type Middleware = (event: { path: string }) => unknown
-const middleware = (await import('../../server/middleware/pull-preview')).default as unknown as Middleware
+/** Where the middleware sends `path`, or `undefined` when it serves it. The server receives the path URL-encoded. */
+function middleware({ path }: { path: string }) {
+  const event = requestEvent(encodeURI(path))
+  handler(event)
+  return redirectOf(event)
+}
 
 describe('pull preview middleware', () => {
   it('previews content pages', () => {

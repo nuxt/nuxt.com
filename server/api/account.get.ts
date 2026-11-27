@@ -1,9 +1,10 @@
 import { count, eq } from 'drizzle-orm'
+import { defineHandler } from 'nuxt/server'
 
 /** What the settings page shows about the signed-in account, and what deleting it removes. */
-export default defineEventHandler(async (event) => {
+export default defineHandler(async (event) => {
   const { user } = await requireUserSession(event)
-  setResponseHeader(event, 'cache-control', 'private, no-store')
+  event.res.headers.set('cache-control', 'private, no-store')
 
   const [row, [chats], [messages]] = await Promise.all([
     db.query.users.findFirst({ where: () => eq(schema.users.id, user.id), columns: { createdAt: true } }),

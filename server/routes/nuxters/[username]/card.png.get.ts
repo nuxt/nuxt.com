@@ -1,4 +1,5 @@
 import { isNuxtersPeriod } from '#shared/utils/nuxters'
+import { createError, defineHandler, getQuery, getRouterParam, sendRedirect } from 'nuxt/server'
 
 const META_TAG_RE = /<meta\b[^>]*>/gi
 
@@ -6,10 +7,10 @@ const META_TAG_RE = /<meta\b[^>]*>/gi
  * Stable Nuxter card URL for GitHub profile READMEs: redirects to the og:image of the profile page.
  * Same as nuxt-og-image's `/_og/r/` resolver, but owned by us and one hop shorter for GitHub's image proxy.
  */
-export default defineEventHandler(async (event) => {
+export default defineHandler(async (event) => {
   const username = getRouterParam(event, 'username')
   if (!username || !/^[a-z0-9-]{1,39}$/i.test(username)) {
-    throw createError({ statusCode: 400, statusMessage: 'Invalid GitHub username' })
+    throw createError({ status: 400, statusText: 'Invalid GitHub username' })
   }
 
   // `?period=2024`: the card of that period (the profile falls back to all time without data).
@@ -20,15 +21,15 @@ export default defineEventHandler(async (event) => {
     headers: { accept: 'text/html' },
     responseType: 'text'
   }).catch((error) => {
-    throw createError({ statusCode: error?.statusCode === 404 ? 404 : 502, statusMessage: 'Nuxter not found' })
+    throw createError({ status: error?.statusCode === 404 ? 404 : 502, statusText: 'Nuxter not found' })
   })
 
   const image = ogImageFromHtml(html)
   if (!image) {
-    throw createError({ statusCode: 404, statusMessage: 'Nuxter card not found' })
+    throw createError({ status: 404, statusText: 'Nuxter card not found' })
   }
 
-  setResponseHeader(event, 'cache-control', 'public, max-age=3600, s-maxage=3600')
+  event.res.headers.set('cache-control', 'public, max-age=3600, s-maxage=3600')
   return sendRedirect(event, image, 302)
 })
 

@@ -1,4 +1,5 @@
 import type { H3Event } from 'h3'
+import type { RequestEvent } from 'nuxt/server'
 import type { Module, NuxterModule, NuxterModuleLink, NuxterModules } from '#shared/types'
 
 interface NuxterModulesIndex {
@@ -14,8 +15,8 @@ interface NuxterModulesIndex {
  * (itself cached, with the contributors of every repository): a profile is then a lookup.
  * The list of /modules (Nuxt 3+): its cache is warm, and Nuxt 2 only modules are not maintained anymore.
  */
-const modulesIndex = cachedFunction(async (event: H3Event): Promise<NuxterModulesIndex> => {
-  const { modules: list } = await event.$fetch<{ modules: Module[] }>('/api/v1/modules')
+const modulesIndex = cachedFunction(async (_event: H3Event | RequestEvent): Promise<NuxterModulesIndex> => {
+  const { modules: list } = await $fetch<{ modules: Module[] }>('/api/v1/modules')
   const index: NuxterModulesIndex = { modules: {}, maintainers: {}, contributors: {} }
   for (const module of list) {
     if (!module.stats) continue
@@ -38,7 +39,7 @@ const modulesIndex = cachedFunction(async (event: H3Event): Promise<NuxterModule
 })
 
 /** The modules of a contributor. Modules are a bonus on a profile: an outage of the list returns none. */
-export async function nuxterModules(event: H3Event, nuxter: { githubId: number, username: string }): Promise<NuxterModules> {
+export async function nuxterModules(event: H3Event | RequestEvent, nuxter: { githubId: number, username: string }): Promise<NuxterModules> {
   const index = await modulesIndex(event).catch((error) => {
     console.error('[nuxters] Cannot load the modules index:', error)
     return null

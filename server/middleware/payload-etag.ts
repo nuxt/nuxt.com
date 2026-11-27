@@ -1,4 +1,5 @@
 import { hash } from 'ohash'
+import { defineHandler, getRequestURL } from 'nuxt/server'
 
 /**
  * A weak `etag` on `_payload.json`, so client-side navigation to these pages can send a
@@ -21,7 +22,7 @@ function isEtaggablePayload(pagePath: string): boolean {
   return ETAGGABLE_PREFIXES.some(prefix => pagePath === prefix || pagePath.startsWith(`${prefix}/`))
 }
 
-export default defineEventHandler(async (event) => {
+export default defineHandler(async (event) => {
   if (import.meta.dev) return
 
   const { pathname } = getRequestURL(event)
@@ -32,7 +33,7 @@ export default defineEventHandler(async (event) => {
 
   try {
     const shas = await Promise.all(CONTENT_INSTANCE_KEYS.map(key => resolveInstanceSha(key)))
-    setResponseHeader(event, 'etag', `W/"${hash(shas)}"`)
+    event.res.headers.set('etag', `W/"${hash(shas)}"`)
   } catch {
     // Never fail a payload request over a cache validator.
   }

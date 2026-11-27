@@ -1,10 +1,8 @@
-import type { H3Event } from 'h3'
 import { betterAuth } from 'better-auth'
 import { drizzleAdapter } from 'better-auth/adapters/drizzle'
 import { APIError, createAuthMiddleware } from 'better-auth/api'
 import { eq } from 'drizzle-orm'
-import type { RequestEvent } from 'nuxt/server'
-import { deriveSecret, sendRedirect as sendNuxtRedirect } from 'nuxt/server'
+import { createError, deriveSecret, sendRedirect, type RequestEvent } from 'nuxt/server'
 
 const LAST_SEEN_RESOLUTION_MS = 24 * 60 * 60 * 1000
 
@@ -123,38 +121,27 @@ export interface UserSession {
   user?: AuthUser
 }
 
-/** Routes built with `nuxt/server` and h3 routes both read the session. */
-type SessionEvent = RequestEvent | H3Event
-
-/**
- * The request headers. On Nuxt 4 a `nuxt/server` event is a Proxy over the h3 event: only `req`, `res`
- * and `url` are its own, so `headers` is h3's for both kinds. With Nitro v3 this becomes `event.req.headers`.
- */
-function requestHeaders(event: SessionEvent): Headers {
-  return (event as H3Event).headers
-}
-
 /** The signed-in user of the request, read from Better Auth's session cookie. */
-export async function getUserSession(event: SessionEvent): Promise<UserSession> {
+export async function getUserSession(event: RequestEvent): Promise<UserSession> {
   const auth = await useAuth()
-  const session = await auth.api.getSession({ headers: requestHeaders(event) })
+  const session = await auth.api.getSession({ headers: event.req.headers })
   return session ? { user: toUser(session.user) } : {}
 }
 
-export async function requireUserSession(event: SessionEvent): Promise<Required<UserSession>> {
+export async function requireUserSession(event: RequestEvent): Promise<Required<UserSession>> {
   const session = await getUserSession(event)
   if (!session.user) {
-    throw createError({ statusCode: 401, statusMessage: 'Unauthorized' })
+    throw createError({ status: 401, statusText: 'Unauthorized' })
   }
   return session as Required<UserSession>
 }
 
 /** Signs out: removes the session and expires its cookies. */
-export async function clearUserSession(event: H3Event) {
+export async function clearUserSession(event: RequestEvent) {
   const auth = await useAuth()
-  const { headers } = await auth.api.signOut({ headers: event.headers, returnHeaders: true })
+  const { headers } = await auth.api.signOut({ headers: event.req.headers, returnHeaders: true })
   for (const cookie of headers.getSetCookie()) {
-    appendResponseHeader(event, 'set-cookie', cookie)
+    event.res.headers.append('set-cookie', cookie)
   }
 }
 
@@ -163,5 +150,5 @@ export function redirectWithCookies(event: RequestEvent, headers: Headers, url: 
   for (const cookie of headers.getSetCookie()) {
     event.res.headers.append('set-cookie', cookie)
   }
-  return sendNuxtRedirect(event, url)
+  return sendRedirect(event, url)
 }

@@ -1,4 +1,6 @@
-export default defineEventHandler(async (event) => {
+import { createError, defineHandler } from 'nuxt/server'
+
+export default defineHandler(async (event) => {
   requireInternalRequest(event)
 
   const session = await getUserSession(event)
@@ -21,8 +23,8 @@ export default defineEventHandler(async (event) => {
   const principalId = await getRateLimitPrincipalId(event)
   if (!principalId) {
     throw createError({
-      statusCode: 401,
-      statusMessage: 'Anonymous session not initialized'
+      status: 401,
+      statusText: 'Anonymous session not initialized'
     })
   }
 

@@ -1,6 +1,7 @@
 import { z } from 'zod'
 import type { BlogAuthorFrontmatter, TemplateCheck } from '#shared/types'
 import { blogAuthors } from '#shared/utils/blog'
+import { defineHandler, readValidatedBody } from 'nuxt/server'
 
 const blogBodySchema = z.object({
   kind: z.literal('blog'),
@@ -21,7 +22,7 @@ const showcaseBodySchema = z.object({
   kind: z.literal('showcase')
 })
 
-export default defineEventHandler(async (event) => {
+export default defineHandler(async (event) => {
   requireInternalRequest(event)
 
   const body = await readValidatedBody(event, z.discriminatedUnion('kind', [
