@@ -30,7 +30,12 @@ async function createAuth() {
       fallback: 'https://nuxt.com'
     },
     database: drizzleAdapter(db, { provider: 'sqlite', schema }),
-    advanced: { database: { generateId: 'uuid' } },
+    advanced: {
+      database: { generateId: 'uuid' },
+      // Vercel ends TLS before the app, so the request URL is `http://`. It sets `x-forwarded-proto`
+      // and `x-forwarded-host` itself, and the host is still checked against `allowedHosts`.
+      trustedProxyHeaders: true
+    },
     user: {
       modelName: 'users',
       fields: { image: 'avatar' },
