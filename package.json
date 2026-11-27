@@ -36,6 +36,9 @@
   },
   "dependencies": {
     "@ai-sdk/mcp": "^2.0.102",
+    "@better-auth/cimd": "1.7.28",
+    "@better-auth/mcp": "1.7.28",
+    "@better-auth/oauth-provider": "1.7.28",
     "@chat-adapter/discord": "^4.45.0",
     "@chat-adapter/state-memory": "^4.45.0",
     "@chat-adapter/state-redis": "^4.45.0",
@@ -93,7 +96,6 @@
     "fflate": "^0.8.3",
     "forges": "^0.4.0",
     "h3": "^1.15.11",
-    "jose": "^6.2.18",
     "motion-v": "^2.13.0",
     "nuxt": "^4.7.0",
     "nuxt-llms": "^0.3.2",

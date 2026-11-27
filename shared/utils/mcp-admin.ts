@@ -25,3 +25,10 @@ export const MCP_OAUTH_SCOPES = {
 export type McpOAuthScope = keyof typeof MCP_OAUTH_SCOPES
 
 export const MCP_OAUTH_SCOPE_LIST = Object.keys(MCP_OAUTH_SCOPES) as McpOAuthScope[]
+
+/** The admin MCP tools each scope unlocks, shown on the consent page. Kept in sync with the tools' `scopes`. */
+export const MCP_OAUTH_SCOPE_TOOLS: Record<McpOAuthScope, string[]> = {
+  'admin:analytics': ['feedback-stats', 'list-feedback', 'agent-usage-stats', 'search-console-analytics', 'search-console-inspect-url', 'search-console-sitemaps', 'crux-web-vitals', 'page-head'],
+  'admin:chats': ['list-agent-chats', 'get-agent-chat', 'list-agent-votes'],
+  'admin:templates': ['template-check-status', 'start-template-checks']
+}

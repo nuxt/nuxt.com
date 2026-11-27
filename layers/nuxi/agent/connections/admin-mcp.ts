@@ -67,13 +67,13 @@ async function adminOnlyConnect(ctx: SessionContext) {
   }
 
   // Connect creates the `nuxt.com/nuxi` connector on first use; an admin then installs it
-  // once through nuxt.com's GitHub consent page, and Connect refreshes the grant from there.
+  // once through nuxt.com's GitHub consent page, and Connect refreshes the grant from there (`offline_access`).
   return connect({
     connector: 'nuxt.com/nuxi',
     principalType: 'app',
     autoProvision: true,
     // nuxt.com only issues tokens bound to this exact resource (RFC 8707), and rejects Connect's default `*` scope.
-    tokenParams: { resources: [ADMIN_MCP_URL], scopes: [...MCP_OAUTH_SCOPE_LIST] }
+    tokenParams: { resources: [ADMIN_MCP_URL], scopes: ['offline_access', ...MCP_OAUTH_SCOPE_LIST] }
   })
 }
 

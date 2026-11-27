@@ -148,7 +148,6 @@ export default defineNuxtConfig({
         }
       }
     },
-    mcpAdminToken: '',
     // Sign-in with GitHub and Discord linking (`server/utils/auth.ts`)
     oauth: {
       github: { clientId: '', clientSecret: '' },

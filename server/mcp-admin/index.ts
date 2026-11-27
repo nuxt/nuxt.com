@@ -1,5 +1,5 @@
-import { createMcpOAuth, defineMcpServer } from '@nuxtjs/mcp-toolkit/server'
-import { verifyMcpAccessToken } from '../utils/mcp-oauth'
+import { defineMcpServer } from '@nuxtjs/mcp-toolkit/server'
+import { betterAuth } from '@nuxtjs/mcp-toolkit/oauth/better-auth'
 import { MCP_OAUTH_SCOPE_LIST, mcpAdminResource, mcpOAuthIssuer } from '../../shared/utils/mcp-admin'
 import { CURRENT_DOCS_VERSION } from '../../shared/utils/docs'
 
@@ -25,17 +25,14 @@ Tools:
 For recurring tasks, prefer the prompts (\`summarize-feedback\`, \`triage-problematic-pages\`, \`review-agent-chats\`, \`weekly-digest\`, \`seo-opportunities\`) which already chain the right tool calls.
 
 Default to recent data (last 7-30 days) unless the user asks for a longer window. Always include direct links (path / chat id) so the team can drill down on the website.`,
-  // People, and the Nuxi agent through Vercel Connect, sign in with GitHub through
-  // nuxt.com's own OAuth server (`server/utils/mcp-oauth.ts`).
-  oauth: createMcpOAuth({
+  // People, and the Nuxi agent through Vercel Connect, sign in with GitHub through Better Auth's
+  // OAuth provider (`mcp()` in `server/utils/auth.ts`), which issues these tokens.
+  oauth: betterAuth({
     resource: mcpAdminResource(),
-    authorizationServers: [mcpOAuthIssuer()],
-    scopesSupported: MCP_OAUTH_SCOPE_LIST,
-    verify: async (token, event) => {
-      const claims = await verifyMcpAccessToken(token)
-      if (!claims) return false
-      event.context.oauth = { ...claims }
-      return true
-    }
-  })
+    issuer: mcpOAuthIssuer(),
+    jwks: `${mcpOAuthIssuer()}/api/auth/jwks`,
+    scopesSupported: ['offline_access', ...MCP_OAUTH_SCOPE_LIST]
+  }),
+  // The role is set at sign-in, and an admin can leave the team after approving a client.
+  authorize: ({ sub }) => isMcpAdmin(sub)
 })

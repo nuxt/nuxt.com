@@ -80,12 +80,12 @@ describe('Nuxi discovery and SEO access', () => {
     await expect(denied.getToken()).rejects.toThrow('not available')
     expect(connect).not.toHaveBeenCalled()
 
-    // Every scope the allowed tools need, for the production resource only: nuxt.com rejects any other.
+    // Every scope the allowed tools need plus a refresh token, for the production resource only: nuxt.com rejects any other.
     await connection.auth(context(admin))
     expect(connect).toHaveBeenCalledWith(expect.objectContaining({
       connector: 'nuxt.com/nuxi',
       principalType: 'app',
-      tokenParams: { resources: ['https://nuxt.com/mcp/admin'], scopes: ['admin:analytics', 'admin:chats', 'admin:templates'] }
+      tokenParams: { resources: ['https://nuxt.com/mcp/admin'], scopes: ['offline_access', 'admin:analytics', 'admin:chats', 'admin:templates'] }
     }))
   })
 })
