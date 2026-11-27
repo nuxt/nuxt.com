@@ -12,6 +12,7 @@ describe('parsePullTarget', () => {
   it('accepts the previewable repos', () => {
     expect(parsePullTarget('nuxt', '33012')).toEqual(PULL)
     expect(parsePullTarget('nuxt.com', '1')).toEqual({ repo: 'nuxt.com', number: 1 })
+    expect(parsePullTarget('module-builder', '646')).toEqual({ repo: 'module-builder', number: 646 })
   })
 
   it.each([
