@@ -22,7 +22,7 @@ const bodySchema = z.object({
  * pull request. The push webhook then refreshes the served bundle and purges the pages.
  */
 export default defineHandler(async (event): Promise<L10nSaveResult> => {
-  const locale = getRouterParam(event, 'locale')
+  const locale = getRouterParam(event, 'locale', { decode: true })
   if (!isL10nLocale(locale)) {
     throw createError({ status: 404, statusText: 'Unknown locale' })
   }

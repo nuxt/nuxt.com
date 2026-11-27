@@ -6,8 +6,8 @@ import { createError, defineHandler, getRouterParam, serverFetch } from 'nuxt/se
 
 /** One docs version's navigation tree, as `/api/navigation/<version>` serves it, with localised titles. */
 export default defineHandler(async (event): Promise<NavigationItem[]> => {
-  const locale = getRouterParam(event, 'locale')
-  const version = getRouterParam(event, 'version')
+  const locale = getRouterParam(event, 'locale', { decode: true })
+  const version = getRouterParam(event, 'version', { decode: true })
   if (!isL10nLocale(locale) || !version || !isDocVersion(version) || !isLocalisedDocVersion(version)) {
     throw createError({ status: 404, statusText: 'Unknown docs version' })
   }

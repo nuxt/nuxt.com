@@ -307,8 +307,8 @@ describe('downloading an edited project', () => {
     vi.stubGlobal('claimPreviewStep', vi.fn().mockResolvedValueOnce(true).mockResolvedValue(false))
   })
 
-  const downloadEvent = () => requestEvent('/api/templates/preview/preview/download', { params: { id: 'preview' } })
-  async function readAll(stream: ReadableStream<Uint8Array>) {
+  const downloadEvent = (signal?: AbortSignal) => requestEvent('/api/templates/preview/preview/download', { params: { id: 'preview' }, signal })
+  async function readAll(stream: AsyncIterable<Uint8Array>) {
     const chunks: Uint8Array[] = []
     for await (const chunk of stream) chunks.push(chunk)
     return Buffer.concat(chunks)
@@ -403,9 +403,10 @@ describe('downloading an edited project', () => {
     stream.push(Buffer.from('zip'))
     getSandbox.mockResolvedValueOnce({ status: 'running', runCommand, readFile: async () => stream })
     const download = (await import('../../server/api/templates/preview/[id]/download.get')).default as any
-    const reader = (await download(downloadEvent())).getReader()
-    await reader.read()
-    await reader.cancel()
+    const request = new AbortController()
+    const body = await download(downloadEvent(request.signal))
+    await body[Symbol.asyncIterator]().next()
+    request.abort()
     const path = runCommand.mock.calls[0]![0].args[2]
     await vi.waitFor(() => expect(runCommand).toHaveBeenLastCalledWith({ cmd: 'rm', args: ['-f', path], signal: expect.any(AbortSignal) }))
     expect(stream.destroyed).toBe(true)

@@ -7,7 +7,7 @@ import { createError, defineHandler, getRouterParam } from 'nuxt/server'
  */
 export default defineHandler(async (event) => {
   const target = pullTargetFromEvent(event)
-  const sha = getRouterParam(event, 'sha')
+  const sha = getRouterParam(event, 'sha', { decode: true })
   const path = getRouterParam(event, 'path', { decode: true })
   if (!sha || !path) {
     throw createError({ status: 400, statusText: 'Missing sha or path' })

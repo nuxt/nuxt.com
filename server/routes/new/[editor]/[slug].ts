@@ -6,8 +6,8 @@ const VERSION_BRANCHES = ['v3', 'v4']
 
 /** nuxt.new's shortcuts: `/new/s/<slug>` opens a template in StackBlitz, `/new/c/<slug>` in CodeSandbox. */
 export default defineHandler(async (event) => {
-  const editor = getRouterParam(event, 'editor')
-  const slug = getRouterParam(event, 'slug') || ''
+  const editor = getRouterParam(event, 'editor', { decode: true })
+  const slug = getRouterParam(event, 'slug', { decode: true }) || ''
   const templates = await listByDir<Template>('/templates')
   const minimal = templates.find(template => template.slug === 'minimal')
   const template = VERSION_BRANCHES.includes(slug) && minimal

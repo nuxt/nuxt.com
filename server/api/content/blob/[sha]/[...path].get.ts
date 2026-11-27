@@ -6,7 +6,7 @@ import { createError, defineHandler, getRouterParam } from 'nuxt/server'
  * The pin is what makes the response immutable, so it can be cached forever (`isr: true`).
  */
 export default defineHandler(async (event) => {
-  const sha = getRouterParam(event, 'sha')
+  const sha = getRouterParam(event, 'sha', { decode: true })
   const path = getRouterParam(event, 'path', { decode: true })
   if (!sha || !path) {
     throw createError({ status: 400, statusText: 'Missing sha or path' })

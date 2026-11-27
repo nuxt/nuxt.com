@@ -17,7 +17,7 @@ function withoutStem(items: NavigationItem[]): NavigationItem[] {
  * leave the server. The search palette only shows results it can place in this tree.
  */
 export default defineHandler(async (event): Promise<NavigationItem[]> => {
-  const version = getRouterParam(event, 'version')
+  const version = getRouterParam(event, 'version', { decode: true })
   if (!version || !isDocVersion(version)) {
     throw createError({ status: 404, statusText: 'Unknown docs version' })
   }

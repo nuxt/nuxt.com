@@ -2,7 +2,7 @@ import type { NuxterProfilePage } from '#shared/types'
 import { createError, defineHandler, getRouterParam } from 'nuxt/server'
 
 export default defineHandler(async (event) => {
-  const username = getRouterParam(event, 'username')
+  const username = getRouterParam(event, 'username', { decode: true })
   if (!username || !/^[a-z0-9-]{1,39}$/i.test(username)) {
     throw createError({ status: 400, statusText: 'Invalid GitHub username' })
   }

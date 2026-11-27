@@ -7,7 +7,7 @@ import { createError, defineHandler, getRouterParam } from 'nuxt/server'
  */
 export default defineHandler(async (event): Promise<NavigationItem[]> => {
   const target = pullTargetFromEvent(event)
-  const version = getRouterParam(event, 'version')
+  const version = getRouterParam(event, 'version', { decode: true })
   if (!version || !isDocVersion(version)) {
     throw createError({ status: 404, statusText: 'Unknown docs version' })
   }

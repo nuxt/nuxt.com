@@ -3,7 +3,7 @@ import { createError, defineHandler, getRouterParam } from 'nuxt/server'
 
 /** The review state of each localised page of a locale. */
 export default defineHandler(async (event): Promise<L10nPageStatus[]> => {
-  const locale = getRouterParam(event, 'locale')
+  const locale = getRouterParam(event, 'locale', { decode: true })
   if (!isL10nLocale(locale)) {
     throw createError({ status: 404, statusText: 'Unknown locale' })
   }

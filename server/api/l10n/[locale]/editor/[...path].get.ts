@@ -4,7 +4,7 @@ import { createError, defineHandler, getRouterParam } from 'nuxt/server'
 
 /** The segments of a localised page for the translation editor, and what the signed-in user's saves become. */
 export default defineHandler(async (event): Promise<L10nEditorPage> => {
-  const locale = getRouterParam(event, 'locale')
+  const locale = getRouterParam(event, 'locale', { decode: true })
   const path = withLeadingSlash(getRouterParam(event, 'path', { decode: true }) ?? '')
   if (!isL10nLocale(locale) || !isLocalisedPage(path)) {
     throw createError({ status: 404, statusText: 'Page not found' })

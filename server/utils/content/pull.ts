@@ -264,7 +264,7 @@ export function getInstanceForPull(preview: PullPreview, key: ContentInstanceKey
 
 /** The `:repo` and `:number` route params, validated. */
 export function pullTargetFromEvent(event: RequestEvent): PullTarget {
-  const target = parsePullTarget(getRouterParam(event, 'repo'), getRouterParam(event, 'number'))
+  const target = parsePullTarget(getRouterParam(event, 'repo', { decode: true }), getRouterParam(event, 'number', { decode: true }))
   if (!target) {
     throw createError({ status: 404, statusText: 'Unknown pull request' })
   }

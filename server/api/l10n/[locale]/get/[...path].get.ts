@@ -7,7 +7,7 @@ import { createError, defineHandler, getRouterParam } from 'nuxt/server'
  * the pinned bundle substituted. Same shape as `/api/content/<instance>/get/<path>`, plus `meta.l10n`.
  */
 export default defineHandler(async (event) => {
-  const locale = getRouterParam(event, 'locale')
+  const locale = getRouterParam(event, 'locale', { decode: true })
   const path = withLeadingSlash(getRouterParam(event, 'path', { decode: true }) ?? '')
   if (!isL10nLocale(locale) || !isLocalisedPage(path)) {
     throw createError({ status: 404, statusText: 'Page not found' })

@@ -5,7 +5,7 @@ import { createError, defineHandler, getRouterParam } from 'nuxt/server'
 
 export default defineHandler(async (event) => {
   const owner = await getRateLimitPrincipalId(event)
-  const sandbox = owner ? await getPreviewSandbox(getRouterParam(event, 'id')!, owner) : null
+  const sandbox = owner ? await getPreviewSandbox(getRouterParam(event, 'id', { decode: true })!, owner) : null
   if (sandbox?.status !== 'running') {
     throw createError({ status: 404, message: 'This preview has stopped.' })
   }
@@ -54,19 +54,15 @@ export default defineHandler(async (event) => {
         await cleanup()
       }
     })()
-    return new ReadableStream<Uint8Array>({
-      async pull(body) {
-        const { value, done } = await chunks.next()
-        if (done) body.close()
-        else body.enqueue(value)
-      },
-      // A visitor who disconnects ends the loop, which cleans up: returning it stops it between chunks, and aborting the read
-      // stops it while it waits on the sandbox, where the return alone would queue behind that read.
-      async cancel() {
-        controller.abort()
-        await chunks.return(undefined)
-      }
-    })
+    // A Node stream, which h3 pipes with backpressure: it writes a web stream without waiting for a slow visitor.
+    const body = Readable.from(chunks)
+    // h3 never cancels the body when a visitor disconnects, but the request signal aborts. Ending the loop cleans up:
+    // aborting the read stops it while it waits on the sandbox, and destroying the body stops it between chunks.
+    event.req.signal.addEventListener('abort', () => {
+      controller.abort()
+      body.destroy()
+    }, { once: true })
+    return body
   } finally {
     if (!streaming) await cleanup()
   }

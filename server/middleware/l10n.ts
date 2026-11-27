@@ -9,7 +9,9 @@ function redirectRuleFor(pathname: string): string | undefined {
   if (!redirect) return
   if (!redirect.to.endsWith('/**')) return redirect.to
 
-  const rest = redirect._redirectStripBase ? withoutBase(pathname, redirect._redirectStripBase) : pathname
+  // The rules match case-insensitively but keep the rule's lowercase base: strip it from a lowercase copy, keep the path's case.
+  const base = redirect._redirectStripBase
+  const rest = base ? pathname.slice(pathname.length - withoutBase(pathname.toLowerCase(), base.toLowerCase()).length) : pathname
   return joinURL(redirect.to.slice(0, -3), rest)
 }
 

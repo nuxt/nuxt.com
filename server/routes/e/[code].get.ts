@@ -10,7 +10,7 @@ import { createError, defineHandler, getRouterParam, sendRedirect } from 'nuxt/s
  * is redirected to the current default docs version.
  */
 export default defineHandler((event) => {
-  const code = getRouterParam(event, 'code')
+  const code = getRouterParam(event, 'code', { decode: true })
 
   // Validate: must be NUXT_ followed by E or B and 1-4 digits
   if (!code || !/^NUXT_[EB]\d{1,4}$/i.test(code)) {
