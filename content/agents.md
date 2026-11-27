@@ -435,24 +435,24 @@ curl -H 'Accept: text/markdown' \
 Fast for people too
 
 #description
-[e18e framework benchmark](https://frameworks.e18e.dev/run-time/#server-side-rendered-tests-lighthouse){target="_blank"}, server-rendered results for Nuxt 4.7.
+[e18e framework benchmark](https://frameworks.e18e.dev/run-time/){target="_blank"} results for Nuxt 4.7, server-rendered and client-rendered.
 
 #default
-:::div{class="grid sm:grid-cols-3 border-y border-default max-sm:divide-y sm:divide-x divide-default"}
-  ::::agents-stat{value="89" unit="ms" label="First paint" detail="7th of 10" place="7" of="10" size="lg" class="py-[clamp(24px,3vw,40px)] sm:pe-[clamp(16px,2.4vw,32px)]"}
+:::div{class="agents-stats grid sm:grid-cols-3 border-y border-default max-sm:divide-y sm:divide-x divide-default"}
+  ::::agents-stat{value="89" unit="ms" label="First paint" detail="Server-rendered, 7th of 10" place="7" alt-value="99" alt-detail="Client-rendered, 2nd of 10" alt-place="2" of="10" size="lg" class="py-[clamp(24px,3vw,40px)] sm:pe-[clamp(16px,2.4vw,32px)]"}
   ::::
 
-  ::::agents-stat{value="10.05" unit="ms" label="Interaction latency" detail="2nd of 10" place="2" of="10" size="lg" class="py-[clamp(24px,3vw,40px)] sm:px-[clamp(16px,2.4vw,32px)]"}
+  ::::agents-stat{value="10.05" unit="ms" label="Interaction latency" detail="Server-rendered, 2nd of 10" place="2" alt-value="10.29" alt-detail="Client-rendered, 2nd of 10" alt-place="2" of="10" size="lg" class="py-[clamp(24px,3vw,40px)] sm:px-[clamp(16px,2.4vw,32px)]"}
   ::::
 
-  ::::agents-stat{value="2.86" unit="ms" label="Interaction work to commit" detail="2nd of 10" place="2" of="10" size="lg" class="py-[clamp(24px,3vw,40px)] sm:ps-[clamp(16px,2.4vw,32px)]"}
+  ::::agents-stat{value="2.86" unit="ms" label="Interaction work to commit" detail="Server-rendered, 2nd of 10" place="2" alt-value="3.19" alt-detail="Client-rendered, 2nd of 10" alt-place="2" of="10" size="lg" class="py-[clamp(24px,3vw,40px)] sm:ps-[clamp(16px,2.4vw,32px)]"}
   ::::
 :::
 
 :::div{class="flex flex-wrap items-center justify-between gap-x-6 gap-y-2 text-sm/normal text-muted [&>p]:my-0"}
-Source: e18e framework benchmark, server-rendered, Nuxt 4.7, measured November 2026.
+Source: e18e framework benchmark, Nuxt 4.7, measured November 2026.
 
-:u-button{to="https://frameworks.e18e.dev/run-time/#server-side-rendered-tests-lighthouse" target="_blank" label="See the full results" variant="link" trailing-icon="i-lucide-arrow-up-right" class="px-0 min-h-11 text-[15px]"}
+:u-button{to="https://frameworks.e18e.dev/run-time/" target="_blank" label="See the full results" variant="link" trailing-icon="i-lucide-arrow-up-right" class="px-0 min-h-11 text-[15px]"}
 :::
 ::
 
