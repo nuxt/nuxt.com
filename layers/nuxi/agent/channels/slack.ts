@@ -56,7 +56,7 @@ export default slackChannel({
   credentials: connectSlackCredentials(slackConnectorId()),
   botName: 'Nuxi',
   // A code channel is one session for one task, and every message in it reaches Nuxi without a
-  // mention. `tools/open_code_channel.ts` moves coding requests into one.
+  // mention. `tools/open_code_channel.ts` opens one when the person asks, or for a task too long for a thread.
   codeChannels: true,
   threadContext: { since: 'last-agent-reply' },
   onAppMention: dispatchSlackMessage,
