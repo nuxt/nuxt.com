@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { isAdminMode } from '../../layers/nuxi/agent/lib/identity/admin-mode'
-import { githubToolsApproval } from '../../layers/nuxi/agent/lib/github'
+import { allowedRepository, githubToolsApproval, repositoryInput } from '../../layers/nuxi/agent/lib/github'
 
 vi.mock('@vercel/connect', () => ({ getToken: vi.fn(async () => 'app-token') }))
 
@@ -119,6 +119,40 @@ describe('isAdminMode', () => {
   })
 })
 
+describe('the repositories the coder may write to', () => {
+  const allowed = ['nuxt/nuxt.com', 'nuxt-modules/*']
+
+  it('allows a listed repository and every repository of a listed account, whatever the case', () => {
+    expect(allowedRepository('nuxt/nuxt.com', allowed)).toBe('nuxt/nuxt.com')
+    expect(allowedRepository('Nuxt/Nuxt.com', allowed)).toBe('nuxt/nuxt.com')
+    expect(allowedRepository('nuxt-modules/i18n', allowed)).toBe('nuxt-modules/i18n')
+    expect(allowedRepository('Nuxt-Modules/.github', allowed)).toBe('nuxt-modules/.github')
+  })
+
+  it.each([
+    ['another repository of an account listed for one', 'nuxt/ui'],
+    ['an account that only starts like a listed one', 'nuxt-modules-evil/i18n'],
+    ['a listed account as a repository name', 'evil/nuxt-modules'],
+    ['the pattern itself', 'nuxt-modules/*'],
+    ['a third segment', 'nuxt-modules/i18n/extra'],
+    ['a name that climbs', 'nuxt-modules/..'],
+    ['a name with a query', 'nuxt-modules/i18n?x=1'],
+    ['no name', 'nuxt-modules/'],
+    ['no owner', 'nuxt.com'],
+    ['something that is not text', null]
+  ])('refuses %s', (_, repository) => {
+    expect(allowedRepository(repository, allowed)).toBeUndefined()
+  })
+
+  it('gives a tool the default repository, and refuses one outside the list before the tool runs', () => {
+    const input = repositoryInput('Repository to commit to')
+
+    expect(input.parse(undefined)).toBe('nuxt/nuxt.com')
+    expect(input.parse('Nuxt/nuxt.com')).toBe('Nuxt/nuxt.com')
+    expect(() => input.parse('nuxt/ui')).toThrow('Not a repository Nuxi works on: nuxt/nuxt.com.')
+  })
+})
+
 describe('githubToolsApproval', () => {
   beforeEach(() => {
     vi.stubEnv('GLOBAL_CONFIG', 'https://edge-config.vercel.com/ecfg_test?token=test')
@@ -152,45 +186,40 @@ describe('githubToolsApproval', () => {
   it('asks before a commit to a branch that has an open pull request', async () => {
     githubWithOnePullRequest()
 
-    expect(await decide('github__editFiles', slackUser, { branch: 'nuxi/showcase-world-triathlon', message: 'feat(showcase): add World Triathlon' })).toBe('user-approval')
-    expect(await decide('commit_assets', slackUser, { repository: 'nuxt/nuxt.com', branch: 'nuxi/showcase-world-triathlon' })).toBe('user-approval')
+    expect(await decide('commit_changes', slackUser, { repository: 'nuxt/nuxt.com', branch: 'nuxi/showcase-world-triathlon', message: 'feat(showcase): add World Triathlon' })).toBe('user-approval')
+    expect(await decide('commit_changes', slackUser, { branch: 'nuxi/showcase-world-triathlon' })).toBe('user-approval')
   })
 
   it('lets a commit to a branch without a pull request through, and looks up nothing for other tools', async () => {
     const heads = githubWithOnePullRequest()
 
-    expect(await decide('github__editFiles', slackUser, { owner: 'nuxt', repo: 'nuxt.com', branch: 'nuxi/showcase-world-triathlon-assets' })).toBeUndefined()
-    expect(await decide('commit_assets', slackUser, { branch: 'nuxi/showcase-world-triathlon-assets' })).toBeUndefined()
-    expect(await decide('github__createBranch', slackUser, { branch: 'nuxi/showcase-world-triathlon' })).toBeUndefined()
+    expect(await decide('commit_changes', slackUser, { branch: 'nuxi/showcase-world-triathlon-assets' })).toBeUndefined()
+    expect(await decide('github__createPullRequest', slackUser, { head: 'nuxi/showcase-world-triathlon' })).toBeUndefined()
     expect(await decide('capture_screenshot', slackUser, { name: 'world-triathlon' })).toBeUndefined()
-    expect(heads).toEqual(['nuxt:nuxi/showcase-world-triathlon-assets', 'nuxt:nuxi/showcase-world-triathlon-assets'])
+    expect(heads).toEqual(['nuxt:nuxi/showcase-world-triathlon-assets'])
   })
 
-  it('asks whatever the case of the repository, which GitHub and the guardrails ignore', async () => {
+  it('asks whatever the case of the repository, which GitHub ignores', async () => {
     const heads = githubWithOnePullRequest()
 
-    expect(await decide('github__editFiles', slackUser, { owner: 'Nuxt', repo: 'nuxt.com', branch: 'nuxi/showcase-world-triathlon' })).toBe('user-approval')
-    expect(await decide('github__editFiles', slackUser, { repo: 'NUXT.COM', branch: 'nuxi/showcase-world-triathlon' })).toBe('user-approval')
-    expect(await decide('commit_assets', slackUser, { repository: 'Nuxt/Nuxt.com', branch: 'nuxi/showcase-world-triathlon' })).toBe('user-approval')
-    expect(heads).toEqual(Array(3).fill('nuxt:nuxi/showcase-world-triathlon'))
+    expect(await decide('commit_changes', slackUser, { repository: 'Nuxt/Nuxt.com', branch: 'nuxi/showcase-world-triathlon' })).toBe('user-approval')
+    expect(heads).toEqual(['nuxt:nuxi/showcase-world-triathlon'])
   })
 
   it('reads the repository where the tool does, so an input the tool ignores can\'t move the lookup', async () => {
     githubWithOnePullRequest()
 
-    expect(await decide('github__editFiles', slackUser, { repository: 'nuxt/ui', branch: 'nuxi/showcase-world-triathlon' })).toBe('user-approval')
-    expect(await decide('commit_assets', slackUser, { owner: 'nuxt', repo: 'ui', branch: 'nuxi/showcase-world-triathlon' })).toBe('user-approval')
+    expect(await decide('commit_changes', slackUser, { owner: 'nuxt', repo: 'ui', branch: 'nuxi/showcase-world-triathlon' })).toBe('user-approval')
   })
 
   it('denies a commit it can\'t place, instead of letting it through unasked', async () => {
     const heads = githubWithOnePullRequest()
     const unplaced = { type: 'denied', reason: 'A commit names a branch of one of these repositories: nuxt/nuxt.com.' }
 
-    expect(await decide('github__editFiles', slackUser, { owner: 'nuxt', repo: 'ui', branch: 'nuxi/showcase-world-triathlon' })).toEqual(unplaced)
-    expect(await decide('github__editFiles', slackUser, { owner: null, branch: 'nuxi/showcase-world-triathlon' })).toEqual(unplaced)
-    expect(await decide('commit_assets', slackUser, { repository: 'nuxt/ui', branch: 'nuxi/showcase-world-triathlon' })).toEqual(unplaced)
-    expect(await decide('github__editFiles', slackUser, { message: 'docs: fix typo' })).toEqual(unplaced)
-    expect(await decide('commit_assets', slackUser)).toEqual(unplaced)
+    expect(await decide('commit_changes', slackUser, { repository: 'nuxt/ui', branch: 'nuxi/showcase-world-triathlon' })).toEqual(unplaced)
+    expect(await decide('commit_changes', slackUser, { repository: null, branch: 'nuxi/showcase-world-triathlon' })).toEqual(unplaced)
+    expect(await decide('commit_changes', slackUser, { message: 'docs: fix typo' })).toEqual(unplaced)
+    expect(await decide('commit_changes', slackUser)).toEqual(unplaced)
     expect(heads).toEqual([])
   })
 
@@ -198,13 +227,7 @@ describe('githubToolsApproval', () => {
     vi.stubGlobal('fetch', async () => Response.json({ message: 'Bad credentials' }, { status: 401 }))
     vi.spyOn(console, 'warn').mockImplementation(() => {})
 
-    expect(await decide('github__editFiles', slackUser, { branch: 'nuxi/fix-typo' })).toBe('user-approval')
-  })
-
-  it('still denies a commit where GitHub tools are not offered', async () => {
-    githubWithOnePullRequest()
-
-    expect(await decide('github__editFiles', { issuer: 'discord', principalId: 'discord:U1', principalType: 'user', attributes: { channel_id: 'C_PUBLIC' } }, { branch: 'nuxi/showcase-world-triathlon' })).toEqual(denied)
+    expect(await decide('commit_changes', slackUser, { branch: 'nuxi/fix-typo' })).toBe('user-approval')
   })
 
   it('leaves GitHub tools to their own policy for a human on Slack and in an admin Discord channel', async () => {
@@ -222,8 +245,8 @@ describe('githubToolsApproval', () => {
   })
 
   it('denies GitHub tools to a Slack bot and to anonymous web visitors', async () => {
-    expect(await decide('github__editFiles', { ...slackUser, principalType: 'service', attributes: { user_id: 'B1', author_type: 'bot' } })).toEqual(denied)
-    expect(await decide('github__editFiles', { issuer: 'nuxt.com', principalId: 'anon', principalType: 'anonymous' })).toEqual(denied)
+    expect(await decide('github__updatePullRequest', { ...slackUser, principalType: 'service', attributes: { user_id: 'B1', author_type: 'bot' } })).toEqual(denied)
+    expect(await decide('github__updatePullRequest', { issuer: 'nuxt.com', principalId: 'anon', principalType: 'anonymous' })).toEqual(denied)
   })
 
   it('leaves other tools alone in public sessions', async () => {

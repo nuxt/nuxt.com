@@ -1,5 +1,6 @@
 import { getToken } from '@vercel/connect'
 import type { ApprovalPolicy } from 'eve/tools/approval'
+import { z } from 'zod'
 import { openPullRequestOf } from './github-files.js'
 import { isAdminMode } from './identity/admin-mode.js'
 import { resolveContext, type AuthContext, type Surface } from './identity/context.js'
@@ -8,19 +9,46 @@ import { resolveContext, type AuthContext, type Surface } from './identity/conte
 export const GITHUB_CONNECTOR = 'github/nuxi-code'
 
 /**
- * The repositories the coder works on, as `owner/name`; the first is the default. To let Nuxi work
- * on another one, add it here, give the `nuxi-code` App access to it, and describe it in
- * `subagents/coder/instructions.md`.
+ * The repositories the coder may write to. An entry is `owner/name`, or `owner/*` for every
+ * repository of that account: the syntax of the GitHub tools' `repositories` guardrail, which reads
+ * this list too. The first entry names one repository, the default of every tool.
+ *
+ * This list is the only thing that holds Nuxi to these repositories. Nothing else in the coder
+ * names one: its tools take the repository as an input, and every write runs with the GitHub token
+ * of the person who asked. GitHub accepts that token only where the `nuxi-code` App is installed
+ * and the person has access, with the role the person has there. So a wider list, such as
+ * `nuxt/*`, gives nobody more than GitHub already gives them. Whatever the repository, a commit
+ * goes to a `nuxi/*` branch or to the branch of an open pull request, never to the default branch.
  */
-export const GITHUB_REPOSITORIES = ['nuxt/nuxt.com'] as const
+export const GITHUB_REPOSITORIES: readonly [string, ...string[]] = ['nuxt/nuxt.com']
+export const DEFAULT_REPOSITORY = GITHUB_REPOSITORIES[0]
+
+const REPOSITORY_PART = /^[\w.-]+$/
 
 /**
- * The entry of `GITHUB_REPOSITORIES` that `repository` names, if any. GitHub ignores the case of
- * owners and repository names, and so does the `repositories` guardrail of the GitHub tools.
+ * The repository of `allowed` that `repository` names, with its owner written as the list writes
+ * it, if any. GitHub ignores the case of owners and repository names, and so does the
+ * `repositories` guardrail of the GitHub tools.
  */
-function allowedRepository(repository: unknown) {
+export function allowedRepository(repository: unknown, allowed: readonly string[] = GITHUB_REPOSITORIES): string | undefined {
   if (typeof repository !== 'string') return undefined
-  return GITHUB_REPOSITORIES.find(allowed => allowed.toLowerCase() === repository.toLowerCase())
+  const [owner = '', name = '', ...rest] = repository.split('/')
+  if (rest.length || !REPOSITORY_PART.test(owner) || !REPOSITORY_PART.test(name) || name === '.' || name === '..') return undefined
+  for (const entry of allowed) {
+    const [entryOwner = '', entryName = ''] = entry.split('/')
+    if (entryOwner.toLowerCase() !== owner.toLowerCase()) continue
+    if (entryName === '*') return `${entryOwner}/${name}`
+    if (entryName.toLowerCase() === name.toLowerCase()) return entry
+  }
+  return undefined
+}
+
+/** A tool input that names a repository to write to: one the list allows, and the default when omitted. */
+export function repositoryInput(description: string) {
+  return z.string().max(140)
+    .refine(repository => allowedRepository(repository) !== undefined, { error: `Not a repository Nuxi works on: ${GITHUB_REPOSITORIES.join(', ')}.` })
+    .default(DEFAULT_REPOSITORY)
+    .describe(description)
 }
 
 const GITHUB_SURFACES = new Set<Surface>(['slack', 'discord', 'cli'])
@@ -49,17 +77,6 @@ export function appToken(repository: string): Promise<string> {
   })
 }
 
-const [DEFAULT_OWNER, DEFAULT_REPO] = GITHUB_REPOSITORIES[0].split('/')
-
-/**
- * The coder's tools that commit to a branch, with the repository each one commits to, read from
- * the inputs that tool reads and with its defaults. Both name the branch `branch`.
- */
-const COMMIT_TOOLS = new Map<string, (input: Readonly<Record<string, unknown>>) => unknown>([
-  ['github__editFiles', ({ owner = DEFAULT_OWNER, repo = DEFAULT_REPO }) => typeof owner === 'string' && typeof repo === 'string' ? `${owner}/${repo}` : undefined],
-  ['commit_assets', ({ repository = GITHUB_REPOSITORIES[0] }) => repository]
-])
-
 /**
  * Whether `branch` has an open pull request: work someone may be reviewing, which the coder may
  * not have opened. Not knowing counts as yes.
@@ -78,9 +95,9 @@ async function hasOpenPullRequest(repository: string, branch: string): Promise<b
  *
  * - A second line of defense: anywhere else, every `github__*` call, read or write, is denied
  *   before it reaches GitHub.
- * - A commit to a branch that already has an open pull request asks the person first, like
- *   `updatePullRequest`. The coder's branches are new, so this only stops a commit to a pull
- *   request that is already open: its own on a follow-up, or one from another task.
+ * - `commit_changes`, the only tool that writes files to GitHub, asks the person first when the
+ *   branch already has an open pull request, like `updatePullRequest`: the coder's own on a
+ *   follow-up, or someone else's, such as a dependency update whose conflict it was asked to fix.
  * - A commit this policy can't place, with no branch or a repository outside the list, is denied.
  *   Letting it through would rely on the tool to refuse it, and the two once read the same input
  *   differently: `Nuxt/nuxt.com` was unknown here and allowed there.
@@ -89,11 +106,11 @@ export const githubToolsApproval: ApprovalPolicy = async ({ toolName, toolInput,
   if (toolName.startsWith('github__') && !(await canUseGithubTools(session.auth.current))) {
     return { type: 'denied', reason: 'GitHub tools are only available to the Nuxt team on Slack and in admin Discord channels.' }
   }
-  const repositoryOf = COMMIT_TOOLS.get(toolName)
-  if (!repositoryOf) return undefined
+  if (toolName !== 'commit_changes') return undefined
 
-  const repository = allowedRepository(repositoryOf(toolInput ?? {}))
-  const branch = toolInput?.branch
+  // Read like the tool's schema reads them: the default repository only when none is given.
+  const { repository: named = DEFAULT_REPOSITORY, branch } = toolInput ?? {}
+  const repository = allowedRepository(named)
   if (!repository || typeof branch !== 'string' || !branch) {
     return { type: 'denied', reason: `A commit names a branch of one of these repositories: ${GITHUB_REPOSITORIES.join(', ')}.` }
   }

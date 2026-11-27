@@ -5,7 +5,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { captureScreenshot, captureUrlError, hideElementsExpression, parseCookie, recordVideo, removeElementsExpression, stepCommand } from '../../layers/nuxi/agent/lib/media/capture'
 import { mediaTypeFromPath, sniffMediaType } from '../../layers/nuxi/agent/lib/media/media-type'
 import { publishMedia } from '../../layers/nuxi/agent/lib/media/publish'
-import { commitAssets, MAX_COMMIT_BYTES, openPullRequestOf } from '../../layers/nuxi/agent/lib/github-files'
+import { openPullRequestOf } from '../../layers/nuxi/agent/lib/github-files'
 import { handoffStore, localStore, MAX_SHARED_BYTES, receiveAttachments, shareAttachments, type HandoffStore } from '../../layers/nuxi/agent/lib/handoff'
 
 const ascii = (text: string) => [...text].map(char => char.charCodeAt(0))
@@ -40,20 +40,25 @@ describe('captureUrlError', () => {
     expect(captureUrlError('https://internal.example.com/')).toBeNull()
   })
 
+  it('accepts a server running in the sandbox itself', () => {
+    expect(captureUrlError('http://localhost:3000/docs')).toBeNull()
+    expect(captureUrlError('http://localhost./')).toBeNull()
+    expect(captureUrlError('http://127.0.0.1:5173/')).toBeNull()
+    expect(captureUrlError('http://[::1]:3000/')).toBeNull()
+  })
+
   it.each([
     'triathlon.org',
     'about:blank',
     'file:///etc/passwd',
     'javascript:alert(1)',
     'https://user:pass@example.com/',
-    'http://localhost:3000/',
-    'http://localhost./',
     'http://app.localhost/',
     'http://db.internal/',
-    'http://127.0.0.1/',
-    // The URL parser normalises these to 127.0.0.1.
-    'http://2130706433/',
-    'http://0x7f.1/',
+    'http://0.0.0.0:3000/',
+    // The URL parser normalises these to 10.0.0.1.
+    'http://167772161/',
+    'http://0xa.1/',
     'http://10.1.2.3/',
     'http://172.16.0.1/',
     'http://172.31.255.255/',
@@ -67,7 +72,8 @@ describe('captureUrlError', () => {
     'http://192.0.0.8/',
     'http://224.0.0.1/',
     'http://255.255.255.255/',
-    'http://[::1]/'
+    'http://[fd00::1]/',
+    'http://[::ffff:10.0.0.1]/'
   ])('rejects %s', (url) => {
     expect(captureUrlError(url)).toEqual(expect.any(String))
   })
@@ -155,7 +161,7 @@ describe('recordVideo', () => {
   })
 
   it('keeps nothing of a recording whose step leaves the public page', async () => {
-    const urls = ['https://nuxt.com/', 'http://127.0.0.1:3000/admin']
+    const urls = ['https://nuxt.com/', 'http://10.0.0.1:3000/admin']
     const commands: string[] = []
     const sandbox = {
       // What the agent-browser CLI prints with `--json`.
@@ -166,7 +172,7 @@ describe('recordVideo', () => {
       readBinaryFile: async () => null
     }
 
-    await expect(recordVideo(sandbox, { name: 'menu', steps: [{ action: 'click', selector: '#admin' }] })).rejects.toThrow('"127.0.0.1" is a local or private address')
+    await expect(recordVideo(sandbox, { name: 'menu', steps: [{ action: 'click', selector: '#admin' }] })).rejects.toThrow('"10.0.0.1" is a local or private address')
     expect(commands.some(command => command.includes('record stop'))).toBe(true)
     expect(commands.at(-1)).toContain('rm -f /workspace/captures/menu.webm')
     expect(commands.some(command => command.includes('ffmpeg'))).toBe(false)
@@ -327,82 +333,6 @@ describe('openPullRequestOf', () => {
     const { fetchImpl } = fakeGithub({ [PULLS]: [] })
 
     expect(await openPullRequestOf({ ...input, fetchImpl })).toBeUndefined()
-  })
-})
-
-describe('commitAssets', () => {
-  const API = 'https://api.github.com'
-  const REFS = `${API}/repos/nuxt/ui/git`
-  const file = { path: 'public/assets/websites/world-triathlon.webp', bytes: WEBP }
-  const commit = { oid: 'c0ffee', url: 'https://github.com/nuxt/ui/commit/c0ffee' }
-  const committed = { [`POST ${API}/graphql`]: { data: { createCommitOnBranch: { commit } } } }
-  const input = { repository: 'nuxt/ui', token: 'token', branch: 'nuxi/showcase', message: 'feat: add screenshot', files: [file] }
-
-  it('commits onto the head of an existing branch', async () => {
-    const { fetchImpl, requests } = fakeGithub({ ...committed, [`GET ${REFS}/ref/heads/nuxi/showcase`]: { object: { sha: 'branch-sha' } } })
-    const message = 'feat(showcase): add World Triathlon screenshot\n\nCaptured from https://triathlon.org.'
-
-    expect(await commitAssets({ ...input, message, fetchImpl })).toEqual({
-      repository: 'nuxt/ui',
-      branch: 'nuxi/showcase',
-      createdBranch: false,
-      commitSha: 'c0ffee',
-      commitUrl: commit.url,
-      paths: [file.path]
-    })
-    expect(requests.map(request => request.call)).toEqual([`GET ${REFS}/ref/heads/nuxi/showcase`, `POST ${API}/graphql`])
-    expect(JSON.parse(String(requests[1]!.body)).variables.input).toEqual({
-      branch: { repositoryNameWithOwner: 'nuxt/ui', branchName: 'nuxi/showcase' },
-      expectedHeadOid: 'branch-sha',
-      message: { headline: 'feat(showcase): add World Triathlon screenshot', body: 'Captured from https://triathlon.org.' },
-      fileChanges: { additions: [{ path: file.path, contents: Buffer.from(WEBP).toString('base64') }] }
-    })
-  })
-
-  it('creates a missing branch from the default branch first', async () => {
-    const { fetchImpl, requests } = fakeGithub({
-      ...committed,
-      [`GET ${API}/repos/nuxt/ui`]: { default_branch: 'v4' },
-      [`GET ${REFS}/ref/heads/v4`]: { object: { sha: 'v4-sha' } },
-      [`POST ${REFS}/refs`]: {}
-    })
-
-    expect(await commitAssets({ ...input, fetchImpl })).toMatchObject({ createdBranch: true })
-    expect(JSON.parse(String(requests[3]!.body))).toEqual({ ref: 'refs/heads/nuxi/showcase', sha: 'v4-sha' })
-    expect(JSON.parse(String(requests[4]!.body)).variables.input).toMatchObject({ expectedHeadOid: 'v4-sha', message: { headline: 'feat: add screenshot' } })
-  })
-
-  it('commits a blog cover of 1.5 MB', async () => {
-    const { fetchImpl, requests } = fakeGithub({ ...committed, [`GET ${REFS}/ref/heads/nuxi/showcase`]: { object: { sha: 'branch-sha' } } })
-    const cover = { path: 'public/assets/blog/v4.7.png', bytes: new Uint8Array([...PNG, ...new Uint8Array(1_500_000)]) }
-
-    expect(await commitAssets({ ...input, files: [cover], fetchImpl })).toMatchObject({ paths: [cover.path] })
-    expect(JSON.parse(String(requests[1]!.body)).variables.input.fileChanges.additions[0].contents).toBe(Buffer.from(cover.bytes).toString('base64'))
-  })
-
-  it('reports why GitHub refused the commit', async () => {
-    const { fetchImpl } = fakeGithub({
-      [`GET ${REFS}/ref/heads/nuxi/showcase`]: { object: { sha: 'branch-sha' } },
-      [`POST ${API}/graphql`]: { data: { createCommitOnBranch: null }, errors: [{ message: 'Expected branch to point to "x"' }] }
-    })
-
-    await expect(commitAssets({ ...input, fetchImpl })).rejects.toThrow('Expected branch to point to "x"')
-  })
-
-  it.each([
-    ['the default branch', { branch: 'main' }],
-    ['a branch that only contains nuxi/', { branch: 'feat/nuxi/x' }],
-    ['a branch that climbs out of nuxi/', { branch: 'nuxi/../main' }],
-    ['a path that climbs out of the repository', { files: [{ path: 'public/../../x.webp', bytes: WEBP }] }],
-    ['a text file', { files: [{ path: '.github/workflows/ci.yml', bytes: TEXT }] }],
-    ['text renamed to an image', { files: [{ path: 'public/x.webp', bytes: TEXT }] }],
-    ['a video', { files: [{ path: 'public/demo.mp4', bytes: MP4 }] }],
-    ['an image over the size limit', { files: [{ path: 'public/x.webp', bytes: new Uint8Array([...WEBP, ...new Uint8Array(MAX_COMMIT_BYTES)]) }] }]
-  ])('sends nothing to GitHub for %s', async (_, override) => {
-    const { fetchImpl, requests } = fakeGithub({})
-
-    await expect(commitAssets({ ...input, ...override, fetchImpl })).rejects.toThrow()
-    expect(requests).toEqual([])
   })
 })
 
