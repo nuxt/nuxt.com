@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "exportedAt": "2026-11-23T11:11:29.861Z",
+    "exportedAt": "2026-11-23T16:30:25.709Z",
     "experiments": [
       {
         "name": "claude-fable-5",
@@ -154,7 +154,7 @@
         "avgCostUsd": 0.09004042526041667,
         "passAt1": 0.84375,
         "avgPassRate": 0.8854166666666666,
-        "tier": 1
+        "tier": 2
       },
       {
         "name": "deepseek-v4-pro",

@@ -1,4 +1,5 @@
 import type { H3Event } from 'h3'
+import type { RequestEvent } from 'nuxt/server'
 import type { NuxterLocaleTranslations } from '#shared/types'
 import { L10N_LOCALE_CODES, type L10nLocale } from '#shared/utils/l10n'
 
@@ -6,7 +7,7 @@ import { L10N_LOCALE_CODES, type L10nLocale } from '#shared/utils/l10n'
  * Who edited, verified and rejected the segments of a locale, built once per translations commit:
  * a profile is then a lookup. The commit is in the key, so a push needs no purge.
  */
-const translationsIndex = defineCachedFunction(async (_event: H3Event, locale: L10nLocale, sha: string) => {
+const translationsIndex = defineCachedFunction(async (_event: H3Event | RequestEvent, locale: L10nLocale, sha: string) => {
   const bundle = await getL10nBundle(locale)
   if (bundle.sha !== sha) throw new Error(`the ${locale} bundle is at ${bundle.sha || 'no commit'}, not ${sha}`)
   return l10nContributors(bundle)
@@ -20,7 +21,7 @@ const translationsIndex = defineCachedFunction(async (_event: H3Event, locale: L
  * What a GitHub login did in each locale of the served translations. Translations are a bonus on a
  * profile: a locale that cannot be read lists nothing.
  */
-export async function nuxterTranslations(event: H3Event, username: string): Promise<NuxterLocaleTranslations[]> {
+export async function nuxterTranslations(event: H3Event | RequestEvent, username: string): Promise<NuxterLocaleTranslations[]> {
   const sha = await resolveTranslationsSha().catch((error) => {
     console.error('[nuxters] Cannot resolve the translations commit:', error)
     return null

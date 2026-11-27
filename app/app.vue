@@ -47,6 +47,17 @@ const { data: searchShas } = useAsyncData(
   { server: false, watch: [searchKeys] }
 )
 
+// The Markdown version the page links to with `useCanonical()`, as served for "Copy page".
+const markdownLink = () => document.querySelector<HTMLLinkElement>('link[rel="alternate"][type="text/markdown"]')
+useAgentTool(defineAgentTool({
+  name: 'get_page_markdown',
+  description: 'Get the page the user is reading as Markdown. Use when the user asks about this page, to summarize, quote or explain it.',
+  inputSchema: { type: 'object', properties: {} },
+  annotations: { readOnlyHint: true },
+  // Fetched from this origin: the link points to the production site, also on previews.
+  execute: (_input, { signal }) => $fetch<string>(new URL(markdownLink()!.href).pathname, { signal })
+}), { enabled: () => !!markdownLink() })
+
 useHead({
   titleTemplate: title => title ? `${title} · Nuxt` : 'Nuxt: The Intuitive Web Framework',
   meta: [

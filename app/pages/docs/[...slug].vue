@@ -53,6 +53,16 @@ const asideNavigation = computed(() => {
     class: navClass(item)
   }))
 })
+// Groups listed among plain links (like `app` in Directory Structure) read as siblings, not section headings
+const desktopAsideNavigation = computed(() => {
+  const items = asideNavigation.value
+  if (!items.some(item => !item.children?.length)) {
+    return items
+  }
+  return items.map(item => item.children?.length
+    ? { ...item, ui: { trigger: 'data-[state=open]:text-muted font-normal' } }
+    : item)
+})
 function paintResponse() {
   if (import.meta.server) {
     return Promise.resolve()
@@ -309,11 +319,7 @@ const noRightAside = computed(() => route.path.includes('/examples/'))
             :navigation="asideNavigation"
             default-open
             trailing-icon="i-lucide-chevron-right"
-            :ui="{
-              link: 'data-[state=open]:text-muted data-[state=open]:hover:text-highlighted',
-              trigger: 'font-normal',
-              linkTrailingIcon: 'group-data-[state=open]:rotate-90'
-            }"
+            :ui="{ linkTrailingIcon: 'group-data-[state=open]:rotate-90' }"
             highlight
           />
         </template>
@@ -370,9 +376,8 @@ const noRightAside = computed(() => route.path.includes('/examples/'))
       <template #left>
         <UPageAside>
           <UContentNavigation
-            :navigation="asideNavigation"
+            :navigation="desktopAsideNavigation"
             :collapsible="false"
-            :ui="{ link: 'data-[state=open]:text-muted data-[state=open]:hover:text-highlighted', trigger: 'font-normal' }"
             highlight
           />
         </UPageAside>

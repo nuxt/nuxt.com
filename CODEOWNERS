@@ -1,2 +1,19 @@
-* @danielroe
-* @atinux
+* @danielroe @atinux
+
+# Evals
+/public/agent-results.json @benjamincanac
+/app/pages/evals.vue @benjamincanac
+
+# Nuxi
+/layers/nuxi/ @HugoRCD
+
+# Templates
+templates/ @HugoRCD @atinux
+/content/templates.yml @HugoRCD @atinux
+*template*.ts @HugoRCD @atinux
+*template*.sql @HugoRCD @atinux
+
+# Docs translations
+l10n/ @danielroe
+*l10n* @danielroe
+*L10n* @danielroe

@@ -126,7 +126,7 @@ export async function startPreview(template: Template, owner: string, timeoutMs:
  */
 export async function getPreviewLimits(event: H3Event) {
   const { user } = await getUserSession(event)
-  const admin = user?.role === 'admin' && await isAuthorizedAdmin(event, user.username).catch(() => false)
+  const admin = user?.role === 'admin' && await isAuthorizedAdmin(user.username).catch(() => false)
   return admin
     ? { timeoutMs: PREVIEW_ADMIN_TIMEOUT_MS, maxLifetimeMs: PREVIEW_ADMIN_MAX_LIFETIME_MS }
     : { timeoutMs: PREVIEW_TIMEOUT_MS, maxLifetimeMs: PREVIEW_MAX_LIFETIME_MS }

@@ -47,7 +47,6 @@ export default defineNuxtConfig({
     'motion-v/nuxt',
     'nuxt-llms',
     '@nuxthub/core',
-    'nuxt-auth-utils',
     'nuxt-schema-org',
     '@nuxtjs/mcp-toolkit',
     '@nuxtjs/robots',
@@ -103,7 +102,19 @@ export default defineNuxtConfig({
   },
   app: {
     pageTransition: false,
-    layoutTransition: false
+    layoutTransition: false,
+    head: {
+      meta: [
+        // WebMCP origin trials for https://nuxt.com, so Chrome and Edge offer the `experimental.webmcp` tools to
+        // agents. Each browser ignores the other's token, and other origins, such as previews, ignore both.
+        // The keys keep both: unhead otherwise dedupes meta tags by `http-equiv` and keeps only the last.
+        // Chrome, expires 2027-03-30: https://developer.chrome.com/origintrials
+        { 'key': 'origin-trial-chrome', 'http-equiv': 'origin-trial', 'content': 'AmqDCjZQy1dUxsmO437qW0AIowIm5VQBK1TzyNKMure66TZ1FSdI8hXBmqtVygFcOoI3f0XHPylFPj/jQEKoBw8AAABIeyJvcmlnaW4iOiJodHRwczovL251eHQuY29tOjQ0MyIsImZlYXR1cmUiOiJXZWJNQ1AiLCJleHBpcnkiOjE4MDYzNjQ4MDB9' },
+        // Edge, expires 2027-01-10, before its trial ends: renew it at
+        // https://developer.microsoft.com/en-us/microsoft-edge/origin-trials/trials/0b76fe60-b266-458e-a285-04e375c0c31a
+        { 'key': 'origin-trial-edge', 'http-equiv': 'origin-trial', 'content': 'A/K+DT4TujT7/8iAQTdnOJKdXs2Dve1XB7iPbPbU5O14uqhIt4UhBOOxT9lgK/VjwNy+S5MzM5I8bDCkG8y0E5gAAABIeyJvcmlnaW4iOiJodHRwczovL251eHQuY29tOjQ0MyIsImZlYXR1cmUiOiJXZWJNQ1AiLCJleHBpcnkiOjE3OTk1ODE2Mzd9' }
+      ]
+    }
   },
   css: ['~/assets/css/main.css'],
   site: {
@@ -136,6 +147,12 @@ export default defineNuxtConfig({
           anchorLinks: { h2: true, h3: true, h4: true }
         }
       }
+    },
+    mcpAdminToken: '',
+    // Sign-in with GitHub and Discord linking (`server/utils/auth.ts`)
+    oauth: {
+      github: { clientId: '', clientSecret: '' },
+      discord: { clientId: '', clientSecret: '' }
     },
     // Service account added as a user of the Search Console property (admin MCP `search-console-*` tools)
     googleSearchConsole: {
@@ -589,7 +606,15 @@ export default defineNuxtConfig({
       }
     },
     // `nuxt-workers` breaks under the Vite environment API.
-    viteEnvironmentApi: false
+    viteEnvironmentApi: false,
+    // Builds the server route matcher once instead of on every request. Nothing here calls `router.addRoute()`.
+    staticRoutes: true,
+    // `staticRoutes` turns this on, but it 404s paths no page matches before the app runs: localised docs
+    // (`/fr/docs/**`) and pull previews (`/pull/**`) only match through the router history base in `app/router.options.ts`.
+    early404: false,
+    // WebMCP tools for agents in the browser: `get_page_markdown` (app.vue), `search_docs` (Search.vue) and
+    // `search_modules` (pages/modules/index.vue), plus Nuxt's own `navigate`.
+    webmcp: true
   },
   compatibilityDate: '2026-01-14',
   nitro: {
@@ -720,11 +745,6 @@ export default defineNuxtConfig({
         }
       }
     }
-  },
-  auth: {
-    // Pages are cached (ISR on Vercel): a session fetched while rendering would be cached with the
-    // page for every visitor, and the browser would never fetch its own. Always fetch it client-side.
-    loadStrategy: 'client-only'
   },
   eslint: {
     config: {

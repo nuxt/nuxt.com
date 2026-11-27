@@ -6,9 +6,14 @@ const timestamps = {
   createdAt: integer('created_at', { mode: 'timestamp' }).notNull().$defaultFn(() => new Date())
 }
 
+/**
+ * Better Auth's `user` model (see `server/utils/auth.ts`). `email` stays nullable for accounts created
+ * before Better Auth; it is filled in at their next sign-in.
+ */
 export const users = sqliteTable('users', {
   id: text('id').primaryKey().$defaultFn(() => crypto.randomUUID()),
   email: text('email'),
+  emailVerified: integer('email_verified', { mode: 'boolean' }).notNull().default(false),
   name: text('name').notNull(),
   avatar: text('avatar').notNull(),
   username: text('username').notNull(),
@@ -17,8 +22,50 @@ export const users = sqliteTable('users', {
   role: text('role', { enum: ['user', 'admin'] }).notNull().default('user'),
   metadata: text('metadata', { mode: 'json' }).$type<Record<string, unknown>>(),
   lastSeenAt: integer('last_seen_at', { mode: 'timestamp' }).$defaultFn(() => new Date()),
-  ...timestamps
+  ...timestamps,
+  updatedAt: integer('updated_at', { mode: 'timestamp' }).$defaultFn(() => new Date()).$onUpdate(() => new Date())
 }, table => [uniqueIndex('users_provider_id_idx').on(table.provider, table.providerId)])
+
+// Better Auth's `session`, `account` and `verification` models. The `auth_` prefix keeps them clear of
+// tables other branches have left in the shared Preview database.
+export const authSessions = sqliteTable('auth_sessions', {
+  id: text('id').primaryKey(),
+  userId: text('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+  token: text('token').notNull().unique(),
+  expiresAt: integer('expires_at', { mode: 'timestamp' }).notNull(),
+  ipAddress: text('ip_address'),
+  userAgent: text('user_agent'),
+  ...timestamps,
+  updatedAt: integer('updated_at', { mode: 'timestamp' }).notNull().$defaultFn(() => new Date()).$onUpdate(() => new Date())
+}, table => [index('auth_sessions_user_id_idx').on(table.userId)])
+
+export const authAccounts = sqliteTable('auth_accounts', {
+  id: text('id').primaryKey(),
+  userId: text('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+  providerId: text('provider_id').notNull(),
+  accountId: text('account_id').notNull(),
+  accessToken: text('access_token'),
+  refreshToken: text('refresh_token'),
+  idToken: text('id_token'),
+  accessTokenExpiresAt: integer('access_token_expires_at', { mode: 'timestamp' }),
+  refreshTokenExpiresAt: integer('refresh_token_expires_at', { mode: 'timestamp' }),
+  scope: text('scope'),
+  password: text('password'),
+  ...timestamps,
+  updatedAt: integer('updated_at', { mode: 'timestamp' }).notNull().$defaultFn(() => new Date()).$onUpdate(() => new Date())
+}, table => [
+  uniqueIndex('auth_accounts_provider_account_idx').on(table.providerId, table.accountId),
+  index('auth_accounts_user_id_idx').on(table.userId)
+])
+
+export const authVerifications = sqliteTable('auth_verifications', {
+  id: text('id').primaryKey(),
+  identifier: text('identifier').notNull(),
+  value: text('value').notNull(),
+  expiresAt: integer('expires_at', { mode: 'timestamp' }).notNull(),
+  ...timestamps,
+  updatedAt: integer('updated_at', { mode: 'timestamp' }).notNull().$defaultFn(() => new Date()).$onUpdate(() => new Date())
+}, table => [index('auth_verifications_identifier_idx').on(table.identifier)])
 
 export const feedback = sqliteTable('feedback', {
   id: integer('id').primaryKey({ autoIncrement: true }),
