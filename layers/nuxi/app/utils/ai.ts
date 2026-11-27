@@ -7,12 +7,12 @@ export function getMergedParts(parts: UIMessage['parts']): UIMessage['parts'] {
     const prev = result[result.length - 1]
     if (part.type === 'source-url') {
       if (prev && isTextUIPart(prev)) {
-        result[result.length - 1] = { type: 'text', text: prev.text + sourceToInlineMdc(part.url) }
+        result[result.length - 1] = { ...prev, text: prev.text + sourceToInlineMdc(part.url) }
       }
       continue
     }
     if (isTextUIPart(part) && prev && isTextUIPart(prev)) {
-      result[result.length - 1] = { type: 'text', text: prev.text + part.text }
+      result[result.length - 1] = { ...part, ...('id' in prev && { id: prev.id }), text: prev.text + part.text }
     } else {
       result.push(part)
     }

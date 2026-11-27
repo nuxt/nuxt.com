@@ -8,12 +8,13 @@ function toolPartToUIPart(part: EveToolPart): DynamicToolUIPart {
 
   switch (part.state) {
     case 'streaming':
-      return { ...base, state: 'input-streaming', input: undefined }
+      return { ...base, state: 'input-streaming', input: part.input }
     case 'completed':
       return { ...base, state: 'output-available', input: part.input, output: part.output }
     case 'failed':
-    case 'cancelled':
       return { ...base, state: 'output-error', input: part.input, errorText: part.error?.message ?? `Tool call ${part.state}` }
+    case 'cancelled':
+      return { ...base, state: 'output-error', input: part.input, errorText: 'Tool call cancelled' }
     case 'rejected':
       return { ...base, state: 'output-denied', input: part.input, approval: { id: part.interaction?.interactionId ?? part.callId, approved: false } }
     default:
@@ -71,7 +72,8 @@ const SETTLED_TOOL_STATES = new Set(['output-available', 'output-error', 'output
 function isPartSettled(part: UIMessage['parts'][number]): boolean {
   if (part.type === 'text' || part.type === 'reasoning') return part.state !== 'streaming'
   if (part.type.startsWith('tool-') || part.type === 'dynamic-tool') {
-    return SETTLED_TOOL_STATES.has((part as { state?: string }).state ?? '')
+    const tool = part as DynamicToolUIPart
+    return SETTLED_TOOL_STATES.has(tool.state) && !(tool.state === 'output-available' && tool.preliminary)
   }
   return true
 }

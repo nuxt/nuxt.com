@@ -657,7 +657,12 @@ export default defineNuxtConfig({
         'valibot',
         'zod',
         'date-fns',
-        'ai'
+        'ai',
+        'eve/vue',
+        'botid/client/core',
+        'verkit',
+        'comark-content/client',
+        'comark/plugins/security'
       ],
       // Pre-bundling `@sqlite.org/sqlite-wasm` breaks the wasm asset it resolves against its own module URL.
       exclude: ['shaders', '@sqlite.org/sqlite-wasm']

@@ -7,8 +7,7 @@ const {
   isAgentDockedBreakpoint,
   currentPage,
   pageContextDismissed,
-  pendingPrompt,
-  nuxiMood
+  pendingPrompt
 } = useNuxtAgent()
 const { chatList } = useChats()
 const { loggedIn } = useUserSession()
@@ -18,10 +17,23 @@ const active = shallowRef<ActiveChat>({ id: crypto.randomUUID(), messages: [] })
 const chatId = computed(() => active.value.id)
 const initialMessages = computed(() => active.value.messages)
 let loadToken = 0
+const reducedMotion = usePreferredReducedMotion()
 
 function startNewChat() {
-  loadToken++
-  active.value = { id: crypto.randomUUID(), messages: [] }
+  const token = ++loadToken
+  const reset = async () => {
+    if (token !== loadToken) return
+    active.value = { id: crypto.randomUUID(), messages: [] }
+    await nextTick()
+  }
+
+  // The keyed chat is replaced on reset, so capture its avatar before unmounting it.
+  if (import.meta.client && isOpen.value && !pendingPrompt.value && reducedMotion.value !== 'reduce' && document.startViewTransition) {
+    const transition = document.startViewTransition(reset)
+    void transition.ready.catch(() => {})
+  } else {
+    void reset()
+  }
 }
 
 async function setActiveChat(id: string) {
@@ -103,11 +115,6 @@ defineShortcuts(computed(() => ({
     <template #title>
       <AgentChatSwitcher v-if="loggedIn" class="min-w-0" />
       <span v-else class="inline-flex items-center gap-2 min-w-0">
-        <Transition appear enter-from-class="opacity-0 scale-50 blur-xs" enter-active-class="transition-[opacity,scale,filter] duration-300 delay-100 ease-out motion-reduce:transition-none">
-          <span class="inline-flex">
-            <AgentNuxiIcon class="size-5 shrink-0" :mood="nuxiMood" />
-          </span>
-        </Transition>
         <span class="truncate">Nuxi</span>
         <UBadge variant="subtle" size="sm" class="shrink-0">
           Beta
