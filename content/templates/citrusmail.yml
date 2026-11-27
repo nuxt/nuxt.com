@@ -1,0 +1,9 @@
+name: 'CitrusMail'
+slug: 'citrusmail'
+description: 'Open-source mail, calendar and contacts client for any IMAP or JMAP provider, with a desktop app.'
+repo: 'citrusmail/citrusmail'
+demo: 'https://faivelo.com/citrus-mail'
+category: 'app'
+deploy:
+  env:
+    - 'NUXT_APP_SECRET'
