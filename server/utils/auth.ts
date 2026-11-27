@@ -22,6 +22,32 @@ async function touchLastSeen(userId: string) {
   }
 }
 
+/**
+ * Fetches client metadata documents and keys like `@better-auth/cimd/node`, but drops the custom-scheme
+ * redirect URIs without a path that Better Auth refuses (`raycast://mcp-oauth-callback`). Better Auth
+ * rejects a whole document for one of them, which locks out clients such as Raycast that redirect to
+ * another URI they list. The transport, and its SSRF guarantees, stay Better Auth's.
+ */
+const fetchClientMetadata: typeof fetchClientMetadataResource = async (input, init) => {
+  const response = await fetchClientMetadataResource(input, init)
+  if (response.status !== 200) return response
+  const document = await response.clone().json().catch(() => undefined) as { client_id?: unknown, redirect_uris?: unknown } | undefined
+  if (document?.client_id !== String(input) || !Array.isArray(document.redirect_uris)) return response
+  const redirectUris = document.redirect_uris.filter((uri) => {
+    try {
+      const { protocol, pathname } = new URL(uri)
+      return protocol === 'http:' || protocol === 'https:' || pathname !== ''
+    } catch {
+      return true
+    }
+  })
+  if (redirectUris.length === document.redirect_uris.length || !redirectUris.length) return response
+  const headers = new Headers(response.headers)
+  headers.delete('content-length')
+  headers.delete('content-encoding')
+  return new Response(JSON.stringify({ ...document, redirect_uris: redirectUris }), { status: 200, headers })
+}
+
 async function createAuth() {
   const { oauth } = useRuntimeConfig()
   const discord = nuxtersDiscord.config()
@@ -131,7 +157,7 @@ async function createAuth() {
         }
       }),
       // Client ID Metadata Documents, including `private_key_jwt` clients such as Nuxi through Vercel Connect.
-      cimd({ fetchClientMetadataResource })
+      cimd({ fetchClientMetadataResource: fetchClientMetadata })
     ],
     hooks: {
       before: createAuthMiddleware(async (ctx) => {
