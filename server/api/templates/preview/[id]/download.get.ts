@@ -16,11 +16,13 @@ export default defineHandler(async (event) => {
   // Read before an edit can land behind the ZIP. Unused when zipping fails, so its failure must not go unhandled.
   const changes = previewChanges(sandbox)
   changes.catch(() => {})
-  const cleanup = async () => {
+  let cleaned: Promise<void> | undefined
+  // Once, whichever of the handler, the stream's end or a disconnect gets there first.
+  const cleanup = () => cleaned ??= (async () => {
     clearTimeout(readTimer)
     controller.abort()
     await sandbox.runCommand({ cmd: 'rm', args: ['-f', path], signal: AbortSignal.timeout(10_000) }).catch(error => console.error('[templates] ZIP cleanup failed', error))
-  }
+  })()
   // Once the ZIP streams, the stream cleans up when it ends; until then, this handler does.
   let streaming = false
   try {
@@ -56,11 +58,11 @@ export default defineHandler(async (event) => {
     })()
     // A Node stream, which h3 pipes with backpressure: it writes a web stream without waiting for a slow visitor.
     const body = Readable.from(chunks)
-    // h3 never cancels the body when a visitor disconnects, but the request signal aborts. Ending the loop cleans up:
-    // aborting the read stops it while it waits on the sandbox, and destroying the body stops it between chunks.
+    // h3 never cancels the body when a visitor disconnects, but the request signal aborts. Clean up here too: a loop
+    // that never started has no `finally` to run, and one waiting on the sandbox stops once the read aborts.
     event.req.signal.addEventListener('abort', () => {
-      controller.abort()
       body.destroy()
+      void cleanup()
     }, { once: true })
     return body
   } finally {

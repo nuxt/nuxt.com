@@ -29,7 +29,12 @@ export default defineHandler(async (event) => {
   // `handler()` matches on its own `basePath` (`/api/content/<instance>`), so drop the pin.
   const request = event.req
   const url = new URL(request.url)
-  url.pathname = url.pathname.replace(`/blob/${sha}`, '')
+  const pathname = url.pathname.replace(`/blob/${sha}`, '')
+  // A percent-encoded sha decodes to a valid one but leaves the pin in the URL: refuse it instead of caching a second copy.
+  if (pathname === url.pathname) {
+    throw createError({ status: 400, statusText: 'Malformed content commit' })
+  }
+  url.pathname = pathname
 
   return content.handler(new Request(url, request))
 })

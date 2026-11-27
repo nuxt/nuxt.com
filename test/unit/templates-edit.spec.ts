@@ -397,7 +397,7 @@ describe('downloading an edited project', () => {
     expect(trackTemplateEvent).not.toHaveBeenCalled()
   })
 
-  it('cleans up when the visitor disconnects mid-download, without reporting it', async () => {
+  it.each([true, false])('cleans up when the visitor disconnects mid-download, without reporting it (read started: %s)', async (started) => {
     const runCommand = vi.fn().mockResolvedValue({ exitCode: 0 })
     const stream = new Readable({ read() {} })
     stream.push(Buffer.from('zip'))
@@ -405,7 +405,7 @@ describe('downloading an edited project', () => {
     const download = (await import('../../server/api/templates/preview/[id]/download.get')).default as any
     const request = new AbortController()
     const body = await download(downloadEvent(request.signal))
-    await body[Symbol.asyncIterator]().next()
+    if (started) await body[Symbol.asyncIterator]().next()
     request.abort()
     const path = runCommand.mock.calls[0]![0].args[2]
     await vi.waitFor(() => expect(runCommand).toHaveBeenLastCalledWith({ cmd: 'rm', args: ['-f', path], signal: expect.any(AbortSignal) }))
