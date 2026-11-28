@@ -553,3 +553,11 @@ websites:
       hideElements: ['.cky-consent-container', '.cky-overlay', '.cky-btn-revisit-wrapper', '#fastgpt-chatbot-button', '#fastgpt-chatbot-window', '.promo-countdown']
       removeElements: ['.i18n-tip', '.promo-countdown']
       delay: 4
+  - name: Rush Hour Planner
+    url: https://rushhourplanner.com/
+    industry: Travel & Leisure
+    logo:
+      width: 297
+      height: 27
+    screenshotOptions:
+      delay: 2
